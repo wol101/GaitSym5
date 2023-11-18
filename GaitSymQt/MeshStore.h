@@ -10,7 +10,7 @@
 #ifndef MESHSTORE_H
 #define MESHSTORE_H
 
-#include "ode/ode.h"
+#include "PGDMath.h"
 
 #include <vector>
 #include <string>
@@ -33,8 +33,8 @@ struct MeshStoreObject
     std::vector<double> normalList;
     std::vector<double> colourList;
     std::vector<double> uvList;
-    dVector3 lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    dVector3 upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
+    pgd::Vector3 lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX,};
+    pgd::Vector3 upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
 };
 
 class MeshStore
@@ -46,7 +46,7 @@ public:
     void addMesh(const MeshStoreObject &meshStoreObject);
     void addMesh(const std::string &path, const std::vector<double> &vertexList, const std::vector<double> &normalList,
                  const std::vector<double> &colourList, const std::vector<double> &uvList,
-                 const dVector3 &lowerBound, const dVector3 &upperBound);
+                 const pgd::Vector3 &lowerBound, const pgd::Vector3 &upperBound);
     void clear();
 
     uint64_t getCurrentMemory();

@@ -38,12 +38,11 @@
 
 #define COUNTERCLOCKWISE
 
-#include <stdio.h>
+#include "FacetedSphere.h"
+
 #include <cmath>
-#include <ode/ode.h>
 #include <sstream>
 
-#include "FacetedSphere.h"
 
 typedef struct
 {

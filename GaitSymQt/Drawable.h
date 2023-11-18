@@ -10,7 +10,7 @@
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
-#include "ode/ode.h"
+#include "PGDMath.h"
 
 #include <vector>
 #include <string>
@@ -31,8 +31,8 @@ public:
 
     void SetDisplayPosition(double x, double y, double z);
     void SetDisplayScale(double x, double y, double z);
-    void SetDisplayRotation(const dMatrix3 R);
-    void SetDisplayRotationFromQuaternion(const dQuaternion q);
+    void SetDisplayRotation(const pgd::Matrix3x3 &R);
+    void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
     void setVisible(bool visible);
 
     const std::vector<FacetedObject *> &facetedObjectList() const;
