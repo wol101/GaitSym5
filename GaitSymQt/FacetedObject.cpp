@@ -1666,7 +1666,7 @@ void FacetedObject::Rotate(double x, double y, double z, double angleDegrees)
 {
     Q_ASSERT_X(x != 0 || y != 0 || z != 0, "Axis must be non-zero", "FacetedObject::Rotate");
     if (angleDegrees == 0) return;
-    pgd::Quaternion q = pgd::MakeQFromAxisAngle(x, y, z, pgd::DegreesToRadians(angleDegrees));
+    pgd::Quaternion q = pgd::MakeQFromAxisAngle(x, y, z, pgd::DegToRad(angleDegrees));
     pgd::Vector3 v;
     for (size_t i = 0; i < m_vertexList.size() / 3; i++)
     {

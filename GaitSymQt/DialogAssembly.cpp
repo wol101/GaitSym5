@@ -139,9 +139,9 @@ void DialogAssembly::accept() // this catches OK and return/enter
         aMotorJoint->setBody1Marker(worldMarkerPtr);
         aMotorJoint->setBody2Marker(bodyMarkerPtr);
         aMotorJoint->Attach();
-        aMotorJoint->SetTargetAngles(pgd::DegreesToRadians(ui->lineEditXR->value()),
-                                     pgd::DegreesToRadians(ui->lineEditYR->value()),
-                                     pgd::DegreesToRadians(ui->lineEditZR->value()));
+        aMotorJoint->SetTargetAngles(pgd::DegToRad(ui->lineEditXR->value()),
+                                     pgd::DegToRad(ui->lineEditYR->value()),
+                                     pgd::DegToRad(ui->lineEditZR->value()));
         aMotorJoint->SetMaxTorque(ui->lineEditMaxTorque->value());
         aMotorJoint->SetTargetAngleGain(ui->lineEditAngleGain->value());
         aMotorJoint->setReverseBodyOrderInCalculations(true);
@@ -167,7 +167,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
             joint->setBody1Marker(hingeJoint->body1Marker());
             joint->setBody2Marker(hingeJoint->body2Marker());
             joint->Attach();
-            joint->SetTargetAngles(pgd::DegreesToRadians(lineEdit->value()));
+            joint->SetTargetAngles(pgd::DegToRad(lineEdit->value()));
             joint->SetMaxTorque(ui->lineEditMaxTorque->value());
             joint->SetTargetAngleGain(ui->lineEditAngleGain->value());
             joint->saveToAttributes();
@@ -191,8 +191,8 @@ void DialogAssembly::accept() // this catches OK and return/enter
             joint->setBody1Marker(universalJoint->body1Marker());
             joint->setBody2Marker(universalJoint->body2Marker());
             joint->Attach();
-            joint->SetTargetAngles(pgd::DegreesToRadians(lineEdit1->value()),
-                                   pgd::DegreesToRadians(lineEdit2->value()));
+            joint->SetTargetAngles(pgd::DegToRad(lineEdit1->value()),
+                                   pgd::DegToRad(lineEdit2->value()));
             joint->SetMaxTorque(ui->lineEditMaxTorque->value());
             joint->SetTargetAngleGain(ui->lineEditAngleGain->value());
             joint->saveToAttributes();
@@ -218,9 +218,9 @@ void DialogAssembly::accept() // this catches OK and return/enter
             joint->setBody1Marker(ballJoint->body1Marker());
             joint->setBody2Marker(ballJoint->body2Marker());
             joint->Attach();
-            joint->SetTargetAngles(pgd::DegreesToRadians(lineEdit1->value()),
-                                   pgd::DegreesToRadians(lineEdit2->value()),
-                                   pgd::DegreesToRadians(lineEdit3->value()));
+            joint->SetTargetAngles(pgd::DegToRad(lineEdit1->value()),
+                                   pgd::DegToRad(lineEdit2->value()),
+                                   pgd::DegToRad(lineEdit3->value()));
             joint->SetMaxTorque(ui->lineEditMaxTorque->value());
             joint->SetTargetAngleGain(ui->lineEditAngleGain->value());
             joint->saveToAttributes();
@@ -310,9 +310,9 @@ void DialogAssembly::initialise()
         {
             if (aMotorJoint->targetAnglesList().size() == 3)
             {
-                ui->lineEditXR->setValue(pgd::RadiansToDegrees(aMotorJoint->targetAnglesList()[0]));
-                ui->lineEditYR->setValue(pgd::RadiansToDegrees(aMotorJoint->targetAnglesList()[1]));
-                ui->lineEditZR->setValue(pgd::RadiansToDegrees(aMotorJoint->targetAnglesList()[2]));
+                ui->lineEditXR->setValue(pgd::RadToDeg(aMotorJoint->targetAnglesList()[0]));
+                ui->lineEditYR->setValue(pgd::RadToDeg(aMotorJoint->targetAnglesList()[1]));
+                ui->lineEditZR->setValue(pgd::RadToDeg(aMotorJoint->targetAnglesList()[2]));
             }
             break;
         }
@@ -355,9 +355,9 @@ void DialogAssembly::initialise()
             if (jointIter != assemblyJoints.end())
             {
                 if (dynamic_cast<AMotorJoint *>(jointIter->second))
-                    lineEdit->setValue(pgd::RadiansToDegrees(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[0]));
+                    lineEdit->setValue(pgd::RadToDeg(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[0]));
             }
-            else { lineEdit->setValue(pgd::RadiansToDegrees(hingeJoint->GetHingeAngle())); }
+            else { lineEdit->setValue(pgd::RadToDeg(hingeJoint->GetHingeAngle())); }
             m_gridLayout->addWidget(lineEdit, row, 2);
             m_jointList.push_back(iter.second.get());
             row++;
@@ -377,17 +377,17 @@ void DialogAssembly::initialise()
             if (jointIter != assemblyJoints.end())
             {
                 if (dynamic_cast<AMotorJoint *>(jointIter->second))
-                    lineEdit->setValue(pgd::RadiansToDegrees(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[0]));
+                    lineEdit->setValue(pgd::RadToDeg(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[0]));
             }
-            else { lineEdit->setValue(pgd::RadiansToDegrees(universalJoint->GetUniversalAngle1())); }
+            else { lineEdit->setValue(pgd::RadToDeg(universalJoint->GetUniversalAngle1())); }
             m_gridLayout->addWidget(lineEdit, row, 2);
             lineEdit = new LineEditDouble();
             if (jointIter != assemblyJoints.end())
             {
                 if (dynamic_cast<AMotorJoint *>(jointIter->second))
-                    lineEdit->setValue(pgd::RadiansToDegrees(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[1]));
+                    lineEdit->setValue(pgd::RadToDeg(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[1]));
             }
-            else { lineEdit->setValue(pgd::RadiansToDegrees(universalJoint->GetUniversalAngle2())); }
+            else { lineEdit->setValue(pgd::RadToDeg(universalJoint->GetUniversalAngle2())); }
             m_gridLayout->addWidget(lineEdit, row, 3);
             m_jointList.push_back(iter.second.get());
             row++;
@@ -409,7 +409,7 @@ void DialogAssembly::initialise()
             if (jointIter != assemblyJoints.end())
             {
                 if (dynamic_cast<AMotorJoint *>(jointIter->second))
-                    lineEdit->setValue(pgd::RadiansToDegrees(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[0]));
+                    lineEdit->setValue(pgd::RadToDeg(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[0]));
             }
             else { lineEdit->setValue(euler.x); }
             m_gridLayout->addWidget(lineEdit, row, 2);
@@ -417,7 +417,7 @@ void DialogAssembly::initialise()
             if (jointIter != assemblyJoints.end())
             {
                 if (dynamic_cast<AMotorJoint *>(jointIter->second))
-                    lineEdit->setValue(pgd::RadiansToDegrees(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[1]));
+                    lineEdit->setValue(pgd::RadToDeg(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[1]));
             }
             else { lineEdit->setValue(euler.y); }
             m_gridLayout->addWidget(lineEdit, row, 3);
@@ -425,7 +425,7 @@ void DialogAssembly::initialise()
             if (jointIter != assemblyJoints.end())
             {
                 if (dynamic_cast<AMotorJoint *>(jointIter->second))
-                    lineEdit->setValue(pgd::RadiansToDegrees(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[2]));
+                    lineEdit->setValue(pgd::RadToDeg(dynamic_cast<AMotorJoint *>(jointIter->second)->targetAnglesList()[2]));
             }
             else { lineEdit->setValue(euler.z); }
             m_gridLayout->addWidget(lineEdit, row, 4);
@@ -459,7 +459,7 @@ void DialogAssembly::reset()
         {
             LineEditDouble *lineEdit = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             Q_ASSERT_X(lineEdit, "DialogAssembly::accept", "lineEdit not set");
-            lineEdit->setValue(pgd::RadiansToDegrees(hingeJoint->GetHingeAngle()));
+            lineEdit->setValue(pgd::RadToDeg(hingeJoint->GetHingeAngle()));
         }
 
         UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_jointList[i]);
@@ -469,8 +469,8 @@ void DialogAssembly::reset()
             LineEditDouble *lineEdit2 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 3)->widget());
             Q_ASSERT_X(lineEdit1, "DialogAssembly::accept", "lineEdit1 not set");
             Q_ASSERT_X(lineEdit2, "DialogAssembly::accept", "lineEdit2 not set");
-            lineEdit1->setValue(pgd::RadiansToDegrees(universalJoint->GetUniversalAngle1()));
-            lineEdit2->setValue(pgd::RadiansToDegrees(universalJoint->GetUniversalAngle2()));
+            lineEdit1->setValue(pgd::RadToDeg(universalJoint->GetUniversalAngle1()));
+            lineEdit2->setValue(pgd::RadToDeg(universalJoint->GetUniversalAngle2()));
         }
 
         BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_jointList[i]);

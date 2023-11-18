@@ -157,7 +157,7 @@ void SimulationWidget::paintGL()
 
     // set the projection matrix
     float aspectRatio = float(width()) / float(height());
-    float halfViewHeight = std::sin(pgd::DegreesToRadians(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+    float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
     float halfViewWidth = halfViewHeight * aspectRatio;
 
     m_proj.setToIdentity();
@@ -882,7 +882,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     float sensorWidth = 36; // 35mm film standard
     float sensorHeight = sensorWidth / aspectRatio;
     std::string clippingRange = GSUtil::ToString("(%g,%g)", m_frontClip, m_backClip);
-    std::string focalLength = GSUtil::ToString("%g", sensorHeight / (2 * std::tan(pgd::DegreesToRadians(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
+    std::string focalLength = GSUtil::ToString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
     std::string focusDistance = GSUtil::ToString("%g", m_cameraDistance);
     std::string verticalAperture = GSUtil::ToString("%g", sensorHeight);
     std::string horizontalAperture = GSUtil::ToString("%g", sensorWidth);
@@ -891,7 +891,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     {
         // for orthographic, the sensor width is the field width * 10 and focal length and distance are not used [the x10 is a cm/mm bit of wierdness in omniverse/usd even though gaitsym units are generally m)
         // if the camera is switched back to perspective in omniverse, then the horizontal aperture needs to go back to 36 for the views to match
-        float halfViewHeight = std::sin(pgd::DegreesToRadians(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+        float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
         float halfViewWidth = halfViewHeight * aspectRatio;
         verticalAperture = GSUtil::ToString("%g", halfViewHeight * 20);
         horizontalAperture = GSUtil::ToString("%g", halfViewWidth * 20);

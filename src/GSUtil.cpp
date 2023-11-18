@@ -331,7 +331,7 @@ double *GSUtil::GetQuaternion(char *bufPtrs[], double *q)
     }
     if (*p == 'd') // degee angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegreesToRadians(q[0]));
+        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
         q[0] = qq.n;
         q[1] = qq.x;
         q[2] = qq.y;
@@ -354,7 +354,7 @@ pgd::Quaternion GSUtil::GetQuaternion(const std::vector<std::string> &tokens, si
     }
     if (p == 'd') // degee angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegreesToRadians(q[0]));
+        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
         return qq;
     }
     return pgd::Quaternion(q[0], q[1], q[2], q[3]);

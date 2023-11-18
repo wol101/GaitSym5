@@ -1,9 +1,10 @@
 #ifndef STROKEFONT_H
 #define STROKEFONT_H
 
-#include "ode/ode.h"
-
 class SimulationWidget;
+
+#include "PGDMath.h"
+
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
 
@@ -53,10 +54,10 @@ public:
     void AddArc(float cx, float cy, float cz, float r, float start_angle, float arc_angle, int num_segments);
 
     void SetDisplayPosition(double x, double y, double z);
-    void SetDisplayRotation(const dMatrix3 R, bool fast = true);
-    void SetDisplayRotationFromQuaternion(const dQuaternion q, bool fast = true);
-    const double *GetDisplayPosition()  { return m_displayPosition; }
-    const double *GetDisplayRotation()  { return m_displayRotation; }
+    void SetDisplayRotation(const pgd::Matrix3x3 &R);
+    void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
+    const pgd::Vector3 &GetDisplayPosition()  { return m_displayPosition; }
+    const pgd::Matrix3x3 &GetDisplayRotation()  { return m_displayRotation; }
     void Move(double x, double y, double z);
     void Scale(double x, double y, double z);
 
@@ -90,9 +91,9 @@ private:
     size_t max_lines = 100000;
     float *line_buffer = nullptr;
 
-    dVector3 m_displayPosition = {0, 0, 0, 0};
-    dVector3 m_displayScale = {1, 1, 1, 0};
-    dMatrix3 m_displayRotation;
+    pgd::Vector3 m_displayPosition = {0, 0, 0};
+    pgd::Vector3 m_displayScale = {1, 1, 1};
+    pgd::Matrix3x3 m_displayRotation;
 
     SimulationWidget *m_glWidget = nullptr;
     QOpenGLBuffer m_VBO;

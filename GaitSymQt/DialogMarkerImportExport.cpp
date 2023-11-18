@@ -290,7 +290,7 @@ int DialogMarkerImportExport::ExportMarkers()
             qWorld = markerIt.second->GetWorldQuaternion();
             double xa, ya, za, angle;
             pgd::MakeAxisAngleFromQ(qWorld, &xa, &ya, &za, &angle);
-            if (ui->checkBoxAnglesInRadians->isChecked() == false) angle = pgd::RadiansToDegrees(angle);
+            if (ui->checkBoxAnglesInRadians->isChecked() == false) angle = pgd::RadToDeg(angle);
             line.push_back(GSUtil::ToString(angle));
             line.push_back(GSUtil::ToString(xa));
             line.push_back(GSUtil::ToString(ya));
@@ -458,7 +458,7 @@ int DialogMarkerImportExport::ImportMarkers()
         {
             marker->SetWorldPosition(values[0], values[1], values[2]);
             angle = values[3];
-            if (!ui->checkBoxAnglesInRadians->isChecked()) angle = pgd::DegreesToRadians(angle);
+            if (!ui->checkBoxAnglesInRadians->isChecked()) angle = pgd::DegToRad(angle);
             qWorld = pgd::MakeQFromAxisAngle(values[4], values[5], values[6], angle);
             marker->SetWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
         }

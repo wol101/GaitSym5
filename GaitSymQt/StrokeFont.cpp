@@ -460,32 +460,14 @@ void StrokeFont::SetDisplayPosition(double x, double y, double z)
     m_displayPosition[2] = z;
 }
 
-void StrokeFont::SetDisplayRotation(const dMatrix3 R, bool fast)
+void StrokeFont::SetDisplayRotation(const pgd::Matrix3x3 &R)
 {
-    if (fast)
-    {
-        std::copy_n(R, dM3E__MAX, m_displayRotation);
-    }
-    else
-    {
-        dQuaternion q;
-        dRtoQ (R, q);
-        dNormalize4 (q);
-        dQtoR (q, m_displayRotation);
-    }
+    m_displayRotation = R;
 }
 
-void StrokeFont::SetDisplayRotationFromQuaternion(const dQuaternion q, bool fast)
+void StrokeFont::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
-    if (fast == false)
-    {
-        dQuaternion qq;
-        std::copy_n(q, dQUE__MAX, qq);
-        dNormalize4 (qq);
-        dQtoR(qq, m_displayRotation);
-    }
-    else
-        dQtoR(q, m_displayRotation);
+    m_displayRotation = pgd::MakeMFromQ(q);
 }
 
 // move the object

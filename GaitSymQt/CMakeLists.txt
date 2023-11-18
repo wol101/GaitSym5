@@ -604,6 +604,7 @@ set(PROJECT_SOURCES
     ../src/ObjectiveMain.cpp
     ../src/ParseXML.cpp
     ../src/PCA.cpp
+    ../src/PGDMath.cpp
     ../src/PIDErrorInController.cpp
     ../src/PIDMuscleLengthController.cpp
     ../src/PlaneGeom.cpp

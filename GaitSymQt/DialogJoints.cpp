@@ -83,7 +83,7 @@ void DialogJoints::accept() // this catches OK and return/enter
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (ui->lineEditHingeLowStop->text().size() && ui->lineEditHingeHighStop->text().size())
-            joint->SetJointStops(pgd::DegreesToRadians(ui->lineEditHingeLowStop->value()), pgd::DegreesToRadians(ui->lineEditHingeHighStop->value()));
+            joint->SetJointStops(pgd::DegToRad(ui->lineEditHingeLowStop->value()), pgd::DegToRad(ui->lineEditHingeHighStop->value()));
         if (ui->lineEditHingeLowStopTorqueLimit->text().size() && ui->lineEditHingeHighStopTorqueLimit->text().size())
             joint->SetTorqueLimits(ui->lineEditHingeLowStopTorqueLimit->value(), ui->lineEditHingeHighStopTorqueLimit->value());
         joint->SetStopTorqueWindow(ui->spinBoxHingeTorqueWindow->value());
@@ -116,12 +116,12 @@ void DialogJoints::accept() // this catches OK and return/enter
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (iMode == BallJoint::AMotorEuler || iMode == BallJoint::AMotorUser)
         {
-            joint->SetStops(pgd::DegreesToRadians(ui->lineEditBallLowStop0->value()),
-                            pgd::DegreesToRadians(ui->lineEditBallHighStop0->value()),
-                            pgd::DegreesToRadians(ui->lineEditBallLowStop1->value()),
-                            pgd::DegreesToRadians(ui->lineEditBallHighStop1->value()),
-                            pgd::DegreesToRadians(ui->lineEditBallLowStop2->value()),
-                            pgd::DegreesToRadians(ui->lineEditBallHighStop2->value()));
+            joint->SetStops(pgd::DegToRad(ui->lineEditBallLowStop0->value()),
+                            pgd::DegToRad(ui->lineEditBallHighStop0->value()),
+                            pgd::DegToRad(ui->lineEditBallLowStop1->value()),
+                            pgd::DegToRad(ui->lineEditBallHighStop1->value()),
+                            pgd::DegToRad(ui->lineEditBallLowStop2->value()),
+                            pgd::DegToRad(ui->lineEditBallHighStop2->value()));
         }
         m_outputJoint = std::move(joint);
     }
@@ -139,7 +139,7 @@ void DialogJoints::accept() // this catches OK and return/enter
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (ui->lineEditFloatingHingeLowStop->text().size() && ui->lineEditFloatingHingeHighStop->text().size())
-            joint->SetJointStops(pgd::DegreesToRadians(ui->lineEditFloatingHingeLowStop->value()), pgd::DegreesToRadians(ui->lineEditFloatingHingeHighStop->value()));
+            joint->SetJointStops(pgd::DegToRad(ui->lineEditFloatingHingeLowStop->value()), pgd::DegToRad(ui->lineEditFloatingHingeHighStop->value()));
         m_outputJoint = std::move(joint);
     }
 
@@ -223,12 +223,12 @@ void DialogJoints::accept() // this catches OK and return/enter
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (ui->lineEditUniversalLowStop1->text().size() && ui->lineEditUniversalHighStop1->text().size())
-            joint->SetJointStops1(pgd::DegreesToRadians(ui->lineEditUniversalLowStop1->value()), pgd::DegreesToRadians(ui->lineEditUniversalHighStop1->value()));
+            joint->SetJointStops1(pgd::DegToRad(ui->lineEditUniversalLowStop1->value()), pgd::DegToRad(ui->lineEditUniversalHighStop1->value()));
         if (ui->lineEditUniversalStopCFM1->text().size()) joint->SetStopCFM1(ui->lineEditUniversalStopCFM1->value());
         if (ui->lineEditUniversalStopERP1->text().size()) joint->SetStopERP1(ui->lineEditUniversalStopERP1->value());
         joint->SetStopBounce1(ui->lineEditUniversalStopBounce1->value());
         if (ui->lineEditUniversalLowStop2->text().size() && ui->lineEditUniversalHighStop2->text().size())
-            joint->SetJointStops2(pgd::DegreesToRadians(ui->lineEditUniversalLowStop2->value()), pgd::DegreesToRadians(ui->lineEditUniversalHighStop2->value()));
+            joint->SetJointStops2(pgd::DegToRad(ui->lineEditUniversalLowStop2->value()), pgd::DegToRad(ui->lineEditUniversalHighStop2->value()));
         if (ui->lineEditUniversalStopCFM2->value() != 0.0) joint->SetStopCFM2(ui->lineEditUniversalStopCFM2->value());
         if (ui->lineEditUniversalStopERP2->value() != 0.0) joint->SetStopERP2(ui->lineEditUniversalStopERP2->value());
         joint->SetStopBounce2(ui->lineEditUniversalStopBounce2->value());
@@ -340,8 +340,8 @@ void DialogJoints::lateInitialise()
     HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_inputJoint);
     if (hingeJoint)
     {
-        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditHingeLowStop->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditHingeHighStop->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditHingeLowStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditHingeHighStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("LowStopTorqueLimit"s)).size()) ui->lineEditHingeLowStopTorqueLimit->setValue(GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("HighStopTorqueLimit"s)).size()) ui->lineEditHingeHighStopTorqueLimit->setValue(GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("StopTorqueWindow"s)).size()) ui->spinBoxHingeTorqueWindow->setValue(GSUtil::Int(s));
@@ -366,20 +366,20 @@ void DialogJoints::lateInitialise()
             ui->comboBoxBallMode->setCurrentText("User Euler");
             break;
         }
-        if ((s = m_inputJoint->findAttribute("LowStop0"s)).size()) ui->lineEditBallLowStop0->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop0"s)).size()) ui->lineEditBallHighStop0->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditBallLowStop1->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditBallHighStop1->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditBallLowStop2->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditBallHighStop2->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop0"s)).size()) ui->lineEditBallLowStop0->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop0"s)).size()) ui->lineEditBallHighStop0->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditBallLowStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditBallHighStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditBallLowStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditBallHighStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Ball"));
     }
 
     FloatingHingeJoint *floatingHingeJoint = dynamic_cast<FloatingHingeJoint *>(m_inputJoint);
     if (floatingHingeJoint)
     {
-        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditFloatingHingeLowStop->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditFloatingHingeHighStop->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditFloatingHingeLowStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditFloatingHingeHighStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Floating Hinge"));
     }
 
@@ -410,13 +410,13 @@ void DialogJoints::lateInitialise()
     UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_inputJoint);
     if (universalJoint)
     {
-        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditUniversalLowStop1->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditUniversalHighStop1->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditUniversalLowStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditUniversalHighStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("StopCFM1"s)).size()) ui->lineEditUniversalStopCFM1->setValue(GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("StopERP1"s)).size()) ui->lineEditUniversalStopERP1->setValue(GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("StopBounce1"s)).size()) ui->lineEditUniversalStopBounce1->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditUniversalLowStop2->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditUniversalHighStop2->setValue(pgd::RadiansToDegrees(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditUniversalLowStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditUniversalHighStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("StopCFM2"s)).size()) ui->lineEditUniversalStopCFM2->setValue(GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("StopERP2"s)).size()) ui->lineEditUniversalStopERP2->setValue(GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("StopBounce2"s)).size()) ui->lineEditUniversalStopBounce2->setValue(GSUtil::Double(s));

@@ -516,7 +516,7 @@ void DialogMarkers::lineEditEulerAppendTextChanged(const QString & /*text*/)
     double angle;
     pgd::Vector3 axis;
     pgd::MakeAxisAngleFromQ(qRotation, &axis.x, &axis.y, &axis.z, &angle);
-    angle = pgd::RadiansToDegrees(angle);
+    angle = pgd::RadToDeg(angle);
     QSignalBlocker blocker5(ui->lineEditAngle);
     QSignalBlocker blocker6(ui->lineEditAxisX);
     QSignalBlocker blocker7(ui->lineEditAxisY);
@@ -530,7 +530,7 @@ void DialogMarkers::lineEditEulerAppendTextChanged(const QString & /*text*/)
 void DialogMarkers::lineEditAxisAngleTextChanged(const QString & /*text*/)
 {
     pgd::Vector3 axis;
-    double angle = pgd::DegreesToRadians(ui->lineEditAngle->value());
+    double angle = pgd::DegToRad(ui->lineEditAngle->value());
     axis.x = ui->lineEditAxisX->value();
     axis.y = ui->lineEditAxisY->value();
     axis.z = ui->lineEditAxisZ->value();
@@ -564,7 +564,7 @@ void DialogMarkers::lineEditQuaternionTextChanged(const QString & /*text*/)
     double angle;
     pgd::Vector3 axis;
     pgd::MakeAxisAngleFromQ(qRotation, &axis.x, &axis.y, &axis.z, &angle);
-    angle = pgd::RadiansToDegrees(angle);
+    angle = pgd::RadToDeg(angle);
     QSignalBlocker blocker1(ui->lineEditAngle);
     QSignalBlocker blocker2(ui->lineEditAxisX);
     QSignalBlocker blocker3(ui->lineEditAxisY);

@@ -310,7 +310,7 @@ void PlaneGeom::Draw(SimulationWindow *window)
     glPushMatrix();
 
     glTranslatef(m_planeOrigin.x, m_planeOrigin.y, m_planeOrigin.z);
-    glRotatef(pgd::RadiansToDegrees(2*acos(m_planeOrientation.n)), m_planeOrientation.v.x, m_planeOrientation.v.y, m_planeOrientation.v.z);
+    glRotatef(pgd::RadToDeg(2*acos(m_planeOrientation.n)), m_planeOrientation.v.x, m_planeOrientation.v.y, m_planeOrientation.v.z);
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_CULL_FACE);
