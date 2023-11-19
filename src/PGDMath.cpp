@@ -158,23 +158,23 @@ const double *pgd::Vector2::constData(void) const
 }
 
 
-pgd::Vector2 operator+(const pgd::Vector2 &u, const pgd::Vector2 &v)
+pgd::Vector2 pgd::operator+(const pgd::Vector2 &u, const pgd::Vector2 &v)
 {
     return pgd::Vector2(u.x + v.x, u.y + v.y);
 }
 
-pgd::Vector2 operator-(const pgd::Vector2 &u, const pgd::Vector2 &v)
+pgd::Vector2 pgd::operator-(const pgd::Vector2 &u, const pgd::Vector2 &v)
 {
     return pgd::Vector2(u.x - v.x, u.y - v.y);
 }
 
 // dot product
-double operator*(const pgd::Vector2 &u, const pgd::Vector2 &v)
+double pgd::operator*(const pgd::Vector2 &u, const pgd::Vector2 &v)
 {
     return (u.x*v.x + u.y*v.y);
 }
 
-double Dot(const pgd::Vector2 &u, const pgd::Vector2 &v)
+double pgd::Dot(const pgd::Vector2 &u, const pgd::Vector2 &v)
 {
     return (u.x*v.x + u.y*v.y);
 }
@@ -184,22 +184,22 @@ double pgd::Vector2::Dot(const Vector2 &v) const
     return (x*v.x + y*v.y);
 }
 
-pgd::Vector2 operator*(double s, const pgd::Vector2 &u)
+pgd::Vector2 pgd::operator*(double s, const pgd::Vector2 &u)
 {
     return pgd::Vector2(u.x*s, u.y*s);
 }
 
-pgd::Vector2 operator*(const pgd::Vector2 &u, double s)
+pgd::Vector2 pgd::operator*(const pgd::Vector2 &u, double s)
 {
     return pgd::Vector2(u.x*s, u.y*s);
 }
 
-pgd::Vector2 operator/(const pgd::Vector2 &u, double s)
+pgd::Vector2 pgd::operator/(const pgd::Vector2 &u, double s)
 {
     return pgd::Vector2(u.x/s, u.y/s);
 }
 
-pgd::Vector2 Normalize(const pgd::Vector2 &u)
+pgd::Vector2 pgd::Normalize(const pgd::Vector2 &u)
 {
     return u / u.Magnitude();
 }
@@ -357,7 +357,7 @@ const double *pgd::Vector3::constData(void) const
 }
 
 
-pgd::Vector3 operator+(const pgd::Vector3 &u, const pgd::Vector3 &v)
+pgd::Vector3 pgd::operator+(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return pgd::Vector3(u.x + v.x, u.y + v.y, u.z + v.z);
 }
@@ -368,14 +368,14 @@ pgd::Vector3 pgd::operator-(const pgd::Vector3 &u, const pgd::Vector3 &v)
 }
 
 // pgd::Vector3 cross product (u cross v)
-pgd::Vector3 operator^(const pgd::Vector3 &u, const pgd::Vector3 &v)
+pgd::Vector3 pgd::operator^(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return pgd::Vector3(  u.y*v.z - u.z*v.y,
                         -u.x*v.z + u.z*v.x,
                         u.x*v.y - u.y*v.x );
 }
 
-pgd::Vector3 Cross(const pgd::Vector3 &u, const pgd::Vector3 &v)
+pgd::Vector3 pgd::Cross(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return pgd::Vector3(  u.y*v.z - u.z*v.y,
                         -u.x*v.z + u.z*v.x,
@@ -390,12 +390,12 @@ pgd::Vector3 pgd::Vector3::Cross(const pgd::Vector3 &v) const
 }
 
 // dot product
-double operator*(const pgd::Vector3 &u, const pgd::Vector3 &v)
+double pgd::operator*(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return (u.x*v.x + u.y*v.y + u.z*v.z);
 }
 
-double Dot(const pgd::Vector3 &u, const pgd::Vector3 &v)
+double pgd::Dot(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return (u.x*v.x + u.y*v.y + u.z*v.z);
 }
@@ -405,23 +405,23 @@ double pgd::Vector3::Dot(const pgd::Vector3 &v) const
     return (x*v.x + y*v.y + z*v.z);
 }
 
-pgd::Vector3 operator*(double s, const pgd::Vector3 &u)
+pgd::Vector3 pgd::operator*(double s, const pgd::Vector3 &u)
 {
     return pgd::Vector3(u.x*s, u.y*s, u.z*s);
 }
 
-pgd::Vector3 operator*(const pgd::Vector3 &u, double s)
+pgd::Vector3 pgd::operator*(const pgd::Vector3 &u, double s)
 {
     return pgd::Vector3(u.x*s, u.y*s, u.z*s);
 }
 
-pgd::Vector3 operator/(const pgd::Vector3 &u, double s)
+pgd::Vector3 pgd::operator/(const pgd::Vector3 &u, double s)
 {
     return pgd::Vector3(u.x/s, u.y/s, u.z/s);
 }
 
 // triple scalar product (u dot (v cross w))
-double TripleScalarProduct(const pgd::Vector3 &u, const pgd::Vector3 &v, const pgd::Vector3 &w)
+double pgd::TripleScalarProduct(const pgd::Vector3 &u, const pgd::Vector3 &v, const pgd::Vector3 &w)
 {
     return double(  (u.x * ( v.y*w.z - v.z*w.y)) +
                   (u.y * (-v.x*w.z + v.z*w.x)) +
@@ -430,7 +430,7 @@ double TripleScalarProduct(const pgd::Vector3 &u, const pgd::Vector3 &v, const p
 
 }
 
-pgd::Vector3 Normalize(const pgd::Vector3 &u)
+pgd::Vector3 pgd::Normalize(const pgd::Vector3 &u)
 {
     return u / u.Magnitude();
 }
@@ -441,7 +441,7 @@ bool pgd::Vector3::operator<(const pgd::Vector3 &rhs) const
     return std::tie(x, y, z) < std::tie(rhs.x, rhs.y, rhs.z);
 }
 
-pgd::Vector4(void)
+pgd::Vector4::Vector4(void)
 {
     x = 0;
     y = 0;
@@ -449,7 +449,7 @@ pgd::Vector4(void)
     w = 0;
 }
 
-pgd::Vector4(double xi, double yi, double zi, double wi)
+pgd::Vector4::Vector4(double xi, double yi, double zi, double wi)
 {
     x = xi;
     y = yi;
@@ -457,7 +457,7 @@ pgd::Vector4(double xi, double yi, double zi, double wi)
     w = wi;
 }
 
-pgd::Vector4(const double *d)
+pgd::Vector4::Vector4(const double *d)
 {
     x = d[0];
     y = d[1];
@@ -603,32 +603,32 @@ const double *pgd::Vector4::constData(void) const
 }
 
 
-pgd::Vector4 operator+(const pgd::Vector4 &u, const pgd::Vector4 &v)
+pgd::Vector4 pgd::operator+(const pgd::Vector4 &u, const pgd::Vector4 &v)
 {
     return pgd::Vector4(u.x + v.x, u.y + v.y, u.z + v.z, u.w + u.w);
 }
 
-pgd::Vector4 operator-(const pgd::Vector4 &u, const pgd::Vector4 &v)
+pgd::Vector4 pgd::operator-(const pgd::Vector4 &u, const pgd::Vector4 &v)
 {
     return pgd::Vector4(u.x - v.x, u.y - v.y, u.z - v.z, u.w - u.w);
 }
 
-pgd::Vector4 operator*(double s, const pgd::Vector4 &u)
+pgd::Vector4 pgd::operator*(double s, const pgd::Vector4 &u)
 {
     return pgd::Vector4(u.x*s, u.y*s, u.z*s, u.w*s);
 }
 
-pgd::Vector4 operator*(const pgd::Vector4 &u, double s)
+pgd::Vector4 pgd::operator*(const pgd::Vector4 &u, double s)
 {
     return pgd::Vector4(u.x*s, u.y*s, u.z*s, u.w * s);
 }
 
-pgd::Vector4 operator/(const pgd::Vector4 &u, double s)
+pgd::Vector4 pgd::operator/(const pgd::Vector4 &u, double s)
 {
     return pgd::Vector4(u.x/s, u.y/s, u.z/s, u.w/s);
 }
 
-pgd::Vector4 Normalize(const pgd::Vector4 &u)
+pgd::Vector4 pgd::Normalize(const pgd::Vector4 &u)
 {
     return u / u.Magnitude();
 }
@@ -640,7 +640,7 @@ bool pgd::Vector4::operator<(const pgd::Vector4 &rhs) const
 }
 
 
-pgd::Quaternion(void)
+pgd::Quaternion::Quaternion(void)
 {
     n = 0;
     x = 0;
@@ -648,7 +648,7 @@ pgd::Quaternion(void)
     z = 0;
 }
 
-pgd::Quaternion(double nn, double x, double y, double z)
+pgd::Quaternion::Quaternion(double nn, double x, double y, double z)
 {
     this->n = nn;
     this->x = x;
@@ -656,7 +656,7 @@ pgd::Quaternion(double nn, double x, double y, double z)
     this->z = z;
 }
 
-pgd::Quaternion(const double *q_nxyz)
+pgd::Quaternion::Quaternion(const double *q_nxyz)
 {
     n = q_nxyz[0];
     x = q_nxyz[1];
@@ -680,22 +680,22 @@ void pgd::Quaternion::Set(const double *q_nxyz)
     z = q_nxyz[3];
 }
 
-double   pgd::Quaternion::Magnitude(void)
+double pgd::Quaternion::Magnitude(void) const
 {
     return std::sqrt(n*n + x*x + y*y + z*z);
 }
 
-pgd::Vector3  pgd::Quaternion::GetVector(void)
+pgd::Vector3 pgd::Quaternion::GetVector(void) const
 {
     return pgd::Vector3(x, y, z);
 }
 
-double   pgd::Quaternion::GetScalar(void)
+double pgd::Quaternion::GetScalar(void) const
 {
     return n;
 }
 
-pgd::Quaternion  pgd::Quaternion::operator+=(const pgd::Quaternion &q)
+pgd::Quaternion pgd::Quaternion::operator+=(const pgd::Quaternion &q)
 {
     n += q.n;
     x += q.x;
@@ -704,7 +704,7 @@ pgd::Quaternion  pgd::Quaternion::operator+=(const pgd::Quaternion &q)
     return *this;
 }
 
-pgd::Quaternion  pgd::Quaternion::operator-=(const pgd::Quaternion &q)
+pgd::Quaternion pgd::Quaternion::operator-=(const pgd::Quaternion &q)
 {
     n -= q.n;
     x -= q.x;
@@ -741,49 +741,49 @@ const double *pgd::Quaternion::constData() const
     return &n;
 }
 
-pgd::Quaternion operator+(const pgd::Quaternion &q1, const pgd::Quaternion &q2)
+pgd::Quaternion pgd::operator+(const pgd::Quaternion &q1, const pgd::Quaternion &q2)
 {
-    return  pgd::Quaternion( q1.n + q2.n,
-                           q1.x + q2.x,
-                           q1.y + q2.y,
-                           q1.z + q2.z);
+    return  pgd::Quaternion(q1.n + q2.n,
+                            q1.x + q2.x,
+                            q1.y + q2.y,
+                            q1.z + q2.z);
 }
 
-pgd::Quaternion operator-(const pgd::Quaternion &q1, const pgd::Quaternion &q2)
+pgd::Quaternion pgd::operator-(const pgd::Quaternion &q1, const pgd::Quaternion &q2)
 {
-    return  pgd::Quaternion( q1.n - q2.n,
-                           q1.x - q2.x,
-                           q1.y - q2.y,
-                           q1.z - q2.z);
+    return  pgd::Quaternion(q1.n - q2.n,
+                            q1.x - q2.x,
+                            q1.y - q2.y,
+                            q1.z - q2.z);
 }
 
-pgd::Quaternion operator*(const pgd::Quaternion &q1, const pgd::Quaternion &q2)
+pgd::Quaternion pgd::operator*(const pgd::Quaternion &q1, const pgd::Quaternion &q2)
 {
-    return  pgd::Quaternion( q1.n*q2.n - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z,
-                           q1.n*q2.x + q1.x*q2.n + q1.y*q2.z - q1.z*q2.y,
-                           q1.n*q2.y + q1.y*q2.n + q1.z*q2.x - q1.x*q2.z,
-                           q1.n*q2.z + q1.z*q2.n + q1.x*q2.y - q1.y*q2.x);
+    return  pgd::Quaternion(q1.n*q2.n - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z,
+                            q1.n*q2.x + q1.x*q2.n + q1.y*q2.z - q1.z*q2.y,
+                            q1.n*q2.y + q1.y*q2.n + q1.z*q2.x - q1.x*q2.z,
+                            q1.n*q2.z + q1.z*q2.n + q1.x*q2.y - q1.y*q2.x);
 }
 
-pgd::Quaternion operator*(const pgd::Quaternion &q, double s)
+pgd::Quaternion pgd::operator*(const pgd::Quaternion &q, double s)
 {
-    return  pgd::Quaternion(q.n*s, q.x*s, q.y*s, q.z*s);
+    return pgd::Quaternion(q.n*s, q.x*s, q.y*s, q.z*s);
 }
 
-pgd::Quaternion operator*(double s, const pgd::Quaternion &q)
+pgd::Quaternion pgd::operator*(double s, const pgd::Quaternion &q)
 {
-    return  pgd::Quaternion(q.n*s, q.x*s, q.y*s, q.z*s);
+    return pgd::Quaternion(q.n*s, q.x*s, q.y*s, q.z*s);
 }
 
-pgd::Quaternion operator*(const pgd::Quaternion &q, const pgd::Vector3 &v)
+pgd::Quaternion pgd::operator*(const pgd::Quaternion &q, const pgd::Vector3 &v)
 {
-    return  pgd::Quaternion( -(q.x*v.x + q.y*v.y + q.z*v.z),
+    return pgd::Quaternion(-(q.x*v.x + q.y*v.y + q.z*v.z),
                            q.n*v.x + q.y*v.z - q.z*v.y,
                            q.n*v.y + q.z*v.x - q.x*v.z,
                            q.n*v.z + q.x*v.y - q.y*v.x);
 }
 
-pgd::Quaternion operator*(const pgd::Vector3 &v, const pgd::Quaternion &q)
+pgd::Quaternion pgd::operator*(const pgd::Vector3 &v, const pgd::Quaternion &q)
 {
     return  pgd::Quaternion( -(q.x*v.x + q.y*v.y + q.z*v.z),
                            q.n*v.x + q.z*v.y - q.y*v.z,
@@ -791,7 +791,7 @@ pgd::Quaternion operator*(const pgd::Vector3 &v, const pgd::Quaternion &q)
                            q.n*v.z + q.y*v.x - q.x*v.y);
 }
 
-pgd::Quaternion operator/(const pgd::Quaternion &q, double s)
+pgd::Quaternion pgd::operator/(const pgd::Quaternion &q, double s)
 {
     return  pgd::Quaternion(q.n/s, q.x/s, q.y/s, q.z/s);
 }
@@ -802,31 +802,31 @@ bool pgd::Quaternion::operator<(const pgd::Quaternion &rhs) const
     return std::tie(n, x, y, z) < std::tie(rhs.n, rhs.x, rhs.y, rhs.z);
 }
 
-pgd::Quaternion Conjugate(const pgd::Quaternion &q)
+pgd::Quaternion pgd::Conjugate(const pgd::Quaternion &q)
 {
-    return q.Conjugate();
+    return pgd::Quaternion(q.n, -q.x, -q.y, -q.z);
 }
 
-double QGetAngle(const pgd::Quaternion &q)
+double pgd::QGetAngle(const pgd::Quaternion &q)
 {
     if (q.n <= -1) return 0; // 2 * M_PI
     if (q.n >= 1) return 0; // 2 * 0
     return  (2*std::acos(q.n));
 }
 
-pgd::Vector3 QGetAxis(const pgd::Quaternion &q)
+pgd::Vector3 pgd::QGetAxis(const pgd::Quaternion &q)
 {
     pgd::Vector3 v = q.GetVector();
     v.Normalize();
     return v;
 }
 
-pgd::Quaternion QRotate(const pgd::Quaternion &q1, const pgd::Quaternion &q2) // so called 'sandwich product'
+pgd::Quaternion pgd::QRotate(const pgd::Quaternion &q1, const pgd::Quaternion &q2) // so called 'sandwich product'
 {
     return  q1*q2*(~q1);
 }
 
-pgd::Vector3  QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // so called 'sandwich product'
+pgd::Vector3 pgd::QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // so called 'sandwich product'
 {
 #ifdef EASY_TO_READ
     pgd::Quaternion t;
@@ -865,7 +865,7 @@ pgd::Vector3  QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // so ca
 }
 
 // these are intrinsic Euler XYZ angles (or fixed axis ZYX)
-pgd::Quaternion  MakeQFromEulerAngles(double x, double y, double z)
+pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
 {
     pgd::Quaternion  q;
     double   roll = pgd::DegToRad(x);
@@ -896,7 +896,7 @@ pgd::Quaternion  MakeQFromEulerAngles(double x, double y, double z)
 }
 
 // these are intrinsic Euler XYZ angles (or fixed axis ZYX)
-pgd::Vector3  MakeEulerAnglesFromQ(const pgd::Quaternion &q)
+pgd::Vector3 pgd::MakeEulerAnglesFromQ(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
     double   q00, q11, q22, q33;
@@ -934,7 +934,7 @@ pgd::Vector3  MakeEulerAnglesFromQ(const pgd::Quaternion &q)
 }
 
 // these are intrinsic Euler XYZ angles (or fixed axis ZYX)
-pgd::Quaternion  MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw)
+pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw)
 {
     pgd::Quaternion  q;
 
@@ -963,7 +963,7 @@ pgd::Quaternion  MakeQFromEulerAnglesRadian(double roll, double pitch, double ya
 
 
 // these are intrinsic Euler XYZ angles (or fixed axis ZYX)
-pgd::Vector3  MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
+pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
     double   q00, q11, q22, q33;
@@ -1001,7 +1001,7 @@ pgd::Vector3  MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 }
 
 // wis  - added routine to make a pgd::Quaternion from an axis and a rotation angle in radians
-pgd::Quaternion MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast)
+pgd::Quaternion pgd::MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast)
 {
     if (fast)
     {
@@ -1028,7 +1028,7 @@ pgd::Quaternion MakeQFromAxisAngle(double x, double y, double z, double angle, b
 }
 
 // wis  - added routine to make a pgd::Quaternion from an axis and a rotation angle in radians
-pgd::Quaternion MakeQFromAxisAngle(const pgd::Vector3 &axis, double angle, bool fast)
+pgd::Quaternion pgd::MakeQFromAxisAngle(const pgd::Vector3 &axis, double angle, bool fast)
 {
     if (fast)
     {
@@ -1053,7 +1053,7 @@ pgd::Quaternion MakeQFromAxisAngle(const pgd::Vector3 &axis, double angle, bool 
     }
 }
 
-void MakeAxisAngleFromQ(const pgd::Quaternion &q, double *xa, double *ya, double *za, double *angle)
+void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, double *xa, double *ya, double *za, double *angle)
 {
     if (q.n > 1) q.Normalize();           // if w > 1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
     *angle = 2 * std::acos(q.n);
@@ -1095,12 +1095,12 @@ void MakeAxisAngleFromQ(const pgd::Quaternion &q, double *xa, double *ya, double
 // Therefore
 // std::cos(theta/2) = qa.w*qb.w + qa.x*qb.x + qa.y*qb.y+ qa.z*qb.z
 
-pgd::Quaternion FindRotation(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
+pgd::Quaternion pgd::FindRotation(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
     return ((~qa) * qb);
 }
 
-double FindAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
+double pgd::FindAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
     double v = qa.n*qb.n + qa.x*qb.x + qa.y*qb.y+ qa.z*qb.z;
     if (v <= -1) return 0; // 2 * M_PI
@@ -1111,7 +1111,7 @@ double FindAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
     return angle;
 }
 
-pgd::Vector3 FindAxis(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
+pgd::Vector3 pgd::FindAxis(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
     return QGetAxis((~qa) * qb);
 }
@@ -1127,9 +1127,16 @@ void pgd::Quaternion::Normalize(void)
     z /= l;
 }
 
+void pgd::Quaternion::Conjugate(void)
+{
+    x = -x;
+    y = -y;
+    z = -z;
+}
+
 // this routine returns the quaternion that rotates v1 to v2 via the shortest path
 // note the vectors do not have to be the same size
-pgd::Quaternion FindRotation(const pgd::Vector3 &v1, const pgd::Vector3 &v2)
+pgd::Quaternion pgd::FindRotation(const pgd::Vector3 &v1, const pgd::Vector3 &v2)
 {
     // classic solutions
     pgd::Quaternion q;
@@ -1153,11 +1160,11 @@ pgd::Quaternion FindRotation(const pgd::Vector3 &v1, const pgd::Vector3 &v2)
 }
 
 // project vector v onto vector u
-pgd::Vector3 Projection(const pgd::Vector3 &v, const pgd::Vector3 &u)
+pgd::Vector3 pgd::Projection(const pgd::Vector3 &v, const pgd::Vector3 &u)
 {
     // (v . norm(u) ) norm(u)
-    u.Normalize();
-    return v.Dot(u) * u;
+    pgd::Vector3 normU = pgd::Normalize(u);
+    return v.Dot(normU) * normU;
 }
 
 //       Decompose the rotation on to 2 parts.
@@ -1169,16 +1176,16 @@ pgd::Vector3 Projection(const pgd::Vector3 &v, const pgd::Vector3 &u)
 //       has singularity in case of swing_rotation close to 180 degrees rotation.
 //       if the input quaternion is of non-unit length, the outputs are non-unit as well
 //       otherwise, outputs are both unit
-void SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist)
+void pgd::SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist)
 {
     pgd::Vector3 ra(rotation.x, rotation.y, rotation.z); // rotation axis
     pgd::Vector3 p = Projection(ra, direction); // return projection v1 on to v2  (parallel component)
     twist->Set(rotation.n, p.x, p.y, p.z);
     twist->Normalize();
-    *swing = rotation * twist->Conjugate();
+    *swing = rotation * pgd::Conjugate(*twist);
 }
 
-pgd::Matrix3x3(void)
+pgd::Matrix3x3::Matrix3x3(void)
 {
     e11 = 0;
     e12 = 0;
@@ -1191,7 +1198,7 @@ pgd::Matrix3x3(void)
     e33 = 0;
 }
 
-pgd::Matrix3x3(bool identity)
+pgd::Matrix3x3::Matrix3x3(bool identity)
 {
     if (identity)
     {
@@ -1207,9 +1214,9 @@ pgd::Matrix3x3(bool identity)
     }
 }
 
-pgd::Matrix3x3(   double r1c1, double r1c2, double r1c3,
-               double r2c1, double r2c2, double r2c3,
-               double r3c1, double r3c2, double r3c3 )
+pgd::Matrix3x3::Matrix3x3(double r1c1, double r1c2, double r1c3,
+                          double r2c1, double r2c2, double r2c3,
+                          double r3c1, double r3c2, double r3c3)
 {
     e11 = r1c1;
     e12 = r1c2;
@@ -1222,7 +1229,7 @@ pgd::Matrix3x3(   double r1c1, double r1c2, double r1c3,
     e33 = r3c3;
 }
 
-pgd::Matrix3x3(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3)
+pgd::Matrix3x3::Matrix3x3(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3)
 {
     e11 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[0];
     e12 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[1];
@@ -1235,9 +1242,9 @@ pgd::Matrix3x3(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3)
     e33 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[8];
 }
 
-void pgd::Matrix3x3::Set( double r1c1, double r1c2, double r1c3,
+void pgd::Matrix3x3::Set(double r1c1, double r1c2, double r1c3,
                          double r2c1, double r2c2, double r2c3,
-                         double r3c1, double r3c2, double r3c3 )
+                         double r3c1, double r3c2, double r3c3)
 {
     e11 = r1c1;
     e12 = r1c2;
@@ -1281,11 +1288,16 @@ double *pgd::Matrix3x3::data()
     return &e11;
 }
 
+const double *pgd::Matrix3x3::constData() const
+{
+    return &e11;
+}
+
 // initialise a matrix from a quaternion
 // based on code from
 // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
 // untested!
-pgd::Matrix3x3(const pgd::Quaternion &q)
+pgd::Matrix3x3::Matrix3x3(const pgd::Quaternion &q)
 {
     double sqw = q.n*q.n;
     double sqx = q.x*q.x;
@@ -1313,7 +1325,7 @@ pgd::Matrix3x3(const pgd::Quaternion &q)
     e23 = 2.0 * (tmp1 - tmp2)*invs ;
 }
 
-double   pgd::Matrix3x3::det(void)
+double pgd::Matrix3x3::det(void)
 {
     return  e11*e22*e33 -
            e11*e32*e23 +
@@ -1323,14 +1335,14 @@ double   pgd::Matrix3x3::det(void)
            e31*e22*e13;
 }
 
-pgd::Matrix3x3   pgd::Matrix3x3::Transpose(void)
+pgd::Matrix3x3 pgd::Matrix3x3::Transpose(void)
 {
     return pgd::Matrix3x3(e11,e21,e31,e12,e22,e32,e13,e23,e33);
 }
 
-pgd::Matrix3x3   pgd::Matrix3x3::Inverse(void)
+pgd::Matrix3x3 pgd::Matrix3x3::Inverse(void)
 {
-    double   d = e11*e22*e33 -
+    double d = e11*e22*e33 -
                e11*e32*e23 +
                e21*e32*e13 -
                e21*e12*e33 +
@@ -1339,15 +1351,15 @@ pgd::Matrix3x3   pgd::Matrix3x3::Inverse(void)
 
     if (std::fabs(d) < DBL_EPSILON) d = 1;
 
-    return  pgd::Matrix3x3(  (e22*e33-e23*e32)/d,
-                          -(e12*e33-e13*e32)/d,
-                          (e12*e23-e13*e22)/d,
-                          -(e21*e33-e23*e31)/d,
-                          (e11*e33-e13*e31)/d,
-                          -(e11*e23-e13*e21)/d,
-                          (e21*e32-e22*e31)/d,
-                          -(e11*e32-e12*e31)/d,
-                          (e11*e22-e12*e21)/d );
+    return  pgd::Matrix3x3( (e22*e33-e23*e32)/d,
+                           -(e12*e33-e13*e32)/d,
+                            (e12*e23-e13*e22)/d,
+                           -(e21*e33-e23*e31)/d,
+                            (e11*e33-e13*e31)/d,
+                           -(e11*e23-e13*e21)/d,
+                            (e21*e32-e22*e31)/d,
+                           -(e11*e32-e12*e31)/d,
+                            (e11*e22-e12*e21)/d );
 }
 
 pgd::Matrix3x3& pgd::Matrix3x3::operator+=(const pgd::Matrix3x3 &m)
@@ -1406,48 +1418,48 @@ pgd::Matrix3x3& pgd::Matrix3x3::operator/=(double s)
     return *this;
 }
 
-pgd::Matrix3x3 operator+(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
+pgd::Matrix3x3 pgd::operator+(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
 {
-    return  pgd::Matrix3x3(  m1.e11+m2.e11,
-                          m1.e12+m2.e12,
-                          m1.e13+m2.e13,
-                          m1.e21+m2.e21,
-                          m1.e22+m2.e22,
-                          m1.e23+m2.e23,
-                          m1.e31+m2.e31,
-                          m1.e32+m2.e32,
-                          m1.e33+m2.e33);
+    return  pgd::Matrix3x3(m1.e11+m2.e11,
+                           m1.e12+m2.e12,
+                           m1.e13+m2.e13,
+                           m1.e21+m2.e21,
+                           m1.e22+m2.e22,
+                           m1.e23+m2.e23,
+                           m1.e31+m2.e31,
+                           m1.e32+m2.e32,
+                           m1.e33+m2.e33);
 }
 
-pgd::Matrix3x3 operator-(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
+pgd::Matrix3x3 pgd::operator-(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
 {
-    return  pgd::Matrix3x3(  m1.e11-m2.e11,
-                          m1.e12-m2.e12,
-                          m1.e13-m2.e13,
-                          m1.e21-m2.e21,
-                          m1.e22-m2.e22,
-                          m1.e23-m2.e23,
-                          m1.e31-m2.e31,
-                          m1.e32-m2.e32,
-                          m1.e33-m2.e33);
+    return  pgd::Matrix3x3(m1.e11-m2.e11,
+                           m1.e12-m2.e12,
+                           m1.e13-m2.e13,
+                           m1.e21-m2.e21,
+                           m1.e22-m2.e22,
+                           m1.e23-m2.e23,
+                           m1.e31-m2.e31,
+                           m1.e32-m2.e32,
+                           m1.e33-m2.e33);
 }
 
-pgd::Matrix3x3 operator/(const pgd::Matrix3x3 &m, double s)
+pgd::Matrix3x3 pgd::operator/(const pgd::Matrix3x3 &m, double s)
 {
-    return  pgd::Matrix3x3(  m.e11/s,
-                          m.e12/s,
-                          m.e13/s,
-                          m.e21/s,
-                          m.e22/s,
-                          m.e23/s,
-                          m.e31/s,
-                          m.e32/s,
-                          m.e33/s);
+    return  pgd::Matrix3x3(m.e11/s,
+                           m.e12/s,
+                           m.e13/s,
+                           m.e21/s,
+                           m.e22/s,
+                           m.e23/s,
+                           m.e31/s,
+                           m.e32/s,
+                           m.e33/s);
 }
 
-pgd::Matrix3x3 operator*(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
+pgd::Matrix3x3 pgd::operator*(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
 {
-    return pgd::Matrix3x3(   m1.e11*m2.e11 + m1.e12*m2.e21 + m1.e13*m2.e31,
+    return pgd::Matrix3x3(m1.e11*m2.e11 + m1.e12*m2.e21 + m1.e13*m2.e31,
                           m1.e11*m2.e12 + m1.e12*m2.e22 + m1.e13*m2.e32,
                           m1.e11*m2.e13 + m1.e12*m2.e23 + m1.e13*m2.e33,
                           m1.e21*m2.e11 + m1.e22*m2.e21 + m1.e23*m2.e31,
@@ -1455,50 +1467,50 @@ pgd::Matrix3x3 operator*(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
                           m1.e21*m2.e13 + m1.e22*m2.e23 + m1.e23*m2.e33,
                           m1.e31*m2.e11 + m1.e32*m2.e21 + m1.e33*m2.e31,
                           m1.e31*m2.e12 + m1.e32*m2.e22 + m1.e33*m2.e32,
-                          m1.e31*m2.e13 + m1.e32*m2.e23 + m1.e33*m2.e33 );
+                          m1.e31*m2.e13 + m1.e32*m2.e23 + m1.e33*m2.e33);
 }
 
-pgd::Matrix3x3 operator*(const pgd::Matrix3x3 &m, double s)
+pgd::Matrix3x3 pgd::operator*(const pgd::Matrix3x3 &m, double s)
 {
-    return  pgd::Matrix3x3(  m.e11*s,
-                          m.e12*s,
-                          m.e13*s,
-                          m.e21*s,
-                          m.e22*s,
-                          m.e23*s,
-                          m.e31*s,
-                          m.e32*s,
-                          m.e33*s);
+    return  pgd::Matrix3x3(m.e11*s,
+                           m.e12*s,
+                           m.e13*s,
+                           m.e21*s,
+                           m.e22*s,
+                           m.e23*s,
+                           m.e31*s,
+                           m.e32*s,
+                           m.e33*s);
 }
 
-pgd::Matrix3x3 operator*(double s, const pgd::Matrix3x3 &m)
+pgd::Matrix3x3 pgd::operator*(double s, const pgd::Matrix3x3 &m)
 {
-    return  pgd::Matrix3x3(  m.e11*s,
-                          m.e12*s,
-                          m.e13*s,
-                          m.e21*s,
-                          m.e22*s,
-                          m.e23*s,
-                          m.e31*s,
-                          m.e32*s,
-                          m.e33*s);
+    return  pgd::Matrix3x3(m.e11*s,
+                           m.e12*s,
+                           m.e13*s,
+                           m.e21*s,
+                           m.e22*s,
+                           m.e23*s,
+                           m.e31*s,
+                           m.e32*s,
+                           m.e33*s);
 }
 
-pgd::Vector3 operator*(const pgd::Matrix3x3 &m, const pgd::Vector3 &u)
+pgd::Vector3 pgd::operator*(const pgd::Matrix3x3 &m, const pgd::Vector3 &u)
 {
     return pgd::Vector3(  m.e11*u.x + m.e12*u.y + m.e13*u.z,
                         m.e21*u.x + m.e22*u.y + m.e23*u.z,
                         m.e31*u.x + m.e32*u.y + m.e33*u.z);
 }
 
-pgd::Vector3 operator*(const pgd::Vector3 &u, const pgd::Matrix3x3 &m)
+pgd::Vector3 pgd::operator*(const pgd::Vector3 &u, const pgd::Matrix3x3 &m)
 {
-    return pgd::Vector3(  u.x*m.e11 + u.y*m.e21 + u.z*m.e31,
+    return pgd::Vector3(u.x*m.e11 + u.y*m.e21 + u.z*m.e31,
                         u.x*m.e12 + u.y*m.e22 + u.z*m.e32,
                         u.x*m.e13 + u.y*m.e23 + u.z*m.e33);
 }
 
-pgd::Matrix3x3 MakeMFromQ(const pgd::Quaternion &q)
+pgd::Matrix3x3 pgd::MakeMFromQ(const pgd::Quaternion &q)
 {
     pgd::Matrix3x3 m;
 
@@ -1517,7 +1529,7 @@ pgd::Matrix3x3 MakeMFromQ(const pgd::Quaternion &q)
     return m;
 }
 
-pgd::Quaternion MakeQfromM (const pgd::Matrix3x3 &R)
+pgd::Quaternion pgd::MakeQfromM (const pgd::Matrix3x3 &R)
 {
     pgd::Quaternion q;
     double tr,s;
@@ -1574,7 +1586,7 @@ pgd::Quaternion MakeQfromM (const pgd::Matrix3x3 &R)
 
 // find the closest point to point P on a line defined as origin B and direction M
 // using formulae from www.geometrictools.com
-pgd::Vector3 ClosestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pgd::Vector3 &M)
+pgd::Vector3 pgd::ClosestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pgd::Vector3 &M)
 {
     double t0 = (M * (P - B)) / (M * M);
     pgd::Vector3 Q = B + (t0 * M);
@@ -1583,7 +1595,7 @@ pgd::Vector3 ClosestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pg
 
 //  generates a quaternion between two given quaternions in proportion to the variable t
 // if t=0 then qm=qa, if t=1 then qm=qb, if t is between them then qm will interpolate between them
-pgd::Quaternion slerpconst pgd::Quaternion &v0, const pgd::Quaternion &v1, double t, bool normalise)
+pgd::Quaternion pgd::slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, bool normalise)
 {
     if (normalise)
     {
@@ -1627,30 +1639,30 @@ pgd::Quaternion slerpconst pgd::Quaternion &v0, const pgd::Quaternion &v1, doubl
     return v0*std::cos(theta) + v2*std::sin(theta);
 }
 
-std::ostream& operator<<(std::ostream &out, const pgd::Vector2 &v)
+std::ostream& pgd::operator<<(std::ostream &out, const pgd::Vector2 &v)
 {
     out << v.x << " " << v.y;
     return out;
 }
 
-std::ostream& operator<<(std::ostream &out, const pgd::Vector3 &v)
+std::ostream& pgd::operator<<(std::ostream &out, const pgd::Vector3 &v)
 {
     out << v.x << " " << v.y << " " << v.z;
     return out;
 }
-std::ostream& operator<<(std::ostream &out, const pgd::Vector4 &v)
+std::ostream& pgd::operator<<(std::ostream &out, const pgd::Vector4 &v)
 {
     out << v.x << " " << v.y << " " << v.z << " " << v.w;
     return out;
 }
 
-std::ostream& operator<<(std::ostream &out, const pgd::Quaternion &q)
+std::ostream& pgd::operator<<(std::ostream &out, const pgd::Quaternion &q)
 {
     out << q.n << " " << q.x << " " << q.y << " " << q.z;
     return out;
 }
 
-std::ostream& operator<<(std::ostream &out, const pgd::Matrix3x3 &m)
+std::ostream& pgd::operator<<(std::ostream &out, const pgd::Matrix3x3 &m)
 {
     out << m.e11 << " " << m.e12 << " " << m.e13 << "\n";
     out << m.e21 << " " << m.e22 << " " << m.e23 << "\n";

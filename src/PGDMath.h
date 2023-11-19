@@ -119,7 +119,7 @@ Vector3 operator*(const Vector3 &u, double s);
 Vector3 operator/(const Vector3 &u, double s);
 double TripleScalarProduct(const Vector3 &u, const Vector3 &v, const Vector3 &w);
 Vector3 Normalize(const Vector3 &u);
-
+Vector3 Projection(const pgd::Vector3 &v, const pgd::Vector3 &u);
 
 //------------------------------------------------------------------------//
 // Vector4 Class and vector functions
@@ -185,11 +185,11 @@ public:
     void Set(double nn, double x, double y, double z);
     void Set(const double *q_nxyz);
 
-    double Magnitude(void);
-    Vector3 GetVector(void);
-    double GetScalar(void);
+    double Magnitude(void) const;
+    Vector3 GetVector(void) const;
+    double GetScalar(void) const;
     void Normalize(void);
-    Quaternion Conjugate(void) const { return Quaternion(n, -x, -y, -z); }
+    void Conjugate(void);
     Quaternion  operator+=(const Quaternion &q);
     Quaternion  operator-=(const Quaternion &q);
     Quaternion operator*=(double s);
@@ -223,11 +223,12 @@ Vector3 MakeEulerAnglesFromQ(const Quaternion &q);
 Vector3  MakeEulerAnglesFromQRadian(const Quaternion &q);
 Quaternion MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast = false);
 Quaternion MakeQFromAxisAngle(const Vector3 &axis, double angle, bool fast = false);
-void MakeAxisAngleFromQ(const Quaternion &q1, double *xa, double *ya, double *za, double *angle);
+void MakeAxisAngleFromQ(Quaternion q1, double *xa, double *ya, double *za, double *angle);
 Quaternion FindRotation(const Quaternion &qa, const Quaternion &qb);
 double FindAngle(const Quaternion &qa, const Quaternion &qb);
 Vector3 FindAxis(const Quaternion &qa, const Quaternion &qb);
 Quaternion FindRotation(const Vector3 &v1, const Vector3 &v2);
+void SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist);
 
 
 //------------------------------------------------------------------------//
@@ -241,13 +242,13 @@ public:
 
     Matrix3x3(void);
     Matrix3x3(bool identity); // initialises to identity, or does not intialise at all if false
-    Matrix3x3(  double r1c1, double r1c2, double r1c3,
+    Matrix3x3(double r1c1, double r1c2, double r1c3,
               double r2c1, double r2c2, double r2c3,
               double r3c1, double r3c2, double r3c3 );
     Matrix3x3(const Quaternion &q);
     Matrix3x3(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3);
 
-    void Set(   double r1c1, double r1c2, double r1c3,
+    void Set(double r1c1, double r1c2, double r1c3,
              double r2c1, double r2c2, double r2c3,
              double r3c1, double r3c2, double r3c3 );
     void Set(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3);
@@ -263,8 +264,8 @@ public:
     Matrix3x3& operator/=(double s);
     double& operator[] (size_t i) { return reinterpret_cast<double *>(&e11)[i]; }     // index operator
 
-
     double *data();
+    const double *constData() const;
 };
 
 Matrix3x3 operator+(const Matrix3x3 &m1, const Matrix3x3 &m2);
@@ -279,7 +280,7 @@ Vector3 operator*(const Vector3 &u, const Matrix3x3 &m);
 Matrix3x3 MakeMFromQ(const pgd::Quaternion &q);
 Quaternion MakeQfromM (const pgd::Matrix3x3 &R);
 Vector3 ClosestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pgd::Vector3 &M);
-Quaternion slerp(const pgd::Quaternion &v0, const pgd::Quaternion &v1, double t, bool normalise = true);
+Quaternion slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, bool normalise = true);
 
 std::ostream& operator<<(std::ostream &out, const Vector2 &v);
 std::ostream& operator<<(std::ostream &out, const Vector3 &v);
