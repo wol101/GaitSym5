@@ -79,31 +79,33 @@
 
 using namespace std::string_literals;
 
-// #define _I(i,j) I[(i)*4+(j)]
-// regex _I\(([0-9]+),([0-9]+)\) to I[(\1)*4+(\2)]
-
 Simulation::Simulation()
 {
-    // initialise the ODE world
-    dInitODE();
-    m_WorldID = dWorldCreate();
-    m_SpaceID = dHashSpaceCreate(nullptr); // FIX ME hash space is a compromise but this should probably be user controlled
-    m_ContactGroup = dJointGroupCreate(0);
+    // initialise PhysX
+    m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
 
-    // glue for calling a C++ callback
-    // Store member function and the instance using std::bind.
-    Callback<void(int, const char *, va_list)>::func = std::bind(&ErrorHandler::ODEMessageTrap, &m_errorHandler, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    // Convert callback-function to c-pointer.
-    void (*c_func)(int, const char *, va_list) = static_cast<decltype(c_func)>(Callback<void(int, const char *, va_list)>::callback);
+    m_Pvd = physx::PxCreatePvd(*m_Foundation);
 
-    // c_func is now the required function pointer
-    dSetMessageHandler(c_func);
-    dSetErrorHandler(c_func);
-    dSetDebugHandler(c_func);
-//    dSetMessageHandler(ErrorHandler::ODEMessageTrap);
-//    dSetErrorHandler(ErrorHandler::ODEMessageTrap);
-//    dSetDebugHandler(ErrorHandler::ODEMessageTrap);
-    //    std::cerr << "dGetMessageHandler() = " << size_t(dGetMessageHandler()) << "\n";
+    physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+    m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+
+    m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale(),true, m_Pvd);
+
+    physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
+    sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+    m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+    sceneDesc.cpuDispatcher	= m_Dispatcher;
+    sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
+    m_Scene = m_Physics->createScene(sceneDesc);
+
+    physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient();
+    if(pvdClient)
+    {
+        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+    }
+
 }
 
 //----------------------------------------------------------------------------
@@ -122,17 +124,18 @@ Simulation::~Simulation()
     m_MarkerList.clear();
     m_ReporterList.clear();
     m_ControllerList.clear();
-    m_WarehouseList.clear();
 
-    // destroy the ODE world
-    dSetMessageHandler(nullptr);
-    dSetErrorHandler(nullptr);
-    dSetDebugHandler(nullptr);
-    dJointGroupDestroy(m_ContactGroup);
-    dSpaceDestroy(m_SpaceID);
-    dWorldDestroy(m_WorldID);
-    dCloseODE();
-
+    PX_RELEASE(m_Scene);
+    PX_RELEASE(m_Dispatcher);
+    PX_RELEASE(m_Physics);
+    if(m_Pvd)
+    {
+        physx::PxPvdTransport *transport = m_Pvd->getTransport();
+        m_Pvd->release();
+        m_Pvd = NULL;
+        PX_RELEASE(transport);
+    }
+    PX_RELEASE(m_Foundation);
 }
 
 //----------------------------------------------------------------------------
@@ -166,7 +169,6 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
             else if ((*it)->tag == "MARKER"s) ParseMarker(*it);
             else if ((*it)->tag == "REPORTER"s) ParseReporter(*it);
             else if ((*it)->tag == "CONTROLLER"s) ParseController(*it);
-            else if ((*it)->tag == "WAREHOUSE"s) ParseWarehouse(*it);
             else if ((*it)->tag == "FLUIDSAC"s) ParseFluidSac(*it);
             if (lastErrorPtr()->size())
             {
@@ -196,9 +198,6 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
     // and some joints require things to be done after the bodies are moved to their start positions
     for (auto &&it :  m_JointList) it.second->LateInitialisation();
 
-    // for the time being just set the current warehouse to the first one in the list
-    if (m_global->CurrentWarehouseFile().length() == 0 && m_WarehouseList.size() > 0) m_global->setCurrentWarehouseFile(m_WarehouseList.begin()->first);
-
     // and we need to set the cycle time
     // currently just using the maximum value but some sort of fuzzy lowest common multiple might be better
     // the easiest way to do that is to mutiply by an appropriate power of 10 with nearest number rounding (int(v * 10000 + 0.5)) to make the numbers into integers and then use an integer formula and convert back
@@ -213,15 +212,6 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
         StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get());
         if (stackedBoxcarDriver) m_CycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_CycleTime);
     }
-#ifdef OUTPUTS_AFTER_SIMULATION_STEP
-    if (m_OutputModelStateAtTime == 0.0 || m_OutputModelStateAtCycle == 0)
-    {
-        OutputProgramState();
-        m_OutputModelStateAtTime = -1.0;
-        m_OutputModelStateAtCycle = -1;
-    }
-#endif
-
     return nullptr;
 }
 
@@ -229,86 +219,24 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 //----------------------------------------------------------------------------
 void Simulation::UpdateSimulation()
 {
-    // calculate the warehouse and position matching fitnesses before we move to a new location
-    while (true)
+    // start by updating the scores
+    double minScore = DBL_MAX;
+    for (auto &&it : m_DataTargetList)
     {
-#ifdef EXPERIMENTAL
-        if (m_global->fitnessType() == Global::ClosestWarehouse)
+        double matchScore;
+        bool matchScoreValid;
+        std::tie(matchScore, matchScoreValid) = it.second->calculateMatchValue(m_SimulationTime);
+        if (matchScoreValid)
         {
-            auto warehouseIter = m_WarehouseList.find(m_global->CurrentWarehouseFile());
-            if (warehouseIter != m_WarehouseList.end())
-            {
-                WarehouseUnit *warehouseUnit = warehouseIter->second->GetWarehouseUnit(0); // only interested in the warehouse unit 0 for this measurement
-                warehouseUnit->SetBodyQueryData(m_BodyList);
-                warehouseUnit->DoSearch();
-                m_WarehouseDistance = warehouseUnit->GetNearestNeighbourDistance();
-#ifdef TOTAL_DISTANCE_WAREHOUSE_METRIC // this version calculates a total distance from warehouse metric
-                if (m_WarehouseDistance < m_WarehouseUnitIncreaseDistanceThreshold) m_ClosestWarehouseFitness += (m_WarehouseUnitIncreaseDistanceThreshold - m_WarehouseDistance);
-#else // and this is a minimum distance metric
-                if (m_WarehouseDistance < std::fabs(m_ClosestWarehouseFitness))
-                {
-                    m_ClosestWarehouseFitness = -m_WarehouseDistance; // negative because we always try and maximise the value
-                    std::cerr << m_SimulationTime << " m_ClosestWarehouseFitness=" << m_ClosestWarehouseFitness << "\n";
-                }
-#endif
-            }
-            break;
+            m_KinematicMatchFitness += matchScore;
+            if (matchScore < minScore)
+                minScore = matchScore;
         }
-#endif
-        if (m_global->fitnessType() == Global::KinematicMatch || m_global->fitnessType() == Global::KinematicMatchMiniMax)
-        {
-            double minScore = DBL_MAX;
-            for (auto &&it : m_DataTargetList)
-            {
-                double matchScore;
-                bool matchScoreValid;
-                std::tie(matchScore, matchScoreValid) = it.second->calculateMatchValue(m_SimulationTime);
-                if (matchScoreValid)
-                {
-                    m_KinematicMatchFitness += matchScore;
-                    if (matchScore < minScore)
-                        minScore = matchScore;
-                }
-            }
-            if (minScore < DBL_MAX)
-                m_KinematicMatchMiniMaxFitness += minScore;
-            break;
-        }
-
-        break;
     }
+    if (minScore < DBL_MAX)
+        m_KinematicMatchMiniMaxFitness += minScore;
 
     // now start the actual simulation
-
-    // check collisions first
-    dJointGroupEmpty(m_ContactGroup);
-    m_ContactList.clear();
-    for (auto &&geomIter : m_GeomList) geomIter.second->ClearContacts();
-    dSpaceCollide(m_SpaceID, this, &NearCallback);
-
-#ifdef EXPERIMENTAL
-    auto warehouseIter = m_WarehouseList.find(m_global->CurrentWarehouseFile());
-    if (warehouseIter != m_WarehouseList.end() && m_global->fitnessType() != Global::ClosestWarehouse)
-    {
-        warehouseIter->second->DoSearch(m_BodyList);
-        m_WarehouseDistance = warehouseIter->second->GetNearestNeighbourDistance();
-        std::vector<std::string> *driverNames = warehouseIter->second->GetDriverNames();
-        double *activations = warehouseIter->second->GetCurrentActivations();
-        for (unsigned int iDriver = 0; iDriver < driverNames->size(); iDriver++)
-        {
-            FixedDriver *driver = dynamic_cast<FixedDriver *>(m_DriverList[driverNames->at(iDriver)].get());
-            if (driver)
-            {
-                driver->setValue(activations[iDriver]);
-            }
-            else
-            {
-                std::cerr << "Only FixedDriver currently supported as warehouse targets\n";
-            }
-        }
-        std::cerr << m_SimulationTime << " m_WarehouseDistance=" << m_WarehouseDistance << "\n";
-    }
-#endif
 
     // update the drivers
     for (auto &&it : m_DriverList)
@@ -348,9 +276,6 @@ void Simulation::UpdateSimulation()
 
         std::vector<std::unique_ptr<PointForce>> *pointForceList = iter1->second->GetPointForceList();
         double tension = iter1->second->GetTension();
-#ifdef DEBUG_CHECK_FORCES
-        pgd::Vector3 force(0, 0, 0);
-#endif
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
             PointForce *pointForce = (*pointForceList)[i].get();
@@ -358,15 +283,7 @@ void Simulation::UpdateSimulation()
                 dBodyAddForceAtPos(pointForce->body->GetBodyID(),
                                    pointForce->vector[0] * tension, pointForce->vector[1] * tension, pointForce->vector[2] * tension,
                                    pointForce->point[0], pointForce->point[1], pointForce->point[2]);
-#ifdef DEBUG_CHECK_FORCES
-            force += pgd::Vector3(pointForce->vector[0] * tension, pointForce->vector[1] * tension, pointForce->vector[2] * tension);
-#endif
         }
-#ifdef DEBUG_CHECK_FORCES
-        std::cerr.setf(std::ios::floatfield, std::ios::fixed);
-        std::cerr << iter1->first << " " << force.x << " " << force.y << " " << force.z << "\n";
-        std::cerr.unsetf(std::ios::floatfield);
-#endif
         iter1++; // this has to be done outside the for definition because erase returns the next iterator
     }
 
@@ -386,13 +303,10 @@ void Simulation::UpdateSimulation()
         }
     }
 
-#ifdef EXPERIMENTAL
     // update the bodies (needed for drag calculations)
     for (auto &&bodyIter : m_BodyList) bodyIter.second->ComputeDrag();
-#endif
 
-#ifndef OUTPUTS_AFTER_SIMULATION_STEP
-    if (m_OutputWarehouseFlag) OutputWarehouse();
+    // output the model state if triggered
     if (m_OutputModelStateAtTime >= 0.0)
     {
         if (m_SimulationTime >= m_OutputModelStateAtTime)
@@ -406,24 +320,10 @@ void Simulation::UpdateSimulation()
         OutputProgramState();
         m_OutputModelStateAtCycle = -1;
     }
-    else if (m_OutputModelStateAtWarehouseDistance > 0 && m_WarehouseDistance >= m_OutputModelStateAtWarehouseDistance)
-    {
-        OutputProgramState();
-        m_OutputModelStateAtWarehouseDistance = 0;
-    }
-#endif
 
     // run the simulation
-    switch (m_global->stepType())
-    {
-    case Global::World:
-        dWorldStep(m_WorldID, m_global->StepSize());
-        break;
-
-    case Global::Quick:
-        dWorldQuickStep(m_WorldID, m_global->StepSize());
-        break;
-    }
+    m_Scene->simulate(m_global->StepSize());
+    m_Scene->fetchResults(true);
 
     // test for penalties
     if (m_errorHandler.IsMessage()) m_KinematicMatchFitness += m_global->NumericalErrorsScore();
@@ -457,29 +357,6 @@ void Simulation::UpdateSimulation()
     // update the step counter
     m_StepCount++;
 
-
-#ifdef OUTPUTS_AFTER_SIMULATION_STEP
-//    if (m_OutputKinematicsFlag && m_StepCount % gDisplaySkip == 0) OutputKinematics();
-    if (m_OutputWarehouseFlag) OutputWarehouse();
-    if (m_OutputModelStateAtTime > 0.0)
-    {
-        if (m_SimulationTime >= m_OutputModelStateAtTime)
-        {
-            OutputProgramState();
-            m_OutputModelStateAtTime = 0.0;
-        }
-    }
-    else if (m_OutputModelStateAtCycle >= 0 && m_CycleTime >= 0 && m_SimulationTime >= m_CycleTime * m_OutputModelStateAtCycle)
-    {
-        OutputProgramState();
-        m_OutputModelStateAtCycle = -1;
-    }
-    else if (m_OutputModelStateAtWarehouseDistance > 0 && m_WarehouseDistance >= m_OutputModelStateAtWarehouseDistance)
-    {
-        OutputProgramState();
-        m_OutputModelStateAtWarehouseDistance = 0;
-    }
-#endif
 }
 
 //----------------------------------------------------------------------------
@@ -603,26 +480,6 @@ bool Simulation::TestForCatastrophy()
         }
     }
 
-#ifdef EXPERIMENTAL
-    // test for WarehouseFailDistanceAbort if set
-    if (m_global->WarehouseFailDistanceAbort() > 0 && m_WarehouseList.size() > 0 && m_global->fitnessType() != Global::ClosestWarehouse)
-    {
-        if (m_WarehouseDistance > m_global->WarehouseFailDistanceAbort())
-        {
-            std::cerr << "Failed due to >WarehouseFailDistanceAbort. m_global->WarehouseFailDistanceAbort()=" << m_global->WarehouseFailDistanceAbort() << " WarehouseDistance = " << m_WarehouseDistance << "\n";
-            return true;
-        }
-    }
-    else if (m_global->WarehouseFailDistanceAbort() < 0 && m_WarehouseList.size() > 0 && m_global->fitnessType() != Global::ClosestWarehouse && m_SimulationTime > 0)
-    {
-        if (m_WarehouseDistance < std::fabs(m_global->WarehouseFailDistanceAbort()))
-        {
-            std::cerr << "Failed due to <WarehouseFailDistanceAbort. m_global->WarehouseFailDistanceAbort()=" << m_global->WarehouseFailDistanceAbort() << " WarehouseDistance = " << m_WarehouseDistance << "\n";
-            return true;
-        }
-    }
-#endif
-
     if (m_OutputModelStateOccured && m_AbortAfterModelStateOutput)
     {
         std::cerr << "Abort because ModelState successfully written\n";
@@ -643,10 +500,6 @@ double Simulation::CalculateInstantaneousFitness()
 
     case Global::KinematicMatchMiniMax:
         return m_KinematicMatchMiniMaxFitness;
-#ifdef EXPERIMENTAL
-    case Global::ClosestWarehouse:
-        return m_ClosestWarehouseFitness;
-#endif
     }
     return 0;
 }
@@ -1060,93 +913,7 @@ std::string *Simulation::ParseDataTarget(const ParseXML::XMLElement *node)
 
 std::string * Simulation::ParseReporter(const ParseXML::XMLElement * /*node*/)
 {
-//    char *buf;
-//    Reporter *reporter;
-//    THROWIFZERO(buf = DoXmlGetProp(cur, "Type"));
-
-//    if (strcmp((const char *)buf, "Torque") == 0)
-//    {
-//        TorqueReporter *torqueReporter = new TorqueReporter();
-//        torqueReporter->setSimulation(this);
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "ID"));
-//        torqueReporter->SetName((const char *)buf);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "BodyID"));
-//        torqueReporter->SetBody(m_BodyList[(const char *)buf]);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "MuscleID"));
-//        torqueReporter->SetMuscle(m_MuscleList[(const char *)buf]);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "PivotPoint"));
-//        torqueReporter->SetPivotPoint((const char *)buf);
-
-//        buf = DoXmlGetProp(cur, "Axis");
-//        if (buf)
-//                torqueReporter->SetAxis((const char *)buf);
-
-//        reporter = torqueReporter;
-//    }
-
-//    else if (strcmp((const char *)buf, "Position") == 0)
-//    {
-//        PositionReporter *positionReporter = new PositionReporter();
-//        positionReporter->setSimulation(this);
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "ID"));
-//        positionReporter->SetName((const char *)buf);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "BodyID"));
-//        Body *bodyID = m_BodyList[(const char *)buf];
-//        positionReporter->SetBody(bodyID);
-
-//        buf = DoXmlGetProp(cur, "Position");
-//        if (buf)
-//            positionReporter->SetPosition((const char *)buf);
-
-//        buf = DoXmlGetProp(cur, "Quaternion");
-//        if (buf)
-//            positionReporter->SetQuaternion((const char *)buf);
-
-//        reporter = positionReporter;
-//    }
-
-//    else if (strcmp((const char *)buf, "SwingClearanceAbort") == 0)
-//    {
-//        SwingClearanceAbortReporter *swingClearanceAbortReporter = new SwingClearanceAbortReporter();
-//        swingClearanceAbortReporter->setSimulation(this);
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "ID"));
-//        swingClearanceAbortReporter->SetName((const char *)buf);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "BodyID"));
-//        Body *bodyID = m_BodyList[(const char *)buf];
-//        swingClearanceAbortReporter->SetBody(bodyID);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "Position"));
-//        swingClearanceAbortReporter->SetPosition((const char *)buf);
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "HeightThreshold"));
-//        swingClearanceAbortReporter->SetHeightThreshold(GSUtil::Double(buf));
-
-//        THROWIFZERO(buf = DoXmlGetProp(cur, "VelocityThreshold"));
-//        swingClearanceAbortReporter->SetVelocityThreshold(GSUtil::Double(buf));
-
-//        // defaults to Z up
-//        buf = DoXmlGetProp(cur, "UpAxis");
-//        if (buf) swingClearanceAbortReporter->SetUpAxis(buf);
-
-//        // optionally specify a direction axis for the velocity test
-//        // gets normalised internally
-//        buf = DoXmlGetProp(cur, "DirectionAxis");
-//        if (buf) swingClearanceAbortReporter->SetDirectionAxis(buf);
-
-//        reporter = swingClearanceAbortReporter;
-//    }
-
-//    else
-//    {
-//        throw __LINE__;
-//    }
-
-//    m_ReporterList[reporter->name()] = reporter;
+    // unimplemented
     return nullptr;
 }
 
@@ -1182,167 +949,6 @@ std::string *Simulation::ParseController(const ParseXML::XMLElement *node)
     return nullptr;
 }
 
-
-std::string * Simulation::ParseWarehouse(const ParseXML::XMLElement * /*node*/)
-{
-#ifdef EXPERIMENTAL
-    std::unique_ptr<Warehouse> warehouse;
-    warehouse->setSimulation(this);
-    std::string *lastError = warehouse->createFromAttributes();
-    if (lastError)
-    {
-        setObjectMessage(warehouse->objectMessage());
-        return lastError;
-    }
-
-    warehouse->SetUnitIncreaseThreshold(m_global->WarehouseUnitIncreaseDistanceThreshold());
-    warehouse->SetUnitDecreaseThresholdFactor(m_global->WarehouseDecreaseThresholdFactor());
-    m_WarehouseList[warehouse->name()] = std::move(warehouse);
-#endif
-    return nullptr;
-}
-
-// function to produce a file of link kinematics in tab delimited format
-// plus additional muscle activation information for use in gait warehousing
-
-void Simulation::OutputWarehouse()
-{
-    if (m_OutputWarehouseAsText)
-    {
-        /* file format is \t separated and \n end of line
-         *
-         * numDrivers name0 name1 name2 ... numBodies name0 name1 name2...
-         * time act0 act1 act2 ... x0 y0 z0 angle0 xaxis0 yaxis0 zaxis0 xv0 yv0 zv0 xav0 yav0 zav0 ...
-         *
-         */
-
-        /* the first defined body is defined as its world coordinates and the rest are relative to the master body */
-
-        // first time through output the column headings
-        if (m_OutputWarehouseLastTime < 0)
-        {
-#if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-            m_OutputWarehouseFile.open(DataFile::ConvertUTF8ToWide(m_OutputWarehouseFilename));
-#else
-            m_OutputWarehouseFile.open(m_OutputWarehouseFilename);
-#endif
-
-            m_OutputWarehouseFile << m_DriverList.size();
-            for (auto &&iter : m_DriverList) m_OutputWarehouseFile << "\t\"" << iter.second->name() << "\"";
-            m_OutputWarehouseFile << "\t" << m_BodyList.size();
-            m_OutputWarehouseFile << "\t" << m_BodyList[m_global->DistanceTravelledBodyIDName()]->name();
-            for (auto &&iter : m_BodyList)
-                if (iter.second->name() != m_global->DistanceTravelledBodyIDName()) m_OutputWarehouseFile << "\t\"" << iter.second->name() << "\"";
-            m_OutputWarehouseFile << "\n";
-        }
-
-        m_OutputWarehouseLastTime = m_SimulationTime;
-        // simulation time
-        m_OutputWarehouseFile << m_SimulationTime;
-        // driver activations
-        for (auto &&iter : m_DriverList) m_OutputWarehouseFile << "\t" << iter.second->value();
-        // output the root body (m_global->DistanceTravelledBodyIDName())
-        Body *rootBody = m_BodyList[m_global->DistanceTravelledBodyIDName()].get();
-        pgd::Vector3 pos, vel, avel;
-        pgd::Quaternion quat;
-        rootBody->GetRelativePosition(nullptr, &pos);
-        rootBody->GetRelativeQuaternion(nullptr, &quat);
-        rootBody->GetRelativeLinearVelocity(nullptr, &vel);
-        rootBody->GetRelativeAngularVelocity(nullptr, &avel);
-        double angle = QGetAngle(quat);
-        pgd::Vector3 axis = QGetAxis(quat);
-        m_OutputWarehouseFile << "\t" << pos.x << "\t" << pos.y << "\t" << pos.z;
-        m_OutputWarehouseFile << "\t" << angle << "\t" << axis.x << "\t" << axis.y << "\t" << axis.z ;
-        m_OutputWarehouseFile << "\t" << vel.x << "\t" << vel.y << "\t" << vel.z;
-        m_OutputWarehouseFile << "\t" << avel.x << "\t" << avel.y << "\t" << avel.z;
-        // and now the rest of the bodies
-        for (auto &&iter : m_BodyList)
-        {
-            if (iter.second->name() != m_global->DistanceTravelledBodyIDName())
-            {
-                iter.second->GetRelativePosition(rootBody, &pos);
-                iter.second->GetRelativeQuaternion(rootBody, &quat);
-                iter.second->GetRelativeLinearVelocity(rootBody, &vel);
-                iter.second->GetRelativeAngularVelocity(rootBody, &avel);
-                angle = QGetAngle(quat);
-                axis = QGetAxis(quat);
-                m_OutputWarehouseFile << "\t" << pos.x << "\t" << pos.y << "\t" << pos.z;
-                m_OutputWarehouseFile << "\t" << angle << "\t" << axis.x << "\t" << axis.y << "\t" << axis.z ;
-                m_OutputWarehouseFile << "\t" << vel.x << "\t" << vel.y << "\t" << vel.z;
-                m_OutputWarehouseFile << "\t" << avel.x << "\t" << avel.y << "\t" << avel.z;
-            }
-        }
-        m_OutputWarehouseFile << "\n";
-    }
-    else
-    {
-        /* file format is binary
-         *
-         * int 0
-         * int numDrivers int lenName0 name0 int lenName1 name1 ...
-         * int numBodies int lenName0 name0 int lenName1 name1 ...
-         * double time double act0 double act1 double act2 ...
-         * double x0 double y0 double z0 double angle0 double xaxis0 double yaxis0 double zaxis0 double xv0 double yv0 double zv0 double xav0 double yav0 double zav0 ...
-         *
-         */
-
-        /* the first defined body is defined as its world coordinates and the rest are relative to the master body */
-
-        // first time through output the column headings
-        if (m_OutputWarehouseLastTime < 0)
-        {
-#if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-            m_OutputWarehouseFile.open(DataFile::ConvertUTF8ToWide(m_OutputWarehouseFilename), std::ios::binary);
-#else
-            m_OutputWarehouseFile.open(m_OutputWarehouseFilename, std::ios::binary);
-#endif
-            GSUtil::BinaryOutput(m_OutputWarehouseFile, uint32_t(0));
-            GSUtil::BinaryOutput(m_OutputWarehouseFile, uint32_t(m_DriverList.size()));
-            for (auto &&iter : m_DriverList) GSUtil::BinaryOutput(m_OutputWarehouseFile, iter.second->name());
-            GSUtil::BinaryOutput(m_OutputWarehouseFile, uint32_t(m_BodyList.size()));
-            GSUtil::BinaryOutput(m_OutputWarehouseFile, m_BodyList[m_global->DistanceTravelledBodyIDName()]->name());
-            for (auto &&iter : m_BodyList)
-                if (iter.second->name() != m_global->DistanceTravelledBodyIDName()) GSUtil::BinaryOutput(m_OutputWarehouseFile, iter.second->name());
-        }
-
-        m_OutputWarehouseLastTime = m_SimulationTime;
-        // simulation time
-        GSUtil::BinaryOutput(m_OutputWarehouseFile, m_SimulationTime);
-        // driver activations
-        for (auto &&iter : m_DriverList) GSUtil::BinaryOutput(m_OutputWarehouseFile, iter.second->value());
-        // output the root body (m_global->DistanceTravelledBodyIDName())
-        Body *rootBody = m_BodyList[m_global->DistanceTravelledBodyIDName()].get();
-        pgd::Vector3 pos, vel, avel;
-        pgd::Quaternion quat;
-        rootBody->GetRelativePosition(nullptr, &pos);
-        rootBody->GetRelativeQuaternion(nullptr, &quat);
-        rootBody->GetRelativeLinearVelocity(nullptr, &vel);
-        rootBody->GetRelativeAngularVelocity(nullptr, &avel);
-        double angle = QGetAngle(quat);
-        pgd::Vector3 axis = QGetAxis(quat);
-        GSUtil::BinaryOutput(m_OutputWarehouseFile, pos.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, pos.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, pos.z);
-        GSUtil::BinaryOutput(m_OutputWarehouseFile, angle); GSUtil::BinaryOutput(m_OutputWarehouseFile, axis.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, axis.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, axis.z);
-        GSUtil::BinaryOutput(m_OutputWarehouseFile, vel.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, vel.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, vel.z);
-        GSUtil::BinaryOutput(m_OutputWarehouseFile, avel.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, avel.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, avel.z);
-        // and now the rest of the bodies
-        for (auto &&iter : m_BodyList)
-        {
-            if (iter.second->name() != m_global->DistanceTravelledBodyIDName())
-            {
-                iter.second->GetRelativePosition(rootBody, &pos);
-                iter.second->GetRelativeQuaternion(rootBody, &quat);
-                iter.second->GetRelativeLinearVelocity(rootBody, &vel);
-                iter.second->GetRelativeAngularVelocity(rootBody, &avel);
-                angle = QGetAngle(quat);
-                axis = QGetAxis(quat);
-                GSUtil::BinaryOutput(m_OutputWarehouseFile, pos.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, pos.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, pos.z);
-                GSUtil::BinaryOutput(m_OutputWarehouseFile, angle); GSUtil::BinaryOutput(m_OutputWarehouseFile, axis.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, axis.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, axis.z);
-                GSUtil::BinaryOutput(m_OutputWarehouseFile, vel.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, vel.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, vel.z);
-                GSUtil::BinaryOutput(m_OutputWarehouseFile, avel.x); GSUtil::BinaryOutput(m_OutputWarehouseFile, avel.y); GSUtil::BinaryOutput(m_OutputWarehouseFile, avel.z);
-            }
-        }
-    }
-}
 
 // save the current model state to XML
 std::string Simulation::SaveToXML()
@@ -1402,11 +1008,6 @@ void Simulation::SetOutputWarehouseFile(const std::string &filename)
     }
 }
 
-void Simulation::SetWarehouseFailDistanceAbort(double warehouseFailDistanceAbort)
-{
-    m_global->setWarehouseFailDistanceAbort(warehouseFailDistanceAbort);
-}
-
 void Simulation::SetGlobal(std::unique_ptr<Global> global)
 {
     m_global = std::move(global);
@@ -1419,147 +1020,12 @@ void Simulation::SetGlobal(std::unique_ptr<Global> global)
     dWorldSetDamping(m_WorldID, m_global->LinearDamping(), m_global->AngularDamping());
 }
 
-// add a warehouse from a file
-void Simulation::AddWarehouse(const std::string &filename)
-{
-#ifdef EXPERIMENTAL
-    std::unique_ptr<Warehouse> warehouse = std::make_unique<Warehouse>();
-    WarehouseUnit *warehouseUnit = warehouse->NewWarehouseUnit(0);
-    int err = warehouseUnit->ImportWarehouseUnit(filename.c_str(), false);
-    if (err) { return; }
-    warehouse->setName(filename);
-    m_global->setCurrentWarehouseFile(filename);
-    m_WarehouseList[filename] = std::move(warehouse);
-#endif
-}
-
 bool Simulation::ShouldQuit()
 {
     if (m_global->TimeLimit() > 0 && m_SimulationTime > m_global->TimeLimit()) return true;
     if (m_global->MechanicalEnergyLimit() > 0 && m_MechanicalEnergy > m_global->MechanicalEnergyLimit()) return true;
     if (m_global->MetabolicEnergyLimit() > 0 && m_MetabolicEnergy > m_global->MetabolicEnergyLimit()) return true;
     return false;
-}
-
-// this is called by dSpaceCollide when two objects in space are
-// potentially colliding.
-
-void Simulation::NearCallback(void *data, dGeomID o1, dGeomID o2)
-{
-    Simulation *s = reinterpret_cast<Simulation *>(data);
-    Geom *g1 = reinterpret_cast<Geom *>(dGeomGetData(o1));
-    Geom *g2 = reinterpret_cast<Geom *>(dGeomGetData(o2));
-
-    dBodyID b1 = dGeomGetBody(o1);
-    dBodyID b2 = dGeomGetBody(o2);
-    if (b1 == b2)
-    {
-        return; // it is never useful for two contacts on the same body to collide [I'm not sure if this every happens - FIX ME - set up a test]
-    }
-
-    if (s->m_global->AllowConnectedCollisions() == false)
-    {
-        if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact)) return;
-    }
-
-    if (s->m_global->AllowInternalCollisions() == false)
-    {
-        if (g1->GetGeomLocation() == g2->GetGeomLocation()) return;
-    }
-
-    if (g1->GetExcludeList()->size())
-    {
-        std::vector<Geom *> *excludeList = g1->GetExcludeList();
-        for (size_t i = 0; i < excludeList->size(); i++)
-        {
-            if (excludeList->at(i) == g2) return;
-        }
-    }
-    if (g2->GetExcludeList()->size())
-    {
-        std::vector<Geom *> *excludeList = g2->GetExcludeList();
-        for (size_t i = 0; i < excludeList->size(); i++)
-        {
-            if (excludeList->at(i) == g1) return;
-        }
-    }
-
-    std::vector<dContact> contact(size_t(s->m_MaxContacts), dContact{}); // in this case default initialisation is potentially useful
-    // std::unique_ptr<dContact[]> contact = std::make_unique<dContact[]>(size_t(s->m_MaxContacts)); // but this version would be slightly quicker
-    // the choice of std::max(cfm) and std::min(erp) means that the softest contact should be used
-    double cfm = std::max(g1->GetContactSoftCFM(), g2->GetContactSoftCFM());
-    double erp = std::min(g1->GetContactSoftERP(), g2->GetContactSoftERP());
-    // just use the largest for mu, rho and bounce
-    double mu = std::max(g1->GetContactMu(), g2->GetContactMu());
-    double bounce = std::max(g1->GetContactBounce(), g2->GetContactBounce());
-    double rho = std::max(g1->GetRho(), g2->GetRho());
-    if (erp < 0) // the only one that needs checking because all the others are std::max so values <0 will never be chosen if one value is >0
-    {
-        if (g1->GetContactSoftERP() < 0) erp = g2->GetContactSoftERP();
-        else erp = g1->GetContactSoftERP();
-    }
-    for (size_t i = 0; i < size_t(s->m_MaxContacts); i++)
-    {
-        contact[i].surface.mode = dContactApprox1;
-        contact[i].surface.mu = mu;
-        if (bounce >= 0)
-        {
-            contact[i].surface.bounce = bounce;
-            contact[i].surface.mode += dContactBounce;
-        }
-        if (rho >= 0)
-        {
-            contact[i].surface.rho = rho;
-            contact[i].surface.mode += dContactRolling;
-        }
-        if (cfm >= 0)
-        {
-            contact[i].surface.soft_cfm = cfm;
-            contact[i].surface.mode += dContactSoftCFM;
-        }
-        if (erp >= 0)
-        {
-            contact[i].surface.soft_erp = erp;
-            contact[i].surface.mode += dContactSoftERP;
-        }
-    }
-    int numc = dCollide(o1, o2, s->m_MaxContacts, &contact[0].geom, sizeof(dContact));
-    if (numc)
-    {
-        for (size_t i = 0; i < size_t(numc); i++)
-        {
-            if (g1->GetAbort()) s->SetContactAbort(g1->name());
-            if (g2->GetAbort()) s->SetContactAbort(g2->name());
-            dJointID c;
-            if (g1->GetAdhesion() == false && g2->GetAdhesion() == false)
-            {
-                c = dJointCreateContact(s->m_WorldID, s->m_ContactGroup, &contact[i]);
-                dJointAttach(c, b1, b2);
-                std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
-                myContact->setSimulation(s);
-                dJointSetFeedback(c, myContact->GetJointFeedback());
-                myContact->SetJointID(c);
-                std::copy_n(contact[i].geom.pos, dV3E__MAX, myContact->GetContactPosition());
-//                // only add the contact information once
-//                // and add it to the non-environment geom
-//                if (g1->GetGeomLocation() == Geom::environment)
-//                    g2->AddContact(myContact.get());
-//                else
-//                    g1->AddContact(myContact.get());
-                // add the contact information to both geoms
-                g1->AddContact(myContact.get());
-                g2->AddContact(myContact.get());
-                s->m_ContactList.push_back(std::move(myContact));
-            }
-            else
-            {
-                // FIX ME adhesive joints are added permanently and forces cannot be measured
-                c = dJointCreateBall(s->m_WorldID, nullptr);
-                dJointAttach(c, b1, b2);
-                dJointSetBallAnchor(c, contact[i].geom.pos[0], contact[i].geom.pos[1], contact[i].geom.pos[2]);
-            }
-        }
-    }
 }
 
 Body *Simulation::GetBody(const std::string &name)
@@ -1650,14 +1116,6 @@ Controller *Simulation::GetController(const std::string &name)
     return nullptr;
 }
 
-Warehouse *Simulation::GetWarehouse(const std::string &name)
-{
-    // use find to allow null return if name not found
-    auto iter = m_WarehouseList.find(name);
-    if (iter != m_WarehouseList.end()) return iter->second.get();
-    return nullptr;
-}
-
 Global *Simulation::GetGlobal()
 {
     return m_global.get();
@@ -1674,7 +1132,6 @@ void Simulation::DumpObjects()
     for (auto &&it : m_DataTargetList) DumpObject(it.second.get());
     for (auto &&it : m_ReporterList) DumpObject(it.second.get());
     for (auto &&it : m_ControllerList) DumpObject(it.second.get());
-    for (auto &&it : m_WarehouseList) DumpObject(it.second.get());
     for (auto &&it : m_MuscleList)
     {
         DumpObject(it.second.get());
@@ -1730,7 +1187,6 @@ std::vector<std::string> Simulation::GetNameList() const
             m_MarkerList.size() +
             m_ReporterList.size() +
             m_ControllerList.size() +
-            m_WarehouseList.size();
     output.reserve(size);
     for (auto &&it : m_BodyList) output.push_back(it.first);
     for (auto &&it : m_JointList) output.push_back(it.first);
@@ -1743,7 +1199,6 @@ std::vector<std::string> Simulation::GetNameList() const
     for (auto &&it : m_MarkerList) output.push_back(it.first);
     for (auto &&it : m_ReporterList) output.push_back(it.first);
     for (auto &&it : m_ControllerList) output.push_back(it.first);
-    for (auto &&it : m_WarehouseList) output.push_back(it.first);
     return output;
 }
 
@@ -1761,7 +1216,6 @@ std::set<std::string> Simulation::GetNameSet() const
     for (auto &&it : m_MarkerList) output.insert(it.first);
     for (auto &&it : m_ReporterList) output.insert(it.first);
     for (auto &&it : m_ControllerList) output.insert(it.first);
-    for (auto &&it : m_WarehouseList) output.insert(it.first);
     return output;
 }
 
@@ -1779,7 +1233,6 @@ std::vector<NamedObject *> Simulation::GetObjectList() const
             m_MarkerList.size() +
             m_ReporterList.size() +
             m_ControllerList.size() +
-            m_WarehouseList.size();
     output.reserve(size);
     // note: the order is important for resolving dependencies
     // bodies depend on nothing
@@ -1801,7 +1254,6 @@ std::vector<NamedObject *> Simulation::GetObjectList() const
     for (auto &&it : m_StrapList) output.push_back(it.second.get());
     for (auto &&it : m_MuscleList) output.push_back(it.second.get());
     for (auto &&it : m_FluidSacList) output.push_back(it.second.get());
-    for (auto &&it : m_WarehouseList) output.push_back(it.second.get());
     for (auto &&it : m_ControllerList) output.push_back(it.second.get());
     for (auto &&it : m_DriverList) output.push_back(it.second.get());
     for (auto &&it : m_DataTargetList) output.push_back(it.second.get());
@@ -1822,7 +1274,6 @@ NamedObject *Simulation::GetNamedObject(const std::string &name) const
     auto MarkerListIt = m_MarkerList.find(name); if (MarkerListIt != m_MarkerList.end()) return MarkerListIt->second.get();
     auto ReporterListIt = m_ReporterList.find(name); if (ReporterListIt != m_ReporterList.end()) return ReporterListIt->second.get();
     auto ControllerListIt = m_ControllerList.find(name); if (ControllerListIt != m_ControllerList.end()) return ControllerListIt->second.get();
-    auto WarehouseListIt = m_WarehouseList.find(name); if (WarehouseListIt != m_WarehouseList.end()) return WarehouseListIt->second.get();
     return nullptr;
 }
 
@@ -1839,7 +1290,6 @@ bool Simulation::DeleteNamedObject(const std::string &name)
     auto MarkerListIt = m_MarkerList.find(name); if (MarkerListIt != m_MarkerList.end()) { m_MarkerList.erase(MarkerListIt); return true; }
     auto ReporterListIt = m_ReporterList.find(name); if (ReporterListIt != m_ReporterList.end()) { m_ReporterList.erase(ReporterListIt); return true; }
     auto ControllerListIt = m_ControllerList.find(name); if (ControllerListIt != m_ControllerList.end()) { m_ControllerList.erase(ControllerListIt); return true; }
-    auto WarehouseListIt = m_WarehouseList.find(name); if (WarehouseListIt != m_WarehouseList.end()) { m_WarehouseList.erase(WarehouseListIt); return true; }
     return false;
 }
 

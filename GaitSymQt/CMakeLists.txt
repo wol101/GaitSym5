@@ -11,6 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_compile_definitions(PX_PHYSX_STATIC_LIB)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS OpenGL)
@@ -1906,4 +1908,3 @@ endif ()
 find_package(Qt6 REQUIRED COMPONENTS Xml)
 target_link_libraries(GaitSym5 PRIVATE Qt6::Xml)
 
-#add_definitions(-DRAPIDXML_NO_EXCEPTIONS)

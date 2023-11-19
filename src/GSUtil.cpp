@@ -222,17 +222,33 @@ void GSUtil::EulerDecompositionZYX(const double *mRot, double& thetaX, double& t
 
 // finds the rotation matrix that will transform R1 to R2
 // where R1 and R2 are both rotation matrices
-void GSUtil::FindRotation(const double *R1, const double *R2, dMatrix3 rotMat)
+void GSUtil::FindRotation(const double *R1, const double *R2, double *rotMat) // needs checking
 {
     // theory:
     // X.R1 = R2
     // X.R1.R1' = R2.R1'
     // X = R2.R1'
-    // and that's what dMultiply2 does
-    // as does dMULTIPLY2_333 which is quicker
+    double R1T[12];
+    R1T[0*4+0]=R1[0*4+0];
+    R1T[0*4+1]=R1[1*4+0];
+    R1T[0*4+2]=R1[2*4+0];
+    R1T[1*4+0]=R1[0*4+1];
+    R1T[1*4+1]=R1[1*4+1];
+    R1T[1*4+2]=R1[2*4+1];
+    R1T[2*4+0]=R1[0*4+2];
+    R1T[2*4+1]=R1[1*4+2];
+    R1T[2*4+2]=R1[2*4+2];
 
-    dMultiply2_333(rotMat, R2, R1); // optimised version
-
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            rotMat[i * 4 + j] =
+                R2[i * 4 + 0] * R1T[0 * 4 + j] +
+                R2[i * 4 + 1] * R1T[1 * 4 + j] +
+                R2[i * 4 + 2] * R1T[2 * 4 + j];
+        }
+    }
 }
 
 // matrix format is:

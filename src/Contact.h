@@ -12,8 +12,6 @@
 
 #include "NamedObject.h"
 
-#include "ode/ode.h"
-
 class SimulationWindow;
 
 class Contact:public NamedObject

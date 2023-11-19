@@ -24,10 +24,6 @@ Global::Global()
     m_DampingConstant = (1.0 - m_ERP) / m_CFM;
 }
 
-Global::~Global()
-{
-}
-
 double Global::SpringConstant() const
 {
     return m_SpringConstant;

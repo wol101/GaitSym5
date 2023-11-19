@@ -23,17 +23,9 @@ class Global: public NamedObject
 {
 public:
     Global();
-//    Global(const Global &global);
-    virtual ~Global() override;
-
-//    Global& operator=(const Global&);
 
     SMART_ENUM(StepType, stepTypeStrings, stepTypeCount, World, Quick);
-#ifdef EXPERIMENTAL
-    SMART_ENUM(FitnessType, fitnessTypeStrings, fitnessTypeCount, KinematicMatch, KinematicMatchMiniMax, ClosestWarehouse);
-#else
     SMART_ENUM(FitnessType, fitnessTypeStrings, fitnessTypeCount, KinematicMatch, KinematicMatchMiniMax);
-#endif
 
     virtual std::string *createFromAttributes() override;
     virtual void saveToAttributes() override;

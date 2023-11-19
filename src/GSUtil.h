@@ -14,8 +14,6 @@
 
 #include "PGDMath.h"
 
-#include "ode/ode.h"
-
 #include <cmath>
 #include <stdlib.h>
 #include <vector>
@@ -481,7 +479,7 @@ static void EulerDecompositionYZX(const double *mRot, double& thetaX, double& th
 static void EulerDecompositionZXY(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
 static void EulerDecompositionZYX(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
 
-static void FindRotation(const double *R1, const double *R2, dMatrix3 rotMat);
+static void FindRotation(const double *R1, const double *R2, double *rotMat);
 static void DumpMatrix(const double *mRot);
 
 static void Tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList);

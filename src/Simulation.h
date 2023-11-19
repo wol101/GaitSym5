@@ -19,6 +19,8 @@
 #include "SmartEnum.h"
 #include "ErrorHandler.h"
 
+#include "PxPhysicsAPI.h"
+
 #include <map>
 #include <string>
 #include <fstream>
@@ -39,7 +41,6 @@ class Marker;
 class Reporter;
 class Controller;
 class FixedJoint;
-class Warehouse;
 class SimulationWindow;
 class MainWindow;
 class Drivable;
@@ -53,8 +54,6 @@ public:
 
     SMART_ENUM(AxisType, axisTypeStrings, axisTypeCount, XAxis, YAxis, ZAxis);
 //    enum AxisType { XAxis, YAxis, ZAxis };
-
-    static void NearCallback(void *data, dGeomID o1, dGeomID o2);
 
     std::string *LoadModel(const char *buffer, size_t length);  // load parameters from the XML configuration file
     void UpdateSimulation(void);     // called at each iteration through simulation
@@ -80,22 +79,14 @@ public:
     Marker *GetMarker(const std::string &name);
     Reporter *GetReporter(const std::string &name);
     Controller *GetController(const std::string &name);
-    Warehouse *GetWarehouse(const std::string &name);
     bool GetOutputModelStateOccured() { return m_OutputModelStateOccured; }
-    dWorldID GetWorldID() { return m_WorldID; }
-    dSpaceID GetSpaceID() { return m_SpaceID; }
 
     void SetTimeLimit(double timeLimit) { m_global->setTimeLimit(timeLimit); }
     void SetMetabolicEnergyLimit(double energyLimit) { m_global->setMetabolicEnergyLimit(energyLimit); }
     void SetMechanicalEnergyLimit(double energyLimit) { m_global->setMechanicalEnergyLimit(energyLimit); }
     void SetOutputModelStateAtTime(double outputModelStateAtTime) { m_OutputModelStateAtTime = outputModelStateAtTime; }
     void SetOutputModelStateAtCycle(double outputModelStateAtCycle) { m_OutputModelStateAtCycle = outputModelStateAtCycle; }
-    void SetOutputModelStateAtWarehouseDistance(double outputModelStateAtWarehouseDistance) { m_OutputModelStateAtWarehouseDistance = outputModelStateAtWarehouseDistance; }
     void SetOutputModelStateFile(const std::string &filename);
-    void SetOutputWarehouseFile(const std::string &filename);
-    void SetWarehouseFailDistanceAbort(double warehouseFailDistanceAbort);
-
-    void AddWarehouse(const std::string &filename);
 
     // get hold of the internal lists (HANDLE WITH CARE)
     std::map<std::string, std::unique_ptr<Body>> *GetBodyList() { return &m_BodyList; }
@@ -109,7 +100,6 @@ public:
     std::map<std::string, std::unique_ptr<Marker>> *GetMarkerList() { return &m_MarkerList; }
     std::map<std::string, std::unique_ptr<Reporter>> *GetReporterList() { return &m_ReporterList; }
     std::map<std::string, std::unique_ptr<Controller>> *GetControllerList() { return &m_ControllerList; }
-    std::map<std::string, std::unique_ptr<Warehouse>> *GetWarehouseList() { return &m_WarehouseList; }
     std::vector<std::unique_ptr<Contact>> *GetContactList() { return &m_ContactList; }
 
     std::vector<std::string> GetNameList() const;
@@ -130,7 +120,6 @@ public:
 
     std::string SaveToXML();
     void OutputProgramState();
-    void OutputWarehouse();
 
     Global *GetGlobal();
     void SetGlobal(std::unique_ptr<Global> global);
@@ -149,12 +138,12 @@ private:
     std::string *ParseDataTarget(const ParseXML::XMLElement *node);
     std::string *ParseReporter(const ParseXML::XMLElement *node);
     std::string *ParseController(const ParseXML::XMLElement *node);
-    std::string *ParseWarehouse(const ParseXML::XMLElement *node);
 
     void DumpObjects();
     void DumpObject(NamedObject *namedObject);
 
     ParseXML m_parseXML;
+    std::unique_ptr<Global> m_global;
 
    // these are the internal lists that are all owners of their respective objects
     std::map<std::string, std::unique_ptr<Body>> m_BodyList;
@@ -168,20 +157,11 @@ private:
     std::map<std::string, std::unique_ptr<Marker>> m_MarkerList;
     std::map<std::string, std::unique_ptr<Reporter>> m_ReporterList;
     std::map<std::string, std::unique_ptr<Controller>> m_ControllerList;
-    std::map<std::string, std::unique_ptr<Warehouse>> m_WarehouseList;
 
     // this is a list of contacts that are active at the current time step
     std::vector<std::unique_ptr<Contact>> m_ContactList;
 
-    // Simulation variables
-    dWorldID m_WorldID;
-    dSpaceID m_SpaceID;
-    dJointGroupID m_ContactGroup;
-    int m_MaxContacts = 64;
-    std::unique_ptr<Global> m_global;
-
     // keep track of simulation time
-
     double m_SimulationTime = 0; // current time
     int64_t m_StepCount = 0; // number of steps taken
     double m_CycleTime = 0;
@@ -192,25 +172,14 @@ private:
 
     // FitnessType
     double m_KinematicMatchMiniMaxFitness = 0;
-    double m_ClosestWarehouseFitness = -DBL_MAX;
 
     // some control values
-    bool m_OutputWarehouseFlag = false;
-    std::string m_OutputWarehouseFilename;
-    std::ofstream m_OutputWarehouseFile;
-    std::string m_OutputModelStateFile;
     bool m_OutputModelStateOccured = false;
     bool m_AbortAfterModelStateOutput = false;
-    bool m_OutputWarehouseAsText = false;
     double m_OutputModelStateAtTime = -1;
     double m_OutputModelStateAtCycle = -1;
     int m_SimulationError = false;
-    bool m_StraightenBody = false;
-    double m_WarehouseDistance = 0;
     bool m_OutputKinematicsFirstTimeFlag = false;
-    double m_OutputWarehouseLastTime = -DBL_MAX;
-    double m_OutputModelStateAtWarehouseDistance = 0;
-    bool m_WarehouseUsePCA = true;
     bool m_DataTargetAbort = false;
     bool m_ContactAbort = false;
     std::vector<std::string> m_DataTargetAbortList;
@@ -234,6 +203,15 @@ private:
     std::map<std::string, std::ofstream> m_dumpFileStreams;
     ErrorHandler m_errorHandler;
 
+    // PhysX values
+    physx::PxDefaultAllocator m_Allocator;
+    physx::PxDefaultErrorCallback m_ErrorCallback;
+    physx::PxFoundation *m_Foundation = nullptr;
+    physx::PxPhysics *m_Physics = nullptr;
+    physx::PxDefaultCpuDispatcher *m_Dispatcher = nullptr;
+    physx::PxScene *m_Scene = nullptr;
+    physx::PxMaterial *m_gMaterial = nullptr;
+    physx::PxPvd *m_Pvd = nullptr;
 };
 
 
