@@ -21,7 +21,7 @@ class Body: public NamedObject
 {
 public:
 
-    Body(dWorldID worldID);
+    Body(physx::PxPhysics *physics);
     virtual ~Body() override;
 
     virtual void LateInitialisation();
@@ -88,7 +88,7 @@ public:
     double GetMass() const;
     void GetMass(dMass *mass) const;
     double GetLinearKineticEnergy();
-    void GetLinearKineticEnergy(dVector3 ke);
+    void GetLinearKineticEnergy(pgd::Vector3 ke);
     double GetRotationalKineticEnergy();
     double GetGravitationalPotentialEnergy();
     dBodyID GetBodyID() const;
@@ -104,9 +104,7 @@ public:
     void EnterConstructionMode();
     void EnterRunMode();
 
-#ifdef EXPERIMENTAL
     void ComputeDrag();
-#endif
 
     // Utility
     static void ParallelAxis(dMass *massProperties, const double *translation, const double *quaternion, dMass *newMassProperties);
@@ -134,25 +132,25 @@ public:
 
 private:
 
-    dWorldID m_worldID = nullptr;
-    dBodyID m_bodyID = nullptr;
-    dVector3 m_constructionPosition = {0, 0, 0, 0};
-    dQuaternion m_constructionQuaternion = {1, 0, 0, 0};
+    physx::PxPhysics *m_physics = nullptr;
+    physx::PxRigidBody *m_rigidBody = nullptr;
+    pgd::Vector3 m_constructionPosition = {0, 0, 0, 0};
+    pgd::Quaternion m_constructionQuaternion = {1, 0, 0, 0};
     double m_constructionDensity = 1000.0;
 
-    dVector3 m_positionLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
-    dVector3 m_positionHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    dVector3 m_linearVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
-    dVector3 m_linearVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    dVector3 m_angularVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
-    dVector3 m_angularVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
+    pgd::Vector3 m_positionLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
+    pgd::Vector3 m_positionHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
+    pgd::Vector3 m_linearVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
+    pgd::Vector3 m_linearVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
+    pgd::Vector3 m_angularVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
+    pgd::Vector3 m_angularVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
 
-    dVector3 m_initialPosition = {0, 0, 0, 0};
-    dQuaternion m_initialQuaternion = {1, 0, 0, 0};
+    pgd::Vector3 m_initialPosition = {0, 0, 0, 0};
+    pgd::Quaternion m_initialQuaternion = {1, 0, 0, 0};
 
     // these are local copies that are really only used for bodies that are not attached to a simulation
-    dVector3 m_currentPosition = {0, 0, 0, 0};
-    dQuaternion m_currentQuaternion = {1, 0, 0, 0};
+    pgd::Vector3 m_currentPosition = {0, 0, 0, 0};
+    pgd::Quaternion m_currentQuaternion = {1, 0, 0, 0};
 
     std::string m_graphicFile1;
     std::string m_graphicFile2;

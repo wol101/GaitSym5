@@ -29,7 +29,7 @@ TwoPointStrap::TwoPointStrap()
 {
 }
 
-//void TwoPointStrap::SetOrigin(Body *body, const dVector3 point)
+//void TwoPointStrap::SetOrigin(Body *body, const pgd::Vector3 point)
 //{
 //    m_originBody = body;
 //    m_origin[0] = point[0];
@@ -47,7 +47,7 @@ TwoPointStrap::TwoPointStrap()
 //    }
 //}
 
-//void TwoPointStrap::SetInsertion(Body *body, const dVector3 point)
+//void TwoPointStrap::SetInsertion(Body *body, const pgd::Vector3 point)
 //{
 //    m_insertionBody = body;
 //    m_insertion[0] = point[0];
@@ -65,7 +65,7 @@ TwoPointStrap::TwoPointStrap()
 //    }
 //}
 
-//void TwoPointStrap::GetOrigin(const Body **body, dVector3 origin) const
+//void TwoPointStrap::GetOrigin(const Body **body, pgd::Vector3 origin) const
 //{
 //    *body = m_originBody;
 //    origin[0] = m_origin[0];
@@ -73,7 +73,7 @@ TwoPointStrap::TwoPointStrap()
 //    origin[2] = m_origin[2];
 //}
 
-//void TwoPointStrap::GetInsertion(const Body **body, dVector3 insertion) const
+//void TwoPointStrap::GetInsertion(const Body **body, pgd::Vector3 insertion) const
 //{
 //    *body = m_insertionBody;
 //    insertion[0] = m_insertion[0];
@@ -131,7 +131,7 @@ void TwoPointStrap::Calculate()
     theInsertion->point[2] = insertion.z;
 
     // calculate the vector from the origin to the insertion
-    dVector3 line;
+    pgd::Vector3 line;
     line[0] = theInsertion->point[0] - theOrigin->point[0];
     line[1] = theInsertion->point[1] - theOrigin->point[1];
     line[2] = theInsertion->point[2] - theOrigin->point[2];

@@ -1251,7 +1251,7 @@ void FacetedObject::WritePOVRay(std::string filename)
 void FacetedObject::WritePOVRay(std::ostringstream &theString)
 {
     size_t i, j;
-    dVector3 prel, p, result;
+    pgd::Vector3 prel, p, result;
 
     theString.precision(7); // should be plenty
 
@@ -1397,7 +1397,7 @@ double *FacetedObject::lowerBound()
 void FacetedObject::WriteOBJFile(std::ostringstream &out)
 {
     size_t i, j;
-    dVector3 prel, result;
+    pgd::Vector3 prel, result;
 
     out.precision(7); // should be plenty
 
@@ -2053,7 +2053,7 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
     double T2[3] = {0., 0., 0.};
     double TP[3] = {0., 0., 0.};
 
-    dVector3 v[3];
+    pgd::Vector3 v[3];
     for ( i = 0; i < triangles; i++ )
     {
         if (clockwise == false)
@@ -2075,7 +2075,7 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
             }
         }
 
-        dVector3 n, a, b;
+        pgd::Vector3 n, a, b;
         dOP( a, -, v[1], v[0] );
         dOP( b, -, v[2], v[0] );
         dCROSS( n, =, b, a );
@@ -2341,7 +2341,7 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
         const double *p1;
         double *p2;
         double triangle2[9];
-        dVector3 v1, v1r;
+        pgd::Vector3 v1, v1r;
 
         if (useDisplayRotation)
         {
@@ -2552,7 +2552,7 @@ int FacetedObject::FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Ve
 
 void FacetedObject::ApplyDisplayTransformation(const pgd::Vector3 inVec, pgd::Vector3 *outVec)
 {
-    dVector3 v1r;
+    pgd::Vector3 v1r;
     pgd::Vector3 scaled(inVec.x * m_displayScale[0], inVec.y * m_displayScale[1], inVec.z * m_displayScale[2]);
     dMULTIPLY0_331(v1r, m_displayRotation, scaled.constData());
     *outVec = *reinterpret_cast<pgd::Vector3 *>(v1r) + *reinterpret_cast<pgd::Vector3 *>(m_displayPosition);
@@ -2579,14 +2579,14 @@ void FacetedObject::SetDisplayScale(double x, double y, double z)
     m_modelValid = false;
 }
 
-void FacetedObject::SetDisplayRotation(const dMatrix3 R)
+void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 R)
 {
     std::copy_n(R, dM3E__MAX, m_displayRotation);
     m_modelValid = false;
 }
 
-// dQuaternion q [ w, x, y, z ], where w is the real part and (x, y, z) form the vector part.
-void FacetedObject::SetDisplayRotationFromQuaternion(const dQuaternion q)
+// pgd::Quaternion q [ w, x, y, z ], where w is the real part and (x, y, z) form the vector part.
+void FacetedObject::SetDisplayRotationFromQuaternion(const pgd::Quaternion q)
 {
     dQtoR(q, m_displayRotation);
     m_modelValid = false;

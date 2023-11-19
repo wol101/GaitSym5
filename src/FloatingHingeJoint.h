@@ -22,9 +22,9 @@ public:
 
     void SetJointStops(double loStop, double hiStop);
 
-    void GetFloatingHingeAnchor(dVector3 result);
-    void GetFloatingHingeAnchor2(dVector3 result);
-    void GetFloatingHingeAxis(dVector3 result);
+    void GetFloatingHingeAnchor(pgd::Vector3 result);
+    void GetFloatingHingeAnchor2(pgd::Vector3 result);
+    void GetFloatingHingeAxis(pgd::Vector3 result);
 
     double GetFloatingHingeAngle();
     double GetFloatingHingeAngleRate();

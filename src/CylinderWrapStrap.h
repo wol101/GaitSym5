@@ -22,8 +22,8 @@ public:
     CylinderWrapStrap();
     virtual ~CylinderWrapStrap();
 
-//    void SetOrigin(Body *body, dVector3 point);
-//    void SetInsertion(Body *body, dVector3 point);
+//    void SetOrigin(Body *body, pgd::Vector3 point);
+//    void SetInsertion(Body *body, pgd::Vector3 point);
     void SetOrigin(Marker *originMarker);
     void SetInsertion(Marker *insertionMarker);
 
@@ -37,9 +37,9 @@ public:
 
     virtual void Calculate();
 
-//    void GetOrigin(const Body **body, dVector3 pos) const;
-//    void GetInsertion(const Body **body, dVector3 pos) const;
-//    void GetCylinder(const Body **body, dVector3 pos, double *radius, dQuaternion q) const;
+//    void GetOrigin(const Body **body, pgd::Vector3 pos) const;
+//    void GetInsertion(const Body **body, pgd::Vector3 pos) const;
+//    void GetCylinder(const Body **body, pgd::Vector3 pos, double *radius, pgd::Quaternion q) const;
 
     Marker *GetOriginMarker() const;
     Marker *GetInsertionMarker() const;

@@ -29,7 +29,7 @@ private:
 
     dJointID m_JointID = nullptr;
     dJointFeedback m_ContactJointFeedback = {};
-    dVector3 m_ContactPosition;
+    pgd::Vector3 m_ContactPosition;
 
 };
 

@@ -30,9 +30,9 @@ public:
     void SetStopSpringDamp(double springConstant, double dampingConstant, double integrationStep);
     void SetStopSpringERP(double springConstant, double ERP, double integrationStep);
 
-    void GetHingeAnchor(dVector3 result);
-    void GetHingeAnchor2(dVector3 result);
-    void GetHingeAxis(dVector3 result);
+    void GetHingeAnchor(pgd::Vector3 result);
+    void GetHingeAnchor2(pgd::Vector3 result);
+    void GetHingeAxis(pgd::Vector3 result);
 
     double GetHingeAngle();
     double GetHingeAngleRate();

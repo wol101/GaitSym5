@@ -21,8 +21,8 @@ class Marker;
 struct PointForce
 {
     Body *body;         // this is the body the force is applied to
-    dVector3 point;     // this is the position of action in world coordinates
-    dVector3 vector;    // this is the direction of action (magnitude acts as a scaling factor)
+    pgd::Vector3 point;     // this is the position of action in world coordinates
+    pgd::Vector3 vector;    // this is the direction of action (magnitude acts as a scaling factor)
 };
 
 class Strap: public NamedObject

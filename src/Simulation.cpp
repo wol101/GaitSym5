@@ -521,7 +521,7 @@ std::string *Simulation::ParseGlobal(const ParseXML::XMLElement *node)
 
 std::string *Simulation::ParseBody(const ParseXML::XMLElement *node)
 {
-    std::unique_ptr<Body> body = std::make_unique<Body>(m_WorldID);
+    std::unique_ptr<Body> body = std::make_unique<Body>(m_Physics);
     body->setSimulation(this);
     body->createAttributeMap(node->attributes);
     std::string *errorMessage = body->createFromAttributes();

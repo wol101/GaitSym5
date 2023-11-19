@@ -33,7 +33,7 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
     const double *r;
     Body *body;
     Geom *geom;
-    dQuaternion q;
+    pgd::Quaternion q;
     double angle = 0;
     if (valueListIndex >= m_QValueList.size())
     {
@@ -65,7 +65,7 @@ double DataTargetQuaternion::calculateError(double time)
     const double *r;
     Body *body;
     Geom *geom;
-    dQuaternion q;
+    pgd::Quaternion q;
     double angle = 0;
 
     size_t index, indexNext;
@@ -125,7 +125,7 @@ std::string DataTargetQuaternion::dumpToString()
     Geom *geom;
     const double *r;
     double angle = 0;
-    dQuaternion q = {0, 0, 0, 0};
+    pgd::Quaternion q = {0, 0, 0, 0};
 
     size_t valueListIndex = 0;
     auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());

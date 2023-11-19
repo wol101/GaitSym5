@@ -29,9 +29,9 @@ public:
     void SetStopSpringDamp(double springConstant, double dampingConstant, double integrationStep);
     void SetStopSpringERP(double springConstant, double ERP, double integrationStep);
 
-    void GetSliderAnchor(dVector3 result);
-    void GetSliderAnchor2(dVector3 result);
-    void GetSliderAxis(dVector3 result);
+    void GetSliderAnchor(pgd::Vector3 result);
+    void GetSliderAnchor2(pgd::Vector3 result);
+    void GetSliderAxis(pgd::Vector3 result);
 
     double GetSliderDistance();
     double GetSliderDistanceRate();

@@ -67,12 +67,12 @@ void BallJoint::SetBallAnchor(double x, double y, double z)
     dJointSetBallAnchor(JointID(), x, y, z);
 }
 
-void BallJoint::GetBallAnchor(dVector3 result)
+void BallJoint::GetBallAnchor(pgd::Vector3 result)
 {
     dJointGetBallAnchor(JointID(), result);
 }
 
-void BallJoint::GetBallAnchor2(dVector3 result)
+void BallJoint::GetBallAnchor2(pgd::Vector3 result)
 {
     dJointGetBallAnchor2(JointID(), result);
 }
@@ -99,7 +99,7 @@ void BallJoint::SetAxes(double x0, double y0, double z0, double x1, double y1, d
         dJointSetAMotorAxis(m_MotorJointID, 2, axisMode, x2, y2, z2);
     }
 
-//    dVector3 r;
+//    pgd::Vector3 r;
 
 //    if (m_Mode == dAMotorEuler)
 //    {
@@ -189,7 +189,7 @@ void BallJoint::SetStops(double a0Low, double a0High, double a1Low, double a1Hig
 //        else
 //        {
 //            // find orientation of Body 2 wrt Body 1
-//            dMatrix3 rotMat;
+//            pgd::Matrix3x3 rotMat;
 //            const double *R1 = dBodyGetRotation(body1);
 //            const double *R2 = dBodyGetRotation(body2);
 //            dMULTIPLY2_333(rotMat, R2, R1);
@@ -208,7 +208,7 @@ void BallJoint::SetStops(double a0Low, double a0High, double a1Low, double a1Hig
 // Get the Euler angle reference vectors
 // use with care - these values are not generally altered by the user
 // and are only used for state save and restore
-void BallJoint::GetEulerReferenceVectors(dVector3 reference1, dVector3 reference2)
+void BallJoint::GetEulerReferenceVectors(pgd::Vector3 reference1, pgd::Vector3 reference2)
 {
     dJointGetAMotorEulerReferenceVectors( m_MotorJointID , reference1 , reference2 );
 }
@@ -216,7 +216,7 @@ void BallJoint::GetEulerReferenceVectors(dVector3 reference1, dVector3 reference
 // Set the Euler angle reference vectors
 // use with care - these values are not generally altered by the user
 // and are only used for state save and restore
-void BallJoint::SetEulerReferenceVectors(dVector3 reference1, dVector3 reference2)
+void BallJoint::SetEulerReferenceVectors(pgd::Vector3 reference1, pgd::Vector3 reference2)
 {
     dJointSetAMotorEulerReferenceVectors( m_MotorJointID , reference1 , reference2 );
 }
@@ -354,7 +354,7 @@ std::string BallJoint::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\ttheta0\ttheta1\ttheta2\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\tMotorFX1\tMotorFY1\tMotorFZ1\tMotorTX1\tMotorTY1\tMotorTZ1\tMotorFX2\tMotorFY2\tMotorFZ2\tMotorTX2\tMotorTY2\tMotorTZ2\n";
     }
-    dVector3 p;
+    pgd::Vector3 p;
     GetBallAnchor(p);
     double theta0 = dJointGetAMotorAngle(m_MotorJointID, 0);
     double theta1 = dJointGetAMotorAngle(m_MotorJointID, 1);

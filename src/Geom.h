@@ -43,10 +43,10 @@ public:
 
     // return body local values
     const double *GetPosition();
-    void GetQuaternion(dQuaternion q);
+    void GetQuaternion(pgd::Quaternion q);
     // return world values
-    void GetWorldPosition(dVector3 p);
-    void GetWorldQuaternion(dQuaternion q);
+    void GetWorldPosition(pgd::Vector3 p);
+    void GetWorldQuaternion(pgd::Quaternion q);
 
 
     void SetGeomLocation(GeomLocation l) { m_GeomLocation = l; }

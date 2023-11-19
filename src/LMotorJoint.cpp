@@ -62,7 +62,7 @@ int LMotorJoint::GetNumAxes(void)
 
 pgd::Vector3 LMotorJoint::GetAxis(int anum)
 {
-    dVector3 result;
+    pgd::Vector3 result;
     dJointGetLMotorAxis(JointID(), anum, result);
     return pgd::Vector3(result);
 }

@@ -270,8 +270,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 
             // calculate the quaternion that rotates from cylinder coordinates to world coordinates
 //            const Body *body;
-//            dVector3 pos;
-//            dQuaternion qq;
+//            pgd::Vector3 pos;
+//            pgd::Quaternion qq;
 //            double radius;
 //            cylinderWrapStrap->GetCylinder(&body, pos, &radius, qq);
 //            const double *q = dBodyGetQuaternion(body->GetBodyID());
@@ -279,7 +279,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 //            pgd::Quaternion cylinderToWorldQuaternion =  qBody * pgd::Quaternion(qq[0], qq[1], qq[2], qq[3]);
 //            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderToWorldQuaternion, pgd::Vector3(0, 0, m_strapCylinderLength / 2));
 //            // calculate the cylinder world position
-//            dVector3 position;
+//            pgd::Vector3 position;
 //            dBodyGetRelPointPos(body->GetBodyID(), pos[0], pos[1], pos[2], position);
             pgd::Vector3 position = cylinderWrapStrap->GetCylinderMarker()->GetWorldPosition();
 //            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderWrapStrap->GetCylinderMarker()->GetWorldQuaternion(), pgd::Vector3(0, 0, m_strapCylinderLength / 2));

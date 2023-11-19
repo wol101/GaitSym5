@@ -42,7 +42,7 @@ void FloatingHingeJoint::SetFloatingHingeAxis(double x, double y, double z)
     dJointSetFloatingHingeAxis(JointID(), x, y, z);
 }
 
-void FloatingHingeJoint::GetFloatingHingeAxis(dVector3 result)
+void FloatingHingeJoint::GetFloatingHingeAxis(pgd::Vector3 result)
 {
     dJointGetFloatingHingeAxis(JointID(), result);
 }

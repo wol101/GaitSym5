@@ -69,7 +69,7 @@ void StrokeFont::AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, 
 {
     if (n_lines >= max_lines) return; // at some point I might want to dynamically increase max_lines
 
-    // matrix is an ODE style dMatrix3 so multiply first and then add the translation
+    // matrix is an ODE style pgd::Matrix3x3 so multiply first and then add the translation
     float mix1, miy1, miz1, mix2, miy2, miz2;
     if (matrix && translation)
     {
@@ -150,7 +150,7 @@ void StrokeFont::AddPoint(float ix1, float iy1, float iz1)
 
 void StrokeFont::AddPoint(float ix1, float iy1, float iz1, const float *matrix, const float *translation)
 {
-    // matrix is an ODE style dMatrix3 so multiply first and then add the translation
+    // matrix is an ODE style pgd::Matrix3x3 so multiply first and then add the translation
     float mix1, miy1, miz1;
     if (matrix && translation)
     {

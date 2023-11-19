@@ -53,8 +53,8 @@ double DataTargetScalar::calculateErrorScore(double value)
 {
     m_errorScore = 0;
     const double *r;
-    dVector3 result;
-    dQuaternion q;
+    pgd::Vector3 result;
+    pgd::Quaternion q;
     pgd::Quaternion pq;
     pgd::Vector3 pv;
     std::vector<Contact *> *contactList;

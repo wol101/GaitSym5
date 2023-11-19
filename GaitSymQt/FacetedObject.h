@@ -138,8 +138,8 @@ public:
 
     void SetDisplayPosition(double x, double y, double z);
     void SetDisplayScale(double x, double y, double z);
-    void SetDisplayRotation(const dMatrix3 R);
-    void SetDisplayRotationFromQuaternion(const dQuaternion q);
+    void SetDisplayRotation(const pgd::Matrix3x3 R);
+    void SetDisplayRotationFromQuaternion(const pgd::Quaternion q);
 
     bool visible() const;
     void setVisible(bool visible);
@@ -164,12 +164,12 @@ private:
     std::vector<double> m_uvList;
     bool m_useRelativeOBJ = false;
     bool m_badMesh = false;
-    dVector3 m_lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    dVector3 m_upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
+    pgd::Vector3 m_lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
+    pgd::Vector3 m_upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
 
-    dVector3 m_displayPosition = {0, 0, 0, 0};
-    dVector3 m_displayScale = {1, 1, 1, 0};
-    dMatrix3 m_displayRotation = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0};
+    pgd::Vector3 m_displayPosition = {0, 0, 0, 0};
+    pgd::Vector3 m_displayScale = {1, 1, 1, 0};
+    pgd::Matrix3x3 m_displayRotation = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0};
     bool m_visible = true;
     QMatrix4x4 m_model;
     bool m_modelValid = false;

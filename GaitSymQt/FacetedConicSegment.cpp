@@ -314,7 +314,7 @@ void FacetedConicSegment::WritePOVRay(std::ostringstream &theString)
     bool drawDisc = false;
     if (m_Length / ((m_R1 + m_R2) / 2) < 0.001) drawDisc = true;
 
-    dVector3 prel, p;
+    pgd::Vector3 prel, p;
     prel[0] = m_OX;
     prel[1] = m_OY;
     prel[2] = m_OZ;

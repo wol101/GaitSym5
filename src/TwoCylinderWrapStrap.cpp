@@ -28,7 +28,7 @@ TwoCylinderWrapStrap::~TwoCylinderWrapStrap()
 {
 }
 
-//void TwoCylinderWrapStrap::SetOrigin(Body *body, const dVector3 point)
+//void TwoCylinderWrapStrap::SetOrigin(Body *body, const pgd::Vector3 point)
 //{
 //    m_originBody = body;
 //    m_originPosition.x = point[0];
@@ -46,7 +46,7 @@ TwoCylinderWrapStrap::~TwoCylinderWrapStrap()
 //    }
 //}
 
-//void TwoCylinderWrapStrap::SetInsertion(Body *body, const dVector3 point)
+//void TwoCylinderWrapStrap::SetInsertion(Body *body, const pgd::Vector3 point)
 //{
 //    m_insertionBody = body;
 //    m_insertionPosition.x = point[0];
@@ -123,7 +123,7 @@ void TwoCylinderWrapStrap::SetCylinder1Radius(double radius)
 //    m_cylinder1Position.z = z;
 //}
 
-//void TwoCylinderWrapStrap::GetCylinder1(const Body **body, dVector3 position, double *radius, dQuaternion q) const
+//void TwoCylinderWrapStrap::GetCylinder1(const Body **body, pgd::Vector3 position, double *radius, pgd::Quaternion q) const
 //{
 //    *body = m_cylinder1Body;
 //    position[0] = m_cylinder1Position.x;
@@ -249,7 +249,7 @@ void TwoCylinderWrapStrap::SetNumWrapSegments(int numWrapSegments)
     m_pathCoordinates.reserve(size_t(m_numWrapSegments) * 2 + 6);
 }
 
-//void TwoCylinderWrapStrap::GetCylinder2(const Body **body, dVector3 position, double *radius, dQuaternion q) const
+//void TwoCylinderWrapStrap::GetCylinder2(const Body **body, pgd::Vector3 position, double *radius, pgd::Quaternion q) const
 //{
 //    *body = m_cylinder2Body;
 //    position[0] = m_cylinder2Position.x;
@@ -262,7 +262,7 @@ void TwoCylinderWrapStrap::SetNumWrapSegments(int numWrapSegments)
 //    q[3] = m_cylinderQuaternion.z;
 //}
 
-//void TwoCylinderWrapStrap::GetOrigin(const Body **body, dVector3 pos) const
+//void TwoCylinderWrapStrap::GetOrigin(const Body **body, pgd::Vector3 pos) const
 //{
 //    *body = m_originBody;
 //    pos[0] = m_originPosition.x;
@@ -270,7 +270,7 @@ void TwoCylinderWrapStrap::SetNumWrapSegments(int numWrapSegments)
 //    pos[2] = m_originPosition.z;
 //}
 
-//void TwoCylinderWrapStrap::GetInsertion(const Body **body, dVector3 pos) const
+//void TwoCylinderWrapStrap::GetInsertion(const Body **body, pgd::Vector3 pos) const
 //{
 //    *body = m_insertionBody;
 //    pos[0] = m_insertionPosition.x;

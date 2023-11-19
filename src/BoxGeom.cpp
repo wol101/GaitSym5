@@ -28,7 +28,7 @@ BoxGeom::BoxGeom(dSpaceID space, double lx, double ly, double lz)
 
 void BoxGeom::GetDimensions(double *lx, double *ly, double *lz)
 {
-    dVector3 result;
+    pgd::Vector3 result;
     dGeomBoxGetLengths(GetGeomID(), result);
     *lx = result[0];
     *ly = result[1];
@@ -56,7 +56,7 @@ void BoxGeom::appendToAttributes()
     Geom::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Box"s);
-    dVector3 result;
+    pgd::Vector3 result;
     dGeomBoxGetLengths(GetGeomID(), result);
     setAttribute("LengthX"s, *GSUtil::ToString(result[0], &buf));
     setAttribute("LengthY"s, *GSUtil::ToString(result[1], &buf));

@@ -62,7 +62,7 @@ void MeshStore::addMesh(const MeshStoreObject &meshStoreObject)
 }
 
 void MeshStore::addMesh(const std::string &path, const std::vector<double> &vertexList, const std::vector<double> &normalList,
-                        const std::vector<double> &colourList, const std::vector<double> &uvList, const dVector3 &lowerBound, const dVector3 &upperBound)
+                        const std::vector<double> &colourList, const std::vector<double> &uvList, const pgd::Vector3 &lowerBound, const pgd::Vector3 &upperBound)
 {
     if ((vertexList.size() * sizeof(double) +
          normalList.size() * sizeof(double) +

@@ -210,37 +210,37 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
 
     bodyPtr->SetMass(&mass);
     bodyPtr->SetConstructionDensity(ui->lineEditDensity->value());
-    dVector3 constructionPosition;
+    pgd::Vector3 constructionPosition;
     constructionPosition[0] = ui->lineEditX->value();
     constructionPosition[1] = ui->lineEditY->value();
     constructionPosition[2] = ui->lineEditZ->value();
     bodyPtr->SetConstructionPosition(constructionPosition[0], constructionPosition[1], constructionPosition[2]);
-    dVector3 positionHighBound;
+    pgd::Vector3 positionHighBound;
     positionHighBound[0] = ui->lineEditHighX->value();
     positionHighBound[1] = ui->lineEditHighY->value();
     positionHighBound[2] = ui->lineEditHighZ->value();
     bodyPtr->SetPositionHighBound(positionHighBound[0], positionHighBound[1], positionHighBound[2]);
-    dVector3 positionLowBound;
+    pgd::Vector3 positionLowBound;
     positionLowBound[0] = ui->lineEditLowX->value();
     positionLowBound[1] = ui->lineEditLowY->value();
     positionLowBound[2] = ui->lineEditLowZ->value();
     bodyPtr->SetPositionLowBound(positionLowBound[0], positionLowBound[1], positionLowBound[2]);
-    dVector3 linearVelocityHighBound;
+    pgd::Vector3 linearVelocityHighBound;
     linearVelocityHighBound[0] = ui->lineEditHighVX->value();
     linearVelocityHighBound[1] = ui->lineEditHighVY->value();
     linearVelocityHighBound[2] = ui->lineEditHighVZ->value();
     bodyPtr->SetLinearVelocityHighBound(linearVelocityHighBound[0], linearVelocityHighBound[1], linearVelocityHighBound[2]);
-    dVector3 linearVelocityLowBound;
+    pgd::Vector3 linearVelocityLowBound;
     linearVelocityLowBound[0] = ui->lineEditLowVX->value();
     linearVelocityLowBound[1] = ui->lineEditLowVY->value();
     linearVelocityLowBound[2] = ui->lineEditLowVZ->value();
     bodyPtr->SetLinearVelocityLowBound(linearVelocityLowBound[0], linearVelocityLowBound[1], linearVelocityLowBound[2]);
-    dVector3 angularVelocityHighBound;
+    pgd::Vector3 angularVelocityHighBound;
     angularVelocityHighBound[0] = ui->lineEditHighAVX->value();
     angularVelocityHighBound[1] = ui->lineEditHighAVY->value();
     angularVelocityHighBound[2] = ui->lineEditHighAVZ->value();
     bodyPtr->SetAngularVelocityHighBound(angularVelocityHighBound[0], angularVelocityHighBound[1], angularVelocityHighBound[2]);
-    dVector3 angularVelocityLowBound;
+    pgd::Vector3 angularVelocityLowBound;
     angularVelocityLowBound[0] = ui->lineEditLowAVX->value();
     angularVelocityLowBound[1] = ui->lineEditLowAVY->value();
     angularVelocityLowBound[2] = ui->lineEditLowAVZ->value();
@@ -249,7 +249,7 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     // and because we are in construction mode we set the position to the construction position/quaternion
     // and the initial position to the desired position/quaternion
     bodyPtr->SetPosition(constructionPosition[0], constructionPosition[1], constructionPosition[2]);
-    dVector3 initialPosition;
+    pgd::Vector3 initialPosition;
     initialPosition[0] = ui->lineEditRunX->value();
     initialPosition[1] = ui->lineEditRunY->value();
     initialPosition[2] = ui->lineEditRunZ->value();
@@ -260,12 +260,12 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     pgd::Quaternion q = pgd::MakeQFromEulerAngles(ex, ey, ez);
     bodyPtr->SetInitialQuaternion(q.n, q.x, q.y, q.z);
     // but the velocities can just be set
-    dVector3 linearVelocity;
+    pgd::Vector3 linearVelocity;
     linearVelocity[0] = ui->lineEditVX->value();
     linearVelocity[1] = ui->lineEditVY->value();
     linearVelocity[2] = ui->lineEditVZ->value();
     bodyPtr->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
-    dVector3 angularVelocity;
+    pgd::Vector3 angularVelocity;
     angularVelocity[0] = ui->lineEditAVX->value();
     angularVelocity[1] = ui->lineEditAVY->value();
     angularVelocity[2] = ui->lineEditAVZ->value();

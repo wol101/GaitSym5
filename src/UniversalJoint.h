@@ -39,10 +39,10 @@ public:
     void SetStopSpringDamp2(double springConstant, double dampingConstant, double integrationStep);
     void SetStopSpringERP2(double springConstant, double ERP, double integrationStep);
 
-    void GetUniversalAnchor(dVector3 result);
-    void GetUniversalAnchor2(dVector3 result);
-    void GetUniversalAxis1(dVector3 result);
-    void GetUniversalAxis2(dVector3 result);
+    void GetUniversalAnchor(pgd::Vector3 result);
+    void GetUniversalAnchor2(pgd::Vector3 result);
+    void GetUniversalAxis1(pgd::Vector3 result);
+    void GetUniversalAxis2(pgd::Vector3 result);
 
     double GetUniversalAngle1();
     double GetUniversalAngle1Rate();

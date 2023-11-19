@@ -28,7 +28,7 @@ CylinderWrapStrap::~CylinderWrapStrap()
 {
 }
 
-//void CylinderWrapStrap::SetOrigin(Body *body, dVector3 point)
+//void CylinderWrapStrap::SetOrigin(Body *body, pgd::Vector3 point)
 //{
 //    m_originBody = body;
 //    m_originPosition.x = point[0];
@@ -46,7 +46,7 @@ CylinderWrapStrap::~CylinderWrapStrap()
 //    }
 //}
 
-//void CylinderWrapStrap::SetInsertion(Body *body, dVector3 point)
+//void CylinderWrapStrap::SetInsertion(Body *body, pgd::Vector3 point)
 //{
 //    m_insertionBody = body;
 //    m_insertionPosition.x = point[0];
@@ -118,7 +118,7 @@ void CylinderWrapStrap::SetInsertion(Marker *insertionMarker)
 //    m_cylinderPosition.z = z;
 //}
 
-//void CylinderWrapStrap::GetOrigin(const Body **body, dVector3 pos) const
+//void CylinderWrapStrap::GetOrigin(const Body **body, pgd::Vector3 pos) const
 //{
 //    *body = m_originBody;
 //    pos[0] = m_originPosition.x;
@@ -126,7 +126,7 @@ void CylinderWrapStrap::SetInsertion(Marker *insertionMarker)
 //    pos[2] = m_originPosition.z;
 //}
 
-//void CylinderWrapStrap::GetInsertion(const Body **body, dVector3 pos) const
+//void CylinderWrapStrap::GetInsertion(const Body **body, pgd::Vector3 pos) const
 //{
 //    *body = m_insertionBody;
 //    pos[0] = m_insertionPosition.x;
@@ -134,7 +134,7 @@ void CylinderWrapStrap::SetInsertion(Marker *insertionMarker)
 //    pos[2] = m_insertionPosition.z;
 //}
 
-//void CylinderWrapStrap::GetCylinder(const Body **body, dVector3 position, double *radius, dQuaternion q) const
+//void CylinderWrapStrap::GetCylinder(const Body **body, pgd::Vector3 position, double *radius, pgd::Quaternion q) const
 //{
 //    *body = m_cylinderBody;
 //    position[0] = m_cylinderPosition.x;

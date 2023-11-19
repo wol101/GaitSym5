@@ -31,13 +31,13 @@ SliderJoint::~SliderJoint()
 
 void SliderJoint::SetSliderAxis(double x, double y, double z)
 {
-    dVector3 v;
+    pgd::Vector3 v;
     v[0] = x; v[1] = y; v[2] = z;
     dNormalize3(v);
     dJointSetSliderAxis(JointID(), v[0], v[1], v[2]);
 }
 
-void SliderJoint::GetSliderAxis(dVector3 result)
+void SliderJoint::GetSliderAxis(pgd::Vector3 result)
 {
     dJointGetSliderAxis(JointID(), result);
 }
@@ -118,7 +118,7 @@ std::string SliderJoint::dumpToString()
         setFirstDump(false);
         ss << "Time\tXA\tYA\tZA\tDistance\tDistanceRate\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\n";
     }
-    dVector3 a;
+    pgd::Vector3 a;
     GetSliderAxis(a);
 
     ss << simulation()->GetTime() << "\t" <<

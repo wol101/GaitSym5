@@ -30,7 +30,7 @@ NPointStrap::NPointStrap(): Strap()
 {
 }
 
-//void NPointStrap::SetOrigin(Body *body, const dVector3 point)
+//void NPointStrap::SetOrigin(Body *body, const pgd::Vector3 point)
 //{
 //    m_originBody = body;
 //    m_origin[0] = point[0];
@@ -48,7 +48,7 @@ NPointStrap::NPointStrap(): Strap()
 //    }
 //}
 
-//void NPointStrap::SetInsertion(Body *body, const dVector3 point)
+//void NPointStrap::SetInsertion(Body *body, const pgd::Vector3 point)
 //{
 //    m_insertionBody = body;
 //    m_insertion[0] = point[0];
@@ -66,7 +66,7 @@ NPointStrap::NPointStrap(): Strap()
 //    }
 //}
 
-//void NPointStrap::GetOrigin(const Body **body, dVector3 origin) const
+//void NPointStrap::GetOrigin(const Body **body, pgd::Vector3 origin) const
 //{
 //    *body = m_originBody;
 //    origin[0] = m_origin[0];
@@ -74,7 +74,7 @@ NPointStrap::NPointStrap(): Strap()
 //    origin[2] = m_origin[2];
 //}
 
-//void NPointStrap::GetInsertion(const Body **body, dVector3 insertion) const
+//void NPointStrap::GetInsertion(const Body **body, pgd::Vector3 insertion) const
 //{
 //    *body = m_insertionBody;
 //    insertion[0] = m_insertion[0];

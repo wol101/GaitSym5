@@ -48,7 +48,7 @@ void FixedJoint::CalculateStress()
     // first we need to move it to the joint position
 
     // calculate the offset of the stress position from the CM
-    dVector3 result;
+    pgd::Vector3 result;
     dBodyVectorToWorld (this->GetBody1()->GetBodyID(), m_StressOrigin.x, m_StressOrigin.y, m_StressOrigin.z, result);
     pgd::Vector3 worldStressOffset(result[0], result[1], result[2]);
 
@@ -622,7 +622,7 @@ std::string FixedJoint::dumpToString()
     {
         if (m_stressCalculationType == beam)
         {
-            dVector3 r;
+            pgd::Vector3 r;
             if (this->GetBody1()) dBodyGetRelPointPos (this->GetBody1()->GetBodyID(), m_StressOrigin.x, m_StressOrigin.y, m_StressOrigin.z, r);
             else dBodyGetRelPointPos (this->GetBody2()->GetBodyID(), m_StressOrigin.x, m_StressOrigin.y, m_StressOrigin.z, r);
             ss << simulation()->GetTime() << "\t" << r[0] << "\t" << r[1] << "\t" << r[2] << "\t" <<
@@ -635,7 +635,7 @@ std::string FixedJoint::dumpToString()
         }
         else if (m_stressCalculationType == spring)
         {
-            dVector3 r;
+            pgd::Vector3 r;
             if (this->GetBody1()) dBodyGetRelPointPos (this->GetBody1()->GetBodyID(), m_StressOrigin.x, m_StressOrigin.y, m_StressOrigin.z, r);
             else dBodyGetRelPointPos (this->GetBody2()->GetBodyID(), m_StressOrigin.x, m_StressOrigin.y, m_StressOrigin.z, r);
             ss << simulation()->GetTime() << "\t" << r[0] << "\t" << r[1] << "\t" << r[2] << "\t" <<

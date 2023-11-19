@@ -22,16 +22,16 @@ public:
 
     NPointStrap();
 
-//    void SetOrigin(Body *body, const dVector3 point);
-//    void SetInsertion(Body *body, const dVector3 point);
+//    void SetOrigin(Body *body, const pgd::Vector3 point);
+//    void SetInsertion(Body *body, const pgd::Vector3 point);
     void SetOrigin(Marker *originMarker);
     void SetInsertion(Marker *insertionMarker);
 
 //    void SetViaPoints(std::vector<Body *> *bodyList, std::vector<pgd::Vector3> *pointList);
     void SetViaPoints(std::vector<Marker *> *viaPointMarkerList);
 
-//    void GetOrigin(const Body **body, dVector3 origin) const;
-//    void GetInsertion(const Body **body, dVector3 insertion) const;
+//    void GetOrigin(const Body **body, pgd::Vector3 origin) const;
+//    void GetInsertion(const Body **body, pgd::Vector3 insertion) const;
 
     const std::vector<pgd::Vector3> *GetViaPoints() const;
     const std::vector<Body *> *GetViaPointBodies() const;
@@ -51,9 +51,9 @@ public:
 private:
 
 //    Body *m_originBody = nullptr;
-//    dVector3 m_origin;
+//    pgd::Vector3 m_origin;
 //    Body *m_insertionBody = nullptr;
-//    dVector3 m_insertion;
+//    pgd::Vector3 m_insertion;
 
     Marker *m_originMarker = nullptr;
     Marker *m_insertionMarker = nullptr;

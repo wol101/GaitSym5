@@ -66,7 +66,7 @@ const double *Geom::GetPosition()
         return dGeomGetPosition(GetGeomID());
 }
 
-void Geom::GetWorldPosition(dVector3 p)
+void Geom::GetWorldPosition(pgd::Vector3 p)
 {
     if (GetBody())
     {
@@ -84,7 +84,7 @@ void Geom::GetWorldPosition(dVector3 p)
 
 void Geom::SetQuaternion(double q0, double q1, double q2, double q3)
 {
-    dQuaternion q;
+    pgd::Quaternion q;
     q[0] = q0; q[1] = q1; q[2] = q2; q[3] = q3;
     if (GetBody())
         dGeomSetOffsetQuaternion(GetGeomID(), q);
@@ -114,7 +114,7 @@ void Geom::setGeomMarker(Marker *geomMarker)
     this->SetQuaternion(q.n, q.x, q.y, q.z);
 }
 
-void Geom::GetQuaternion(dQuaternion q)
+void Geom::GetQuaternion(pgd::Quaternion q)
 {
     if (GetBody())
         dGeomGetOffsetQuaternion(GetGeomID(), q);
@@ -122,12 +122,12 @@ void Geom::GetQuaternion(dQuaternion q)
         dGeomGetQuaternion(GetGeomID(), q);
 }
 
-void Geom::GetWorldQuaternion(dQuaternion q)
+void Geom::GetWorldQuaternion(pgd::Quaternion q)
 {
     if (GetBody())
     {
         const double *bodyRotation = dBodyGetQuaternion(dGeomGetBody(GetGeomID()));
-        dQuaternion relRotation;
+        pgd::Quaternion relRotation;
         dGeomGetOffsetQuaternion(GetGeomID(), relRotation);
         //combine the body rotation with the cylinder rotation to get combined rotation from world coordinates
         dQMultiply0 (q, bodyRotation, relRotation);
@@ -196,14 +196,14 @@ std::string Geom::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\tQW\tQX\tQY\tQZ\tNContacts\tBody1\tBody2\tXC\tYC\tZC\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\n";
     }
-    dQuaternion bodyRotation;
+    pgd::Quaternion bodyRotation;
     dGeomGetQuaternion(GetGeomID(), bodyRotation);
     const double *relPosition = dGeomGetOffsetPosition(GetGeomID());
-    dQuaternion relRotation;
+    pgd::Quaternion relRotation;
     dGeomGetOffsetQuaternion(GetGeomID(), relRotation);
 
-    dVector3 p;
-    dQuaternion q;
+    pgd::Vector3 p;
+    pgd::Quaternion q;
 
     // get the position in world coordinates
     dBodyGetRelPointPos(dGeomGetBody(GetGeomID()), relPosition[0], relPosition[1], relPosition[2], p);

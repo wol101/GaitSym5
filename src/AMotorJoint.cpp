@@ -395,7 +395,7 @@ std::string AMotorJoint::dumpToString()
     pgd::MakeAxisAngleFromQ(m_lastToCurrent, &lastToCurrentAxis.x, &lastToCurrentAxis.y, &lastToCurrentAxis.z, &deltaAngle);
     double angularVelocity = deltaAngle / simulation()->GetTimeIncrement(); // note this value will not necessarily have the correct sign
 
-    dVector3 axis;
+    pgd::Vector3 axis;
     dJointGetAMotorAxis(JointID(), 0, axis); // get the world axis orientation
     double targetVelocity = dJointGetAMotorParam(JointID(), dParamVel1);
     double axisTorque = dDOT(axis, JointFeedback()->t1);

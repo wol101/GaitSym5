@@ -56,7 +56,7 @@ std::string TorqueReporter::dumpToString()
     pgd::Vector3 torque, point, force, centre;
     double *forcePoint, *forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-    dVector3 result;
+    pgd::Vector3 result;
     dBodyGetRelPointPos(mBody->GetBodyID(), mPivotPoint.x, mPivotPoint.y, mPivotPoint.z, result); // needs to be in world coordinates
     centre = pgd::Vector3(result[0], result[1], result[2]);
 
@@ -97,7 +97,7 @@ std::string TorqueReporter::dumpToString()
     }
 
     // convert to body local coordinates
-    dVector3 bodyTorque, bodyMomentArm;
+    pgd::Vector3 bodyTorque, bodyMomentArm;
     dBodyVectorFromWorld (mBody->GetBodyID(), totalTorque.x, totalTorque.y, totalTorque.z, bodyTorque);
     dBodyVectorFromWorld (mBody->GetBodyID(), momentArm.x, momentArm.y, momentArm.z, bodyMomentArm);
 
@@ -122,11 +122,11 @@ void TorqueReporter::CalculateRotationFromAxis(double x, double y, double z, pgd
 {
     // calculate the rotation needed to get the axis pointing the right way
     // axis is assumed to already be normalised
-    dVector3 axis;
+    pgd::Vector3 axis;
     axis[0] = x;
     axis[1] = y;
     axis[2] = z;
-    dVector3 p, q;
+    pgd::Vector3 p, q;
     // calculate 2 perpendicular vectors
     dPlaneSpace(axis, p, q);
     // assemble the matrix

@@ -159,7 +159,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
     pgd::Vector3 torque, point, force, centre;
     double *forcePoint, *forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-//    dVector3 result;
+//    pgd::Vector3 result;
 //    dBodyGetRelPointPos(mBody->GetBodyID(), mPivotPoint.x, mPivotPoint.y, mPivotPoint.z, result); // needs to be in world coordinates
 //    centre = pgd::Vector3(result[0], result[1], result[2]);
     centre = marker.GetWorldPosition();
@@ -201,7 +201,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
     }
 
 //    // convert to body local coordinates
-//    dVector3 bodyTorque, bodyMomentArm;
+//    pgd::Vector3 bodyTorque, bodyMomentArm;
 //    dBodyVectorFromWorld (mBody->GetBodyID(), totalTorque.x, totalTorque.y, totalTorque.z, bodyTorque);
 //    dBodyVectorFromWorld (mBody->GetBodyID(), momentArm.x, momentArm.y, momentArm.z, bodyMomentArm);
 

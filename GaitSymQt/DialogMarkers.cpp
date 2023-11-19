@@ -94,7 +94,7 @@ void DialogMarkers::accept() // this catches OK and return/enter
     {
         markerPtr->SetBody(m_simulation->GetBodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
 
-        dVector3 pos, result;
+        pgd::Vector3 pos, result;
         pos[0] = ui->lineEditPositionX->value();
         pos[1] = ui->lineEditPositionY->value();
         pos[2] = ui->lineEditPositionZ->value();
@@ -112,7 +112,7 @@ void DialogMarkers::accept() // this catches OK and return/enter
     }
     else     // world marker
     {
-        dVector3 pos;
+        pgd::Vector3 pos;
         pos[0] = ui->lineEditPositionX->value();
         pos[1] = ui->lineEditPositionY->value();
         pos[2] = ui->lineEditPositionZ->value();

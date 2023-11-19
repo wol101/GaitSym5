@@ -42,7 +42,7 @@ double DataTargetVector::calculateError(size_t valueListIndex)
     UniversalJoint *universalJoint;
     Marker *marker;
     double err = 0;
-    dVector3 v;
+    pgd::Vector3 v;
     if (valueListIndex >= m_VValueList.size())
     {
         std::cerr << "Warning: DataTargetVector::GetMatchValue valueListIndex out of range\n";
@@ -98,7 +98,7 @@ double DataTargetVector::calculateError(double time)
     UniversalJoint *universalJoint;
     Marker *marker;
     double err = 0;
-    dVector3 v;
+    pgd::Vector3 v;
 
     size_t index, indexNext;
     auto lowerBound = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), time);
@@ -179,7 +179,7 @@ std::string DataTargetVector::dumpToString()
     Marker *marker;
     const double *r = nullptr;
     double err = 0;
-    dVector3 v;
+    pgd::Vector3 v;
 
     size_t valueListIndex = 0;
     auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());

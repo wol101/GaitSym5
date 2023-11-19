@@ -35,7 +35,7 @@ void UniversalJoint::SetUniversalAnchor(double x, double y, double z)
 
 void UniversalJoint::SetUniversalAxis1(double x, double y, double z)
 {
-    dVector3 v;
+    pgd::Vector3 v;
     v[0] = x; v[1] = y; v[2] = z;
     dNormalize3(v);
     dJointSetUniversalAxis1 (JointID(), v[0], v[1], v[2]);
@@ -43,7 +43,7 @@ void UniversalJoint::SetUniversalAxis1(double x, double y, double z)
 
 void UniversalJoint::SetUniversalAxis2(double x, double y, double z)
 {
-    dVector3 v;
+    pgd::Vector3 v;
     v[0] = x; v[1] = y; v[2] = z;
     dNormalize3(v);
     dJointSetUniversalAxis2 (JointID(), v[0], v[1], v[2]);
@@ -159,22 +159,22 @@ void UniversalJoint::SetJointStops2(double loStop, double hiStop)
     dJointSetUniversalParam(JointID(), dParamHiStop2, hiStop);
 }
 
-void UniversalJoint::GetUniversalAnchor(dVector3 result)
+void UniversalJoint::GetUniversalAnchor(pgd::Vector3 result)
 {
     dJointGetUniversalAnchor (JointID(), result);
 }
 
-void UniversalJoint::GetUniversalAnchor2(dVector3 result)
+void UniversalJoint::GetUniversalAnchor2(pgd::Vector3 result)
 {
     dJointGetUniversalAnchor2 (JointID(), result);
 }
 
-void UniversalJoint::GetUniversalAxis1(dVector3 result)
+void UniversalJoint::GetUniversalAxis1(pgd::Vector3 result)
 {
     dJointGetUniversalAxis1 (JointID(), result);
 }
 
-void UniversalJoint::GetUniversalAxis2(dVector3 result)
+void UniversalJoint::GetUniversalAxis2(pgd::Vector3 result)
 {
     dJointGetUniversalAxis2 (JointID(), result);
 }
@@ -281,7 +281,7 @@ std::string UniversalJoint::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\tXA1\tYA1\tZA1\tAngle1\tAngleRate1\tXA2\tYA2\tZA2\tAngle2\tAngleRate2\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\n";
     }
-    dVector3 p, a1, a2;
+    pgd::Vector3 p, a1, a2;
     GetUniversalAnchor(p);
     GetUniversalAxis1(a1);
     GetUniversalAxis2(a2);

@@ -49,12 +49,12 @@ void Drawable::SetDisplayScale(double x, double y, double z)
     for (auto &&iter : m_facetedObjectList) iter->SetDisplayScale(x, y, z);
 }
 
-void Drawable::SetDisplayRotation(const dMatrix3 R)
+void Drawable::SetDisplayRotation(const pgd::Matrix3x3 R)
 {
     for (auto &&iter : m_facetedObjectList) iter->SetDisplayRotation(R);
 }
 
-void Drawable::SetDisplayRotationFromQuaternion(const dQuaternion q)
+void Drawable::SetDisplayRotationFromQuaternion(const pgd::Quaternion q)
 {
     for (auto &&iter : m_facetedObjectList) iter->SetDisplayRotationFromQuaternion(q);
 }

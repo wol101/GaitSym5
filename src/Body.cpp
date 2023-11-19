@@ -32,19 +32,23 @@ using namespace std::string_literals;
 #define OUTSIDERANGE(x, minX, maxX) \
         ((x) < (minX) || (x) > (maxX))
 
-Body::Body(dWorldID worldID)
+Body::Body(physx::PxPhysics *physics)
 {
-    m_worldID = worldID;
-    if (m_worldID)
+    m_physics = physics;
+    if (m_physics)
     {
-        m_bodyID = dBodyCreate(worldID);
-        dBodySetData(m_bodyID, this);
+        physx::PxTransform localTm;
+        m_rigidBody = m_physics->createRigidDynamic(localTm);
     }
 }
 
 Body::~Body()
 {
-    if (m_bodyID) dBodyDestroy(m_bodyID);
+    if (m_rigidBody)
+    {
+        m_rigidBody->release();
+        m_rigidBody = nullptr;
+    }
 }
 
 void Body::SetPosition(double x, double y, double z)
@@ -139,7 +143,7 @@ std::string *Body::SetPosition(const std::string &buf)
         }
         else
         {
-            dVector3 result;
+            pgd::Vector3 result;
             dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
             this->SetPosition(result[0], result[1], result[2]);
             return nullptr;
@@ -154,7 +158,7 @@ std::string *Body::SetPosition(const std::string &buf)
             return lastErrorPtr();
         }
         // get world coordinates of x1,y1,z1
-        dVector3 world1, world2, pos;
+        pgd::Vector3 world1, world2, pos;
         dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), world1);
         dBodyGetRelPointPos (m_bodyID, GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]), world2);
         // add the error to the current position
@@ -266,7 +270,7 @@ std::string *Body::SetLinearVelocity(const std::string &buf)
         }
         else
         {
-            dVector3 result;
+            pgd::Vector3 result;
             dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
             const double *vRel = dBodyGetLinearVel(theBody->GetBodyID());
             SetLinearVelocity(result[0] + vRel[0], result[1] + vRel[1], result[2] + vRel[2]);
@@ -291,8 +295,8 @@ void Body::SetPositionDelta(double x, double y, double z)
 
 void Body::SetQuaternionDelta(double n, double x, double y, double z)
 {
-    dQuaternion qb = {n, x, y, z};
-    dQuaternion qa;
+    pgd::Quaternion qb = {n, x, y, z};
+    pgd::Quaternion qa;
     dQMultiply0(qa, qb, m_currentQuaternion);
     m_currentQuaternion[0] = qa[0];
     m_currentQuaternion[1] = qa[1];
@@ -318,7 +322,7 @@ double Body::GetLinearKineticEnergy()
     return linearKE;
 }
 
-void Body::GetLinearKineticEnergy(dVector3 ke)
+void Body::GetLinearKineticEnergy(pgd::Vector3 ke)
 {
     // linear KE = 0.5 m v^2
     dMass mass;
@@ -342,9 +346,9 @@ double Body::GetRotationalKineticEnergy()
     dBodyGetMass(m_bodyID, &mass);
 
     const double *ow = dBodyGetAngularVel(m_bodyID);
-    dVector3 o;
+    pgd::Vector3 o;
     dBodyVectorFromWorld (m_bodyID, ow[0], ow[1], ow[2], o);
-    dVector3 o1;
+    pgd::Vector3 o1;
     dMultiply0_331(o1, mass.I, o);
     double rotationalKE = 0.5 * (o[0]*o1[0] + o[1]*o1[1] + o[2]*o1[2]);
 
@@ -355,7 +359,7 @@ double Body::GetGravitationalPotentialEnergy()
 {
     dMass mass;
     dBodyGetMass(m_bodyID, &mass);
-    dVector3 g;
+    pgd::Vector3 g;
     dWorldGetGravity (m_worldID, g);
     const double *p = dBodyGetPosition(m_bodyID);
 
@@ -402,7 +406,7 @@ std::string *Body::SetAngularVelocity(const std::string &buf)
         }
         else
         {
-            dVector3 result;
+            pgd::Vector3 result;
             dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
             const double *vARel = dBodyGetAngularVel(theBody->GetBodyID());
             SetAngularVelocity(result[0] + vARel[0], result[1] + vARel[1], result[2] + vARel[2]);
@@ -464,7 +468,7 @@ void Body::GetQuaternion(pgd::Quaternion *quat)
 
 void Body::GetRelativePosition(Body *rel, pgd::Vector3 *pos)
 {
-    dVector3 result;
+    pgd::Vector3 result;
     const double *p = GetPosition();
     if (rel)
     {
@@ -615,7 +619,7 @@ std::string Body::dumpToString()
     const double *v = GetLinearVelocity();
     const double *q = GetQuaternion();
     const double *rv = GetAngularVelocity();
-    dVector3 ke;
+    pgd::Vector3 ke;
     GetLinearKineticEnergy(ke);
 
     ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
@@ -799,7 +803,7 @@ std::string Body::MassCheck(const dMass *m)
     // is positive definite, given that I is PD and mass>0. see the theorem
     // about partitioned PD matrices for proof.
 
-    dMatrix3 I2,chat;
+    pgd::Matrix3x3 I2,chat;
     dSetZero (chat,12);
     dSetCrossMatrixPlus (chat,m->c,4);
     dMultiply0_333 (I2,chat,chat);

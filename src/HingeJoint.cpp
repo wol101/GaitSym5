@@ -37,23 +37,23 @@ void HingeJoint::SetHingeAnchor (double x, double y, double z)
 
 void HingeJoint::SetHingeAxis(double x, double y, double z)
 {
-    dVector3 v;
+    pgd::Vector3 v;
     v[0] = x; v[1] = y; v[2] = z;
     dNormalize3(v);
     dJointSetHingeAxis(JointID(), v[0], v[1], v[2]);
 }
 
-void HingeJoint::GetHingeAnchor(dVector3 result)
+void HingeJoint::GetHingeAnchor(pgd::Vector3 result)
 {
     dJointGetHingeAnchor(JointID(), result);
 }
 
-void HingeJoint::GetHingeAnchor2(dVector3 result)
+void HingeJoint::GetHingeAnchor2(pgd::Vector3 result)
 {
     dJointGetHingeAnchor2(JointID(), result);
 }
 
-void HingeJoint::GetHingeAxis(dVector3 result)
+void HingeJoint::GetHingeAxis(pgd::Vector3 result)
 {
     dJointGetHingeAxis(JointID(), result);
 }
@@ -141,7 +141,7 @@ void HingeJoint::CalculateStopTorque()
     // first we need to move it to the joint position
 
     // calculate the offset of the joint anchor from the CM
-    dVector3 jointAnchor;
+    pgd::Vector3 jointAnchor;
     dJointGetHingeAnchor(JointID(), jointAnchor);
     dBodyID bodyID = dJointGetBody(JointID(), 0);
     pgd::Vector3 worldForceOffset;
@@ -173,7 +173,7 @@ void HingeJoint::CalculateStopTorque()
     pgd::Vector3 torqueAxis = torqueJointAnchor / torqueScalar;
 
     // so the torque around the hinge axis should be: torqueScalar * (hingeAxis .dot. torqueAxis)
-    dVector3 result;
+    pgd::Vector3 result;
     dJointGetHingeAxis(JointID(), result);
     pgd::Vector3 hingeAxis(result[0], result[1], result[2]);
     m_axisTorque = torqueScalar * (hingeAxis * torqueAxis);
@@ -323,7 +323,7 @@ std::string HingeJoint::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\tXP2\tYP2\tZP2\tXA\tYA\tZA\tAngle\tAngleRate\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\tStopTorque\n";
     }
-    dVector3 p, p2, a;
+    pgd::Vector3 p, p2, a;
     GetHingeAnchor(p);
     GetHingeAnchor2(p2);
     GetHingeAxis(a);
