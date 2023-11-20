@@ -15,8 +15,6 @@
 #include "GSUtil.h"
 #include "Marker.h"
 
-#include "ode/ode.h"
-
 #include "pystring.h"
 
 #include <iostream>
@@ -25,7 +23,6 @@
 #include <cmath>
 #include <algorithm>
 #include <sstream>
-#include <assert.h>
 
 using namespace std::string_literals;
 
@@ -35,10 +32,13 @@ using namespace std::string_literals;
 Body::Body(physx::PxPhysics *physics)
 {
     m_physics = physics;
-    if (m_physics)
+    physx::PxScene *scenes[1];
+    m_physics->getScenes(scenes, 1, 0);
+    if (m_physics && scenes[0])
     {
         physx::PxTransform localTm;
         m_rigidBody = m_physics->createRigidDynamic(localTm);
+        scenes[0]->addActor(m_rigidBody);
     }
 }
 
@@ -53,10 +53,13 @@ Body::~Body()
 
 void Body::SetPosition(double x, double y, double z)
 {
-    m_currentPosition[0] = x;
-    m_currentPosition[1] = y;
-    m_currentPosition[2] = z;
-    if (m_bodyID) dBodySetPosition(m_bodyID, x, y, z);
+    m_currentPosition.set(x, y, z);
+    physx::PxTransform destination;
+    m_rigidBody->getKinematicTarget(destination);
+    destination.p.x = x;
+    destination.p.y = y;
+    destination.p.z = z;
+    m_rigidBody->setKinematicTarget(destination);
 }
 
 void Body::SetQuaternion(double n, double x, double y, double z)
