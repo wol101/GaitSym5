@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\test\xml\xml_native_reader_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\test\xml\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6A832C97-6E69-3D7B-8211-44321460135C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

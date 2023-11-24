@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\CMakeFiles\56c9fc5d65e121d45bbe3094cd6b0df7\NightlyMemoryCheck.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\tinyxml2-src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\tinyxml2-build\CMakeFiles\NightlyMemoryCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6CEA4723-C6C3-3CBA-99EB-C7D824FAE355}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

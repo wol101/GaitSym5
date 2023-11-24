@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\Coordinates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\PointCoordinates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\Qhull.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullFacet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullFacetList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullFacetSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullHyperplane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullPointSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullQh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullRidge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullStat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullUser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullVertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullVertexSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\RboxPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\RoadError.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\RoadLogEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\Coordinates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\functionObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\PointCoordinates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\Qhull.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullFacet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullFacetList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullFacetSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullHyperplane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullLinkedList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullPointSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullQh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullRidge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullSets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullStat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\QhullVertexSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\RboxPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\RoadError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\libqhullcpp\RoadLogEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\src\qhulltest\RoadTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3BBE74B5-9557-3C30-A656-A8BE560D30F4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6A832C97-6E69-3D7B-8211-44321460135C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

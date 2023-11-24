@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-update_disconnected.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-patch_disconnected.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\49306cf1ba307d0696f4429a95bec7cb\glfw3-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\1496372fa9be6bd10dccb64c164727c4\glfw3-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\12d71de2a87291043d7f043feb2838da\glfw3-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\glfw3-subbuild\CMakeFiles\glfw3-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C98E3399-0D4B-326E-AF6A-26DBD822EDBC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

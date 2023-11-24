@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-update_disconnected.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-patch_disconnected.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\6deecfbead913325ff713fdc09dff2d4\qhull-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\76a6da47b40972ea6ae7ede4e84dcf9e\qhull-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\c52d271746482bf186fcd65b85cc0a90\qhull-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\qhull-subbuild\CMakeFiles\qhull-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C738AD27-D2F2-32E8-8C27-B7830091FC64}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

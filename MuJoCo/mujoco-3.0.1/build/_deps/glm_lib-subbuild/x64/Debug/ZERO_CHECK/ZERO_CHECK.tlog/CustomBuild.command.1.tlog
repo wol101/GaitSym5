@@ -1,0 +1,10 @@
+^D:\WIS\SYNCHRONISED\RESEARCH\GAITSYM\GAITSYM5\MUJOCO\MUJOCO-3.0.1\BUILD\_DEPS\GLM_LIB-SUBBUILD\CMAKEFILES\0DAFC51C54650DB6043B28B6A112B70E\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glm_lib-subbuild -BD:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glm_lib-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glm_lib-subbuild/glm_lib-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

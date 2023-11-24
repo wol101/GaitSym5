@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/sdflib-populate"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/a2ace45136962ca4653fa10ffdf47bf9/sdflib-populate.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/08e5d99d0c705d02d1a5299b67342545/sdflib-populate-complete.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-build.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-configure.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-download.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-install.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-mkdir.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-patch_disconnected.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-test.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/sdflib-subbuild/CMakeFiles/9d63556655c3085c7e0513c657f38715/sdflib-populate-update_disconnected.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"sdflib-populate"
+		],
+		"name" : "sdflib-populate"
+	}
+}

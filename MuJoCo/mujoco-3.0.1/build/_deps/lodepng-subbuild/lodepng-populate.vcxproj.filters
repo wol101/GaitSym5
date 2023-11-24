@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\b25787fff7c681fea0fedf7fc0537ba8\lodepng-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\9b86ec52786b51950838ed4c185a40ab\lodepng-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\034e0342140d1c8381563b89f47ebe28\lodepng-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Synchronised\Research\GaitSym\GaitSym5\MuJoCo\mujoco-3.0.1\build\_deps\lodepng-subbuild\CMakeFiles\lodepng-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{A952E8D7-920F-391F-A88B-1A7F3CB68BA8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

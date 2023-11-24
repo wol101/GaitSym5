@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/lodepng-populate"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/034e0342140d1c8381563b89f47ebe28/lodepng-populate.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/9b86ec52786b51950838ed4c185a40ab/lodepng-populate-complete.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-build.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-configure.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-download.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-install.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-mkdir.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-patch.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-test.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/lodepng-subbuild/CMakeFiles/b25787fff7c681fea0fedf7fc0537ba8/lodepng-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"lodepng-populate"
+		],
+		"name" : "lodepng-populate"
+	}
+}

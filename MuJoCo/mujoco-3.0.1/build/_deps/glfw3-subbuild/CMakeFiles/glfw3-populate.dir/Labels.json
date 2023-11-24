@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/glfw3-populate"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/12d71de2a87291043d7f043feb2838da/glfw3-populate.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/1496372fa9be6bd10dccb64c164727c4/glfw3-populate-complete.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-build.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-configure.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-download.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-install.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-mkdir.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-patch_disconnected.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-test.rule"
+		},
+		{
+			"file" : "D:/wis/Synchronised/Research/GaitSym/GaitSym5/MuJoCo/mujoco-3.0.1/build/_deps/glfw3-subbuild/CMakeFiles/49306cf1ba307d0696f4429a95bec7cb/glfw3-populate-update_disconnected.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"glfw3-populate"
+		],
+		"name" : "glfw3-populate"
+	}
+}
