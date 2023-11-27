@@ -14,14 +14,14 @@
 
 #include "NamedObject.h"
 #include "SmartEnum.h"
-
-#include "ode/ode.h"
+#include "PGDMath.h"
 
 #include <vector>
 
 class Contact;
 class SimulationWindow;
 class Marker;
+class Body;
 
 class Geom: public NamedObject
 {
@@ -33,9 +33,8 @@ public:
     SMART_ENUM(GeomLocation, GeomLocationStrings, GeomLocationCount, environment, body);
 //    enum GeomLocation { environment, body };
 
-    void SetBody(dBodyID body);
-    dBodyID GetBody();
-    dGeomID GetGeomID() { return m_GeomID; }
+    void SetBody(Body *body);
+    Body *GetBody();
 
     // these functions set the geom position relative to its body
     void SetPosition (double x, double y, double z);
@@ -88,18 +87,16 @@ public:
     void setGeomMarker(Marker *geomMarker); // virtual because this is specialised for some geoms e.g. plane
     Marker *geomMarker() const;
 
-    void setGeomID(const dGeomID &GeomID);
-    dGeomID GeomID() const;
-
 private:
 
-    dGeomID m_GeomID = {nullptr};
-
+    Body *m_body = nullptr;
     GeomLocation m_GeomLocation = {GeomLocation::environment};
+    pgd::Vector3 m_position;
+    pgd::Quaternion m_quaternion;
 
     double m_CFM = -1;
     double m_ERP = -1;
-    double m_Mu = dInfinity;
+    double m_Mu = -1;
     double m_Bounce = -1;
     double m_Rho = -1;
 

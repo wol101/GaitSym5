@@ -32,110 +32,16 @@ Geom::Geom()
 {
 }
 
-Geom::~Geom()
-{
-    if (GetGeomID()) dGeomDestroy(GetGeomID());
-}
-
-
 // these functions set the geom position relative to its body
 // these now use the geom offset functions
-void Geom::SetBody(dBodyID setBody)
+void Geom::SetBody(Body *body)
 {
-    dGeomSetBody(GetGeomID(), setBody);
+    m_body = body;
 }
 
-dBodyID Geom::GetBody()
+Body *Geom::GetBody()
 {
-    return dGeomGetBody(GetGeomID());
-}
-
-void Geom::SetPosition (double x, double y, double z)
-{
-    if (GetBody())
-        dGeomSetOffsetPosition(GetGeomID(), x, y, z);
-    else
-        dGeomSetPosition(GetGeomID(), x, y, z);
-}
-
-const double *Geom::GetPosition()
-{
-    if (GetBody())
-        return dGeomGetOffsetPosition(GetGeomID());
-    else
-        return dGeomGetPosition(GetGeomID());
-}
-
-void Geom::GetWorldPosition(pgd::Vector3 p)
-{
-    if (GetBody())
-    {
-        const double *relPosition = dGeomGetOffsetPosition(GetGeomID());
-        dBodyGetRelPointPos(dGeomGetBody(GetGeomID()), relPosition[0], relPosition[1], relPosition[2], p);
-    }
-    else
-    {
-        const double *position = dGeomGetPosition(GetGeomID());
-        p[0] = position[0];
-        p[1] = position[1];
-        p[2] = position[2];
-    }
-}
-
-void Geom::SetQuaternion(double q0, double q1, double q2, double q3)
-{
-    pgd::Quaternion q;
-    q[0] = q0; q[1] = q1; q[2] = q2; q[3] = q3;
-    if (GetBody())
-        dGeomSetOffsetQuaternion(GetGeomID(), q);
-    else
-        dGeomSetQuaternion(GetGeomID(), q);
-}
-
-void Geom::setGeomMarker(Marker *geomMarker)
-{
-    m_geomMarker = geomMarker;
-    if (m_geomMarker->GetBody())
-    {
-        this->SetGeomLocation(Geom::body);
-        this->SetBody(m_geomMarker->GetBody()->GetBodyID());
-    }
-    else
-    {
-        this->SetBody(nullptr);
-        this->SetGeomLocation(Geom::environment);
-
-    }
-    if (dynamic_cast<PlaneGeom *>(this)) return; // do not try to place non-placeable geoms
-
-    pgd::Vector3 p = geomMarker->GetPosition();
-    this->SetPosition(p.x, p.y, p.z);
-    pgd::Quaternion q = geomMarker->GetQuaternion();
-    this->SetQuaternion(q.n, q.x, q.y, q.z);
-}
-
-void Geom::GetQuaternion(pgd::Quaternion q)
-{
-    if (GetBody())
-        dGeomGetOffsetQuaternion(GetGeomID(), q);
-    else
-        dGeomGetQuaternion(GetGeomID(), q);
-}
-
-void Geom::GetWorldQuaternion(pgd::Quaternion q)
-{
-    if (GetBody())
-    {
-        const double *bodyRotation = dBodyGetQuaternion(dGeomGetBody(GetGeomID()));
-        pgd::Quaternion relRotation;
-        dGeomGetOffsetQuaternion(GetGeomID(), relRotation);
-        //combine the body rotation with the cylinder rotation to get combined rotation from world coordinates
-        dQMultiply0 (q, bodyRotation, relRotation);
-    }
-    else
-    {
-        dGeomGetQuaternion(GetGeomID(), q);
-    }
+    return m_body;
 }
 
 void Geom::SetSpringDamp(double springConstant, double dampingConstant, double integrationStep)
@@ -265,16 +171,6 @@ std::string Geom::dumpToString()
 Marker *Geom::geomMarker() const
 {
     return m_geomMarker;
-}
-
-void Geom::setGeomID(const dGeomID &GeomID)
-{
-    m_GeomID = GeomID;
-}
-
-dGeomID Geom::GeomID() const
-{
-    return m_GeomID;
 }
 
 // this function initialises the data in the object based on the contents
