@@ -114,11 +114,7 @@ public:
     void AllocateMemory(size_t numTriangles);
     void ApplyDisplayTransformation(const pgd::Vector3 inVec, pgd::Vector3 *outVec);
     void ApplyDisplayRotation(const pgd::Vector3 inVec, pgd::Vector3 *outVec);
-
-    // ODE link
-    void CalculateTrimesh(double **vertices, int *numVertices, int *vertexStride, dTriIndex **triIndexes, int *numTriIndexes, int *triStride);
-    void CalculateTrimesh(float **vertices, int *numVertices, int *vertexStride, dTriIndex **triIndexes, int *numTriIndexes, int *triStride);
-    void CalculateMassProperties(dMass *m, double density, bool clockwise, double *translation);
+    void CalculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor);
 
     double *lowerBound();
     double *upperBound();
@@ -140,6 +136,9 @@ public:
     void SetDisplayScale(double x, double y, double z);
     void SetDisplayRotation(const pgd::Matrix3x3 R);
     void SetDisplayRotationFromQuaternion(const pgd::Quaternion q);
+    pgd::Vector3 GetDisplayPosition() const;
+    pgd::Vector3 GetDisplayRotation() const;
+    pgd::Vector3 GetDisplayScale() const
 
     bool visible() const;
     void setVisible(bool visible);
@@ -164,12 +163,14 @@ private:
     std::vector<double> m_uvList;
     bool m_useRelativeOBJ = false;
     bool m_badMesh = false;
-    pgd::Vector3 m_lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    pgd::Vector3 m_upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
+    pgd::Vector3 m_lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX};
+    pgd::Vector3 m_upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
 
-    pgd::Vector3 m_displayPosition = {0, 0, 0, 0};
-    pgd::Vector3 m_displayScale = {1, 1, 1, 0};
-    pgd::Matrix3x3 m_displayRotation = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0};
+    pgd::Vector3 m_displayPosition = {0, 0, 0};
+    pgd::Vector3 m_displayScale = {1, 1, 1};
+    pgd::Matrix3x3 m_displayRotation = {1, 0, 0,
+                                        0, 1, 0,
+                                        0, 0, 1};
     bool m_visible = true;
     QMatrix4x4 m_model;
     bool m_modelValid = false;

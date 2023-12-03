@@ -1310,17 +1310,17 @@ void FacetedObject::WriteOBJFile(std::string filename)
     }
 }
 
-const double *FacetedObject::GetDisplayPosition() const
+pgd::Vector3 FacetedObject::GetDisplayPosition() const
 {
     return m_displayPosition;
 }
 
-const double *FacetedObject::GetDisplayRotation() const
+pgd::Vector3 FacetedObject::GetDisplayRotation() const
 {
     return m_displayRotation;
 }
 
-const double *FacetedObject::GetDisplayScale() const
+pgd::Vector3 FacetedObject::GetDisplayScale() const
 {
     return m_displayScale;
 }
@@ -1959,64 +1959,6 @@ void FacetedObject::AllocateMemory(size_t numTriangles)
     m_uvList.reserve(numTriangles * 6);
 }
 
-// return an ODE style trimesh
-// note memory is allocated by this routine and will need to be released elsewhere
-// warning - this routine will not cope with very big meshes because it uses ints
-void FacetedObject::CalculateTrimesh(double **vertices, int *numVertices, int *vertexStride,
-                                     dTriIndex **triIndexes, int *numTriIndexes, int *triStride)
-{
-    size_t i;
-    *vertexStride = 3 * sizeof(double);
-    *triStride = 3 * sizeof(dTriIndex);
-
-    *numVertices = int((m_vertexList.size() / 3));
-    *numTriIndexes = int((m_vertexList.size() / 3));
-
-    *vertices = new double[(m_vertexList.size() / 3) * 3];
-    *triIndexes = new dTriIndex[(m_vertexList.size() / 3)];
-
-    for (i = 0; i < (m_vertexList.size() / 3); i++)
-    {
-        (*vertices)[i * 3] = m_vertexList[i * 3];
-        (*vertices)[i * 3 + 1] = m_vertexList[i * 3 + 1];
-        (*vertices)[i * 3 + 2] = m_vertexList[i * 3 + 2];
-    }
-
-    for (i = 0; i < (m_vertexList.size() / 3); i++)
-    {
-        (*triIndexes)[i] = dTriIndex(i);
-    }
-}
-
-// return an ODE style trimesh
-// note memory is allocated by this routine and will need to be released elsewhere
-// warning - this routine will not cope with very big meshes because it uses ints
-void FacetedObject::CalculateTrimesh(float **vertices, int *numVertices, int *vertexStride,
-                                     dTriIndex **triIndexes, int *numTriIndexes, int *triStride)
-{
-    size_t i;
-    *vertexStride = 3 * sizeof(float);
-    *triStride = 3 * sizeof(dTriIndex);
-
-    *numVertices = int((m_vertexList.size() / 3));
-    *numTriIndexes = int((m_vertexList.size() / 3));
-
-    *vertices = new float[(m_vertexList.size() / 3) * 3];
-    *triIndexes = new dTriIndex[(m_vertexList.size() / 3)];
-
-    for (i = 0; i < (m_vertexList.size() / 3); i++)
-    {
-        (*vertices)[i * 3] = float(m_vertexList[i * 3]);
-        (*vertices)[i * 3 + 1] = float(m_vertexList[i * 3 + 1]);
-        (*vertices)[i * 3 + 2] = float(m_vertexList[i * 3 + 2]);
-    }
-
-    for (i = 0; i < (m_vertexList.size() / 3); i++)
-    {
-        (*triIndexes)[i] = dTriIndex(i);
-    }
-}
-
 // calculate mass properties
 // based on dMassSetTrimesh
 /*
@@ -2032,12 +1974,9 @@ void FacetedObject::CalculateTrimesh(float **vertices, int *numVertices, int *ve
 // the mass properties are calculated around the world origin
 // these can be moved to around the centroid if wanted using the parallel axes rules
 
-void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clockwise, double *translation)
+void FacetedObject::CalculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor)
 {
-    dMassSetZero (m);
-
-    // assumes anticlockwise winding
-
+    // assumes anticlockwise winding unless clockwise is set
     unsigned int triangles = static_cast<unsigned int>((m_vertexList.size() / 3) / 3);
 
     double nx, ny, nz;
@@ -2060,28 +1999,28 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
         {
             for (j = 0; j < 3; j++)
             {
-                v[j][0] = m_vertexList[i * 9 + j * 3] + translation[0];
-                v[j][1] = m_vertexList[i * 9 + j * 3 + 1] + translation[1];
-                v[j][2] = m_vertexList[i * 9 + j * 3 + 2] + translation[2];
+                v[j][0] = m_vertexList[i * 9 + j * 3] + translation.x;
+                v[j][1] = m_vertexList[i * 9 + j * 3 + 1] + translation.y;
+                v[j][2] = m_vertexList[i * 9 + j * 3 + 2] + translation.z;
             }
         }
         else
         {
             for (j = 0; j < 3; j++)
             {
-                v[j][2] = m_vertexList[i * 9 + j * 3] + translation[0];
-                v[j][1] = m_vertexList[i * 9 + j * 3 + 1] + translation[1];
-                v[j][0] = m_vertexList[i * 9 + j * 3 + 2] + translation[2];
+                v[j][2] = m_vertexList[i * 9 + j * 3] + translation.x;
+                v[j][1] = m_vertexList[i * 9 + j * 3 + 1] + translation.y;
+                v[j][0] = m_vertexList[i * 9 + j * 3 + 2] + translation.z;
             }
         }
 
         pgd::Vector3 n, a, b;
-        dOP( a, -, v[1], v[0] );
-        dOP( b, -, v[2], v[0] );
-        dCROSS( n, =, b, a );
-        nx = fabs(n[0]);
-        ny = fabs(n[1]);
-        nz = fabs(n[2]);
+        a = v[1] - v[0];
+        b = v[2] - v[0];
+        n = pgd::Cross(b, a);
+        nx = std::fabs(n[0]);
+        ny = std::fabs(n[1]);
+        nz = std::fabs(n[2]);
 
         if ( nx > ny && nx > nz )
             C = 0;
@@ -2091,7 +2030,7 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
         // Even though all triangles might be initially valid,
         // a triangle may degenerate into a segment after applying
         // space transformation.
-        if (n[C] != REAL(0.0))
+        if (n[C] != 0.0)
         {
             A = (C + 1) % 3;
             B = (A + 1) % 3;
@@ -2186,7 +2125,7 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
                     Pabb /= -60.0;
                 }
 
-                w = - dDOT(n, v[0]);
+                w = - pgd::Dot(n, v[0]);
 
                 k1 = 1 / n[C];
                 k2 = k1 * k1;
@@ -2240,7 +2179,7 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
     TP[1] /= 2;
     TP[2] /= 2;
 
-    m->mass = density * T0;
+    *mass = density * T0;
 // #define _I(i,j) I[(i)*4+(j)]
 // regex _I\(([0-9]+),([0-9]+)\) to I[(\1)*4+(\2)]
 //    m->_I(0,0) = density * (T2[1] + T2[2]);
@@ -2252,19 +2191,12 @@ void FacetedObject::CalculateMassProperties(dMass *m, double density, bool clock
 //    m->_I(1,2) = - density * TP[1];
 //    m->_I(2,0) = - density * TP[2];
 //    m->_I(0,2) = - density * TP[2];
-    m->I[0 * 4 + 0] = density * (T2[1] + T2[2]);
-    m->I[1 * 4 + 1] = density * (T2[2] + T2[0]);
-    m->I[2 * 4 + 2] = density * (T2[0] + T2[1]);
-    m->I[0 * 4 + 1] = - density * TP[0];
-    m->I[1 * 4 + 0] = - density * TP[0];
-    m->I[2 * 4 + 1] = - density * TP[1];
-    m->I[1 * 4 + 2] = - density * TP[1];
-    m->I[2 * 4 + 0] = - density * TP[2];
-    m->I[0 * 4 + 2] = - density * TP[2];
-
-    m->c[0] = T1[0] / T0;
-    m->c[1] = T1[1] / T0;
-    m->c[2] = T1[2] / T0;
+    inertialTensor->Set( density * (T2[1] + T2[2]), -density * TP[0],           -density * TP[2],
+                        -density * TP[0],            density * (T2[2] + T2[0]), -density * TP[1],
+                        -density * TP[2],           -density * TP[1],            density * (T2[0] + T2[1]));
+    centreOfMass->x = T1[0] / T0;
+    centreOfMass->y = T1[1] / T0;
+    centreOfMass->z = T1[2] / T0;
 }
 
 // reverse the face winding

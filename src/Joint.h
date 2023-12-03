@@ -13,8 +13,7 @@
 #define Joint_h
 
 #include "NamedObject.h"
-
-#include "ode/ode.h"
+#include "PGDMath.h"
 
 class Body;
 class SimulationWindow;
@@ -23,9 +22,6 @@ class Marker;
 class Joint: public NamedObject
 {
 public:
-
-    // Note constructor in derived functions need to set m_JointID
-    // m_JointFeedback only needs to be set if GetFeedback is used (good idea though)
 
     Joint();
     virtual ~Joint();
@@ -37,7 +33,7 @@ public:
     void setBody1(Body *Body1);
     void setBody2(Body *Body2);
 
-    dJointFeedback *GetFeedback();
+    void GetFeedback(pgd::Vector3 *force, pgd::Vector3 *torque);
 
     // some joints (particularly those with motors) need to do something before the simulation step
     virtual void Update() {}
@@ -55,13 +51,6 @@ public:
     virtual void saveToAttributes();
     virtual void appendToAttributes();
 
-    dJointID JointID() const;
-    void setJointID(const dJointID &JointID);
-
-    dJointFeedback *JointFeedback();
-    void setJointFeedback(const dJointFeedback &JointFeedback);
-
-
     double CFM() const;
     void setCFM(double CFM);
 
@@ -72,8 +61,6 @@ private:
 
     Body *m_Body1 = nullptr;
     Body *m_Body2 = nullptr;
-    dJointID m_JointID = nullptr;
-    dJointFeedback m_JointFeedback = {};
     Marker *m_body1Marker = nullptr;
     Marker *m_body2Marker = nullptr;
     double m_CFM = -1;

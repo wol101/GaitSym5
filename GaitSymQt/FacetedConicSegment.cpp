@@ -319,7 +319,7 @@ void FacetedConicSegment::WritePOVRay(std::ostringstream &theString)
     prel[1] = m_OY;
     prel[2] = m_OZ;
     prel[3] = 0;
-    dMULTIPLY0_331(p, GetDisplayRotation(), prel);
+    p = GetDisplayRotation() * prel;
     double bpx = p[0] + GetDisplayPosition()[0];
     double bpy = p[1] + GetDisplayPosition()[1];
     double bpz = p[2] + GetDisplayPosition()[2];
