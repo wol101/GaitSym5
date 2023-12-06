@@ -315,26 +315,19 @@ void FacetedConicSegment::WritePOVRay(std::ostringstream &theString)
     if (m_Length / ((m_R1 + m_R2) / 2) < 0.001) drawDisc = true;
 
     pgd::Vector3 prel, p;
-    prel[0] = m_OX;
-    prel[1] = m_OY;
-    prel[2] = m_OZ;
-    prel[3] = 0;
+    prel.Set(m_OX, m_OY, m_OZ);
     p = GetDisplayRotation() * prel;
     double bpx = p[0] + GetDisplayPosition()[0];
     double bpy = p[1] + GetDisplayPosition()[1];
     double bpz = p[2] + GetDisplayPosition()[2];
 
-    prel[0] = m_OX;
-    prel[1] = m_OY;
-    prel[2] = m_OZ + m_Length;
-    prel[3] = 0;
-    dMULTIPLY0_331(p, GetDisplayRotation(), prel);
+    prel.Set(m_OX, m_OY, m_OZ + m_Length);
+    p = GetDisplayRotation() * prel;
     double cpx = p[0] + GetDisplayPosition()[0];
     double cpy = p[1] + GetDisplayPosition()[1];
     double cpz = p[2] + GetDisplayPosition()[2];
 
-    if ((std::isfinite(bpx) && std::isfinite(bpy) && std::isfinite(bpz) && std::isfinite(cpx)
-            && std::isfinite(cpy) && std::isfinite(cpz)) == false) return;
+    if ((std::isfinite(bpx) && std::isfinite(bpy) && std::isfinite(bpz) && std::isfinite(cpx) && std::isfinite(cpy) && std::isfinite(cpz)) == false) return;
 
     theString << "object {\n";
     if (drawDisc)

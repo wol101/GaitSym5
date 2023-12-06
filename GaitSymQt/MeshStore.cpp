@@ -76,12 +76,8 @@ void MeshStore::addMesh(const std::string &path, const std::vector<double> &vert
     mesh->normalList = normalList;
     mesh->colourList = colourList;
     mesh->uvList = uvList;
-    mesh->lowerBound[0] = lowerBound[0];
-    mesh->lowerBound[1] = lowerBound[1];
-    mesh->lowerBound[2] = lowerBound[2];
-    mesh->upperBound[0] = upperBound[0];
-    mesh->upperBound[1] = upperBound[1];
-    mesh->upperBound[2] = upperBound[2];
+    mesh->lowerBound = lowerBound;
+    mesh->upperBound = upperBound;
 
     auto timeIt = m_lastAccessedMapByName.find(mesh->path);
     if (timeIt != m_lastAccessedMapByName.end())

@@ -33,7 +33,7 @@ struct MeshStoreObject
     std::vector<double> normalList;
     std::vector<double> colourList;
     std::vector<double> uvList;
-    pgd::Vector3 lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX,};
+    pgd::Vector3 lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX};
     pgd::Vector3 upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
 };
 

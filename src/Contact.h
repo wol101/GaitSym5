@@ -11,26 +11,20 @@
 #define Contact_h
 
 #include "NamedObject.h"
-
-class SimulationWindow;
+#include "PGDMath.h"
 
 class Contact:public NamedObject
 {
 public:
     Contact();
 
-    void SetJointID(dJointID jointID) { m_JointID = jointID; }
-
-    dJointID GetJointID() { return m_JointID; }
-    dJointFeedback* GetJointFeedback() { return &m_ContactJointFeedback; }
-    double* GetContactPosition() { return m_ContactPosition; }
+    void GetFeedback(pgd::Vector3 *position, pgd::Vector3 *force, pgd::Vector3 *torque);
 
 private:
 
-    dJointID m_JointID = nullptr;
-    dJointFeedback m_ContactJointFeedback = {};
-    pgd::Vector3 m_ContactPosition;
-
+    pgd::Vector3 m_position;
+    pgd::Vector3 m_force;
+    pgd::Vector3 m_torque;
 };
 
 

@@ -8,22 +8,15 @@
  */
 
 #include "SphereGeom.h"
-#include "Simulation.h"
-#include "Marker.h"
 #include "GSUtil.h"
-
-
-#include "ode/ode.h"
 
 #include <string>
 
 using namespace std::string_literals;
 
-SphereGeom::SphereGeom(dSpaceID space, double radius)
+SphereGeom::SphereGeom(double radius)
 {
-    // create the geom
-    setGeomID(dCreateSphere(space, radius));
-    dGeomSetData(GetGeomID(), this);
+    m_radius = radius;
 }
 
 std::string *SphereGeom::createFromAttributes()
@@ -31,7 +24,7 @@ std::string *SphereGeom::createFromAttributes()
     if (Geom::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("Radius"s, &buf) == nullptr) return lastErrorPtr();
-    dGeomSphereSetRadius(GetGeomID(), GSUtil::Double(buf));
+    setRadius(GSUtil::Double(buf));
     return nullptr;
 }
 
@@ -40,18 +33,18 @@ void SphereGeom::appendToAttributes()
     Geom::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Sphere"s);
-    setAttribute("Radius"s, *GSUtil::ToString(dGeomSphereGetRadius(GetGeomID()), &buf));
+    setAttribute("Radius"s, *GSUtil::ToString(radius(), &buf));
     return;
 }
 
 double SphereGeom::radius() const
 {
-    return dGeomSphereGetRadius(GeomID());
+    return m_radius;
 }
 
 void SphereGeom::setRadius(double radius)
 {
-    dGeomSphereSetRadius(GeomID(), radius);
+    m_radius = radius;
 }
 
 

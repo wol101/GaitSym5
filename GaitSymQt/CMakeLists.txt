@@ -30,6 +30,7 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS OpenGL)
+find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 
 set(PROJECT_SOURCES
     ../GaitSymQt/AboutDialog.cpp
@@ -983,6 +984,7 @@ target_include_directories(GaitSym5 PRIVATE
 
 target_link_libraries(GaitSym5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(GaitSym5 PRIVATE Qt6::OpenGL)
+target_link_libraries(GaitSym5 PRIVATE Qt6::OpenGLWidgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -13,8 +13,6 @@
 #include "StrokeFont.h"
 #include "PGDMath.h"
 
-#include "ode/ode.h"
-
 #include "GLUtils.h"
 #include "SimulationWidget.h"
 
@@ -23,13 +21,11 @@
 #include <QOpenGLVersionFunctionsFactory>
 #endif
 
-#include <algorithm>
-
 const size_t line_buffer_stride = 7;
 
 StrokeFont::StrokeFont()
 {
-    dRSetIdentity(m_displayRotation);
+    m_displayRotation.SetIdentity();
     // the line buffer is organised x1,y1,z1,r1,g1,b1,a1,x2,y2,z2,r2,g2,b2,a2
     line_buffer = new float[max_lines * line_buffer_stride * 2];
 }

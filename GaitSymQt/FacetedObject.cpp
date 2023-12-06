@@ -1264,15 +1264,12 @@ void FacetedObject::WritePOVRay(std::ostringstream &theString)
         theString << "    triangle {\n";
         for (j = 0; j < 3; j++)
         {
-            prel[0] = m_vertexList[i * 9 + j * 3];
-            prel[1] = m_vertexList[i * 9 + j * 3 + 1];
-            prel[2] = m_vertexList[i * 9 + j * 3 + 2];
-            prel[3] = 0;
-            dMULTIPLY0_331(p, m_displayRotation, prel);
+            prel.Set(m_vertexList[i * 9 + j * 3], m_vertexList[i * 9 + j * 3 + 1], m_vertexList[i * 9 + j * 3 + 2]);
+            p = m_displayRotation * prel;
+            result = p + m_displayPosition;
             result[0] = p[0] + m_displayPosition[0];
             result[1] = p[1] + m_displayPosition[1];
             result[2] = p[2] + m_displayPosition[2];
-
             theString << "      <" << result[0] << "," << result[1] << "," << result[2] << ">\n";
         }
         theString << "    }\n";
@@ -1280,8 +1277,7 @@ void FacetedObject::WritePOVRay(std::ostringstream &theString)
 
     // now colour
     theString << "    pigment {\n";
-    theString << "      color rgbf<" << m_blendColour.redF() << "," << m_blendColour.greenF() << "," <<
-              m_blendColour.blueF() << "," << 1 - m_blendColour.alphaF() << ">\n";
+    theString << "      color rgbf<" << m_blendColour.redF() << "," << m_blendColour.greenF() << "," << m_blendColour.blueF() << "," << 1 - m_blendColour.alphaF() << ">\n";
     theString << "    }\n";
     theString << "  }\n";
     theString << "}\n\n";
@@ -1315,7 +1311,7 @@ pgd::Vector3 FacetedObject::GetDisplayPosition() const
     return m_displayPosition;
 }
 
-pgd::Vector3 FacetedObject::GetDisplayRotation() const
+pgd::Matrix3x3 FacetedObject::GetDisplayRotation() const
 {
     return m_displayRotation;
 }

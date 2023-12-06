@@ -33,7 +33,7 @@ public:
     void setBody1(Body *Body1);
     void setBody2(Body *Body2);
 
-    void GetFeedback(pgd::Vector3 *force, pgd::Vector3 *torque);
+    void GetFeedback(pgd::Vector3 *position, pgd::Vector3 *force, pgd::Vector3 *torque);
 
     // some joints (particularly those with motors) need to do something before the simulation step
     virtual void Update() {}

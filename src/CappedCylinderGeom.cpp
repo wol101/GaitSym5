@@ -8,23 +8,16 @@
  */
 
 #include "CappedCylinderGeom.h"
-#include "Simulation.h"
-#include "Marker.h"
 #include "GSUtil.h"
-
-
-#include "ode/ode.h"
 
 #include <string>
 
 using namespace std::string_literals;
 
-CappedCylinderGeom::CappedCylinderGeom(dSpaceID space, double radius, double length)
+CappedCylinderGeom::CappedCylinderGeom(double radius, double length)
 {
-    // create the geom
-    setGeomID(dCreateCapsule(space, radius, length));
-
-    dGeomSetData(GetGeomID(), this);
+    m_radius = radius;
+    m_length = length;
 }
 
 std::string *CappedCylinderGeom::createFromAttributes()
@@ -35,7 +28,7 @@ std::string *CappedCylinderGeom::createFromAttributes()
     double radius = GSUtil::Double(buf);
     if (findAttribute("Length"s, &buf) == nullptr) return lastErrorPtr();
     double length = GSUtil::Double(buf);
-    dGeomCapsuleSetParams(GetGeomID(), radius, length);
+    setLengthRadius(radius, length);
 
     return nullptr;
 }
@@ -47,7 +40,7 @@ void CappedCylinderGeom::appendToAttributes()
 
     setAttribute("Type"s, "CappedCylinder"s);
     double radius, length;
-    dGeomCapsuleGetParams(GetGeomID(), &radius, &length);
+    getLengthRadius(&radius, &length);
     setAttribute("Radius"s, *GSUtil::ToString(radius, &buf));
     setAttribute("Length"s, *GSUtil::ToString(length, &buf));
     return;
@@ -55,12 +48,14 @@ void CappedCylinderGeom::appendToAttributes()
 
 void CappedCylinderGeom::setLengthRadius(double length, double radius)
 {
-    dGeomCapsuleSetParams(GetGeomID(), radius, length);
+    m_radius = radius;
+    m_length = length;
 }
 
 void CappedCylinderGeom::getLengthRadius(double *length, double *radius) const
 {
-    dGeomCapsuleGetParams(GeomID(), radius, length);
+    *radius = m_radius;
+    *length = m_length;
 }
 
 

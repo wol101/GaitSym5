@@ -16,13 +16,16 @@ class SphereGeom: public Geom
 {
 public:
 
-    SphereGeom(dSpaceID space, double radius);
+    SphereGeom(double radius);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
     double radius() const;
     void setRadius(double radius);
+
+private:
+    double m_radius = 0;
 };
 
 

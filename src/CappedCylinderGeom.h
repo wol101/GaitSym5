@@ -16,13 +16,17 @@ class CappedCylinderGeom:public Geom
 {
 public:
 
-    CappedCylinderGeom(dSpaceID space, double radius, double length);
+    CappedCylinderGeom(double radius, double length);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
     void setLengthRadius(double length, double radius);
     void getLengthRadius(double *length, double *radius) const;
+
+private:
+    double m_radius = 0;
+    double m_length = 0;
 };
 
 
