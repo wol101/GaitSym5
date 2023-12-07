@@ -7,13 +7,9 @@
  *
  */
 
-#include "ode/ode.h"
-
 #include "PIDMuscleLengthController.h"
 #include "Muscle.h"
 #include "GSUtil.h"
-
-#include "pystring.h"
 
 using namespace std::string_literals;
 

@@ -11,7 +11,7 @@
 #include "Body.h"
 #include "PGDMath.h"
 #include "GSUtil.h"
-#include "DataFile.h"
+#include "Simulation.h"
 #include "Geom.h"
 #include "Marker.h"
 
@@ -30,7 +30,6 @@ DataTargetQuaternion::DataTargetQuaternion()
 // in this case this is the angle between the two quaternions
 double DataTargetQuaternion::calculateError(size_t valueListIndex)
 {
-    const double *r;
     Body *body;
     Geom *geom;
     pgd::Quaternion q;
@@ -43,13 +42,13 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
 
     if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
     {
-        r = body->GetQuaternion();
-        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], pgd::Quaternion(r[0], r[1], r[2], r[3]));
+        q = body->GetQuaternion();
+        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
     }
     else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
     {
-        geom->GetWorldQuaternion(q);
-        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], pgd::Quaternion(q[0], q[1], q[2], q[3]));
+        q = geom->GetWorldQuaternion();
+        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
     }
     else
     {
@@ -62,7 +61,6 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
 // in this case this is the angle between the two quaternions
 double DataTargetQuaternion::calculateError(double time)
 {
-    const double *r;
     Body *body;
     Geom *geom;
     pgd::Quaternion q;
@@ -96,13 +94,13 @@ double DataTargetQuaternion::calculateError(double time)
 
     if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
     {
-        r = body->GetQuaternion();
-        angle = pgd::FindAngle(interpolatedTarget, pgd::Quaternion(r[0], r[1], r[2], r[3]));
+        q = body->GetQuaternion();
+        angle = pgd::FindAngle(interpolatedTarget, q);
     }
     else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
     {
-        geom->GetWorldQuaternion(q);
-        angle = pgd::FindAngle(interpolatedTarget, pgd::Quaternion(q[0], q[1], q[2], q[3]));
+        q = geom->GetWorldQuaternion();
+        angle = pgd::FindAngle(interpolatedTarget, q);
     }
     else
     {
@@ -123,9 +121,8 @@ std::string DataTargetQuaternion::dumpToString()
     }
     Body *body;
     Geom *geom;
-    const double *r;
     double angle = 0;
-    pgd::Quaternion q = {0, 0, 0, 0};
+    pgd::Quaternion q;
 
     size_t valueListIndex = 0;
     auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());
@@ -133,17 +130,13 @@ std::string DataTargetQuaternion::dumpToString()
 
     if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
     {
-        r = body->GetQuaternion();
-        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], pgd::Quaternion(r[0], r[1], r[2], r[3]));
-        q[0] = r[0];
-        q[1] = r[1];
-        q[2] = r[2];
-        q[3] = r[3];
+        q = body->GetQuaternion();
+        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
     }
     else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
     {
-        geom->GetWorldQuaternion(q);
-        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], pgd::Quaternion(q[0], q[1], q[2], q[3]));
+        q = geom->GetWorldQuaternion();
+        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
     }
 
     ss << simulation()->GetTime() <<

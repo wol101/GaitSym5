@@ -38,14 +38,14 @@ public:
 
     // these functions set the geom position relative to its body
     void SetPosition (double x, double y, double z);
-    void SetQuaternion(double q0, double q1, double q2, double q3);
+    void SetQuaternion(double n, double x, double y, double z);
 
     // return body local values
-    const double *GetPosition();
-    void GetQuaternion(pgd::Quaternion q);
+    pgd::Vector3 GetPosition() const;
+    pgd::Quaternion GetQuaternion() const;
     // return world values
-    void GetWorldPosition(pgd::Vector3 p);
-    void GetWorldQuaternion(pgd::Quaternion q);
+    pgd::Vector3 GetWorldPosition() const;
+    pgd::Quaternion GetWorldQuaternion() const;
 
 
     void SetGeomLocation(GeomLocation l) { m_GeomLocation = l; }

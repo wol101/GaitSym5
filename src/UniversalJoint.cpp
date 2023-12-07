@@ -20,12 +20,8 @@
 
 using namespace std::string_literals;
 
-UniversalJoint::UniversalJoint(dWorldID worldID) : Joint()
+UniversalJoint::UniversalJoint() : Joint()
 {
-    setJointID(dJointCreateUniversal(worldID, nullptr));
-    dJointSetData(JointID(), this);
-
-    dJointSetFeedback(JointID(), JointFeedback());
 }
 
 void UniversalJoint::SetUniversalAnchor(double x, double y, double z)

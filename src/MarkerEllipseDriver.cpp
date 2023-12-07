@@ -9,7 +9,7 @@
 
 #include "MarkerEllipseDriver.h"
 
-#include "Body.h"
+#include "Simulation.h"
 #include "Marker.h"
 #include "GSUtil.h"
 #include "Drivable.h"
@@ -17,7 +17,6 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include <sstream>
 
 using namespace std::string_literals;
 

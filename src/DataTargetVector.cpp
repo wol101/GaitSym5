@@ -11,7 +11,6 @@
 #include "Body.h"
 #include "PGDMath.h"
 #include "GSUtil.h"
-#include "DataFile.h"
 #include "HingeJoint.h"
 #include "BallJoint.h"
 #include "UniversalJoint.h"
@@ -34,7 +33,7 @@ DataTargetVector::DataTargetVector()
 // in this case this is the euclidean distance between the two vectors
 double DataTargetVector::calculateError(size_t valueListIndex)
 {
-    const double *r;
+    pgd::Vector3 r;
     Body *body;
     Geom *geom;
     HingeJoint *hingeJoint;
@@ -61,17 +60,17 @@ double DataTargetVector::calculateError(size_t valueListIndex)
     }
     else if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
     {
-        hingeJoint->GetHingeAnchor(v);
+        v = hingeJoint->GetHingeAnchor();
         err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
    }
     else if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
     {
-        ballJoint->GetBallAnchor(v);
+        v = ballJoint->GetBallAnchor();
         err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
    }
     else if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
     {
-        universalJoint->GetUniversalAnchor(v);
+        v = universalJoint->GetUniversalAnchor();
         err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
     }
     else if ((marker = dynamic_cast<Marker *>(GetTarget())) != nullptr)
@@ -90,7 +89,7 @@ double DataTargetVector::calculateError(size_t valueListIndex)
 // in this case this is the euclidean distance between the two vectors
 double DataTargetVector::calculateError(double time)
 {
-    const double *r;
+    pgd::Vector3 r;
     Body *body;
     Geom *geom;
     HingeJoint *hingeJoint;
@@ -131,12 +130,12 @@ double DataTargetVector::calculateError(double time)
     }
     else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
     {
-        geom->GetWorldPosition(v);
+        v = geom->GetWorldPosition();
         err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
     }
     else if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
     {
-        hingeJoint->GetHingeAnchor(v);
+        v = hingeJoint->GetHingeAnchor();
         err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
    }
     else if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)

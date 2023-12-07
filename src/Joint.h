@@ -24,10 +24,7 @@ class Joint: public NamedObject
 public:
 
     Joint();
-    virtual ~Joint();
 
-    virtual void Attach(Body *body1, Body *body2);
-    virtual void Attach();
     Body *GetBody1() { return m_Body1; }
     Body *GetBody2() { return m_Body2; }
     void setBody1(Body *Body1);

@@ -18,7 +18,7 @@ class HingeJoint: public Joint
 {
 public:
 
-    HingeJoint(dWorldID worldID);
+    HingeJoint();
 
     void SetHingeAnchor(double x, double y, double z);
     void SetHingeAxis(double x, double y, double z);
@@ -30,9 +30,8 @@ public:
     void SetStopSpringDamp(double springConstant, double dampingConstant, double integrationStep);
     void SetStopSpringERP(double springConstant, double ERP, double integrationStep);
 
-    void GetHingeAnchor(pgd::Vector3 result);
-    void GetHingeAnchor2(pgd::Vector3 result);
-    void GetHingeAxis(pgd::Vector3 result);
+    pgd::Vector3 GetHingeAnchor();
+    pgd::Vector3 GetHingeAxis();
 
     double GetHingeAngle();
     double GetHingeAngleRate();
@@ -50,8 +49,8 @@ private:
 
     void CalculateStopTorque();
 
-    double m_HiStopTorqueLimit = dInfinity;
-    double m_LoStopTorqueLimit = -dInfinity;
+    double m_HiStopTorqueLimit = std::numeric_limits<double>::infinity();
+    double m_LoStopTorqueLimit = -std::numeric_limits<double>::infinity();
     double m_axisTorque = 0;
 
     std::vector<double> m_axisTorqueList;
@@ -63,6 +62,9 @@ private:
     // these values are just used for saving and loading
     double m_StopCFM = -1;
     double m_StopERP = -1;
+
+    pgd::Vector3 m_anchor;
+    pgd::Vector3 m_axis;
 
 };
 

@@ -94,21 +94,17 @@ void DialogMarkers::accept() // this catches OK and return/enter
     {
         markerPtr->SetBody(m_simulation->GetBodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
 
-        pgd::Vector3 pos, result;
+        pgd::Vector3 pos;
         pos[0] = ui->lineEditPositionX->value();
         pos[1] = ui->lineEditPositionY->value();
         pos[2] = ui->lineEditPositionZ->value();
-        dBodyGetPosRelPoint(markerPtr->GetBody()->GetBodyID(), pos[0], pos[1], pos[2], result); // convert from world to body
-        markerPtr->SetPosition(result[0], result[1], result[2]);
+        markerPtr->SetWorldPosition(pos[0], pos[1], pos[2]);
 
-        const double *q = dBodyGetQuaternion(markerPtr->GetBody()->GetBodyID());
-        pgd::Quaternion qBody(q[0], q[1], q[2], q[3]);
         double ex = ui->lineEditEulerX->value();
         double ey = ui->lineEditEulerY->value();
         double ez = ui->lineEditEulerZ->value();
         pgd::Quaternion qWorld = pgd::MakeQFromEulerAngles(ex, ey, ez);
-        pgd::Quaternion qLocal = ~qBody * qWorld;
-        markerPtr->SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+        markerPtr->SetWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
     else     // world marker
     {

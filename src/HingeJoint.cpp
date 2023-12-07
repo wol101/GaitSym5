@@ -23,11 +23,8 @@
 
 using namespace std::string_literals;
 
-HingeJoint::HingeJoint(dWorldID worldID) : Joint()
+HingeJoint::HingeJoint() : Joint()
 {
-    setJointID(dJointCreateHinge(worldID, nullptr));
-    dJointSetData(JointID(), this);
-    dJointSetFeedback(JointID(), JointFeedback());
 }
 
 void HingeJoint::SetHingeAnchor (double x, double y, double z)

@@ -13,65 +13,25 @@
 #include "GSUtil.h"
 #include "Marker.h"
 
-#include "ode/ode.h"
-
-#include <cassert>
-#include <cstdlib>
 #include <sstream>
 
 using namespace std::string_literals;
 
-BallJoint::BallJoint(dWorldID worldID, Mode mode) : Joint()
+BallJoint::BallJoint() : Joint()
 {
-    // ball joint
-    setJointID(dJointCreateBall(worldID, nullptr));
-    dJointSetData(JointID(), this);
-    dJointSetFeedback(JointID(), JointFeedback());
-
-    // angular motor
-    m_MotorJointID = dJointCreateAMotor (worldID, nullptr);
-    dJointSetFeedback(m_MotorJointID, &m_MotorJointFeedback);
-
-    m_Mode = mode;
-}
-
-void BallJoint::Attach(Body *body1, Body *body2)
-{
-    assert(body1 != nullptr || body2 != nullptr);
-    setBody1(body1);
-    setBody2(body2);
-    if (GetBody1() == nullptr)
-    {
-        dJointAttach(JointID(), nullptr, GetBody2()->GetBodyID());
-        dJointAttach(m_MotorJointID, nullptr, GetBody2()->GetBodyID());
-    }
-    else if (GetBody2() == nullptr)
-    {
-        dJointAttach(JointID(), GetBody1()->GetBodyID(), nullptr);
-        dJointAttach(m_MotorJointID, GetBody1()->GetBodyID(), nullptr);
-    }
-    else
-    {
-        dJointAttach(JointID(), GetBody1()->GetBodyID(), GetBody2()->GetBodyID());
-        dJointAttach(m_MotorJointID, GetBody1()->GetBodyID(), GetBody2()->GetBodyID());
-    }
-}
-
-void BallJoint::Attach()
-{
-    this->Attach(body1Marker()->GetBody(), body2Marker()->GetBody());
 }
 
 void BallJoint::SetBallAnchor(double x, double y, double z)
 {
-    dJointSetBallAnchor(JointID(), x, y, z);
+    m_anchor.Set(x, y, z);
 }
 
-void BallJoint::GetBallAnchor(pgd::Vector3 result)
+pgd::Vector3 BallJoint::GetBallAnchor() const
 {
-    dJointGetBallAnchor(JointID(), result);
+    return m_anchor;
 }
 
+/*
 void BallJoint::GetBallAnchor2(pgd::Vector3 result)
 {
     dJointGetBallAnchor2(JointID(), result);
@@ -229,6 +189,7 @@ void BallJoint::SetEulerReferenceVectors(pgd::Vector3 reference1, pgd::Vector3 r
 //        SetAngles();
 //    }
 //}
+*/
 
 // get the qauternion that rotates from body1 to body2
 pgd::Quaternion BallJoint::GetQuaternion()
@@ -243,21 +204,21 @@ std::string *BallJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
-    if (findAttribute("Mode"s, &buf) == nullptr) return lastErrorPtr();
-    else if (buf == "NoStops") m_Mode = BallJoint::NoStops;
-    else if (buf == "AMotorUser") m_Mode = BallJoint::AMotorUser;
-    else if (buf == "AMotorEuler") m_Mode = BallJoint::AMotorEuler;
-    else { setLastError("Joint ID=\""s + name() +"\" unrecognised Mode"s); return lastErrorPtr(); }
+    // if (findAttribute("Mode"s, &buf) == nullptr) return lastErrorPtr();
+    // else if (buf == "NoStops") m_Mode = BallJoint::NoStops;
+    // else if (buf == "AMotorUser") m_Mode = BallJoint::AMotorUser;
+    // else if (buf == "AMotorEuler") m_Mode = BallJoint::AMotorEuler;
+    // else { setLastError("Joint ID=\""s + name() +"\" unrecognised Mode"s); return lastErrorPtr(); }
 
     pgd::Vector3 position = body1Marker()->GetWorldPosition();
     this->SetBallAnchor(position.x, position.y, position.z);
     pgd::Vector3 x, y, z;
-    body1Marker()->GetWorldBasis(&x, &y, &z);
-    int axisMode = 1; // 1 relative to body 1
-    this->SetAxes(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z, axisMode);
-    if (CFM() >= 0) dJointSetBallParam (JointID(), dParamCFM, CFM());
-    if (ERP() >= 0) dJointSetBallParam (JointID(), dParamERP, ERP());
-
+    // body1Marker()->GetWorldBasis(&x, &y, &z);
+    // int axisMode = 1; // 1 relative to body 1
+    // this->SetAxes(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z, axisMode);
+    // if (CFM() >= 0) dJointSetBallParam (JointID(), dParamCFM, CFM());
+    // if (ERP() >= 0) dJointSetBallParam (JointID(), dParamERP, ERP());
+/*
     switch (m_Mode)
     {
     case BallJoint::NoStops:
@@ -303,6 +264,7 @@ std::string *BallJoint::createFromAttributes()
             break;
         }
     }
+*/
     return nullptr;
 }
 
@@ -313,6 +275,7 @@ void BallJoint::appendToAttributes()
     setAttribute("Type"s, "Ball"s);
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
+/*
     switch (m_Mode)
     {
     case BallJoint::NoStops:
@@ -337,40 +300,41 @@ void BallJoint::appendToAttributes()
         setAttribute("HighStop2"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop3), &buf));
         break;
     }
+*/
 }
 
-BallJoint::Mode BallJoint::GetMode() const
-{
-    return m_Mode;
-}
+// BallJoint::Mode BallJoint::GetMode() const
+// {
+//     return m_Mode;
+// }
 
 std::string BallJoint::dumpToString()
 {
     std::stringstream ss;
-    ss.precision(17);
-    ss.setf(std::ios::scientific);
-    if (firstDump())
-    {
-        setFirstDump(false);
-        ss << "Time\tXP\tYP\tZP\ttheta0\ttheta1\ttheta2\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\tMotorFX1\tMotorFY1\tMotorFZ1\tMotorTX1\tMotorTY1\tMotorTZ1\tMotorFX2\tMotorFY2\tMotorFZ2\tMotorTX2\tMotorTY2\tMotorTZ2\n";
-    }
-    pgd::Vector3 p;
-    GetBallAnchor(p);
-    double theta0 = dJointGetAMotorAngle(m_MotorJointID, 0);
-    double theta1 = dJointGetAMotorAngle(m_MotorJointID, 1);
-    double theta2 = dJointGetAMotorAngle(m_MotorJointID, 2);
+    // ss.precision(17);
+    // ss.setf(std::ios::scientific);
+    // if (firstDump())
+    // {
+    //     setFirstDump(false);
+    //     ss << "Time\tXP\tYP\tZP\ttheta0\ttheta1\ttheta2\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\tMotorFX1\tMotorFY1\tMotorFZ1\tMotorTX1\tMotorTY1\tMotorTZ1\tMotorFX2\tMotorFY2\tMotorFZ2\tMotorTX2\tMotorTY2\tMotorTZ2\n";
+    // }
+    // pgd::Vector3 p;
+    // GetBallAnchor(p);
+    // double theta0 = dJointGetAMotorAngle(m_MotorJointID, 0);
+    // double theta1 = dJointGetAMotorAngle(m_MotorJointID, 1);
+    // double theta2 = dJointGetAMotorAngle(m_MotorJointID, 2);
 
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" <<
-          theta0 << "\t" << theta1 << "\t" << theta2 << "\t" <<
-          JointFeedback()->f1[0] << "\t" << JointFeedback()->f1[1] << "\t" << JointFeedback()->f1[2] << "\t" <<
-          JointFeedback()->t1[0] << "\t" << JointFeedback()->t1[1] << "\t" << JointFeedback()->t1[2] << "\t" <<
-          JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
-          JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] << "\t" <<
-          m_MotorJointFeedback.f1[0] << "\t" << m_MotorJointFeedback.f1[1] << "\t" << m_MotorJointFeedback.f1[2] << "\t" <<
-          m_MotorJointFeedback.t1[0] << "\t" << m_MotorJointFeedback.t1[1] << "\t" << m_MotorJointFeedback.t1[2] << "\t" <<
-          m_MotorJointFeedback.f2[0] << "\t" << m_MotorJointFeedback.f2[1] << "\t" << m_MotorJointFeedback.f2[2] << "\t" <<
-          m_MotorJointFeedback.t2[0] << "\t" << m_MotorJointFeedback.t2[1] << "\t" << m_MotorJointFeedback.t2[2] << "\t" <<
-          "\n";
+    // ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" <<
+    //       theta0 << "\t" << theta1 << "\t" << theta2 << "\t" <<
+    //       JointFeedback()->f1[0] << "\t" << JointFeedback()->f1[1] << "\t" << JointFeedback()->f1[2] << "\t" <<
+    //       JointFeedback()->t1[0] << "\t" << JointFeedback()->t1[1] << "\t" << JointFeedback()->t1[2] << "\t" <<
+    //       JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
+    //       JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] << "\t" <<
+    //       m_MotorJointFeedback.f1[0] << "\t" << m_MotorJointFeedback.f1[1] << "\t" << m_MotorJointFeedback.f1[2] << "\t" <<
+    //       m_MotorJointFeedback.t1[0] << "\t" << m_MotorJointFeedback.t1[1] << "\t" << m_MotorJointFeedback.t1[2] << "\t" <<
+    //       m_MotorJointFeedback.f2[0] << "\t" << m_MotorJointFeedback.f2[1] << "\t" << m_MotorJointFeedback.f2[2] << "\t" <<
+    //       m_MotorJointFeedback.t2[0] << "\t" << m_MotorJointFeedback.t2[1] << "\t" << m_MotorJointFeedback.t2[2] << "\t" <<
+    //       "\n";
     return ss.str();
 }
 

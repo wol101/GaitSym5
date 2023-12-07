@@ -11,11 +11,7 @@
 #include "Body.h"
 #include "Marker.h"
 #include "GSUtil.h"
-
-#include "ode/ode.h"
-
-#include <string.h>
-#include <cassert>
+#include "Simulation.h"
 
 using namespace std::string_literals;
 
@@ -23,29 +19,6 @@ Joint::Joint()
 {
 }
 
-Joint::~Joint()
-{
-    if (JointID()) dJointDestroy(JointID());
-}
-
-void Joint::Attach(Body *body1, Body *body2)
-{
-    m_Body1 = body1;
-    m_Body2 = body2;
-    if (GetBody1() == nullptr) dJointAttach(JointID(), nullptr, GetBody2()->GetBodyID());
-    else if (GetBody2() == nullptr) dJointAttach(JointID(), GetBody1()->GetBodyID(), nullptr);
-    else dJointAttach(JointID(), GetBody1()->GetBodyID(), GetBody2()->GetBodyID());
-}
-
-void Joint::Attach()
-{
-    this->Attach(body1Marker()->GetBody(), body2Marker()->GetBody());
-}
-
-dJointFeedback *Joint::GetFeedback()
-{
-    return &m_JointFeedback;
-}
 
 Marker *Joint::body1Marker() const
 {
@@ -102,7 +75,6 @@ std::string *Joint::createFromAttributes()
     }
     this->setBody1Marker(marker1Iterator->second.get());
     this->setBody2Marker(marker2Iterator->second.get());
-    this->Attach(); // must attach before the various joint axes, anchors and fixed operations
 
     if (findAttribute("CFM"s, &buf)) m_CFM = GSUtil::Double(buf);
     if (findAttribute("ERP"s, &buf)) m_ERP = GSUtil::Double(buf);
@@ -129,26 +101,6 @@ void Joint::appendToAttributes()
     setAttribute("Body2MarkerID"s, body2Marker()->name());
     if (m_CFM >= 0) setAttribute("CFM"s, *GSUtil::ToString(m_CFM, &buf));
     if (m_ERP >= 0) setAttribute("ERP"s, *GSUtil::ToString(m_ERP, &buf));
-}
-
-dJointID Joint::JointID() const
-{
-    return m_JointID;
-}
-
-void Joint::setJointID(const dJointID &JointID)
-{
-    m_JointID = JointID;
-}
-
-dJointFeedback *Joint::JointFeedback()
-{
-    return &m_JointFeedback;
-}
-
-void Joint::setJointFeedback(const dJointFeedback &JointFeedback)
-{
-    m_JointFeedback = JointFeedback;
 }
 
 double Joint::CFM() const

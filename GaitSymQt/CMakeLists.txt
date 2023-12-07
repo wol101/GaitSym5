@@ -701,7 +701,6 @@ set(PROJECT_SOURCES
     ../src/PIDErrorInController.cpp
     ../src/PIDMuscleLengthController.cpp
     ../src/PlaneGeom.cpp
-    ../src/RayGeom.cpp
     ../src/Reporter.cpp
     ../src/Simulation.cpp
     ../src/SliderJoint.cpp
@@ -841,7 +840,6 @@ set(PROJECT_SOURCES
     ../src/PIDErrorInController.h
     ../src/PIDMuscleLengthController.h
     ../src/PlaneGeom.h
-    ../src/RayGeom.h
     ../src/Reporter.h
     ../src/SimpleStrap.h
     ../src/Simulation.h

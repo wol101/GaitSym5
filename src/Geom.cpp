@@ -44,6 +44,77 @@ Body *Geom::GetBody()
     return m_body;
 }
 
+void Geom::SetPosition (double x, double y, double z)
+{
+    m_position.Set(x, y, z);
+}
+
+pgd::Vector3 Geom::GetPosition() const
+{
+    return m_position;
+}
+
+pgd::Vector3 Geom::GetWorldPosition() const
+{
+    if (m_body)
+    {
+        // get the position in world coordinates
+        //        pgd::Vector3 p;
+        //        dBodyGetRelPointPos(m_body->GetBodyID(), m_position.x, m_position.y, m_position.z, p);
+        //        return pgd::Vector3(p[0], p[1], p[2]);
+        pgd::Vector3 bodyWorldPosition = pgd::QVRotate(m_body->GetQuaternion(), m_position) + pgd::Vector3(m_body->GetPosition());
+        return bodyWorldPosition;
+    }
+    else
+    {
+        return m_position;
+    }
+}
+
+void Geom::SetQuaternion(double n, double x, double y, double z)
+{
+    m_quaternion.Set(n, x, y, z);
+}
+
+void Geom::setGeomMarker(Marker *geomMarker)
+{
+    m_geomMarker = geomMarker;
+    if (m_geomMarker->GetBody())
+    {
+        this->SetGeomLocation(Geom::body);
+        this->SetBody(m_geomMarker->GetBody());
+    }
+    else
+    {
+        this->SetBody(nullptr);
+        this->SetGeomLocation(Geom::environment);
+
+    }
+    if (dynamic_cast<PlaneGeom *>(this)) return; // do not try to place non-placeable geoms
+
+    pgd::Vector3 p = geomMarker->GetPosition();
+    this->SetPosition(p.x, p.y, p.z);
+    pgd::Quaternion q = geomMarker->GetQuaternion();
+    this->SetQuaternion(q.n, q.x, q.y, q.z);
+}
+
+pgd::Quaternion Geom::GetQuaternion() const
+{
+    return m_quaternion;
+}
+
+pgd::Quaternion Geom::GetWorldQuaternion() const
+{
+    if (m_body)
+    {
+        return m_body->GetQuaternion() * m_quaternion;
+    }
+    else
+    {
+        return m_quaternion;
+    }
+}
+
 void Geom::SetSpringDamp(double springConstant, double dampingConstant, double integrationStep)
 {
     m_ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
