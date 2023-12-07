@@ -17,7 +17,7 @@ class AMotorJoint: public Joint
 {
 public:
 
-    AMotorJoint(dWorldID worldID);
+    AMotorJoint();
 
     void GetAxisAngle(double *xa, double *ya, double *za, double *angle) const;
     pgd::Quaternion GetQuaternion() const;
@@ -36,9 +36,7 @@ public:
     double GetMaxTorque() const;
 
 
-#ifdef EXPERIMENTAL
     void SetDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope);
-#endif
 
     virtual std::string dumpToString();
     virtual void Update();
@@ -66,12 +64,10 @@ private:
     bool m_firstTime = true;
     bool m_reverseBodyOrderInCalculations = false;
 
-#ifdef EXPERIMENTAL
     void UpdateDynamicFriction();
     double m_dynamicFrictionIntercept = 0;
     double m_dynamicFrictionSlope = 0;
     bool m_dynamicFrictionFlag = false;
-#endif
 };
 
 

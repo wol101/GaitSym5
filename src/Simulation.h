@@ -19,8 +19,6 @@
 #include "SmartEnum.h"
 #include "ErrorHandler.h"
 
-#include "PxPhysicsAPI.h"
-
 #include <map>
 #include <string>
 #include <fstream>
@@ -203,15 +201,6 @@ private:
     std::map<std::string, std::ofstream> m_dumpFileStreams;
     ErrorHandler m_errorHandler;
 
-    // PhysX values
-    physx::PxDefaultAllocator m_Allocator;
-    physx::PxDefaultErrorCallback m_ErrorCallback;
-    physx::PxFoundation *m_Foundation = nullptr;
-    physx::PxPhysics *m_Physics = nullptr;
-    physx::PxDefaultCpuDispatcher *m_Dispatcher = nullptr;
-    physx::PxScene *m_Scene = nullptr;
-    physx::PxMaterial *m_gMaterial = nullptr;
-    physx::PxPvd *m_Pvd = nullptr;
 };
 
 

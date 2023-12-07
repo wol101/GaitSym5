@@ -12,18 +12,27 @@
 
 #include "Geom.h"
 
-#include "ode/ode.h"
+// The plane equation is:
+// a * x + b * y + c * z = d
+// The plane's normal vector is (a, b, c), and it must have length 1.
 
 class PlaneGeom: public Geom
 {
 public:
 
-    PlaneGeom(dSpaceID space, double a, double b, double c, double d);
-    virtual ~PlaneGeom();
+    PlaneGeom(double a, double b, double c, double d);
+
+    void SetPlane(double a, double b, double c, double d);
+    void GetPlane(double *a, double *b, double *c, double *d);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+private:
+    double m_a;
+    double m_b;
+    double m_c;
+    double m_d;
 };
 
 

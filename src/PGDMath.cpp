@@ -142,6 +142,11 @@ double& pgd::Vector2::operator[](size_t i)
     return reinterpret_cast<double *>(&x)[i];
 }
 
+double pgd::Vector2::operator[](size_t i) const
+{
+    return reinterpret_cast<const double *>(&x)[i];
+}
+
 pgd::Vector2 pgd::Vector2::operator-(void)
 {
     return pgd::Vector2(-x, -y);
@@ -335,9 +340,14 @@ pgd::Vector3& pgd::Vector3::operator=(double *s)
     return *this;
 }
 
-double& pgd::Vector3::operator[](size_t i)
+double& pgd::Vector3::operator [](size_t i)
 {
     return reinterpret_cast<double *>(&x)[i];
+}
+
+double pgd::Vector3::operator [](size_t i) const
+{
+    return reinterpret_cast<const double *>(&x)[i];
 }
 
 
@@ -586,6 +596,11 @@ double& pgd::Vector4::operator[](size_t i)
     return reinterpret_cast<double *>(&x)[i];
 }
 
+double pgd::Vector4::operator[](size_t i) const
+{
+    return reinterpret_cast<const double *>(&x)[i];
+}
+
 
 pgd::Vector4 pgd::Vector4::operator-(void)
 {
@@ -729,6 +744,25 @@ pgd::Quaternion pgd::Quaternion::operator/=(double s)
     y /= s;
     z /= s;
     return *this;
+}
+
+pgd::Quaternion& pgd::Quaternion::operator=(double *s)
+{
+    n = s[0];
+    x = s[1];
+    y = s[2];
+    z = s[3];
+    return *this;
+}
+
+double& pgd::Quaternion::operator[](size_t i)
+{
+    return reinterpret_cast<double *>(&n)[i];
+}
+
+double pgd::Quaternion::operator[](size_t i) const
+{
+    return reinterpret_cast<const double *>(&n)[i];
 }
 
 double *pgd::Quaternion::data()
@@ -1417,6 +1451,45 @@ pgd::Matrix3x3& pgd::Matrix3x3::operator/=(double s)
     e33 /= s;
     return *this;
 }
+
+pgd::Matrix3x3& pgd::Matrix3x3::operator=(double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3)
+{
+    e11 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[0];
+    e12 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[1];
+    e13 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[2];
+    e21 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[3];
+    e22 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[4];
+    e23 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[5];
+    e31 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[6];
+    e32 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[7];
+    e33 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[8];
+    return *this;
+}
+
+double& pgd::Matrix3x3::operator[](size_t i)
+{
+    return reinterpret_cast<double *>(&e11)[i];
+}
+
+double pgd::Matrix3x3::operator[](size_t i) const
+{
+    return reinterpret_cast<const double *>(&e11)[i];
+}
+
+void pgd::Matrix3x3::SetInertia(double ixx, double iyy, double izz, double ixy, double iyz, double izx)
+{
+    e11 = ixx; e12 = ixy; e13 = izx;
+    e21 = ixy; e22 = iyy; e23 = iyz;
+    e31 = izx; e32 = iyz; e33 = izz;
+}
+
+void pgd::Matrix3x3::GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const
+{
+    *ixx = e11;       *ixy = e12; *izx = e13;
+    /* *ixy = e21; */ *iyy = e22; *iyz = e23;
+    /* *izx = e31; *iyz = e32; */ *izz = e33;
+}
+
 
 pgd::Matrix3x3 pgd::operator+(const pgd::Matrix3x3 &m1, const pgd::Matrix3x3 &m2)
 {

@@ -19,20 +19,25 @@
 
 using namespace std::string_literals;
 
-BoxGeom::BoxGeom(dSpaceID space, double lx, double ly, double lz)
+BoxGeom::BoxGeom(double lx, double ly, double lz)
 {
-    // create the geom
-    setGeomID(dCreateBox(space, lx, ly, lz));
-    dGeomSetData(GetGeomID(), this);
+    m_lx = lx;
+    m_ly = ly;
+    m_lz = lz;
 }
 
 void BoxGeom::GetDimensions(double *lx, double *ly, double *lz)
 {
-    pgd::Vector3 result;
-    dGeomBoxGetLengths(GetGeomID(), result);
-    *lx = result[0];
-    *ly = result[1];
-    *lz = result[2];
+    *lx = m_lx;
+    *ly = m_lx;
+    *lz = m_lx;
+}
+
+void BoxGeom::SetDimensions(double lx, double ly, double lz)
+{
+    m_lx = lx;
+    m_ly = ly;
+    m_lz = lz;
 }
 
 std::string *BoxGeom::createFromAttributes()
@@ -46,7 +51,7 @@ std::string *BoxGeom::createFromAttributes()
     double lengthY = GSUtil::Double(buf);
     if (findAttribute("LengthZ"s, &buf) == nullptr) return lastErrorPtr();
     double lengthZ = GSUtil::Double(buf);
-    dGeomBoxSetLengths(GetGeomID(), lengthX, lengthY, lengthZ);
+    SetDimensions(lengthX, lengthY, lengthZ);
 
     return nullptr;
 }
@@ -56,11 +61,11 @@ void BoxGeom::appendToAttributes()
     Geom::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Box"s);
-    pgd::Vector3 result;
-    dGeomBoxGetLengths(GetGeomID(), result);
-    setAttribute("LengthX"s, *GSUtil::ToString(result[0], &buf));
-    setAttribute("LengthY"s, *GSUtil::ToString(result[1], &buf));
-    setAttribute("LengthZ"s, *GSUtil::ToString(result[2], &buf));
+    double lx, ly, lz;
+    GetDimensions(&lx, &ly, &lz);
+    setAttribute("LengthX"s, *GSUtil::ToString(lx, &buf));
+    setAttribute("LengthY"s, *GSUtil::ToString(ly, &buf));
+    setAttribute("LengthZ"s, *GSUtil::ToString(lz, &buf));
 
     return;
 }

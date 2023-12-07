@@ -1017,6 +1017,7 @@ if (MSVC)
     # set(CMAKE_CXX_FLAGS_DEBUG "-bigobj -g") # default flags CMAKE_CXX_FLAGS_DEBUG=-g
     # target_compile_options(GaitSym5 PRIVATE /bigobj /MT)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+    add_compile_definitions(_USE_MATH_DEFINES)
 endif ()
 
 find_package(Qt6 REQUIRED COMPONENTS Xml)

@@ -13,7 +13,6 @@
 #define Body_h
 
 #include "NamedObject.h"
-#include "Simulation.h"
 #include "PGDMath.h"
 #include "SmartEnum.h"
 
@@ -21,8 +20,7 @@ class Body: public NamedObject
 {
 public:
 
-    Body(physx::PxPhysics *physics);
-    virtual ~Body() override;
+    Body();
 
     virtual void LateInitialisation();
 
@@ -33,7 +31,7 @@ public:
                NoDrag, DragCoefficients, DragCylinderX, DragCylinderY, DragCylinderZ);
 
     void SetConstructionPosition(double x, double y, double z) { m_constructionPosition[0] = x; m_constructionPosition[1] = y; m_constructionPosition[2] = z; }
-    const double *GetConstructionPosition() const { return m_constructionPosition; }
+    pgd::Vector3 GetConstructionPosition() const { return m_constructionPosition; }
     void SetConstructionDensity(double constructionDensity) { m_constructionDensity = constructionDensity; }
     double GetConstructionDensity() const { return m_constructionDensity; }
 
@@ -48,7 +46,8 @@ public:
     void SetPositionDelta(double x, double y, double z);
     void SetQuaternionDelta(double n, double x, double y, double z);
 
-    void SetMass(const dMass *mass);
+    void SetMass(double mass);
+    void SetMass(double mass, double ixx, double iyy, double izz, double ixy, double iyz, double izx);
 
     void SetPositionLowBound(double x, double y, double z) { m_positionLowBound[0] = x; m_positionLowBound[1] = y; m_positionLowBound[2] = z; }
     void SetPositionHighBound(double x, double y, double z) { m_positionHighBound[0] = x; m_positionHighBound[1] = y; m_positionHighBound[2] = z; }
@@ -56,12 +55,12 @@ public:
     void SetLinearVelocityHighBound(double x, double y, double z) { m_linearVelocityHighBound[0] = x; m_linearVelocityHighBound[1] = y; m_linearVelocityHighBound[2] = z; }
     void SetAngularVelocityLowBound(double x, double y, double z) { m_angularVelocityLowBound[0] = x; m_angularVelocityLowBound[1] = y; m_angularVelocityLowBound[2] = z; }
     void SetAngularVelocityHighBound(double x, double y, double z) { m_angularVelocityHighBound[0] = x; m_angularVelocityHighBound[1] = y; m_angularVelocityHighBound[2] = z; }
-    const double *GetPositionLowBound() const { return m_positionLowBound; }
-    const double *GetPositionHighBound() const { return m_positionHighBound; }
-    const double *GetLinearVelocityLowBound() const { return m_linearVelocityLowBound; }
-    const double *GetLinearVelocityHighBound() const { return m_linearVelocityHighBound; }
-    const double *GetAngularVelocityLowBound() const { return m_angularVelocityLowBound; }
-    const double *GetAngularVelocityHighBound() const { return m_angularVelocityHighBound; }
+    pgd::Vector3 GetPositionLowBound() const { return m_positionLowBound; }
+    pgd::Vector3 GetPositionHighBound() const { return m_positionHighBound; }
+    pgd::Vector3 GetLinearVelocityLowBound() const { return m_linearVelocityLowBound; }
+    pgd::Vector3 GetLinearVelocityHighBound() const { return m_linearVelocityHighBound; }
+    pgd::Vector3 GetAngularVelocityLowBound() const { return m_angularVelocityLowBound; }
+    pgd::Vector3 GetAngularVelocityHighBound() const { return m_angularVelocityHighBound; }
 
     void SetLinearDamping(double linearDamping);
     void SetAngularDamping(double angularDamping);
@@ -69,16 +68,14 @@ public:
     void SetAngularDampingThreshold(double angularDampingThreshold);
     void SetMaxAngularSpeed(double maxAngularSpeed);
 
-#ifdef EXPERIMENTAL
     void SetCylinderDragParameters(DragControl dragAxis, double dragFluidDensity, double dragCylinderMin, double dragCylinderMax, double dragCylinderRadius, double dragCylinderCoefficient);
     void SetDirectDragCoefficients(double linearDragCoefficientX, double linearDragCoefficientY, double linearDragCoefficientZ,
                                    double rotationalDragCoefficientX, double rotationalDragCoefficientY, double rotationalDragCoefficientZ);
-#endif
 
-    const double *GetPosition();
-    const double *GetQuaternion();
-    const double *GetLinearVelocity();
-    const double *GetAngularVelocity();
+    pgd::Vector3 GetPosition() const;
+    pgd::Quaternion GetQuaternion() const;
+    pgd::Vector3 GetLinearVelocity() const;
+    pgd::Vector3 GetAngularVelocity() const;
     void GetPosition(pgd::Vector3 *pos);
     void GetQuaternion(pgd::Quaternion *quat);
     void GetRelativePosition(Body *rel, pgd::Vector3 *pos);
@@ -86,12 +83,11 @@ public:
     void GetRelativeLinearVelocity(Body *rel, pgd::Vector3 *vel);
     void GetRelativeAngularVelocity(Body *rel, pgd::Vector3 *rVel);
     double GetMass() const;
-    void GetMass(dMass *mass) const;
+    void GetMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const;
     double GetLinearKineticEnergy();
-    void GetLinearKineticEnergy(pgd::Vector3 ke);
+    void GetLinearKineticEnergy(pgd::Vector3 *ke);
     double GetRotationalKineticEnergy();
     double GetGravitationalPotentialEnergy();
-    dBodyID GetBodyID() const;
 
     void SetInitialPosition(double x, double y, double z);
     void SetInitialQuaternion(double n, double x, double y, double z);
@@ -107,7 +103,7 @@ public:
     void ComputeDrag();
 
     // Utility
-    static void ParallelAxis(dMass *massProperties, const double *translation, const double *quaternion, dMass *newMassProperties);
+    static void ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor);
     static void ParallelAxis(double x, double y, double z, // transformation from centre of mass to new location (m)
                              double mass, // mass (kg)
                              double ixx, double iyy, double izz, double ixy, double iyz, double izx, // moments of inertia kgm2
@@ -116,7 +112,6 @@ public:
                              double *ixxp, double *iyyp, double *izzp, double *ixyp, double *iyzp, double *izxp); // transformed moments of inertia about new coordinate system
 
     static double GetProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vector3 &vector1, const pgd::Vector3 &vector2);
-    static std::string MassCheck (const dMass *m);
 
     void SetGraphicFile1(const std::string &graphicFile) { m_graphicFile1 = graphicFile; }
     std::string GetGraphicFile1() const { return m_graphicFile1; }
@@ -132,25 +127,24 @@ public:
 
 private:
 
-    physx::PxPhysics *m_physics = nullptr;
-    physx::PxRigidBody *m_rigidBody = nullptr;
-    pgd::Vector3 m_constructionPosition = {0, 0, 0, 0};
+    pgd::Vector3 m_constructionPosition = {0, 0, 0};
     pgd::Quaternion m_constructionQuaternion = {1, 0, 0, 0};
     double m_constructionDensity = 1000.0;
 
-    pgd::Vector3 m_positionLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
-    pgd::Vector3 m_positionHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    pgd::Vector3 m_linearVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
-    pgd::Vector3 m_linearVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
-    pgd::Vector3 m_angularVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX, 0};
-    pgd::Vector3 m_angularVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX, 0};
+    pgd::Vector3 m_positionLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
+    pgd::Vector3 m_positionHighBound = {DBL_MAX, DBL_MAX, DBL_MAX};
+    pgd::Vector3 m_linearVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
+    pgd::Vector3 m_linearVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX};
+    pgd::Vector3 m_angularVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
+    pgd::Vector3 m_angularVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX};
 
-    pgd::Vector3 m_initialPosition = {0, 0, 0, 0};
+    pgd::Vector3 m_initialPosition = {0, 0, 0};
     pgd::Quaternion m_initialQuaternion = {1, 0, 0, 0};
 
-    // these are local copies that are really only used for bodies that are not attached to a simulation
-    pgd::Vector3 m_currentPosition = {0, 0, 0, 0};
+    pgd::Vector3 m_currentPosition = {0, 0, 0};
     pgd::Quaternion m_currentQuaternion = {1, 0, 0, 0};
+    pgd::Vector3 m_currentLinearVelocity = {0, 0, 0};
+    pgd::Vector3 m_currentAngularVelocity = {0, 0, 0};
 
     std::string m_graphicFile1;
     std::string m_graphicFile2;
@@ -165,8 +159,6 @@ private:
 
     bool m_constructionMode = false;
 
-
-#ifdef EXPERIMENTAL
     DragControl m_dragControl = DragControl::NoDrag;
     double m_dragCoefficients[6] = {0, 0, 0, 0, 0, 0};
     double m_dragFluidDensity = 0;
@@ -174,8 +166,9 @@ private:
     double m_dragCylinderLength = 0;
     double m_dragCylinderRadius = 0;
     double m_dragCylinderCoefficient = 0;
-#endif
 
+    double m_mass = 0;
+    pgd::Matrix3x3 m_inertia;
 };
 
 #endif

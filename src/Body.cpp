@@ -26,40 +26,15 @@
 
 using namespace std::string_literals;
 
-#define OUTSIDERANGE(x, minX, maxX) \
-        ((x) < (minX) || (x) > (maxX))
+#define OUTSIDERANGE(x, minX, maxX) ((x) < (minX) || (x) > (maxX))
 
-Body::Body(physx::PxPhysics *physics)
+Body::Body()
 {
-    m_physics = physics;
-    physx::PxScene *scenes[1];
-    m_physics->getScenes(scenes, 1, 0);
-    if (m_physics && scenes[0])
-    {
-        physx::PxTransform localTm;
-        m_rigidBody = m_physics->createRigidDynamic(localTm);
-        scenes[0]->addActor(m_rigidBody);
-    }
-}
-
-Body::~Body()
-{
-    if (m_rigidBody)
-    {
-        m_rigidBody->release();
-        m_rigidBody = nullptr;
-    }
 }
 
 void Body::SetPosition(double x, double y, double z)
 {
-    m_currentPosition.set(x, y, z);
-    physx::PxTransform destination;
-    m_rigidBody->getKinematicTarget(destination);
-    destination.p.x = x;
-    destination.p.y = y;
-    destination.p.z = z;
-    m_rigidBody->setKinematicTarget(destination);
+    m_currentPosition.Set(x, y, z);
 }
 
 void Body::SetQuaternion(double n, double x, double y, double z)
@@ -68,7 +43,6 @@ void Body::SetQuaternion(double n, double x, double y, double z)
     m_currentQuaternion[1] = x;
     m_currentQuaternion[2] = y;
     m_currentQuaternion[3] = z;
-    if (m_bodyID) dBodySetQuaternion(m_bodyID, m_currentQuaternion);
 }
 
 // parses the position allowing a relative position specified by BODY ID
@@ -103,13 +77,13 @@ std::string *Body::SetPosition(const std::string &buf)
             return lastErrorPtr();
         }
         // find the marker that is relative to this body and make it marker1
-        if (marker2->GetBody()->GetBodyID() == m_bodyID) std::swap(marker1, marker2);
-        if (marker2->GetBody()->GetBodyID() == m_bodyID)
+        if (marker2->GetBody() == this) std::swap(marker1, marker2);
+        if (marker2->GetBody() == this)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" Only one marker of pair must be relative to the body"s);
             return lastErrorPtr();
         }
-        if (marker1->GetBody()->GetBodyID() != m_bodyID)
+        if (marker1->GetBody() != this)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" Only one marker of pair must be relative to the body"s);
             return lastErrorPtr();
@@ -146,9 +120,12 @@ std::string *Body::SetPosition(const std::string &buf)
         }
         else
         {
-            pgd::Vector3 result;
-            dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            this->SetPosition(result[0], result[1], result[2]);
+            // pgd::Vector3 result;
+            // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
+            //    pgd::Vector3 result;
+            //    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result); // convert from body to world
+            pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->GetPosition());
+            this->SetPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
             return nullptr;
         }
     }
@@ -162,10 +139,12 @@ std::string *Body::SetPosition(const std::string &buf)
         }
         // get world coordinates of x1,y1,z1
         pgd::Vector3 world1, world2, pos;
-        dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), world1);
-        dBodyGetRelPointPos (m_bodyID, GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]), world2);
+        // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), world1);
+        // dBodyGetRelPointPos (m_bodyID, GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]), world2);
+        world1 = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->GetPosition());
+        world2 = pgd::QVRotate(this->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]))) + pgd::Vector3(this->GetPosition());
         // add the error to the current position
-        const double *p = dBodyGetPosition(m_bodyID);
+        pgd::Vector3 p = this->GetPosition();
         for (size_t i = 0; i < 3; i++) pos[i] = p[i] + (world1[i] - world2[i]);
         this->SetPosition(pos[0], pos[1], pos[2]);
 
@@ -238,7 +217,7 @@ std::string *Body::SetQuaternion(const std::string &buf)
 
 void Body::SetLinearVelocity(double x, double y, double z)
 {
-    dBodySetLinearVel(m_bodyID, x, y, z);
+    m_currentLinearVelocity.Set(x, y, z);
 }
 
 // parses the linear velocity allowing a relative velocity specified by BODY ID
@@ -273,10 +252,12 @@ std::string *Body::SetLinearVelocity(const std::string &buf)
         }
         else
         {
-            pgd::Vector3 result;
-            dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            const double *vRel = dBodyGetLinearVel(theBody->GetBodyID());
-            SetLinearVelocity(result[0] + vRel[0], result[1] + vRel[1], result[2] + vRel[2]);
+            // pgd::Vector3 result;
+            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
+            pgd::Vector3 worldVelocity = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])));
+            pgd::Vector3 vRel = theBody->GetLinearVelocity();
+
+            SetLinearVelocity(worldVelocity[0] + vRel[0], worldVelocity[1] + vRel[1], worldVelocity[2] + vRel[2]);
             return nullptr;
         }
     }
@@ -289,53 +270,27 @@ void Body::SetPositionDelta(double x, double y, double z)
     m_currentPosition[0] += x;
     m_currentPosition[1] += y;
     m_currentPosition[2] += z;
-    if (m_bodyID)
-    {
-        const double *p = dBodyGetPosition(m_bodyID);
-        dBodySetPosition(m_bodyID, p[0] + x, p[1] + y, p[2] + z);
-    }
 }
 
 void Body::SetQuaternionDelta(double n, double x, double y, double z)
 {
     pgd::Quaternion qb = {n, x, y, z};
-    pgd::Quaternion qa;
-    dQMultiply0(qa, qb, m_currentQuaternion);
-    m_currentQuaternion[0] = qa[0];
-    m_currentQuaternion[1] = qa[1];
-    m_currentQuaternion[2] = qa[2];
-    m_currentQuaternion[3] = qa[3];
-    if (m_bodyID)
-    {
-        const double *q = dBodyGetQuaternion(m_bodyID);
-        dQMultiply0(qa, qb, q);
-        dBodySetQuaternion(m_bodyID, qa);
-    }
+    m_currentQuaternion = qb * m_currentQuaternion;
 }
 
 double Body::GetLinearKineticEnergy()
 {
     // linear KE = 0.5 m v^2
-    dMass mass;
-    dBodyGetMass(m_bodyID, &mass);
-
-    const double *v = dBodyGetLinearVel(m_bodyID);
-    double linearKE = 0.5 * mass.mass * (v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
-
+    double linearKE = 0.5 * m_mass * m_currentLinearVelocity.Magnitude2();
     return linearKE;
 }
 
-void Body::GetLinearKineticEnergy(pgd::Vector3 ke)
+void Body::GetLinearKineticEnergy(pgd::Vector3 *ke)
 {
     // linear KE = 0.5 m v^2
-    dMass mass;
-    dBodyGetMass(m_bodyID, &mass);
-
-    const double *v = dBodyGetLinearVel(m_bodyID);
-    ke[0] =  0.5 * mass.mass * v[0] * v[0];
-    ke[1] =  0.5 * mass.mass * v[1] * v[1];
-    ke[2] =  0.5 * mass.mass * v[2] * v[2];
-
+    ke->x = 0.5 * m_mass * m_currentLinearVelocity.x * m_currentLinearVelocity.x;
+    ke->y = 0.5 * m_mass * m_currentLinearVelocity.y * m_currentLinearVelocity.y;
+    ke->z = 0.5 * m_mass * m_currentLinearVelocity.z * m_currentLinearVelocity.z;
     return;
 }
 
@@ -344,37 +299,21 @@ double Body::GetRotationalKineticEnergy()
 
     // rotational KE = 0.5 * o(t) * I * o
     // where o is rotational velocity vector and o(t) is the same but transposed
-
-    dMass mass;
-    dBodyGetMass(m_bodyID, &mass);
-
-    const double *ow = dBodyGetAngularVel(m_bodyID);
-    pgd::Vector3 o;
-    dBodyVectorFromWorld (m_bodyID, ow[0], ow[1], ow[2], o);
-    pgd::Vector3 o1;
-    dMultiply0_331(o1, mass.I, o);
-    double rotationalKE = 0.5 * (o[0]*o1[0] + o[1]*o1[1] + o[2]*o1[2]);
-
+    double rotationalKE = 0.5 * m_currentAngularVelocity * m_inertia * m_currentAngularVelocity;
     return rotationalKE;
 }
 
 double Body::GetGravitationalPotentialEnergy()
 {
-    dMass mass;
-    dBodyGetMass(m_bodyID, &mass);
-    pgd::Vector3 g;
-    dWorldGetGravity (m_worldID, g);
-    const double *p = dBodyGetPosition(m_bodyID);
-
     // gravitational PE = mgh
-    double gravitationalPotentialEnergy = - mass.mass * (g[0]*p[0] + g[1]*p[1] + g[2]*p[2]);
-
+    pgd::Vector3 g = simulation()->GetGlobal()->Gravity();
+    double gravitationalPotentialEnergy = -1 * m_mass * (g[0]*m_currentPosition[0] + g[1]*m_currentPosition[1] + g[2]*m_currentPosition[2]);
     return gravitationalPotentialEnergy;
 }
 
 void Body::SetAngularVelocity(double x, double y, double z)
 {
-    dBodySetAngularVel(m_bodyID, x, y, z);
+    m_currentAngularVelocity.Set(x, y, z);
 }
 
 // parses the angular velocity allowing a relative angular velocity specified by BODY ID
@@ -409,10 +348,11 @@ std::string *Body::SetAngularVelocity(const std::string &buf)
         }
         else
         {
-            pgd::Vector3 result;
-            dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            const double *vARel = dBodyGetAngularVel(theBody->GetBodyID());
-            SetAngularVelocity(result[0] + vARel[0], result[1] + vARel[1], result[2] + vARel[2]);
+            // pgd::Vector3 result;
+            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
+            pgd::Vector3 worldAVelocity = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])));
+            pgd::Vector3 vARel = theBody->GetAngularVelocity();
+            SetAngularVelocity(worldAVelocity[0] + vARel[0], worldAVelocity[1] + vARel[1], worldAVelocity[2] + vARel[2]);
             return nullptr;
         }
     }
@@ -421,40 +361,35 @@ std::string *Body::SetAngularVelocity(const std::string &buf)
 
 }
 
-dBodyID Body::GetBodyID() const
+void Body::SetMass(double mass)
 {
-    return m_bodyID;
+    m_mass = mass;
 }
 
-void Body::SetMass(const dMass *mass)
+void Body::SetMass(double mass, double ixx, double iyy, double izz, double ixy, double iyz, double izx)
 {
-    dBodySetMass(m_bodyID, mass);
+    m_mass = mass;
+    m_inertia.SetInertia(ixx, iyy, izz, ixy, iyz, izx);
 }
 
-const double *Body::GetPosition()
+pgd::Vector3 Body::GetPosition() const
 {
-    if (m_bodyID)
-        return dBodyGetPosition(m_bodyID);
-    else
-        return m_currentPosition;
+    return m_currentPosition;
 }
 
 const double *Body::GetQuaternion()
 {
-    if (m_bodyID)
-        return dBodyGetQuaternion(m_bodyID);
-    else
-        return m_currentQuaternion;
+    return m_currentQuaternion;
 }
 
 const double *Body::GetLinearVelocity()
 {
-    return dBodyGetLinearVel(m_bodyID);
+    return m_currentLinearVelocity;
 }
 
 const double *Body::GetAngularVelocity()
 {
-    return dBodyGetAngularVel(m_bodyID);
+    return m_currentAngularVelocity;
 }
 
 void Body::GetPosition(pgd::Vector3 *pos)
@@ -536,16 +471,16 @@ void Body::GetRelativeAngularVelocity(Body *rel, pgd::Vector3 *rVel)
     }
 }
 
+
 double Body::GetMass() const
 {
-    dMass mass;
-    dBodyGetMass(m_bodyID, &mass);
-    return mass.mass;
+    return m_mass;
 }
 
-void Body::GetMass(dMass *mass) const
+void Body::GetMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const
 {
-    dBodyGetMass(m_bodyID, mass);
+    *mass = m_mass;
+    m_inertia.GetInertia(ixx, iyy, izz, ixy, iyz, izx);
     return;
 }
 
@@ -639,10 +574,10 @@ std::string Body::dumpToString()
 // assumes starting point is the moment of inertia at the centre of mass
 // #define _I(i,j) I[(i)*4+(j)]
 // regex _I\(([0-9]+),([0-9]+)\) to I[(\1)*4+(\2)]
-void Body::ParallelAxis(dMass *massProperties, const double *translation, const double *quaternion, dMass *newMassProperties)
+void Body::ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor)
 {
     double x, y, z; // transformation from centre of mass to new location (m)
-    double mass; // mass (kg)
+    double m; // mass (kg)
     double ixx,  iyy,  izz,  ixy,  iyz,  izx; // moments of inertia kgm2
     double ang; // rotation angle (radians)
     double ax, ay, az; // axis of rotation
@@ -651,19 +586,8 @@ void Body::ParallelAxis(dMass *massProperties, const double *translation, const 
     x = translation[0];
     y = translation[1];
     z = translation[2];
-    mass = massProperties->mass;
-//    ixx = massProperties->_I(0,0);
-//    iyy = massProperties->_I(1,1);
-//    izz = massProperties->_I(2,2);
-//    ixy = massProperties->_I(0,1);
-//    izx = massProperties->_I(0,2);
-//    iyz = massProperties->_I(1,2);
-    ixx = massProperties->I[(0)*4+(0)];
-    iyy = massProperties->I[(1)*4+(1)];
-    izz = massProperties->I[(2)*4+(2)];
-    ixy = massProperties->I[(0)*4+(1)];
-    izx = massProperties->I[(0)*4+(2)];
-    iyz = massProperties->I[(1)*4+(2)];
+    m = mass;
+    inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &iyz, &izx);
 
     ang = 2*acos(quaternion[0]);
     double magnitude = sqrt(SQUARE(quaternion[1]) + SQUARE(quaternion[2]) + SQUARE(quaternion[3]));
@@ -675,7 +599,7 @@ void Body::ParallelAxis(dMass *massProperties, const double *translation, const 
     ay = quaternion[2] / magnitude;
     az = quaternion[3] / magnitude;
 
-    ParallelAxis(x, y, z, mass, ixx, iyy, izz, ixy, iyz, izx, ang, ax, ay, az, &ixxp, &iyyp, &izzp, &ixyp, &iyzp, &izxp);
+    ParallelAxis(x, y, z, m, ixx, iyy, izz, ixy, iyz, izx, ang, ax, ay, az, &ixxp, &iyyp, &izzp, &ixyp, &iyzp, &izxp);
 
     dMassSetParameters (newMassProperties, mass, 0, 0, 0, ixxp, iyyp, izzp, ixyp, izxp, iyzp);
 }
@@ -740,85 +664,6 @@ void Body::ParallelAxis(double x, double y, double z, // transformation from cen
              iyz*(ax*ay*(1 - cosang) - az*sinang));
 }
 
-// returns zero if position values are simply mirror images of each other
-// also checks mass properties
-//int Body::SanityCheck(Body *otherBody, Simulation::AxisType axis, const std::string & /*sanityCheckLeft */, const std::string & /* sanityCheckRight */)
-//{
-//    const double epsilon = 1e-10;
-//    const double *p1 = this->GetPosition();
-//    const double *p2 = otherBody->GetPosition();
-
-//    switch (axis)
-//    {
-//    case Simulation::XAxis:
-//        if (fabs(p1[0] + p2[0]) > epsilon) return __LINE__;
-//        if (fabs(p1[1] - p2[1]) > epsilon) return __LINE__;
-//        if (fabs(p1[2] - p2[2]) > epsilon) return __LINE__;
-//        break;
-
-//    case Simulation::YAxis:
-//        if (fabs(p1[0] - p2[0]) > epsilon) return __LINE__;
-//        if (fabs(p1[1] + p2[1]) > epsilon) return __LINE__;
-//        if (fabs(p1[2] - p2[2]) > epsilon) return __LINE__;
-//        break;
-
-//    case Simulation::ZAxis:
-//        if (fabs(p1[0] - p2[0]) > epsilon) return __LINE__;
-//        if (fabs(p1[1] - p2[1]) > epsilon) return __LINE__;
-//        if (fabs(p1[2] + p2[2]) > epsilon) return __LINE__;
-//        break;
-//    }
-
-//    int i;
-//    dMass mass1, mass2;
-//    dBodyGetMass(m_bodyID, &mass1);
-//    dBodyGetMass(otherBody->GetBodyID(), &mass2);
-
-//    if (fabs(mass1.mass - mass2.mass) > epsilon) return __LINE__;
-//    for (i=0; i<3; i++) if (fabs(mass1.I[i] - mass2.I[i]) > epsilon) return __LINE__;
-//    for (i=4; i<7; i++) if (fabs(mass1.I[i] - mass2.I[i]) > epsilon) return __LINE__;
-//    for (i=8; i<11; i++) if (fabs(mass1.I[i] - mass2.I[i]) > epsilon) return __LINE__;
-
-//    return 0;
-//}
-
-std::string Body::MassCheck(const dMass *m)
-{
-    if (m->mass <= 0)
-    {
-        return "mass must be > 0"s;
-    }
-    if (!dIsPositiveDefinite (m->I,3))
-    {
-        return "inertia must be positive definite"s;
-    }
-
-    // verify that the center of mass position is consistent with the mass
-    // and inertia matrix. this is done by checking that the inertia around
-    // the center of mass is also positive definite. from the comment in
-    // dMassTranslate(), if the body is translated so that its center of mass
-    // is at the point of reference, then the new inertia is:
-    //   I + mass*crossmat(c)^2
-    // note that requiring this to be positive definite is exactly equivalent
-    // to requiring that the spatial inertia matrix
-    //   [ mass*eye(3,3)   M*crossmat(c)^T ]
-    //   [ M*crossmat(c)   I               ]
-    // is positive definite, given that I is PD and mass>0. see the theorem
-    // about partitioned PD matrices for proof.
-
-    pgd::Matrix3x3 I2,chat;
-    dSetZero (chat,12);
-    dSetCrossMatrixPlus (chat,m->c,4);
-    dMultiply0_333 (I2,chat,chat);
-    for (int i=0; i<3; i++) I2[i] = m->I[i] + m->mass*I2[i];
-    for (int i=4; i<7; i++) I2[i] = m->I[i] + m->mass*I2[i];
-    for (int i=8; i<11; i++) I2[i] = m->I[i] + m->mass*I2[i];
-    if (!dIsPositiveDefinite (I2,3))
-    {
-        return "center of mass inconsistent with mass parameters"s;
-    }
-    return ""s;
-}
 
 void Body::SetLinearDamping(double linearDamping)
 {

@@ -7,13 +7,9 @@
  *
  */
 
-#include "ode/ode.h"
-#include <vector>
-
 #include "Contact.h"
-#include "PGDMath.h"
-#include "Simulation.h"
 
+// FIX ME - I don't yet know how this will work
 
 Contact::Contact()
 {

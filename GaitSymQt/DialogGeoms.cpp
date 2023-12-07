@@ -88,17 +88,15 @@ void DialogGeoms::accept() // this catches OK and return/enter
     QString strapTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if (strapTab == "Sphere")
     {
-        m_outputGeom = std::make_unique<SphereGeom>(m_simulation->GetSpaceID(), ui->lineEditSphereRadius->value());
+        m_outputGeom = std::make_unique<SphereGeom>(ui->lineEditSphereRadius->value());
     }
     else if (strapTab == "Capsule")
     {
-        m_outputGeom = std::make_unique<CappedCylinderGeom>(m_simulation->GetSpaceID(),
-                                                            ui->lineEditCapsuleRadius->value(), ui->lineEditCapsuleLength->value());
+        m_outputGeom = std::make_unique<CappedCylinderGeom>(ui->lineEditCapsuleRadius->value(), ui->lineEditCapsuleLength->value());
     }
     else if (strapTab == "Box")
     {
-        m_outputGeom = std::make_unique<BoxGeom>(m_simulation->GetSpaceID(), ui->lineEditBoxLengthX->value(),
-                                                 ui->lineEditBoxLengthY->value(), ui->lineEditBoxLengthZ->value());
+        m_outputGeom = std::make_unique<BoxGeom>(ui->lineEditBoxLengthX->value(), ui->lineEditBoxLengthY->value(), ui->lineEditBoxLengthZ->value());
     }
     else if (strapTab == "Plane")
     {
@@ -109,7 +107,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
         double b = normal.y;
         double c = normal.z;
         double d = normal.Dot(point);
-        m_outputGeom = std::make_unique<PlaneGeom>(m_simulation->GetSpaceID(), a, b, c, d);
+        m_outputGeom = std::make_unique<PlaneGeom>(a, b, c, d);
     }
 
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());

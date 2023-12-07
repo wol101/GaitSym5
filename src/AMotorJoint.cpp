@@ -14,34 +14,33 @@
 #include "Marker.h"
 #include "GSUtil.h"
 
-#include "ode/ode.h"
 #include "pystring.h"
 
 #include <sstream>
 #include <limits>
 
-AMotorJoint::AMotorJoint(dWorldID worldID) : Joint()
+AMotorJoint::AMotorJoint() : Joint()
 {
-    setJointID(dJointCreateAMotor(worldID, nullptr));
-    dJointSetData(JointID(), this);
-    dJointSetAMotorMode(JointID(), dAMotorUser);
+    // setJointID(dJointCreateAMotor(worldID, nullptr));
+    // dJointSetData(JointID(), this);
+    // dJointSetAMotorMode(JointID(), dAMotorUser);
 
-    dJointSetFeedback(JointID(), JointFeedback());
+    // dJointSetFeedback(JointID(), JointFeedback());
 
-    // this is always implmented as a single axis motor
-    // with the axis set globally and updated each time step
-    dJointSetAMotorNumAxes(JointID(), 1);
+    // // this is always implmented as a single axis motor
+    // // with the axis set globally and updated each time step
+    // dJointSetAMotorNumAxes(JointID(), 1);
 
-    // rel value controls how the axis is anchored
-    // 0: The axis is anchored to the global frame.
-    // 1: The axis is anchored to the first body.
-    // 2: The axis is anchored to the second body.
-    // x, y, z are always set globally
-    // NB. If attached to World then must use rel = 0
-    int rel = 0;
-    // this is just a placeholder since it will generally get recalculated
-    pgd::Vector3 axis(1, 0, 0);
-    dJointSetAMotorAxis(JointID(), 0, rel, axis.x, axis.y, axis.z);
+    // // rel value controls how the axis is anchored
+    // // 0: The axis is anchored to the global frame.
+    // // 1: The axis is anchored to the first body.
+    // // 2: The axis is anchored to the second body.
+    // // x, y, z are always set globally
+    // // NB. If attached to World then must use rel = 0
+    // int rel = 0;
+    // // this is just a placeholder since it will generally get recalculated
+    // pgd::Vector3 axis(1, 0, 0);
+    // dJointSetAMotorAxis(JointID(), 0, rel, axis.x, axis.y, axis.z);
 }
 
 void AMotorJoint::GetAxisAngle(double *xa, double *ya, double *za, double *angle) const

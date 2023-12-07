@@ -15,13 +15,18 @@
 class BoxGeom : public Geom
 {
 public:
-    BoxGeom(dSpaceID space, double lx, double ly, double lz);
+    BoxGeom(double lx, double ly, double lz);
 
+    void SetDimensions(double lx, double ly, double lz);
     void GetDimensions(double *lx, double *ly, double *lz);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+private:
+    double m_lx = 0;
+    double m_ly = 0;
+    double m_lz = 0;
 };
 
 

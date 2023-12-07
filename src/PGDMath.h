@@ -50,6 +50,7 @@ public:
     Vector2& operator/=(double s);    // scalar divide
     Vector2& operator=(double *s);    // assign from POD array
     double& operator[] (size_t i);     // index operator
+    double operator[] (size_t i) const;     // index operator
 
     Vector2 operator-(void); // unary negate
 
@@ -99,6 +100,7 @@ public:
     Vector3& operator/=(double s);    // scalar divide
     Vector3& operator=(double *s);    // assign from POD array
     double& operator[] (size_t i);     // index operator
+    double operator[] (size_t i) const;     // index operator
 
     Vector3 operator-(void); // unary negate
 
@@ -149,6 +151,7 @@ public:
     Vector4& operator/=(double s);    // scalar divide
     Vector4& operator=(double *s);    // assign from POD array
     double& operator[] (size_t i);    // index operator
+    double operator[] (size_t i) const;    // index operator
 
     Vector4 operator-(void); // unary negate
 
@@ -196,7 +199,10 @@ public:
     Quaternion operator/=(double s);
     Quaternion  operator~(void) const { return Quaternion(n, -x, -y, -z);}
     Quaternion  operator-(void) const { return Quaternion(-n, -x, -y, -z);}
-    double& operator[] (size_t i) { return reinterpret_cast<double *>(&n)[i]; }     // index operator
+    Quaternion& operator=(double *s);    // assign from POD array
+    double& operator[] (size_t i);    // index operator
+    double operator[] (size_t i) const;    // index operator
+
 
     double *data();
     const double *constData() const;
@@ -262,10 +268,15 @@ public:
     Matrix3x3& operator-=(const Matrix3x3 &m);
     Matrix3x3& operator*=(double s);
     Matrix3x3& operator/=(double s);
-    double& operator[] (size_t i) { return reinterpret_cast<double *>(&e11)[i]; }     // index operator
+    Matrix3x3& operator=(double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3);    // assign from POD array
+    double& operator[] (size_t i);    // index operator
+    double operator[] (size_t i) const;    // index operator
 
     double *data();
     const double *constData() const;
+
+    void SetInertia(double ixx, double iyy, double izz, double ixy, double iyz, double izx);
+    void GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const;
 };
 
 Matrix3x3 operator+(const Matrix3x3 &m1, const Matrix3x3 &m2);

@@ -20,7 +20,6 @@
 #include "DataTarget.h"
 #include "Reporter.h"
 #include "Controller.h"
-#include "Warehouse.h"
 #include "MainWindow.h"
 #include "Preferences.h"
 
