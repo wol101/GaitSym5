@@ -18,12 +18,8 @@
 
 #include <sstream>
 
-LMotorJoint::LMotorJoint(dWorldID worldID) : Joint()
+LMotorJoint::LMotorJoint() : Joint()
 {
-    setJointID(dJointCreateLMotor(worldID, nullptr));
-    dJointSetData(JointID(), this);
-
-    dJointSetFeedback(JointID(), JointFeedback());
 }
 
 void LMotorJoint::SetNumAxes(int numAxes)

@@ -15,10 +15,8 @@
 #include "Colour.h"
 
 #include <string>
-#include <iostream>
 #include <map>
 #include <vector>
-#include <set>
 #include <initializer_list>
 
 class Simulation;

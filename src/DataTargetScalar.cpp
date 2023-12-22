@@ -18,11 +18,11 @@
 #include "Marker.h"
 #include "Geom.h"
 #include "GSUtil.h"
+#include "Simulation.h"
 #include "TegotaeDriver.h"
 
 #include "pystring.h"
 
-#include <sstream>
 #include <algorithm>
 
 using namespace std::string_literals;
@@ -52,7 +52,8 @@ double DataTargetScalar::calculateError(size_t index)
 double DataTargetScalar::calculateErrorScore(double value)
 {
     m_errorScore = 0;
-    const double *r;
+    pgd::Vector3 r;
+    pgd::Quaternion rq;
     pgd::Vector3 result;
     pgd::Quaternion q;
     pgd::Quaternion pq;
@@ -75,20 +76,20 @@ double DataTargetScalar::calculateErrorScore(double value)
             switch (m_DataType)
             {
             case Q0:
-                r = body->GetQuaternion();
-                m_errorScore = (r[0] - value);
+                rq = body->GetQuaternion();
+                m_errorScore = (rq[0] - value);
                 break;
             case Q1:
-                r = body->GetQuaternion();
-                m_errorScore = (r[1] - value);
+                rq = body->GetQuaternion();
+                m_errorScore = (rq[1] - value);
                 break;
             case Q2:
-                r = body->GetQuaternion();
-                m_errorScore = (r[2] - value);
+                rq = body->GetQuaternion();
+                m_errorScore = (rq[2] - value);
                 break;
             case Q3:
-                r = body->GetQuaternion();
-                m_errorScore = (r[3] - value);
+                rq = body->GetQuaternion();
+                m_errorScore = (rq[3] - value);
                 break;
             case XP:
                 r = body->GetPosition();
@@ -182,7 +183,7 @@ double DataTargetScalar::calculateErrorScore(double value)
         }
         if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
         {
-            hingeJoint->GetHingeAnchor(result);
+            result = hingeJoint->GetHingeAnchor();
             switch (m_DataType)
             {
             case XP:
@@ -197,23 +198,23 @@ double DataTargetScalar::calculateErrorScore(double value)
             case Angle:
                 m_errorScore = (hingeJoint->GetHingeAngle() - value);
                 break;
-            case XF:
-                force = hingeJoint->GetFeedback()->f1[0];
-                m_errorScore = (force - value);
-                break;
-            case YF:
-                force = hingeJoint->GetFeedback()->f1[2];
-                m_errorScore = (force - value);
-                break;
-            case ZF:
-                force = hingeJoint->GetFeedback()->f1[3];
-                m_errorScore = (force - value);
-                break;
-            case Force:
-                pv.Set(hingeJoint->GetFeedback()->f1);
-                force = pv.Magnitude();
-                m_errorScore = (force - value);
-                break;
+            // case XF:
+            //     force = hingeJoint->GetFeedback()->f1[0];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case YF:
+            //     force = hingeJoint->GetFeedback()->f1[2];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case ZF:
+            //     force = hingeJoint->GetFeedback()->f1[3];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case Force:
+            //     pv.Set(hingeJoint->GetFeedback()->f1);
+            //     force = pv.Magnitude();
+            //     m_errorScore = (force - value);
+            //     break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }
@@ -221,7 +222,7 @@ double DataTargetScalar::calculateErrorScore(double value)
         }
         if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
         {
-            ballJoint->GetBallAnchor(result);
+            result = ballJoint->GetBallAnchor();
             switch (m_DataType)
             {
             case XP:
@@ -233,23 +234,23 @@ double DataTargetScalar::calculateErrorScore(double value)
             case ZP:
                 m_errorScore = (result[2] - value);
                 break;
-            case XF:
-                force = ballJoint->GetFeedback()->f1[0];
-                m_errorScore = (force - value);
-                break;
-            case YF:
-                force = ballJoint->GetFeedback()->f1[2];
-                m_errorScore = (force - value);
-                break;
-            case ZF:
-                force = ballJoint->GetFeedback()->f1[3];
-                m_errorScore = (force - value);
-                break;
-            case Force:
-                pv.Set(ballJoint->GetFeedback()->f1);
-                force = pv.Magnitude();
-                m_errorScore = (force - value);
-                break;
+            // case XF:
+            //     force = ballJoint->GetFeedback()->f1[0];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case YF:
+            //     force = ballJoint->GetFeedback()->f1[2];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case ZF:
+            //     force = ballJoint->GetFeedback()->f1[3];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case Force:
+            //     pv.Set(ballJoint->GetFeedback()->f1);
+            //     force = pv.Magnitude();
+            //     m_errorScore = (force - value);
+            //     break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }
@@ -257,7 +258,7 @@ double DataTargetScalar::calculateErrorScore(double value)
         }
         if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
         {
-            universalJoint->GetUniversalAnchor(result);
+            result = universalJoint->GetUniversalAnchor();
             switch (m_DataType)
             {
             case XP:
@@ -269,23 +270,23 @@ double DataTargetScalar::calculateErrorScore(double value)
             case ZP:
                 m_errorScore = (result[2] - value);
                 break;
-            case XF:
-                force = universalJoint->GetFeedback()->f1[0];
-                m_errorScore = (force - value);
-                break;
-            case YF:
-                force = universalJoint->GetFeedback()->f1[2];
-                m_errorScore = (force - value);
-                break;
-            case ZF:
-                force = universalJoint->GetFeedback()->f1[3];
-                m_errorScore = (force - value);
-                break;
-            case Force:
-                pv.Set(universalJoint->GetFeedback()->f1);
-                force = pv.Magnitude();
-                m_errorScore = (force - value);
-                break;
+            // case XF:
+            //     force = universalJoint->GetFeedback()->f1[0];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case YF:
+            //     force = universalJoint->GetFeedback()->f1[2];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case ZF:
+            //     force = universalJoint->GetFeedback()->f1[3];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case Force:
+            //     pv.Set(universalJoint->GetFeedback()->f1);
+            //     force = pv.Magnitude();
+            //     m_errorScore = (force - value);
+            //     break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }
@@ -296,57 +297,57 @@ double DataTargetScalar::calculateErrorScore(double value)
             switch (m_DataType)
             {
             case Q0:
-                geom->GetWorldQuaternion(q);
+                q = geom->GetWorldQuaternion();
                 m_errorScore = (q[0] - value);
                 break;
             case Q1:
-                geom->GetWorldQuaternion(q);
+                q = geom->GetWorldQuaternion();
                 m_errorScore = (q[1] - value);
                 break;
             case Q2:
-                geom->GetWorldQuaternion(q);
+                q = geom->GetWorldQuaternion();
                 m_errorScore = (q[2] - value);
                 break;
             case Q3:
-                geom->GetWorldQuaternion(q);
+                q = geom->GetWorldQuaternion();
                 m_errorScore = (q[3] - value);
                 break;
             case XP:
-                geom->GetWorldPosition(result);
+                result = geom->GetWorldPosition();
                 m_errorScore = (result[0] - value);
                 break;
             case YP:
-                geom->GetWorldPosition(result);
+                result = geom->GetWorldPosition();
                 m_errorScore = (result[1] - value);
                 break;
             case ZP:
-                geom->GetWorldPosition(result);
+                result = geom->GetWorldPosition();
                 m_errorScore = (result[2] - value);
                 break;
-            case XF:
-                contactList = geom->GetContactList();
-                force = 0;
-                for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[0];
-                m_errorScore = (force - value);
-                break;
-            case YF:
-                contactList = geom->GetContactList();
-                force = 0;
-                for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[1];
-                m_errorScore = (force - value);
-                break;
-            case ZF:
-                contactList = geom->GetContactList();
-                force = 0;
-                for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[2];
-                m_errorScore = (force - value);
-                break;
-            case Force:
-                contactList = geom->GetContactList();
-                force = 0;
-                for (auto &&it : *contactList) { pv.Set(it->GetJointFeedback()->f1); force += pv.Magnitude(); }
-                m_errorScore = (force - value);
-                break;
+            // case XF:
+            //     contactList = geom->GetContactList();
+            //     force = 0;
+            //     for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[0];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case YF:
+            //     contactList = geom->GetContactList();
+            //     force = 0;
+            //     for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[1];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case ZF:
+            //     contactList = geom->GetContactList();
+            //     force = 0;
+            //     for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[2];
+            //     m_errorScore = (force - value);
+            //     break;
+            // case Force:
+            //     contactList = geom->GetContactList();
+            //     force = 0;
+            //     for (auto &&it : *contactList) { pv.Set(it->GetJointFeedback()->f1); force += pv.Magnitude(); }
+            //     m_errorScore = (force - value);
+            //     break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }

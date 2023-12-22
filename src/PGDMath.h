@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#pragma pack(4) // this pack level works for doubles, would need 4 for floats and ints
+#pragma pack(push, 1) // packing needed to allow indexed access to the elements
 
 // wis  - namespace to avoid naming problems
 namespace pgd
@@ -301,6 +301,6 @@ std::ostream& operator<<(std::ostream &out, const Matrix3x3 &m);
 
 }
 
-#pragma pack()
+#pragma pack(pop) // restore default packing
 
 #endif

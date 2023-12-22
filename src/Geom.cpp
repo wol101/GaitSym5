@@ -173,69 +173,69 @@ std::string Geom::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\tQW\tQX\tQY\tQZ\tNContacts\tBody1\tBody2\tXC\tYC\tZC\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\n";
     }
-    pgd::Quaternion bodyRotation;
-    dGeomGetQuaternion(GetGeomID(), bodyRotation);
-    const double *relPosition = dGeomGetOffsetPosition(GetGeomID());
-    pgd::Quaternion relRotation;
-    dGeomGetOffsetQuaternion(GetGeomID(), relRotation);
+    // pgd::Quaternion bodyRotation;
+    // dGeomGetQuaternion(GetGeomID(), bodyRotation);
+    // const double *relPosition = dGeomGetOffsetPosition(GetGeomID());
+    // pgd::Quaternion relRotation;
+    // dGeomGetOffsetQuaternion(GetGeomID(), relRotation);
 
-    pgd::Vector3 p;
-    pgd::Quaternion q;
+    // pgd::Vector3 p;
+    // pgd::Quaternion q;
 
-    // get the position in world coordinates
-    dBodyGetRelPointPos(dGeomGetBody(GetGeomID()), relPosition[0], relPosition[1], relPosition[2], p);
+    // // get the position in world coordinates
+    // dBodyGetRelPointPos(dGeomGetBody(GetGeomID()), relPosition[0], relPosition[1], relPosition[2], p);
 
-    //combine the body rotation with the cylinder rotation to get combined rotation from world coordinates
-    dQMultiply0 (q, bodyRotation, relRotation);
+    // //combine the body rotation with the cylinder rotation to get combined rotation from world coordinates
+    // dQMultiply0 (q, bodyRotation, relRotation);
 
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
-          "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" <<
-          m_ContactList.size();
+    // ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
+    //       "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" <<
+    //       m_ContactList.size();
 
-    dJointFeedback *jointFeedback;
-    dBodyID bodyID;
-    for (unsigned int i = 0; i < m_ContactList.size(); i++)
-    {
-        bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 0);
-        if (bodyID == GetBody()) // put them the normal way round
-        {
-            if (bodyID == nullptr) ss << "\tStatic_Environment\t";
-            else ss << "\t" << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
-            bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 1);
-            if (bodyID == nullptr) ss << "Static_Environment\t";
-            else ss << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
+    // dJointFeedback *jointFeedback;
+    // dBodyID bodyID;
+    // for (unsigned int i = 0; i < m_ContactList.size(); i++)
+    // {
+    //     bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 0);
+    //     if (bodyID == GetBody()) // put them the normal way round
+    //     {
+    //         if (bodyID == nullptr) ss << "\tStatic_Environment\t";
+    //         else ss << "\t" << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
+    //         bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 1);
+    //         if (bodyID == nullptr) ss << "Static_Environment\t";
+    //         else ss << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
 
-            ss << (m_ContactList[i]->GetContactPosition())[0] << "\t" <<
-                  (m_ContactList[i]->GetContactPosition())[1] << "\t" <<
-                  (m_ContactList[i]->GetContactPosition())[2] << "\t";
+    //         ss << (m_ContactList[i]->GetContactPosition())[0] << "\t" <<
+    //               (m_ContactList[i]->GetContactPosition())[1] << "\t" <<
+    //               (m_ContactList[i]->GetContactPosition())[2] << "\t";
 
-            jointFeedback = m_ContactList[i]->GetJointFeedback();
-            ss << jointFeedback->f1[0] << "\t" << jointFeedback->f1[1] << "\t" << jointFeedback->f1[2] << "\t" <<
-                  jointFeedback->t1[0] << "\t" << jointFeedback->t1[1] << "\t" << jointFeedback->t1[2] << "\t" <<
-                  jointFeedback->f2[0] << "\t" << jointFeedback->f2[1] << "\t" << jointFeedback->f2[2] << "\t" <<
-                  jointFeedback->t2[0] << "\t" << jointFeedback->t2[1] << "\t" << jointFeedback->t2[2];
-        }
-        else // reverse the order since our body is second
-        {
-            bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 1);
-            if (bodyID == nullptr) ss << "Static_Environment\t";
-            else ss << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
-            bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 0);
-            if (bodyID == nullptr) ss << "\tStatic_Environment\t";
-            else ss << "\t" << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
+    //         jointFeedback = m_ContactList[i]->GetJointFeedback();
+    //         ss << jointFeedback->f1[0] << "\t" << jointFeedback->f1[1] << "\t" << jointFeedback->f1[2] << "\t" <<
+    //               jointFeedback->t1[0] << "\t" << jointFeedback->t1[1] << "\t" << jointFeedback->t1[2] << "\t" <<
+    //               jointFeedback->f2[0] << "\t" << jointFeedback->f2[1] << "\t" << jointFeedback->f2[2] << "\t" <<
+    //               jointFeedback->t2[0] << "\t" << jointFeedback->t2[1] << "\t" << jointFeedback->t2[2];
+    //     }
+    //     else // reverse the order since our body is second
+    //     {
+    //         bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 1);
+    //         if (bodyID == nullptr) ss << "Static_Environment\t";
+    //         else ss << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
+    //         bodyID = dJointGetBody(m_ContactList[i]->GetJointID(), 0);
+    //         if (bodyID == nullptr) ss << "\tStatic_Environment\t";
+    //         else ss << "\t" << reinterpret_cast<Body *>(dBodyGetData(bodyID))->name() << "\t";
 
-            ss << (m_ContactList[i]->GetContactPosition())[0] << "\t" <<
-                  (m_ContactList[i]->GetContactPosition())[1] << "\t" <<
-                  (m_ContactList[i]->GetContactPosition())[2] << "\t";
+    //         ss << (m_ContactList[i]->GetContactPosition())[0] << "\t" <<
+    //               (m_ContactList[i]->GetContactPosition())[1] << "\t" <<
+    //               (m_ContactList[i]->GetContactPosition())[2] << "\t";
 
-            jointFeedback = m_ContactList[i]->GetJointFeedback();
-            ss << jointFeedback->f2[0] << "\t" << jointFeedback->f2[1] << "\t" << jointFeedback->f2[2] << "\t" <<
-                  jointFeedback->t2[0] << "\t" << jointFeedback->t2[1] << "\t" << jointFeedback->t2[2] << "\t" <<
-                  jointFeedback->f1[0] << "\t" << jointFeedback->f1[1] << "\t" << jointFeedback->f1[2] << "\t" <<
-                  jointFeedback->t1[0] << "\t" << jointFeedback->t1[1] << "\t" << jointFeedback->t1[2];
-        }
-    }
-    ss << "\n";
+    //         jointFeedback = m_ContactList[i]->GetJointFeedback();
+    //         ss << jointFeedback->f2[0] << "\t" << jointFeedback->f2[1] << "\t" << jointFeedback->f2[2] << "\t" <<
+    //               jointFeedback->t2[0] << "\t" << jointFeedback->t2[1] << "\t" << jointFeedback->t2[2] << "\t" <<
+    //               jointFeedback->f1[0] << "\t" << jointFeedback->f1[1] << "\t" << jointFeedback->f1[2] << "\t" <<
+    //               jointFeedback->t1[0] << "\t" << jointFeedback->t1[1] << "\t" << jointFeedback->t1[2];
+    //     }
+    // }
+    // ss << "\n";
     return ss.str();
 }
 

@@ -12,30 +12,16 @@
 
 #include "Geom.h"
 
-class StridedVertex;
-class StridedTri;
-class GimpactStridedVertex;
-
 class TrimeshGeom : public Geom
 {
 public:
-    TrimeshGeom(dSpaceID space, const std::vector<double> &vertexList);
-    virtual ~TrimeshGeom();
+    TrimeshGeom(const std::vector<double> &vertexList);
+
+    virtual std::string *createFromAttributes();
+    virtual void appendToAttributes();
 
 private:
-
-#ifdef USE_GIMPACT
-    GimpactStridedVertex *m_Vertices = nullptr;
-#else
-    double *m_Vertices = nullptr;
-#endif
-    int m_NumVertices = 0;
-    int m_VertexStride = 0;
-    dTriIndex *m_TriIndexes = nullptr;
-    int m_NumTriIndexes = 0;
-    int m_TriStride = 0;
-    dTriMeshDataID m_TriMeshDataID = nullptr;
-
+    std::vector<double> m_vertexList;
 };
 
 #endif // TRIMESHGEOM_H

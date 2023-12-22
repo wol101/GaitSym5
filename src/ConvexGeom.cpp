@@ -10,21 +10,19 @@
 #include "ConvexGeom.h"
 
 #include "Simulation.h"
-#include "Marker.h"
 #include "GSUtil.h"
 #include "PGDMath.h"
 
-#include "ode/ode.h"
 
 #include <string>
 
 using namespace std::string_literals;
 
-ConvexGeom::ConvexGeom(dSpaceID space, const double *planes, unsigned int planecount, const double *points, unsigned int pointcount, const unsigned int *polygons)
+ConvexGeom::ConvexGeom(const std::vector<double> &planes, const std::vector <double> &points, const std::vector<unsigned int> &polygons)
 {
-    // create the geom
-    setGeomID(dCreateConvex(space, planes, planecount, points, pointcount, polygons));
-    dGeomSetData(GetGeomID(), this);
+    m_planes = planes;
+    m_points = points;
+    m_polygons = polygons;
 }
 
 std::string *ConvexGeom::createFromAttributes()
@@ -42,7 +40,6 @@ std::string *ConvexGeom::createFromAttributes()
     if (m_indexStart) { for (size_t i = 0; i < m_triangles.size(); i++) { m_triangles[i] -= m_indexStart; } }
     if (m_reverseWinding) { for (size_t i = 0; i < m_triangles.size(); i += 3) { std::swap(m_triangles[i], m_triangles[i + 2]); } }
     initialiseConvexData();
-    setConvex(m_planes.data(), m_planecount, m_points.data(), m_pointcount, m_polygons.data());
     return nullptr;
 }
 
@@ -64,23 +61,25 @@ void ConvexGeom::appendToAttributes()
 }
 
 
-void ConvexGeom::setConvex(const double *planes, unsigned int planecount, const double *points, unsigned int pointcount, const unsigned int *polygons)
+void ConvexGeom::setConvex(const std::vector<double> &planes, const std::vector<double> &points, const std::vector<unsigned int> &polygons)
 {
-    dGeomSetConvex(GetGeomID(), planes, planecount, points, pointcount, polygons);
+    m_planes = planes;
+    m_points = points;
+    m_polygons = polygons;
 }
 
 void ConvexGeom::initialiseConvexData()
 {
     // set the limits
-    m_pointcount = static_cast<unsigned int>(m_vertices.size() / 3);
-    m_planecount = static_cast<unsigned int>(m_triangles.size() / 3);
+    size_t pointcount = static_cast<unsigned int>(m_vertices.size() / 3);
+    size_t planecount = static_cast<unsigned int>(m_triangles.size() / 3);
     // copy the vertices into m_points
     m_points.clear();
-    m_points.reserve(m_pointcount * 3);
+    m_points.reserve(pointcount * 3);
     for (size_t i = 0; i < m_vertices.size(); i++) m_points.push_back(m_vertices[i]);
     // copy the triangles into m_polygons with the correct vertex count
     m_polygons.clear();
-    m_polygons.reserve(m_planecount * 4);
+    m_polygons.reserve(planecount * 4);
     for (size_t i = 0; i < m_triangles.size();)
     {
         m_polygons.push_back(3);

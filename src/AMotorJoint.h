@@ -63,6 +63,8 @@ private:
     pgd::Quaternion m_lastToCurrent;
     bool m_firstTime = true;
     bool m_reverseBodyOrderInCalculations = false;
+    double m_maxTorque = std::numeric_limits<double>::infinity();
+    double m_targetVelocity = 0;
 
     void UpdateDynamicFriction();
     double m_dynamicFrictionIntercept = 0;

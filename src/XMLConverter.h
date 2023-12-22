@@ -16,15 +16,17 @@
 class Genome;
 class DataFile;
 class ExpressionParser;
+namespace pkpy { class VM; }
 
 class XMLConverter
 {
 public:
     XMLConverter();
+    virtual ~XMLConverter();
 
     int LoadBaseXMLFile(const char *filename);
     int LoadBaseXMLString(const char *dataPtr, size_t length);
-    int ApplyGenome(int genomeSize, const double *genomeData);
+    int ApplyGenome(const std::vector<double> &genomeData);
     void GetFormattedXML(std::string *formattedXML);
 
     const std::string &BaseXMLString() const;
@@ -33,13 +35,12 @@ public:
 
 private:
 
-    void ConvertVectorBrackets();
-
     std::string m_BaseXMLString;
     std::vector<std::string> m_SmartSubstitutionTextComponents;
     std::vector<std::string> m_SmartSubstitutionParserText;
     std::vector<double> m_SmartSubstitutionValues;
     size_t m_SmartSubstitutionTextComponentsSize = 0;
+    pkpy::VM *m_pythonVM = nullptr;
 };
 
 

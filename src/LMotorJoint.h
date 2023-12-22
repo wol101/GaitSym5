@@ -17,7 +17,7 @@ class LMotorJoint: public Joint
 {
 public:
 
-    LMotorJoint(dWorldID worldID);
+    LMotorJoint();
 
     void SetNumAxes(int numAxes);
     void SetStops(int anum, double low, double high);

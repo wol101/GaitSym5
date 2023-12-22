@@ -15,9 +15,9 @@
 class ConvexGeom: public Geom
 {
 public:
-    ConvexGeom(dSpaceID space, const double *planes, unsigned int planecount, const double *points, unsigned int pointcount, const unsigned int *polygons);
+    ConvexGeom(const std::vector<double> &planes, const std::vector <double> &points, const std::vector<unsigned int> &polygons);
 
-    void setConvex(const double *planes, unsigned int planecount, const double *points, unsigned int pointcount, const unsigned int *polygons);
+    void setConvex(const std::vector<double> &planes, const std::vector <double> &points, const std::vector<unsigned int> &polygons);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -34,9 +34,7 @@ private:
     bool m_reverseWinding = false;
     // these are the data as required by the setConvex routine
     std::vector<double> m_planes;
-    unsigned int m_planecount = 0;
     std::vector <double> m_points;
-    unsigned int m_pointcount = 0;
     std::vector<unsigned int> m_polygons;
     int m_indexStart = 0; // allows both 1 indexed and 0 indexed triangle to make pasting in OBJ data easier
 };

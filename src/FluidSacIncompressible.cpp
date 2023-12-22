@@ -9,13 +9,7 @@
 
 #include "FluidSacIncompressible.h"
 
-#include "Marker.h"
-#include "Strap.h"
 #include "GSUtil.h"
-
-#include "ode/ode.h"
-
-#include "pystring.h"
 
 using namespace std::string_literals;
 

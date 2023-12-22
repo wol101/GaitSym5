@@ -15,7 +15,6 @@
 #include "Strap.h"
 
 #include <vector>
-#include <tuple>
 
 class Marker;
 

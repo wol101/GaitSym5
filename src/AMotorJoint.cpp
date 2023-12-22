@@ -271,7 +271,7 @@ void AMotorJoint::SetTargetAngleGain(double targetAngleGain)
 
 void AMotorJoint::SetMaxTorque(double maxTorque)
 {
-    dJointSetAMotorParam(JointID(), dParamFMax1, maxTorque);
+    m_maxTorque = maxTorque;
 }
 
 pgd::Vector3 AMotorJoint::GetTargetAxis() const
@@ -291,7 +291,7 @@ double AMotorJoint::GetTargetAngleGain() const
 
 double AMotorJoint::GetMaxTorque() const
 {
-    return dJointGetAMotorParam(JointID(), dParamFMax1);
+    return m_maxTorque;
 }
 
 void AMotorJoint::Update()
@@ -316,10 +316,8 @@ void AMotorJoint::Update()
         m_deltaAxis = -m_deltaAxis;
         m_deltaAngle = -m_deltaAngle;
     }
-    dJointSetAMotorAxis(JointID(), 0, 0, m_deltaAxis.x, m_deltaAxis.y, m_deltaAxis.z);
-    double targetVelocity = m_deltaAngle * m_targetAngleGain;
-    if (targetVelocity * simulation()->GetTimeIncrement() > m_deltaAngle) targetVelocity = 0.5 * m_deltaAngle / simulation()->GetTimeIncrement();
-    dJointSetAMotorParam(JointID(), dParamVel1, targetVelocity);
+    m_targetVelocity = m_deltaAngle * m_targetAngleGain;
+    if (m_targetVelocity * simulation()->GetTimeIncrement() > m_deltaAngle) m_targetVelocity = 0.5 * m_deltaAngle / simulation()->GetTimeIncrement();
 
     m_firstTime = false;
 }
@@ -328,8 +326,6 @@ std::string *AMotorJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf, buf2, buf3;
-    if (CFM() >= 0) dJointSetAMotorParam (JointID(), dParamCFM, CFM());
-    if (ERP() >= 0) dJointSetAMotorParam (JointID(), dParamERP, ERP());
 
     if (findAttribute("MaxTorque"s, &buf) == nullptr) return lastErrorPtr();
     this->SetMaxTorque(GSUtil::Double(buf));
@@ -364,7 +360,7 @@ void AMotorJoint::appendToAttributes()
     std::string buf;
     buf.reserve(256);
     setAttribute("Type"s, "AMotor"s);
-    setAttribute("MaxTorque"s, *GSUtil::ToString(dJointGetAMotorParam(JointID(), dParamFMax1), &buf));
+    setAttribute("MaxTorque"s, *GSUtil::ToString(m_maxTorque, &buf));
     setAttribute("TargetAngleGain"s, *GSUtil::ToString(m_targetAngleGain, &buf));
     setAttribute("TargetAngles"s, *GSUtil::ToString(m_targetAnglesList.data(), m_targetAnglesList.size(), &buf));
     setAttribute("ReverseBodyOrderInCalculations"s, *GSUtil::ToString(m_reverseBodyOrderInCalculations, &buf));
@@ -395,19 +391,19 @@ std::string AMotorJoint::dumpToString()
     double angularVelocity = deltaAngle / simulation()->GetTimeIncrement(); // note this value will not necessarily have the correct sign
 
     pgd::Vector3 axis;
-    dJointGetAMotorAxis(JointID(), 0, axis); // get the world axis orientation
-    double targetVelocity = dJointGetAMotorParam(JointID(), dParamVel1);
-    double axisTorque = dDOT(axis, JointFeedback()->t1);
+    // dJointGetAMotorAxis(JointID(), 0, axis); // get the world axis orientation
+    // double targetVelocity = dJointGetAMotorParam(JointID(), dParamVel1);
+    // double axisTorque = dDOT(axis, JointFeedback()->t1);
 
-    ss << simulation()->GetTime() << "\t" <<
-          JointFeedback()->f1[0] << "\t" << JointFeedback()->f1[1] << "\t" << JointFeedback()->f1[2] << "\t" <<
-          JointFeedback()->t1[0] << "\t" << JointFeedback()->t1[1] << "\t" << JointFeedback()->t1[2] << "\t" <<
-          JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
-          JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] << "\t" <<
-          angularVelocity << "\t" << axisTorque << "\t" << targetVelocity * axisTorque << "\t" << targetVelocity << "\t" <<
-          currentAngle << "\t" << currentAxis.x << "\t" << currentAxis.y << "\t" << currentAxis.z << "\t" <<
-          m_deltaAngle << "\t" << m_deltaAxis.x << "\t" << m_deltaAxis.y << "\t" << m_deltaAxis.z << "\t" <<
-          "\n";
+    // ss << simulation()->GetTime() << "\t" <<
+    //       JointFeedback()->f1[0] << "\t" << JointFeedback()->f1[1] << "\t" << JointFeedback()->f1[2] << "\t" <<
+    //       JointFeedback()->t1[0] << "\t" << JointFeedback()->t1[1] << "\t" << JointFeedback()->t1[2] << "\t" <<
+    //       JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
+    //       JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] << "\t" <<
+    //       angularVelocity << "\t" << axisTorque << "\t" << targetVelocity * axisTorque << "\t" << targetVelocity << "\t" <<
+    //       currentAngle << "\t" << currentAxis.x << "\t" << currentAxis.y << "\t" << currentAxis.z << "\t" <<
+    //       m_deltaAngle << "\t" << m_deltaAxis.x << "\t" << m_deltaAxis.y << "\t" << m_deltaAxis.z << "\t" <<
+    //       "\n";
     return ss.str();
 }
 
