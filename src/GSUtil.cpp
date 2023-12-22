@@ -734,7 +734,7 @@ std::string *GSUtil::ToString(float v, std::string *output)
 std::string *GSUtil::ToString(int32_t v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%d", v);
+    int l = snprintf(buf, sizeof(buf), "%" PRId32, v);
     output->assign(buf, size_t(l));
     return output;
 }
@@ -742,7 +742,7 @@ std::string *GSUtil::ToString(int32_t v, std::string *output)
 std::string *GSUtil::ToString(uint32_t v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%u", v);
+    int l = snprintf(buf, sizeof(buf), "%" PRIu32, v);
     output->assign(buf, size_t(l));
     return output;
 }
@@ -772,7 +772,7 @@ std::string *GSUtil::ToString(bool v, std::string *output)
 
 std::string *GSUtil::ToString(const double *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -781,13 +781,13 @@ std::string *GSUtil::ToString(const double *v, size_t n, std::string *output)
         else l = snprintf(&buf[count], 32, "%.18g", v[i]);
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
 std::string *GSUtil::ToString(const float *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -796,13 +796,13 @@ std::string *GSUtil::ToString(const float *v, size_t n, std::string *output)
         else l = snprintf(&buf[count], 32, "%.10g", double(v[i]));
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
 std::string *GSUtil::ToString(const int32_t *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -811,13 +811,13 @@ std::string *GSUtil::ToString(const int32_t *v, size_t n, std::string *output)
         else l = snprintf(&buf[count], 32, "%d", v[i]);
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
 std::string *GSUtil::ToString(const uint32_t *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -826,13 +826,13 @@ std::string *GSUtil::ToString(const uint32_t *v, size_t n, std::string *output)
         else l = snprintf(&buf[count], 32, "%u", v[i]);
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
 std::string *GSUtil::ToString(const int64_t *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -841,13 +841,13 @@ std::string *GSUtil::ToString(const int64_t *v, size_t n, std::string *output)
         else l = snprintf(&buf[count], 32, "%" PRId64, v[i]);
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
 std::string *GSUtil::ToString(const uint64_t *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -856,13 +856,13 @@ std::string *GSUtil::ToString(const uint64_t *v, size_t n, std::string *output)
         else l = snprintf(&buf[count], 32, "%" PRIu64, v[i]);
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
 std::string *GSUtil::ToString(const bool *v, size_t n, std::string *output)
 {
-    std::vector<char> buf(32 * n);
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
@@ -871,7 +871,7 @@ std::string *GSUtil::ToString(const bool *v, size_t n, std::string *output)
         else { if (v[i]) l = snprintf(&buf[count], 32, "true"); else l = snprintf(&buf[count], 32, "false"); }
         count += size_t(l);
     }
-    output->assign(buf.data(), count);
+    output->assign(buf.get(), count);
     return output;
 }
 
