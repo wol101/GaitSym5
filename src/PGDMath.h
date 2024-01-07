@@ -275,8 +275,8 @@ public:
     double *data();
     const double *constData() const;
 
-    void SetInertia(double ixx, double iyy, double izz, double ixy, double iyz, double izx);
-    void GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const;
+    void SetInertia(double ixx, double iyy, double izz, double ixy, double izx, double iyz);
+    void GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const;
 };
 
 Matrix3x3 operator+(const Matrix3x3 &m1, const Matrix3x3 &m2);

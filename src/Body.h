@@ -47,7 +47,7 @@ public:
     void SetQuaternionDelta(double n, double x, double y, double z);
 
     void SetMass(double mass);
-    void SetMass(double mass, double ixx, double iyy, double izz, double ixy, double iyz, double izx);
+    void SetMass(double mass, double ixx, double iyy, double izz, double ixy, double izx, double iyz);
 
     void SetPositionLowBound(double x, double y, double z) { m_positionLowBound[0] = x; m_positionLowBound[1] = y; m_positionLowBound[2] = z; }
     void SetPositionHighBound(double x, double y, double z) { m_positionHighBound[0] = x; m_positionHighBound[1] = y; m_positionHighBound[2] = z; }
@@ -76,14 +76,14 @@ public:
     pgd::Quaternion GetQuaternion() const;
     pgd::Vector3 GetLinearVelocity() const;
     pgd::Vector3 GetAngularVelocity() const;
-    void GetPosition(pgd::Vector3 *pos);
-    void GetQuaternion(pgd::Quaternion *quat);
-    void GetRelativePosition(Body *rel, pgd::Vector3 *pos);
-    void GetRelativeQuaternion(Body *rel, pgd::Quaternion *quat);
-    void GetRelativeLinearVelocity(Body *rel, pgd::Vector3 *vel);
-    void GetRelativeAngularVelocity(Body *rel, pgd::Vector3 *rVel);
+    void GetPosition(pgd::Vector3 *pos) const;
+    void GetQuaternion(pgd::Quaternion *quat) const;
+    void GetRelativePosition(const Body *rel, pgd::Vector3 *pos) const;
+    void GetRelativeQuaternion(const Body *rel, pgd::Quaternion *quat) const;
+    void GetRelativeLinearVelocity(const Body *rel, pgd::Vector3 *vel) const;
+    void GetRelativeAngularVelocity(const Body *rel, pgd::Vector3 *rVel) const;
     double GetMass() const;
-    void GetMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const;
+    void GetMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const;
     double GetLinearKineticEnergy();
     void GetLinearKineticEnergy(pgd::Vector3 *ke);
     double GetRotationalKineticEnergy();
@@ -91,8 +91,8 @@ public:
 
     void SetInitialPosition(double x, double y, double z);
     void SetInitialQuaternion(double n, double x, double y, double z);
-    const double *GetInitialPosition();
-    const double *GetInitialQuaternion();
+    pgd::Vector3 GetInitialPosition();
+    pgd::Quaternion GetInitialQuaternion();
 
     LimitTestResult TestLimits();
 //    int SanityCheck(Body *otherBody, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
@@ -106,10 +106,10 @@ public:
     static void ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor);
     static void ParallelAxis(double x, double y, double z, // transformation from centre of mass to new location (m)
                              double mass, // mass (kg)
-                             double ixx, double iyy, double izz, double ixy, double iyz, double izx, // moments of inertia kgm2
+                             double ixx, double iyy, double izz, double ixy, double izx, double iyz, // moments of inertia kgm2
                              double ang, // rotation angle (radians)
                              double ax, double ay, double az, // axis of rotation - must be unit length
-                             double *ixxp, double *iyyp, double *izzp, double *ixyp, double *iyzp, double *izxp); // transformed moments of inertia about new coordinate system
+                             double *ixxp, double *iyyp, double *izzp, double *ixyp, double *izxp, double *iyzp); // transformed moments of inertia about new coordinate system
 
     static double GetProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vector3 &vector1, const pgd::Vector3 &vector2);
 
@@ -166,6 +166,8 @@ private:
     double m_dragCylinderLength = 0;
     double m_dragCylinderRadius = 0;
     double m_dragCylinderCoefficient = 0;
+    pgd::Vector3 m_dragForce;
+    pgd::Vector3 m_dragTorque;
 
     double m_mass = 0;
     pgd::Matrix3x3 m_inertia;

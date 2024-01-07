@@ -201,7 +201,7 @@ std::string *BallJoint::createFromAttributes()
     // else { setLastError("Joint ID=\""s + name() +"\" unrecognised Mode"s); return lastErrorPtr(); }
 
     pgd::Vector3 position = body1Marker()->GetWorldPosition();
-    this->SetBallAnchor(position.x, position.y, position.z);
+    this->setAnchor(position);
     pgd::Vector3 x, y, z;
     // body1Marker()->GetWorldBasis(&x, &y, &z);
     // int axisMode = 1; // 1 relative to body 1

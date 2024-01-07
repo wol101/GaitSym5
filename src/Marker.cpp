@@ -187,8 +187,7 @@ std::string *Marker::SetQuaternion(const std::string &buf)
     {
         if (m_body)
         {
-            const double *q = m_body->GetQuaternion();
-            pgd::Quaternion qBody(q[0], q[1], q[2], q[3]);
+            pgd::Quaternion qBody = m_body->GetQuaternion();
             pgd::Quaternion qWorld = GSUtil::GetQuaternion(tokens, 1);
             pgd::Quaternion qLocal = ~qBody * qWorld;
             SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
@@ -209,16 +208,14 @@ std::string *Marker::SetQuaternion(const std::string &buf)
     }
 
     // first get world quaternion
-    const double *q2 = theBody->GetQuaternion();
-    pgd::Quaternion qBody1(q2[0], q2[1], q2[2], q2[3]);
+    pgd::Quaternion qBody1 = theBody->GetQuaternion();
     pgd::Quaternion qBody2 = GSUtil::GetQuaternion(tokens, 1);
     pgd::Quaternion qWorld = qBody1 * qBody2;
 
     // then set the local quaternion
     if (m_body)
     {
-        const double *q = m_body->GetQuaternion();
-        pgd::Quaternion qBody(q[0], q[1], q[2], q[3]);
+        pgd::Quaternion qBody = m_body->GetQuaternion();
         pgd::Quaternion qLocal = ~qBody * qWorld;
         SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
     }
@@ -240,8 +237,7 @@ std::string *Marker::SetQuaternion(const std::string &body, double qs0, double q
     {
         if (m_body)
         {
-            const double *q = m_body->GetQuaternion();
-            pgd::Quaternion qBody(q[0], q[1], q[2], q[3]);
+            pgd::Quaternion qBody = m_body->GetQuaternion();
             pgd::Quaternion qWorld(qs0, qx1, qy2, qz3);
             pgd::Quaternion qLocal = ~qBody * qWorld;
             SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
@@ -261,16 +257,14 @@ std::string *Marker::SetQuaternion(const std::string &body, double qs0, double q
     }
 
     // first get world quaternion
-    const double *q2 = theBody->GetQuaternion();
-    pgd::Quaternion qBody1(q2[0], q2[1], q2[2], q2[3]);
+    pgd::Quaternion qBody1 = theBody->GetQuaternion();
     pgd::Quaternion qBody2(qs0, qx1, qy2, qz3);
     pgd::Quaternion qWorld = qBody1 * qBody2;
 
     // then set the local quaternion
     if (m_body)
     {
-        const double *q = m_body->GetQuaternion();
-        pgd::Quaternion qBody(q[0], q[1], q[2], q[3]);
+        pgd::Quaternion qBody = m_body->GetQuaternion();
         pgd::Quaternion qLocal = ~qBody * qWorld;
         SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
     }
@@ -285,8 +279,7 @@ std::string *Marker::SetWorldQuaternion(double qs0, double qx1, double qy2, doub
 {
     if (m_body)
     {
-        const double *q = m_body->GetQuaternion();
-        pgd::Quaternion qBody(q[0], q[1], q[2], q[3]);
+        pgd::Quaternion qBody = m_body->GetQuaternion();
         pgd::Quaternion qWorld(qs0, qx1, qy2, qz3);
         pgd::Quaternion qLocal = ~qBody * qWorld;
         SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
@@ -418,7 +411,7 @@ pgd::Vector3 Marker::GetWorldLinearVelocity()
 pgd::Vector3 Marker::GetWorldAngularVelocity()
 {
     pgd::Vector3 worldAngularVelocity;
-    if (m_body) { worldAngularVelocity.Set(m_body->GetAngularVelocity()); }
+    if (m_body) { worldAngularVelocity = m_body->GetAngularVelocity(); }
     return worldAngularVelocity;
 }
 
@@ -426,8 +419,7 @@ pgd::Quaternion Marker::GetWorldQuaternion() const
 {
     if (m_body)
     {
-        const double *bodyRotation = m_body->GetQuaternion();
-        pgd::Quaternion bodyQuaternion(bodyRotation[0], bodyRotation[1], bodyRotation[2], bodyRotation[3]);
+        pgd::Quaternion bodyQuaternion = m_body->GetQuaternion();
         return bodyQuaternion * m_quaternion;
     }
     else

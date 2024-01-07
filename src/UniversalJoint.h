@@ -20,60 +20,57 @@ public:
 
     UniversalJoint();
 
-    void SetUniversalAnchor (double x, double y, double z);
-    void SetUniversalAxis1(double x, double y, double z);
-    void SetUniversalAxis2(double x, double y, double z);
-
-    void SetStartAngleReference1(double startAngleReference);
-    void SetJointStops1(double loStop, double hiStop);
-    void SetStopCFM1(double cfm);
-    void SetStopERP1(double erp);
-    void SetStopBounce1(double bounce);
-    void SetStopSpringDamp1(double springConstant, double dampingConstant, double integrationStep);
-    void SetStopSpringERP1(double springConstant, double ERP, double integrationStep);
-    void SetStartAngleReference2(double startAngleReference);
-    void SetJointStops2(double loStop, double hiStop);
-    void SetStopCFM2(double cfm);
-    void SetStopERP2(double erp);
-    void SetStopBounce2(double bounce);
-    void SetStopSpringDamp2(double springConstant, double dampingConstant, double integrationStep);
-    void SetStopSpringERP2(double springConstant, double ERP, double integrationStep);
-
-    pgd::Vector3 GetUniversalAnchor();
-    pgd::Vector3 GetUniversalAxis1();
-    pgd::Vector3 GetUniversalAxis2();
-
-    double GetUniversalAngle1();
-    double GetUniversalAngle1Rate();
-    double GetUniversalAngle2();
-    double GetUniversalAngle2Rate();
-
     virtual std::string dumpToString();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+    pgd::Vector3 axis0() const;
+    void setAxis0(const pgd::Vector3 &newAxis0);
+
+    pgd::Vector3 axis1() const;
+    void setAxis1(const pgd::Vector3 &newAxis1);
+
+    pgd::Vector3 anchor() const;
+    void setAnchor(const pgd::Vector3 &newAnchor);
+
+    pgd::Vector2 stops0() const;
+    void setStops0(const pgd::Vector2 &newStops0);
+
+    double stop0Spring() const;
+    void setStop0Spring(double newStop0Spring);
+
+    double stop0Damp() const;
+    void setStop0Damp(double newStop0Damp);
+
+    double stop0Bounce() const;
+    void setStop0Bounce(double newStop0Bounce);
+
+    pgd::Vector2 stops1() const;
+    void setStops1(const pgd::Vector2 &newStops1);
+
+    double stop1Spring() const;
+    void setStop1Spring(double newStop1Spring);
+
+    double stop1Damp() const;
+    void setStop1Damp(double newStop1Damp);
+
+    double stop1Bounce() const;
+    void setStop1Bounce(double newStop1Bounce);
+
 private:
 
-    // double m_StartAngleReference1 = 0;
-    // double m_StartAngleReference2 = 0;
-
-    // these values are just used for saving and loading
-    double m_StopCFM1 = -1;
-    double m_StopERP1 = -1;
-    double m_StopCFM2 = -1;
-    double m_StopERP2 = -1;
-
-    pgd::Vector3 m_anchor;
+    pgd::Vector3 m_axis0;
     pgd::Vector3 m_axis1;
-    pgd::Vector3 m_axis2;
-
-    pgd::Vector3 m_hingeAxis;
-    pgd::Vector3 m_hingeAnchor;
-    pgd::Vector2 m_jointStops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
-    double m_stopSpring = 0;
-    double m_stopDamp = 0;
-    double m_stopBounce = 0;
+    pgd::Vector3 m_anchor;
+    pgd::Vector2 m_stops0 = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    double m_stop0Spring = 0;
+    double m_stop0Damp = 0;
+    double m_stop0Bounce = 0;
+    pgd::Vector2 m_stops1 = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    double m_stop1Spring = 0;
+    double m_stop1Damp = 0;
+    double m_stop1Bounce = 0;
 
 };
 

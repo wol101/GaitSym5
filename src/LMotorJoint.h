@@ -30,7 +30,7 @@ public:
     int numAxes();
     double position(int anum);
     double positionRate(int anum);
-    void positions(double *x, double *y, double *z);
+    void getPositions(double *x, double *y, double *z);
     double targetPosition(int anum);
 
     virtual std::string dumpToString();
@@ -74,6 +74,9 @@ private:
     double m_targetVelocity0 = 0;
     double m_targetVelocity1 = 0;
     double m_targetVelocity2 = 0;
+    double m_maxForce0 = 0;
+    double m_maxForce1 = 0;
+    double m_maxForce2 = 0;
 
     int m_numAxes = 0;
     double m_dynamicFrictionIntercept = 0;

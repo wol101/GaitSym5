@@ -1476,14 +1476,14 @@ double pgd::Matrix3x3::operator[](size_t i) const
     return reinterpret_cast<const double *>(&e11)[i];
 }
 
-void pgd::Matrix3x3::SetInertia(double ixx, double iyy, double izz, double ixy, double iyz, double izx)
+void pgd::Matrix3x3::SetInertia(double ixx, double iyy, double izz, double ixy, double izx, double iyz)
 {
     e11 = ixx; e12 = ixy; e13 = izx;
     e21 = ixy; e22 = iyy; e23 = iyz;
     e31 = izx; e32 = iyz; e33 = izz;
 }
 
-void pgd::Matrix3x3::GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *iyz, double *izx) const
+void pgd::Matrix3x3::GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const
 {
     *ixx = e11;       *ixy = e12; *izx = e13;
     /* *ixy = e21; */ *iyy = e22; *iyz = e23;

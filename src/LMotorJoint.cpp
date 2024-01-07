@@ -45,11 +45,14 @@ double LMotorJoint::position(int anum)
     case 2:
         return relativePositionBody1Marker.z;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::position anum out of range, setting to 0\n";
+#endif
         return relativePositionBody1Marker.x;
     }
 }
 
-void LMotorJoint::positions(double *x, double *y, double *z)
+void LMotorJoint::getPositions(double *x, double *y, double *z)
 {
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->GetWorldPosition()) - pgd::Vector3(body1Marker()->GetWorldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
@@ -71,6 +74,9 @@ double LMotorJoint::positionRate(int anum)
     case 2:
         return m_lastPositionRate2;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::positionRate anum out of range, setting to 0\n";
+#endif
         return m_lastPositionRate0;
     }
 }
@@ -86,6 +92,9 @@ double LMotorJoint::targetPosition(int anum)
     case 2:
         return m_targetPosition2;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::targetPosition anum out of range, setting to 0\n";
+#endif
         return m_targetPosition0;
     }
 }
@@ -125,17 +134,19 @@ void LMotorJoint::setTargetVelocity(int anum, double targetVelocity)
     switch (anum)
     {
     case 0:
-        m_tar
-        dJointSetLMotorParam(JointID(), dParamVel1, targetVelocity);
+        m_targetVelocity0 = targetVelocity;
         break;
     case 1:
-        dJointSetLMotorParam(JointID(), dParamVel2, targetVelocity);
+        m_targetVelocity1 = targetVelocity;
         break;
     case 2:
-        dJointSetLMotorParam(JointID(), dParamVel3, targetVelocity);
+        m_targetVelocity2 = targetVelocity;
         break;
     default:
-        dJointSetLMotorParam(JointID(), dParamVel, targetVelocity);
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setTargetVelocity anum out of range, setting to 0\n";
+#endif
+        m_targetVelocity0 = targetVelocity;
         break;
     }
 }
@@ -144,38 +155,39 @@ void LMotorJoint::setTargetVelocity(int anum, double targetVelocity)
 // desired velocity. Note this isn't used for stops which can generate
 // a *lot* of force.
 // set to zero to turn off the motor bit (again stops still work if set)
-void LMotorJoint::SetMaxForce(int anum, double maximumForce)
+void LMotorJoint::setMaxForce(int anum, double maximumForce)
 {
     switch (anum)
     {
     case 0:
-        dJointSetLMotorParam(JointID(), dParamFMax1, maximumForce);
+        m_maxForce0 = maximumForce;
         break;
     case 1:
-        dJointSetLMotorParam(JointID(), dParamFMax2, maximumForce);
+        m_maxForce1 = maximumForce;
         break;
     case 2:
-        dJointSetLMotorParam(JointID(), dParamFMax3, maximumForce);
+        m_maxForce2 = maximumForce;
         break;
     default:
-        dJointSetLMotorParam(JointID(), dParamFMax, maximumForce);
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setMaxForce anum out of range, setting to 0\n";
+#endif
+        m_maxForce0 = maximumForce;
         break;
     }
 }
 
-#ifdef EXPERIMENTAL
-void LMotorJoint::SetDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope)
+void LMotorJoint::setDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope)
 {
     m_dynamicFrictionIntercept = dynamicFrictionIntercept;
     m_dynamicFrictionSlope = dynamicFrictionSlope;
     m_dynamicFrictionFlag = true;
 
-    SetTargetVelocity(0, 0);
-    SetTargetVelocity(1, 0);
-    SetTargetVelocity(2, 0);
+    setTargetVelocity(0, 0);
+    setTargetVelocity(1, 0);
+    setTargetVelocity(2, 0);
     SetDynamicFriction();
 }
-#endif
 
 void LMotorJoint::SetPosition(int anum, double position, double time)
 {
@@ -200,6 +212,9 @@ void LMotorJoint::SetPosition(int anum, double position, double time)
         m_lastPosition2 = position;
         break;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setPosition anum out of range, setting to 0\n";
+#endif
         if (!m_lastTimeValid0) m_lastTimeValid0 = true;
         else m_lastPositionRate0 = (position - m_lastPosition0) / (time - m_lastTime0);
         m_lastTime0 = time;
@@ -208,7 +223,7 @@ void LMotorJoint::SetPosition(int anum, double position, double time)
     }
 }
 
-void LMotorJoint::SetTargetPosition(int anum, double targetPosition)
+void LMotorJoint::setTargetPosition(int anum, double targetPosition)
 {
     switch(anum)
     {
@@ -225,13 +240,16 @@ void LMotorJoint::SetTargetPosition(int anum, double targetPosition)
         m_targetPositionSet2 = true;
         break;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setTargetPosition anum out of range, setting to 0\n";
+#endif
         m_targetPosition0 = targetPosition;
         m_targetPositionSet0 = true;
         break;
     }
 }
 
-void LMotorJoint::SetTargetPositionGain(int anum, double targetPositionGain)
+void LMotorJoint::setTargetPositionGain(int anum, double targetPositionGain)
 {
     switch(anum)
     {
@@ -245,37 +263,37 @@ void LMotorJoint::SetTargetPositionGain(int anum, double targetPositionGain)
         m_targetPositionGain2 = targetPositionGain;
         break;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setTargetPositionGain anum out of range, setting to 0\n";
+#endif
         m_targetPositionGain0 = targetPositionGain;
         break;
     }
 }
 
-#ifdef EXPERIMENTAL
 void LMotorJoint::SetDynamicFriction()
 {
     double maximumForce;
-    maximumForce = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * fabs(GetPositionRate(0));
-    SetMaxForce(0, maximumForce);
-    maximumForce = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * fabs(GetPositionRate(1));
-    SetMaxForce(1, maximumForce);
-    maximumForce = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * fabs(GetPositionRate(2));
-    SetMaxForce(2, maximumForce);
+    maximumForce = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(positionRate(0));
+    setMaxForce(0, maximumForce);
+    maximumForce = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(positionRate(1));
+    setMaxForce(1, maximumForce);
+    maximumForce = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(positionRate(2));
+    setMaxForce(2, maximumForce);
 }
-#endif
 
 void LMotorJoint::Update()
 {
     double position0, position1, position2, delPosition;
-    GetPositions(&position0, &position1, &position2);
+    getPositions(&position0, &position1, &position2);
     double time = simulation()->GetTime();
-    int numAxes = dJointGetLMotorNumAxes(JointID());
-    switch (numAxes)
+    switch (m_numAxes)
     {
     case 1:
         if (m_targetPositionSet0)
         {
             delPosition = m_targetPosition0 - position0;
-            SetTargetVelocity(0, delPosition * m_targetPositionGain0);
+            setTargetVelocity(0, delPosition * m_targetPositionGain0);
         }
         SetPosition(0, position0, time);
         break;
@@ -283,12 +301,12 @@ void LMotorJoint::Update()
         if (m_targetPositionSet0)
         {
             delPosition = m_targetPosition0 - position0;
-            SetTargetVelocity(0, delPosition * m_targetPositionGain0);
+            setTargetVelocity(0, delPosition * m_targetPositionGain0);
         }
         if (m_targetPositionSet1)
         {
             delPosition = m_targetPosition1 - position1;
-            SetTargetVelocity(1, delPosition * m_targetPositionGain1);
+            setTargetVelocity(1, delPosition * m_targetPositionGain1);
         }
         SetPosition(0, position0, time);
         SetPosition(1, position1, time);
@@ -297,27 +315,30 @@ void LMotorJoint::Update()
         if (m_targetPositionSet0)
         {
             delPosition = m_targetPosition0 - position0;
-            SetTargetVelocity(0, delPosition * m_targetPositionGain0);
+            setTargetVelocity(0, delPosition * m_targetPositionGain0);
         }
         if (m_targetPositionSet1)
         {
             delPosition = m_targetPosition1 - position1;
-            SetTargetVelocity(1, delPosition * m_targetPositionGain1);
+            setTargetVelocity(1, delPosition * m_targetPositionGain1);
         }
         if (m_targetPositionSet2)
         {
             delPosition = m_targetPosition2 - position2;
-            SetTargetVelocity(2, delPosition * m_targetPositionGain2);
+            setTargetVelocity(2, delPosition * m_targetPositionGain2);
         }
         SetPosition(0, position0, time);
         SetPosition(1, position1, time);
         SetPosition(2, position2, time);
         break;
     default:
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setStops anum out of range, setting to 0\n";
+#endif
         if (m_targetPositionSet0)
         {
             delPosition = m_targetPosition0 - position0;
-            SetTargetVelocity(0, delPosition * m_targetPositionGain0);
+            setTargetVelocity(0, delPosition * m_targetPositionGain0);
         }
         SetPosition(0, position0, time);
         break;
@@ -328,86 +349,86 @@ std::string *LMotorJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf, buf2, buf3;
-    if (CFM() >= 0) dJointSetLMotorParam (JointID(), dParamCFM, CFM());
-    if (ERP() >= 0) dJointSetLMotorParam (JointID(), dParamERP, ERP());
+    // if (CFM() >= 0) dJointSetLMotorParam (JointID(), dParamCFM, CFM());
+    // if (ERP() >= 0) dJointSetLMotorParam (JointID(), dParamERP, ERP());
 
     if (findAttribute("NumAxes"s, &buf) == nullptr) return lastErrorPtr();
     int numAxes = GSUtil::Int(buf);
     if (numAxes < 1 || numAxes > 3) { setLastError("Joint ID=\""s + name() +"\" NumAxes out of range"s); return lastErrorPtr(); }
-    this->SetNumAxes(numAxes);
+    this->setNumAxes(numAxes);
     switch (numAxes)
     {
     case 1:
         if (findAttribute("MaxForce0"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetMaxForce(0, GSUtil::Double(buf));
+        this->setMaxForce(0, GSUtil::Double(buf));
         findAttribute("LowStop0"s, &buf);
         findAttribute("HighStop0"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop0 and HighStop0 required"s); return lastErrorPtr(); }
-            this->SetStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
         }
-        if (findAttribute("TargetPosition0"s, &buf)) this->SetTargetPosition(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain0"s, &buf)) this->SetTargetPositionGain(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::Double(buf));
         break;
     case 2:
         if (findAttribute("MaxForce0"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetMaxForce(0, GSUtil::Double(buf));
+        this->setMaxForce(0, GSUtil::Double(buf));
         if (findAttribute("MaxForce1"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetMaxForce(1, GSUtil::Double(buf));
+        this->setMaxForce(1, GSUtil::Double(buf));
         findAttribute("LowStop0"s, &buf);
         findAttribute("HighStop0"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop0 and HighStop0 required"s); return lastErrorPtr(); }
-            this->SetStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
         }
         findAttribute("LowStop1"s, &buf);
         findAttribute("HighStop1"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop1 and HighStop1 required"s); return lastErrorPtr(); }
-            this->SetStops(1, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(1, GSUtil::Double(buf), GSUtil::Double(buf2));
         }
-        if (findAttribute("TargetPosition0"s, &buf)) this->SetTargetPosition(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPosition1"s, &buf)) this->SetTargetPosition(1, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain0"s, &buf)) this->SetTargetPositionGain(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain1"s, &buf)) this->SetTargetPositionGain(1, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition1"s, &buf)) this->setTargetPosition(1, GSUtil::Double(buf));
+        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPositionGain1"s, &buf)) this->setTargetPositionGain(1, GSUtil::Double(buf));
         break;
     case 3:
         if (findAttribute("MaxForce0"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetMaxForce(0, GSUtil::Double(buf));
+        this->setMaxForce(0, GSUtil::Double(buf));
         if (findAttribute("MaxForce1"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetMaxForce(1, GSUtil::Double(buf));
+        this->setMaxForce(1, GSUtil::Double(buf));
         if (findAttribute("MaxForce2"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetMaxForce(2, GSUtil::Double(buf));
+        this->setMaxForce(2, GSUtil::Double(buf));
         findAttribute("LowStop0"s, &buf);
         findAttribute("HighStop0"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop0 and HighStop0 required"s); return lastErrorPtr(); }
-            this->SetStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
         }
         findAttribute("LowStop1"s, &buf);
         findAttribute("HighStop1"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop1 and HighStop1 required"s); return lastErrorPtr(); }
-            this->SetStops(1, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(1, GSUtil::Double(buf), GSUtil::Double(buf2));
         }
         findAttribute("LowStop2"s, &buf);
         findAttribute("HighStop2"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop2 and HighStop2 required"s); return lastErrorPtr(); }
-            this->SetStops(2, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(2, GSUtil::Double(buf), GSUtil::Double(buf2));
         }
-        if (findAttribute("TargetPosition0"s, &buf)) this->SetTargetPosition(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPosition1"s, &buf)) this->SetTargetPosition(1, GSUtil::Double(buf));
-        if (findAttribute("TargetPosition2"s, &buf)) this->SetTargetPosition(2, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain0"s, &buf)) this->SetTargetPositionGain(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain1"s, &buf)) this->SetTargetPositionGain(1, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain2"s, &buf)) this->SetTargetPositionGain(2, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition1"s, &buf)) this->setTargetPosition(1, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition2"s, &buf)) this->setTargetPosition(2, GSUtil::Double(buf));
+        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPositionGain1"s, &buf)) this->setTargetPositionGain(1, GSUtil::Double(buf));
+        if (findAttribute("TargetPositionGain2"s, &buf)) this->setTargetPositionGain(2, GSUtil::Double(buf));
         break;
     }
 
@@ -421,15 +442,15 @@ void LMotorJoint::appendToAttributes()
     setAttribute("Type"s, "LMotor"s);
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
-    setAttribute("NumAxes"s, *GSUtil::ToString(this->GetNumAxes(), &buf));
-    switch (this->GetNumAxes())
+    setAttribute("NumAxes"s, *GSUtil::ToString(this->numAxes(), &buf));
+    switch (this->numAxes())
     {
     case 1:
-        setAttribute("MaxForce0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamFMax1), &buf));
+        setAttribute("MaxForce0"s, *GSUtil::ToString(m_maxForce0, &buf));
         if (m_stopsSet0)
         {
-            setAttribute("LowStop0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop1), &buf));
-            setAttribute("HighStop0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop1), &buf));
+            setAttribute("LowStop0"s, *GSUtil::ToString(m_stops0[0], &buf));
+            setAttribute("HighStop0"s, *GSUtil::ToString(m_stops0[1], &buf));
         }
         if (m_targetPositionSet0)
         {
@@ -438,17 +459,17 @@ void LMotorJoint::appendToAttributes()
         }
         break;
     case 2:
-        setAttribute("MaxForce0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamFMax1), &buf));
-        setAttribute("MaxForce1"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamFMax2), &buf));
+        setAttribute("MaxForce0"s, *GSUtil::ToString(m_maxForce0, &buf));
+        setAttribute("MaxForce1"s, *GSUtil::ToString(m_maxForce1, &buf));
         if (m_stopsSet0)
         {
-            setAttribute("LowStop0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop1), &buf));
-            setAttribute("HighStop0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop1), &buf));
+            setAttribute("LowStop0"s, *GSUtil::ToString(m_stops0[0], &buf));
+            setAttribute("HighStop0"s, *GSUtil::ToString(m_stops0[1], &buf));
         }
         if (m_stopsSet1)
         {
-            setAttribute("LowStop1"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop2), &buf));
-            setAttribute("HighStop1"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop2), &buf));
+            setAttribute("LowStop1"s, *GSUtil::ToString(m_stops1[0], &buf));
+            setAttribute("HighStop1"s, *GSUtil::ToString(m_stops1[1], &buf));
         }
         if (m_targetPositionSet0)
         {
@@ -462,23 +483,23 @@ void LMotorJoint::appendToAttributes()
         }
         break;
     case 3:
-        setAttribute("MaxForce0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamFMax1), &buf));
-        setAttribute("MaxForce1"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamFMax2), &buf));
-        setAttribute("MaxForce2"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamFMax3), &buf));
+        setAttribute("MaxForce0"s, *GSUtil::ToString(m_maxForce0, &buf));
+        setAttribute("MaxForce1"s, *GSUtil::ToString(m_maxForce1, &buf));
+        setAttribute("MaxForce2"s, *GSUtil::ToString(m_maxForce2, &buf));
         if (m_stopsSet0)
         {
-            setAttribute("LowStop0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop1), &buf));
-            setAttribute("HighStop0"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop1), &buf));
+            setAttribute("LowStop0"s, *GSUtil::ToString(m_stops0[0], &buf));
+            setAttribute("HighStop0"s, *GSUtil::ToString(m_stops0[1], &buf));
         }
         if (m_stopsSet1)
         {
-            setAttribute("LowStop1"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop2), &buf));
-            setAttribute("HighStop1"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop2), &buf));
+            setAttribute("LowStop1"s, *GSUtil::ToString(m_stops1[0], &buf));
+            setAttribute("HighStop1"s, *GSUtil::ToString(m_stops1[1], &buf));
         }
         if (m_stopsSet2)
         {
-            setAttribute("LowStop2"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop3), &buf));
-            setAttribute("HighStop2"s, *GSUtil::ToString(dJointGetLMotorParam(JointID(), dParamLoStop3), &buf));
+            setAttribute("LowStop2"s, *GSUtil::ToString(m_stops2[0], &buf));
+            setAttribute("HighStop2"s, *GSUtil::ToString(m_stops2[1], &buf));
         }
         if (m_targetPositionSet0)
         {
@@ -502,6 +523,7 @@ void LMotorJoint::appendToAttributes()
 std::string LMotorJoint::dumpToString()
 {
     std::stringstream ss;
+#ifdef FIX_ME
     ss.precision(17);
     ss.setf(std::ios::scientific);
     if (firstDump())
@@ -515,6 +537,7 @@ std::string LMotorJoint::dumpToString()
           JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
           JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] <<
           "\n";
+#endif // FIX_ME
 return ss.str();
 }
 

@@ -9,9 +9,8 @@
 
 #include "TorqueReporter.h"
 #include "Simulation.h"
-#include "Body.h"
 #include "Muscle.h"
-#include "GSUtil.h"
+#include "Marker.h"
 
 #include <iostream>
 #include <vector>
@@ -54,11 +53,11 @@ std::string TorqueReporter::dumpToString()
     std::vector<std::unique_ptr<PointForce >> *pointForceList = mMuscle->GetPointForceList();
     double tension = mMuscle->GetTension();
     pgd::Vector3 torque, point, force, centre;
-    double *forcePoint, *forceDirection;
+    pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-    pgd::Vector3 result;
-    dBodyGetRelPointPos(mBody->GetBodyID(), mPivotPoint.x, mPivotPoint.y, mPivotPoint.z, result); // needs to be in world coordinates
-    centre = pgd::Vector3(result[0], result[1], result[2]);
+    Marker marker(mBody);
+    marker.SetPosition(mPivotPoint.x, mPivotPoint.y, mPivotPoint.z);
+    centre = marker.GetWorldPosition();
 
 // These are the same but the second option works even when tension is zero
 //        if (tension > 0)
@@ -98,8 +97,8 @@ std::string TorqueReporter::dumpToString()
 
     // convert to body local coordinates
     pgd::Vector3 bodyTorque, bodyMomentArm;
-    dBodyVectorFromWorld (mBody->GetBodyID(), totalTorque.x, totalTorque.y, totalTorque.z, bodyTorque);
-    dBodyVectorFromWorld (mBody->GetBodyID(), momentArm.x, momentArm.y, momentArm.z, bodyMomentArm);
+    bodyTorque = marker.GetVector(totalTorque);
+    bodyMomentArm = marker.GetVector(momentArm);
 
     // now find the rotation axis specific values
     pgd::Matrix3x3 R;
@@ -122,15 +121,36 @@ void TorqueReporter::CalculateRotationFromAxis(double x, double y, double z, pgd
 {
     // calculate the rotation needed to get the axis pointing the right way
     // axis is assumed to already be normalised
-    pgd::Vector3 axis;
-    axis[0] = x;
-    axis[1] = y;
-    axis[2] = z;
+    pgd::Vector3 n(x, y, z);
     pgd::Vector3 p, q;
+    // from odemath dxPlaneSpace
     // calculate 2 perpendicular vectors
-    dPlaneSpace(axis, p, q);
+    if (std::fabs(n[2]) > M_SQRT1_2) {
+        // choose p in y-z plane
+        double a = n[1]*n[1] + n[2]*n[2];
+        double k = 1.0/std::sqrt(a);
+        p[0] = 0;
+        p[1] = -n[2]*k;
+        p[2] = n[1]*k;
+        // set q = n x p
+        q[0] = a*k;
+        q[1] = -n[0]*p[2];
+        q[2] = n[0]*p[1];
+    }
+    else {
+        // choose p in x-y plane
+        double a = n[0]*n[0] + n[1]*n[1];
+        double k = 1.0/std::sqrt(a);
+        p[0] = -n[1]*k;
+        p[1] = n[0]*k;
+        p[2] = 0;
+        // set q = n x p
+        q[0] = -n[2]*p[1];
+        q[1] = n[2]*p[0];
+        q[2] = a*k;
+    }
     // assemble the matrix
-    *R = pgd::Matrix3x3( axis[0], axis[1], axis[2],
-                         p[0],    p[1],    p[2],
-                         q[0],    q[1],    q[2] );
+    *R = pgd::Matrix3x3( n[0], n[1], n[2],
+                         p[0], p[1], p[2],
+                         q[0], q[1], q[2] );
 }

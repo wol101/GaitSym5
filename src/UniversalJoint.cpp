@@ -20,190 +20,19 @@ UniversalJoint::UniversalJoint() : Joint()
 {
 }
 
-void UniversalJoint::SetUniversalAnchor(double x, double y, double z)
-{
-    dJointSetUniversalAnchor (JointID(), x, y, z);
-}
-
-void UniversalJoint::SetUniversalAxis1(double x, double y, double z)
-{
-    pgd::Vector3 v;
-    v[0] = x; v[1] = y; v[2] = z;
-    dNormalize3(v);
-    dJointSetUniversalAxis1 (JointID(), v[0], v[1], v[2]);
-}
-
-void UniversalJoint::SetUniversalAxis2(double x, double y, double z)
-{
-    pgd::Vector3 v;
-    v[0] = x; v[1] = y; v[2] = z;
-    dNormalize3(v);
-    dJointSetUniversalAxis2 (JointID(), v[0], v[1], v[2]);
-}
-
-void UniversalJoint::SetStopCFM1(double cfm)
-{
-    m_StopCFM1 = cfm;
-    dJointSetUniversalParam (JointID(), dParamStopCFM1, cfm);
-}
-
-void UniversalJoint::SetStopERP1(double erp)
-{
-    m_StopERP1 = erp;
-    dJointSetUniversalParam (JointID(), dParamStopERP1, erp);
-}
-
-void UniversalJoint::SetStopSpringDamp1(double springConstant, double dampingConstant, double integrationStep)
-{
-    double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
-    double CFM = 1/(integrationStep * springConstant + dampingConstant);
-    SetStopERP1(ERP);
-    SetStopCFM1(CFM);
-}
-
-void UniversalJoint::SetStopSpringERP1(double springConstant, double ERP, double integrationStep)
-{
-    double CFM = ERP / (integrationStep * springConstant);
-    SetStopERP1(ERP);
-    SetStopCFM1(CFM);
-}
-
-void UniversalJoint::SetStopBounce1(double bounce)
-{
-    dJointSetUniversalParam (JointID(), dParamBounce1, bounce);
-}
-
-void UniversalJoint::SetStartAngleReference1(double startAngleReference)
-{
-    m_StartAngleReference1 = startAngleReference;
-}
-
-void UniversalJoint::SetJointStops1(double loStop, double hiStop)
-{
-    // correct for m_StartAngleReference
-    loStop -= m_StartAngleReference1;
-    hiStop -= m_StartAngleReference1;
-
-    if (loStop < -M_PI) loStop = -dInfinity;
-    if (hiStop > M_PI) hiStop = dInfinity;
-
-    // note there is safety feature that stops setting incompatible low and high
-    // stops which can cause difficulties. The safe option is to set them twice.
-
-    dJointSetUniversalParam(JointID(), dParamLoStop1, loStop);
-    dJointSetUniversalParam(JointID(), dParamHiStop1, hiStop);
-    dJointSetUniversalParam(JointID(), dParamLoStop1, loStop);
-    dJointSetUniversalParam(JointID(), dParamHiStop1, hiStop);
-}
-
-void UniversalJoint::SetStopCFM2(double cfm)
-{
-    m_StopCFM2 = cfm;
-    dJointSetUniversalParam (JointID(), dParamStopCFM2, cfm);
-}
-
-void UniversalJoint::SetStopERP2(double erp)
-{
-    m_StopERP2 = erp;
-    dJointSetUniversalParam (JointID(), dParamStopERP2, erp);
-}
-
-void UniversalJoint::SetStopSpringDamp2(double springConstant, double dampingConstant, double integrationStep)
-{
-    double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
-    double CFM = 1/(integrationStep * springConstant + dampingConstant);
-    SetStopERP2(ERP);
-    SetStopCFM2(CFM);
-}
-
-void UniversalJoint::SetStopSpringERP2(double springConstant, double ERP, double integrationStep)
-{
-    double CFM = ERP / (integrationStep * springConstant);
-    SetStopERP2(ERP);
-    SetStopCFM2(CFM);
-}
-
-void UniversalJoint::SetStopBounce2(double bounce)
-{
-    dJointSetUniversalParam (JointID(), dParamBounce2, bounce);
-}
-
-void UniversalJoint::SetStartAngleReference2(double startAngleReference)
-{
-    m_StartAngleReference2 = startAngleReference;
-}
-
-void UniversalJoint::SetJointStops2(double loStop, double hiStop)
-{
-    // correct for m_StartAngleReference
-    loStop -= m_StartAngleReference2;
-    hiStop -= m_StartAngleReference2;
-
-    if (loStop < -M_PI) loStop = -dInfinity;
-    if (hiStop > M_PI) hiStop = dInfinity;
-
-    // note there is safety feature that stops setting incompatible low and high
-    // stops which can cause difficulties. The safe option is to set them twice.
-
-    dJointSetUniversalParam(JointID(), dParamLoStop2, loStop);
-    dJointSetUniversalParam(JointID(), dParamHiStop2, hiStop);
-    dJointSetUniversalParam(JointID(), dParamLoStop2, loStop);
-    dJointSetUniversalParam(JointID(), dParamHiStop2, hiStop);
-}
-
-void UniversalJoint::GetUniversalAnchor(pgd::Vector3 result)
-{
-    dJointGetUniversalAnchor (JointID(), result);
-}
-
-void UniversalJoint::GetUniversalAnchor2(pgd::Vector3 result)
-{
-    dJointGetUniversalAnchor2 (JointID(), result);
-}
-
-void UniversalJoint::GetUniversalAxis1(pgd::Vector3 result)
-{
-    dJointGetUniversalAxis1 (JointID(), result);
-}
-
-void UniversalJoint::GetUniversalAxis2(pgd::Vector3 result)
-{
-    dJointGetUniversalAxis2 (JointID(), result);
-}
-
-double UniversalJoint::GetUniversalAngle1()
-{
-    return dJointGetUniversalAngle1 (JointID()) + m_StartAngleReference1;
-}
-
-double UniversalJoint::GetUniversalAngle2()
-{
-    return dJointGetUniversalAngle2 (JointID()) + m_StartAngleReference1;
-}
-
-double UniversalJoint::GetUniversalAngle1Rate()
-{
-    return dJointGetUniversalAngle1Rate (JointID());
-}
-
-double UniversalJoint::GetUniversalAngle2Rate()
-{
-    return dJointGetUniversalAngle2Rate (JointID());
-}
-
 std::string *UniversalJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
     pgd::Vector3 position = body1Marker()->GetWorldPosition();
-    this->SetUniversalAnchor(position.x, position.y, position.z);
+    this->setAnchor(position);
     pgd::Vector3 x, y, z;
     body1Marker()->GetWorldBasis(&x, &y, &z);
-    this->SetUniversalAxis1(x.x, x.y, x.z);
-    this->SetUniversalAxis2(y.x, y.y, y.z);
-    if (CFM() >= 0) dJointSetUniversalParam (JointID(), dParamCFM, CFM());
-    if (ERP() >= 0) dJointSetUniversalParam (JointID(), dParamERP, ERP());
+    this->setAxis0(x);
+    this->setAxis1(y);
+    // if (CFM() >= 0) dJointSetUniversalParam (JointID(), dParamCFM, CFM());
+    // if (ERP() >= 0) dJointSetUniversalParam (JointID(), dParamERP, ERP());
 
     if (findAttribute("LowStop1"s, &buf) == nullptr) return lastErrorPtr();
     double loStop1 = GSUtil::GetAngle(buf);
@@ -214,7 +43,7 @@ std::string *UniversalJoint::createFromAttributes()
         setLastError("Universal ID=\""s + name() +"\" LowStop1 >= HighStop1"s);
         return lastErrorPtr();
     }
-    this->SetJointStops1(loStop1, hiStop1);
+    this->setStops0(pgd::Vector2(loStop1, hiStop1));
 
     if (findAttribute("LowStop2"s, &buf) == nullptr) return lastErrorPtr();
     double loStop2 = GSUtil::GetAngle(buf);
@@ -225,23 +54,23 @@ std::string *UniversalJoint::createFromAttributes()
         setLastError("Universal ID=\""s + name() +"\" LowStop2 >= HighStop2"s);
         return lastErrorPtr();
     }
-    this->SetJointStops2(loStop2, hiStop2);
+    this->setStops1(pgd::Vector2(loStop2, hiStop2));
 
-    if (findAttribute("StopCFM1"s, &buf))
+    if (findAttribute("StopSpring1"s, &buf))
     {
-        this->SetStopCFM1(GSUtil::Double(buf));
-        if (findAttribute("StopERP1"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetStopERP1(GSUtil::Double(buf));
+        this->setStop0Spring(GSUtil::Double(buf));
+        if (findAttribute("StopDamp1"s, &buf) == nullptr) return lastErrorPtr();
+        this->setStop0Damp(GSUtil::Double(buf));
     }
-    if (findAttribute("StopCFM2"s, &buf))
+    if (findAttribute("StopSpring2"s, &buf))
     {
-        this->SetStopCFM2(GSUtil::Double(buf));
-        if (findAttribute("StopERP2"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetStopERP2(GSUtil::Double(buf));
+        this->setStop1Spring(GSUtil::Double(buf));
+        if (findAttribute("StopDamp2"s, &buf) == nullptr) return lastErrorPtr();
+        this->setStop1Damp(GSUtil::Double(buf));
     }
 
-    if (findAttribute("StopBounce1"s, &buf)) this->SetStopBounce1(GSUtil::Double(buf));
-    if (findAttribute("StopBounce2"s, &buf)) this->SetStopBounce2(GSUtil::Double(buf));
+    if (findAttribute("StopBounce1"s, &buf)) this->setStop0Bounce(GSUtil::Double(buf));
+    if (findAttribute("StopBounce2"s, &buf)) this->setStop1Bounce(GSUtil::Double(buf));
 
     return nullptr;
 }
@@ -251,16 +80,126 @@ void UniversalJoint::appendToAttributes()
     Joint::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Universal"s);
-    setAttribute("LowStop1"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamLoStop1), &buf));
-    setAttribute("HighStop1"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamHiStop1), &buf));
-    setAttribute("LowStop2"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamLoStop2), &buf));
-    setAttribute("HighStop2"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamHiStop2), &buf));
-    if (m_StopCFM1 > 0) setAttribute("StopCFM1"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamStopCFM1), &buf));
-    if (m_StopERP1 > 0) setAttribute("StopERP1"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamStopERP1), &buf));
-    setAttribute("StopBounce1"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamBounce1), &buf));
-    if (m_StopCFM2 > 0) setAttribute("StopCFM2"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamStopCFM2), &buf));
-    if (m_StopERP2 > 0) setAttribute("StopERP2"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamStopERP2), &buf));
-    setAttribute("StopBounce2"s, *GSUtil::ToString(dJointGetUniversalParam(JointID(), dParamBounce2), &buf));
+    setAttribute("LowStop1"s, *GSUtil::ToString(m_stops0[0], &buf));
+    setAttribute("HighStop1"s, *GSUtil::ToString(m_stops0[1], &buf));
+    setAttribute("LowStop2"s, *GSUtil::ToString(m_stops1[0], &buf));
+    setAttribute("HighStop2"s, *GSUtil::ToString(m_stops1[1], &buf));
+    if (m_stop0Spring > 0) setAttribute("StopSpring1"s, *GSUtil::ToString(m_stop0Spring, &buf));
+    if (m_stop0Damp > 0) setAttribute("StopDamp1"s, *GSUtil::ToString(m_stop0Damp, &buf));
+    setAttribute("StopBounce1"s, *GSUtil::ToString(m_stop0Bounce, &buf));
+    if (m_stop1Spring > 0) setAttribute("StopSpring2"s, *GSUtil::ToString(m_stop0Spring, &buf));
+    if (m_stop1Damp > 0) setAttribute("StopDamp2"s, *GSUtil::ToString(m_stop0Damp, &buf));
+    setAttribute("StopBounce2"s, *GSUtil::ToString(m_stop1Bounce, &buf));
+}
+
+pgd::Vector3 UniversalJoint::axis0() const
+{
+    return m_axis0;
+}
+
+void UniversalJoint::setAxis0(const pgd::Vector3 &newAxis0)
+{
+    m_axis0 = newAxis0;
+}
+
+pgd::Vector3 UniversalJoint::axis1() const
+{
+    return m_axis1;
+}
+
+void UniversalJoint::setAxis1(const pgd::Vector3 &newAxis1)
+{
+    m_axis1 = newAxis1;
+}
+
+pgd::Vector3 UniversalJoint::anchor() const
+{
+    return m_anchor;
+}
+
+void UniversalJoint::setAnchor(const pgd::Vector3 &newAnchor)
+{
+    m_anchor = newAnchor;
+}
+
+pgd::Vector2 UniversalJoint::stops0() const
+{
+    return m_stops0;
+}
+
+void UniversalJoint::setStops0(const pgd::Vector2 &newStops0)
+{
+    m_stops0 = newStops0;
+}
+
+double UniversalJoint::stop0Spring() const
+{
+    return m_stop0Spring;
+}
+
+void UniversalJoint::setStop0Spring(double newStop0Spring)
+{
+    m_stop0Spring = newStop0Spring;
+}
+
+double UniversalJoint::stop0Damp() const
+{
+    return m_stop0Damp;
+}
+
+void UniversalJoint::setStop0Damp(double newStop0Damp)
+{
+    m_stop0Damp = newStop0Damp;
+}
+
+double UniversalJoint::stop0Bounce() const
+{
+    return m_stop0Bounce;
+}
+
+void UniversalJoint::setStop0Bounce(double newStop0Bounce)
+{
+    m_stop0Bounce = newStop0Bounce;
+}
+
+pgd::Vector2 UniversalJoint::stops1() const
+{
+    return m_stops1;
+}
+
+void UniversalJoint::setStops1(const pgd::Vector2 &newStops1)
+{
+    m_stops1 = newStops1;
+}
+
+double UniversalJoint::stop1Spring() const
+{
+    return m_stop1Spring;
+}
+
+void UniversalJoint::setStop1Spring(double newStop1Spring)
+{
+    m_stop1Spring = newStop1Spring;
+}
+
+double UniversalJoint::stop1Damp() const
+{
+    return m_stop1Damp;
+}
+
+void UniversalJoint::setStop1Damp(double newStop1Damp)
+{
+    m_stop1Damp = newStop1Damp;
+}
+
+double UniversalJoint::stop1Bounce() const
+{
+    return m_stop1Bounce;
+}
+
+void UniversalJoint::setStop1Bounce(double newStop1Bounce)
+{
+    m_stop1Bounce = newStop1Bounce;
 }
 
 std::string UniversalJoint::dumpToString()

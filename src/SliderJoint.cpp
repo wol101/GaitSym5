@@ -24,26 +24,6 @@ void SliderJoint::setSliderDistance(double newSliderDistance)
     m_sliderDistance = newSliderDistance;
 }
 
-pgd::Vector3 SliderJoint::sliderAxis() const
-{
-    return m_sliderAxis;
-}
-
-void SliderJoint::setSliderAxis(const pgd::Vector3 &newSliderAxis)
-{
-    m_sliderAxis = newSliderAxis;
-}
-
-pgd::Vector2 SliderJoint::jointStops() const
-{
-    return m_jointStops;
-}
-
-void SliderJoint::setJointStops(const pgd::Vector2 &newJointStops)
-{
-    m_jointStops = newJointStops;
-}
-
 double SliderJoint::stopSpring() const
 {
     return m_stopSpring;
@@ -72,6 +52,26 @@ double SliderJoint::stopBounce() const
 void SliderJoint::setStopBounce(double newStopBounce)
 {
     m_stopBounce = newStopBounce;
+}
+
+pgd::Vector3 SliderJoint::axis() const
+{
+    return m_axis;
+}
+
+void SliderJoint::setAxis(const pgd::Vector3 &newAxis)
+{
+    m_axis = newAxis;
+}
+
+pgd::Vector2 SliderJoint::stops() const
+{
+    return m_stops;
+}
+
+void SliderJoint::setStops(const pgd::Vector2 &newStops)
+{
+    m_stops = newStops;
 }
 
 

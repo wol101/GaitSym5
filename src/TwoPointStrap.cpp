@@ -8,20 +8,14 @@
  */
 
 #include "TwoPointStrap.h"
-#include "Body.h"
 #include "PGDMath.h"
-#include "DataFile.h"
 #include "Simulation.h"
 #include "Marker.h"
-#include "GSUtil.h"
-
-#include "ode/ode.h"
 
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <string.h>
-#include <algorithm>
 
 using namespace std::string_literals;
 
