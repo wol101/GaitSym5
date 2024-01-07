@@ -20,16 +20,13 @@
 
 using namespace std::string_literals;
 
-FixedJoint::FixedJoint(dWorldID worldID) : Joint()
+FixedJoint::FixedJoint() : Joint()
 {
-    setJointID(dJointCreateFixed(worldID, nullptr));
-    dJointSetData(JointID(), this);
-    dJointSetFeedback(JointID(), JointFeedback());
 }
 
 void FixedJoint::SetFixed()
 {
-    dJointSetFixed(JointID());
+    // dJointSetFixed(JointID());
 }
 
 void FixedJoint::LateInitialisation()
@@ -42,6 +39,7 @@ void FixedJoint::LateInitialisation()
 // note for this to work the centre of the fixed joint needs to be the centroid of the cross section area
 void FixedJoint::CalculateStress()
 {
+#ifdef FIX_ME
     // first of all we need to convert the forces and torques into the joint local coordinate system
 
     // the force feedback is at the CM for fixed joints
@@ -234,6 +232,7 @@ void FixedJoint::CalculateStress()
         }
         break;
     }
+#endif // FIX_ME
 }
 
 const std::vector<unsigned char> &FixedJoint::pixMap() const
@@ -455,8 +454,8 @@ std::string *FixedJoint::createFromAttributes()
     this->SetStressOrientation(quaternion.n, quaternion.x, quaternion.y, quaternion.z);
 
     SetFixed();
-    if (CFM() >= 0) dJointSetFixedParam (JointID(), dParamCFM, CFM());
-    if (ERP() >= 0) dJointSetFixedParam (JointID(), dParamERP, ERP());
+    // if (CFM() >= 0) dJointSetFixedParam (JointID(), dParamCFM, CFM());
+    // if (ERP() >= 0) dJointSetFixedParam (JointID(), dParamERP, ERP());
     if (findAttribute("LateFix"s, &buf)) m_lateFix = GSUtil::Bool(buf);
 
     if (findAttribute("StressCalculationType"s, &buf) == nullptr) return lastErrorPtr();
@@ -576,6 +575,7 @@ void FixedJoint::appendToAttributes()
 std::string FixedJoint::dumpToString()
 {
     std::stringstream ss;
+#ifdef FIX_ME
     ss.precision(17);
     ss.setf(std::ios::scientific);
     if (firstDump())
@@ -647,6 +647,7 @@ std::string FixedJoint::dumpToString()
                   "\n";
         }
     }
+#endif //FIX_ME
     return ss.str();
 }
 

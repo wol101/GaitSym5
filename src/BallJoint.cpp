@@ -21,16 +21,6 @@ BallJoint::BallJoint() : Joint()
 {
 }
 
-void BallJoint::SetBallAnchor(double x, double y, double z)
-{
-    m_anchor.Set(x, y, z);
-}
-
-pgd::Vector3 BallJoint::GetBallAnchor() const
-{
-    return m_anchor;
-}
-
 /*
 void BallJoint::GetBallAnchor2(pgd::Vector3 result)
 {
@@ -191,8 +181,8 @@ void BallJoint::SetEulerReferenceVectors(pgd::Vector3 reference1, pgd::Vector3 r
 //}
 */
 
-// get the qauternion that rotates from body1 to body2
-pgd::Quaternion BallJoint::GetQuaternion()
+// get the quaternion that rotates from body1 to body2
+pgd::Quaternion BallJoint::CalculateQuaternion()
 {
     pgd::Quaternion q;
     body2Marker()->GetBody()->GetRelativeQuaternion(body1Marker()->GetBody(), &q);
@@ -301,6 +291,16 @@ void BallJoint::appendToAttributes()
         break;
     }
 */
+}
+
+pgd::Vector3 BallJoint::anchor() const
+{
+    return m_anchor;
+}
+
+void BallJoint::setAnchor(const pgd::Vector3 &newAnchor)
+{
+    m_anchor = newAnchor;
 }
 
 // BallJoint::Mode BallJoint::GetMode() const

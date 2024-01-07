@@ -14,56 +14,23 @@
 #include "Marker.h"
 #include "GSUtil.h"
 
-#include "ode/ode.h"
-
 #include <sstream>
 
 LMotorJoint::LMotorJoint() : Joint()
 {
 }
 
-void LMotorJoint::SetNumAxes(int numAxes)
+void LMotorJoint::setNumAxes(int numAxes)
 {
-    dJointSetLMotorNumAxes(JointID(), numAxes);
-    pgd::Vector3 ax,ay,az;
-    body1Marker()->GetWorldBasis(&ax, &ay, &az);
-    // rel value controls how the axis is anchored
-    // 0: The axis is anchored to the global frame.
-    // 1: The axis is anchored to the first body.
-    // 2: The axis is anchored to the second body.
-    // the axes are always defined in the global frame
-    int rel = 0;
-    if (body1Marker()->GetBody()) rel = 1;
-    switch (numAxes)
-    {
-    case 1:
-        dJointSetLMotorAxis(JointID(), 0, rel, ax.x, ax.y, ax.z);
-        break;
-    case 2:
-        dJointSetLMotorAxis(JointID(), 0, rel, ax.x, ax.y, ax.z);
-        dJointSetLMotorAxis(JointID(), 1, rel, ay.x, ay.y, ay.z);
-        break;
-    case 3:
-        dJointSetLMotorAxis(JointID(), 0, rel, ax.x, ax.y, ax.z);
-        dJointSetLMotorAxis(JointID(), 1, rel, ay.x, ay.y, ay.z);
-        dJointSetLMotorAxis(JointID(), 2, rel, az.x, az.y, az.z);
-        break;
-    }
+    m_numAxes = numAxes;
 }
 
-int LMotorJoint::GetNumAxes(void)
+int LMotorJoint::numAxes(void)
 {
-    return dJointGetLMotorNumAxes(JointID());
+    return m_numAxes;
 }
 
-pgd::Vector3 LMotorJoint::GetAxis(int anum)
-{
-    pgd::Vector3 result;
-    dJointGetLMotorAxis(JointID(), anum, result);
-    return pgd::Vector3(result);
-}
-
-double LMotorJoint::GetPosition(int anum)
+double LMotorJoint::position(int anum)
 {
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->GetWorldPosition()) - pgd::Vector3(body1Marker()->GetWorldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
@@ -82,7 +49,7 @@ double LMotorJoint::GetPosition(int anum)
     }
 }
 
-void LMotorJoint::GetPositions(double *x, double *y, double *z)
+void LMotorJoint::positions(double *x, double *y, double *z)
 {
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->GetWorldPosition()) - pgd::Vector3(body1Marker()->GetWorldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
@@ -93,7 +60,7 @@ void LMotorJoint::GetPositions(double *x, double *y, double *z)
     *z = relativePositionBody1Marker.z;
 }
 
-double LMotorJoint::GetPositionRate(int anum)
+double LMotorJoint::positionRate(int anum)
 {
     switch (anum)
     {
@@ -108,7 +75,7 @@ double LMotorJoint::GetPositionRate(int anum)
     }
 }
 
-double LMotorJoint::GetTargetPosition(int anum)
+double LMotorJoint::targetPosition(int anum)
 {
     switch (anum)
     {
@@ -123,7 +90,7 @@ double LMotorJoint::GetTargetPosition(int anum)
     }
 }
 
-void LMotorJoint::SetStops(int anum, double low, double high)
+void LMotorJoint::setStops(int anum, double low, double high)
 {
     // note there is safety feature that stops setting incompatible low and high
     // stops which can cause difficulties. The safe option is to set them twice.
@@ -131,42 +98,34 @@ void LMotorJoint::SetStops(int anum, double low, double high)
     switch (anum)
     {
     case 0:
-        dJointSetLMotorParam(JointID(), dParamLoStop1, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop1, high);
-        dJointSetLMotorParam(JointID(), dParamLoStop1, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop1, high);
+        m_stops0.Set(low, high);
         m_stopsSet0 = true;
         break;
     case 1:
-        dJointSetLMotorParam(JointID(), dParamLoStop2, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop2, high);
-        dJointSetLMotorParam(JointID(), dParamLoStop2, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop2, high);
+        m_stops1.Set(low, high);
         m_stopsSet1 = true;
         break;
     case 2:
-        dJointSetLMotorParam(JointID(), dParamLoStop3, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop3, high);
-        dJointSetLMotorParam(JointID(), dParamLoStop3, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop3, high);
+        m_stops2.Set(low, high);
         m_stopsSet2 = true;
         break;
     default:
-        dJointSetLMotorParam(JointID(), dParamLoStop, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop, high);
-        dJointSetLMotorParam(JointID(), dParamLoStop, low);
-        dJointSetLMotorParam(JointID(), dParamHiStop, high);
+#ifndef NDEBUG
+        std::cerr << "Warning: LMotorJoint::setStops anum out of range, setting to 0\n";
+#endif
+        m_stops0.Set(low, high);
         m_stopsSet0 = true;
         break;
     }
 }
 
 // this is the target velocity for the motor
-void LMotorJoint::SetTargetVelocity(int anum, double targetVelocity)
+void LMotorJoint::setTargetVelocity(int anum, double targetVelocity)
 {
     switch (anum)
     {
     case 0:
+        m_tar
         dJointSetLMotorParam(JointID(), dParamVel1, targetVelocity);
         break;
     case 1:

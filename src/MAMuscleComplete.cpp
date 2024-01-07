@@ -19,12 +19,6 @@
 #include "MAMuscleComplete.h"
 #include "Simulation.h"
 #include "GSUtil.h"
-#include "TwoPointStrap.h"
-#include "NPointStrap.h"
-#include "CylinderWrapStrap.h"
-#include "TwoCylinderWrapStrap.h"
-
-#include "ode/ode.h"
 
 #include <sstream>
 #include <cmath>

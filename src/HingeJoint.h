@@ -20,51 +20,59 @@ public:
 
     HingeJoint();
 
-    void SetHingeAnchor(double x, double y, double z);
-    void SetHingeAxis(double x, double y, double z);
-
-    void SetJointStops(double loStop, double hiStop);
-    void SetStopCFM(double cfm);
-    void SetStopERP(double erp);
-    void SetStopBounce(double bounce);
-    void SetStopSpringDamp(double springConstant, double dampingConstant, double integrationStep);
-    void SetStopSpringERP(double springConstant, double ERP, double integrationStep);
-
-    pgd::Vector3 GetHingeAnchor();
-    pgd::Vector3 GetHingeAxis();
-
-    double GetHingeAngle();
-    double GetHingeAngleRate();
-
-    void SetTorqueLimits(double loStopTorqueLimit, double hiStopTorqueLimit);
     int TestLimits();
-    void SetStopTorqueWindow(int window);
 
     virtual void Update();
     virtual std::string dumpToString();
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+    double stopSpring() const;
+    void setStopSpring(double newStopSpring);
+
+    double stopDamp() const;
+    void setStopDamp(double newStopDamp);
+
+    double stopBounce() const;
+    void setStopBounce(double newStopBounce);
+
+    pgd::Vector2 axisTorqueLimits() const;
+    void setAxisTorqueLimits(const pgd::Vector2 &newAxisTorqueLimits);
+
+    int axisTorqueWindow() const;
+    void setAxisTorqueWindow(int newAxisTorqueWindow);
+
+    double axisTorque() const;
+
+    double axisTorqueMean() const;
+
+    pgd::Vector3 axis() const;
+    void setAxis(const pgd::Vector3 &newAxis);
+
+    pgd::Vector3 anchor() const;
+    void setAnchor(const pgd::Vector3 &newAnchor);
+
+    pgd::Vector2 stops() const;
+    void setStops(const pgd::Vector2 &newStops);
+
 private:
 
     void CalculateStopTorque();
 
-    double m_HiStopTorqueLimit = std::numeric_limits<double>::infinity();
-    double m_LoStopTorqueLimit = -std::numeric_limits<double>::infinity();
+    pgd::Vector2 m_axisTorqueLimits = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
     double m_axisTorque = 0;
-
     std::vector<double> m_axisTorqueList;
     double m_axisTorqueTotal = 0;
     double m_axisTorqueMean = 0;
     int m_axisTorqueIndex = 0;
     int m_axisTorqueWindow = 0;
 
-    // these values are just used for saving and loading
-    double m_StopCFM = -1;
-    double m_StopERP = -1;
-
-    pgd::Vector3 m_anchor;
     pgd::Vector3 m_axis;
+    pgd::Vector3 m_anchor;
+    pgd::Vector2 m_stops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    double m_stopSpring = 0;
+    double m_stopDamp = 0;
+    double m_stopBounce = 0;
 
 };
 

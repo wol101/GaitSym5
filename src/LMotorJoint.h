@@ -19,22 +19,19 @@ public:
 
     LMotorJoint();
 
-    void SetNumAxes(int numAxes);
-    void SetStops(int anum, double low, double high);
-    void SetTargetVelocity(int anum, double targetVelocity);
-    void SetTargetPosition(int anum, double targetPosition);
-    void SetTargetPositionGain(int anum, double targetPositionGain);
-    void SetMaxForce(int anum, double maximumForce);
-#ifdef EXPERIMENTAL
-    void SetDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope);
-#endif
+    void setNumAxes(int numAxes);
+    void setStops(int anum, double low, double high);
+    void setTargetVelocity(int anum, double targetVelocity);
+    void setTargetPosition(int anum, double targetPosition);
+    void setTargetPositionGain(int anum, double targetPositionGain);
+    void setMaxForce(int anum, double maximumForce);
+    void setDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope);
 
-    int GetNumAxes();
-    pgd::Vector3 GetAxis(int anum);
-    double GetPosition(int anum);
-    double GetPositionRate(int anum);
-    void GetPositions(double *x, double *y, double *z);
-    double GetTargetPosition(int anum);
+    int numAxes();
+    double position(int anum);
+    double positionRate(int anum);
+    void positions(double *x, double *y, double *z);
+    double targetPosition(int anum);
 
     virtual std::string dumpToString();
     virtual void Update();
@@ -45,6 +42,7 @@ public:
 private:
 
     void SetPosition(int anum, double position, double time);
+    void SetDynamicFriction();
 
     double m_lastPosition0 = 0;
     double m_lastPosition1 = 0;
@@ -61,6 +59,9 @@ private:
     bool m_stopsSet0 = false;
     bool m_stopsSet1 = false;
     bool m_stopsSet2 = false;
+    pgd::Vector2 m_stops0 = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    pgd::Vector2 m_stops1 = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    pgd::Vector2 m_stops2 = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
     double m_targetPosition0 = 0;
     double m_targetPosition1 = 0;
     double m_targetPosition2 = 0;
@@ -70,12 +71,14 @@ private:
     double m_targetPositionGain0 = 1;
     double m_targetPositionGain1 = 1;
     double m_targetPositionGain2 = 1;
-#ifdef EXPERIMENTAL
-    void SetDynamicFriction();
+    double m_targetVelocity0 = 0;
+    double m_targetVelocity1 = 0;
+    double m_targetVelocity2 = 0;
+
+    int m_numAxes = 0;
     double m_dynamicFrictionIntercept = 0;
     double m_dynamicFrictionSlope = 0;
     bool m_dynamicFrictionFlag = false;
-#endif
 };
 
 

@@ -118,12 +118,9 @@ int ObjectiveMain::ReadModel()
 
     // create the simulation object
     m_simulation = std::make_unique<Simulation>();
-    if (m_outputWarehouseFilename.size()) m_simulation->SetOutputWarehouseFile(m_outputWarehouseFilename);
     if (m_outputModelStateFilename.size()) m_simulation->SetOutputModelStateFile(m_outputModelStateFilename);
     if (m_outputModelStateAtTime >= 0) m_simulation->SetOutputModelStateAtTime(m_outputModelStateAtTime);
     if (m_outputModelStateAtCycle >= 0) m_simulation->SetOutputModelStateAtCycle(m_outputModelStateAtCycle);
-    if (m_inputWarehouseFilename.size()) m_simulation->AddWarehouse(m_inputWarehouseFilename);
-    if (m_outputModelStateAtWarehouseDistance >= 0) m_simulation->SetOutputModelStateAtWarehouseDistance(m_outputModelStateAtWarehouseDistance);
 
     if (m_debug) std::cerr << "Loading model\n";
     if (m_simulation->LoadModel(myFile.GetRawData(), myFile.GetSize()))
@@ -135,7 +132,6 @@ int ObjectiveMain::ReadModel()
 
     // late initialisation options
     if (m_simulationTimeLimit >= 0) m_simulation->SetTimeLimit(m_simulationTimeLimit);
-    if (m_warehouseFailDistanceAbort != 0) m_simulation->SetWarehouseFailDistanceAbort(m_warehouseFailDistanceAbort);
 
     return 0;
 }

@@ -8,13 +8,9 @@
  */
 
 #include "UniversalJoint.h"
-#include "DataFile.h"
-#include "Body.h"
 #include "Simulation.h"
 #include "Marker.h"
 #include "GSUtil.h"
-
-#include "ode/ode.h"
 
 #include <sstream>
 

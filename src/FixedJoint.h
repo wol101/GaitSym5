@@ -24,7 +24,7 @@ class FixedJoint: public Joint
 {
     public:
 
-    FixedJoint(dWorldID worldID);
+    FixedJoint();
 
     SMART_ENUM(StressCalculationType, stressCalculationTypeStrings, stressCalculationTypeCount, none, beam, spring);
 //    enum StressCalculationType { none = 0, beam, spring };

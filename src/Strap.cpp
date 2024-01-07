@@ -157,11 +157,8 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
 
     // sum the torques acting on body 0 of the joint
     pgd::Vector3 torque, point, force, centre;
-    double *forcePoint, *forceDirection;
+    pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-//    pgd::Vector3 result;
-//    dBodyGetRelPointPos(mBody->GetBodyID(), mPivotPoint.x, mPivotPoint.y, mPivotPoint.z, result); // needs to be in world coordinates
-//    centre = pgd::Vector3(result[0], result[1], result[2]);
     centre = marker.GetWorldPosition();
 
 // These are the same but the second option works even when tension is zero

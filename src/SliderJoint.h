@@ -15,33 +15,35 @@
 class SliderJoint: public Joint
 {
 public:
-    SliderJoint(dWorldID worldID);
-    virtual ~SliderJoint();
+    SliderJoint();
 
-    void SetSliderAxis(double x, double y, double z);
-    void SetSliderAxis(const char *buf);
 
-    void SetStartDistanceReference(double startDistanceReference);
-    void SetJointStops(double loStop, double hiStop);
-    void SetStopCFM(double cfm);
-    void SetStopERP(double erp);
-    void SetStopBounce(double bounce);
-    void SetStopSpringDamp(double springConstant, double dampingConstant, double integrationStep);
-    void SetStopSpringERP(double springConstant, double ERP, double integrationStep);
+    double sliderDistance() const;
+    void setSliderDistance(double newSliderDistance);
 
-    void GetSliderAnchor(pgd::Vector3 result);
-    void GetSliderAnchor2(pgd::Vector3 result);
-    void GetSliderAxis(pgd::Vector3 result);
+    pgd::Vector3 sliderAxis() const;
+    void setSliderAxis(const pgd::Vector3 &newSliderAxis);
 
-    double GetSliderDistance();
-    double GetSliderDistanceRate();
+    pgd::Vector2 jointStops() const;
+    void setJointStops(const pgd::Vector2 &newJointStops);
 
-    virtual void Update();
-    virtual std::string dumpToString();
+    double stopSpring() const;
+    void setStopSpring(double newStopSpring);
+
+    double stopDamp() const;
+    void setStopDamp(double newStopDamp);
+
+    double stopBounce() const;
+    void setStopBounce(double newStopBounce);
 
 private:
 
-    double m_StartDistanceReference = 0;
+    double m_sliderDistance = 0;
+    pgd::Vector3 m_sliderAxis;
+    pgd::Vector2 m_jointStops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    double m_stopSpring = 0;
+    double m_stopDamp = 0;
+    double m_stopBounce = 0;
 };
 
 #endif // SLIDERJOINT_H

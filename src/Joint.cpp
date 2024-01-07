@@ -8,7 +8,6 @@
  */
 
 #include "Joint.h"
-#include "Body.h"
 #include "Marker.h"
 #include "GSUtil.h"
 #include "Simulation.h"
@@ -18,7 +17,6 @@ using namespace std::string_literals;
 Joint::Joint()
 {
 }
-
 
 Marker *Joint::body1Marker() const
 {
@@ -121,15 +119,5 @@ double Joint::ERP() const
 void Joint::setERP(double ERP)
 {
     m_ERP = ERP;
-}
-
-void Joint::setBody1(Body *Body1)
-{
-    m_Body1 = Body1;
-}
-
-void Joint::setBody2(Body *Body2)
-{
-    m_Body2 = Body2;
 }
 

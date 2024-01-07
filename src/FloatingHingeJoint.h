@@ -16,22 +16,20 @@ class FloatingHingeJoint: public Joint
 {
 public:
 
-    FloatingHingeJoint(dWorldID worldID);
-
-    void SetFloatingHingeAxis(double x, double y, double z);
-
-    void SetJointStops(double loStop, double hiStop);
-
-    void GetFloatingHingeAnchor(pgd::Vector3 result);
-    void GetFloatingHingeAnchor2(pgd::Vector3 result);
-    void GetFloatingHingeAxis(pgd::Vector3 result);
-
-    double GetFloatingHingeAngle();
-    double GetFloatingHingeAngleRate();
+    FloatingHingeJoint();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+    pgd::Vector3 axis() const;
+    void setAxis(const pgd::Vector3 &newAxis);
+
+    pgd::Vector2 stops() const;
+    void setStops(const pgd::Vector2 &newStops);
+
+private:
+    pgd::Vector3 m_axis;
+    pgd::Vector2 m_stops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
 };
 
 

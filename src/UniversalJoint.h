@@ -68,6 +68,13 @@ private:
     pgd::Vector3 m_axis1;
     pgd::Vector3 m_axis2;
 
+    pgd::Vector3 m_hingeAxis;
+    pgd::Vector3 m_hingeAnchor;
+    pgd::Vector2 m_jointStops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    double m_stopSpring = 0;
+    double m_stopDamp = 0;
+    double m_stopBounce = 0;
+
 };
 
 

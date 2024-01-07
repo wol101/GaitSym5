@@ -193,14 +193,12 @@ pgd::Vector3 AMotorJoint::GetEulerAngles(const Marker &basisMarker) const
     return pgd::Vector3(angle0, angle1, angle2);
 }
 
-#ifdef EXPERIMENTAL
 void AMotorJoint::SetDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope)
 {
     m_dynamicFrictionIntercept = dynamicFrictionIntercept;
     m_dynamicFrictionSlope = dynamicFrictionSlope;
     m_dynamicFrictionFlag = true;
 
-    dJointSetAMotorParam(JointID(), dParamVel1, 0);
     UpdateDynamicFriction();
 }
 
@@ -213,7 +211,6 @@ void AMotorJoint::UpdateDynamicFriction()
     double maxTorque = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(angularVelocity);
     SetMaxTorque(maxTorque);
 }
-#endif
 
 const std::vector<double> &AMotorJoint::targetAnglesList() const
 {

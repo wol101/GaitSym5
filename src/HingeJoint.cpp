@@ -8,16 +8,12 @@
  */
 
 #include "HingeJoint.h"
-#include "DataFile.h"
-#include "Body.h"
 #include "Simulation.h"
 #include "PGDMath.h"
 #include "Marker.h"
 #include "GSUtil.h"
 
-#include "ode/ode.h"
-
-#include <iostream>
+// #include <iostream>
 #include <cstdlib>
 #include <sstream>
 
@@ -27,69 +23,7 @@ HingeJoint::HingeJoint() : Joint()
 {
 }
 
-void HingeJoint::SetHingeAnchor (double x, double y, double z)
-{
-    dJointSetHingeAnchor(JointID(), x, y, z);
-}
 
-void HingeJoint::SetHingeAxis(double x, double y, double z)
-{
-    pgd::Vector3 v;
-    v[0] = x; v[1] = y; v[2] = z;
-    dNormalize3(v);
-    dJointSetHingeAxis(JointID(), v[0], v[1], v[2]);
-}
-
-void HingeJoint::GetHingeAnchor(pgd::Vector3 result)
-{
-    dJointGetHingeAnchor(JointID(), result);
-}
-
-void HingeJoint::GetHingeAnchor2(pgd::Vector3 result)
-{
-    dJointGetHingeAnchor2(JointID(), result);
-}
-
-void HingeJoint::GetHingeAxis(pgd::Vector3 result)
-{
-    dJointGetHingeAxis(JointID(), result);
-}
-
-double HingeJoint::GetHingeAngle()
-{
-    return dJointGetHingeAngle(JointID());
-}
-
-double HingeJoint::GetHingeAngleRate()
-{
-    return dJointGetHingeAngleRate(JointID());
-}
-
-void HingeJoint::SetTorqueLimits(double loStopTorqueLimit, double hiStopTorqueLimit)
-{
-    m_LoStopTorqueLimit = loStopTorqueLimit;
-    m_HiStopTorqueLimit = hiStopTorqueLimit;
-}
-
-void HingeJoint::SetJointStops(double loStop, double hiStop)
-{
-    if (loStop >= hiStop)
-    {
-        std::cerr << "Error in HingeJoint::SetJointStops loStop >= hiStop\n";
-        throw(__LINE__);
-    }
-
-    if (loStop < -M_PI) loStop = -dInfinity;
-    if (hiStop > M_PI) hiStop = dInfinity;
-
-    // note there is safety feature that stops setting incompatible low and high
-    // stops which can cause difficulties. The safe option is to set them twice.
-
-    dJointSetHingeParam(JointID(), dParamLoStop, loStop);
-    dJointSetHingeParam(JointID(), dParamHiStop, hiStop);
-    dJointSetHingeParam(JointID(), dParamLoStop, loStop);
-    dJointSetHingeParam(JointID(), dParamHiStop, hiStop);
-}
 
 void HingeJoint::CalculateStopTorque()
 {
@@ -123,7 +57,7 @@ void HingeJoint::CalculateStopTorque()
         t = (loStop - angle) * kp;
     }
 #endif
-
+#ifdef FIX_ME
     if (simulation()->GetTime() <= 0)
     {
         m_axisTorque = 0;
@@ -189,21 +123,60 @@ void HingeJoint::CalculateStopTorque()
         m_axisTorqueList[size_t(m_axisTorqueIndex)] = m_axisTorque;
         m_axisTorqueMean = m_axisTorqueTotal / m_axisTorqueWindow;
     }
+#endif // FIX_ME
 }
 
-int HingeJoint::TestLimits()
+pgd::Vector2 HingeJoint::stops() const
 {
-    if (m_axisTorqueMean < m_LoStopTorqueLimit) return -1;
-    if (m_axisTorqueMean > m_HiStopTorqueLimit) return 1;
-    return 0;
+    return m_stops;
 }
 
-void HingeJoint::SetStopTorqueWindow(int window)
+void HingeJoint::setStops(const pgd::Vector2 &newStops)
 {
-    if (window > 1)
+    m_stops = newStops;
+}
+
+pgd::Vector3 HingeJoint::anchor() const
+{
+    return m_anchor;
+}
+
+void HingeJoint::setAnchor(const pgd::Vector3 &newAnchor)
+{
+    m_anchor = newAnchor;
+}
+
+pgd::Vector3 HingeJoint::axis() const
+{
+    return m_axis;
+}
+
+void HingeJoint::setAxis(const pgd::Vector3 &newAxis)
+{
+    m_axis = newAxis;
+}
+
+double HingeJoint::axisTorqueMean() const
+{
+    return m_axisTorqueMean;
+}
+
+double HingeJoint::axisTorque() const
+{
+    return m_axisTorque;
+}
+
+int HingeJoint::axisTorqueWindow() const
+{
+    return m_axisTorqueWindow;
+}
+
+void HingeJoint::setAxisTorqueWindow(int newAxisTorqueWindow)
+{
+    m_axisTorqueWindow = newAxisTorqueWindow;
+    if (m_axisTorqueWindow > 1)
     {
-        m_axisTorqueList.resize(size_t(window)); // () initialises the array to zero
-        m_axisTorqueWindow = window;
+        m_axisTorqueList.resize(size_t(m_axisTorqueWindow)); // () initialises the array to zero
     }
     else
     {
@@ -215,36 +188,51 @@ void HingeJoint::SetStopTorqueWindow(int window)
     m_axisTorqueIndex = 0;
 }
 
-void HingeJoint::SetStopCFM(double cfm)
+pgd::Vector2 HingeJoint::axisTorqueLimits() const
 {
-    m_StopCFM = cfm;
-    dJointSetHingeParam (JointID(), dParamStopCFM, cfm);
+    return m_axisTorqueLimits;
 }
 
-void HingeJoint::SetStopERP(double erp)
+void HingeJoint::setAxisTorqueLimits(const pgd::Vector2 &newAxisTorqueLimits)
 {
-    m_StopERP = erp;
-    dJointSetHingeParam (JointID(), dParamStopERP, erp);
+    m_axisTorqueLimits = newAxisTorqueLimits;
 }
 
-void HingeJoint::SetStopSpringDamp(double springConstant, double dampingConstant, double integrationStep)
+double HingeJoint::stopBounce() const
 {
-    double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
-    double CFM = 1/(integrationStep * springConstant + dampingConstant);
-    SetStopERP(ERP);
-    SetStopCFM(CFM);
+    return m_stopBounce;
 }
 
-void HingeJoint::SetStopSpringERP(double springConstant, double ERP, double integrationStep)
+void HingeJoint::setStopBounce(double newStopBounce)
 {
-    double CFM = ERP / (integrationStep * springConstant);
-    SetStopERP(ERP);
-    SetStopCFM(CFM);
+    m_stopBounce = newStopBounce;
 }
 
-void HingeJoint::SetStopBounce(double bounce)
+double HingeJoint::stopDamp() const
 {
-    dJointSetHingeParam (JointID(), dParamBounce, bounce);
+    return m_stopDamp;
+}
+
+void HingeJoint::setStopDamp(double newStopDamp)
+{
+    m_stopDamp = newStopDamp;
+}
+
+double HingeJoint::stopSpring() const
+{
+    return m_stopSpring;
+}
+
+void HingeJoint::setStopSpring(double newStopSpring)
+{
+    m_stopSpring = newStopSpring;
+}
+
+int HingeJoint::TestLimits()
+{
+    if (m_axisTorqueMean < m_axisTorqueLimits[0]) return -1;
+    if (m_axisTorqueMean > m_axisTorqueLimits[1]) return 1;
+    return 0;
 }
 
 void HingeJoint::Update()
@@ -258,11 +246,9 @@ std::string *HingeJoint::createFromAttributes()
     std::string buf;
 
     pgd::Vector3 axis = body1Marker()->GetWorldAxis(Marker::Axis::X);
-    this->SetHingeAxis(axis.x, axis.y, axis.z);
+    this->setAxis(axis);
     pgd::Vector3 position = body1Marker()->GetWorldPosition();
-    this->SetHingeAnchor(position.x, position.y, position.z);
-    if (CFM() >= 0) dJointSetHingeParam (JointID(), dParamCFM, CFM());
-    if (ERP() >= 0) dJointSetHingeParam (JointID(), dParamERP, ERP());
+    this->setAnchor(position);
 
     if (findAttribute("LowStop"s, &buf) == nullptr) return lastErrorPtr();
     double loStop = GSUtil::GetAngle(buf);
@@ -273,21 +259,21 @@ std::string *HingeJoint::createFromAttributes()
         setLastError("Hinge ID=\""s + name() +"\" LowStop >= HighStop"s);
         return lastErrorPtr();
     }
-    this->SetJointStops(loStop, hiStop);
+    this->setStops(pgd::Vector2(loStop, hiStop));
 
     if (findAttribute("HighStopTorqueLimit"s, &buf))
     {
         double hiStopTorqueLimit = GSUtil::Double(buf);
         if (findAttribute("LowStopTorqueLimit"s, &buf) == nullptr) return lastErrorPtr();
         double loStopTorqueLimit = GSUtil::Double(buf);
-        this->SetTorqueLimits(loStopTorqueLimit, hiStopTorqueLimit);
+        this->setAxisTorqueLimits(pgd::Vector2(loStopTorqueLimit, hiStopTorqueLimit));
         if (findAttribute("StopTorqueWindow"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetStopTorqueWindow(GSUtil::Int(buf));
+        this->setAxisTorqueWindow(GSUtil::Int(buf));
     }
 
-    if (findAttribute("StopCFM"s, &buf)) this->SetStopCFM(GSUtil::Double(buf));
-    if (findAttribute("StopERP"s, &buf)) this->SetStopERP(GSUtil::Double(buf));
-    if (findAttribute("StopBounce"s, &buf)) this->SetStopBounce(GSUtil::Double(buf));
+    if (findAttribute("StopSpring"s, &buf)) this->setStopSpring(GSUtil::Double(buf));
+    if (findAttribute("StopDamp"s, &buf)) this->setStopDamp(GSUtil::Double(buf));
+    if (findAttribute("StopBounce"s, &buf)) this->setStopBounce(GSUtil::Double(buf));
 
     return nullptr;
 }
@@ -297,43 +283,43 @@ void HingeJoint::appendToAttributes()
     Joint::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Hinge"s);
-    setAttribute("LowStop"s, *GSUtil::ToString(dJointGetHingeParam(JointID(), dParamLoStop), &buf));
-    setAttribute("HighStop"s, *GSUtil::ToString(dJointGetHingeParam(JointID(), dParamHiStop), &buf));
-    if (m_HiStopTorqueLimit != dInfinity)
+    setAttribute("LowStop"s, *GSUtil::ToString(m_stops[0], &buf));
+    setAttribute("HighStop"s, *GSUtil::ToString(m_stops[1], &buf));
+    if (m_axisTorqueLimits[1] != std::numeric_limits<double>::infinity())
     {
-        setAttribute("HighStopTorqueLimit"s, *GSUtil::ToString(m_HiStopTorqueLimit, &buf));
-        setAttribute("LowStopTorqueLimit"s, *GSUtil::ToString(m_LoStopTorqueLimit, &buf));
+        setAttribute("HighStopTorqueLimit"s, *GSUtil::ToString(m_axisTorqueLimits[1], &buf));
+        setAttribute("LowStopTorqueLimit"s, *GSUtil::ToString(m_axisTorqueLimits[0], &buf));
         setAttribute("StopTorqueWindow"s, *GSUtil::ToString(m_axisTorqueWindow, &buf));
     }
-    if (m_StopCFM >= 0) setAttribute("StopCFM"s, *GSUtil::ToString(dJointGetHingeParam(JointID(), dParamStopCFM), &buf));
-    if (m_StopERP >= 0) setAttribute("StopERP"s, *GSUtil::ToString(dJointGetHingeParam(JointID(), dParamStopERP), &buf));
-    setAttribute("StopBounce"s, *GSUtil::ToString(dJointGetHingeParam(JointID(), dParamBounce), &buf));
+    if (m_stopSpring >= 0) setAttribute("StopSpring"s, *GSUtil::ToString(m_stopSpring, &buf));
+    if (m_stopDamp >= 0) setAttribute("StopDamp"s, *GSUtil::ToString(m_stopDamp, &buf));
+    setAttribute("StopBounce"s, *GSUtil::ToString(m_stopBounce, &buf));
 }
 
 std::string HingeJoint::dumpToString()
 {
     std::stringstream ss;
-    ss.precision(17);
-    ss.setf(std::ios::scientific);
-    if (firstDump())
-    {
-        setFirstDump(false);
-        ss << "Time\tXP\tYP\tZP\tXP2\tYP2\tZP2\tXA\tYA\tZA\tAngle\tAngleRate\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\tStopTorque\n";
-    }
-    pgd::Vector3 p, p2, a;
-    GetHingeAnchor(p);
-    GetHingeAnchor2(p2);
-    GetHingeAxis(a);
+    // ss.precision(17);
+    // ss.setf(std::ios::scientific);
+    // if (firstDump())
+    // {
+    //     setFirstDump(false);
+    //     ss << "Time\tXP\tYP\tZP\tXP2\tYP2\tZP2\tXA\tYA\tZA\tAngle\tAngleRate\tFX1\tFY1\tFZ1\tTX1\tTY1\tTZ1\tFX2\tFY2\tFZ2\tTX2\tTY2\tTZ2\tStopTorque\n";
+    // }
+    // pgd::Vector3 p, p2, a;
+    // GetHingeAnchor(p);
+    // GetHingeAnchor2(p2);
+    // GetHingeAxis(a);
 
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" <<
-          p2[0] << "\t" << p2[1] << "\t" << p2[2] << "\t" <<
-          a[0] << "\t" << a[1] << "\t" << a[2] << "\t" << GetHingeAngle() << "\t" << GetHingeAngleRate() << "\t" <<
-          JointFeedback()->f1[0] << "\t" << JointFeedback()->f1[1] << "\t" << JointFeedback()->f1[2] << "\t" <<
-          JointFeedback()->t1[0] << "\t" << JointFeedback()->t1[1] << "\t" << JointFeedback()->t1[2] << "\t" <<
-          JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
-          JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] << "\t" <<
-          m_axisTorque <<
-          "\n";
+    // ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" <<
+    //       p2[0] << "\t" << p2[1] << "\t" << p2[2] << "\t" <<
+    //       a[0] << "\t" << a[1] << "\t" << a[2] << "\t" << GetHingeAngle() << "\t" << GetHingeAngleRate() << "\t" <<
+    //       JointFeedback()->f1[0] << "\t" << JointFeedback()->f1[1] << "\t" << JointFeedback()->f1[2] << "\t" <<
+    //       JointFeedback()->t1[0] << "\t" << JointFeedback()->t1[1] << "\t" << JointFeedback()->t1[2] << "\t" <<
+    //       JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
+    //       JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] << "\t" <<
+    //       m_axisTorque <<
+    //       "\n";
     return ss.str();
 }
 
