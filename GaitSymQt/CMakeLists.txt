@@ -23,8 +23,13 @@ add_compile_definitions(PX_PHYSX_STATIC_LIB)
 # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
 # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
 # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
-IF (CMAKE_BUILD_TYPE EQUAL Debug)
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
     add_compile_definitions(PX_CHECKED)
+    message(STATUS "PX_CHECKED defined")
+endif()
+if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
+    add_compile_definitions(PX_SIMD_DISABLED)
+    message(STATUS "PX_SIMD_DISABLED defined")
 endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -92,8 +97,6 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmRadixSort.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmSerialize.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmVisualization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsDelayLoadHook.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsModuleUpdateLoader.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/fastxml/src/PsFastXml.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdAllocator.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdAssert.cpp
@@ -327,8 +330,6 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyTGSDynamics.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyThreadContext.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyThresholdTable.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/linux/PhysXIndicatorLinux.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/windows/PhysXIndicatorWindows.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/gpu/PxGpu.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/gpu/PxPhysXGpuModuleLoader.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpActor.cpp
@@ -878,8 +879,9 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixSync.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixThread.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixTime.cpp
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/linux/PhysXIndicatorLinux.cpp
 )
-ELSIF(WIN32)
+ELSEIF(WIN32)
 set(PROJECT_SOURCES
    ${PROJECT_SOURCES}
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsAtomic.cpp
@@ -891,7 +893,9 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsSync.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsThread.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsTime.cpp
-)
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsDelayLoadHook.cpp
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsModuleUpdateLoader.cpp
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/windows/PhysXIndicatorWindows.cpp)
 ENDIF(UNIX)
 
 
@@ -1036,4 +1040,5 @@ function(dump_cmake_variables)
     endforeach()
 endfunction()
 
+# handy variable dump to General Messages window on QtCreator
 dump_cmake_variables()

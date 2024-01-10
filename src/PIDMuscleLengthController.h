@@ -34,7 +34,7 @@ private:
     double m_Kp = 0;
     double m_Ki = 0;
     double m_Kd = 0;
-    double m_previous_error = DBL_MAX;
+    double m_previous_error = std::numeric_limits<double>::infinity();
     double m_error = 0;
     double m_integral = 0;
     double m_derivative = 0;

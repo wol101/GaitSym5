@@ -48,8 +48,8 @@ private:
     double m_slope = 0;
     MatchType m_matchType = MatchType::Linear;
     InterpolationType m_interpolationType = InterpolationType::Punctuated;
-    double m_abortBelow = -DBL_MAX;
-    double m_abortAbove = DBL_MAX;
+    double m_abortBelow = -std::numeric_limits<double>::infinity();
+    double m_abortAbove = std::numeric_limits<double>::infinity();
     std::vector<double> m_targetTimeList;
     size_t m_lastIndex = SIZE_MAX;
     double m_lastValue = 0;

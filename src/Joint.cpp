@@ -33,6 +33,16 @@ Marker *Joint::body2Marker() const
     return m_body2Marker;
 }
 
+Body *Joint::body1() const
+{
+    return m_body1Marker->GetBody();
+}
+
+Body *Joint::body2() const
+{
+    return m_body2Marker->GetBody();
+}
+
 void Joint::setBody2Marker(Marker *body2Marker)
 {
     m_body2Marker = body2Marker;

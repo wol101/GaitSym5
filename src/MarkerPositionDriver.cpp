@@ -40,7 +40,7 @@ void MarkerPositionDriver::Update()
     // which it usually does because the integration step size is small
     if (time >= m_changeTimes[m_index + 1] || time < m_changeTimes[m_index])
     {
-        // m_changeTimes starts at 0 and ends at DBL_MAX
+        // m_changeTimes starts at 0 and ends at std::numeric_limits<double>::infinity()
         // when time >= 0 and time < m_changeTimes[1] upper_bound will return 1
         // when time >= m_changeTimes[1] and time < m_changeTimes[2] upper_bound will return 2
         // etc.

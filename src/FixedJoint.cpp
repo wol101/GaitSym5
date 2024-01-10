@@ -113,8 +113,8 @@ void FixedJoint::CalculateStress()
         double *yDistancePtr = m_yDistances.data();
 
         double *stressPtr = m_stress.data();
-        m_minStress = DBL_MAX;
-        m_maxStress = -DBL_MAX;
+        m_minStress = std::numeric_limits<double>::infinity();
+        m_maxStress = -std::numeric_limits<double>::infinity();
         for (size_t i = 0; i < m_nActivePixels; i++)
         {
             *stressPtr = -t1 * (*xDistancePtr) + t2 * (*yDistancePtr) + linearStress;
@@ -162,8 +162,8 @@ void FixedJoint::CalculateStress()
         }
 
         double torqueScale = m_torqueScalar / totalNominalTorque; // this will make the total torque produced by the springs add up to the actual torque
-        m_minStress = DBL_MAX;
-        m_maxStress = -DBL_MAX;
+        m_minStress = std::numeric_limits<double>::infinity();
+        m_maxStress = -std::numeric_limits<double>::infinity();
         double *stressPtr = m_stress.data();
         double dArea = m_dx * m_dy;
         for (size_t i = 0; i < m_nActivePixels; i++)
@@ -220,8 +220,8 @@ void FixedJoint::CalculateStress()
 
     case MovingAverageLowPass:
     case Butterworth2ndOrderLowPass:
-        m_lowPassMinStress = DBL_MAX;
-        m_lowPassMaxStress = -DBL_MAX;
+        m_lowPassMinStress = std::numeric_limits<double>::infinity();
+        m_lowPassMaxStress = -std::numeric_limits<double>::infinity();
         for (size_t i = 0; i < m_nActivePixels; i++)
         {
             m_filteredStress[i]->AddNewSample(m_stress[i]);

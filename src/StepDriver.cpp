@@ -42,7 +42,7 @@ void StepDriver::Update()
     // which it usually does because the integration step size is small
     if (m_index < m_changeTimes.size() - 1 && (time >= m_changeTimes[m_index + 1] || time < m_changeTimes[m_index]))
     {
-        // m_changeTimes starts at 0 and ends at DBL_MAX
+        // m_changeTimes starts at 0 and ends at std::numeric_limits<double>::infinity()
         // when time >= 0 and time < m_changeTimes[1] upper_bound will return 1
         // when time >= m_changeTimes[1] and time < m_changeTimes[2] upper_bound will return 2
         // etc.
@@ -92,7 +92,7 @@ std::string *StepDriver::createFromAttributes()
     m_changeTimes.resize(m_durationList.size() + 2);
     m_changeTimes[0] = 0;
     for (size_t i =0; i < m_durationList.size(); i++) m_changeTimes[i + 1] = m_changeTimes[i] + m_durationList[i];
-    m_changeTimes[m_durationList.size() + 1] = DBL_MAX;
+    m_changeTimes[m_durationList.size() + 1] = std::numeric_limits<double>::infinity();
     return nullptr;
 }
 

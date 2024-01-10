@@ -160,8 +160,8 @@ private:
     std::vector<double> m_uvList;
     bool m_useRelativeOBJ = false;
     bool m_badMesh = false;
-    pgd::Vector3 m_lowerBound = {DBL_MAX, DBL_MAX, DBL_MAX};
-    pgd::Vector3 m_upperBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
+    pgd::Vector3 m_lowerBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    pgd::Vector3 m_upperBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
 
     pgd::Vector3 m_displayPosition = {0, 0, 0};
     pgd::Vector3 m_displayScale = {1, 1, 1};

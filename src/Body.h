@@ -131,12 +131,12 @@ private:
     pgd::Quaternion m_constructionQuaternion = {1, 0, 0, 0};
     double m_constructionDensity = 1000.0;
 
-    pgd::Vector3 m_positionLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
-    pgd::Vector3 m_positionHighBound = {DBL_MAX, DBL_MAX, DBL_MAX};
-    pgd::Vector3 m_linearVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
-    pgd::Vector3 m_linearVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX};
-    pgd::Vector3 m_angularVelocityLowBound = {-DBL_MAX, -DBL_MAX, -DBL_MAX};
-    pgd::Vector3 m_angularVelocityHighBound = {DBL_MAX, DBL_MAX, DBL_MAX};
+    pgd::Vector3 m_positionLowBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
+    pgd::Vector3 m_positionHighBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    pgd::Vector3 m_linearVelocityLowBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
+    pgd::Vector3 m_linearVelocityHighBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    pgd::Vector3 m_angularVelocityLowBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
+    pgd::Vector3 m_angularVelocityHighBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
 
     pgd::Vector3 m_initialPosition = {0, 0, 0};
     pgd::Quaternion m_initialQuaternion = {1, 0, 0, 0};

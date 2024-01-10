@@ -24,7 +24,7 @@ void PIDErrorInController::Initialise(double Kp, double Ki, double Kd)
     m_Kp = Kp;
     m_Ki = Ki;
     m_Kd = Kd;
-    m_previous_error = DBL_MAX;
+    m_previous_error = std::numeric_limits<double>::infinity();
     m_error = 0;
     m_integral = 0;
     m_derivative = 0;
@@ -41,7 +41,7 @@ void PIDErrorInController::Update()
 
     // in this driver, the error is driven by the upstream driver
     m_error = dataSum();
-    if (m_previous_error == DBL_MAX) m_previous_error = m_error;
+    if (m_previous_error == std::numeric_limits<double>::infinity()) m_previous_error = m_error;
 
     // do the PID calculations
     m_integral = m_integral + (m_error * m_dt);

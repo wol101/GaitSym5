@@ -39,6 +39,9 @@ public:
     Marker *body2Marker() const;
     void setBody2Marker(Marker *body2Marker);
 
+    Body *body1() const;
+    Body *body2() const;
+
     virtual std::string *createFromAttributes();
     virtual void saveToAttributes();
     virtual void appendToAttributes();

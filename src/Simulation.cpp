@@ -220,7 +220,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 void Simulation::UpdateSimulation()
 {
     // start by updating the scores
-    double minScore = DBL_MAX;
+    double minScore = std::numeric_limits<double>::infinity();
     for (auto &&it : m_DataTargetList)
     {
         double matchScore;
@@ -233,7 +233,7 @@ void Simulation::UpdateSimulation()
                 minScore = matchScore;
         }
     }
-    if (minScore < DBL_MAX)
+    if (minScore < std::numeric_limits<double>::infinity())
         m_KinematicMatchMiniMaxFitness += minScore;
 
     // now start the actual simulation

@@ -862,15 +862,15 @@ std::string *Body::createFromAttributes()
     // initial position/quaternion first then construction position/quaternion
     if (findAttribute("Position"s, &buf) == nullptr) return lastErrorPtr();
     this->SetPosition(buf);
-    std::copy_n(this->GetPosition(), 4, m_initialPosition);
+    m_initialPosition = this->GetPosition();
 
     if (findAttribute("ConstructionPosition"s, &buf) == nullptr) return lastErrorPtr();
     this->SetPosition(buf); // set the position first and copy the values
-    std::copy_n(this->GetPosition(), 4, m_constructionPosition);
+    m_constructionPosition = this->GetPosition();
 
     if (findAttribute("Quaternion"s, &buf) == nullptr) return lastErrorPtr(); // note quaternion is (qs,qx,qy,qz)
     this->SetQuaternion(buf);
-    std::copy_n(this->GetQuaternion(), 4, m_initialQuaternion);
+    m_initialQuaternion = this->GetQuaternion();
     this->SetQuaternion(1, 0, 0, 0); // construction quaternion is always zero
 
     if (findAttribute("LinearVelocity"s, &buf) == nullptr) return lastErrorPtr();

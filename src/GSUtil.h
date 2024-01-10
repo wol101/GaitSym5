@@ -430,7 +430,7 @@ inline static double Interpolate(double x1, double y1, double x2, double y2, dou
 {
     // y - y1 = ( (y2 - y1) / (x2 - x1) ) * (x - x1)
     double delX = x2 - x1;
-    if (std::fabs(delX) < DBL_EPSILON) return y1;
+    if (std::fabs(delX) < std::numeric_limits<double>::epsilon()) return y1;
     double y =  ( ( (y2 - y1) / (delX) ) * (x - x1) ) + y1;
     return y;
 }

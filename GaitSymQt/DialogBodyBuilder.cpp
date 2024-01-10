@@ -8,7 +8,6 @@
 #include "LineEditUniqueName.h"
 #include "DialogProperties.h"
 
-#include "ode/ode.h"
 #include "pystring.h"
 
 #include <QBoxLayout>

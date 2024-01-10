@@ -271,7 +271,7 @@ void MAMuscleComplete::SetActivation()
             }
             else
             {
-                double ax = -DBL_MAX, bx = DBL_MAX, r, tol;
+                double ax = -std::numeric_limits<double>::infinity(), bx = std::numeric_limits<double>::infinity(), r, tol;
                 // double range = maxlpe - minlpe; // this doesn't quite work because of damping
                 double range = m_Params.len; // this should be bigger than necessary
                 int nInc = 100;
