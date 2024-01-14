@@ -771,30 +771,6 @@ void MainWindowActions::menuNew()
     }
 }
 
-void MainWindowActions::menuStartWarehouseExport()
-{
-    if (m_mainWindow->m_simulation == nullptr) return;
-
-    QFileInfo info(Preferences::valueQString("LastFileOpened"));
-    QString fileName = QFileDialog::getSaveFileName(m_mainWindow, tr("Save output as Warehouse file"), info.absolutePath(), tr("Text Files (*.txt)"), nullptr);
-
-    if (fileName.isNull() == false)
-    {
-        m_mainWindow->ui->actionStartWarehouseExport->setEnabled(false);
-        m_mainWindow->ui->actionStopWarehouseExport->setEnabled(true);
-        m_mainWindow->m_simulation->SetOutputWarehouseFile(fileName.toStdString());
-    }
-}
-
-void MainWindowActions::menuStopWarehouseExport()
-{
-    if (m_mainWindow->m_simulation == nullptr) return;
-
-    m_mainWindow->ui->actionStartWarehouseExport->setEnabled(true);
-    m_mainWindow->ui->actionStopWarehouseExport->setEnabled(false);
-    m_mainWindow->m_simulation->SetOutputWarehouseFile(nullptr);
-}
-
 void MainWindowActions::menuImportMeshes()
 {
     if (m_mainWindow->m_simulation == nullptr) return;
@@ -818,7 +794,7 @@ void MainWindowActions::menuImportMeshes()
             }
 
             // now create the body
-            std::unique_ptr<Body> body = std::make_unique<Body>(m_mainWindow->m_simulation->GetWorldID());
+            std::unique_ptr<Body> body = std::make_unique<Body>(/*m_mainWindow->m_simulation->GetWorldID()*/);
             body->setSimulation(m_mainWindow->m_simulation);
             body->SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
             body->SetGraphicFile1(meshFileName);
@@ -858,30 +834,33 @@ void MainWindowActions::menuImportMeshes()
             body->setName(suggestedName);
 
             // and set the mass
-            dMass mass = {};
+            double mass, ixx, iyy, izz, ixy, izx, iyz;
+            pgd::Vector3 centreOfMass;
+            pgd::Matrix3x3 inertialTensor;
             double density = body->GetConstructionDensity();
             bool clockwise = false;
             pgd::Vector3 translation;
-            mesh->CalculateMassProperties(&mass, density, clockwise, translation.data());
-            std::string massError = Body::MassCheck(&mass);
+            mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+            std::string massError/* = Body::MassCheck(&mass)*/; // FIX_ME
             if (massError.size() == 0)
             {
-                body->SetConstructionPosition(mass.c[0], mass.c[1], mass.c[2]);
-                body->SetPosition(mass.c[0], mass.c[1], mass.c[2]);
+                body->SetConstructionPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
+                body->SetPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
                 // now recalculate the inertial tensor arount the centre of mass
-                translation.Set(-mass.c[0], -mass.c[1], -mass.c[2]);
-                mesh->CalculateMassProperties(&mass, density, clockwise, translation.data());
-                mass.c[0] = mass.c[1] = mass.c[2] = 0;
+                translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
+                mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
             }
             else
             {
                 QMessageBox::warning(m_mainWindow, tr("Calculate Mass Properties: %1").arg(meshFileName.c_str()), tr("Calculated mass properties are invalid so using defaults:\n%1").arg(massError.c_str()));
-                dMassSetParameters(&mass, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0);
                 pgd::Vector3 boundingBoxCentre = (pgd::Vector3(mesh->upperBound()) + pgd::Vector3(mesh->lowerBound())) / 2;
                 body->SetConstructionPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
                 body->SetPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
+                mass = 1;
+                inertialTensor.SetInertia(1, 1, 1, 0, 0, 0);
             }
-            body->SetMass(&mass);
+            inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+            body->SetMass(mass, ixx, iyy, izz, ixy, izx, iyz);
 
             // set the default properties
             body->setSize1(Preferences::valueDouble("BodyAxesSize"));
@@ -920,18 +899,6 @@ void MainWindowActions::menuImportMeshes()
     m_mainWindow->updateComboBoxTrackingMarker();
     m_mainWindow->ui->treeWidgetElements->fillVisibitilityLists(m_mainWindow->m_simulation);
     m_mainWindow->m_simulationWidget->update();
-}
-
-void MainWindowActions::menuImportWarehouse()
-{
-    if (m_mainWindow->m_simulation == nullptr) return;
-    QString fileName = QFileDialog::getOpenFileName(m_mainWindow, tr("Open Warehouse File"), "", tr("Warehouse Files (*.txt);;Any File (*.* *)"), nullptr);
-
-    if (fileName.isNull() == false)
-    {
-        m_mainWindow->m_simulation->AddWarehouse(fileName.toStdString());
-        m_mainWindow->setStatusString(QString("Warehouse %1 added").arg(fileName), 1);
-    }
 }
 
 void MainWindowActions::menuToggleFullScreen()
@@ -1033,9 +1000,9 @@ void MainWindowActions::menuCreateEditBody(Body *body)
     pgd::Quaternion originalOrientation;
     if (body)
     {
-        originalContructionPosition.Set(body->GetConstructionPosition());
-        originalPosition.Set(body->GetPosition());
-        originalOrientation.Set(body->GetQuaternion());
+        originalContructionPosition = body->GetConstructionPosition();
+        originalPosition = body->GetPosition();
+        originalOrientation = body->GetQuaternion();
     }
     int status = dialogBodyBuilder.exec();
     if (status == QDialog::Accepted)

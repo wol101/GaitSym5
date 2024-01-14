@@ -30,6 +30,7 @@
 #include "Preferences.h"
 #include "MainWindow.h"
 #include "GSUtil.h"
+#include "DataFile.h"
 
 #include <QApplication>
 #include <QClipboard>

@@ -38,27 +38,43 @@ find_package(Qt6 REQUIRED COMPONENTS OpenGL)
 find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 
 set(PROJECT_SOURCES
-    ../GaitSymQt/AboutDialog.cpp
     ../GaitSymQt/AVIWriter.cpp
+    ../GaitSymQt/AboutDialog.cpp
+    ../GaitSymQt/AboutDialog.ui
     ../GaitSymQt/BasicXMLSyntaxHighlighter.cpp
     ../GaitSymQt/DialogAssembly.cpp
+    ../GaitSymQt/DialogAssembly.ui
     ../GaitSymQt/DialogBodyBuilder.cpp
+    ../GaitSymQt/DialogBodyBuilder.ui
     ../GaitSymQt/DialogCreateMirrorElements.cpp
+    ../GaitSymQt/DialogCreateMirrorElements.ui
     ../GaitSymQt/DialogCreateTestingDrivers.cpp
+    ../GaitSymQt/DialogCreateTestingDrivers.ui
     ../GaitSymQt/DialogDrivers.cpp
+    ../GaitSymQt/DialogDrivers.ui
     ../GaitSymQt/DialogGeoms.cpp
+    ../GaitSymQt/DialogGeoms.ui
     ../GaitSymQt/DialogGlobal.cpp
+    ../GaitSymQt/DialogGlobal.ui
     ../GaitSymQt/DialogInfo.cpp
+    ../GaitSymQt/DialogInfo.ui
     ../GaitSymQt/DialogJoints.cpp
+    ../GaitSymQt/DialogJoints.ui
     ../GaitSymQt/DialogMarkerImportExport.cpp
+    ../GaitSymQt/DialogMarkerImportExport.ui
     ../GaitSymQt/DialogMarkers.cpp
+    ../GaitSymQt/DialogMarkers.ui
     ../GaitSymQt/DialogMuscles.cpp
+    ../GaitSymQt/DialogMuscles.ui
     ../GaitSymQt/DialogOutputSelect.cpp
+    ../GaitSymQt/DialogOutputSelect.ui
     ../GaitSymQt/DialogPreferences.cpp
+    ../GaitSymQt/DialogPreferences.ui
     ../GaitSymQt/DialogProperties.cpp
+    ../GaitSymQt/DialogProperties.ui
     ../GaitSymQt/DialogRename.cpp
+    ../GaitSymQt/DialogRename.ui
     ../GaitSymQt/DoubleValidator.cpp
-    ../GaitSymQt/Drawable.cpp
     ../GaitSymQt/DrawBody.cpp
     ../GaitSymQt/DrawCustom.cpp
     ../GaitSymQt/DrawFluidSac.cpp
@@ -66,6 +82,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DrawJoint.cpp
     ../GaitSymQt/DrawMarker.cpp
     ../GaitSymQt/DrawMuscle.cpp
+    ../GaitSymQt/Drawable.cpp
     ../GaitSymQt/ElementTreeWidget.cpp
     ../GaitSymQt/FacetedAxes.cpp
     ../GaitSymQt/FacetedBox.cpp
@@ -81,17 +98,19 @@ set(PROJECT_SOURCES
     ../GaitSymQt/LineEditDouble.cpp
     ../GaitSymQt/LineEditPath.cpp
     ../GaitSymQt/LineEditUniqueName.cpp
-    ../GaitSymQt/main.cpp
     ../GaitSymQt/MainWindow.cpp
+    ../GaitSymQt/MainWindow.ui
     ../GaitSymQt/MainWindowActions.cpp
     ../GaitSymQt/MeshStore.cpp
     ../GaitSymQt/Preferences.cpp
     ../GaitSymQt/SimulationWidget.cpp
     ../GaitSymQt/StrokeFont.cpp
     ../GaitSymQt/TextEditDialog.cpp
+    ../GaitSymQt/TextEditDialog.ui
     ../GaitSymQt/TrackBall.cpp
     ../GaitSymQt/UniqueNameValidator.cpp
     ../GaitSymQt/ViewControlWidget.cpp
+    ../GaitSymQt/main.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmCollection.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmPtrTable.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmRadixSort.cpp

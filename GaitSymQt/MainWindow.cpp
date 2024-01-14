@@ -100,7 +100,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionEditGlobal, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuEditGlobal()));
     connect(ui->actionExportMarkers, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuExportMarkers()));
     connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuImportMeshes()));
-    connect(ui->actionImportWarehouse, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuImportWarehouse()));
     connect(ui->actionNew, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuNew()));
     connect(ui->actionOpen, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuOpen()));
     connect(ui->actionOutput, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuOutputs()));
@@ -123,11 +122,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSnapshot, SIGNAL(triggered()), m_mainWindowActions, SLOT(snapshot()));
     connect(ui->actionStartOBJSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStartOBJSequenceSave()));
     connect(ui->actionStartUSDSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStartUSDSequenceSave()));
-    connect(ui->actionStartWarehouseExport, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStartWarehouseExport()));
     connect(ui->actionStep, SIGNAL(triggered()), m_mainWindowActions, SLOT(step()));
     connect(ui->actionStopOBJSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStopOBJSequenceSave()));
     connect(ui->actionStopUSDSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStopUSDSequenceSave()));
-    connect(ui->actionStopWarehouseExport, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStopWarehouseExport()));
     connect(ui->actionToggleFullscreen, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuToggleFullScreen()));
     connect(ui->actionViewBack, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraBack()));
     connect(ui->actionViewBottom, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraBottom()));
@@ -229,12 +226,6 @@ MainWindow::MainWindow(QWidget *parent)
     setInterfaceValues();
     setStatusString(tr("Ready"), 2);
     updateEnable();
-
-#ifndef EXPERIMENTAL
-    ui->actionStartWarehouseExport->setVisible(false);
-    ui->actionStopWarehouseExport->setVisible(false);
-    ui->actionImportWarehouse->setVisible(false);
-#endif
 
     // finally remember the geometry etc.
     restoreGeometry(Preferences::valueQByteArray("MainWindowGeometry"));
@@ -737,9 +728,6 @@ void MainWindow::updateEnable()
     ui->actionCreateMirrorElements->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
     ui->actionCreateTestingDrivers->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetMuscleList()->size() > 0);
     ui->actionExportMarkers->setEnabled(m_simulation != nullptr);
-    ui->actionStartWarehouseExport->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
-    ui->actionStopWarehouseExport->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
-    ui->actionImportWarehouse->setEnabled(m_simulation != nullptr && m_mode == runMode);
     ui->actionRecordMovie->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
     ui->actionRun->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
     ui->actionStep->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);

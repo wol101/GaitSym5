@@ -57,7 +57,6 @@ public slots:
     void menuEditGlobal();
     void menuExportMarkers();
     void menuImportMeshes();
-    void menuImportWarehouse();
     void menuNew();
     void menuOpen();
     void menuOutputs();
@@ -72,11 +71,9 @@ public slots:
     void menuSaveDefaultView();
     void menuStartOBJSequenceSave();
     void menuStartUSDSequenceSave();
-    void menuStartWarehouseExport();
     void menuStopAVISave();
     void menuStopOBJSequenceSave();
     void menuStopUSDSequenceSave();
-    void menuStopWarehouseExport();
     void menuToggleFullScreen();
 
     void menuOpen(const QString &fileName, const QByteArray *fileData);

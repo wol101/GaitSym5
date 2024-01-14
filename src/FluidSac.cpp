@@ -87,16 +87,16 @@ void FluidSac::calculateLoadsOnMarkers()
 
         // and add the reaction forces to the body
         m_pointForceList[pointListIndex].body = m_markerList[it->v0]->GetBody();
-        std::copy_n(m_vertexList[it->v0].data(), 3, m_pointForceList[pointListIndex].point);
-        std::copy_n((it->normal * R0).data(), 3, m_pointForceList[pointListIndex].vector);
+        m_pointForceList[pointListIndex].point = m_vertexList[it->v0];
+        m_pointForceList[pointListIndex].vector = it->normal * R0;
         pointListIndex++;
         m_pointForceList[pointListIndex].body = m_markerList[it->v1]->GetBody();
-        std::copy_n(m_vertexList[it->v1].data(), 3, m_pointForceList[pointListIndex].point);
-        std::copy_n((it->normal * R1).data(), 3, m_pointForceList[pointListIndex].vector);
+        m_pointForceList[pointListIndex].point = m_vertexList[it->v1];
+        m_pointForceList[pointListIndex].vector = it->normal * R1;
         pointListIndex++;
         m_pointForceList[pointListIndex].body = m_markerList[it->v2]->GetBody();
-        std::copy_n(m_vertexList[it->v2].data(), 3, m_pointForceList[pointListIndex].point);
-        std::copy_n((it->normal * R2).data(), 3, m_pointForceList[pointListIndex].vector);
+        m_pointForceList[pointListIndex].point = m_vertexList[it->v2];
+        m_pointForceList[pointListIndex].vector = it->normal * R2;
         pointListIndex++;
     }
 }
