@@ -21,11 +21,7 @@
 #include "Muscle.h"
 #include "Driver.h"
 
-#ifdef USE_QT3D
-#include "SimulationWindowQt3D.h"
-#else
 #include "SimulationWidget.h"
-#endif
 
 #include <QMessageBox>
 #include <QTimer>
@@ -178,14 +174,8 @@ MainWindow::MainWindow(QWidget *parent)
     QBoxLayout *boxLayout = new QBoxLayout(QBoxLayout::LeftToRight, ui->widgetSimulationPlaceholder);
     boxLayout->setContentsMargins(0, 0, 0, 0);
     boxLayout->setSpacing(0);
-#ifdef USE_QT3D
-    m_simulationWidget = new SimulationWindowQt3D();
-    QWidget *container = QWidget::createWindowContainer(m_simulationWidget);
-    boxLayout->addWidget(container);
-#else
     m_simulationWidget = new SimulationWidget();
     boxLayout->addWidget(m_simulationWidget);
-#endif
     m_simulationWidget->setMainWindow(this);
 
     // connect the ViewControlWidget to the GLWidget
@@ -641,11 +631,7 @@ void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
     setStatusString(QString("Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 1);
 }
 
-#ifdef USE_QT3D
-SimulationWindowQt3D *MainWindow::simulationWidget() const
-#else
 SimulationWidget *MainWindow::simulationWidget() const
-#endif
 {
     return m_simulationWidget;
 }

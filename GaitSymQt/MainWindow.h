@@ -13,11 +13,7 @@
 #include <QMainWindow>
 #include <QFileInfo>
 
-#ifdef USE_QT3D
-class SimulationWindowQt3D;
-#else
 class SimulationWidget;
-#endif
 
 namespace Ui {
 class MainWindow;
@@ -41,11 +37,7 @@ public:
 
     Mode mode() const;
     Simulation *simulation() const;
-#ifdef USE_QT3D
-    SimulationWindowQt3D *simulationWidget() const;
-#else
     SimulationWidget *simulationWidget() const;
-#endif
 
     const QFileInfo &configFile() const;
 
@@ -109,11 +101,7 @@ private:
     void handleTracking();
 
     Ui::MainWindow *ui = nullptr;
-#ifdef USE_QT3D
-    SimulationWindowQt3D *m_simulationWidget = nullptr;
-#else
     SimulationWidget *m_simulationWidget = nullptr;
-#endif
 
     QFileInfo m_configFile; // maybe use windowFilePath() and windowTitle() instead
 

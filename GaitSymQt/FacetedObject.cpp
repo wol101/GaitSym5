@@ -24,22 +24,10 @@
 #include <QDir>
 #include <QDebug>
 
-#ifdef USE_QT3D
-#include <QMaterial>
-#include <QTransform>
-#include <QGeometryRenderer>
-#include <QBuffer>
-#include <QPerVertexColorMaterial>
-#include <QAttribute>
-#include <QLayer>
-#include <QParameter>
-#include <QEffect>
-#else
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLTexture>
 #if QT_VERSION >= 0x060000
 #include <QOpenGLVersionFunctionsFactory>
-#endif
 #endif
 
 
@@ -60,16 +48,9 @@
 using namespace std::literals::string_literals;
 
 // create object
-#if USE_QT3D
-FacetedObject::FacetedObject(Qt3DCore::QNode *parent)
-    : Qt3DCore::QEntity(parent)
-{
-}
-#else
 FacetedObject::FacetedObject()
 {
 }
-#endif
 
 // destroy object
 FacetedObject::~FacetedObject()
@@ -973,137 +954,6 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
     return 0;
 }
 
-#if USE_QT3D
-void FacetedObject::InitialiseEntity()
-{
-    // Material
-    Qt3DRender::QMaterial *material;
-    if (m_effect)
-    {
-        material = new Qt3DRender::QMaterial(this);
-        material->setEffect(m_effect);
-        material->addParameter(new Qt3DRender::QParameter(QStringLiteral("meshColor"), QColor(Qt::blue)));
-    }
-    else
-    {
-        material = new Qt3DExtras::QPerVertexColorMaterial(this);
-    }
-
-    // Transform
-    m_transform = new Qt3DCore::QTransform(this);
-
-    // Custom Mesh
-    Qt3DRender::QGeometryRenderer *customMeshRenderer = new Qt3DRender::QGeometryRenderer(this);
-    Qt3DCore::QGeometry *customGeometry = new Qt3DCore::QGeometry(customMeshRenderer);
-
-    // the vertex data is interleaved
-    // vec3 for position
-    // vec3 for normals
-    // vec3 for colors
-    size_t numVertices = m_vertexList.size() / 3;
-    Q_ASSERT_X(numVertices == m_normalList.size() / 3, "FacetedObject::InitialiseEntity()",
-               "numVertices != m_normalList.size() / 3");
-    QByteArray vertexData;
-    vertexData.resize(int(numVertices * (3 + 3 + 3) * sizeof(float)));
-    float *vertexDataPtr = reinterpret_cast<float *>(vertexData.data());
-    for (size_t i = 0; i < numVertices; i++)
-    {
-        vertexDataPtr[i * (3 + 3 + 3) + 0] = float(m_vertexList[i * 3 + 0]);
-        vertexDataPtr[i * (3 + 3 + 3) + 1] = float(m_vertexList[i * 3 + 1]);
-        vertexDataPtr[i * (3 + 3 + 3) + 2] = float(m_vertexList[i * 3 + 2]);
-        vertexDataPtr[i * (3 + 3 + 3) + 3] = float(m_normalList[i * 3 + 0]);
-        vertexDataPtr[i * (3 + 3 + 3) + 4] = float(m_normalList[i * 3 + 1]);
-        vertexDataPtr[i * (3 + 3 + 3) + 5] = float(m_normalList[i * 3 + 2]);
-        vertexDataPtr[i * (3 + 3 + 3) + 6] = float(m_colourList[i * 3 + 0]);
-        vertexDataPtr[i * (3 + 3 + 3) + 7] = float(m_colourList[i * 3 + 1]);
-        vertexDataPtr[i * (3 + 3 + 3) + 8] = float(m_colourList[i * 3 + 2]);
-//        qDebug("Vertex %d (%f,%f,%f) (%f,%f,%f) (%f,%f,%f)", i,
-//               double(vertexDataPtr[i * (3 + 3 + 3) + 0]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 1]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 2]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 3]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 4]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 5]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 6]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 7]),
-//                double(vertexDataPtr[i * (3 + 3 + 3) + 8]));
-    }
-
-    // the index data is just a list of uint32_t values
-    // and is the same length as the number of vertices because vertices are not shared
-    QByteArray vertexIndexData;
-    vertexIndexData.resize(int(numVertices * sizeof(uint32_t)));
-    uint32_t *vertexIndexDataPtr = reinterpret_cast<uint32_t *>(vertexIndexData.data());
-    for (size_t i = 0; i < numVertices; i++) vertexIndexDataPtr[i] = uint32_t(i);
-
-    Qt3DCore::QBuffer *vertexDataBuffer = new Qt3DCore::QBuffer(customGeometry);
-    Qt3DCore::QBuffer *indexDataBuffer = new Qt3DCore::QBuffer(customGeometry);
-    vertexDataBuffer->setUsage(Qt3DCore::QBuffer::StaticDraw);
-    indexDataBuffer->setUsage(Qt3DCore::QBuffer::StaticDraw);
-    vertexDataBuffer->setData(vertexData);
-    indexDataBuffer->setData(vertexIndexData);
-
-    // Attributes
-    Qt3DCore::QAttribute *positionAttribute = new Qt3DCore::QAttribute(this);
-    positionAttribute->setAttributeType(Qt3DCore::QAttribute::VertexAttribute);
-    positionAttribute->setBuffer(vertexDataBuffer);
-    positionAttribute->setVertexBaseType(Qt3DCore::QAttribute::Float);
-    positionAttribute->setVertexSize(3);
-    positionAttribute->setByteOffset(0);
-    positionAttribute->setByteStride(9 * sizeof(float));
-    positionAttribute->setCount(uint(numVertices));
-    positionAttribute->setName(Qt3DCore::QAttribute::defaultPositionAttributeName());
-
-    Qt3DCore::QAttribute *normalAttribute = new Qt3DCore::QAttribute(this);
-    normalAttribute->setAttributeType(Qt3DCore::QAttribute::VertexAttribute);
-    normalAttribute->setBuffer(vertexDataBuffer);
-    normalAttribute->setVertexBaseType(Qt3DCore::QAttribute::Float);
-    normalAttribute->setVertexSize(3);
-    normalAttribute->setByteOffset(3 * sizeof(float));
-    normalAttribute->setByteStride(9 * sizeof(float));
-    normalAttribute->setCount(uint(numVertices));
-    normalAttribute->setName(Qt3DCore::QAttribute::defaultNormalAttributeName());
-
-    Qt3DCore::QAttribute *colorAttribute = new Qt3DCore::QAttribute(this);
-    colorAttribute->setAttributeType(Qt3DCore::QAttribute::VertexAttribute);
-    colorAttribute->setBuffer(vertexDataBuffer);
-    colorAttribute->setVertexBaseType(Qt3DCore::QAttribute::Float);
-    colorAttribute->setVertexSize(3);
-    colorAttribute->setByteOffset(6 * sizeof(float));
-    colorAttribute->setByteStride(9 * sizeof(float));
-    colorAttribute->setCount(uint(numVertices));
-    colorAttribute->setName(Qt3DCore::QAttribute::defaultColorAttributeName());
-
-    Qt3DCore::QAttribute *indexAttribute = new Qt3DCore::QAttribute(this);
-    indexAttribute->setAttributeType(Qt3DCore::QAttribute::IndexAttribute);
-    indexAttribute->setBuffer(indexDataBuffer);
-    indexAttribute->setVertexBaseType(Qt3DCore::QAttribute::UnsignedInt);
-    indexAttribute->setVertexSize(1);
-    indexAttribute->setByteOffset(0);
-    indexAttribute->setByteStride(sizeof(uint32_t));
-    indexAttribute->setCount(uint(numVertices));
-
-    customGeometry->addAttribute(positionAttribute);
-    customGeometry->addAttribute(normalAttribute);
-    customGeometry->addAttribute(colorAttribute);
-    customGeometry->addAttribute(indexAttribute);
-
-    customMeshRenderer->setInstanceCount(1);
-    customMeshRenderer->setIndexOffset(0);
-    customMeshRenderer->setFirstInstance(0);
-    customMeshRenderer->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
-    customMeshRenderer->setGeometry(customGeometry);
-    customMeshRenderer->setVertexCount(int(numVertices));
-
-    this->addComponent(customMeshRenderer);
-    this->addComponent(m_transform);
-    this->addComponent(material);
-    if (m_layer) this->addComponent(m_layer);
-
-
-//    std::cerr << numVertices << " initialised\n";
-}
-#else
 void FacetedObject::Draw()
 {
 #if QT_VERSION >= 0x060000
@@ -1220,7 +1070,6 @@ void FacetedObject::Draw()
 
     m_simulationWidget->facetedObjectShader()->release();
 }
-#endif
 
 // Write a FacetedObject out as a POVRay file
 void FacetedObject::WritePOVRay(std::string filename)

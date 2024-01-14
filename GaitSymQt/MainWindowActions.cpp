@@ -45,11 +45,7 @@
 #include "MarkerPositionDriver.h"
 #include "MarkerEllipseDriver.h"
 
-#ifdef USE_QT3D
-#include "SimulationWindowQt3D.h"
-#else
 #include "SimulationWidget.h"
-#endif
 
 
 #include "pystring.h"

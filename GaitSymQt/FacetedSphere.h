@@ -17,11 +17,7 @@
 class FacetedSphere: public FacetedObject
 {
 public:
-#ifdef USE_QT3D
-    FacetedSphere(double radius, size_t maxlevels, const QColor &blendColour, double blendFraction, Qt3DCore::QNode *parent = nullptr);
-#else
     FacetedSphere(double radius, size_t maxlevels, const QColor &blendColour, double blendFraction);
-#endif
 
     static size_t EstimateLevel(size_t requestedFaces, size_t *actualFaces = nullptr);
 
