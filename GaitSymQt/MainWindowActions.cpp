@@ -21,7 +21,6 @@
 #include "FluidSac.h"
 #include "Driver.h"
 #include "FacetedObject.h"
-#include "Warehouse.h"
 #include "Preferences.h"
 #include "DialogPreferences.h"
 #include "DialogOutputSelect.h"

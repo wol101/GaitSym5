@@ -61,7 +61,6 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
     auto dataTargetList = simulation->GetDataTargetList();
     auto reporterList = simulation->GetReporterList();
     auto controllerList = simulation->GetControllerList();
-    auto warehouseList = simulation->GetWarehouseList();
 
     if (bodyList->size() > 0)
     {
@@ -250,27 +249,6 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetController, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestController(QPoint)));
-    }
-
-    if (warehouseList->size() > 0)
-    {
-        m_listWidgetWarehouse = new QListWidget(this);
-        m_listWidgetWarehouse->setFont(listWidgetFont);
-        m_listWidgetWarehouse->setContextMenuPolicy(Qt::CustomContextMenu);
-        count = 0;
-        m_listWidgetWarehouse->clear();
-        for (auto &&warehouseIterator : *warehouseList)
-        {
-            m_listWidgetWarehouse->addItem(warehouseIterator.first.c_str());
-            item = m_listWidgetWarehouse->item(count++);
-            if (warehouseIterator.second->dump()) item->setCheckState(Qt::Checked);
-            else item->setCheckState(Qt::Unchecked);
-        }
-        gridLayout->addWidget(m_listWidgetWarehouse, 1, m_columns);
-        label = new QLabel("Warehouse List", this);
-        gridLayout->addWidget(label, 0, m_columns);
-        m_columns++;
-        QObject::connect(m_listWidgetWarehouse, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestWarehouse(QPoint)));
     }
 
     connect(m_ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(acceptButtonClicked()));
@@ -700,14 +678,6 @@ void DialogOutputSelect::acceptButtonClicked()
         (*m_simulation->GetControllerList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
-    for (i = 0; listWidgetWarehouse() && i < listWidgetWarehouse()->count(); i++)
-    {
-        item = listWidgetWarehouse()->item(i);
-        if (item->checkState() == Qt::Unchecked) dump = false;
-        else dump = true;
-        (*m_simulation->GetWarehouseList())[std::string(item->text().toUtf8())]->setDump(dump);
-    }
-
     Preferences::insert("DialogOutputSelectGeometry", saveGeometry());
     accept();
 }
@@ -735,16 +705,6 @@ Simulation *DialogOutputSelect::simulation() const
 void DialogOutputSelect::setSimulation(Simulation *simulation)
 {
     m_simulation = simulation;
-}
-
-QListWidget *DialogOutputSelect::listWidgetWarehouse() const
-{
-    return m_listWidgetWarehouse;
-}
-
-void DialogOutputSelect::setListWidgetWarehouse(QListWidget *listWidgetWarehouse)
-{
-    m_listWidgetWarehouse = listWidgetWarehouse;
 }
 
 QListWidget *DialogOutputSelect::listWidgetController() const

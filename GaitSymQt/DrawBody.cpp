@@ -12,6 +12,7 @@
 #include "FacetedAxes.h"
 #include "FacetedObject.h"
 #include "Preferences.h"
+#include "Simulation.h"
 
 #include <QString>
 #include <QDir>
@@ -137,7 +138,7 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
         m_meshEntity1->setBlendColour(m_bodyColour1, 1);
         if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity1->ParsePLYFile(absoluteFilename.toStdString());
         if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity1->ParseOBJFile(absoluteFilename.toStdString());
-        const double *offset = m_body->GetConstructionPosition();
+        pgd::Vector3 offset = m_body->GetConstructionPosition();
         m_meshEntity1->Move(-offset[0], -offset[1], -offset[2]);
     }
 
@@ -165,7 +166,7 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
         m_meshEntity2->setBlendColour(m_bodyColour2, 1);
         if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity2->ParsePLYFile(absoluteFilename.toStdString());
         if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity2->ParseOBJFile(absoluteFilename.toStdString());
-        const double *offset = m_body->GetConstructionPosition();
+        pgd::Vector3 offset = m_body->GetConstructionPosition();
         m_meshEntity2->Move(-offset[0], -offset[1], -offset[2]);
     }
 
@@ -193,7 +194,7 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
         m_meshEntity3->setBlendColour(m_bodyColour3, 1);
         if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity3->ParsePLYFile(absoluteFilename.toStdString());
         if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity3->ParseOBJFile(absoluteFilename.toStdString());
-        const double *offset = m_body->GetConstructionPosition();
+        pgd::Vector3 offset = m_body->GetConstructionPosition();
         m_meshEntity3->Move(-offset[0], -offset[1], -offset[2]);
     }
 
@@ -205,8 +206,8 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
 
 void DrawBody::updateEntityPose()
 {
-    const double *quaternion = m_body->GetQuaternion();
-    const double *position = m_body->GetPosition();
+    pgd::Quaternion quaternion = m_body->GetQuaternion();
+    pgd::Vector3 position = m_body->GetPosition();
     SetDisplayRotationFromQuaternion(quaternion);
     SetDisplayPosition(position[0], position[1], position[2]);
     m_axes->SetDisplayScale(m_body->size1(), m_body->size1(), m_body->size1());

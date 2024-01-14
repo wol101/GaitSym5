@@ -18,11 +18,8 @@
 
 using namespace std::string_literals;
 
-ConvexGeom::ConvexGeom(const std::vector<double> &planes, const std::vector <double> &points, const std::vector<unsigned int> &polygons)
+ConvexGeom::ConvexGeom()
 {
-    m_planes = planes;
-    m_points = points;
-    m_polygons = polygons;
 }
 
 std::string *ConvexGeom::createFromAttributes()

@@ -4,9 +4,10 @@
 #include "BasicXMLSyntaxHighlighter.h"
 #include "Preferences.h"
 #include "Simulation.h"
+#include "GSUtil.h"
 
 #include "pystring.h"
-#include "exprtk.hpp"
+#include "pocketpy.h"
 
 #include <QPlainTextEdit>
 #include <QMessageBox>
@@ -21,9 +22,7 @@
 #include <QRegularExpression>
 
 #include <string>
-#include <sstream>
 #include <regex>
-#include <iomanip>
 
 using namespace std::literals::string_literals;
 
@@ -710,26 +709,11 @@ std::string TextEditDialog::attributeMachineReplace(const std::string input, con
 std::string TextEditDialog::attributeMachineArithmetic(const std::string &original, const std::string &arithmetic)
 {
     std::string newString;
-    exprtk::symbol_table<double> *symbol_table;
-    exprtk::expression<double> *expression;
-    exprtk::parser<double> *parser;
-
-    symbol_table = new exprtk::symbol_table<double>();
-    expression = new exprtk::expression<double>();
-    parser = new exprtk::parser<double>();
-
-    symbol_table->add_constant("v", std::atof(original.c_str()));
-    symbol_table->add_constants(); // this adds pi, epsilon, inf
-
-    expression->register_symbol_table(*symbol_table);
-    bool success = parser->compile(arithmetic, *expression);
-    if (success)
-    {
-        double newValue = expression->value();
-        std::stringstream ss;
-        ss << std::setprecision(18) << newValue; // this defaults to %.18g format if neither fixed nor scientific is set
-        newString = ss.str();
-    }
+    pkpy::VM *vm = new pkpy::VM();
+    std::string expression = "v="s + original + ";"s + arithmetic;
+    pkpy::PyObject *obj = vm->eval(expression);
+    double newValue = pkpy::py_cast<double>(vm, obj);
+    newString = GSUtil::ToString(newValue);
     return newString;
 }
 

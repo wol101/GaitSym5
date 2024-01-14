@@ -65,6 +65,7 @@ void DialogAssembly::closeEvent(QCloseEvent *event)
 
 void DialogAssembly::accept() // this catches OK and return/enter
 {
+#ifdef FIX_ME
     for (auto &&iter = m_simulation->GetJointList()->begin(); iter != m_simulation->GetJointList()->end(); /* no increment */)
     {
         if (iter->second->group() == "assembly"s)
@@ -261,10 +262,12 @@ void DialogAssembly::comboBoxBodyListCurrentIndexChanged(const QString &text)
         ui->lineEditYR->setValue(euler.y);
         ui->lineEditZR->setValue(euler.z);
     }
+#endif
 }
 
 void DialogAssembly::initialise()
 {
+#ifdef FIX_ME
     Q_ASSERT_X(m_simulation, "DialogAssembly::initialiseEdit", "m_simulation not set");
 
     ui->lineEditMaxForce->setValue(Preferences::valueDouble("DialogAssemblyMaxForce", 10000));
@@ -440,10 +443,12 @@ void DialogAssembly::initialise()
 
     scrollArea->setWidget(scrollAreaWidgetContents);
     verticalLayout->addWidget(scrollArea);
+#endif
 }
 
 void DialogAssembly::reset()
 {
+#ifdef FIX_ME
     ui->comboBoxBodyList->setCurrentIndex(-1); // -1 means that nothing is selected
     ui->lineEditX->setValue(0);
     ui->lineEditY->setValue(0);
@@ -489,6 +494,7 @@ void DialogAssembly::reset()
             lineEdit3->setValue(euler.z);
         }
     }
+#endif
 }
 
 Simulation *DialogAssembly::simulation() const

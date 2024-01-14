@@ -55,6 +55,9 @@ public:
     pgd::Vector2 stops() const;
     void setStops(const pgd::Vector2 &newStops);
 
+    double angle() const;
+    void setAngle(double newAngle);
+
 private:
 
     void CalculateStopTorque();
@@ -73,6 +76,8 @@ private:
     double m_stopSpring = 0;
     double m_stopDamp = 0;
     double m_stopBounce = 0;
+
+    double m_angle = 0;
 
 };
 

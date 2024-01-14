@@ -70,26 +70,28 @@ void DialogJoints::accept() // this catches OK and return/enter
     QString tab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if (tab == "Hinge")
     {
-        std::unique_ptr<HingeJoint> joint = std::make_unique<HingeJoint>(m_simulation->GetWorldID());
+        std::unique_ptr<HingeJoint> joint = std::make_unique<HingeJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
-        joint->Attach();
+        // joint->Attach();
         pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
         pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(Marker::Axis::X);
-        joint->SetHingeAnchor(anchor.x, anchor.y, anchor.z);
-        joint->SetHingeAxis(axis.x, axis.y, axis.z);
+        joint->setAnchor(anchor);
+        joint->setAxis(axis);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (ui->lineEditHingeLowStop->text().size() && ui->lineEditHingeHighStop->text().size())
-            joint->SetJointStops(pgd::DegToRad(ui->lineEditHingeLowStop->value()), pgd::DegToRad(ui->lineEditHingeHighStop->value()));
+            joint->setStops(pgd::Vector2(pgd::DegToRad(ui->lineEditHingeLowStop->value()), pgd::DegToRad(ui->lineEditHingeHighStop->value())));
         if (ui->lineEditHingeLowStopTorqueLimit->text().size() && ui->lineEditHingeHighStopTorqueLimit->text().size())
-            joint->SetTorqueLimits(ui->lineEditHingeLowStopTorqueLimit->value(), ui->lineEditHingeHighStopTorqueLimit->value());
-        joint->SetStopTorqueWindow(ui->spinBoxHingeTorqueWindow->value());
+            joint->setAxisTorqueLimits(pgd::Vector2(ui->lineEditHingeLowStopTorqueLimit->value(), ui->lineEditHingeHighStopTorqueLimit->value()));
+        joint->setAxisTorqueWindow(ui->spinBoxHingeTorqueWindow->value());
+#ifdef FIX_ME
         if (ui->lineEditHingeStopCFM->text().size()) joint->SetStopCFM(ui->lineEditHingeStopCFM->value());
         if (ui->lineEditHingeStopERP->text().size()) joint->SetStopERP(ui->lineEditHingeStopERP->value());
-        joint->SetStopBounce(ui->lineEditHingeStopBounce->value());
+#endif
+        joint->setStopBounce(ui->lineEditHingeStopBounce->value());
         m_outputJoint = std::move(joint);
     }
 
@@ -97,23 +99,26 @@ void DialogJoints::accept() // this catches OK and return/enter
     {
         std::unique_ptr<BallJoint> joint;
         QString mode = ui->comboBoxBallMode->currentText();
+#ifdef FIX_ME
         BallJoint::Mode iMode = BallJoint::NoStops;
         if (mode == "No Stops") iMode = BallJoint::NoStops;
         else if (mode == "Fixed Euler") iMode = BallJoint::AMotorEuler;
         else if (mode == "User Euler") iMode = BallJoint::AMotorUser;
-        joint = std::make_unique<BallJoint>(m_simulation->GetWorldID(), iMode);
+#endif
+        joint = std::make_unique<BallJoint>(/*m_simulation->GetWorldID(), iMode*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
-        joint->Attach();
+        // joint->Attach();
         pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
         pgd::Vector3 x, y, z;
         joint->body1Marker()->GetWorldBasis(&x, &y, &z);
-        joint->SetBallAnchor(anchor.x, anchor.y, anchor.z);
-        joint->SetAxes(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z, static_cast<int>(iMode));
+        joint->setAnchor(anchor);
+        // joint->SetAxes(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z, static_cast<int>(iMode));
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
+#ifdef FIX_ME
         if (iMode == BallJoint::AMotorEuler || iMode == BallJoint::AMotorUser)
         {
             joint->SetStops(pgd::DegToRad(ui->lineEditBallLowStop0->value()),
@@ -123,34 +128,35 @@ void DialogJoints::accept() // this catches OK and return/enter
                             pgd::DegToRad(ui->lineEditBallLowStop2->value()),
                             pgd::DegToRad(ui->lineEditBallHighStop2->value()));
         }
+#endif
         m_outputJoint = std::move(joint);
     }
 
     else if (tab == "Floating Hinge")
     {
-        std::unique_ptr<FloatingHingeJoint> joint = std::make_unique<FloatingHingeJoint>(m_simulation->GetWorldID());
+        std::unique_ptr<FloatingHingeJoint> joint = std::make_unique<FloatingHingeJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
-        joint->Attach();
+        // joint->Attach();
         pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(Marker::Axis::X);
-        joint->SetFloatingHingeAxis(axis.x, axis.y, axis.z);
+        joint->setAxis(axis);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (ui->lineEditFloatingHingeLowStop->text().size() && ui->lineEditFloatingHingeHighStop->text().size())
-            joint->SetJointStops(pgd::DegToRad(ui->lineEditFloatingHingeLowStop->value()), pgd::DegToRad(ui->lineEditFloatingHingeHighStop->value()));
+            joint->setStops(pgd::Vector2(pgd::DegToRad(ui->lineEditFloatingHingeLowStop->value()), pgd::DegToRad(ui->lineEditFloatingHingeHighStop->value())));
         m_outputJoint = std::move(joint);
     }
 
     else if (tab == "Fixed")
     {
-        std::unique_ptr<FixedJoint> joint = std::make_unique<FixedJoint>(m_simulation->GetWorldID());
+        std::unique_ptr<FixedJoint> joint = std::make_unique<FixedJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
-        joint->Attach();
+        // joint->Attach();
         joint->SetFixed();
         joint->setLateFix(ui->checkBoxLateFix->isChecked());
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
@@ -208,30 +214,34 @@ void DialogJoints::accept() // this catches OK and return/enter
 
     else if (tab == "Universal")
     {
-        std::unique_ptr<UniversalJoint> joint = std::make_unique<UniversalJoint>(m_simulation->GetWorldID());
+        std::unique_ptr<UniversalJoint> joint = std::make_unique<UniversalJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
-        joint->Attach();
+        // joint->Attach();
         pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
         pgd::Vector3 x, y, z;
         joint->body1Marker()->GetWorldBasis(&x, &y, &z);
-        joint->SetUniversalAnchor(anchor.x, anchor.y, anchor.z);
-        joint->SetUniversalAxis1(x.x, x.y, x.z);
-        joint->SetUniversalAxis2(y.x, y.y, y.z);
+        joint->setAnchor(anchor);
+        joint->setAxis0(x);
+        joint->setAxis1(y);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
         if (ui->lineEditUniversalLowStop1->text().size() && ui->lineEditUniversalHighStop1->text().size())
-            joint->SetJointStops1(pgd::DegToRad(ui->lineEditUniversalLowStop1->value()), pgd::DegToRad(ui->lineEditUniversalHighStop1->value()));
+            joint->setStops0(pgd::Vector2(pgd::DegToRad(ui->lineEditUniversalLowStop1->value()), pgd::DegToRad(ui->lineEditUniversalHighStop1->value())));
+#ifdef FIX_ME
         if (ui->lineEditUniversalStopCFM1->text().size()) joint->SetStopCFM1(ui->lineEditUniversalStopCFM1->value());
         if (ui->lineEditUniversalStopERP1->text().size()) joint->SetStopERP1(ui->lineEditUniversalStopERP1->value());
-        joint->SetStopBounce1(ui->lineEditUniversalStopBounce1->value());
+#endif
+        joint->setStop0Bounce(ui->lineEditUniversalStopBounce1->value());
         if (ui->lineEditUniversalLowStop2->text().size() && ui->lineEditUniversalHighStop2->text().size())
-            joint->SetJointStops2(pgd::DegToRad(ui->lineEditUniversalLowStop2->value()), pgd::DegToRad(ui->lineEditUniversalHighStop2->value()));
+            joint->setStops1(pgd::Vector2(pgd::DegToRad(ui->lineEditUniversalLowStop2->value()), pgd::DegToRad(ui->lineEditUniversalHighStop2->value())));
+#ifdef FIX_ME
         if (ui->lineEditUniversalStopCFM2->value() != 0.0) joint->SetStopCFM2(ui->lineEditUniversalStopCFM2->value());
         if (ui->lineEditUniversalStopERP2->value() != 0.0) joint->SetStopERP2(ui->lineEditUniversalStopERP2->value());
-        joint->SetStopBounce2(ui->lineEditUniversalStopBounce2->value());
+#endif
+        joint->setStop1Bounce(ui->lineEditUniversalStopBounce2->value());
         m_outputJoint = std::move(joint);
     }
 
@@ -354,6 +364,7 @@ void DialogJoints::lateInitialise()
     BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_inputJoint);
     if (ballJoint)
     {
+#ifdef FIX_ME
         switch (ballJoint->GetMode())
         {
         case BallJoint::NoStops:
@@ -366,6 +377,7 @@ void DialogJoints::lateInitialise()
             ui->comboBoxBallMode->setCurrentText("User Euler");
             break;
         }
+#endif
         if ((s = m_inputJoint->findAttribute("LowStop0"s)).size()) ui->lineEditBallLowStop0->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("HighStop0"s)).size()) ui->lineEditBallHighStop0->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditBallLowStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));

@@ -62,9 +62,6 @@ public:
     QListWidget *listWidgetController() const;
     void setListWidgetController(QListWidget *listWidgetController);
 
-    QListWidget *listWidgetWarehouse() const;
-    void setListWidgetWarehouse(QListWidget *listWidgetWarehouse);
-
     Simulation *simulation() const;
     void setSimulation(Simulation *simulation);
 

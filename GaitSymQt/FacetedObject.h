@@ -112,14 +112,14 @@ public:
     // utility
     void ReverseWinding();
     void AllocateMemory(size_t numTriangles);
-    void ApplyDisplayTransformation(const pgd::Vector3 inVec, pgd::Vector3 *outVec);
-    void ApplyDisplayRotation(const pgd::Vector3 inVec, pgd::Vector3 *outVec);
+    void ApplyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
+    void ApplyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
     void CalculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor);
 
-    double *lowerBound();
-    double *upperBound();
-    double boundingBoxVolume();
-    pgd::Vector3 boundingBoxSize();
+    pgd::Vector3 lowerBound() const;
+    pgd::Vector3 upperBound() const;
+    double boundingBoxVolume() const;
+    pgd::Vector3 boundingBoxSize() const;
 
     SimulationWidget *simulationWidget() const;
     void setSimulationWidget(SimulationWidget *simulationWidget);
@@ -134,8 +134,8 @@ public:
 
     void SetDisplayPosition(double x, double y, double z);
     void SetDisplayScale(double x, double y, double z);
-    void SetDisplayRotation(const pgd::Matrix3x3 R);
-    void SetDisplayRotationFromQuaternion(const pgd::Quaternion q);
+    void SetDisplayRotation(const pgd::Matrix3x3 &R);
+    void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
 
     bool visible() const;
     void setVisible(bool visible);

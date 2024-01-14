@@ -128,6 +128,7 @@ void TegotaeDriver::UpdateReactionForce()
     pgd::Vector3 worldReactionForce;
     for (auto geomIt : m_contactGeomList)
     {
+#ifdef FIX_ME
         std::vector<Contact *> *contactList = geomIt->GetContactList();
         dJointFeedback *jointFeedback;
         for (unsigned int i = 0; i < contactList->size(); i++)
@@ -138,6 +139,7 @@ void TegotaeDriver::UpdateReactionForce()
             worldReactionForce.Set(jointFeedback->f1);
             m_N += pgd::Dot(worldXAxis, worldReactionForce);
         }
+#endif
     }
     if (m_N < 0) m_N = 0;
 }

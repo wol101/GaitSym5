@@ -451,6 +451,34 @@ bool pgd::Vector3::operator<(const pgd::Vector3 &rhs) const
     return std::tie(x, y, z) < std::tie(rhs.x, rhs.y, rhs.z);
 }
 
+pgd::Vector3 pgd::PerpendicularVector(const pgd::Vector3 &v)
+{
+    pgd::Vector3 result;
+    // Finds an arbitrary perpendicular vector to v
+    // for two vectors (x, y, z) and (a, b, c) to be perpendicular,
+    // the following equation has to be fulfilled
+    // 0 = ax + by + cz
+
+    // x = y = z = 0 is not an acceptable solution
+    if (v.Magnitude2() < std::numeric_limits<double>::min())
+    {
+        return result; // result is zero length
+    }
+
+    // If one dimension is zero, this can be solved by setting that to
+    // non-zero and the others to zero. Example: (4, 2, 0) lies in the
+    // x-y-Plane, so (0, 0, 1) is orthogonal to the plane.
+    if (v.x == 0) { result.x = 1; return result; }
+    if (v.y == 0) { result.y = 1; return result; }
+    if (v.z == 0) { result.z = 1; return result; }
+
+    // arbitrarily set a = b = 1
+    // then the equation simplifies to
+    // c = -(x + y)/z
+    result.Set(1, 1, -1.0 * (v.x + v.y) / v.z);
+    return result;
+}
+
 pgd::Vector4::Vector4(void)
 {
     x = 0;
@@ -1034,6 +1062,88 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 
 }
 
+pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis)
+{
+    {
+        // returns the Euler angles using marker axes as the basis
+
+        // Theory:
+        // Since the axes form an orthonormal basis A (each axis is a column of the matrix),
+        // you can decompose a rotation R on the three axes by transforming R into the
+        // basis A and then do Euler Angle decomposition on the three main axes:
+        // R = A*R'*A^t = A*X*Y*Z*A^t = (A*X*A^t)*(A*Y*A^t)*(A*Z*A^t)
+        // This translates into the following algorithm:
+        // Compute R' = A^t*R*A
+        // Decompose R' into Euler Angles around main axes to obtain angles X, Y, Z
+        // convert these into their matrix rotations
+        // Compute the three rotations around the given axes:
+        //    X' = A*X*A^t
+        //    Y' = A*Y*A^t
+        //    Z' = A*Y*A^t
+
+        pgd::Matrix3x3 R(q);
+        const pgd::Matrix3x3 &A = basis;
+        pgd::Matrix3x3 At = A.Transpose();
+        pgd::Matrix3x3 Rp = At * R * A;
+        pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(pgd::MakeQfromM(Rp));
+        pgd::Matrix3x3 Xp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(1, 0, 0, (euler.x), true)) * At;
+        pgd::Matrix3x3 Yp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 1, 0, (euler.y), true)) * At;
+        pgd::Matrix3x3 Zp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 0, 1, (euler.z), true)) * At;
+        pgd::Quaternion Xpq = pgd::MakeQfromM(Xp);
+        pgd::Quaternion Ypq = pgd::MakeQfromM(Yp);
+        pgd::Quaternion Zpq = pgd::MakeQfromM(Zp);
+
+        // we can't just convert the quaternions into axis angle to get the angles because the axes might be reversed, or might be arbitrary if close to zero
+        double xMag = Xpq.GetVector().Magnitude();
+        double yMag = Ypq.GetVector().Magnitude();
+        double zMag = Zpq.GetVector().Magnitude();
+        double dotX = 0, dotY = 0, dotZ = 0;
+        pgd::Vector3 axisX, axisY, axisZ;
+        double angle0 = 0, angle1 = 0, angle2 = 0;
+        const double epsilon = std::numeric_limits<double>::epsilon();
+        if (xMag < epsilon || Xpq.n >= 1 || Xpq.n <= -1)
+        {
+            angle0 = 0;
+        }
+        else
+        {
+            angle0 = 2 * std::acos(Xpq.n); // acos produces a value from 0 to pi, so this angle is 0 to 2*pi
+            if (angle0 > M_PI) angle0 -= 2 * M_PI; // so this means the angle is restricted to the more usual -pi to pi
+            axisX = Xpq.GetVector() / xMag;
+            dotX =pgd::Dot(axisX, pgd::Vector3(A.e11, A.e21, A.e31));
+            if (dotX < 0)
+                angle0 = - angle0;
+        }
+        if (yMag < epsilon || Ypq.n >= 1 || Ypq.n <= -1)
+        {
+            angle1 = 0;
+        }
+        else
+        {
+            angle1 = 2 * std::acos(Ypq.n);
+            if (angle1 > M_PI) angle1 -= 2 * M_PI;
+            axisY = Ypq.GetVector() / yMag;
+            dotY =pgd::Dot(axisY, pgd::Vector3(A.e11, A.e21, A.e31));
+            if (dotY < 0)
+                angle1 = - angle1;
+        }
+        if (zMag < epsilon || Zpq.n >= 1 || Zpq.n <= -1)
+        {
+            angle2 = 0;
+        }
+        else
+        {
+            angle2 = 2 * std::acos(Zpq.n);
+            if (angle2 > M_PI) angle2 -= 2 * M_PI;
+            axisZ = Zpq.GetVector() / zMag;
+            dotZ =pgd::Dot(axisZ, pgd::Vector3(A.e11, A.e21, A.e31));
+            if (dotZ < 0)
+                angle2 = - angle2;
+        }
+        return pgd::Vector3(angle0, angle1, angle2);
+    }
+}
+
 // wis  - added routine to make a pgd::Quaternion from an axis and a rotation angle in radians
 pgd::Quaternion pgd::MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast)
 {
@@ -1359,7 +1469,7 @@ pgd::Matrix3x3::Matrix3x3(const pgd::Quaternion &q)
     e23 = 2.0 * (tmp1 - tmp2)*invs ;
 }
 
-double pgd::Matrix3x3::det(void)
+double pgd::Matrix3x3::det(void) const
 {
     return  e11*e22*e33 -
            e11*e32*e23 +
@@ -1369,12 +1479,12 @@ double pgd::Matrix3x3::det(void)
            e31*e22*e13;
 }
 
-pgd::Matrix3x3 pgd::Matrix3x3::Transpose(void)
+pgd::Matrix3x3 pgd::Matrix3x3::Transpose(void) const
 {
     return pgd::Matrix3x3(e11,e21,e31,e12,e22,e32,e13,e23,e33);
 }
 
-pgd::Matrix3x3 pgd::Matrix3x3::Inverse(void)
+pgd::Matrix3x3 pgd::Matrix3x3::Inverse(void) const
 {
     double d = e11*e22*e33 -
                e11*e32*e23 +

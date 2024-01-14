@@ -12,6 +12,9 @@
 namespace pgd
 {
 
+// predefinitions
+class Matrix3x3;
+
 //------------------------------------------------------------------------//
 // Misc. Constants
 //------------------------------------------------------------------------//
@@ -122,6 +125,7 @@ Vector3 operator/(const Vector3 &u, double s);
 double TripleScalarProduct(const Vector3 &u, const Vector3 &v, const Vector3 &w);
 Vector3 Normalize(const Vector3 &u);
 Vector3 Projection(const pgd::Vector3 &v, const pgd::Vector3 &u);
+pgd::Vector3 PerpendicularVector(const pgd::Vector3 &v);
 
 //------------------------------------------------------------------------//
 // Vector4 Class and vector functions
@@ -225,6 +229,7 @@ Quaternion QRotate(const Quaternion &q1, const Quaternion &q2);
 Vector3  QVRotate(const Quaternion &q, const Vector3 &v);
 Quaternion  MakeQFromEulerAngles(double x, double y, double z);
 Quaternion  MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw);
+pgd::Vector3 MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis);
 Vector3 MakeEulerAnglesFromQ(const Quaternion &q);
 Vector3  MakeEulerAnglesFromQRadian(const Quaternion &q);
 Quaternion MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast = false);
@@ -235,7 +240,6 @@ double FindAngle(const Quaternion &qa, const Quaternion &qb);
 Vector3 FindAxis(const Quaternion &qa, const Quaternion &qb);
 Quaternion FindRotation(const Vector3 &v1, const Vector3 &v2);
 void SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist);
-
 
 //------------------------------------------------------------------------//
 // Matrix Class and matrix functions
@@ -260,9 +264,9 @@ public:
     void Set(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3);
     void SetIdentity();
 
-    double   det(void);
-    Matrix3x3   Transpose(void);
-    Matrix3x3   Inverse(void);
+    double   det(void) const;
+    Matrix3x3   Transpose(void) const;
+    Matrix3x3   Inverse(void) const;
 
     Matrix3x3& operator+=(const Matrix3x3 &m);
     Matrix3x3& operator-=(const Matrix3x3 &m);

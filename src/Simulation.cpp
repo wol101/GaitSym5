@@ -12,7 +12,6 @@
 
 #include "Simulation.h"
 
-#include "GSUtil.h"
 #include "CyclicDriver.h"
 #include "StepDriver.h"
 #include "MarkerPositionDriver.h"
@@ -40,7 +39,6 @@
 #include "FluidSacIdealGas.h"
 #include "FluidSacIncompressible.h"
 #include "PlaneGeom.h"
-#include "Contact.h"
 #include "NPointStrap.h"
 #include "FixedJoint.h"
 #include "Marker.h"
@@ -52,7 +50,6 @@
 #include "LMotorJoint.h"
 #include "BoxGeom.h"
 #include "StackedBoxCarDriver.h"
-#include "Warehouse.h"
 #include "FixedDriver.h"
 #include "PIDErrorInController.h"
 #include "TegotaeDriver.h"
@@ -69,73 +66,17 @@
 #include <map>
 #include <set>
 #include <list>
-#include <ctype.h>
-#include <cmath>
 #include <algorithm>
-#include <locale>
-#include <codecvt>
-#include <functional>
-#include <numeric>
 
 using namespace std::string_literals;
 
 Simulation::Simulation()
 {
-    // initialise PhysX
-    m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
-
-    m_Pvd = physx::PxCreatePvd(*m_Foundation);
-
-    physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
-
-    m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale(),true, m_Pvd);
-
-    physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
-    sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-    m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
-    sceneDesc.cpuDispatcher	= m_Dispatcher;
-    sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
-    m_Scene = m_Physics->createScene(sceneDesc);
-
-    physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient();
-    if(pvdClient)
-    {
-        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-        pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-    }
-
 }
 
 //----------------------------------------------------------------------------
 Simulation::~Simulation()
 {
-    // these need to be cleared before we destroy the ODE world
-    m_ContactList.clear();
-    m_BodyList.clear();
-    m_JointList.clear();
-    m_GeomList.clear();
-    m_MuscleList.clear();
-    m_StrapList.clear();
-    m_FluidSacList.clear();
-    m_DriverList.clear();
-    m_DataTargetList.clear();
-    m_MarkerList.clear();
-    m_ReporterList.clear();
-    m_ControllerList.clear();
-
-    PX_RELEASE(m_Scene);
-    PX_RELEASE(m_Dispatcher);
-    PX_RELEASE(m_Physics);
-    if(m_Pvd)
-    {
-        physx::PxPvdTransport *transport = m_Pvd->getTransport();
-        m_Pvd->release();
-        m_Pvd = NULL;
-        PX_RELEASE(transport);
-    }
-    PX_RELEASE(m_Foundation);
 }
 
 //----------------------------------------------------------------------------
@@ -219,6 +160,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 //----------------------------------------------------------------------------
 void Simulation::UpdateSimulation()
 {
+#ifdef FIX_ME
     // start by updating the scores
     double minScore = std::numeric_limits<double>::infinity();
     for (auto &&it : m_DataTargetList)
@@ -356,7 +298,7 @@ void Simulation::UpdateSimulation()
 
     // update the step counter
     m_StepCount++;
-
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -521,7 +463,7 @@ std::string *Simulation::ParseGlobal(const ParseXML::XMLElement *node)
 
 std::string *Simulation::ParseBody(const ParseXML::XMLElement *node)
 {
-    std::unique_ptr<Body> body = std::make_unique<Body>(m_Physics);
+    std::unique_ptr<Body> body = std::make_unique<Body>();
     body->setSimulation(this);
     body->createAttributeMap(node->attributes);
     std::string *errorMessage = body->createFromAttributes();
@@ -556,49 +498,49 @@ std::string *Simulation::ParseJoint(const ParseXML::XMLElement *node)
     std::string *errorMessage = nullptr;
     if (buf == "Hinge"s)
     {
-        joint = std::make_unique<HingeJoint>(m_WorldID);
+        joint = std::make_unique<HingeJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
     }
     else if (buf == "Ball"s)
     {
-        joint = std::make_unique<BallJoint>(m_WorldID, BallJoint::NoStops);
+        joint = std::make_unique<BallJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
     }
     else if (buf == "Fixed"s)
     {
-        joint = std::make_unique<FixedJoint>(m_WorldID);
+        joint = std::make_unique<FixedJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
     }
     else if (buf == "FloatingHinge"s)
     {
-        joint = std::make_unique<FloatingHingeJoint>(m_WorldID);
+        joint = std::make_unique<FloatingHingeJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
     }
     else if (buf == "Universal"s)
     {
-        joint = std::make_unique<UniversalJoint>(m_WorldID);
+        joint = std::make_unique<UniversalJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
     }
     else if (buf == "AMotor"s)
     {
-        joint = std::make_unique<AMotorJoint>(m_WorldID);
+        joint = std::make_unique<AMotorJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
     }
     else if (buf == "LMotor"s)
     {
-        joint = std::make_unique<LMotorJoint>(m_WorldID);
+        joint = std::make_unique<LMotorJoint>();
         joint->setSimulation(this);
         joint->createAttributeMap(node->attributes);
         errorMessage = joint->createFromAttributes();
@@ -625,7 +567,7 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
     std::string *errorMessage = nullptr;
     if (buf == "Box"s)
     {
-        std::unique_ptr<BoxGeom> boxGeom = std::make_unique<BoxGeom>(m_SpaceID, 1.0, 1.0, 1.0);
+        std::unique_ptr<BoxGeom> boxGeom = std::make_unique<BoxGeom>(1.0, 1.0, 1.0);
         boxGeom->setSimulation(this);
         boxGeom->createAttributeMap(node->attributes);
         errorMessage = boxGeom->createFromAttributes();
@@ -633,7 +575,7 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
     }
     else if (buf == "CappedCylinder"s)
     {
-        std::unique_ptr<CappedCylinderGeom> cappedCylinderGeom = std::make_unique<CappedCylinderGeom>(m_SpaceID, 1.0, 1.0);
+        std::unique_ptr<CappedCylinderGeom> cappedCylinderGeom = std::make_unique<CappedCylinderGeom>(1.0, 1.0);
         cappedCylinderGeom->setSimulation(this);
         cappedCylinderGeom->createAttributeMap(node->attributes);
         errorMessage = cappedCylinderGeom->createFromAttributes();
@@ -641,7 +583,7 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
     }
     else if (buf == "Plane"s)
     {
-        std::unique_ptr<PlaneGeom> planeGeom = std::make_unique<PlaneGeom>(m_SpaceID, 10.0, 0.0, 1.0, 0.0);
+        std::unique_ptr<PlaneGeom> planeGeom = std::make_unique<PlaneGeom>(10.0, 0.0, 1.0, 0.0);
         planeGeom->setSimulation(this);
         planeGeom->createAttributeMap(node->attributes);
         errorMessage = planeGeom->createFromAttributes();
@@ -649,7 +591,7 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
     }
     else if (buf == "Sphere"s)
     {
-        std::unique_ptr<SphereGeom> sphereGeom = std::make_unique<SphereGeom>(m_SpaceID, 1.0);
+        std::unique_ptr<SphereGeom> sphereGeom = std::make_unique<SphereGeom>(1.0);
         sphereGeom->setSimulation(this);
         sphereGeom->createAttributeMap(node->attributes);
         errorMessage = sphereGeom->createFromAttributes();
@@ -657,11 +599,7 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
     }
     else if (buf == "Convex"s)
     {
-        // dummy values to prevent the constructor throwing an exception
-        double planes[1], points[1];
-        unsigned int polygons[1];
-        unsigned int planecount = 0, pointcount = 0;
-        std::unique_ptr<ConvexGeom> convexGeom = std::make_unique<ConvexGeom>(m_SpaceID, planes, planecount, points, pointcount, polygons);
+        std::unique_ptr<ConvexGeom> convexGeom = std::make_unique<ConvexGeom>();
         convexGeom->setSimulation(this);
         convexGeom->createAttributeMap(node->attributes);
         errorMessage = convexGeom->createFromAttributes();
@@ -965,7 +903,6 @@ std::string Simulation::SaveToXML()
     for (auto &&it : m_FluidSacList) { it.second->saveToAttributes(); m_parseXML.AddElement("FLUIDSAC"s, it.second->attributeMap()); }
     for (auto &&it : m_ReporterList) { it.second->saveToAttributes(); m_parseXML.AddElement("REPORTER"s, it.second->attributeMap()); }
     for (auto &&it : m_ControllerList) { it.second->saveToAttributes(); m_parseXML.AddElement("CONTROLLER"s, it.second->attributeMap()); }
-    for (auto &&it : m_WarehouseList) { it.second->saveToAttributes(); m_parseXML.AddElement("WAREHOUSE"s, it.second->attributeMap()); }
     for (auto &&it : m_DriverList) { it.second->saveToAttributes(); m_parseXML.AddElement("DRIVER"s, it.second->attributeMap()); }
     for (auto &&it : m_DataTargetList) { it.second->saveToAttributes(); m_parseXML.AddElement("DATATARGET"s, it.second->attributeMap()); }
 
@@ -992,32 +929,9 @@ void Simulation::SetOutputModelStateFile(const std::string &filename)
     m_OutputModelStateFile = filename;
 }
 
-void Simulation::SetOutputWarehouseFile(const std::string &filename)
-{
-    if (filename.size() > 0)
-    {
-        if (m_OutputWarehouseFlag) m_OutputWarehouseFile.close();
-        m_OutputWarehouseFilename = filename;
-        m_OutputWarehouseFlag = true;
-    }
-    else
-    {
-        if (m_OutputWarehouseFlag) m_OutputWarehouseFile.close();
-        m_OutputWarehouseFlag = false;
-        m_OutputWarehouseFilename.clear();
-    }
-}
-
 void Simulation::SetGlobal(std::unique_ptr<Global> global)
 {
     m_global = std::move(global);
-    // set the global simulation parameters
-    dWorldSetGravity(m_WorldID, m_global->Gravity().x, m_global->Gravity().y, m_global->Gravity().z);
-    dWorldSetERP(m_WorldID, m_global->ERP());
-    dWorldSetCFM(m_WorldID, m_global->CFM());
-    dWorldSetContactMaxCorrectingVel(m_WorldID, m_global->ContactMaxCorrectingVel());
-    dWorldSetContactSurfaceLayer(m_WorldID, m_global->ContactSurfaceLayer());
-    dWorldSetDamping(m_WorldID, m_global->LinearDamping(), m_global->AngularDamping());
 }
 
 bool Simulation::ShouldQuit()
@@ -1177,16 +1091,16 @@ std::vector<std::string> Simulation::GetNameList() const
 {
     std::vector<std::string> output;
     size_t size = m_BodyList.size() +
-            m_JointList.size() +
-            m_GeomList.size() +
-            m_MuscleList.size() +
-            m_StrapList.size() +
-            m_FluidSacList.size() +
-            m_DriverList.size() +
-            m_DataTargetList.size() +
-            m_MarkerList.size() +
-            m_ReporterList.size() +
-            m_ControllerList.size() +
+                  m_JointList.size() +
+                  m_GeomList.size() +
+                  m_MuscleList.size() +
+                  m_StrapList.size() +
+                  m_FluidSacList.size() +
+                  m_DriverList.size() +
+                  m_DataTargetList.size() +
+                  m_MarkerList.size() +
+                  m_ReporterList.size() +
+                  m_ControllerList.size();
     output.reserve(size);
     for (auto &&it : m_BodyList) output.push_back(it.first);
     for (auto &&it : m_JointList) output.push_back(it.first);
@@ -1223,16 +1137,16 @@ std::vector<NamedObject *> Simulation::GetObjectList() const
 {
     std::vector<NamedObject *> output;
     size_t size = m_BodyList.size() +
-            m_JointList.size() +
-            m_GeomList.size() +
-            m_MuscleList.size() +
-            m_StrapList.size() +
-            m_FluidSacList.size() +
-            m_DriverList.size() +
-            m_DataTargetList.size() +
-            m_MarkerList.size() +
-            m_ReporterList.size() +
-            m_ControllerList.size() +
+                  m_JointList.size() +
+                  m_GeomList.size() +
+                  m_MuscleList.size() +
+                  m_StrapList.size() +
+                  m_FluidSacList.size() +
+                  m_DriverList.size() +
+                  m_DataTargetList.size() +
+                  m_MarkerList.size() +
+                  m_ReporterList.size() +
+                  m_ControllerList.size();
     output.reserve(size);
     // note: the order is important for resolving dependencies
     // bodies depend on nothing

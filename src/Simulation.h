@@ -12,7 +12,6 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "DataFile.h"
 #include "Global.h"
 #include "Contact.h"
 #include "ParseXML.h"
@@ -24,7 +23,6 @@
 #include <fstream>
 #include <vector>
 #include <set>
-#include <unordered_map>
 
 class Body;
 class Joint;
@@ -176,6 +174,7 @@ private:
     bool m_AbortAfterModelStateOutput = false;
     double m_OutputModelStateAtTime = -1;
     double m_OutputModelStateAtCycle = -1;
+    std::string m_OutputModelStateFile;
     int m_SimulationError = false;
     bool m_OutputKinematicsFirstTimeFlag = false;
     bool m_DataTargetAbort = false;

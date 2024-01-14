@@ -2,6 +2,7 @@
 #include "ui_DialogBodyBuilder.h"
 
 #include "SimulationWidget.h"
+#include "Simulation.h"
 #include "Preferences.h"
 #include "FacetedObject.h"
 #include "Body.h"
@@ -73,7 +74,7 @@ void DialogBodyBuilder::lateInitialise()
 {
     Q_ASSERT_X(m_simulation, "DialogBodyBuilder::lateInitialise", "m_simulation not defined");
 
-    Body referenceBody(m_simulation->GetWorldID());
+    Body referenceBody;
     referenceBody.SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
     if (m_inputBody)
     {
@@ -100,58 +101,58 @@ void DialogBodyBuilder::lateInitialise()
 
     if (m_inputBody)
     {
-        dMass mass;
-        m_inputBody->GetMass(&mass);
-        ui->lineEditMass->setValue(mass.mass);
-        ui->lineEditI11->setValue(mass.I[0 * 4 + 0]);
-        ui->lineEditI22->setValue(mass.I[1 * 4 + 1]);
-        ui->lineEditI33->setValue(mass.I[2 * 4 + 2]);
-        ui->lineEditI12->setValue(mass.I[0 * 4 + 1]);
-        ui->lineEditI13->setValue(mass.I[0 * 4 + 2]);
-        ui->lineEditI23->setValue(mass.I[1 * 4 + 2]);
+        double mass, ixx, iyy, izz, ixy, izx, iyz;
+        m_inputBody->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        ui->lineEditMass->setValue(mass);
+        ui->lineEditI11->setValue(ixx);
+        ui->lineEditI22->setValue(iyy);
+        ui->lineEditI33->setValue(izz);
+        ui->lineEditI12->setValue(ixy);
+        ui->lineEditI13->setValue(izx);
+        ui->lineEditI23->setValue(iyz);
         ui->lineEditDensity->setValue(m_inputBody->GetConstructionDensity());
-        const double *constructionPosition = m_inputBody->GetConstructionPosition();
+        pgd::Vector3 constructionPosition = m_inputBody->GetConstructionPosition();
         ui->lineEditX->setValue(constructionPosition[0]);
         ui->lineEditY->setValue(constructionPosition[1]);
         ui->lineEditZ->setValue(constructionPosition[2]);
-        const double *initialPosition = m_inputBody->GetInitialPosition();
+        pgd::Vector3 initialPosition = m_inputBody->GetInitialPosition();
         ui->lineEditRunX->setValue(initialPosition[0]);
         ui->lineEditRunY->setValue(initialPosition[1]);
         ui->lineEditRunZ->setValue(initialPosition[2]);
-        const double *initialQuaternion = m_inputBody->GetInitialQuaternion();
+        pgd::Quaternion initialQuaternion = m_inputBody->GetInitialQuaternion();
         pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(pgd::Quaternion(initialQuaternion));
         ui->lineEditEulerX->setValue(eulerAngles.x);
         ui->lineEditEulerY->setValue(eulerAngles.y);
         ui->lineEditEulerZ->setValue(eulerAngles.z);
-        const double *angularlinear = m_inputBody->GetLinearVelocity();
+        pgd::Vector3 angularlinear = m_inputBody->GetLinearVelocity();
         ui->lineEditVX->setValue(angularlinear[0]);
         ui->lineEditVY->setValue(angularlinear[1]);
         ui->lineEditVZ->setValue(angularlinear[2]);
-        const double *angularVelocity = m_inputBody->GetAngularVelocity();
+        pgd::Vector3 angularVelocity = m_inputBody->GetAngularVelocity();
         ui->lineEditAVX->setValue(angularVelocity[0]);
         ui->lineEditAVY->setValue(angularVelocity[1]);
         ui->lineEditAVZ->setValue(angularVelocity[2]);
-        const double *positionHighBound = m_inputBody->GetPositionHighBound();
+        pgd::Vector3 positionHighBound = m_inputBody->GetPositionHighBound();
         ui->lineEditHighX->setValue(positionHighBound[0]);
         ui->lineEditHighY->setValue(positionHighBound[1]);
         ui->lineEditHighZ->setValue(positionHighBound[2]);
-        const double *positionLowBound = m_inputBody->GetPositionLowBound();
+        pgd::Vector3 positionLowBound = m_inputBody->GetPositionLowBound();
         ui->lineEditLowX->setValue(positionLowBound[0]);
         ui->lineEditLowY->setValue(positionLowBound[1]);
         ui->lineEditLowZ->setValue(positionLowBound[2]);
-        const double *linearVelocityHighBound = m_inputBody->GetLinearVelocityHighBound();
+        pgd::Vector3 linearVelocityHighBound = m_inputBody->GetLinearVelocityHighBound();
         ui->lineEditHighVX->setValue(linearVelocityHighBound[0]);
         ui->lineEditHighVY->setValue(linearVelocityHighBound[1]);
         ui->lineEditHighVZ->setValue(linearVelocityHighBound[2]);
-        const double *linearVelocityLowBound = m_inputBody->GetLinearVelocityLowBound();
+        pgd::Vector3 linearVelocityLowBound = m_inputBody->GetLinearVelocityLowBound();
         ui->lineEditLowVX->setValue(linearVelocityLowBound[0]);
         ui->lineEditLowVY->setValue(linearVelocityLowBound[1]);
         ui->lineEditLowVZ->setValue(linearVelocityLowBound[2]);
-        const double *angularVelocityHighBound = m_inputBody->GetAngularVelocityHighBound();
+        pgd::Vector3 angularVelocityHighBound = m_inputBody->GetAngularVelocityHighBound();
         ui->lineEditHighAVX->setValue(angularVelocityHighBound[0]);
         ui->lineEditHighAVY->setValue(angularVelocityHighBound[1]);
         ui->lineEditHighAVZ->setValue(angularVelocityHighBound[2]);
-        const double *angularVelocityLowBound = m_inputBody->GetAngularVelocityLowBound();
+        pgd::Vector3 angularVelocityLowBound = m_inputBody->GetAngularVelocityLowBound();
         ui->lineEditLowAVX->setValue(angularVelocityLowBound[0]);
         ui->lineEditLowAVY->setValue(angularVelocityLowBound[1]);
         ui->lineEditLowAVZ->setValue(angularVelocityLowBound[2]);
@@ -177,20 +178,20 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogBodyBuilder::accept()";
 
-    dMass mass;
-    dMassSetParameters(&mass, ui->lineEditMass->value(), 0, 0, 0, ui->lineEditI11->value(), ui->lineEditI22->value(), ui->lineEditI33->value(), ui->lineEditI12->value(), ui->lineEditI13->value(), ui->lineEditI23->value());
-    std::string massError = Body::MassCheck(&mass);
-    if (massError.size())
-    {
-        QMessageBox::warning(this, tr("Calculate Mass Properties"), tr("Current mass properties are invalid:\n%1").arg(massError.c_str()));
-        return;
-    }
+    // dMass mass;
+    // dMassSetParameters(&mass, ui->lineEditMass->value(), 0, 0, 0, ui->lineEditI11->value(), ui->lineEditI22->value(), ui->lineEditI33->value(), ui->lineEditI12->value(), ui->lineEditI13->value(), ui->lineEditI23->value());
+    // std::string massError = Body::MassCheck(&mass);
+    // if (massError.size())
+    // {
+    //     QMessageBox::warning(this, tr("Calculate Mass Properties"), tr("Current mass properties are invalid:\n%1").arg(massError.c_str()));
+    //     return;
+    // }
 
     Body *bodyPtr;
     if (m_inputBody) bodyPtr = m_inputBody;
     else
     {
-        m_outputBody = std::make_unique<Body>(m_simulation->GetWorldID());
+        m_outputBody = std::make_unique<Body>(/*m_simulation->GetWorldID()*/);
         bodyPtr = m_outputBody.get();
         bodyPtr->EnterConstructionMode();
     }
@@ -207,7 +208,14 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
     bodyPtr->setSimulation(m_simulation);
 
-    bodyPtr->SetMass(&mass);
+    double mass = ui->lineEditMass->value();
+    double ixx = ui->lineEditI11->value();
+    double iyy = ui->lineEditI22->value();
+    double izz = ui->lineEditI33->value();
+    double ixy = ui->lineEditI12->value();
+    double izx = ui->lineEditI13->value();
+    double iyz = ui->lineEditI23->value();
+    bodyPtr->SetMass(mass, ixx, iyy, izz, ixy, izx, iyz);
     bodyPtr->SetConstructionDensity(ui->lineEditDensity->value());
     pgd::Vector3 constructionPosition;
     constructionPosition[0] = ui->lineEditX->value();
@@ -332,41 +340,34 @@ void DialogBodyBuilder::closeEvent(QCloseEvent *event)
 void DialogBodyBuilder::calculate()
 {
     if (!m_referenceObject) return;
-    dMass mass;
     double density = ui->lineEditDensity->text().toDouble();
     bool clockwise = false;
     pgd::Vector3 translation;
-    m_referenceObject->CalculateMassProperties(&mass, density, clockwise, translation.data());
-    std::string massError = Body::MassCheck(&mass);
-    if (massError.size())
-    {
-        QMessageBox::warning(this, tr("Calculate Mass Properties"), tr("Valid mass properties cannot be calculated from this mesh:\n%1").arg(massError.c_str()));
-        return;
-    }
-    ui->lineEditMass->setValue(mass.mass);
-    ui->lineEditX->setValue(mass.c[0]);
-    ui->lineEditY->setValue(mass.c[1]);
-    ui->lineEditZ->setValue(mass.c[2]);
+    double mass;
+    pgd::Vector3 centreOfMass;
+    pgd::Matrix3x3 inertialTensor;
+    m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+    // std::string massError = Body::MassCheck(&mass);
+    // if (massError.size())
+    // {
+    //     QMessageBox::warning(this, tr("Calculate Mass Properties"), tr("Valid mass properties cannot be calculated from this mesh:\n%1").arg(massError.c_str()));
+    //     return;
+    // }
+    ui->lineEditMass->setValue(mass);
+    ui->lineEditX->setValue(centreOfMass[0]);
+    ui->lineEditY->setValue(centreOfMass[1]);
+    ui->lineEditZ->setValue(centreOfMass[2]);
     // now recalculate the inertial tensor arount the centre of mass
-    translation.Set(-mass.c[0], -mass.c[1], -mass.c[2]);
-    m_referenceObject->CalculateMassProperties(&mass, density, clockwise, translation.data());
-// #define _I(i,j) I[(i)*4+(j)]
-// regex _I\(([0-9]+),([0-9]+)\) to I[(\1)*4+(\2)]
-//    mass->_I(0,0) = I11;
-//    mass->_I(1,1) = I22;
-//    mass->_I(2,2) = I33;
-//    mass->_I(0,1) = I12;
-//    mass->_I(0,2) = I13;
-//    mass->_I(1,2) = I23;
-//    mass->_I(1,0) = I12;
-//    mass->_I(2,0) = I13;
-//    mass->_I(2,1) = I23;
-    ui->lineEditI11->setValue(mass.I[0 * 4 + 0]);
-    ui->lineEditI22->setValue(mass.I[1 * 4 + 1]);
-    ui->lineEditI33->setValue(mass.I[2 * 4 + 2]);
-    ui->lineEditI12->setValue(mass.I[0 * 4 + 1]);
-    ui->lineEditI13->setValue(mass.I[0 * 4 + 2]);
-    ui->lineEditI23->setValue(mass.I[1 * 4 + 2]);
+    translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
+    m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+    double ixx, iyy, izz, ixy, izx, iyz;
+    inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    ui->lineEditI11->setValue(ixx);
+    ui->lineEditI22->setValue(iyy);
+    ui->lineEditI33->setValue(izz);
+    ui->lineEditI12->setValue(ixy);
+    ui->lineEditI13->setValue(izx);
+    ui->lineEditI23->setValue(iyz);
 }
 
 void DialogBodyBuilder::lineEditMeshClicked()

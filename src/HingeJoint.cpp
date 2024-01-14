@@ -126,6 +126,16 @@ void HingeJoint::CalculateStopTorque()
 #endif // FIX_ME
 }
 
+double HingeJoint::angle() const
+{
+    return m_angle;
+}
+
+void HingeJoint::setAngle(double newAngle)
+{
+    m_angle = newAngle;
+}
+
 pgd::Vector2 HingeJoint::stops() const
 {
     return m_stops;

@@ -183,7 +183,7 @@ double DataTargetScalar::calculateErrorScore(double value)
         }
         if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
         {
-            result = hingeJoint->GetHingeAnchor();
+            result = hingeJoint->anchor();
             switch (m_DataType)
             {
             case XP:
@@ -196,25 +196,27 @@ double DataTargetScalar::calculateErrorScore(double value)
                 m_errorScore = (result[2] - value);
                 break;
             case Angle:
-                m_errorScore = (hingeJoint->GetHingeAngle() - value);
+                m_errorScore = (hingeJoint->angle() - value);
                 break;
-            // case XF:
-            //     force = hingeJoint->GetFeedback()->f1[0];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case YF:
-            //     force = hingeJoint->GetFeedback()->f1[2];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case ZF:
-            //     force = hingeJoint->GetFeedback()->f1[3];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case Force:
-            //     pv.Set(hingeJoint->GetFeedback()->f1);
-            //     force = pv.Magnitude();
-            //     m_errorScore = (force - value);
-            //     break;
+#ifdef FIX_ME
+            case XF:
+                force = hingeJoint->GetFeedback()->f1[0];
+                m_errorScore = (force - value);
+                break;
+            case YF:
+                force = hingeJoint->GetFeedback()->f1[2];
+                m_errorScore = (force - value);
+                break;
+            case ZF:
+                force = hingeJoint->GetFeedback()->f1[3];
+                m_errorScore = (force - value);
+                break;
+            case Force:
+                pv.Set(hingeJoint->GetFeedback()->f1);
+                force = pv.Magnitude();
+                m_errorScore = (force - value);
+                break;
+#endif
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }
@@ -222,7 +224,7 @@ double DataTargetScalar::calculateErrorScore(double value)
         }
         if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
         {
-            result = ballJoint->GetBallAnchor();
+            result = ballJoint->anchor();
             switch (m_DataType)
             {
             case XP:
@@ -234,23 +236,25 @@ double DataTargetScalar::calculateErrorScore(double value)
             case ZP:
                 m_errorScore = (result[2] - value);
                 break;
-            // case XF:
-            //     force = ballJoint->GetFeedback()->f1[0];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case YF:
-            //     force = ballJoint->GetFeedback()->f1[2];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case ZF:
-            //     force = ballJoint->GetFeedback()->f1[3];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case Force:
-            //     pv.Set(ballJoint->GetFeedback()->f1);
-            //     force = pv.Magnitude();
-            //     m_errorScore = (force - value);
-            //     break;
+#ifdef FIX_ME
+            case XF:
+                force = ballJoint->GetFeedback()->f1[0];
+                m_errorScore = (force - value);
+                break;
+            case YF:
+                force = ballJoint->GetFeedback()->f1[2];
+                m_errorScore = (force - value);
+                break;
+            case ZF:
+                force = ballJoint->GetFeedback()->f1[3];
+                m_errorScore = (force - value);
+                break;
+            case Force:
+                pv.Set(ballJoint->GetFeedback()->f1);
+                force = pv.Magnitude();
+                m_errorScore = (force - value);
+                break;
+#endif
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }
@@ -258,7 +262,7 @@ double DataTargetScalar::calculateErrorScore(double value)
         }
         if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
         {
-            result = universalJoint->GetUniversalAnchor();
+            result = universalJoint->anchor();
             switch (m_DataType)
             {
             case XP:
@@ -270,23 +274,25 @@ double DataTargetScalar::calculateErrorScore(double value)
             case ZP:
                 m_errorScore = (result[2] - value);
                 break;
-            // case XF:
-            //     force = universalJoint->GetFeedback()->f1[0];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case YF:
-            //     force = universalJoint->GetFeedback()->f1[2];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case ZF:
-            //     force = universalJoint->GetFeedback()->f1[3];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case Force:
-            //     pv.Set(universalJoint->GetFeedback()->f1);
-            //     force = pv.Magnitude();
-            //     m_errorScore = (force - value);
-            //     break;
+#ifdef FIX_ME
+            case XF:
+                force = universalJoint->GetFeedback()->f1[0];
+                m_errorScore = (force - value);
+                break;
+            case YF:
+                force = universalJoint->GetFeedback()->f1[2];
+                m_errorScore = (force - value);
+                break;
+            case ZF:
+                force = universalJoint->GetFeedback()->f1[3];
+                m_errorScore = (force - value);
+                break;
+            case Force:
+                pv.Set(universalJoint->GetFeedback()->f1);
+                force = pv.Magnitude();
+                m_errorScore = (force - value);
+                break;
+#endif
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }
@@ -324,30 +330,32 @@ double DataTargetScalar::calculateErrorScore(double value)
                 result = geom->GetWorldPosition();
                 m_errorScore = (result[2] - value);
                 break;
-            // case XF:
-            //     contactList = geom->GetContactList();
-            //     force = 0;
-            //     for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[0];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case YF:
-            //     contactList = geom->GetContactList();
-            //     force = 0;
-            //     for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[1];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case ZF:
-            //     contactList = geom->GetContactList();
-            //     force = 0;
-            //     for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[2];
-            //     m_errorScore = (force - value);
-            //     break;
-            // case Force:
-            //     contactList = geom->GetContactList();
-            //     force = 0;
-            //     for (auto &&it : *contactList) { pv.Set(it->GetJointFeedback()->f1); force += pv.Magnitude(); }
-            //     m_errorScore = (force - value);
-            //     break;
+#ifdef FIX_ME
+            case XF:
+                contactList = geom->GetContactList();
+                force = 0;
+                for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[0];
+                m_errorScore = (force - value);
+                break;
+            case YF:
+                contactList = geom->GetContactList();
+                force = 0;
+                for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[1];
+                m_errorScore = (force - value);
+                break;
+            case ZF:
+                contactList = geom->GetContactList();
+                force = 0;
+                for (auto &&it : *contactList) force += it->GetJointFeedback()->f1[2];
+                m_errorScore = (force - value);
+                break;
+            case Force:
+                contactList = geom->GetContactList();
+                force = 0;
+                for (auto &&it : *contactList) { pv.Set(it->GetJointFeedback()->f1); force += pv.Magnitude(); }
+                m_errorScore = (force - value);
+                break;
+#endif
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
             }

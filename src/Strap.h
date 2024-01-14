@@ -13,7 +13,6 @@
 #include "NamedObject.h"
 #include "Simulation.h"
 #include <vector>
-#include <set>
 
 class Body;
 class Marker;

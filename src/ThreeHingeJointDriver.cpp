@@ -23,8 +23,6 @@
 #include "NPointStrap.h"
 #include "PIDMuscleLengthController.h"
 
-#include "pystring.h"
-
 #include <cassert>
 #include <algorithm>
 #include <utility>
@@ -668,16 +666,16 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
     if (findAttribute("DumpExtensionCurve"s, &buf)) m_dumpExtensionCurve = GSUtil::Bool(buf);
 
     // assemble the local copies of bodies, markers and joints
-    std::unique_ptr<Body> baseBody = std::make_unique<Body>(nullptr);
+    std::unique_ptr<Body> baseBody = std::make_unique<Body>();
     baseBody->setName(m_proximalJoint->body1Marker()->GetBody()->name());
     m_baseBody = baseBody.get();
-    std::unique_ptr<Body> proximalBody = std::make_unique<Body>(nullptr);
+    std::unique_ptr<Body> proximalBody = std::make_unique<Body>();
     proximalBody->setName(m_proximalJoint->body2Marker()->GetBody()->name());
     m_proximalBody = proximalBody.get();
-    std::unique_ptr<Body> intermediateBody = std::make_unique<Body>(nullptr);
+    std::unique_ptr<Body> intermediateBody = std::make_unique<Body>();
     intermediateBody->setName(m_intermediateJoint->body2Marker()->GetBody()->name());
     m_intermediateBody = intermediateBody.get();
-    std::unique_ptr<Body> distalBody = std::make_unique<Body>(nullptr);
+    std::unique_ptr<Body> distalBody = std::make_unique<Body>();
     distalBody->setName(m_distalJoint->body2Marker()->GetBody()->name());
     m_distalBody = distalBody.get();
     m_localBodyList[baseBody->name()] = std::move(baseBody);

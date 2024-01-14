@@ -1361,7 +1361,7 @@ const double *FacetedObject::GetTriangle(size_t i) const
     return &m_vertexList.at(9 * i);
 }
 
-double *FacetedObject::upperBound()
+pgd::Vector3 FacetedObject::upperBound() const
 {
     return m_upperBound;
 }
@@ -1384,7 +1384,7 @@ void FacetedObject::setBlendColour(const QColor &blendColour, double blendFracti
     m_blendFraction = blendFraction;
 }
 
-double *FacetedObject::lowerBound()
+pgd::Vector3 FacetedObject::lowerBound() const
 {
     return m_lowerBound;
 }
@@ -1408,7 +1408,7 @@ void FacetedObject::WriteOBJFile(std::ostringstream &out)
                 prel[0] = m_vertexList[i * 9 + j * 3];
                 prel[1] = m_vertexList[i * 9 + j * 3 + 1];
                 prel[2] = m_vertexList[i * 9 + j * 3 + 2];
-                ApplyDisplayTransformation(*reinterpret_cast<pgd::Vector3 *>(prel), reinterpret_cast<pgd::Vector3 *>(result));
+                ApplyDisplayTransformation(prel, &result);
                 out << "v " << result[0] << " " << result[1] << " " << result[2] << "\n";
             }
 
@@ -1431,7 +1431,7 @@ void FacetedObject::WriteOBJFile(std::ostringstream &out)
                 prel[0] = m_vertexList[i * 9 + j * 3];
                 prel[1] = m_vertexList[i * 9 + j * 3 + 1];
                 prel[2] = m_vertexList[i * 9 + j * 3 + 2];
-                ApplyDisplayTransformation(*reinterpret_cast<pgd::Vector3 *>(prel), reinterpret_cast<pgd::Vector3 *>(result));
+                ApplyDisplayTransformation(prel, &result);
                 out << "v " << result[0] << " " << result[1] << " " << result[2] << "\n";
             }
         }
@@ -2282,8 +2282,7 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
                     v1[0] = p1[0];
                     v1[1] = p1[1];
                     v1[2] = p1[2];
-                    v1[3] = 0;
-                    dMULTIPLY0_331(v1r, m_displayRotation, v1);
+                    v1r = m_displayRotation * v1;
                     p2 = triangle2 + 3 * j;
                     p2[0] = v1r[0] + m_displayPosition[0];
                     p2[1] = v1r[1] + m_displayPosition[1];
@@ -2317,7 +2316,7 @@ bool FacetedObject::RayIntersectsTriangle(const pgd::Vector3 &rayOrigin,
                                           const pgd::Vector3 &vertex2,
                                           pgd::Vector3 *outIntersectionPoint)
 {
-    const double EPSILON = 1e-10;
+    const double EPSILON = std::numeric_limits<double>::epsilon();
     pgd::Vector3 edge1, edge2, h, s, q;
     double a,f,u,v;
     edge1 = vertex1 - vertex0;
@@ -2441,7 +2440,7 @@ int FacetedObject::FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Ve
 
     // first check bounding box
     double coord[3];
-    bool bbHit = HitBoundingBox(m_lowerBound, m_upperBound, rayOrigin.constData(), rayVector.constData(), coord);
+    bool bbHit = HitBoundingBox(m_lowerBound.constData(), m_upperBound.constData(), rayOrigin.constData(), rayVector.constData(), coord);
     if (!bbHit) return 0;
 
     // now loop through the triangles
@@ -2478,17 +2477,15 @@ int FacetedObject::FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Ve
     return hitCount;
 }
 
-void FacetedObject::ApplyDisplayTransformation(const pgd::Vector3 inVec, pgd::Vector3 *outVec)
+void FacetedObject::ApplyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec)
 {
-    pgd::Vector3 v1r;
     pgd::Vector3 scaled(inVec.x * m_displayScale[0], inVec.y * m_displayScale[1], inVec.z * m_displayScale[2]);
-    dMULTIPLY0_331(v1r, m_displayRotation, scaled.constData());
-    *outVec = *reinterpret_cast<pgd::Vector3 *>(v1r) + *reinterpret_cast<pgd::Vector3 *>(m_displayPosition);
+    *outVec = (m_displayRotation * scaled) + m_displayPosition;
 }
 
-void FacetedObject::ApplyDisplayRotation(const pgd::Vector3 inVec, pgd::Vector3 *outVec)
+void FacetedObject::ApplyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec)
 {
-    dMULTIPLY0_331(outVec->data(), m_displayRotation, inVec.constData());
+    *outVec = m_displayRotation * inVec;
 }
 
 void FacetedObject::SetDisplayPosition(double x, double y, double z)
@@ -2507,16 +2504,16 @@ void FacetedObject::SetDisplayScale(double x, double y, double z)
     m_modelValid = false;
 }
 
-void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 R)
+void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 &R)
 {
-    std::copy_n(R, dM3E__MAX, m_displayRotation);
+    m_displayRotation = R;
     m_modelValid = false;
 }
 
 // pgd::Quaternion q [ w, x, y, z ], where w is the real part and (x, y, z) form the vector part.
-void FacetedObject::SetDisplayRotationFromQuaternion(const pgd::Quaternion q)
+void FacetedObject::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
-    dQtoR(q, m_displayRotation);
+    m_displayRotation = pgd::MakeMFromQ(q);
     m_modelValid = false;
 }
 
@@ -2596,12 +2593,12 @@ double FacetedObject::blendFraction() const
     return m_blendFraction;
 }
 
-double FacetedObject::boundingBoxVolume()
+double FacetedObject::boundingBoxVolume() const
 {
     return (m_upperBound[0] - m_lowerBound[0]) * (m_upperBound[1] - m_lowerBound[1]) * (m_upperBound[2] - m_lowerBound[2]);
 }
 
-pgd::Vector3 FacetedObject::boundingBoxSize()
+pgd::Vector3 FacetedObject::boundingBoxSize() const
 {
     return pgd::Vector3(m_upperBound[0] - m_lowerBound[0], m_upperBound[1] - m_lowerBound[1], m_upperBound[2] - m_lowerBound[2]);
 }

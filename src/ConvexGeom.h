@@ -15,7 +15,7 @@
 class ConvexGeom: public Geom
 {
 public:
-    ConvexGeom(const std::vector<double> &planes, const std::vector <double> &points, const std::vector<unsigned int> &polygons);
+    ConvexGeom();
 
     void setConvex(const std::vector<double> &planes, const std::vector <double> &points, const std::vector<unsigned int> &polygons);
 

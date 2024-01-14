@@ -205,6 +205,7 @@ void UniversalJoint::setStop1Bounce(double newStop1Bounce)
 std::string UniversalJoint::dumpToString()
 {
     std::stringstream ss;
+#ifdef FIX_ME
     ss.precision(17);
     ss.setf(std::ios::scientific);
     if (firstDump())
@@ -225,6 +226,7 @@ std::string UniversalJoint::dumpToString()
           JointFeedback()->f2[0] << "\t" << JointFeedback()->f2[1] << "\t" << JointFeedback()->f2[2] << "\t" <<
           JointFeedback()->t2[0] << "\t" << JointFeedback()->t2[1] << "\t" << JointFeedback()->t2[2] <<
           "\n";
+#endif
     return ss.str();
 }
 

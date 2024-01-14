@@ -52,6 +52,13 @@ public:
     double ERP() const;
     void setERP(double ERP);
 
+    pgd::Vector3 GetWorldDistance() const; //distance vector from body1 to body2 in world coordinates
+    pgd::Quaternion GetWorldRotation() const; //rotation quaternion from body1 to body2 in world coordinates
+    pgd::Vector3 GetBody1Distance() const; //distance vector from body1 to body2 in body1 coordinates
+    pgd::Quaternion GetBody1Rotation() const; //rotation quaternion from body1 to body2 in body1 coordinates
+    pgd::Vector3 GetBody2Distance() const; //distance vector from body1 to body2 in body2 coordinates
+    pgd::Quaternion GetBody2Rotation() const; //rotation quaternion from body1 to body2 in body2 coordinates
+
 private:
 
     Marker *m_body1Marker = nullptr;
