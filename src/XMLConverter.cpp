@@ -11,8 +11,8 @@
 #include "DataFile.h"
 #include "GSUtil.h"
 
-#include "pocketpy.h"
 #include "pystring.h"
+#include "pocketpy.h"
 
 #include <stdlib.h>
 #include <string.h>
