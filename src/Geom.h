@@ -28,7 +28,6 @@ class Geom: public NamedObject
 public:
 
     Geom();
-    virtual ~Geom();
 
     SMART_ENUM(GeomLocation, GeomLocationStrings, GeomLocationCount, environment, body);
 //    enum GeomLocation { environment, body };

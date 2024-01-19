@@ -43,8 +43,8 @@ signals:
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
     virtual void reject() Q_DECL_OVERRIDE;
-    void comboBoxBodyListCurrentIndexChanged(const QString &text);
     void reset();
+    void comboBoxBodyListCurrentIndexChanged(const QString &text);
 
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;

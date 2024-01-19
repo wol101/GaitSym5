@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
+# set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+set(CMAKE_OSX_ARCHITECTURES x86_64) # this works better set in the project options
+# set(_CMAKE_APPLE_ARCHS_DEFAULT x86_64)
+
 project(GaitSym5 VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -31,6 +35,9 @@ if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
     add_compile_definitions(PX_SIMD_DISABLED)
     message(STATUS "PX_SIMD_DISABLED defined")
 endif()
+
+# MuJoCo definitions
+add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -392,7 +399,6 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/omnipvd/OmniPvdPxSampler.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/PvdMetaDataPvdBinding.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/PvdPhysicsClient.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/windows/NpWindowsDelayLoadHook.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctBoxController.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctCapsuleController.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctCharacterController.cpp
@@ -404,7 +410,6 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctSweptCapsule.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctSweptVolume.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcooking/src/Cooking.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcooking/src/windows/WindowsCookingDelayLoadHook.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtBroadPhase.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtCollection.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtContactJoint.cpp
@@ -426,7 +431,6 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtJoint.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtMetaData.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleClothCooker.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtPrismaticJoint.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtPvd.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtPxStringTable.cpp
@@ -668,6 +672,7 @@ set(PROJECT_SOURCES
     ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/userprintf_rbox_r.c
     ../MuJoCo/mujoco-3.0.1/build/_deps/lodepng-src/lodepng.cpp
     ../MuJoCo/mujoco-3.0.1/build/_deps/tinyxml2-src/tinyxml2.cpp
+    ../MuJoCo/mujoco-3.0.1/build/_deps/tinyobjloader-src/tiny_obj_loader.cc
     ../pystring/pystring.cpp
     ../src/AMotorJoint.cpp
     ../src/ArgParse.cpp
@@ -914,7 +919,10 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsTime.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsDelayLoadHook.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsModuleUpdateLoader.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/windows/PhysXIndicatorWindows.cpp)
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/windows/PhysXIndicatorWindows.cpp
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/windows/NpWindowsDelayLoadHook.cpp
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcooking/src/windows/WindowsCookingDelayLoadHook.cpp
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp)
 ENDIF(UNIX)
 
 

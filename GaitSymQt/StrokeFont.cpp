@@ -653,7 +653,7 @@ void StrokeFont::Debug()
     // ModelMatrix = Translation * Rotation * Scale
     QMatrix4x4 model = translationRotation * scale;
     QMatrix4x4 mvpMatrix = m_vpMatrix * model;
-    qDebug("n_lines = %d\n", n_lines);
+    qDebug("n_lines = %zu\n", n_lines);
     for (size_t i = 0; i < n_lines; i++)
     {
         fp = line_buffer + i * line_buffer_stride * 2;
@@ -661,7 +661,7 @@ void StrokeFont::Debug()
         QVector4D finish(*(fp + 7), *(fp + 8), *(fp + 9), 1);
         QVector4D start2 = mvpMatrix * start;
         QVector4D finish2 = mvpMatrix * finish;
-        qDebug("%d (%f,%f,%f) to (%f,%f,%f) screen (%f,%f,%f) to (%f,%f,%f)\n", i,
+        qDebug("%zu (%f,%f,%f) to (%f,%f,%f) screen (%f,%f,%f) to (%f,%f,%f)\n", i,
                double(start.x()), double(start.y()), double(start.z()), double(finish.x()), double(finish.y()), double(finish.z()),
                double(start2.x()), double(start2.y()), double(start2.z()), double(finish2.x()), double(finish2.y()), double(finish2.z()));
     }

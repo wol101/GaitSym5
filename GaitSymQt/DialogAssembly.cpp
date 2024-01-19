@@ -238,6 +238,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
 
     Preferences::insert("DialogAssemblyGeometry", saveGeometry());
     QDialog::accept();
+#endif
 }
 
 void DialogAssembly::reject() // this catches cancel, close and escape key
@@ -262,7 +263,6 @@ void DialogAssembly::comboBoxBodyListCurrentIndexChanged(const QString &text)
         ui->lineEditYR->setValue(euler.y);
         ui->lineEditZR->setValue(euler.z);
     }
-#endif
 }
 
 void DialogAssembly::initialise()

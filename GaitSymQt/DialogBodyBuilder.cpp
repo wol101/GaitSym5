@@ -52,11 +52,11 @@ DialogBodyBuilder::DialogBodyBuilder(QWidget *parent) :
     ui->lineEditI11->setValue(1.0);
     ui->lineEditI22->setValue(1.0);
     ui->lineEditI33->setValue(1.0);
-    ui->lineEditDensity->setBottom(DBL_MIN);
-    ui->lineEditMass->setBottom(DBL_MIN);
-    ui->lineEditI11->setBottom(DBL_MIN);
-    ui->lineEditI22->setBottom(DBL_MIN);
-    ui->lineEditI33->setBottom(DBL_MIN);
+    ui->lineEditDensity->setBottom(std::numeric_limits<double>::min());
+    ui->lineEditMass->setBottom(std::numeric_limits<double>::min());
+    ui->lineEditI11->setBottom(std::numeric_limits<double>::min());
+    ui->lineEditI22->setBottom(std::numeric_limits<double>::min());
+    ui->lineEditI33->setBottom(std::numeric_limits<double>::min());
 
     qobject_cast<LineEditPath *>(ui->lineEditMesh1)->setPathType(LineEditPath::FileForOpen);
     qobject_cast<LineEditPath *>(ui->lineEditMesh2)->setPathType(LineEditPath::FileForOpen);
