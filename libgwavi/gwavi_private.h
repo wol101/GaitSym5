@@ -8,6 +8,11 @@
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* structures */
 struct gwavi_header_t
 {
@@ -78,28 +83,30 @@ struct gwavi_stream_format_a_t
 
 struct gwavi_t
 {
-	FILE *out;
-	struct gwavi_header_t avi_header;
-	struct gwavi_stream_header_t stream_header_v;
-	struct gwavi_stream_format_v_t stream_format_v;
-	struct gwavi_stream_header_t stream_header_a;
-	struct gwavi_stream_format_a_t stream_format_a;
-	long marker;
-	int offsets_ptr;
-	int offsets_len;
-	long offsets_start;
-	unsigned int *offsets;
-	int offset_count;
+    FILE *out;
+    struct gwavi_header_t avi_header;
+    struct gwavi_stream_header_t stream_header_v;
+    struct gwavi_stream_format_v_t stream_format_v;
+    struct gwavi_stream_header_t stream_header_a;
+    struct gwavi_stream_format_a_t stream_format_a;
+    long marker;
+    int offsets_ptr;
+    int offsets_len;
+    long offsets_start;
+    unsigned int *offsets;
+    int offset_count;
 };
 
 struct gwavi_audio_t
 {
-	unsigned int channels;
-	unsigned int bits;
-	unsigned int samples_per_second;
+    unsigned int channels;
+    unsigned int bits;
+    unsigned int samples_per_second;
 };
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ndef GWAVI_PRIVATE_H */
 

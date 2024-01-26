@@ -31,7 +31,7 @@
  */
 
 /*
- * Usefull IO functions.
+ * Useful IO functions.
  */
 
 #include <stdio.h>
@@ -39,14 +39,13 @@
 int
 write_int(FILE *out, unsigned int n)
 {
-	unsigned char buffer[4];
-
-	buffer[0] = (0xff & (n));
-	buffer[1] = (0xff & (n >> 8));
-	buffer[2] = (0xff & (n >> 16));
-	buffer[3] = (0xff & (n >> 24));
-
-	if (fwrite(buffer, 1, 4, out) != 4)
+	if (fputc((n & 255), out) == EOF)
+		return -1;
+	if (fputc(((n >> 8) & 255), out) == EOF)
+		return -1;
+	if (fputc(((n >> 16) & 255), out) == EOF)
+		return -1;
+	if (fputc(((n >> 24) & 255), out) == EOF)
 		return -1;
 
 	return 0;
@@ -55,19 +54,16 @@ write_int(FILE *out, unsigned int n)
 int
 write_short(FILE *out, unsigned int n)
 {
-	unsigned char buffer[2];
-
-	buffer[0] = (0xff & (n));
-	buffer[1] = (0xff & (n >> 8));
-
-	if (fwrite(buffer, 1, 2, out) != 2)
+	if (fputc((n & 255), out) == EOF)
+		return -1;
+	if (fputc(((n >> 8) & 255), out) == EOF)
 		return -1;
 
 	return 0;
 }
 
 int
-write_chars(FILE *out, const char *s)
+write_chars(FILE *out, char *s)
 {
 	int t = 0;
 
@@ -79,10 +75,13 @@ write_chars(FILE *out, const char *s)
 }
 
 int
-write_chars_bin(FILE *out, const char *s, size_t count)
+write_chars_bin(FILE *out, char *s, int count)
 {
-	if (fwrite(s, 1, count, out) != count)
-		return -1;
+	int t;
+
+	for (t = 0; t < count; t++)
+		if (fputc(s[t], out) == EOF)
+			return -1;
 
 	return 0;
 }

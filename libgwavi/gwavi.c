@@ -34,11 +34,6 @@
  * This is the file containing gwavi library functions.
  */
 
-#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-/* MSVC, We know now to use fopen/strcpy */
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -72,146 +67,157 @@
  * @return Structure containing required information in order to create the AVI
  * file. If an error occured, NULL is returned.
  */
+#if defined(_WIN32) || defined(WIN32)
+struct gwavi_t *
+gwavi_open(const wchar_t *filename, unsigned int width, unsigned int height,
+       const char *fourcc, unsigned int fps, struct gwavi_audio_t *audio)
+#else
 struct gwavi_t *
 gwavi_open(const char *filename, unsigned int width, unsigned int height,
-	   const char *fourcc, unsigned int fps, struct gwavi_audio_t *audio)
+       const char *fourcc, unsigned int fps, struct gwavi_audio_t *audio)
+#endif
 {
-	struct gwavi_t *gwavi;
-	FILE *out;
+    struct gwavi_t *gwavi;
+    FILE *out;
 
-	if (check_fourcc(fourcc) != 0)
-		(void)fprintf(stderr, "WARNING: given fourcc does not seem to "
-			      "be valid: %s\n", fourcc);
-	if (fps < 1)
-		return NULL;
-	if ((out = fopen(filename, "wb+")) == NULL) {
-		perror("gwavi_open: failed to open file for writing");
-		return NULL;
-	}
+    if (check_fourcc(fourcc) != 0)
+        (void)fprintf(stderr, "WARNING: given fourcc does not seem to "
+                  "be valid: %s\n", fourcc);
+    if (fps < 1)
+        return NULL;
+#if defined(_WIN32) || defined(WIN32)
+    if ((out = _wfopen(filename, L"wb+")) == NULL)
+#else
+    if ((out = fopen(filename, "wb+")) == NULL)
+#endif
+    {
+        perror("gwavi_open: failed to open file for writing");
+        return NULL;
+    }
 
-	if ((gwavi = (struct gwavi_t *)malloc(sizeof(struct gwavi_t))) == NULL) {
-		(void)fprintf(stderr, "gwavi_open: could not allocate memoryi "
-			      "for gwavi structure\n");
-		return NULL;
-	}
-	memset(gwavi, 0, sizeof(struct gwavi_t));
+    if ((gwavi = (struct gwavi_t *)malloc(sizeof(struct gwavi_t))) == NULL) {
+        (void)fprintf(stderr, "gwavi_open: could not allocate memoryi "
+                  "for gwavi structure\n");
+        return NULL;
+    }
+    memset(gwavi, 0, sizeof(struct gwavi_t));
 
-	gwavi->out = out;
+    gwavi->out = out;
 
-	/* set avi header */
-	gwavi->avi_header.time_delay= 1000000 / fps;
-	gwavi->avi_header.data_rate = width * height * 3;
-	gwavi->avi_header.flags = 0x10;
+    /* set avi header */
+    gwavi->avi_header.time_delay= 1000000 / fps;
+    gwavi->avi_header.data_rate = width * height * 3;
+    gwavi->avi_header.flags = 0x10;
 
-	if (audio)
-		gwavi->avi_header.data_streams = 2;
-	else
-		gwavi->avi_header.data_streams = 1;
+    if (audio)
+        gwavi->avi_header.data_streams = 2;
+    else
+        gwavi->avi_header.data_streams = 1;
 
-	/* this field gets updated when calling gwavi_close() */
-	gwavi->avi_header.number_of_frames = 0;
-	gwavi->avi_header.width = width;
-	gwavi->avi_header.height = height;
-	gwavi->avi_header.buffer_size = (width * height * 3);
+    /* this field gets updated when calling gwavi_close() */
+    gwavi->avi_header.number_of_frames = 0;
+    gwavi->avi_header.width = width;
+    gwavi->avi_header.height = height;
+    gwavi->avi_header.buffer_size = (width * height * 3);
 
-	/* set stream header */
-	(void)strcpy(gwavi->stream_header_v.data_type, "vids");
-	(void)memcpy(gwavi->stream_header_v.codec, fourcc, 4);
-	gwavi->stream_header_v.time_scale = 1;
-	gwavi->stream_header_v.data_rate = fps;
-	gwavi->stream_header_v.buffer_size = (width * height * 3);
-	gwavi->stream_header_v.data_length = 0;
+    /* set stream header */
+    (void)strcpy(gwavi->stream_header_v.data_type, "vids");
+    (void)memcpy(gwavi->stream_header_v.codec, fourcc, 4);
+    gwavi->stream_header_v.time_scale = 1;
+    gwavi->stream_header_v.data_rate = fps;
+    gwavi->stream_header_v.buffer_size = (width * height * 3);
+    gwavi->stream_header_v.data_length = 0;
 
-	/* set stream format */
-	gwavi->stream_format_v.header_size = 40;
-	gwavi->stream_format_v.width = width;
-	gwavi->stream_format_v.height = height;
-	gwavi->stream_format_v.num_planes = 1;
-	gwavi->stream_format_v.bits_per_pixel = 24;
-	gwavi->stream_format_v.compression_type =
-		((unsigned int)fourcc[3] << 24) +
-		((unsigned int)fourcc[2] << 16) +
-		((unsigned int)fourcc[1] << 8) +
-		((unsigned int)fourcc[0]);
-	gwavi->stream_format_v.image_size = width * height * 3;
-	gwavi->stream_format_v.colors_used = 0;
-	gwavi->stream_format_v.colors_important = 0;
+    /* set stream format */
+    gwavi->stream_format_v.header_size = 40;
+    gwavi->stream_format_v.width = width;
+    gwavi->stream_format_v.height = height;
+    gwavi->stream_format_v.num_planes = 1;
+    gwavi->stream_format_v.bits_per_pixel = 24;
+    gwavi->stream_format_v.compression_type =
+        ((unsigned int)fourcc[3] << 24) +
+        ((unsigned int)fourcc[2] << 16) +
+        ((unsigned int)fourcc[1] << 8) +
+        ((unsigned int)fourcc[0]);
+    gwavi->stream_format_v.image_size = width * height * 3;
+    gwavi->stream_format_v.colors_used = 0;
+    gwavi->stream_format_v.colors_important = 0;
 
-	gwavi->stream_format_v.palette = 0;
-	gwavi->stream_format_v.palette_count = 0;
+    gwavi->stream_format_v.palette = 0;
+    gwavi->stream_format_v.palette_count = 0;
 
-	if (audio) {
-		/* set stream header */
-		memcpy(gwavi->stream_header_a.data_type, "auds", 4);
-		gwavi->stream_header_a.codec[0] = 1;
-		gwavi->stream_header_a.codec[1] = 0;
-		gwavi->stream_header_a.codec[2] = 0;
-		gwavi->stream_header_a.codec[3] = 0;
-		gwavi->stream_header_a.time_scale = 1;
-		gwavi->stream_header_a.data_rate = audio->samples_per_second;
-		gwavi->stream_header_a.buffer_size =
-			audio->channels * (audio->bits / 8) * audio->samples_per_second;
-		/* when set to -1, drivers use default quality value */
-		gwavi->stream_header_a.audio_quality = -1;
-		gwavi->stream_header_a.sample_size =
-			(audio->bits / 8) * audio->channels;
+    if (audio) {
+        /* set stream header */
+        memcpy(gwavi->stream_header_a.data_type, "auds", 4);
+        gwavi->stream_header_a.codec[0] = 1;
+        gwavi->stream_header_a.codec[1] = 0;
+        gwavi->stream_header_a.codec[2] = 0;
+        gwavi->stream_header_a.codec[3] = 0;
+        gwavi->stream_header_a.time_scale = 1;
+        gwavi->stream_header_a.data_rate = audio->samples_per_second;
+        gwavi->stream_header_a.buffer_size =
+            audio->channels * (audio->bits / 8) * audio->samples_per_second;
+        /* when set to -1, drivers use default quality value */
+        gwavi->stream_header_a.audio_quality = -1;
+        gwavi->stream_header_a.sample_size =
+            (audio->bits / 8) * audio->channels;
 
-		/* set stream format */
-		gwavi->stream_format_a.format_type = 1;
-		gwavi->stream_format_a.channels = audio->channels;
-		gwavi->stream_format_a.sample_rate = audio->samples_per_second;
-		gwavi->stream_format_a.bytes_per_second =
-			audio->channels * (audio->bits / 8) * audio->samples_per_second;
-		gwavi->stream_format_a.block_align =
-			audio->channels * (audio->bits / 8);
-		gwavi->stream_format_a.bits_per_sample = audio->bits;
-		gwavi->stream_format_a.size = 0;
-	}
+        /* set stream format */
+        gwavi->stream_format_a.format_type = 1;
+        gwavi->stream_format_a.channels = audio->channels;
+        gwavi->stream_format_a.sample_rate = audio->samples_per_second;
+        gwavi->stream_format_a.bytes_per_second =
+            audio->channels * (audio->bits / 8) * audio->samples_per_second;
+        gwavi->stream_format_a.block_align =
+            audio->channels * (audio->bits / 8);
+        gwavi->stream_format_a.bits_per_sample = audio->bits;
+        gwavi->stream_format_a.size = 0;
+    }
 
-	if (write_chars_bin(out, "RIFF", 4) == -1)
-		goto write_chars_bin_failed;
-	if (write_int(out, 0) == -1) {
-		(void)fprintf(stderr, "gwavi_info: write_int() failed\n");
-		return NULL;
-	}
-	if (write_chars_bin(out, "AVI ", 4) == -1)
-		goto write_chars_bin_failed;
+    if (write_chars_bin(out, "RIFF", 4) == -1)
+        goto write_chars_bin_failed;
+    if (write_int(out, 0) == -1) {
+        (void)fprintf(stderr, "gwavi_info: write_int() failed\n");
+        return NULL;
+    }
+    if (write_chars_bin(out, "AVI ", 4) == -1)
+        goto write_chars_bin_failed;
 
-	if (write_avi_header_chunk(gwavi) == -1) {
-		(void)fprintf(stderr, "gwavi_info: write_avi_header_chunk "
-			      "failed\n");
-		return NULL;
-	}
+    if (write_avi_header_chunk(gwavi) == -1) {
+        (void)fprintf(stderr, "gwavi_info: write_avi_header_chunk "
+                  "failed\n");
+        return NULL;
+    }
 
-	if (write_chars_bin(out, "LIST", 4) == -1)
-		goto write_chars_bin_failed;
-	if ((gwavi->marker = ftell(out)) == -1) {
-		perror("gwavi_info (ftell)");
-		return NULL;
-	}
-	if (write_int(out, 0) == -1) {
-		(void)fprintf(stderr, "gwavi_info: write_int() failed\n");
-		return NULL;
-	}
-	if (write_chars_bin(out, "movi", 4) == -1)
-		goto write_chars_bin_failed;
+    if (write_chars_bin(out, "LIST", 4) == -1)
+        goto write_chars_bin_failed;
+    if ((gwavi->marker = ftell(out)) == -1) {
+        perror("gwavi_info (ftell)");
+        return NULL;
+    }
+    if (write_int(out, 0) == -1) {
+        (void)fprintf(stderr, "gwavi_info: write_int() failed\n");
+        return NULL;
+    }
+    if (write_chars_bin(out, "movi", 4) == -1)
+        goto write_chars_bin_failed;
 
-	gwavi->offsets_len = 1024;
-	if ((gwavi->offsets = (unsigned int *)malloc((size_t)gwavi->offsets_len *
-				      sizeof(unsigned int)))
-			== NULL) {
-		(void)fprintf(stderr, "gwavi_info: could not allocate memory "
-			      "for gwavi offsets table\n");
-		return NULL;
-	}
+    gwavi->offsets_len = 1024;
+    if ((gwavi->offsets = (unsigned int *)malloc((size_t)gwavi->offsets_len *
+                      sizeof(unsigned int)))
+            == NULL) {
+        (void)fprintf(stderr, "gwavi_info: could not allocate memory "
+                  "for gwavi offsets table\n");
+        return NULL;
+    }
 
-	gwavi->offsets_ptr = 0;
+    gwavi->offsets_ptr = 0;
 
-	return gwavi;
+    return gwavi;
 
 write_chars_bin_failed:
-	(void)fprintf(stderr, "gwavi_open: write_chars_bin() failed\n");
-	return NULL;
+    (void)fprintf(stderr, "gwavi_open: write_chars_bin() failed\n");
+    return NULL;
 }
 
 /**
@@ -226,57 +232,57 @@ write_chars_bin_failed:
 int
 gwavi_add_frame(struct gwavi_t *gwavi, const unsigned char *buffer, size_t len)
 {
-	size_t maxi_pad;  /* if your frame is raggin, give it some paddin' */
-	size_t t;
+    size_t maxi_pad;  /* if your frame is raggin, give it some paddin' */
+    size_t t;
 
-	if (!gwavi || !buffer) {
-		(void)fputs("gwavi and/or buffer argument cannot be NULL",
-			    stderr);
-		return -1;
-	}
-	if (len < 256)
-		(void)fprintf(stderr, "WARNING: specified buffer len seems "
-			      "rather small: %d. Are you sure about this?\n",
-			      (int)len);
+    if (!gwavi || !buffer) {
+        (void)fputs("gwavi and/or buffer argument cannot be NULL",
+                stderr);
+        return -1;
+    }
+    if (len < 256)
+        (void)fprintf(stderr, "WARNING: specified buffer len seems "
+                  "rather small: %d. Are you sure about this?\n",
+                  (int)len);
 
-	gwavi->offset_count++;
-	gwavi->stream_header_v.data_length++;
+    gwavi->offset_count++;
+    gwavi->stream_header_v.data_length++;
 
-	maxi_pad = len % 4;
-	if (maxi_pad > 0)
-		maxi_pad = 4 - maxi_pad;
+    maxi_pad = len % 4;
+    if (maxi_pad > 0)
+        maxi_pad = 4 - maxi_pad;
 
-	if (gwavi->offset_count >= gwavi->offsets_len) {
-		gwavi->offsets_len += 1024;
-		gwavi->offsets = (unsigned int *)realloc(gwavi->offsets,
-					(size_t)gwavi->offsets_len *
-					sizeof(unsigned int));
-	}
+    if (gwavi->offset_count >= gwavi->offsets_len) {
+        gwavi->offsets_len += 1024;
+        gwavi->offsets = (unsigned int *)realloc(gwavi->offsets,
+                    (size_t)gwavi->offsets_len *
+                    sizeof(unsigned int));
+    }
 
-	gwavi->offsets[gwavi->offsets_ptr++] = (unsigned int)(len + maxi_pad);
+    gwavi->offsets[gwavi->offsets_ptr++] = (unsigned int)(len + maxi_pad);
 
-	if (write_chars_bin(gwavi->out, "00dc", 4) == -1) {
-		(void)fprintf(stderr, "gwavi_add_frame: write_chars_bin() "
-			      "failed\n");
-		return -1;
-	}
-	if (write_int(gwavi->out, (unsigned int)(len + maxi_pad)) == -1) {
-		(void)fprintf(stderr, "gwavi_add_frame: write_int() failed\n");
-		return -1;
-	}
+    if (write_chars_bin(gwavi->out, "00dc", 4) == -1) {
+        (void)fprintf(stderr, "gwavi_add_frame: write_chars_bin() "
+                  "failed\n");
+        return -1;
+    }
+    if (write_int(gwavi->out, (unsigned int)(len + maxi_pad)) == -1) {
+        (void)fprintf(stderr, "gwavi_add_frame: write_int() failed\n");
+        return -1;
+    }
 
-	if ((t = fwrite(buffer, 1, len, gwavi->out)) != len) {
-		(void)fprintf(stderr, "gwavi_add_frame: fwrite() failed\n");
-		return -1;
-	}
+    if ((t = fwrite(buffer, 1, len, gwavi->out)) != len) {
+        (void)fprintf(stderr, "gwavi_add_frame: fwrite() failed\n");
+        return -1;
+    }
 
-	for (t = 0; t < maxi_pad; t++)
-		if (fputc(0, gwavi->out) == EOF) {
-			(void)fprintf(stderr, "gwavi_add_frame: fputc() failed\n");
-			return -1;
-		}
+    for (t = 0; t < maxi_pad; t++)
+        if (fputc(0, gwavi->out) == EOF) {
+            (void)fprintf(stderr, "gwavi_add_frame: fputc() failed\n");
+            return -1;
+        }
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -291,55 +297,55 @@ gwavi_add_frame(struct gwavi_t *gwavi, const unsigned char *buffer, size_t len)
 int
 gwavi_add_audio(struct gwavi_t *gwavi, const unsigned char *buffer, size_t len)
 {
-	size_t maxi_pad;  /* in case audio bleeds over the 4 byte boundary  */
-	size_t t;
+    size_t maxi_pad;  /* in case audio bleeds over the 4 byte boundary  */
+    size_t t;
 
-	if (!gwavi || !buffer) {
-		(void)fputs("gwavi and/or buffer argument cannot be NULL",
-			    stderr);
-		return -1;
-	}
+    if (!gwavi || !buffer) {
+        (void)fputs("gwavi and/or buffer argument cannot be NULL",
+                stderr);
+        return -1;
+    }
 
-	gwavi->offset_count++;
+    gwavi->offset_count++;
 
-	maxi_pad = len % 4;
-	if (maxi_pad > 0)
-		maxi_pad = 4 - maxi_pad;
+    maxi_pad = len % 4;
+    if (maxi_pad > 0)
+        maxi_pad = 4 - maxi_pad;
 
-	if (gwavi->offset_count >= gwavi->offsets_len) {
-		gwavi->offsets_len += 1024;
-		gwavi->offsets = (unsigned int *)realloc(gwavi->offsets,
-					(size_t)gwavi->offsets_len *
-					sizeof(unsigned int));
-	}
+    if (gwavi->offset_count >= gwavi->offsets_len) {
+        gwavi->offsets_len += 1024;
+        gwavi->offsets = (unsigned int *)realloc(gwavi->offsets,
+                    (size_t)gwavi->offsets_len *
+                    sizeof(unsigned int));
+    }
 
-	gwavi->offsets[gwavi->offsets_ptr++] =
-		(unsigned int)((len + maxi_pad) | 0x80000000);
+    gwavi->offsets[gwavi->offsets_ptr++] =
+        (unsigned int)((len + maxi_pad) | 0x80000000);
 
-	if (write_chars_bin(gwavi->out,"01wb",4) == -1) {
-		(void)fprintf(stderr, "gwavi_add_audio: write_chars_bin() "
-			      "failed\n");
-		return -1;
-	}
-	if (write_int(gwavi->out,(unsigned int)(len + maxi_pad)) == -1) {
-		(void)fprintf(stderr, "gwavi_add_audio: write_int() failed\n");
-		return -1;
-	}
+    if (write_chars_bin(gwavi->out,"01wb",4) == -1) {
+        (void)fprintf(stderr, "gwavi_add_audio: write_chars_bin() "
+                  "failed\n");
+        return -1;
+    }
+    if (write_int(gwavi->out,(unsigned int)(len + maxi_pad)) == -1) {
+        (void)fprintf(stderr, "gwavi_add_audio: write_int() failed\n");
+        return -1;
+    }
 
-	if ((t = fwrite(buffer, 1, len, gwavi->out)) != len ) {
-		(void)fprintf(stderr, "gwavi_add_audio: fwrite() failed\n");
-		return -1;
-	}
+    if ((t = fwrite(buffer, 1, len, gwavi->out)) != len ) {
+        (void)fprintf(stderr, "gwavi_add_audio: fwrite() failed\n");
+        return -1;
+    }
 
-	for (t = 0; t < maxi_pad; t++)
-		if (fputc(0,gwavi->out) == EOF) {
-			(void)fprintf(stderr, "gwavi_add_audio: fputc() failed\n");
-			return -1;
-		}
+    for (t = 0; t < maxi_pad; t++)
+        if (fputc(0,gwavi->out) == EOF) {
+            (void)fprintf(stderr, "gwavi_add_audio: fputc() failed\n");
+            return -1;
+        }
 
-	gwavi->stream_header_a.data_length += (unsigned int)(len + maxi_pad);
+    gwavi->stream_header_a.data_length += (unsigned int)(len + maxi_pad);
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -354,75 +360,75 @@ gwavi_add_audio(struct gwavi_t *gwavi, const unsigned char *buffer, size_t len)
 int
 gwavi_close(struct gwavi_t *gwavi)
 {
-	long t;
+    long t;
 
-	if (!gwavi) {
-		(void)fputs("gwavi argument cannot be NULL", stderr);
-		return -1;
-	}
+    if (!gwavi) {
+        (void)fputs("gwavi argument cannot be NULL", stderr);
+        return -1;
+    }
 
-	if ((t = ftell(gwavi->out)) == -1)
-		goto ftell_failed;
-	if (fseek(gwavi->out, gwavi->marker, SEEK_SET) == -1)
-		goto fseek_failed;
-	if (write_int(gwavi->out, (unsigned int)(t - gwavi->marker - 4)) == -1) {
-		(void)fprintf(stderr, "gwavi_close: write_int() failed\n");
-		return -1;
-	}
-	if (fseek(gwavi->out,t,SEEK_SET) == -1)
-		goto fseek_failed;
+    if ((t = ftell(gwavi->out)) == -1)
+        goto ftell_failed;
+    if (fseek(gwavi->out, gwavi->marker, SEEK_SET) == -1)
+        goto fseek_failed;
+    if (write_int(gwavi->out, (unsigned int)(t - gwavi->marker - 4)) == -1) {
+        (void)fprintf(stderr, "gwavi_close: write_int() failed\n");
+        return -1;
+    }
+    if (fseek(gwavi->out,t,SEEK_SET) == -1)
+        goto fseek_failed;
 
-	if (write_index(gwavi->out, gwavi->offset_count, gwavi->offsets) == -1) {
-		(void)fprintf(stderr, "gwavi_close: write_index() failed\n");
-		return -1;
-	}
+    if (write_index(gwavi->out, gwavi->offset_count, gwavi->offsets) == -1) {
+        (void)fprintf(stderr, "gwavi_close: write_index() failed\n");
+        return -1;
+    }
 
-	free(gwavi->offsets);
+    free(gwavi->offsets);
 
-	/* reset some avi header fields */
-	gwavi->avi_header.number_of_frames = gwavi->stream_header_v.data_length;
+    /* reset some avi header fields */
+    gwavi->avi_header.number_of_frames = gwavi->stream_header_v.data_length;
 
-	if ((t = ftell(gwavi->out)) == -1)
-		goto ftell_failed;
-	if (fseek(gwavi->out, 12, SEEK_SET) == -1)
-		goto fseek_failed;
-	if (write_avi_header_chunk(gwavi) == -1) {
-		(void)fprintf(stderr, "gwavi_close: write_avi_header_chunk() "
-			      "failed\n");
-		return -1;
-	}
-	if (fseek(gwavi->out, t, SEEK_SET) == -1)
-		goto fseek_failed;
+    if ((t = ftell(gwavi->out)) == -1)
+        goto ftell_failed;
+    if (fseek(gwavi->out, 12, SEEK_SET) == -1)
+        goto fseek_failed;
+    if (write_avi_header_chunk(gwavi) == -1) {
+        (void)fprintf(stderr, "gwavi_close: write_avi_header_chunk() "
+                  "failed\n");
+        return -1;
+    }
+    if (fseek(gwavi->out, t, SEEK_SET) == -1)
+        goto fseek_failed;
 
-	if ((t = ftell(gwavi->out)) == -1)
-		goto ftell_failed;
-	if (fseek(gwavi->out, 4, SEEK_SET) == -1)
-		goto fseek_failed;
-	if (write_int(gwavi->out, (unsigned int)(t - 8)) == -1) {
-		(void)fprintf(stderr, "gwavi_close: write_int() failed\n");
-		return -1;
-	}
-	if (fseek(gwavi->out, t, SEEK_SET) == -1)
-		goto fseek_failed;
+    if ((t = ftell(gwavi->out)) == -1)
+        goto ftell_failed;
+    if (fseek(gwavi->out, 4, SEEK_SET) == -1)
+        goto fseek_failed;
+    if (write_int(gwavi->out, (unsigned int)(t - 8)) == -1) {
+        (void)fprintf(stderr, "gwavi_close: write_int() failed\n");
+        return -1;
+    }
+    if (fseek(gwavi->out, t, SEEK_SET) == -1)
+        goto fseek_failed;
 
-	if (gwavi->stream_format_v.palette != 0)
-		free(gwavi->stream_format_v.palette);
+    if (gwavi->stream_format_v.palette != 0)
+        free(gwavi->stream_format_v.palette);
 
-	if (fclose(gwavi->out) == EOF) {
-		perror("gwavi_close (fclose)");
-		return -1;
-	}
-	free(gwavi);
+    if (fclose(gwavi->out) == EOF) {
+        perror("gwavi_close (fclose)");
+        return -1;
+    }
+    free(gwavi);
 
-	return 0;
+    return 0;
 
 ftell_failed:
-	perror("gwavi_close: (ftell)");
-	return -1;
+    perror("gwavi_close: (ftell)");
+    return -1;
 
 fseek_failed:
-	perror("gwavi_close (fseek)");
-	return -1;
+    perror("gwavi_close (fseek)");
+    return -1;
 }
 
 /**
@@ -439,14 +445,14 @@ fseek_failed:
 int
 gwavi_set_framerate(struct gwavi_t *gwavi, unsigned int fps)
 {
-	if (!gwavi) {
-		(void)fputs("gwavi argument cannot be NULL", stderr);
-		return -1;
-	}
-	gwavi->stream_header_v.data_rate = fps;
-	gwavi->avi_header.time_delay = (10000000 / fps);
+    if (!gwavi) {
+        (void)fputs("gwavi argument cannot be NULL", stderr);
+        return -1;
+    }
+    gwavi->stream_header_v.data_rate = fps;
+    gwavi->avi_header.time_delay = (10000000 / fps);
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -461,24 +467,24 @@ gwavi_set_framerate(struct gwavi_t *gwavi, unsigned int fps)
  * @return 0 on success, -1 on error.
  */
 int
-gwavi_set_codec(struct gwavi_t *gwavi, const char *fourcc)
+gwavi_set_codec(struct gwavi_t *gwavi, char *fourcc)
 {
-	if (!gwavi) {
-		(void)fputs("gwavi argument cannot be NULL", stderr);
-		return -1;
-	}
-	if (check_fourcc(fourcc) != 0)
-		(void)fprintf(stderr, "WARNING: given fourcc does not seem to "
-			      "be valid: %s\n", fourcc);
+    if (!gwavi) {
+        (void)fputs("gwavi argument cannot be NULL", stderr);
+        return -1;
+    }
+    if (check_fourcc(fourcc) != 0)
+        (void)fprintf(stderr, "WARNING: given fourcc does not seem to "
+                  "be valid: %s\n", fourcc);
 
-	memcpy(gwavi->stream_header_v.codec, fourcc, 4);
-	gwavi->stream_format_v.compression_type =
-		((unsigned int)fourcc[3] << 24) +
-		((unsigned int)fourcc[2] << 16) +
-		((unsigned int)fourcc[1] << 8) +
-		((unsigned int)fourcc[0]);
+    memcpy(gwavi->stream_header_v.codec, fourcc, 4);
+    gwavi->stream_format_v.compression_type =
+        ((unsigned int)fourcc[3] << 24) +
+        ((unsigned int)fourcc[2] << 16) +
+        ((unsigned int)fourcc[1] << 8) +
+        ((unsigned int)fourcc[0]);
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -496,22 +502,22 @@ gwavi_set_codec(struct gwavi_t *gwavi, const char *fourcc)
 int
 gwavi_set_size(struct gwavi_t *gwavi, unsigned int width, unsigned int height)
 {
-	unsigned int size = (width * height * 3);
+    unsigned int size = (width * height * 3);
 
-	if (!gwavi) {
-		(void)fputs("gwavi argument cannot be NULL", stderr);
-		return -1;
-	}
+    if (!gwavi) {
+        (void)fputs("gwavi argument cannot be NULL", stderr);
+        return -1;
+    }
 
-	gwavi->avi_header.data_rate = size;
-	gwavi->avi_header.width = width;
-	gwavi->avi_header.height = height;
-	gwavi->avi_header.buffer_size = size;
-	gwavi->stream_header_v.buffer_size = size;
-	gwavi->stream_format_v.width = width;
-	gwavi->stream_format_v.height = height;
-	gwavi->stream_format_v.image_size = size;
+    gwavi->avi_header.data_rate = size;
+    gwavi->avi_header.width = width;
+    gwavi->avi_header.height = height;
+    gwavi->avi_header.buffer_size = size;
+    gwavi->stream_header_v.buffer_size = size;
+    gwavi->stream_format_v.width = width;
+    gwavi->stream_format_v.height = height;
+    gwavi->stream_format_v.image_size = size;
 
-	return 0;
+    return 0;
 }
 

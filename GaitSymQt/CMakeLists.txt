@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5)
 set(CMAKE_OSX_ARCHITECTURES x86_64) # this works better set in the project options
 # set(_CMAKE_APPLE_ARCHS_DEFAULT x86_64)
 
-project(GaitSym5 VERSION 0.1 LANGUAGES CXX)
+project(GaitSym5 VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -37,7 +37,10 @@ if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
 endif()
 
 # MuJoCo definitions
-add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE)
+add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC)
+
+# gle definitions
+add_compile_definitions(DEBUG_OUTPUT)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -674,6 +677,22 @@ set(PROJECT_SOURCES
     ../MuJoCo/mujoco-3.0.1/build/_deps/tinyxml2-src/tinyxml2.cpp
     ../MuJoCo/mujoco-3.0.1/build/_deps/tinyobjloader-src/tiny_obj_loader.cc
     ../pystring/pystring.cpp
+    ../glextrusion/ex_angle.c
+    ../glextrusion/ex_cut_round.c
+    ../glextrusion/ex_raw.c
+    ../glextrusion/extrude.c
+    ../glextrusion/intersect.c
+    ../glextrusion/qmesh.c
+    ../glextrusion/rot_prince.c
+    ../glextrusion/rotate.c
+    ../glextrusion/round_cap.c
+    ../glextrusion/segment.c
+    ../glextrusion/texgen.c
+    ../glextrusion/urotate.c
+    ../glextrusion/view.c
+    ../libgwavi/avi-utils.c
+    ../libgwavi/fileio.c
+    ../libgwavi/gwavi.c
     ../src/AMotorJoint.cpp
     ../src/ArgParse.cpp
     ../src/BallJoint.cpp
