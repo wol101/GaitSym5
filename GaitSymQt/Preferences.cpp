@@ -25,7 +25,7 @@
 #define QMetaType(x) (x)
 #endif
 
-const QString Preferences::applicationName("GaitSym2019");
+const QString Preferences::applicationName("GaitSym5");
 const QString Preferences::organizationName("AnimalSimulationLaboratory");
 QSettings Preferences::m_qtSettings(QSettings::IniFormat, QSettings::UserScope, Preferences::getOrganizationName(), Preferences::getApplicationName());
 QMap<QString, SettingsItem> Preferences::m_settings;

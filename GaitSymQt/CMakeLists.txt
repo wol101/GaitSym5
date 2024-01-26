@@ -908,6 +908,28 @@ set(PROJECT_SOURCES
     ../rapidxml/rapidxml_iterators.hpp
     ../rapidxml/rapidxml_print.hpp
     ../rapidxml/rapidxml_utils.hpp
+
+    ../GaitSymQt/app.rc
+    ../GaitSymQt/resources.qrc
+    ../GaitSymQt/AboutDialog.ui
+    ../GaitSymQt/DialogAssembly.ui
+    ../GaitSymQt/DialogBodyBuilder.ui
+    ../GaitSymQt/DialogCreateMirrorElements.ui
+    ../GaitSymQt/DialogCreateTestingDrivers.ui
+    ../GaitSymQt/DialogDrivers.ui
+    ../GaitSymQt/DialogGeoms.ui
+    ../GaitSymQt/DialogGlobal.ui
+    ../GaitSymQt/DialogInfo.ui
+    ../GaitSymQt/DialogJoints.ui
+    ../GaitSymQt/DialogMarkerImportExport.ui
+    ../GaitSymQt/DialogMarkers.ui
+    ../GaitSymQt/DialogMuscles.ui
+    ../GaitSymQt/DialogOutputSelect.ui
+    ../GaitSymQt/DialogPreferences.ui
+    ../GaitSymQt/DialogProperties.ui
+    ../GaitSymQt/DialogRename.ui
+    ../GaitSymQt/MainWindow.ui
+    ../GaitSymQt/TextEditDialog.ui
 )
 
 IF(UNIX)
