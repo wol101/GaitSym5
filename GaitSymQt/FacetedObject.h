@@ -73,9 +73,9 @@ public:
     const double *GetColourList() const;
     size_t GetNumTriangles() const;
     const double *GetTriangle(size_t i) const;
-    pgd::Vector3 GetDisplayPosition() const;
-    pgd::Matrix3x3 GetDisplayRotation() const;
-    pgd::Vector3 GetDisplayScale() const;
+    const pgd::Vector3 &GetDisplayPosition() const;
+    const pgd::Matrix3x3 &GetDisplayRotation() const;
+    const pgd::Vector3 &GetDisplayScale() const;
 
     void AddPolygon(const double *vertices, size_t nSides, const double *normals = nullptr, const double *UVs = nullptr);
     void AddTriangle(const double *vertices, const double *normals = nullptr, const double *UVs = nullptr);
@@ -119,6 +119,8 @@ public:
 
     void SetDisplayPosition(double x, double y, double z);
     void SetDisplayScale(double x, double y, double z);
+    void SetDisplayPosition(const pgd::Vector3 &displayPosition);
+    void SetDisplayScale(const pgd::Vector3 &displayScale);
     void SetDisplayRotation(const pgd::Matrix3x3 &R);
     void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
 

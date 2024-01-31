@@ -1153,17 +1153,17 @@ void FacetedObject::WriteOBJFile(std::string filename)
     }
 }
 
-pgd::Vector3 FacetedObject::GetDisplayPosition() const
+const pgd::Vector3 &FacetedObject::GetDisplayPosition() const
 {
     return m_displayPosition;
 }
 
-pgd::Matrix3x3 FacetedObject::GetDisplayRotation() const
+const pgd::Matrix3x3 &FacetedObject::GetDisplayRotation() const
 {
     return m_displayRotation;
 }
 
-pgd::Vector3 FacetedObject::GetDisplayScale() const
+const pgd::Vector3 &FacetedObject::GetDisplayScale() const
 {
     return m_displayScale;
 }
@@ -2348,6 +2348,18 @@ void FacetedObject::SetDisplayScale(double x, double y, double z)
     m_displayScale[0] = x;
     m_displayScale[1] = y;
     m_displayScale[2] = z;
+    m_modelValid = false;
+}
+
+void FacetedObject::SetDisplayPosition(const pgd::Vector3 &displayPosition)
+{
+    m_displayPosition = displayPosition;
+    m_modelValid = false;
+}
+
+void FacetedObject::SetDisplayScale(const pgd::Vector3 &displayScale)
+{
+    m_displayScale = displayScale;
     m_modelValid = false;
 }
 

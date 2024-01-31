@@ -252,7 +252,7 @@ public:
              e21, e22, e23,
              e31, e32, e33; // in memory as row major
 
-    Matrix3x3(void);
+    Matrix3x3(void); // initialises elements to zero
     Matrix3x3(bool identity); // initialises to identity, or does not intialise at all if false
     Matrix3x3(double r1c1, double r1c2, double r1c3,
               double r2c1, double r2c2, double r2c3,
