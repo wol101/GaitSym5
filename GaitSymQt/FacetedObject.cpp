@@ -37,9 +37,7 @@
 #include <cmath>
 #include <stdlib.h>
 #include <string.h>
-#include <cfloat>
 #include <vector>
-#include <list>
 #include <string>
 #include <sstream>
 #include <cstdlib>
@@ -2387,16 +2385,15 @@ const QMatrix4x4 &FacetedObject::model()
     {
         m_modelValid = true;
         QMatrix4x4 translationRotation(
-                    static_cast<float>(m_displayRotation[0]), static_cast<float>(m_displayRotation[1]), static_cast<float>(m_displayRotation[2]),  static_cast<float>(m_displayPosition[0]),
-                    static_cast<float>(m_displayRotation[4]), static_cast<float>(m_displayRotation[5]), static_cast<float>(m_displayRotation[6]),  static_cast<float>(m_displayPosition[1]),
-                    static_cast<float>(m_displayRotation[8]), static_cast<float>(m_displayRotation[9]), static_cast<float>(m_displayRotation[10]), static_cast<float>(m_displayPosition[2]),
-                    0,                                        0,                                        0,                                         1);
+            static_cast<float>(m_displayRotation.e11), static_cast<float>(m_displayRotation.e12), static_cast<float>(m_displayRotation.e13), static_cast<float>(m_displayPosition.x),
+            static_cast<float>(m_displayRotation.e21), static_cast<float>(m_displayRotation.e22), static_cast<float>(m_displayRotation.e23), static_cast<float>(m_displayPosition.y),
+            static_cast<float>(m_displayRotation.e31), static_cast<float>(m_displayRotation.e32), static_cast<float>(m_displayRotation.e33), static_cast<float>(m_displayPosition.z),
+            0,                                        0,                                        0,                                         1);
         QMatrix4x4 scale(
-                    static_cast<float>(m_displayScale[0]),  0,                                      0,                                      0,
-                    0,                                      static_cast<float>(m_displayScale[1]),  0,                                      0,
-                    0,                                      0,                                      static_cast<float>(m_displayScale[2]),  0,
-                    0,                                      0,                                      0,                                      1);
-        // ModelMatrix = Translation * Rotation * Scale
+            static_cast<float>(m_displayScale.x), 0,                                    0,                                    0,
+            0,                                    static_cast<float>(m_displayScale.y), 0,                                    0,
+            0,                                    0,                                    static_cast<float>(m_displayScale.z), 0,
+            0,                                    0,                                    0,                                    1);
         m_model = translationRotation * scale;
     }
     return m_model;

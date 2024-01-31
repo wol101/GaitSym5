@@ -248,7 +248,9 @@ void SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3
 class Matrix3x3 {
 public:
     // elements eij: i -> row, j -> column
-    double   e11, e12, e13, e21, e22, e23, e31, e32, e33; // in memory as row major
+    double   e11, e12, e13,
+             e21, e22, e23,
+             e31, e32, e33; // in memory as row major
 
     Matrix3x3(void);
     Matrix3x3(bool identity); // initialises to identity, or does not intialise at all if false
