@@ -25,7 +25,6 @@
 #include <QDebug>
 
 #include <QOpenGLFunctions_3_3_Core>
-#include <QOpenGLTexture>
 #if QT_VERSION >= 0x060000
 #include <QOpenGLVersionFunctionsFactory>
 #endif
@@ -47,11 +46,6 @@ using namespace std::literals::string_literals;
 
 // create object
 FacetedObject::FacetedObject()
-{
-}
-
-// destroy object
-FacetedObject::~FacetedObject()
 {
 }
 

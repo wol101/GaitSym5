@@ -21,7 +21,6 @@
 #include "DataTargetVector.h"
 #include "DataTargetMarkerCompare.h"
 #include "DataFile.h"
-#include "PGDMath.h"
 #include "Body.h"
 #include "HingeJoint.h"
 #include "BallJoint.h"

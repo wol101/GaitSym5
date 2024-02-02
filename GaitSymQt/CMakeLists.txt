@@ -1004,6 +1004,7 @@ set(PROJECT_SOURCES
     ../src/ObjectiveMain.cpp
     ../src/ParseXML.cpp
     ../src/PGDMath.cpp
+    ../src/PhysicsEngine.cpp
     ../src/PIDErrorInController.cpp
     ../src/PIDMuscleLengthController.cpp
     ../src/PlaneGeom.cpp
@@ -1141,6 +1142,7 @@ set(PROJECT_SOURCES
     ../src/NPointStrap.h
     ../src/ObjectiveMain.h
     ../src/ParseXML.h
+    ../src/PhysicsEngine.h
     ../src/PGDMath.h
     ../src/PIDErrorInController.h
     ../src/PIDMuscleLengthController.h

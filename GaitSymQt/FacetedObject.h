@@ -16,24 +16,18 @@
 #include <QColor>
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
+#include <QOpenGLTexture>
 
 class SimulationWidget;
 class DataFile;
 class TrimeshGeom;
-class QOpenGLTexture;
 
 class FacetedObject
 {
 public:
     FacetedObject();
-    virtual ~FacetedObject();
 
     virtual void Draw();
-    // destructor is needed to make sure it is virtual in subclasses but I don't need the rest of the rule of 5
-    FacetedObject(const FacetedObject&) = delete;
-    FacetedObject(FacetedObject&&) = delete;
-    FacetedObject& operator=(const FacetedObject&) = delete;
-    FacetedObject& operator=(FacetedObject&&) = delete;
 
     struct OBJMaterial
     {
