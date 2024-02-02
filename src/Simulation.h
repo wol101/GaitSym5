@@ -40,6 +40,7 @@ class FixedJoint;
 class SimulationWindow;
 class MainWindow;
 class Drivable;
+class PhysicsEngine;
 
 class Simulation : NamedObject
 {
@@ -200,6 +201,8 @@ private:
     std::map<std::string, std::ofstream> m_dumpFileStreams;
     ErrorHandler m_errorHandler;
 
+    // physics engine
+    std::unique_ptr<PhysicsEngine> m_physicsEngine;
 };
 
 
