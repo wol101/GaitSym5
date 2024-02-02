@@ -10,7 +10,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "MainWindowActions.h"
-#include "ViewControlWidget.h"
 #include "Preferences.h"
 #include "Simulation.h"
 #include "Body.h"
@@ -44,7 +43,6 @@
 #include <QtGlobal>
 #include <QWindow>
 
-#include <algorithm>
 #include <sstream>
 
 using namespace std::literals::string_literals;

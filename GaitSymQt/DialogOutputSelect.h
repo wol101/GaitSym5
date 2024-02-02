@@ -76,7 +76,6 @@ public slots:
     void menuRequestDataTarget(QPoint);
     void menuRequestReporter(QPoint);
     void menuRequestController(QPoint);
-    void menuRequestWarehouse(QPoint);
     void acceptButtonClicked();
     void rejectButtonClicked();
 
@@ -94,7 +93,6 @@ private:
     QListWidget *m_listWidgetMuscle = nullptr;
     QListWidget *m_listWidgetReporter = nullptr;
     QListWidget *m_listWidgetController = nullptr;
-    QListWidget *m_listWidgetWarehouse = nullptr;
 
     QGridLayout *gridLayout = nullptr;
     QDialogButtonBox *buttonBox = nullptr;

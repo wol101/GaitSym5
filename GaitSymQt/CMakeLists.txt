@@ -1003,7 +1003,6 @@ set(PROJECT_SOURCES
     ../src/NPointStrap.cpp
     ../src/ObjectiveMain.cpp
     ../src/ParseXML.cpp
-    ../src/PCA.cpp
     ../src/PGDMath.cpp
     ../src/PIDErrorInController.cpp
     ../src/PIDMuscleLengthController.cpp
@@ -1142,7 +1141,6 @@ set(PROJECT_SOURCES
     ../src/NPointStrap.h
     ../src/ObjectiveMain.h
     ../src/ParseXML.h
-    ../src/PCA.h
     ../src/PGDMath.h
     ../src/PIDErrorInController.h
     ../src/PIDMuscleLengthController.h

@@ -27,12 +27,6 @@ DialogGlobal::DialogGlobal(QWidget *parent) :
 #endif
 
     initialiseDefaultGlobal();
-    ui->lineEditCurrentWarehouseFile->setPathType(LineEditPath::FileForOpen);
-
-    ui->groupBoxWarehouse->setHidden(true);
-#ifdef EXPERIMENTAL
-    ui->groupBoxWarehouse->setHidden(false);
-#endif
 
     connect(ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));
@@ -58,18 +52,14 @@ void DialogGlobal::accept() // this catches OK and return/enter
     m_outputGlobal->setDistanceTravelledBodyIDName(ui->comboBoxDistanceTravelledBodyIDName->currentText().toStdString());
     m_outputGlobal->setContactMaxCorrectingVel(ui->lineEditContactMaxCorrectingVel->value());
     m_outputGlobal->setContactSurfaceLayer(ui->lineEditContactSurfaceLayer->value());
-    m_outputGlobal->setWarehouseFailDistanceAbort(ui->lineEditFailDistanceAbort->value());
     m_outputGlobal->setGravity(ui->lineEditGravityX->value(), ui->lineEditGravityY->value(), ui->lineEditGravityZ->value());
     m_outputGlobal->setMechanicalEnergyLimit(ui->lineEditMechanicalEnergyLimit->value());
     m_outputGlobal->setMetabolicEnergyLimit(ui->lineEditMetabolicEnergyLimit->value());
     m_outputGlobal->setStepSize(ui->lineEditStepSize->value());
     m_outputGlobal->setTimeLimit(ui->lineEditTimeLimit->value());
     m_outputGlobal->setNumericalErrorsScore(ui->lineEditNumericalErrorScore->value());
-    m_outputGlobal->setWarehouseUnitIncreaseDistanceThreshold(ui->lineEditUnitIncreaseDistanceThreshold->value());
-    m_outputGlobal->setWarehouseDecreaseThresholdFactor(ui->lineEditWarehouseDecreaseThresholdFactor->value());
     m_outputGlobal->setLinearDamping(ui->lineEditLinearDamping->value());
     m_outputGlobal->setAngularDamping(ui->lineEditAngularDamping->value());
-    m_outputGlobal->setCurrentWarehouseFile(ui->lineEditCurrentWarehouseFile->text().toStdString());
     m_outputGlobal->setAllowConnectedCollisions(ui->checkBoxAllowConnectedCollisions->isChecked());
     m_outputGlobal->setAllowInternalCollisions(ui->checkBoxAllowInternalCollisions->isChecked());
     m_outputGlobal->setPermittedNumericalErrors(ui->spinBoxPermittedErrorCount->value());
@@ -186,7 +176,6 @@ void DialogGlobal::updateUI(const Global *globalPtr)
     ui->lineEditContactMaxCorrectingVel->setValue(globalPtr->ContactMaxCorrectingVel());
     ui->lineEditERP->setValue(globalPtr->ERP());
     ui->lineEditContactSurfaceLayer->setValue(globalPtr->ContactSurfaceLayer());
-    ui->lineEditFailDistanceAbort->setValue(globalPtr->WarehouseFailDistanceAbort());
     ui->lineEditGravityX->setValue(globalPtr->Gravity().x);
     ui->lineEditGravityY->setValue(globalPtr->Gravity().y);
     ui->lineEditGravityZ->setValue(globalPtr->Gravity().z);
@@ -195,11 +184,8 @@ void DialogGlobal::updateUI(const Global *globalPtr)
     ui->lineEditStepSize->setValue(globalPtr->StepSize());
     ui->lineEditTimeLimit->setValue(globalPtr->TimeLimit());
     ui->lineEditNumericalErrorScore->setValue(globalPtr->NumericalErrorsScore());
-    ui->lineEditUnitIncreaseDistanceThreshold->setValue(globalPtr->WarehouseUnitIncreaseDistanceThreshold());
-    ui->lineEditWarehouseDecreaseThresholdFactor->setValue(globalPtr->WarehouseDecreaseThresholdFactor());
     ui->lineEditLinearDamping->setValue(globalPtr->LinearDamping());
     ui->lineEditAngularDamping->setValue(globalPtr->AngularDamping());
-    ui->lineEditCurrentWarehouseFile->setText(QString::fromStdString(globalPtr->CurrentWarehouseFile()));
     ui->checkBoxAllowConnectedCollisions->setChecked(globalPtr->AllowConnectedCollisions());
     ui->checkBoxAllowInternalCollisions->setChecked(globalPtr->AllowInternalCollisions());
     ui->spinBoxPermittedErrorCount->setValue(globalPtr->PermittedNumericalErrors());
@@ -361,13 +347,9 @@ void DialogGlobal::initialiseDefaultGlobal()
     m_defaultGlobal.setSpringConstant(Preferences::valueDouble("GlobalDefaultSpringConstant"));
     m_defaultGlobal.setStepSize(Preferences::valueDouble("GlobalDefaultStepSize"));
     m_defaultGlobal.setTimeLimit(Preferences::valueDouble("GlobalDefaultTimeLimit"));
-    m_defaultGlobal.setWarehouseDecreaseThresholdFactor(Preferences::valueDouble("GlobalDefaultWarehouseDecreaseThresholdFactor"));
-    m_defaultGlobal.setWarehouseFailDistanceAbort(Preferences::valueDouble("GlobalDefaultWarehouseFailDistanceAbort"));
-    m_defaultGlobal.setWarehouseUnitIncreaseDistanceThreshold(Preferences::valueDouble("GlobalDefaultWarehouseUnitIncreaseDistanceThreshold"));
     m_defaultGlobal.setLinearDamping(Preferences::valueDouble("GlobalDefaultLinearDamping"));
     m_defaultGlobal.setAngularDamping(Preferences::valueDouble("GlobalDefaultAngularDamping"));
     m_defaultGlobal.setNumericalErrorsScore(Preferences::valueDouble("GlobalDefaultNumericalErrorsScore"));
-    m_defaultGlobal.setCurrentWarehouseFile(Preferences::valueQString("GlobalDefaultCurrentWarehouseFile").toStdString());
     m_defaultGlobal.setDistanceTravelledBodyIDName(Preferences::valueQString("GlobalDefaultDistanceTravelledBodyIDName").toStdString());
 
     m_defaultGlobal.MeshSearchPath()->clear();

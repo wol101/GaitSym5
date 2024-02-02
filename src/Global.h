@@ -74,18 +74,6 @@ public:
     double TimeLimit() const;
     void setTimeLimit(double TimeLimit);
 
-    double WarehouseDecreaseThresholdFactor() const;
-    void setWarehouseDecreaseThresholdFactor(double WarehouseDecreaseThresholdFactor);
-
-    double WarehouseFailDistanceAbort() const;
-    void setWarehouseFailDistanceAbort(double WarehouseFailDistanceAbort);
-
-    double WarehouseUnitIncreaseDistanceThreshold() const;
-    void setWarehouseUnitIncreaseDistanceThreshold(double WarehouseUnitIncreaseDistanceThreshold);
-
-    std::string CurrentWarehouseFile() const;
-    void setCurrentWarehouseFile(const std::string &CurrentWarehouseFile);
-
     std::string DistanceTravelledBodyIDName() const;
     void setDistanceTravelledBodyIDName(const std::string &DistanceTravelledBodyIDName);
 
@@ -134,13 +122,9 @@ private:
     double m_SpringConstant = 0;
     double m_StepSize = 1e-4;
     double m_TimeLimit = 10;
-    double m_WarehouseDecreaseThresholdFactor = 0.5;
-    double m_WarehouseFailDistanceAbort = 0.5;
-    double m_WarehouseUnitIncreaseDistanceThreshold = 0.5;
     double m_LinearDamping = 0;
     double m_AngularDamping = 0;
     double m_NumericalErrorsScore = 0;
-    std::string m_CurrentWarehouseFile;
     std::string m_DistanceTravelledBodyIDName;
     std::vector<std::string> m_MeshSearchPath = {"."s};
 };

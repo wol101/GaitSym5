@@ -39,15 +39,11 @@ ObjectiveMain::ObjectiveMain(int argc, const char **argv)
     m_argparse.Initialise(argc, argv, "ObjectiveMain command line interface to GaitSym2019 build "s + compileDate + " "s + compileTime, 0, 0);
     m_argparse.AddArgument("-sc"s, "--score"s, "Score filename"s, ""s, 1, false, ArgParse::String);
     m_argparse.AddArgument("-co"s, "--config"s, "Config filename"s, ""s, 1, true, ArgParse::String);
-    m_argparse.AddArgument("-ow"s, "--outputWarehouse"s, "Output warehouse filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-iw"s, "--inputWarehouse"s, "Input warehouse filename"s, ""s, 1, false, ArgParse::String);
     m_argparse.AddArgument("-ms"s, "--modelState"s, "Model state filename"s, ""s, 1, false, ArgParse::String);
     m_argparse.AddArgument("-rt"s, "--runTimeLimit"s, "Run time limit"s, ""s, 1, false, ArgParse::Double);
     m_argparse.AddArgument("-st"s, "--simulationTimeLimit"s, "Simulation time limit"s, ""s, 1, false, ArgParse::Double);
     m_argparse.AddArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
     m_argparse.AddArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-mw"s, "--outputModelStateAtWarehouseDistance"s, "Output model state at this warehouse distance"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-wd"s, "--warehouseFailDistanceAbort"s, "Abort the simulation when the warehouse distance fails"s);
     m_argparse.AddArgument("-de"s, "--debug"s, "Turn debugging on"s);
 
     m_argparse.AddArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
@@ -63,14 +59,10 @@ ObjectiveMain::ObjectiveMain(int argc, const char **argv)
     m_argparse.Get("--runTimeLimit"s, &m_runTimeLimit);
     m_argparse.Get("--outputModelStateAtTime"s, &m_outputModelStateAtTime);
     m_argparse.Get("--outputModelStateAtCycle"s, &m_outputModelStateAtCycle);
-    m_argparse.Get("--outputModelStateAtWarehouseDistance"s, &m_outputModelStateAtWarehouseDistance);
     m_argparse.Get("--simulationTimeLimit"s, &m_simulationTimeLimit);
-    m_argparse.Get("--warehouseFailDistanceAbort"s, &m_warehouseFailDistanceAbort);
     m_argparse.Get("--config"s, &m_configFilename);
     m_argparse.Get("--score"s, &m_scoreFilename);
     m_argparse.Get("--modelState"s, &m_outputModelStateFilename);
-    m_argparse.Get("--inputWarehouse"s, &m_inputWarehouseFilename);
-    m_argparse.Get("--outputWarehouse"s, &m_outputWarehouseFilename);
     m_argparse.Get("--debug"s, &m_debug);
 }
 

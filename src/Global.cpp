@@ -261,18 +261,6 @@ std::string *Global::createFromAttributes()
     if (findAttribute("PermittedNumericalErrors", &buf)) m_PermittedNumericalErrors = GSUtil::Int(buf);
     if (findAttribute("NumericalErrorsScore", &buf)) m_NumericalErrorsScore = GSUtil::Double(buf);
 
-    findAttribute("WarehouseFailDistanceAbort", &buf);
-    if (buf.size()) m_WarehouseFailDistanceAbort = GSUtil::Double(buf);
-
-    findAttribute("WarehouseUnitIncreaseDistanceThreshold", &buf);
-    if (buf.size()) m_WarehouseUnitIncreaseDistanceThreshold = GSUtil::Double(buf);
-
-    findAttribute("WarehouseDecreaseThresholdFactor", &buf);
-    if (buf.size()) m_WarehouseDecreaseThresholdFactor = GSUtil::Double(buf);
-
-    findAttribute("CurrentWarehouse", &buf);
-    if (buf.size()) m_CurrentWarehouseFile = buf;
-
     m_MeshSearchPath.clear();
     findAttribute("MeshSearchPath", &buf);
     std::vector<std::string> encodedMeshSearchPath;
@@ -318,10 +306,6 @@ void Global::appendToAttributes()
     setAttribute("TimeLimit", *GSUtil::ToString(m_TimeLimit, &buf));
     setAttribute("NumericalErrorsScore", *GSUtil::ToString(m_NumericalErrorsScore, &buf));
     setAttribute("PermittedNumericalErrors", *GSUtil::ToString(m_PermittedNumericalErrors, &buf));
-    setAttribute("CurrentWarehouse", m_CurrentWarehouseFile);
-    setAttribute("WarehouseDecreaseThresholdFactor", *GSUtil::ToString(m_WarehouseDecreaseThresholdFactor, &buf));
-    setAttribute("WarehouseFailDistanceAbort", *GSUtil::ToString(m_WarehouseFailDistanceAbort, &buf));
-    setAttribute("WarehouseUnitIncreaseDistanceThreshold", *GSUtil::ToString(m_WarehouseUnitIncreaseDistanceThreshold, &buf));
 
     std::vector<std::string> encodedMeshSearchPath;
     for (size_t i = 0; i < m_MeshSearchPath.size(); i++) encodedMeshSearchPath.push_back(percentEncode(m_MeshSearchPath[i], "%:"s));
@@ -569,46 +553,6 @@ double Global::TimeLimit() const
 void Global::setTimeLimit(double TimeLimit)
 {
     m_TimeLimit = TimeLimit;
-}
-
-double Global::WarehouseDecreaseThresholdFactor() const
-{
-    return m_WarehouseDecreaseThresholdFactor;
-}
-
-void Global::setWarehouseDecreaseThresholdFactor(double WarehouseDecreaseThresholdFactor)
-{
-    m_WarehouseDecreaseThresholdFactor = WarehouseDecreaseThresholdFactor;
-}
-
-double Global::WarehouseFailDistanceAbort() const
-{
-    return m_WarehouseFailDistanceAbort;
-}
-
-void Global::setWarehouseFailDistanceAbort(double WarehouseFailDistanceAbort)
-{
-    m_WarehouseFailDistanceAbort = WarehouseFailDistanceAbort;
-}
-
-double Global::WarehouseUnitIncreaseDistanceThreshold() const
-{
-    return m_WarehouseUnitIncreaseDistanceThreshold;
-}
-
-void Global::setWarehouseUnitIncreaseDistanceThreshold(double WarehouseUnitIncreaseDistanceThreshold)
-{
-    m_WarehouseUnitIncreaseDistanceThreshold = WarehouseUnitIncreaseDistanceThreshold;
-}
-
-std::string Global::CurrentWarehouseFile() const
-{
-    return m_CurrentWarehouseFile;
-}
-
-void Global::setCurrentWarehouseFile(const std::string &CurrentWarehouse)
-{
-    m_CurrentWarehouseFile = CurrentWarehouse;
 }
 
 std::string Global::DistanceTravelledBodyIDName() const

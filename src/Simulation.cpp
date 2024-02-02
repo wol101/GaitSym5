@@ -1156,7 +1156,6 @@ std::vector<NamedObject *> Simulation::GetObjectList() const
     // straps depend on markers
     // muscles depend on straps
     // fluid sacs depend on markers
-    // warehouse depends on bodies (and maybe markers)
     // controllers depend on muscles and other drivables
     // drivers depend on controllers, muscles and other drivables
     // data targets can depend on almost anything

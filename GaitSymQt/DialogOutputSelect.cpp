@@ -572,39 +572,6 @@ void DialogOutputSelect::menuRequestController(QPoint p)
     }
 }
 
-void DialogOutputSelect::menuRequestWarehouse(QPoint p)
-{
-    QMenu menu(this);
-    menu.addAction(tr("All On"));
-    menu.addAction(tr("All Off"));
-
-    QPoint gp = m_listWidgetWarehouse->mapToGlobal(p);
-
-    QAction *action = menu.exec(gp);
-    QListWidgetItem *item;
-    Qt::CheckState state;
-    int i;
-    bool dump;
-    if (action)
-    {
-        if (action->text() == tr("All On"))
-        {
-            state = Qt::Checked;
-            dump = true;
-        }
-        else
-        {
-            state = Qt::Unchecked;
-            dump = false;
-        }
-        for (i = 0; i < m_listWidgetWarehouse->count(); i++)
-        {
-            item = m_listWidgetWarehouse->item(i);
-            item->setCheckState(state);
-        }
-    }
-}
-
 void DialogOutputSelect::acceptButtonClicked()
 {
     Q_ASSERT_X(m_simulation, "DialogOutputSelect::acceptButtonClicked", "m_simulation undefined");

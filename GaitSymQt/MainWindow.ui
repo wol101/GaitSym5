@@ -57,8 +57,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>183</width>
-              <height>754</height>
+              <width>157</width>
+              <height>688</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
@@ -859,8 +859,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>358</width>
-              <height>474</height>
+              <width>350</width>
+              <height>436</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_7">
@@ -966,8 +966,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1137</width>
-          <height>306</height>
+          <width>1143</width>
+          <height>361</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_11">
@@ -1033,7 +1033,7 @@
      <x>0</x>
      <y>0</y>
      <width>1157</width>
-     <height>22</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -1082,10 +1082,6 @@
     <addaction name="actionSnapshot"/>
     <addaction name="separator"/>
     <addaction name="actionOutput"/>
-    <addaction name="separator"/>
-    <addaction name="actionStartWarehouseExport"/>
-    <addaction name="actionStopWarehouseExport"/>
-    <addaction name="actionImportWarehouse"/>
     <addaction name="separator"/>
     <addaction name="actionSaveOBJSnapshot"/>
     <addaction name="actionStartOBJSequence"/>
@@ -1396,21 +1392,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
-   </property>
-  </action>
-  <action name="actionStartWarehouseExport">
-   <property name="text">
-    <string>Start &amp;Warehouse Export...</string>
-   </property>
-  </action>
-  <action name="actionStopWarehouseExport">
-   <property name="text">
-    <string>Sto&amp;p Warehouse Export</string>
-   </property>
-  </action>
-  <action name="actionImportWarehouse">
-   <property name="text">
-    <string>&amp;Import Warehouse...</string>
    </property>
   </action>
   <action name="actionViewRight">
