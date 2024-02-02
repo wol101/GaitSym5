@@ -1002,6 +1002,7 @@ set(PROJECT_SOURCES
     ../src/NamedObject.cpp
     ../src/NPointStrap.cpp
     ../src/ObjectiveMain.cpp
+    ../src/ODEPhysicsEngine.cpp
     ../src/ParseXML.cpp
     ../src/PGDMath.cpp
     ../src/PhysicsEngine.cpp
@@ -1141,6 +1142,7 @@ set(PROJECT_SOURCES
     ../src/NamedObject.h
     ../src/NPointStrap.h
     ../src/ObjectiveMain.h
+    ../src/ODEPhysicsEngine.h
     ../src/ParseXML.h
     ../src/PhysicsEngine.h
     ../src/PGDMath.h
