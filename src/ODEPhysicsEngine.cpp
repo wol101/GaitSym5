@@ -1,5 +1,14 @@
 #include "ODEPhysicsEngine.h"
 
+#include "Simulation.h"
+#include "Driver.h"
+#include "Controller.h"
+#include "Muscle.h"
+#include "DampedSpringMuscle.h"
+#include "FluidSac.h"
+#include "Body.h"
+#include "Joint.h"
+
 ODEPhysicsEngine::ODEPhysicsEngine()
 {
 }
@@ -47,15 +56,15 @@ int ODEPhysicsEngine::Step()
     m_ContactList.clear();
     // for (auto &&geomIter : m_GeomList) geomIter.second->ClearContacts();
     dSpaceCollide(m_SpaceID, this, &NearCallback);
-/*
+
     // update the drivers
-    for (auto &&it : m_DriverList)
+    for (auto &&it : *simulation()->GetDriverList())
     {
         it.second->Update();
         it.second->SendData();
     }
     // and the controllers (which are drivers too probably)
-    for (auto &&it : m_ControllerList)
+    for (auto &&it : *simulation()->GetControllerList())
     {
         auto driver = dynamic_cast<Driver *>(it.second.get());
         if (driver)
@@ -63,12 +72,12 @@ int ODEPhysicsEngine::Step()
             driver->Update();
             driver->SendData();
         }
-        if (it.second->lastStepCount() != m_StepCount)
+        if (it.second->lastStepCount() != simulation()->GetStepCount())
             std::cerr << "Warning: " << it.first << " controller not updated\n"; // currently cannot stack controllers although this is fixable
     }
 
     // update the muscles
-    for (auto iter1 = m_MuscleList.begin(); iter1 != m_MuscleList.end(); /* no increment */)
+    for (auto iter1 = simulation()->GetMuscleList()->begin(); iter1 != simulation()->GetMuscleList()->end(); /* no increment */)
     {
         iter1->second->CalculateStrap();
         iter1->second->SetActivation();
@@ -79,7 +88,7 @@ int ODEPhysicsEngine::Step()
         {
             if (dampedSpringMuscle->ShouldBreak())
             {
-                iter1 = m_MuscleList.erase(iter1); // erase returns the next iterator [but m_MuscleList.erase(iter1++) would also work and is compatible with older C++ compilers]
+                iter1 = simulation()->GetMuscleList()->erase(iter1); // erase returns the next iterator [but m_MuscleList.erase(iter1++) would also work and is compatible with older C++ compilers]
                 continue;
             }
         }
@@ -93,7 +102,7 @@ int ODEPhysicsEngine::Step()
         {
             PointForce *pointForce = (*pointForceList)[i].get();
             if (pointForce->body)
-                dBodyAddForceAtPos(pointForce->body->GetBodyID(),
+                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pointForce->body->data()->at(0)),
                                    pointForce->vector[0] * tension, pointForce->vector[1] * tension, pointForce->vector[2] * tension,
                                    pointForce->point[0], pointForce->point[1], pointForce->point[2]);
 #ifdef DEBUG_CHECK_FORCES
@@ -109,10 +118,10 @@ int ODEPhysicsEngine::Step()
     }
 
     // update the joints (needed for motors, end stops and stress calculations)
-    for (auto &&jointIter : m_JointList) jointIter.second->Update();
+    for (auto &&jointIter : *simulation()->GetJointList()) { jointIter.second->Update(); }
 
     // update the fluid sacs
-    for (auto fsIter = m_FluidSacList.begin(); fsIter != m_FluidSacList.end(); fsIter++)
+    for (auto fsIter = simulation()->GetFluidSacList()->begin(); fsIter != simulation()->GetFluidSacList()->end(); fsIter++)
     {
         fsIter->second->calculateVolume();
         fsIter->second->calculatePressure();
@@ -120,27 +129,27 @@ int ODEPhysicsEngine::Step()
         for (size_t i = 0; i < fsIter->second->pointForceList().size(); i++)
         {
             const PointForce *pf = &fsIter->second->pointForceList().at(i);
-            dBodyAddForceAtPos(pf->body->GetBodyID(), pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
+            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()->at(0)), pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
         }
     }
 
     // update the bodies (needed for drag calculations)
-    for (auto &&bodyIter : m_BodyList) bodyIter.second->ComputeDrag();
+    for (auto &&bodyIter : *simulation()->GetBodyList()) { bodyIter.second->ComputeDrag(); }
 
     // run the simulation
-    switch (m_global->stepType())
+    switch (simulation()->GetGlobal()->stepType())
     {
     case Global::World:
-        dWorldStep(m_WorldID, m_global->StepSize());
+        dWorldStep(m_WorldID, simulation()->GetGlobal()->StepSize());
         break;
 
     case Global::Quick:
-        dWorldQuickStep(m_WorldID, m_global->StepSize());
+        dWorldQuickStep(m_WorldID, simulation()->GetGlobal()->StepSize());
         break;
     }
 
     // test for penalties
-    if (m_errorHandler.IsMessage()) m_KinematicMatchFitness += m_global->NumericalErrorsScore();
+    if (m_errorHandler.IsMessage()) m_KinematicMatchFitness += simulation()->GetGlobal()->NumericalErrorsScore();
 
     // calculate the energies
     for (auto &&iter1 : m_MuscleList)

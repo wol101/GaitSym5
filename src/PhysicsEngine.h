@@ -18,6 +18,9 @@ public:
     virtual int Initialise(Simulation *simulation);
     virtual int Step() = 0;
 
+    Simulation *simulation() const;
+    void setSimulation(Simulation *newSimulation);
+
 private:
     Simulation *m_simulation = nullptr;
 };

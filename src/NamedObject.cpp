@@ -269,6 +269,16 @@ void NamedObject::setFirstDump(bool firstDump)
     m_firstDump = firstDump;
 }
 
+const std::vector<void *> *NamedObject::constData() const
+{
+    return &m_data;
+}
+
+std::vector<void *> *NamedObject::data()
+{
+    return &m_data;
+}
+
 bool NamedObject::redraw() const
 {
     return m_redraw;
