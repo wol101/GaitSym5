@@ -109,6 +109,10 @@ public:
     static std::string dumpHelper(std::initializer_list<std::string> values);
     static std::string dumpHelper(std::initializer_list<double> values);
 
+    void *data() const;
+
+    void setData(void *newData);
+
 protected:
     std::string *findAttribute(const std::string &name, std::string *attributeValue);
     void setAttribute(const std::string &name, const std::string &attributeValue);
@@ -139,6 +143,8 @@ private:
     std::map<std::string, std::string> m_attributeMap;
     std::string m_tag;
     std::vector<NamedObject *> m_upstreamObjects;
+
+    void *m_data = nullptr;
 };
 
 #endif

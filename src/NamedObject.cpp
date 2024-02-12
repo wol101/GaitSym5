@@ -269,6 +269,16 @@ void NamedObject::setFirstDump(bool firstDump)
     m_firstDump = firstDump;
 }
 
+void NamedObject::setData(void *newData)
+{
+    m_data = newData;
+}
+
+void *NamedObject::data() const
+{
+    return m_data;
+}
+
 bool NamedObject::redraw() const
 {
     return m_redraw;

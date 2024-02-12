@@ -5,6 +5,7 @@
 #include "Muscle.h"
 #include "FluidSac.h"
 #include "Geom.h"
+#include "HingeJoint.h"
 
 #define MAX_CONTACTS 64
 
@@ -45,6 +46,42 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     dSetErrorHandler(c_func);
     dSetDebugHandler(c_func);
 
+    // first create the bodies
+    for (auto &&iter :  *simulation->GetBodyList())
+    {
+        dBodyID bodyID = dBodyCreate(m_worldID);
+        dBodySetData(bodyID, &iter.second);
+        iter.second->setData(bodyID);
+    }
+
+    // then the joints
+    for (auto &&iter :  *simulation->GetJointList())
+    {
+        while (true)
+        {
+            HingeJoint *hingeJoint = dynamic_cast<HingeJoint>(iter.second);
+            if (hingeJoint)
+            {
+                setJointID(dJointCreateHinge(worldID, nullptr));
+                dJointSetData(JointID(), this);
+                dJointSetFeedback(JointID(), JointFeedback());
+                dJointSetHingeAnchor(JointID(), x, y, z);
+                dJointSetHingeAxis(JointID(), v[0], v[1], v[2]);
+                dJointSetHingeParam(JointID(), dParamLoStop, loStop);
+                dJointSetHingeParam(JointID(), dParamHiStop, hiStop);
+                dJointSetHingeParam(JointID(), dParamLoStop, loStop);
+                dJointSetHingeParam(JointID(), dParamHiStop, hiStop);
+                break;
+            }
+
+        }
+    }
+
+    // then the geoms
+    for (auto &&iter :  *simulation->GetJointList())
+    {
+    }
+
     return 0;
 }
 
@@ -65,7 +102,7 @@ int ODEPhysicsEngine::Step()
         {
             PointForce *pf = (*pointForceList)[i].get();
             if (pf->body)
-                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()->at(0)),
+                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
                                    pf->vector[0] * tension, pf->vector[1] * tension, pf->vector[2] * tension,
                                    pf->point[0], pf->point[1], pf->point[2]);
         }
@@ -77,7 +114,7 @@ int ODEPhysicsEngine::Step()
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
             const PointForce *pf = &iter.second->pointForceList().at(i);
-            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()->at(0)),
+            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
                                pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
         }
     }
@@ -194,22 +231,15 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
             dJointID c;
             if (g1->GetAdhesion() == false && g2->GetAdhesion() == false)
             {
-                c = dJointCreateContact(reinterpret_cast<ODEPhysicsEngine *>(s->physicsEngine())->worldID(), reinterpret_cast<ODEPhysicsEngine *>(s->physicsEngine())->contactGroup(), &contact[i]);
+                c = dJointCreateContact(s->worldID(), s->contactGroup(), &contact[i]);
                 dJointAttach(c, b1, b2);
                 std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
                 myContact->setSimulation(s->simulation());
 #ifdef FIX_ME
                 dJointSetFeedback(c, myContact->GetJointFeedback());
                 myContact->SetJointID(c);
-#endif
                 std::copy_n(contact[i].geom.pos, dV3E__MAX, myContact->GetContactPosition());
-                //                // only add the contact information once
-                //                // and add it to the non-environment geom
-                //                if (g1->GetGeomLocation() == Geom::environment)
-                //                    g2->AddContact(myContact.get());
-                //                else
-                //                    g1->AddContact(myContact.get());
-                // add the contact information to both geoms
+#endif
                 g1->AddContact(myContact.get());
                 g2->AddContact(myContact.get());
                 s->contactList()->push_back(std::move(myContact));
