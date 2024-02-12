@@ -1,13 +1,12 @@
 #include "ODEPhysicsEngine.h"
 
 #include "Simulation.h"
-#include "Driver.h"
-#include "Controller.h"
-#include "Muscle.h"
-#include "DampedSpringMuscle.h"
-#include "FluidSac.h"
 #include "Body.h"
-#include "Joint.h"
+#include "Muscle.h"
+#include "FluidSac.h"
+#include "Geom.h"
+
+#define MAX_CONTACTS 64
 
 ODEPhysicsEngine::ODEPhysicsEngine()
 {
@@ -19,9 +18,9 @@ ODEPhysicsEngine::~ODEPhysicsEngine()
     dSetMessageHandler(nullptr);
     dSetErrorHandler(nullptr);
     dSetDebugHandler(nullptr);
-    if (m_ContactGroup) dJointGroupDestroy(m_ContactGroup);
-    if (m_SpaceID) dSpaceDestroy(m_SpaceID);
-    if (m_WorldID) dWorldDestroy(m_WorldID);
+    if (m_contactGroup) dJointGroupDestroy(m_contactGroup);
+    if (m_spaceID) dSpaceDestroy(m_spaceID);
+    if (m_worldID) dWorldDestroy(m_worldID);
     dCloseODE();
 }
 
@@ -31,9 +30,9 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
 
     // initialise the ODE world
     dInitODE();
-    m_WorldID = dWorldCreate();
-    m_SpaceID = dHashSpaceCreate(nullptr); // FIX ME hash space is a compromise but this should probably be user controlled
-    m_ContactGroup = dJointGroupCreate(0);
+    m_worldID = dWorldCreate();
+    m_spaceID = dHashSpaceCreate(nullptr); // FIX ME hash space is a compromise but this should probably be user controlled
+    m_contactGroup = dJointGroupCreate(0);
 
     // glue for calling a C++ callback
     // Store member function and the instance using std::bind.
@@ -52,133 +51,54 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
 int ODEPhysicsEngine::Step()
 {
     // check collisions first
-    dJointGroupEmpty(m_ContactGroup);
-    m_ContactList.clear();
+    dJointGroupEmpty(m_contactGroup);
+    m_contactList.clear();
     // for (auto &&geomIter : m_GeomList) geomIter.second->ClearContacts();
-    dSpaceCollide(m_SpaceID, this, &NearCallback);
+    dSpaceCollide(m_spaceID, this, &NearCallback);
 
-    // update the drivers
-    for (auto &&it : *simulation()->GetDriverList())
+    // apply the point forces from the muscles
+    for (auto &&iter :  *simulation()->GetMuscleList())
     {
-        it.second->Update();
-        it.second->SendData();
-    }
-    // and the controllers (which are drivers too probably)
-    for (auto &&it : *simulation()->GetControllerList())
-    {
-        auto driver = dynamic_cast<Driver *>(it.second.get());
-        if (driver)
-        {
-            driver->Update();
-            driver->SendData();
-        }
-        if (it.second->lastStepCount() != simulation()->GetStepCount())
-            std::cerr << "Warning: " << it.first << " controller not updated\n"; // currently cannot stack controllers although this is fixable
-    }
-
-    // update the muscles
-    for (auto iter1 = simulation()->GetMuscleList()->begin(); iter1 != simulation()->GetMuscleList()->end(); /* no increment */)
-    {
-        iter1->second->CalculateStrap();
-        iter1->second->SetActivation();
-
-        // check for breaking strain
-        DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(iter1->second.get());
-        if (dampedSpringMuscle)
-        {
-            if (dampedSpringMuscle->ShouldBreak())
-            {
-                iter1 = simulation()->GetMuscleList()->erase(iter1); // erase returns the next iterator [but m_MuscleList.erase(iter1++) would also work and is compatible with older C++ compilers]
-                continue;
-            }
-        }
-
-        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter1->second->GetPointForceList();
-        double tension = iter1->second->GetTension();
-#ifdef DEBUG_CHECK_FORCES
-        pgd::Vector3 force(0, 0, 0);
-#endif
+        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->GetPointForceList();
+        double tension = iter.second->GetTension();
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
-            PointForce *pointForce = (*pointForceList)[i].get();
-            if (pointForce->body)
-                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pointForce->body->data()->at(0)),
-                                   pointForce->vector[0] * tension, pointForce->vector[1] * tension, pointForce->vector[2] * tension,
-                                   pointForce->point[0], pointForce->point[1], pointForce->point[2]);
-#ifdef DEBUG_CHECK_FORCES
-            force += pgd::Vector3(pointForce->vector[0] * tension, pointForce->vector[1] * tension, pointForce->vector[2] * tension);
-#endif
+            PointForce *pf = (*pointForceList)[i].get();
+            if (pf->body)
+                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()->at(0)),
+                                   pf->vector[0] * tension, pf->vector[1] * tension, pf->vector[2] * tension,
+                                   pf->point[0], pf->point[1], pf->point[2]);
         }
-#ifdef DEBUG_CHECK_FORCES
-        std::cerr.setf(std::ios::floatfield, std::ios::fixed);
-        std::cerr << iter1->first << " " << force.x << " " << force.y << " " << force.z << "\n";
-        std::cerr.unsetf(std::ios::floatfield);
-#endif
-        iter1++; // this has to be done outside the for definition because erase returns the next iterator
     }
 
-    // update the joints (needed for motors, end stops and stress calculations)
-    for (auto &&jointIter : *simulation()->GetJointList()) { jointIter.second->Update(); }
-
-    // update the fluid sacs
-    for (auto fsIter = simulation()->GetFluidSacList()->begin(); fsIter != simulation()->GetFluidSacList()->end(); fsIter++)
+    // apply the point forces from the  fluid sacs
+    for (auto &&iter : *simulation()->GetFluidSacList())
     {
-        fsIter->second->calculateVolume();
-        fsIter->second->calculatePressure();
-        fsIter->second->calculateLoadsOnMarkers();
-        for (size_t i = 0; i < fsIter->second->pointForceList().size(); i++)
+        for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
-            const PointForce *pf = &fsIter->second->pointForceList().at(i);
-            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()->at(0)), pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
+            const PointForce *pf = &iter.second->pointForceList().at(i);
+            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()->at(0)),
+                               pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
         }
     }
 
     // update the bodies (needed for drag calculations)
+#ifdef FIX_ME
     for (auto &&bodyIter : *simulation()->GetBodyList()) { bodyIter.second->ComputeDrag(); }
+#endif
 
     // run the simulation
     switch (simulation()->GetGlobal()->stepType())
     {
     case Global::World:
-        dWorldStep(m_WorldID, simulation()->GetGlobal()->StepSize());
+        dWorldStep(m_worldID, simulation()->GetGlobal()->StepSize());
         break;
 
     case Global::Quick:
-        dWorldQuickStep(m_WorldID, simulation()->GetGlobal()->StepSize());
+        dWorldQuickStep(m_worldID, simulation()->GetGlobal()->StepSize());
         break;
     }
 
-    // test for penalties
-    if (m_errorHandler.IsMessage()) m_KinematicMatchFitness += simulation()->GetGlobal()->NumericalErrorsScore();
-
-    // calculate the energies
-    for (auto &&iter1 : m_MuscleList)
-    {
-        m_MechanicalEnergy += iter1.second->GetPower() * m_global->StepSize();
-        m_MetabolicEnergy += iter1.second->GetMetabolicPower() * m_global->StepSize();
-    }
-    m_MetabolicEnergy += m_global->BMR() * m_global->StepSize();
-
-    // update any contact force dependent drivers (because only after the simulation is the force valid
-    // update the footprint indicator
-    if (m_ContactList.size() > 0)
-    {
-        for (auto &&it : m_DriverList)
-        {
-            TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(it.second.get());
-            if (tegotaeDriver) tegotaeDriver->UpdateReactionForce();
-        }
-    }
-
-    // all reporting is done after a simulation step
-
-    DumpObjects();
-
-    // update the time counter
-    m_SimulationTime += m_global->StepSize();
-
-    // update the step counter
-    m_StepCount++;
     return 0;
 }
 
@@ -187,7 +107,7 @@ int ODEPhysicsEngine::Step()
 
 void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
 {
-    Simulation *s = reinterpret_cast<Simulation *>(data);
+    ODEPhysicsEngine *s = reinterpret_cast<ODEPhysicsEngine *>(data);
     Geom *g1 = reinterpret_cast<Geom *>(dGeomGetData(o1));
     Geom *g2 = reinterpret_cast<Geom *>(dGeomGetData(o2));
 
@@ -198,12 +118,12 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
         return; // it is never useful for two contacts on the same body to collide [I'm not sure if this every happens - FIX ME - set up a test]
     }
 
-    if (s->m_global->AllowConnectedCollisions() == false)
+    if (s->simulation()->GetGlobal()->AllowConnectedCollisions() == false)
     {
         if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact)) return;
     }
 
-    if (s->m_global->AllowInternalCollisions() == false)
+    if (s->simulation()->GetGlobal()->AllowInternalCollisions() == false)
     {
         if (g1->GetGeomLocation() == g2->GetGeomLocation()) return;
     }
@@ -225,7 +145,7 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
         }
     }
 
-    std::vector<dContact> contact(size_t(s->m_MaxContacts), dContact{}); // in this case default initialisation is potentially useful
+    std::vector<dContact> contact(size_t(MAX_CONTACTS), dContact{}); // in this case default initialisation is potentially useful
     // std::unique_ptr<dContact[]> contact = std::make_unique<dContact[]>(size_t(s->m_MaxContacts)); // but this version would be slightly quicker
     // the choice of std::max(cfm) and std::min(erp) means that the softest contact should be used
     double cfm = std::max(g1->GetContactSoftCFM(), g2->GetContactSoftCFM());
@@ -239,7 +159,7 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
         if (g1->GetContactSoftERP() < 0) erp = g2->GetContactSoftERP();
         else erp = g1->GetContactSoftERP();
     }
-    for (size_t i = 0; i < size_t(s->m_MaxContacts); i++)
+    for (size_t i = 0; i < size_t(MAX_CONTACTS); i++)
     {
         contact[i].surface.mode = dContactApprox1;
         contact[i].surface.mu = mu;
@@ -264,22 +184,24 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
             contact[i].surface.mode += dContactSoftERP;
         }
     }
-    int numc = dCollide(o1, o2, s->m_MaxContacts, &contact[0].geom, sizeof(dContact));
+    int numc = dCollide(o1, o2, MAX_CONTACTS, &contact[0].geom, sizeof(dContact));
     if (numc)
     {
         for (size_t i = 0; i < size_t(numc); i++)
         {
-            if (g1->GetAbort()) s->SetContactAbort(g1->name());
-            if (g2->GetAbort()) s->SetContactAbort(g2->name());
+            if (g1->GetAbort()) s->simulation()->SetContactAbort(g1->name());
+            if (g2->GetAbort()) s->simulation()->SetContactAbort(g2->name());
             dJointID c;
             if (g1->GetAdhesion() == false && g2->GetAdhesion() == false)
             {
-                c = dJointCreateContact(s->m_WorldID, s->m_ContactGroup, &contact[i]);
+                c = dJointCreateContact(reinterpret_cast<ODEPhysicsEngine *>(s->physicsEngine())->worldID(), reinterpret_cast<ODEPhysicsEngine *>(s->physicsEngine())->contactGroup(), &contact[i]);
                 dJointAttach(c, b1, b2);
                 std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
-                myContact->setSimulation(s);
+                myContact->setSimulation(s->simulation());
+#ifdef FIX_ME
                 dJointSetFeedback(c, myContact->GetJointFeedback());
                 myContact->SetJointID(c);
+#endif
                 std::copy_n(contact[i].geom.pos, dV3E__MAX, myContact->GetContactPosition());
                 //                // only add the contact information once
                 //                // and add it to the non-environment geom
@@ -290,17 +212,37 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
                 // add the contact information to both geoms
                 g1->AddContact(myContact.get());
                 g2->AddContact(myContact.get());
-                s->m_ContactList.push_back(std::move(myContact));
+                s->contactList()->push_back(std::move(myContact));
             }
             else
             {
                 // FIX ME adhesive joints are added permanently and forces cannot be measured
-                c = dJointCreateBall(s->m_WorldID, nullptr);
+                c = dJointCreateBall(s->worldID(), nullptr);
                 dJointAttach(c, b1, b2);
                 dJointSetBallAnchor(c, contact[i].geom.pos[0], contact[i].geom.pos[1], contact[i].geom.pos[2]);
             }
         }
     }
+}
+
+std::vector<std::unique_ptr<Contact>> *ODEPhysicsEngine::contactList()
+{
+    return &m_contactList;
+}
+
+dJointGroupID ODEPhysicsEngine::contactGroup() const
+{
+    return m_contactGroup;
+}
+
+dSpaceID ODEPhysicsEngine::spaceID() const
+{
+    return m_spaceID;
+}
+
+dWorldID ODEPhysicsEngine::worldID() const
+{
+    return m_worldID;
 }
 
 

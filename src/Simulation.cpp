@@ -55,6 +55,7 @@
 #include "ThreeHingeJointDriver.h"
 #include "TwoHingeJointDriver.h"
 #include "MarkerEllipseDriver.h"
+#include "PhysicsEngine.h".h"
 
 #include "pystring.h"
 
@@ -159,7 +160,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 //----------------------------------------------------------------------------
 void Simulation::UpdateSimulation()
 {
-#ifdef FIX_ME
+    assert(m_physicsEngine);
     // start by updating the scores
     double minScore = std::numeric_limits<double>::infinity();
     for (auto &&it : m_DataTargetList)
@@ -214,18 +215,6 @@ void Simulation::UpdateSimulation()
                 continue;
             }
         }
-
-        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter1->second->GetPointForceList();
-        double tension = iter1->second->GetTension();
-        for (unsigned int i = 0; i < pointForceList->size(); i++)
-        {
-            PointForce *pointForce = (*pointForceList)[i].get();
-            if (pointForce->body)
-                dBodyAddForceAtPos(pointForce->body->GetBodyID(),
-                                   pointForce->vector[0] * tension, pointForce->vector[1] * tension, pointForce->vector[2] * tension,
-                                   pointForce->point[0], pointForce->point[1], pointForce->point[2]);
-        }
-        iter1++; // this has to be done outside the for definition because erase returns the next iterator
     }
 
     // update the joints (needed for motors, end stops and stress calculations)
@@ -263,8 +252,7 @@ void Simulation::UpdateSimulation()
     }
 
     // run the simulation
-    m_Scene->simulate(m_global->StepSize());
-    m_Scene->fetchResults(true);
+    m_physicsEngine->Step();
 
     // test for penalties
     if (m_errorHandler.IsMessage()) m_KinematicMatchFitness += m_global->NumericalErrorsScore();
@@ -297,7 +285,6 @@ void Simulation::UpdateSimulation()
 
     // update the step counter
     m_StepCount++;
-#endif
 }
 
 //----------------------------------------------------------------------------
@@ -1084,6 +1071,11 @@ void Simulation::DumpObject(NamedObject *namedObject)
             std::cerr << "Error writing dump file\n";
         }
     }
+}
+
+PhysicsEngine*Simulation::physicsEngine() const
+{
+    return m_physicsEngine.get();
 }
 
 std::vector<std::string> Simulation::GetNameList() const

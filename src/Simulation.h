@@ -121,6 +121,8 @@ public:
     Global *GetGlobal();
     void SetGlobal(std::unique_ptr<Global> global);
 
+    PhysicsEngine *physicsEngine() const;
+
 private:
 
     std::string *ParseGlobal(const ParseXML::XMLElement *node);
