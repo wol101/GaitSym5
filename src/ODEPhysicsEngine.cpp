@@ -50,7 +50,7 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     for (auto &&iter :  *simulation->GetBodyList())
     {
         dBodyID bodyID = dBodyCreate(m_worldID);
-        dBodySetData(bodyID, &iter.second);
+        dBodySetData(bodyID, iter.second.get());
         iter.second->setData(bodyID);
     }
 
@@ -59,18 +59,24 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     {
         while (true)
         {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint>(iter.second);
+            dJointID jointID = nullptr;
+            auto jointFeedback = std::make_unique<dJointFeedback>();
+            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
             if (hingeJoint)
             {
-                setJointID(dJointCreateHinge(worldID, nullptr));
-                dJointSetData(JointID(), this);
-                dJointSetFeedback(JointID(), JointFeedback());
-                dJointSetHingeAnchor(JointID(), x, y, z);
-                dJointSetHingeAxis(JointID(), v[0], v[1], v[2]);
-                dJointSetHingeParam(JointID(), dParamLoStop, loStop);
-                dJointSetHingeParam(JointID(), dParamHiStop, hiStop);
-                dJointSetHingeParam(JointID(), dParamLoStop, loStop);
-                dJointSetHingeParam(JointID(), dParamHiStop, hiStop);
+                pgd::Vector3 anchor = hingeJoint->anchor();
+                pgd::Vector3 axis = hingeJoint->axis();
+                pgd::Vector2 stops = hingeJoint->stops();
+                jointID = dJointCreateHinge(m_worldID, nullptr);
+                dJointSetData(jointID, hingeJoint);
+                dJointSetFeedback(jointID, jointFeedback.get());
+                dJointSetHingeAnchor(jointID, anchor.x, anchor.y, anchor.z);
+                dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
+                dJointSetHingeParam(jointID, dParamLoStop, stops[0]); // needs to be done twice to guarantee to see the stops properly
+                dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
+                dJointSetHingeParam(jointID, dParamLoStop, stops[0]);
+                dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
+                m_jointFeedback[iter.first] = std::move(jointFeedback);
                 break;
             }
 

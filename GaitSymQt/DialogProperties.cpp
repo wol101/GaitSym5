@@ -318,7 +318,7 @@ void DialogProperties::update()
         SettingsItem item = m_SettingsWidgetList[i].item;
         QWidget *widget = m_SettingsWidgetList[i].widget;
 
-        QMetaType::Type type = static_cast<QMetaType::Type>(item.value.type());
+        QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());
         if (type == QMetaType::Int) item.value = dynamic_cast<QSpinBox *>(widget)->value();
         if (type == QMetaType::Double) item.value = dynamic_cast<LineEditDouble *>(widget)->value();
         if (type == QMetaType::Float) item.value = float(dynamic_cast<LineEditDouble *>(widget)->value());

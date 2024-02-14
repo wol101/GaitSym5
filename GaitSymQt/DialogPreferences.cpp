@@ -30,7 +30,6 @@
 
 #include "Preferences.h"
 #include "LineEditDouble.h"
-#include "LineEditPath.h"
 
 #include "DialogPreferences.h"
 #include "ui_DialogPreferences.h"
@@ -395,7 +394,7 @@ void DialogPreferences::importButtonClicked()
         {
             SettingsItem item = m_SettingsWidgetList[i].item;
             QWidget *widget = m_SettingsWidgetList[i].widget;
-            QMetaType::Type type = static_cast<QMetaType::Type>(item.value.type());
+            QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());
             if (type == QMetaType::Int) dynamic_cast<QSpinBox *>(widget)->setValue(Preferences::valueInt(item.key));
             if (type == QMetaType::Double) dynamic_cast<QLineEdit *>(widget)->setText(Preferences::valueQString(item.key));
             if (type == QMetaType::QString) dynamic_cast<QLineEdit *>(widget)->setText( Preferences::valueQString(item.key));
@@ -448,7 +447,7 @@ void DialogPreferences::defaultsButtonClicked()
             Preferences::LoadDefaults();
             SettingsItem item = m_SettingsWidgetList[i].item;
             QWidget *widget = m_SettingsWidgetList[i].widget;
-            QMetaType::Type type = static_cast<QMetaType::Type>(item.value.type());
+            QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());
             if (type == QMetaType::Int) dynamic_cast<QSpinBox *>(widget)->setValue(Preferences::valueInt(item.key));
             if (type == QMetaType::Double) dynamic_cast<LineEditDouble *>(widget)->setText(Preferences::valueQString(item.key));
             if (type == QMetaType::QString) dynamic_cast<QLineEdit *>(widget)->setText( Preferences::valueQString(item.key));

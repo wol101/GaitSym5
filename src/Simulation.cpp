@@ -55,7 +55,7 @@
 #include "ThreeHingeJointDriver.h"
 #include "TwoHingeJointDriver.h"
 #include "MarkerEllipseDriver.h"
-#include "PhysicsEngine.h".h"
+#include "PhysicsEngine.h"
 
 #include "pystring.h"
 
@@ -226,11 +226,6 @@ void Simulation::UpdateSimulation()
         fsIter->second->calculateVolume();
         fsIter->second->calculatePressure();
         fsIter->second->calculateLoadsOnMarkers();
-        for (size_t i = 0; i < fsIter->second->pointForceList().size(); i++)
-        {
-            const PointForce *pf = &fsIter->second->pointForceList().at(i);
-            dBodyAddForceAtPos(pf->body->GetBodyID(), pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
-        }
     }
 
     // update the bodies (needed for drag calculations)

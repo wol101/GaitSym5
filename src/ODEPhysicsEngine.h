@@ -39,6 +39,9 @@ private:
 
     // ODE uses callbacks for errors so this needs wrapping
     ErrorHandler m_errorHandler;
+
+    // ode needs external handling of joint feedback memory
+    std::map<std::string, std::unique_ptr<dJointFeedback>> m_jointFeedback;
 };
 
 #endif // ODEPHYSICSENGINE_H
