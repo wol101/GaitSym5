@@ -27,7 +27,8 @@ ODEPhysicsEngine::~ODEPhysicsEngine()
 
 int ODEPhysicsEngine::Initialise(Simulation *simulation)
 {
-    PhysicsEngine::Initialise(simulation);
+    int err = PhysicsEngine::Initialise(simulation);
+    if (err) { return err; }
 
     // initialise the ODE world
     dInitODE();
@@ -47,11 +48,20 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     dSetDebugHandler(c_func);
 
     // first create the bodies
+    pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter :  *simulation->GetBodyList())
     {
         dBodyID bodyID = dBodyCreate(m_worldID);
         dBodySetData(bodyID, iter.second.get());
         iter.second->setData(bodyID);
+
+        pgd::Vector3 constructionPosition = iter.second->GetConstructionPosition();
+        dBodySetPosition(bodyID, constructionPosition.x, constructionPosition.y, constructionPosition.z);
+        dBodySetQuaternion(bodyID, zeroRotation.constData());
+        pgd::Vector3 linearVelocity = iter.second->GetLinearVelocity();
+        dBodySetLinearVel(bodyID, linearVelocity.x, linearVelocity.y, linearVelocity.z);
+        pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();
+        dBodySetAngularVel(bodyID, angularVelocity.x, angularVelocity.y, angularVelocity.z);
     }
 
     // then the joints
@@ -77,14 +87,14 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
                 dJointSetHingeParam(jointID, dParamLoStop, stops[0]);
                 dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
                 m_jointFeedback[iter.first] = std::move(jointFeedback);
+                iter.second->setData(jointID);
                 break;
             }
-
         }
     }
 
     // then the geoms
-    for (auto &&iter :  *simulation->GetJointList())
+    for (auto &&iter :  *simulation->GetGeomList())
     {
     }
 
@@ -140,6 +150,14 @@ int ODEPhysicsEngine::Step()
     case Global::Quick:
         dWorldQuickStep(m_worldID, simulation()->GetGlobal()->StepSize());
         break;
+    }
+
+    // update the objects with the new data
+    for (auto &&iter :  *simulation()->GetBodyList())
+    {
+        dBodyID bodyID = dBodyCreate(m_worldID);
+        dBodySetData(bodyID, iter.second.get());
+        iter.second->setData(bodyID);
     }
 
     return 0;

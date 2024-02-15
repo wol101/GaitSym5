@@ -56,6 +56,7 @@
 #include "TwoHingeJointDriver.h"
 #include "MarkerEllipseDriver.h"
 #include "PhysicsEngine.h"
+#include "ODEPhysicsEngine.h"
 
 #include "pystring.h"
 
@@ -160,7 +161,17 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 //----------------------------------------------------------------------------
 void Simulation::UpdateSimulation()
 {
-    assert(m_physicsEngine);
+    if (!m_physicsEngine)
+    {
+        m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
+        if (m_physicsEngine->Initialise(this))
+        {
+            std::cerr << "Error: unable to initialise the physics engine\n";
+            m_SimulationError = true;
+            return;
+        }
+    }
+
     // start by updating the scores
     double minScore = std::numeric_limits<double>::infinity();
     for (auto &&it : m_DataTargetList)
@@ -249,9 +260,6 @@ void Simulation::UpdateSimulation()
     // run the simulation
     m_physicsEngine->Step();
 
-    // test for penalties
-    if (m_errorHandler.IsMessage()) m_KinematicMatchFitness += m_global->NumericalErrorsScore();
-
     // calculate the energies
     for (auto &&iter1 : m_MuscleList)
     {
@@ -285,24 +293,6 @@ void Simulation::UpdateSimulation()
 //----------------------------------------------------------------------------
 bool Simulation::TestForCatastrophy()
 {
-    // first of all check to see that ODE is happy
-    if (m_errorHandler.IsMessage())
-    {
-        int num = m_errorHandler.GetLastMessageNumber();
-        std::string messageText = m_errorHandler.GetLastMessage();
-        m_numericalErrorCount++;
-        if (m_global->PermittedNumericalErrors() >= 0 && m_numericalErrorCount > m_global->PermittedNumericalErrors())
-        {
-            std::cerr << "t=" << m_SimulationTime << " error count=" << m_numericalErrorCount << " Failed due to ODE warning " << num << " " << messageText << "\n";
-            return true;
-        }
-        else
-        {
-            std::cerr << "t=" << m_SimulationTime << " ODE warning " << num << " " << messageText << "\n";
-        }
-        m_errorHandler.ClearMessage();
-    }
-
     // check for simulation error
     if (m_SimulationError)
     {
