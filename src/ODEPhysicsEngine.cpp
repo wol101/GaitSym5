@@ -80,6 +80,7 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
                 pgd::Vector2 stops = hingeJoint->stops();
                 jointID = dJointCreateHinge(m_worldID, nullptr);
                 dJointSetData(jointID, hingeJoint);
+                iter.second->setData(jointID);
                 dJointSetFeedback(jointID, jointFeedback.get());
                 dJointSetHingeAnchor(jointID, anchor.x, anchor.y, anchor.z);
                 dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
@@ -88,7 +89,6 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
                 dJointSetHingeParam(jointID, dParamLoStop, stops[0]);
                 dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
                 m_jointFeedback[iter.first] = std::move(jointFeedback);
-                iter.second->setData(jointID);
                 break;
             }
             break;
@@ -109,12 +109,12 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
                 pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
                 geomID = dCreateSphere(m_spaceID, radius);
                 dGeomSetData(geomID, sphereGeom);
+                iter.second->setData(geomID);
                 dGeomSphereSetRadius(geomID, radius);
                 dBodyID bodyID = reinterpret_cast<dBodyID>(sphereGeom->GetBody()->data());
                 dGeomSetBody(geomID, bodyID);
                 dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
                 dGeomSetOffsetQuaternion(geomID, quaternion.constData());
-                iter.second->setData(geomID);
                 break;
             }
             PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
@@ -158,7 +158,6 @@ int ODEPhysicsEngine::Step()
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
     m_contactList.clear();
-    // for (auto &&geomIter : m_GeomList) geomIter.second->ClearContacts();
     dSpaceCollide(m_spaceID, this, &NearCallback);
 
     // apply the point forces from the muscles
@@ -207,9 +206,15 @@ int ODEPhysicsEngine::Step()
     // update the objects with the new data
     for (auto &&iter :  *simulation()->GetBodyList())
     {
-        dBodyID bodyID = dBodyCreate(m_worldID);
-        dBodySetData(bodyID, iter.second.get());
-        iter.second->setData(bodyID);
+        dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
+        const double *position = dBodyGetPosition(bodyID);
+        const double *quaternion = dBodyGetQuaternion(bodyID);
+        const double *linearVelocity = dBodyGetLinearVel(bodyID);
+        const double *angularVelocity = dBodyGetAngularVel(bodyID);
+        iter.second->SetPosition(position[0], position[1], position[2]);
+        iter.second->SetQuaternion(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
+        iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
+        iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
     return 0;

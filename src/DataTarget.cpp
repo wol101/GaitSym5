@@ -14,7 +14,6 @@
 #include "pystring.h"
 
 #include <iostream>
-#include <cfloat>
 #include <sstream>
 #include <algorithm>
 
@@ -50,7 +49,8 @@ double DataTarget::positiveFunction(double v)
     return 0;
 }
 
-std::tuple<double, bool> DataTarget::calculateMatchValue(double time)
+// returns true when matchScore value is valid
+bool DataTarget::calculateMatchValue(double time, double *matchScore)
 {
     switch (m_interpolationType)
     {
@@ -58,10 +58,8 @@ std::tuple<double, bool> DataTarget::calculateMatchValue(double time)
         {
             auto lowerBound = std::lower_bound(m_targetTimeList.begin(), m_targetTimeList.end(), time);
             size_t index = std::distance(m_targetTimeList.begin(), lowerBound);
-            if (index == 0)
-                return std::make_tuple(m_lastValue, false); // this means that time is less than the lowest value in the list
-            if (index == m_lastIndex)
-                return std::make_tuple(m_lastValue, false);
+            if (index == 0) { *matchScore = m_lastValue; return false; } // this means that time is less than the lowest value in the list
+            if (index == m_lastIndex) { *matchScore = m_lastValue; return false; }
             m_lastIndex = index;
             m_lastValue = m_intercept + m_slope * positiveFunction(calculateError(index - 1));
             break;
@@ -77,7 +75,8 @@ std::tuple<double, bool> DataTarget::calculateMatchValue(double time)
         simulation()->SetDataTargetAbort(name());
         m_lastValue += m_abortBonus;
     }
-    return std::make_tuple(m_lastValue, true);
+    *matchScore = m_lastValue;
+    return true;
 }
 
 std::string DataTarget::dumpToString()
@@ -91,8 +90,7 @@ std::string DataTarget::dumpToString()
         ss << "Time\tMatchValue\tValid\n";
     }
     double value;
-    bool valid;
-    std::tie(value, valid) = calculateMatchValue(simulation()->GetTime());
+    bool valid = calculateMatchValue(simulation()->GetTime(), &value);
     ss << simulation()->GetTime() << "\t" << value << "\t" << valid << "\n";
 //    ss << simulation()->GetTime() << "\t" << std::get<0>(GetMatchValue(simulation()->GetTime())) << "\n";
     return ss.str();

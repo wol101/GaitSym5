@@ -13,9 +13,6 @@
 #include "NamedObject.h"
 #include "SmartEnum.h"
 
-#include <cfloat>
-#include <tuple>
-
 class Body;
 class SimulationWindow;
 
@@ -27,7 +24,7 @@ public:
     SMART_ENUM(MatchType, matchTypeStrings, matchTypeCount, Linear, Square, Raw);
     SMART_ENUM(InterpolationType, interpolationTypeStrings, interpolationTypeCount, Punctuated, Continuous);
 
-    std::tuple<double, bool> calculateMatchValue(double time);
+    bool calculateMatchValue(double time, double *matchScore);
     double positiveFunction(double v);
 
     virtual std::string dumpToString();

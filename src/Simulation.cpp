@@ -177,8 +177,7 @@ void Simulation::UpdateSimulation()
     for (auto &&it : m_DataTargetList)
     {
         double matchScore;
-        bool matchScoreValid;
-        std::tie(matchScore, matchScoreValid) = it.second->calculateMatchValue(m_SimulationTime);
+        bool matchScoreValid = it.second->calculateMatchValue(m_SimulationTime, &matchScore);
         if (matchScoreValid)
         {
             m_KinematicMatchFitness += matchScore;
@@ -190,6 +189,9 @@ void Simulation::UpdateSimulation()
         m_KinematicMatchMiniMaxFitness += minScore;
 
     // now start the actual simulation
+
+    // clear the contacts from the geoms
+    for (auto &&geomIter : m_GeomList) { geomIter.second->ClearContacts(); }
 
     // update the drivers
     for (auto &&it : m_DriverList)
@@ -226,6 +228,7 @@ void Simulation::UpdateSimulation()
                 continue;
             }
         }
+        iter1++; // this has to be done outside the for definition because erase returns the next iterator
     }
 
     // update the joints (needed for motors, end stops and stress calculations)
