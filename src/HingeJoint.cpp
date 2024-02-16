@@ -126,6 +126,16 @@ void HingeJoint::CalculateStopTorque()
 #endif // FIX_ME
 }
 
+double HingeJoint::angleRate() const
+{
+    return m_angleRate;
+}
+
+void HingeJoint::setAngleRate(double newAngleRate)
+{
+    m_angleRate = newAngleRate;
+}
+
 double HingeJoint::angle() const
 {
     return m_angle;

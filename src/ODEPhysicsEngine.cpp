@@ -1,5 +1,6 @@
 #include "ODEPhysicsEngine.h"
 
+#include "PGDMath.h"
 #include "Simulation.h"
 #include "Body.h"
 #include "Muscle.h"
@@ -8,6 +9,8 @@
 #include "HingeJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
+
+using namespace std::string_literals;
 
 #define MAX_CONTACTS 64
 
@@ -27,9 +30,9 @@ ODEPhysicsEngine::~ODEPhysicsEngine()
     dCloseODE();
 }
 
-int ODEPhysicsEngine::Initialise(Simulation *simulation)
+int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
 {
-    int err = PhysicsEngine::Initialise(simulation);
+    int err = PhysicsEngine::Initialise(theSimulation);
     if (err) { return err; }
 
     // initialise the ODE world
@@ -49,9 +52,18 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     dSetErrorHandler(c_func);
     dSetDebugHandler(c_func);
 
+    // apply the global values
+    Global *global = simulation()->GetGlobal();
+    dWorldSetGravity(m_worldID, global->Gravity().x, global->Gravity().y, global->Gravity().z);
+    dWorldSetERP(m_worldID, global->ERP());
+    dWorldSetCFM(m_worldID, global->CFM());
+    dWorldSetContactMaxCorrectingVel(m_worldID, global->ContactMaxCorrectingVel());
+    dWorldSetContactSurfaceLayer(m_worldID, global->ContactSurfaceLayer());
+    dWorldSetDamping(m_worldID, global->LinearDamping(), global->AngularDamping());
+
     // first create the bodies
     pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-    for (auto &&iter :  *simulation->GetBodyList())
+    for (auto &&iter :  *simulation()->GetBodyList())
     {
         dBodyID bodyID = dBodyCreate(m_worldID);
         dBodySetData(bodyID, iter.second.get());
@@ -66,7 +78,7 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     }
 
     // then the joints
-    for (auto &&iter :  *simulation->GetJointList())
+    for (auto &&iter :  *simulation()->GetJointList())
     {
         while (true)
         {
@@ -81,6 +93,9 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
                 jointID = dJointCreateHinge(m_worldID, nullptr);
                 dJointSetData(jointID, hingeJoint);
                 iter.second->setData(jointID);
+                dBodyID body1 = (hingeJoint->body1()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(hingeJoint->body1()->data());
+                dBodyID body2 = (hingeJoint->body2()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(hingeJoint->body2()->data());
+                dJointAttach(jointID, body1, body2);
                 dJointSetFeedback(jointID, jointFeedback.get());
                 dJointSetHingeAnchor(jointID, anchor.x, anchor.y, anchor.z);
                 dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
@@ -96,7 +111,7 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     }
 
     // then the geoms
-    for (auto &&iter :  *simulation->GetGeomList())
+    for (auto &&iter :  *simulation()->GetGeomList())
     {
         while (true)
         {
@@ -141,7 +156,7 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
     }
 
     // finally move the bodies to their starting positions
-    for (auto &&iter :  *simulation->GetBodyList())
+    for (auto &&iter :  *simulation()->GetBodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
         pgd::Vector3 position = iter.second->GetPosition();
@@ -216,7 +231,28 @@ int ODEPhysicsEngine::Step()
         iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
         iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
-
+    for (auto &&iter :  *simulation()->GetJointList())
+    {
+        while (true)
+        {
+            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
+            if (hingeJoint)
+            {
+                dJointID jointID = reinterpret_cast<dJointID>(hingeJoint->data());
+                dVector3 axis, anchor;
+                dJointGetHingeAnchor(jointID, anchor);
+                dJointGetHingeAxis(jointID, axis);
+                double angle = dJointGetHingeAngle(jointID);
+                double angleRate = dJointGetHingeAngleRate(jointID);
+                hingeJoint->setAnchor(&anchor[0]);
+                hingeJoint->setAxis(&axis[0]);
+                hingeJoint->setAngle(angle);
+                hingeJoint->setAngleRate(angleRate);
+                break;
+            }
+            break;
+        }
+    }
     return 0;
 }
 

@@ -58,6 +58,9 @@ public:
     double angle() const;
     void setAngle(double newAngle);
 
+    double angleRate() const;
+    void setAngleRate(double newAngleRate);
+
 private:
 
     void CalculateStopTorque();
@@ -78,7 +81,7 @@ private:
     double m_stopBounce = 0;
 
     double m_angle = 0;
-
+    double m_angleRate = 0;
 };
 
 

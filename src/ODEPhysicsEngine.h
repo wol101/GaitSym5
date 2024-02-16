@@ -15,7 +15,7 @@ public:
     ODEPhysicsEngine();
     virtual ~ODEPhysicsEngine();
 
-    virtual int Initialise(Simulation *simulation);
+    virtual int Initialise(Simulation *theSimulation);
     virtual int Step();
 
     dWorldID worldID() const;

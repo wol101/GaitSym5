@@ -57,7 +57,9 @@
 
 #ifdef _MSC_VER
 // disable unsafe function warning
-# define _CRT_SECURE_NO_WARNINGS
+# ifndef _CRT_SECURE_NO_WARNINGS
+#  define _CRT_SECURE_NO_WARNINGS
+# endif
 #endif /* _MSC_VER */
 
 #endif /* __CCD_COMPILER_H__ */
