@@ -6,6 +6,8 @@
 #include "FluidSac.h"
 #include "Geom.h"
 #include "HingeJoint.h"
+#include "SphereGeom.h"
+#include "PlaneGeom.h"
 
 #define MAX_CONTACTS 64
 
@@ -54,7 +56,6 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
         dBodyID bodyID = dBodyCreate(m_worldID);
         dBodySetData(bodyID, iter.second.get());
         iter.second->setData(bodyID);
-
         pgd::Vector3 constructionPosition = iter.second->GetConstructionPosition();
         dBodySetPosition(bodyID, constructionPosition.x, constructionPosition.y, constructionPosition.z);
         dBodySetQuaternion(bodyID, zeroRotation.constData());
@@ -90,12 +91,63 @@ int ODEPhysicsEngine::Initialise(Simulation *simulation)
                 iter.second->setData(jointID);
                 break;
             }
+            break;
         }
     }
 
     // then the geoms
     for (auto &&iter :  *simulation->GetGeomList())
     {
+        while (true)
+        {
+            dGeomID geomID = nullptr;
+            SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get());
+            if (sphereGeom)
+            {
+                double radius = sphereGeom->radius();
+                pgd::Vector3 position = sphereGeom->GetPosition();
+                pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
+                geomID = dCreateSphere(m_spaceID, radius);
+                dGeomSetData(geomID, sphereGeom);
+                dGeomSphereSetRadius(geomID, radius);
+                dBodyID bodyID = reinterpret_cast<dBodyID>(sphereGeom->GetBody()->data());
+                dGeomSetBody(geomID, bodyID);
+                dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
+                dGeomSetOffsetQuaternion(geomID, quaternion.constData());
+                iter.second->setData(geomID);
+                break;
+            }
+            PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
+            if (planeGeom)
+            {
+                double a, b, c, d;
+                planeGeom->GetPlane(&a, &b, &c, &d);
+                double length = std::sqrt(a * a + b * b + c * c);
+                if (length < std::numeric_limits<double>::epsilon()) // standard fixup
+                {
+                    a = 0; b = 0; c = 1; d = 0;
+                }
+                else
+                {
+                    a = a / length; b = b / length; c = c / length;
+                }
+                geomID = dCreatePlane(m_spaceID, a, b, c, d);
+                dGeomSetData(geomID, planeGeom);
+                iter.second->setData(geomID);
+                break;
+            }
+            break;
+        }
+    }
+
+    // finally move the bodies to their starting positions
+    for (auto &&iter :  *simulation->GetBodyList())
+    {
+        dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
+        pgd::Vector3 position = iter.second->GetPosition();
+        dBodySetPosition(bodyID, position.x, position.y, position.z);
+        pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        dBodySetQuaternion(bodyID, quaternion.constData());
     }
 
     return 0;
