@@ -27,7 +27,12 @@ public:
     std::vector<std::unique_ptr<Contact>> *contactList();
 
 private:
-    static void NearCallback(void *data, dGeomID o1, dGeomID o2);
+    void NearCallback(void *data, dGeomID o1, dGeomID o2);
+
+    void CreateBodies();
+    void CreateJoints();
+    void CreateGeoms();
+    void MoveBodies();
 
     // Simulation variables
     dWorldID m_worldID;

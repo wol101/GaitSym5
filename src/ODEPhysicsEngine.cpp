@@ -61,6 +61,19 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
     dWorldSetContactSurfaceLayer(m_worldID, global->ContactSurfaceLayer());
     dWorldSetDamping(m_worldID, global->LinearDamping(), global->AngularDamping());
 
+    // create the ODE versions of the main elements
+    CreateBodies();
+    CreateJoints();
+    CreateGeoms();
+
+    // And ODE requires that bodies be moved to their starting positions after joints have been created
+    MoveBodies();
+
+    return 0;
+}
+
+void ODEPhysicsEngine::CreateBodies()
+{
     // first create the bodies
     pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter :  *simulation()->GetBodyList())
@@ -76,8 +89,10 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
         pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();
         dBodySetAngularVel(bodyID, angularVelocity.x, angularVelocity.y, angularVelocity.z);
     }
+}
 
-    // then the joints
+void ODEPhysicsEngine::CreateJoints()
+{
     for (auto &&iter :  *simulation()->GetJointList())
     {
         while (true)
@@ -109,8 +124,10 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
             break;
         }
     }
+}
 
-    // then the geoms
+void ODEPhysicsEngine::CreateGeoms()
+{
     for (auto &&iter :  *simulation()->GetGeomList())
     {
         while (true)
@@ -154,8 +171,10 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
             break;
         }
     }
+}
 
-    // finally move the bodies to their starting positions
+void ODEPhysicsEngine::MoveBodies()
+{
     for (auto &&iter :  *simulation()->GetBodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
@@ -164,8 +183,6 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
         pgd::Quaternion quaternion = iter.second->GetQuaternion();
         dBodySetQuaternion(bodyID, quaternion.constData());
     }
-
-    return 0;
 }
 
 int ODEPhysicsEngine::Step()
@@ -173,7 +190,12 @@ int ODEPhysicsEngine::Step()
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
     m_contactList.clear();
-    dSpaceCollide(m_spaceID, this, &NearCallback);
+
+    // the callback function is a member function so needs special handling
+    Callback<void(void *, dGeomID, dGeomID)>::func = std::bind(&ODEPhysicsEngine::NearCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    // Convert callback-function to c-pointer.
+    void (*c_func)(void *, dGeomID, dGeomID) = static_cast<decltype(c_func)>(Callback<void(void *, dGeomID, dGeomID)>::callback);
+    dSpaceCollide(m_spaceID, this, c_func);
 
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())
