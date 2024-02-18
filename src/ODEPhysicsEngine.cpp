@@ -117,17 +117,17 @@ void ODEPhysicsEngine::CreateJoints()
                 dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
                 dJointSetHingeParam(jointID, dParamLoStop, stops[0]);
                 dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
-                // double springConstant = hingeJoint->stopSpring();
-                // double dampingConstant = hingeJoint->stopDamp();
-                // double integrationStep = simulation()->GetTimeIncrement();
-                // if (springConstant >= 0 && dampingConstant >= 0)
-                // {
-                //     double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
-                //     double CFM = 1/(integrationStep * springConstant + dampingConstant);
-                //     dJointSetHingeParam (jointID, dParamStopCFM, CFM);
-                //     dJointSetHingeParam (jointID, dParamStopERP, ERP);
-                // }
-                // if (hingeJoint->stopBounce() >= 0) { dJointSetHingeParam (jointID, dParamBounce, hingeJoint->stopBounce()); }
+                double springConstant = hingeJoint->stopSpring();
+                double dampingConstant = hingeJoint->stopDamp();
+                double integrationStep = simulation()->GetTimeIncrement();
+                if (springConstant >= std::numeric_limits<double>::epsilon() && dampingConstant >= std::numeric_limits<double>::epsilon())
+                {
+                    double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
+                    double CFM = 1/(integrationStep * springConstant + dampingConstant);
+                    dJointSetHingeParam (jointID, dParamStopCFM, CFM);
+                    dJointSetHingeParam (jointID, dParamStopERP, ERP);
+                }
+                if (hingeJoint->stopBounce() >= 0) { dJointSetHingeParam (jointID, dParamBounce, hingeJoint->stopBounce()); }
                 m_jointFeedback[iter.first] = std::move(jointFeedback);
                 break;
             }
