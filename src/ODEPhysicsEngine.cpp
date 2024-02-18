@@ -217,10 +217,15 @@ int ODEPhysicsEngine::Step()
         }
     }
 
-    // update the bodies (needed for drag calculations)
-#ifdef FIX_ME
-    for (auto &&bodyIter : *simulation()->GetBodyList()) { bodyIter.second->ComputeDrag(); }
-#endif
+    // apply the forces from the drag
+    for (auto &&bodyIter : *simulation()->GetBodyList())
+    {
+        pgd::Vector3 dragForce = bodyIter.second->dragForce();
+        pgd::Vector3 dragTorque = bodyIter.second->dragTorque();
+        bodyIter.second->ComputeDrag();
+        dBodyAddRelForce(reinterpret_cast<dBodyID>(bodyIter.second->data()), dragForce.x, dragForce.y, dragForce.z);
+        dBodyAddRelTorque(reinterpret_cast<dBodyID>(bodyIter.second->data()), dragTorque.x, dragTorque.y, dragTorque.z);
+    }
 
     // run the simulation
     switch (simulation()->GetGlobal()->stepType())

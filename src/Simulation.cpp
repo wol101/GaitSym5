@@ -243,7 +243,7 @@ void Simulation::UpdateSimulation()
     }
 
     // update the bodies (needed for drag calculations)
-    for (auto &&bodyIter : m_BodyList) bodyIter.second->ComputeDrag();
+    for (auto &&bodyIter : m_BodyList) { bodyIter.second->ComputeDrag(); }
 
     // output the model state if triggered
     if (m_OutputModelStateAtTime >= 0.0)

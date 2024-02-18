@@ -1041,6 +1041,16 @@ void Body::appendToAttributes()
     if (constructionMode) EnterConstructionMode();
 }
 
+pgd::Vector3 Body::dragForce() const
+{
+    return m_dragForce;
+}
+
+pgd::Vector3 Body::dragTorque() const
+{
+    return m_dragTorque;
+}
+
 void Body::LateInitialisation()
 {
     this->SetPosition(m_initialPosition[0], m_initialPosition[1], m_initialPosition[2]);

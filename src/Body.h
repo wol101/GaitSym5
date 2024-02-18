@@ -125,6 +125,10 @@ public:
     virtual void saveToAttributes() override;
     virtual void appendToAttributes() override;
 
+    pgd::Vector3 dragForce() const;
+
+    pgd::Vector3 dragTorque() const;
+
 private:
 
     pgd::Vector3 m_constructionPosition = {0, 0, 0};
