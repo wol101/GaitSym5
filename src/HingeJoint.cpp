@@ -311,8 +311,8 @@ void HingeJoint::appendToAttributes()
         setAttribute("LowStopTorqueLimit"s, *GSUtil::ToString(m_axisTorqueLimits[0], &buf));
         setAttribute("StopTorqueWindow"s, *GSUtil::ToString(m_axisTorqueWindow, &buf));
     }
-    if (m_stopSpring >= 0) setAttribute("StopSpring"s, *GSUtil::ToString(m_stopSpring, &buf));
-    if (m_stopDamp >= 0) setAttribute("StopDamp"s, *GSUtil::ToString(m_stopDamp, &buf));
+    setAttribute("StopSpring"s, *GSUtil::ToString(m_stopSpring, &buf));
+    setAttribute("StopDamp"s, *GSUtil::ToString(m_stopDamp, &buf));
     setAttribute("StopBounce"s, *GSUtil::ToString(m_stopBounce, &buf));
 }
 

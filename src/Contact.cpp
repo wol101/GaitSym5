@@ -9,10 +9,38 @@
 
 #include "Contact.h"
 
-// FIX ME - I don't yet know how this will work
-
 Contact::Contact()
 {
+}
+
+pgd::Vector3 Contact::position() const
+{
+    return m_position;
+}
+
+void Contact::setPosition(const pgd::Vector3 &newPosition)
+{
+    m_position = newPosition;
+}
+
+pgd::Vector3 Contact::force() const
+{
+    return m_force;
+}
+
+void Contact::setForce(const pgd::Vector3 &newForce)
+{
+    m_force = newForce;
+}
+
+pgd::Vector3 Contact::torque() const
+{
+    return m_torque;
+}
+
+void Contact::setTorque(const pgd::Vector3 &newTorque)
+{
+    m_torque = newTorque;
 }
 
 

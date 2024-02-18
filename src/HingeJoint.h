@@ -76,9 +76,9 @@ private:
     pgd::Vector3 m_axis;
     pgd::Vector3 m_anchor;
     pgd::Vector2 m_stops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
-    double m_stopSpring = 0;
-    double m_stopDamp = 0;
-    double m_stopBounce = 0;
+    double m_stopSpring = -1;
+    double m_stopDamp = -1;
+    double m_stopBounce = -1;
 
     double m_angle = 0;
     double m_angleRate = 0;

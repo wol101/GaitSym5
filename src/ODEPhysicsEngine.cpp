@@ -117,6 +117,17 @@ void ODEPhysicsEngine::CreateJoints()
                 dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
                 dJointSetHingeParam(jointID, dParamLoStop, stops[0]);
                 dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
+                // double springConstant = hingeJoint->stopSpring();
+                // double dampingConstant = hingeJoint->stopDamp();
+                // double integrationStep = simulation()->GetTimeIncrement();
+                // if (springConstant >= 0 && dampingConstant >= 0)
+                // {
+                //     double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
+                //     double CFM = 1/(integrationStep * springConstant + dampingConstant);
+                //     dJointSetHingeParam (jointID, dParamStopCFM, CFM);
+                //     dJointSetHingeParam (jointID, dParamStopERP, ERP);
+                // }
+                // if (hingeJoint->stopBounce() >= 0) { dJointSetHingeParam (jointID, dParamBounce, hingeJoint->stopBounce()); }
                 m_jointFeedback[iter.first] = std::move(jointFeedback);
                 break;
             }
@@ -189,6 +200,7 @@ int ODEPhysicsEngine::Step()
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
     m_contactList.clear();
+    m_contactFeedbackList.clear();
     dSpaceCollide(m_spaceID, this, NearCallback);
 
     // apply the point forces from the muscles
@@ -252,6 +264,7 @@ int ODEPhysicsEngine::Step()
         iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
         iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
+
     for (auto &&iter :  *simulation()->GetJointList())
     {
         while (true)
@@ -274,6 +287,15 @@ int ODEPhysicsEngine::Step()
             break;
         }
     }
+
+    for (size_t i = 0; i < m_contactList.size(); i++)
+    {
+        Contact *contact = m_contactList[i].get();
+        dJointFeedback *jointFeedback = m_contactFeedbackList[i].get();
+        contact->setForce(pgd::Vector3(jointFeedback->f1));
+        contact->setTorque(pgd::Vector3(jointFeedback->t1));
+    }
+
     return 0;
 }
 
@@ -373,14 +395,14 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
                 dJointAttach(c, b1, b2);
                 std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
                 myContact->setSimulation(s->simulation());
-#ifdef FIX_ME
-                dJointSetFeedback(c, myContact->GetJointFeedback());
-                myContact->SetJointID(c);
-                std::copy_n(contact[i].geom.pos, dV3E__MAX, myContact->GetContactPosition());
-#endif
+                auto jointFeedback = std::make_unique<dJointFeedback>();
+                dJointSetFeedback(c, jointFeedback.get());
+                myContact->setData(c);
+                myContact->setPosition(pgd::Vector3(contact[i].geom.pos[0], contact[i].geom.pos[1], contact[i].geom.pos[2]));
                 g1->AddContact(myContact.get());
                 g2->AddContact(myContact.get());
                 s->contactList()->push_back(std::move(myContact));
+                s->contactFeedbackList()->push_back(std::move(jointFeedback));
             }
             else
             {
@@ -433,6 +455,11 @@ bool ODEPhysicsEngine::GetErrorMessage(int *messageNumber, std::string *messageT
 std::vector<std::unique_ptr<Contact>> *ODEPhysicsEngine::contactList()
 {
     return &m_contactList;
+}
+
+std::vector<std::unique_ptr<dJointFeedback>> *ODEPhysicsEngine::contactFeedbackList()
+{
+    return &m_contactFeedbackList;
 }
 
 dJointGroupID ODEPhysicsEngine::contactGroup() const

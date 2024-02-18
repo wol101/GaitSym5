@@ -18,7 +18,14 @@ class Contact:public NamedObject
 public:
     Contact();
 
-    void GetFeedback(pgd::Vector3 *position, pgd::Vector3 *force, pgd::Vector3 *torque);
+    pgd::Vector3 position() const;
+    void setPosition(const pgd::Vector3 &newPosition);
+
+    pgd::Vector3 force() const;
+    void setForce(const pgd::Vector3 &newForce);
+
+    pgd::Vector3 torque() const;
+    void setTorque(const pgd::Vector3 &newTorque);
 
 private:
 

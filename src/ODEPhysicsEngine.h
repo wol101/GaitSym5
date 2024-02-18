@@ -25,6 +25,8 @@ public:
 
     std::vector<std::unique_ptr<Contact>> *contactList();
 
+    std::vector<std::unique_ptr<dJointFeedback> > *contactFeedbackList();
+
 private:
     static void NearCallback(void *data, dGeomID o1, dGeomID o2);
 
@@ -40,6 +42,7 @@ private:
 
     // this is a list of contacts that are active at the current time step
     std::vector<std::unique_ptr<Contact>> m_contactList;
+    std::vector< std::unique_ptr<dJointFeedback>> m_contactFeedbackList;
 
     // error message handling
     static void ODEMessageTrap(int num, const char *msg, va_list ap);
