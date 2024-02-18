@@ -14,6 +14,11 @@ using namespace std::string_literals;
 
 #define MAX_CONTACTS 64
 
+std::string ODEPhysicsEngine::m_messageText;
+int ODEPhysicsEngine::m_messageNumber = 0;
+bool ODEPhysicsEngine::m_messageFlag = false;
+
+
 ODEPhysicsEngine::ODEPhysicsEngine()
 {
 }
@@ -41,16 +46,10 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
     m_spaceID = dHashSpaceCreate(nullptr); // FIX ME hash space is a compromise but this should probably be user controlled
     m_contactGroup = dJointGroupCreate(0);
 
-    // glue for calling a C++ callback
-    // Store member function and the instance using std::bind.
-    Callback<void(int, const char *, va_list)>::func = std::bind(&ErrorHandler::ODEMessageTrap, &m_errorHandler, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    // Convert callback-function to c-pointer.
-    void (*c_func)(int, const char *, va_list) = static_cast<decltype(c_func)>(Callback<void(int, const char *, va_list)>::callback);
-
-    // c_func is now the required function pointer
-    dSetMessageHandler(c_func);
-    dSetErrorHandler(c_func);
-    dSetDebugHandler(c_func);
+    // set the error handlers
+    dSetMessageHandler(ODEMessageTrap);
+    dSetErrorHandler(ODEMessageTrap);
+    dSetDebugHandler(ODEMessageTrap);
 
     // apply the global values
     Global *global = simulation()->GetGlobal();
@@ -190,12 +189,7 @@ int ODEPhysicsEngine::Step()
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
     m_contactList.clear();
-
-    // the callback function is a member function so needs special handling
-    Callback<void(void *, dGeomID, dGeomID)>::func = std::bind(&ODEPhysicsEngine::NearCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    // Convert callback-function to c-pointer.
-    void (*c_func)(void *, dGeomID, dGeomID) = static_cast<decltype(c_func)>(Callback<void(void *, dGeomID, dGeomID)>::callback);
-    dSpaceCollide(m_spaceID, this, c_func);
+    dSpaceCollide(m_spaceID, this, NearCallback);
 
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())
@@ -392,6 +386,43 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
             }
         }
     }
+}
+
+void ODEPhysicsEngine::ODEMessageTrap(int num, const char *msg, va_list ap)
+{
+    fflush (stderr);
+    fflush (stdout);
+    fprintf (stderr,"\n%d: ", num);
+    vfprintf (stderr, msg, ap);
+    fprintf (stderr, "\n");
+    fflush (stderr);
+
+    // reliably acquire the size
+    // from a copy of the variable argument array
+    // and a functionally reliable call to mock the formatting
+    va_list vaArgsCopy;
+    va_copy(vaArgsCopy, ap);
+    const int iLen = std::vsnprintf(NULL, 0, msg, vaArgsCopy);
+    va_end(vaArgsCopy);
+
+    // return a formatted string without risking memory mismanagement
+    // and without assuming any compiler or platform specific behavior
+    std::vector<char> zc(iLen + 1);
+    std::vsnprintf(zc.data(), zc.size(), msg, ap);
+    va_end(ap);
+
+    m_messageText.assign(zc.data(), iLen);
+    m_messageNumber = num;
+    m_messageFlag = true;
+}
+
+bool ODEPhysicsEngine::GetErrorMessage(int *messageNumber, std::string *messageText)
+{
+    bool messageFlag = m_messageFlag;
+    m_messageFlag = false;
+    *messageNumber = m_messageNumber;
+    *messageText = m_messageText;
+    return messageFlag;
 }
 
 std::vector<std::unique_ptr<Contact>> *ODEPhysicsEngine::contactList()

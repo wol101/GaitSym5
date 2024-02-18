@@ -978,7 +978,6 @@ set(PROJECT_SOURCES
     ../src/DataTargetVector.cpp
     ../src/Drivable.cpp
     ../src/Driver.cpp
-    ../src/ErrorHandler.cpp
     ../src/Filter.cpp
     ../src/FixedDriver.cpp
     ../src/FixedJoint.cpp
@@ -1117,7 +1116,6 @@ set(PROJECT_SOURCES
     ../src/DataTargetVector.h
     ../src/Drivable.h
     ../src/Driver.h
-    ../src/ErrorHandler.h
     ../src/Filter.h
     ../src/FixedDriver.h
     ../src/FixedJoint.h
