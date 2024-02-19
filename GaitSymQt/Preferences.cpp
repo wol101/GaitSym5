@@ -87,7 +87,7 @@ void Preferences::Export(const QString &filename)
 
 QByteArray Preferences::ExportData()
 {
-    QDomDocument doc("GaitSym2019Preferences");
+    QDomDocument doc("GaitSym5Preferences");
     doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
     QDomElement root = doc.createElement("PREFERENCES");
     doc.appendChild(root);
@@ -176,7 +176,7 @@ void Preferences::Import(const QString &filename)
 int Preferences::ImportData(const QByteArray &xmlData)
 {
     m_settings.clear();
-    QDomDocument doc("GaitSym2019Preferences");
+    QDomDocument doc("GaitSym5Preferences");
     if (!doc.setContent(xmlData)) { return __LINE__; }
     QDomElement docElem = doc.documentElement();
     ParseQDomElement(docElem);

@@ -118,7 +118,7 @@ public:
     void OutputProgramState();
 
     Global *GetGlobal();
-    void SetGlobal(std::unique_ptr<Global> global);
+    void SetGlobal(std::unique_ptr<Global> &&global);
 
     PhysicsEngine *physicsEngine() const;
 

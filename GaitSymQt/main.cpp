@@ -87,14 +87,14 @@ int main(int argc, char *argv[])
         if (glVersion <= 3.2)
         {
             QString errorMessage = QString("This application requires OpenGL 3.3 or greater.\nCurrent version is %1.\nApplication will abort.").arg(glVersionString.c_str());
-            QMessageBox::critical(nullptr, "GaitSym2019", errorMessage);
+            QMessageBox::critical(nullptr, "GaitSym5", errorMessage);
             exit(EXIT_FAILURE);
         }
     }
     catch (...)
     {
         QString errorMessage = QString("This application requires OpenGL 3.3 or greater.\nUnknown failure initialising OpenGL.\nApplication will abort.");
-        QMessageBox::critical(nullptr, "GaitSym2019", errorMessage);
+        QMessageBox::critical(nullptr, "GaitSym5", errorMessage);
         exit(EXIT_FAILURE);
     }
 

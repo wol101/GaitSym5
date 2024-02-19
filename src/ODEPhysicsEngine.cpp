@@ -113,10 +113,12 @@ void ODEPhysicsEngine::CreateJoints()
                 dJointSetFeedback(jointID, jointFeedback.get());
                 dJointSetHingeAnchor(jointID, anchor.x, anchor.y, anchor.z);
                 dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
-                dJointSetHingeParam(jointID, dParamLoStop, stops[0]); // needs to be done twice to guarantee to see the stops properly
-                dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
-                dJointSetHingeParam(jointID, dParamLoStop, stops[0]);
-                dJointSetHingeParam(jointID, dParamHiStop, stops[1]);
+                double loStop = (stops[0] < -M_PI) ? -dInfinity : stops[0];
+                double hiStop = (stops[0] > M_PI) ? dInfinity : stops[0];
+                dJointSetHingeParam(jointID, dParamLoStop, loStop); // needs to be done twice to guarantee to see the stops properly
+                dJointSetHingeParam(jointID, dParamHiStop, hiStop);
+                dJointSetHingeParam(jointID, dParamLoStop, loStop);
+                dJointSetHingeParam(jointID, dParamHiStop, hiStop);
                 double springConstant = hingeJoint->stopSpring();
                 double dampingConstant = hingeJoint->stopDamp();
                 double integrationStep = simulation()->GetTimeIncrement();
@@ -176,6 +178,7 @@ void ODEPhysicsEngine::CreateGeoms()
                 geomID = dCreatePlane(m_spaceID, a, b, c, d);
                 dGeomSetData(geomID, planeGeom);
                 iter.second->setData(geomID);
+                dGeomSetBody(geomID, nullptr);
                 break;
             }
             break;
@@ -201,7 +204,7 @@ int ODEPhysicsEngine::Step()
     dJointGroupEmpty(m_contactGroup);
     m_contactList.clear();
     m_contactFeedbackList.clear();
-    dSpaceCollide(m_spaceID, this, NearCallback);
+    dSpaceCollide(m_spaceID, this, &NearCallback);
 
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())

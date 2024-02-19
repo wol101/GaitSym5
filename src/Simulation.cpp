@@ -903,7 +903,7 @@ void Simulation::SetOutputModelStateFile(const std::string &filename)
     m_OutputModelStateFile = filename;
 }
 
-void Simulation::SetGlobal(std::unique_ptr<Global> global)
+void Simulation::SetGlobal(std::unique_ptr<Global> &&global)
 {
     m_global = std::move(global);
 }

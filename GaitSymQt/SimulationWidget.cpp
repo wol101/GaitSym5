@@ -92,7 +92,7 @@ void SimulationWidget::initializeGL()
     if (openGLVersion < 330)
     {
         QString errorMessage = QString("This application requires OpenGL 3.3 or greater.\nCurrent version is %1.\nApplication will abort.").arg(versionString);
-        QMessageBox::critical(this, tr("GaitSym2019"), errorMessage);
+        QMessageBox::critical(this, tr("GaitSym5"), errorMessage);
         exit(EXIT_FAILURE);
     }
 

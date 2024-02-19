@@ -128,18 +128,14 @@ void TegotaeDriver::UpdateReactionForce()
     pgd::Vector3 worldReactionForce;
     for (auto geomIt : m_contactGeomList)
     {
-#ifdef FIX_ME
         std::vector<Contact *> *contactList = geomIt->GetContactList();
-        dJointFeedback *jointFeedback;
         for (unsigned int i = 0; i < contactList->size(); i++)
         {
-            jointFeedback = contactList->at(i)->GetJointFeedback();
             // add the force that matches the X direction of the marker
             worldXAxis = m_forceDirection->GetWorldAxis(Marker::Axis::X);
-            worldReactionForce.Set(jointFeedback->f1);
+            worldReactionForce = contactList->at(i)->force();
             m_N += pgd::Dot(worldXAxis, worldReactionForce);
         }
-#endif
     }
     if (m_N < 0) m_N = 0;
 }

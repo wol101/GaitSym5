@@ -1,12 +1,12 @@
 <PREFERENCES>
-    <SETTING defaultValue="GaitSym2019"
+    <SETTING defaultValue="GaitSym5"
         display="0"
         key="Application"
         label="Application"
         order="-1"
         path="0"
         type="QString"
-        value="GaitSym2019" />
+        value="GaitSym5" />
     <SETTING defaultValue="AnimalSimulationLaboratory"
         display="0"
         key="Organisation"
