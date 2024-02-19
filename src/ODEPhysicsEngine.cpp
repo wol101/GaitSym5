@@ -80,6 +80,11 @@ void ODEPhysicsEngine::CreateBodies()
         dBodyID bodyID = dBodyCreate(m_worldID);
         dBodySetData(bodyID, iter.second.get());
         iter.second->setData(bodyID);
+        double mass, ixx, iyy, izz, ixy, izx, iyz;
+        iter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        dMass inertialProperties;
+        dMassSetParameters(&inertialProperties, mass, 0, 0, 0, ixx, iyy, izz, ixy, izx, iyz);
+        dBodySetMass(bodyID, &inertialProperties);
         pgd::Vector3 constructionPosition = iter.second->GetConstructionPosition();
         dBodySetPosition(bodyID, constructionPosition.x, constructionPosition.y, constructionPosition.z);
         dBodySetQuaternion(bodyID, zeroRotation.constData());
