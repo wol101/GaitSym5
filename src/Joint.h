@@ -59,12 +59,21 @@ public:
     pgd::Vector3 GetBody2Distance() const; //distance vector from body1 to body2 in body2 coordinates
     pgd::Quaternion GetBody2Rotation() const; //rotation quaternion from body1 to body2 in body2 coordinates
 
+    pgd::Vector3 force() const;
+    void setForce(const pgd::Vector3 &newForce);
+
+    pgd::Vector3 torque() const;
+    void setTorque(const pgd::Vector3 &newTorque);
+
 private:
 
     Marker *m_body1Marker = nullptr;
     Marker *m_body2Marker = nullptr;
     double m_CFM = -1;
     double m_ERP = -1;
+
+    pgd::Vector3 m_force;
+    pgd::Vector3 m_torque;
 };
 
 #endif

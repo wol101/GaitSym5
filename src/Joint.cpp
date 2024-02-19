@@ -167,5 +167,25 @@ pgd::Quaternion Joint::GetBody2Rotation() const
     return result;
 }
 
+pgd::Vector3 Joint::force() const
+{
+    return m_force;
+}
+
+void Joint::setForce(const pgd::Vector3 &newForce)
+{
+    m_force = newForce;
+}
+
+pgd::Vector3 Joint::torque() const
+{
+    return m_torque;
+}
+
+void Joint::setTorque(const pgd::Vector3 &newTorque)
+{
+    m_torque = newTorque;
+}
+
 
 

@@ -114,7 +114,7 @@ void ODEPhysicsEngine::CreateJoints()
                 dJointSetHingeAnchor(jointID, anchor.x, anchor.y, anchor.z);
                 dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
                 double loStop = (stops[0] < -M_PI) ? -dInfinity : stops[0];
-                double hiStop = (stops[0] > M_PI) ? dInfinity : stops[0];
+                double hiStop = (stops[1] > M_PI) ? dInfinity : stops[1];
                 dJointSetHingeParam(jointID, dParamLoStop, loStop); // needs to be done twice to guarantee to see the stops properly
                 dJointSetHingeParam(jointID, dParamHiStop, hiStop);
                 dJointSetHingeParam(jointID, dParamLoStop, loStop);
@@ -202,7 +202,6 @@ int ODEPhysicsEngine::Step()
 {
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
-    m_contactList.clear();
     m_contactFeedbackList.clear();
     dSpaceCollide(m_spaceID, this, &NearCallback);
 
@@ -285,16 +284,20 @@ int ODEPhysicsEngine::Step()
                 hingeJoint->setAxis(&axis[0]);
                 hingeJoint->setAngle(angle);
                 hingeJoint->setAngleRate(angleRate);
+                dJointFeedback *jointFeedback = dJointGetFeedback(jointID);
+                hingeJoint->setForce(pgd::Vector3(jointFeedback->f1));
+                hingeJoint->setTorque(pgd::Vector3(jointFeedback->t1));
                 break;
             }
             break;
         }
     }
 
-    for (size_t i = 0; i < m_contactList.size(); i++)
+    for (size_t i = 0; i < simulation()->GetContactList()->size(); i++)
     {
-        Contact *contact = m_contactList[i].get();
-        dJointFeedback *jointFeedback = m_contactFeedbackList[i].get();
+        Contact *contact = simulation()->GetContactList()->at(i).get();
+        dJointID jointID = reinterpret_cast<dJointID>(contact->data());
+        dJointFeedback *jointFeedback = dJointGetFeedback(jointID);
         contact->setForce(pgd::Vector3(jointFeedback->f1));
         contact->setTorque(pgd::Vector3(jointFeedback->t1));
     }
@@ -404,7 +407,7 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
                 myContact->setPosition(pgd::Vector3(contact[i].geom.pos[0], contact[i].geom.pos[1], contact[i].geom.pos[2]));
                 g1->AddContact(myContact.get());
                 g2->AddContact(myContact.get());
-                s->contactList()->push_back(std::move(myContact));
+                s->simulation()->GetContactList()->push_back(std::move(myContact));
                 s->contactFeedbackList()->push_back(std::move(jointFeedback));
             }
             else
@@ -455,14 +458,14 @@ bool ODEPhysicsEngine::GetErrorMessage(int *messageNumber, std::string *messageT
     return messageFlag;
 }
 
-std::vector<std::unique_ptr<Contact>> *ODEPhysicsEngine::contactList()
-{
-    return &m_contactList;
-}
-
 std::vector<std::unique_ptr<dJointFeedback>> *ODEPhysicsEngine::contactFeedbackList()
 {
     return &m_contactFeedbackList;
+}
+
+std::map<std::string, std::unique_ptr<dJointFeedback>> *ODEPhysicsEngine::jointFeedbackMap()
+{
+    return &m_jointFeedback;
 }
 
 dJointGroupID ODEPhysicsEngine::contactGroup() const

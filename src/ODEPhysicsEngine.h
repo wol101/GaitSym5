@@ -23,9 +23,9 @@ public:
 
     dJointGroupID contactGroup() const;
 
-    std::vector<std::unique_ptr<Contact>> *contactList();
+    std::vector<std::unique_ptr<dJointFeedback>> *contactFeedbackList();
 
-    std::vector<std::unique_ptr<dJointFeedback> > *contactFeedbackList();
+    std::map<std::string, std::unique_ptr<dJointFeedback>> *jointFeedbackMap();
 
 private:
     static void NearCallback(void *data, dGeomID o1, dGeomID o2);
@@ -40,10 +40,6 @@ private:
     dSpaceID m_spaceID;
     dJointGroupID m_contactGroup;
 
-    // this is a list of contacts that are active at the current time step
-    std::vector<std::unique_ptr<Contact>> m_contactList;
-    std::vector< std::unique_ptr<dJointFeedback>> m_contactFeedbackList;
-
     // error message handling
     static void ODEMessageTrap(int num, const char *msg, va_list ap);
     static bool GetErrorMessage(int *messageNumber, std::string *messageText);
@@ -51,8 +47,10 @@ private:
     static int m_messageNumber;
     static bool m_messageFlag;
 
-    //ODE needs external handling of joint feedback memory
+    // ODE needs external handling of joint feedback memory
     std::map<std::string, std::unique_ptr<dJointFeedback>> m_jointFeedback;
+    std::vector<std::unique_ptr<dJointFeedback>> m_contactFeedbackList;
+
 };
 
 #endif // ODEPHYSICSENGINE_H

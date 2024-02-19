@@ -190,8 +190,9 @@ void Simulation::UpdateSimulation()
 
     // now start the actual simulation
 
-    // clear the contacts from the geoms
+    // clear the contacts from the geoms and in the master list
     for (auto &&geomIter : m_GeomList) { geomIter.second->ClearContacts(); }
+    m_ContactList.clear();
 
     // update the drivers
     for (auto &&it : m_DriverList)
