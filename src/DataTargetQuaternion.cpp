@@ -88,7 +88,7 @@ double DataTargetQuaternion::calculateError(double time)
     // do a slerp interpolation between the target quaternions
     double delTime = (*targetTimeList())[size_t(indexNext)] - (*targetTimeList())[size_t(index)];
     double interpolationFraction;
-    if (delTime < DBL_EPSILON) interpolationFraction = 0;
+    if (delTime < std::numeric_limits<double>::epsilon) interpolationFraction = 0;
     else interpolationFraction = (time - (*targetTimeList())[size_t(index)]) / delTime;
     pgd::Quaternion interpolatedTarget = pgd::slerp(m_QValueList[size_t(index)], m_QValueList[size_t(indexNext)], interpolationFraction);
 

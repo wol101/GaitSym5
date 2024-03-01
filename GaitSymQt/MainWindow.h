@@ -19,9 +19,18 @@ namespace Ui {
 class MainWindow;
 }
 
+class Body;
+class Driver;
+class Geom;
+class Joint;
+class MainWindow;
+class Marker;
+class Muscle;
+class NamedObject;
 class Simulation;
+
+class QAction;
 class QTreeWidgetItem;
-class MainWindowActions;
 
 class MainWindow : public QMainWindow
 {
@@ -30,8 +39,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow() Q_DECL_OVERRIDE;
-
-   friend MainWindowActions;
 
     enum Mode { constructionMode, runMode };
 
@@ -44,6 +51,77 @@ public:
 public slots:
     void processOneThing();
     void handleCommandLineArguments();
+
+    void buttonCameraBack();
+    void buttonCameraBottom();
+    void buttonCameraFront();
+    void buttonCameraLeft();
+    void buttonCameraRight();
+    void buttonCameraTop();
+    void enterConstructionMode();
+    void enterRunMode();
+    void menu1280x720();
+    void menu1920x1080();
+    void menu640x480();
+    void menu800x600();
+    void menuAbout();
+    void menuClearMeshCache();
+    void menuCreateAssembly();
+    void menuCreateBody();
+    void menuCreateDriver();
+    void menuCreateGeom();
+    void menuCreateJoint();
+    void menuCreateMarker();
+    void menuCreateMuscle();
+    void menuCreateMirrorElements();
+    void menuCreateTestingDrivers();
+    void menuLoadDefaultView();
+    void menuDeleteAssembly();
+    void menuEditGlobal();
+    void menuExportMarkers();
+    void menuImportMeshes();
+    void menuNew();
+    void menuOpen();
+    void menuOutputs();
+    void menuPreferences();
+    void menuRawXMLEditor();
+    void menuRecordMovie();
+    void menuRename();
+    void menuResetView();
+    void menuRestart();
+    void menuSave();
+    void menuSaveAs();
+    void menuSaveDefaultView();
+    void menuStartOBJSequenceSave();
+    void menuStartUSDSequenceSave();
+    void menuStopAVISave();
+    void menuStopOBJSequenceSave();
+    void menuStopUSDSequenceSave();
+    void menuToggleFullScreen();
+
+    void menuOpen(const QString &fileName, const QByteArray *fileData);
+    void menuCreateEditMarker(Marker *marker);
+    void menuCreateEditBody(Body *body);
+    void menuCreateEditJoint(Joint *joint);
+    void menuCreateEditGeom(Geom *geom);
+    void menuCreateEditMuscle(Muscle *muscle);
+    void menuCreateEditDriver(Driver *driver);
+
+    void menuOpenRecent(QAction *action);
+
+    void elementInfo(const QString &elementType, const QString &elementName);
+    void elementHide(const QString &elementType, const QString &elementName);
+
+    void usdSnapshot();
+    void objSnapshot();
+    void run();
+    void snapshot();
+    void step();
+
+    void copy();
+    void cut();
+    void paste();
+    void selectAll();
 
     void comboBoxMeshDisplayMapCurrentTextChanged(const QString &text);
     void comboBoxMuscleColourMapCurrentTextChanged(const QString &text);
@@ -99,6 +177,7 @@ private:
     void resizeSimulationWindow(int openGLWidth, int openGLHeight);
     void updateComboBoxTrackingMarker();
     void handleTracking();
+    void updateRecentFiles(const QString &recentFile);
 
     Ui::MainWindow *ui = nullptr;
     SimulationWidget *m_simulationWidget = nullptr;
@@ -120,7 +199,8 @@ private:
     Mode m_mode = constructionMode;
     bool m_noName = true;
 
-    MainWindowActions *m_mainWindowActions = nullptr;
+    QStringList m_recentFileList;
+    int m_maxRecentFiles = 20;
 };
 
 #endif // MAINWINDOW_H

@@ -9,39 +9,68 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "MainWindowActions.h"
+
+#include "AboutDialog.h"
+#include "Body.h"
+#include "Colour.h"
+#include "DataFile.h"
+#include "DialogAssembly.h"
+#include "DialogBodyBuilder.h"
+#include "DialogCreateMirrorElements.h"
+#include "DialogCreateTestingDrivers.h"
+#include "DialogDrivers.h"
+#include "DialogGeoms.h"
+#include "DialogGlobal.h"
+#include "DialogInfo.h"
+#include "DialogJoints.h"
+#include "DialogMarkerImportExport.h"
+#include "DialogMarkers.h"
+#include "DialogMuscles.h"
+#include "DialogOutputSelect.h"
+#include "DialogPreferences.h"
+#include "DialogRename.h"
+#include "Driver.h"
+#include "FacetedObject.h"
+#include "FluidSac.h"
+#include "Geom.h"
+#include "Joint.h"
+#include "Marker.h"
+#include "MarkerEllipseDriver.h"
+#include "MarkerPositionDriver.h"
+#include "Muscle.h"
 #include "Preferences.h"
 #include "Simulation.h"
-#include "Body.h"
-#include "Marker.h"
-#include "Joint.h"
-#include "Muscle.h"
-#include "Geom.h"
-#include "Muscle.h"
-#include "Driver.h"
-
 #include "SimulationWidget.h"
+#include "TegotaeDriver.h"
+#include "TextEditDialog.h"
+#include "ThreeHingeJointDriver.h"
+#include "TwoHingeJointDriver.h"
 
-#include <QMessageBox>
-#include <QTimer>
-#include <QFileDialog>
+#include "pystring.h"
+
+#include <QAction>
+#include <QApplication>
 #include <QBoxLayout>
-#include <QScreen>
-#include <QListWidgetItem>
-#include <QLineEdit>
-#include <QFile>
-#include <QKeyEvent>
+#include <QComboBox>
 #include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QListWidgetItem>
+#include <QMenu>
+#include <QMessageBox>
+#include <QProgressDialog>
+#include <QRegularExpression>
+#include <QScreen>
+#include <QSizePolicy>
 #include <QStringList>
 #include <QTemporaryFile>
-#include <QSizePolicy>
-#include <QApplication>
-#include <QProgressDialog>
 #include <QThread>
-#include <QComboBox>
+#include <QTimer>
 #include <QTreeWidgetItem>
-#include <QtGlobal>
 #include <QWindow>
+#include <QtGlobal>
 
 #include <sstream>
 
@@ -63,69 +92,72 @@ private:
     std::streambuf *oldBuffer;
 };
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     // create the window elements
     ui->setupUi(this);
 
+    // fill the recent file lists
+    m_recentFileList = Preferences::valueQStringList("RecentFileList");
+    m_maxRecentFiles = Preferences::valueInt("MaxRecentFiles", 20);
+    updateRecentFiles("");
+
     // interface related connections
-    m_mainWindowActions = new MainWindowActions(this);
-    connect(ui->action1280x720, SIGNAL(triggered()), m_mainWindowActions, SLOT(menu1280x720()));
-    connect(ui->action1920x1080, SIGNAL(triggered()), m_mainWindowActions, SLOT(menu1920x1080()));
-    connect(ui->action640x480, SIGNAL(triggered()), m_mainWindowActions, SLOT(menu640x480()));
-    connect(ui->action800x600, SIGNAL(triggered()), m_mainWindowActions, SLOT(menu800x600()));
-    connect(ui->actionAboutGaitSymQt, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuAbout()));
-    connect(ui->actionClearMeshCache, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuClearMeshCache()));
-    connect(ui->actionConstructionMode, SIGNAL(triggered()), m_mainWindowActions, SLOT(enterConstructionMode()));
-    connect(ui->actionCopy, SIGNAL(triggered()), m_mainWindowActions, SLOT(copy()));
-    connect(ui->actionCreateAssembly, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateAssembly()));
-    connect(ui->actionCreateBody, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateBody()));
-    connect(ui->actionCreateDriver, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateDriver()));
-    connect(ui->actionCreateGeom, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateGeom()));
-    connect(ui->actionCreateJoint, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateJoint()));
-    connect(ui->actionCreateMarker, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateMarker()));
-    connect(ui->actionCreateMuscle, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateMuscle()));
-    connect(ui->actionCreateMirrorElements, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateMirrorElements()));
-    connect(ui->actionCreateTestingDrivers, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuCreateTestingDrivers()));
-    connect(ui->actionCut, SIGNAL(triggered()), m_mainWindowActions, SLOT(cut()));
-    connect(ui->actionLoadDefaultView, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuLoadDefaultView()));
-    connect(ui->actionDeleteAssembly, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuDeleteAssembly()));
-    connect(ui->actionEditGlobal, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuEditGlobal()));
-    connect(ui->actionExportMarkers, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuExportMarkers()));
-    connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuImportMeshes()));
-    connect(ui->actionNew, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuNew()));
-    connect(ui->actionOpen, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuOpen()));
-    connect(ui->actionOutput, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuOutputs()));
-    connect(ui->actionPaste, SIGNAL(triggered()), m_mainWindowActions, SLOT(paste()));
-    connect(ui->actionPreferences, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuPreferences()));
+    connect(ui->action1280x720, SIGNAL(triggered()), this, SLOT(menu1280x720()));
+    connect(ui->action1920x1080, SIGNAL(triggered()), this, SLOT(menu1920x1080()));
+    connect(ui->action640x480, SIGNAL(triggered()), this, SLOT(menu640x480()));
+    connect(ui->action800x600, SIGNAL(triggered()), this, SLOT(menu800x600()));
+    connect(ui->actionAboutGaitSymQt, SIGNAL(triggered()), this, SLOT(menuAbout()));
+    connect(ui->actionClearMeshCache, SIGNAL(triggered()), this, SLOT(menuClearMeshCache()));
+    connect(ui->actionConstructionMode, SIGNAL(triggered()), this, SLOT(enterConstructionMode()));
+    connect(ui->actionCopy, SIGNAL(triggered()), this, SLOT(copy()));
+    connect(ui->actionCreateAssembly, SIGNAL(triggered()), this, SLOT(menuCreateAssembly()));
+    connect(ui->actionCreateBody, SIGNAL(triggered()), this, SLOT(menuCreateBody()));
+    connect(ui->actionCreateDriver, SIGNAL(triggered()), this, SLOT(menuCreateDriver()));
+    connect(ui->actionCreateGeom, SIGNAL(triggered()), this, SLOT(menuCreateGeom()));
+    connect(ui->actionCreateJoint, SIGNAL(triggered()), this, SLOT(menuCreateJoint()));
+    connect(ui->actionCreateMarker, SIGNAL(triggered()), this, SLOT(menuCreateMarker()));
+    connect(ui->actionCreateMuscle, SIGNAL(triggered()), this, SLOT(menuCreateMuscle()));
+    connect(ui->actionCreateMirrorElements, SIGNAL(triggered()), this, SLOT(menuCreateMirrorElements()));
+    connect(ui->actionCreateTestingDrivers, SIGNAL(triggered()), this, SLOT(menuCreateTestingDrivers()));
+    connect(ui->actionCut, SIGNAL(triggered()), this, SLOT(cut()));
+    connect(ui->actionLoadDefaultView, SIGNAL(triggered()), this, SLOT(menuLoadDefaultView()));
+    connect(ui->actionDeleteAssembly, SIGNAL(triggered()), this, SLOT(menuDeleteAssembly()));
+    connect(ui->actionEditGlobal, SIGNAL(triggered()), this, SLOT(menuEditGlobal()));
+    connect(ui->actionExportMarkers, SIGNAL(triggered()), this, SLOT(menuExportMarkers()));
+    connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), this, SLOT(menuImportMeshes()));
+    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(menuNew()));
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(menuOpen()));
+    connect(ui->actionOutput, SIGNAL(triggered()), this, SLOT(menuOutputs()));
+    connect(ui->actionPaste, SIGNAL(triggered()), this, SLOT(paste()));
+    connect(ui->actionPreferences, SIGNAL(triggered()), this, SLOT(menuPreferences()));
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionRawXMLEditor, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuRawXMLEditor()));
-    connect(ui->actionRecordMovie, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuRecordMovie()));
-    connect(ui->actionRenameElement, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuRename()));
-    connect(ui->actionResetView, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuResetView()));
-    connect(ui->actionRestart, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuRestart()));
-    connect(ui->actionRun, SIGNAL(triggered()), m_mainWindowActions, SLOT(run()));
-    connect(ui->actionRunMode, SIGNAL(triggered()), m_mainWindowActions, SLOT(enterRunMode()));
-    connect(ui->actionSave, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuSave()));
-    connect(ui->actionSaveAs, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuSaveAs()));
-    connect(ui->actionSaveDefaultView, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuSaveDefaultView()));
-    connect(ui->actionSaveOBJSnapshot, SIGNAL(triggered()), m_mainWindowActions, SLOT(objSnapshot()));
-    connect(ui->actionSaveUSDSnapshot, SIGNAL(triggered()), m_mainWindowActions, SLOT(usdSnapshot()));
-    connect(ui->actionSelectAll, SIGNAL(triggered()), m_mainWindowActions, SLOT(selectAll()));
-    connect(ui->actionSnapshot, SIGNAL(triggered()), m_mainWindowActions, SLOT(snapshot()));
-    connect(ui->actionStartOBJSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStartOBJSequenceSave()));
-    connect(ui->actionStartUSDSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStartUSDSequenceSave()));
-    connect(ui->actionStep, SIGNAL(triggered()), m_mainWindowActions, SLOT(step()));
-    connect(ui->actionStopOBJSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStopOBJSequenceSave()));
-    connect(ui->actionStopUSDSequence, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuStopUSDSequenceSave()));
-    connect(ui->actionToggleFullscreen, SIGNAL(triggered()), m_mainWindowActions, SLOT(menuToggleFullScreen()));
-    connect(ui->actionViewBack, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraBack()));
-    connect(ui->actionViewBottom, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraBottom()));
-    connect(ui->actionViewFront, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraFront()));
-    connect(ui->actionViewLeft, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraLeft()));
-    connect(ui->actionViewRight, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraRight()));
-    connect(ui->actionViewTop, SIGNAL(triggered()), m_mainWindowActions, SLOT(buttonCameraTop()));
+    connect(ui->actionRawXMLEditor, SIGNAL(triggered()), this, SLOT(menuRawXMLEditor()));
+    connect(ui->actionRecordMovie, SIGNAL(triggered()), this, SLOT(menuRecordMovie()));
+    connect(ui->actionRenameElement, SIGNAL(triggered()), this, SLOT(menuRename()));
+    connect(ui->actionResetView, SIGNAL(triggered()), this, SLOT(menuResetView()));
+    connect(ui->actionRestart, SIGNAL(triggered()), this, SLOT(menuRestart()));
+    connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(run()));
+    connect(ui->actionRunMode, SIGNAL(triggered()), this, SLOT(enterRunMode()));
+    connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(menuSave()));
+    connect(ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(menuSaveAs()));
+    connect(ui->actionSaveDefaultView, SIGNAL(triggered()), this, SLOT(menuSaveDefaultView()));
+    connect(ui->actionSaveOBJSnapshot, SIGNAL(triggered()), this, SLOT(objSnapshot()));
+    connect(ui->actionSaveUSDSnapshot, SIGNAL(triggered()), this, SLOT(usdSnapshot()));
+    connect(ui->actionSelectAll, SIGNAL(triggered()), this, SLOT(selectAll()));
+    connect(ui->actionSnapshot, SIGNAL(triggered()), this, SLOT(snapshot()));
+    connect(ui->actionStartOBJSequence, SIGNAL(triggered()), this, SLOT(menuStartOBJSequenceSave()));
+    connect(ui->actionStartUSDSequence, SIGNAL(triggered()), this, SLOT(menuStartUSDSequenceSave()));
+    connect(ui->actionStep, SIGNAL(triggered()), this, SLOT(step()));
+    connect(ui->actionStopOBJSequence, SIGNAL(triggered()), this, SLOT(menuStopOBJSequenceSave()));
+    connect(ui->actionStopUSDSequence, SIGNAL(triggered()), this, SLOT(menuStopUSDSequenceSave()));
+    connect(ui->actionToggleFullscreen, SIGNAL(triggered()), this, SLOT(menuToggleFullScreen()));
+    connect(ui->actionViewBack, SIGNAL(triggered()), this, SLOT(buttonCameraBack()));
+    connect(ui->actionViewBottom, SIGNAL(triggered()), this, SLOT(buttonCameraBottom()));
+    connect(ui->actionViewFront, SIGNAL(triggered()), this, SLOT(buttonCameraFront()));
+    connect(ui->actionViewLeft, SIGNAL(triggered()), this, SLOT(buttonCameraLeft()));
+    connect(ui->actionViewRight, SIGNAL(triggered()), this, SLOT(buttonCameraRight()));
+    connect(ui->actionViewTop, SIGNAL(triggered()), this, SLOT(buttonCameraTop()));
     connect(ui->radioButtonTrackingNone, SIGNAL(clicked()), this, SLOT(radioButtonTracking()));
     connect(ui->radioButtonTrackingX, SIGNAL(clicked()), this, SLOT(radioButtonTracking()));
     connect(ui->radioButtonTrackingY, SIGNAL(clicked()), this, SLOT(radioButtonTracking()));
@@ -147,12 +179,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->doubleSpinBoxTimeMax, SIGNAL(valueChanged(double)), this, SLOT(spinboxTimeMax(double)));
     connect(ui->doubleSpinBoxTrackingOffset, SIGNAL(valueChanged(double)), this, SLOT(spinboxTrackingOffsetChanged(double)));
     connect(ui->spinBoxSkip, SIGNAL(valueChanged(int)), this, SLOT(spinboxSkip(int)));
-    connect(ui->treeWidgetElements, SIGNAL(createNewBody()), m_mainWindowActions, SLOT(menuCreateBody()));
-    connect(ui->treeWidgetElements, SIGNAL(createNewDriver()), m_mainWindowActions, SLOT(menuCreateDriver()));
-    connect(ui->treeWidgetElements, SIGNAL(createNewGeom()), m_mainWindowActions, SLOT(menuCreateGeom()));
-    connect(ui->treeWidgetElements, SIGNAL(createNewJoint()), m_mainWindowActions, SLOT(menuCreateJoint()));
-    connect(ui->treeWidgetElements, SIGNAL(createNewMarker()), m_mainWindowActions, SLOT(menuCreateMarker()));
-    connect(ui->treeWidgetElements, SIGNAL(createNewMuscle()), m_mainWindowActions, SLOT(menuCreateMuscle()));
+    connect(ui->treeWidgetElements, SIGNAL(createNewBody()), this, SLOT(menuCreateBody()));
+    connect(ui->treeWidgetElements, SIGNAL(createNewDriver()), this, SLOT(menuCreateDriver()));
+    connect(ui->treeWidgetElements, SIGNAL(createNewGeom()), this, SLOT(menuCreateGeom()));
+    connect(ui->treeWidgetElements, SIGNAL(createNewJoint()), this, SLOT(menuCreateJoint()));
+    connect(ui->treeWidgetElements, SIGNAL(createNewMarker()), this, SLOT(menuCreateMarker()));
+    connect(ui->treeWidgetElements, SIGNAL(createNewMuscle()), this, SLOT(menuCreateMuscle()));
     connect(ui->treeWidgetElements, SIGNAL(deleteBody(const QString &)), this, SLOT(deleteExistingBody(const QString &)));
     connect(ui->treeWidgetElements, SIGNAL(deleteDriver(const QString &)), this, SLOT(deleteExistingDriver(const QString &)));
     connect(ui->treeWidgetElements, SIGNAL(deleteGeom(const QString &)), this, SLOT(deleteExistingGeom(const QString &)));
@@ -166,7 +198,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->treeWidgetElements, SIGNAL(editMarker(const QString &)), this, SLOT(editExistingMarker(const QString &)));
     connect(ui->treeWidgetElements, SIGNAL(editMuscle(const QString &)), this, SLOT(editExistingMuscle(const QString &)));
     connect(ui->treeWidgetElements, SIGNAL(elementTreeWidgetItemChanged(QTreeWidgetItem *, int)), this, SLOT(handleElementTreeWidgetItemChanged(QTreeWidgetItem *, int)));
-    connect(ui->treeWidgetElements, SIGNAL(infoRequest(const QString &, const QString &)), m_mainWindowActions, SLOT(elementInfo(const QString &, const QString &)));
+    connect(ui->treeWidgetElements, SIGNAL(infoRequest(const QString &, const QString &)), this, SLOT(elementInfo(const QString &, const QString &)));
 
     // put SimulationWindow into existing widgetGLWidget
     QBoxLayout *boxLayout = new QBoxLayout(QBoxLayout::LeftToRight, ui->widgetSimulationPlaceholder);
@@ -183,7 +215,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_simulationWidget, SIGNAL(EmitStatusString(const QString &, int)), this, SLOT(setStatusString(const QString &, int)));
     connect(m_simulationWidget, SIGNAL(EmitCOI(float, float, float)), this, SLOT(setUICOI(float, float, float)));
     connect(m_simulationWidget, SIGNAL(EmitFoV(float)), this, SLOT(setUIFoV(float)));
-    connect(m_simulationWidget, SIGNAL(EmitCreateMarkerRequest()), m_mainWindowActions, SLOT(menuCreateMarker()));
+    connect(m_simulationWidget, SIGNAL(EmitCreateMarkerRequest()), this, SLOT(menuCreateMarker()));
     connect(m_simulationWidget, SIGNAL(EmitEditMarkerRequest(const QString &)), this, SLOT(editExistingMarker(const QString &)));
     connect(m_simulationWidget, SIGNAL(EmitMoveMarkerRequest(const QString &, const QVector3D &)), this, SLOT(moveExistingMarker(const QString &, const QVector3D &)));
     connect(m_simulationWidget, SIGNAL(EmitEditBodyRequest(const QString &)), this, SLOT(editExistingBody(const QString &)));
@@ -195,8 +227,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_simulationWidget, SIGNAL(EmitDeleteJointRequest(const QString &)), this, SLOT(deleteExistingJoint(const QString &)));
     connect(m_simulationWidget, SIGNAL(EmitDeleteMarkerRequest(const QString &)), this, SLOT(deleteExistingMarker(const QString &)));
     connect(m_simulationWidget, SIGNAL(EmitDeleteMuscleRequest(const QString &)), this, SLOT(deleteExistingMuscle(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitInfoRequest(const QString &, const QString &)), m_mainWindowActions, SLOT(elementInfo(const QString &, const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitHideRequest(const QString &, const QString &)), m_mainWindowActions, SLOT(elementHide(const QString &, const QString &)));
+    connect(m_simulationWidget, SIGNAL(EmitInfoRequest(const QString &, const QString &)), this, SLOT(elementInfo(const QString &, const QString &)));
+    connect(m_simulationWidget, SIGNAL(EmitHideRequest(const QString &, const QString &)), this, SLOT(elementHide(const QString &, const QString &)));
     connect(m_simulationWidget, SIGNAL(EmitResize(int, int)), this, SLOT(reportOpenGLSize(int, int)));
 
     // the treeWidgetElements needs to know about this window
@@ -224,7 +256,7 @@ MainWindow::MainWindow(QWidget *parent)
     log(QString("Window state restored from \"%1\"").arg(Preferences::fileName()));
 
     // Full screen does not work sensibly yet so remove
-    if (isFullScreen()) m_mainWindowActions->menuToggleFullScreen();
+    if (isFullScreen()) this->menuToggleFullScreen();
     ui->actionToggleFullscreen->setVisible(false);
 }
 
@@ -284,7 +316,7 @@ void MainWindow::processOneThing()
             log(QString::fromStdString(capturedCerr.str()));
             setStatusString(tr("Unable to start simulation"), 1);
             ui->actionRun->setChecked(false);
-            m_mainWindowActions->run();
+            this->run();
             return;
         }
 
@@ -339,7 +371,7 @@ void MainWindow::processOneThing()
             QString time = QString("%1").arg(m_simulation->GetTime(), 0, 'f', 5);
             ui->lcdNumberTime->display(time);
             ui->actionRun->setChecked(false);
-            m_mainWindowActions->run();
+            this->run();
             return;
         }
         if (m_simulation->TestForCatastrophy())
@@ -351,7 +383,7 @@ void MainWindow::processOneThing()
             QString time = QString("%1").arg(m_simulation->GetTime(), 0, 'f', 5);
             ui->lcdNumberTime->display(time);
             ui->actionRun->setChecked(false);
-            m_mainWindowActions->run();
+            this->run();
             return;
         }
         log(QString::fromStdString(capturedCerr.str()));
@@ -366,7 +398,7 @@ void MainWindow::handleCommandLineArguments()
     {
         QFileInfo fileInfo(arguments.at(1));
         if (fileInfo.isFile())
-            m_mainWindowActions->menuOpen(arguments.at(1), nullptr);
+            this->menuOpen(arguments.at(1), nullptr);
     }
 }
 
@@ -1017,37 +1049,37 @@ void MainWindow::deleteExistingGeom(const QString &name, bool force)
 void MainWindow::editExistingBody(const QString &name)
 {
     Body *body = m_simulation->GetBody(name.toStdString());
-    m_mainWindowActions->menuCreateEditBody(body);
+    this->menuCreateEditBody(body);
 }
 
 void MainWindow::editExistingMarker(const QString &name)
 {
     Marker *marker = m_simulation->GetMarker(name.toStdString());
-    m_mainWindowActions->menuCreateEditMarker(marker);
+    this->menuCreateEditMarker(marker);
 }
 
 void MainWindow::editExistingJoint(const QString &name)
 {
     Joint *joint = m_simulation->GetJoint(name.toStdString());
-    m_mainWindowActions->menuCreateEditJoint(joint);
+    this->menuCreateEditJoint(joint);
 }
 
 void MainWindow::editExistingMuscle(const QString &name)
 {
     Muscle *muscle = m_simulation->GetMuscle(name.toStdString());
-    m_mainWindowActions->menuCreateEditMuscle(muscle);
+    this->menuCreateEditMuscle(muscle);
 }
 
 void MainWindow::editExistingGeom(const QString &name)
 {
     Geom *geom = m_simulation->GetGeom(name.toStdString());
-    m_mainWindowActions->menuCreateEditGeom(geom);
+    this->menuCreateEditGeom(geom);
 }
 
 void MainWindow::editExistingDriver(const QString &name)
 {
     Driver *driver = m_simulation->GetDriver(name.toStdString());
-    m_mainWindowActions->menuCreateEditDriver(driver);
+    this->menuCreateEditDriver(driver);
 }
 
 
@@ -1163,3 +1195,1706 @@ void MainWindow::updateComboBoxTrackingMarker()
     ui->comboBoxTrackingMarker->setCurrentIndex(currentTrackMarkerIndex);
 }
 
+void MainWindow::menuOpen()
+{
+    if (this->isWindowModified())
+    {
+        int ret = QMessageBox::warning(this, tr("Current document contains unsaved changes"),
+                                       tr("Opening a new document will delete the current document.\nAre you sure you want to continue?"),
+                                       QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+        if (ret == QMessageBox::Cancel) return;
+    }
+
+    QFileInfo info(Preferences::valueQString("LastFileOpened"));
+    QString fileName;
+
+    fileName = QFileDialog::getOpenFileName(this, tr("Open Config File"), info.absoluteFilePath(), tr("Config Files (*.gaitsym *.xml);;Any File (*.* *)"), nullptr);
+    if (fileName.isNull() == false)
+    {
+        Preferences::insert("LastFileOpened", fileName);
+        menuOpen(fileName, nullptr);
+    }
+}
+
+void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
+{
+    // dispose any simulation cleanly
+    this->m_timer->stop();
+    this->ui->actionRun->setChecked(false);
+    if (this->m_movieFlag) { menuStopAVISave(); }
+    this->m_saveOBJFileSequenceFlag = false;
+    if (this->m_simulationWidget->aviWriter()) menuStopAVISave();
+    if (this->m_simulation)
+    {
+        delete this->m_simulation;
+        this->m_simulation = nullptr;
+        this->m_simulationWidget->setSimulation(this->m_simulation);
+    }
+    this->m_stepCount = 0;
+    this->m_stepFlag = false;
+
+    this->m_configFile.setFile(fileName);
+    QDir::setCurrent(this->m_configFile.absolutePath());
+    QString canonicalFilePath = this->m_configFile.canonicalFilePath();
+    QDir currentDir(this->m_configFile.absolutePath());
+    Preferences::insert("LastFileOpened", canonicalFilePath);
+
+    this->setStatusString(fileName + QString(" loading"), 2);
+    qApp->processEvents();
+
+    std::string *errorMessage = nullptr;
+    if (fileData)
+    {
+        this->m_simulation = new Simulation();
+        errorMessage = this->m_simulation->LoadModel(fileData->constData(), fileData->size());
+    }
+    else
+    {
+        DataFile file;
+        int err;
+        err = file.ReadFile(canonicalFilePath.toStdString());
+        if (err)
+        {
+            this->setStatusString(QString("Error reading ") + canonicalFilePath, 0);
+            this->updateEnable();
+            return;
+        }
+        this->m_simulation = new Simulation();
+        errorMessage = this->m_simulation->LoadModel(file.GetRawData(), file.GetSize());
+    }
+    if (errorMessage)
+    {
+        this->setStatusString(QString::fromStdString(*errorMessage), 0);
+        delete this->m_simulation;
+        this->m_simulation = nullptr;
+        this->m_simulationWidget->setSimulation(this->m_simulation);
+        this->m_simulationWidget->update();
+        this->updateEnable();
+        return;
+    }
+    this->ui->treeWidgetElements->fillVisibitilityLists(this->m_simulation);
+
+    // check we can find the meshes
+    QStringList searchPath;
+    for (size_t i = 0; i < this->m_simulation->GetGlobal()->MeshSearchPath()->size(); i++)
+        searchPath.append(QString::fromStdString(this->m_simulation->GetGlobal()->MeshSearchPath()->at(i)));
+    bool noToAll = false;
+    bool meshPathChanged = false;
+    for (auto &&iter : *this->m_simulation->GetBodyList())
+    {
+        std::vector<std::string> meshNames = {iter.second->GetGraphicFile1(), iter.second->GetGraphicFile2(), iter.second->GetGraphicFile3()};
+        for (size_t nameIndex = 0;  nameIndex < meshNames.size(); nameIndex++)
+        {
+            auto &&meshName = meshNames[nameIndex];
+            if (meshName.size() == 0) continue;
+            bool fileFound = false;
+            QString graphicsFile = QString::fromStdString(meshName);
+            for (int i = 0; i < searchPath.size(); i++)
+            {
+                QDir dir(searchPath[i]);
+                if (dir.exists(graphicsFile))
+                {
+                    fileFound = true;
+                    break;
+                }
+            }
+            if (fileFound == false)
+            {
+                int ret = QMessageBox::warning(this, QString("Loading ") + canonicalFilePath,
+                                               QString("Unable to find \"") + graphicsFile + QString("\"\nDo you want to load a new file?\nThis will alter the Mesh Path and the file will require saving to make this change permanent."),
+                                               QMessageBox::Yes | QMessageBox::No | QMessageBox::NoToAll, QMessageBox::Yes);
+                if (ret == QMessageBox::NoToAll) noToAll = true;
+                if (ret == QMessageBox::Yes)
+                {
+                    QString newFile = QFileDialog::getOpenFileName(this, tr("Open Mesh File"), graphicsFile, tr("Mesh Files (*.obj *.ply)"), nullptr);
+                    if (newFile.isNull() == false)
+                    {
+                        QFileInfo newFileInfo(newFile);
+                        switch (nameIndex)
+                        {
+                        case 0:
+                            iter.second->SetGraphicFile1(newFileInfo.fileName().toStdString());
+                            break;
+                        case 1:
+                            iter.second->SetGraphicFile2(newFileInfo.fileName().toStdString());
+                            break;
+                        case 2:
+                            iter.second->SetGraphicFile3(newFileInfo.fileName().toStdString());
+                            break;
+                        default:
+                            qDebug() << "Error IN MainWindow::menuOpen(): invalid nameIndex = " << nameIndex;
+                        }
+                        QString newPath = currentDir.relativeFilePath(newFileInfo.absolutePath());
+                        if (newPath.size() == 0) newPath = ".";
+                        searchPath.append(newPath);
+                        meshPathChanged = true;
+                    }
+                }
+            }
+            if (noToAll) break;
+        }
+        if (noToAll) break;
+    }
+    if (meshPathChanged)
+    {
+        this->m_simulation->GetGlobal()->MeshSearchPath()->clear();
+        for (int i = 0; i < searchPath.size(); i++) this->m_simulation->GetGlobal()->MeshSearchPath()->push_back(searchPath[i].toStdString());
+    }
+
+    this->m_simulationWidget->setAxesScale(float(this->m_simulation->GetGlobal()->size1()));
+    QString backgroundColour = QString::fromStdString(this->m_simulation->GetGlobal()->colour1().GetHexArgb());
+    this->m_simulationWidget->setSimulation(this->m_simulation);
+    this->m_simulationWidget->setBackgroundColour(QColor(backgroundColour));
+    this->m_simulationWidget->update();
+    // this->m_simulation->setDrawContactForces(Preferences::valueBool("DisplayContactForces"));
+    //  this->m_simulation->Draw(this->m_simulationWidget);
+    this->radioButtonTracking();
+
+    this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetTimeLimit());
+    QString time = QString("%1").arg(double(0), 0, 'f', 5);
+    this->ui->lcdNumberTime->display(time);
+
+    this->setStatusString(fileName + QString(" loaded"), 1);
+
+    this->comboBoxMuscleColourMapCurrentTextChanged(this->ui->comboBoxMuscleColourMap->currentText());
+    this->comboBoxMeshDisplayMapCurrentTextChanged(this->ui->comboBoxMeshDisplay->currentText());
+
+    this->updateComboBoxTrackingMarker();
+    this->handleTracking();
+
+    // put the filename as a title
+    //if (canonicalFilePath.size() <= 256) this->setWindowTitle(canonicalFilePath + "[*]");
+    //else this->setWindowTitle(QString("...") + canonicalFilePath.right(256) + "[*]");
+    this->setWindowTitle(canonicalFilePath);
+
+    updateRecentFiles(canonicalFilePath);
+
+    // set menu activations for loaded model
+    this->m_noName = false;
+    if (meshPathChanged)
+    {
+        this->setWindowModified(true);
+        enterConstructionMode();
+    }
+    else
+    {
+        this->setWindowModified(false);
+        enterRunMode();
+    }
+    this->updateEnable();
+    Preferences::Write();
+}
+
+void MainWindow::menuRestart()
+{
+    menuOpen(this->m_configFile.absoluteFilePath(), nullptr);
+}
+
+void MainWindow::menuSaveAs()
+{
+    QString fileName;
+    if (this->m_configFile.absoluteFilePath().isEmpty())
+    {
+        QFileInfo info(Preferences::valueQString("LastFileOpened"));
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Model State File "), info.absoluteFilePath(), tr("Config Files (*.gaitsym);;XML files (*.xml)"), nullptr);
+    }
+    else
+    {
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Model State File"), this->m_configFile.absoluteFilePath(), tr("Config Files (*.gaitsym);;XML files (*.xml)"), nullptr);
+    }
+
+    if (fileName.isNull() == false)
+    {
+        if (this->m_mode == MainWindow::constructionMode) // need to put everything into run mode to save properly
+        {
+            for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterRunMode();
+            for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
+            for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+            for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+        }
+        this->setStatusString(fileName + QString(" saving"), 2);
+        this->m_configFile.setFile(fileName);
+        QDir currentDir(this->m_configFile.absolutePath());
+        QString meshPath, relativeMeshPath;
+        for (auto &&it : *this->m_simulation->GetBodyList())
+        {
+            meshPath = QString::fromStdString(it.second->GetGraphicFile1());
+            relativeMeshPath = currentDir.relativeFilePath(meshPath);
+            it.second->SetGraphicFile1(relativeMeshPath.toStdString());
+            meshPath = QString::fromStdString(it.second->GetGraphicFile2());
+            relativeMeshPath = currentDir.relativeFilePath(meshPath);
+            it.second->SetGraphicFile2(relativeMeshPath.toStdString());
+            meshPath = QString::fromStdString(it.second->GetGraphicFile3());
+            relativeMeshPath = currentDir.relativeFilePath(meshPath);
+            it.second->SetGraphicFile3(relativeMeshPath.toStdString());
+        }
+        this->m_simulation->SetOutputModelStateFile(fileName.toStdString());
+        this->m_simulation->OutputProgramState();
+        this->setStatusString(fileName + QString(" saved"), 1);
+        QDir::setCurrent(this->m_configFile.absolutePath());
+        Preferences::insert("LastFileOpened", this->m_configFile.canonicalFilePath());
+        // if (fileName.size() <= 256) this->setWindowTitle(fileName + "[*]");
+        // else this->setWindowTitle(QString("...") + fileName.right(256) + "[*]");
+        this->setWindowTitle(this->m_configFile.canonicalFilePath());
+        updateRecentFiles(this->m_configFile.canonicalFilePath());
+        this->m_noName = false;
+        this->setWindowModified(false);
+        if (this->m_mode == MainWindow::constructionMode)
+        {
+            for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterConstructionMode();
+            for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
+            for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+        }
+        Preferences::Write();
+        this->updateEnable();
+    }
+    else
+    {
+        this->ui->statusBar->showMessage(QString("Save As... cancelled"));
+    }
+}
+
+void MainWindow::menuSave()
+{
+    if (this->m_noName) return;
+    if (this->m_mode == MainWindow::constructionMode) // need to put everything into run mode to save properly
+    {
+        for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterRunMode();
+        for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
+        for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+        for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+    }
+    QString fileName = this->m_configFile.absoluteFilePath();
+    QDir currentDir(this->m_configFile.absolutePath());
+    QString meshPath, relativeMeshPath;
+    for (auto &&it : *this->m_simulation->GetBodyList())
+    {
+        meshPath = QString::fromStdString(it.second->GetGraphicFile1());
+        relativeMeshPath = currentDir.relativeFilePath(meshPath);
+        it.second->SetGraphicFile1(relativeMeshPath.toStdString());
+        meshPath = QString::fromStdString(it.second->GetGraphicFile2());
+        relativeMeshPath = currentDir.relativeFilePath(meshPath);
+        it.second->SetGraphicFile2(relativeMeshPath.toStdString());
+        meshPath = QString::fromStdString(it.second->GetGraphicFile3());
+        relativeMeshPath = currentDir.relativeFilePath(meshPath);
+        it.second->SetGraphicFile3(relativeMeshPath.toStdString());
+    }
+    this->setStatusString(fileName + QString(" saving"), 2);
+    this->m_simulation->SetOutputModelStateFile(fileName.toStdString());
+    this->m_simulation->OutputProgramState();
+    this->setStatusString(fileName + QString(" saved"), 1);
+    this->setWindowModified(false);
+    if (this->m_mode == MainWindow::constructionMode)
+    {
+        for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterConstructionMode();
+        for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
+        for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+    }
+    Preferences::Write();
+    this->updateEnable();
+}
+
+
+void MainWindow::menuAbout()
+{
+    AboutDialog aboutDialog(this);
+
+    int status = aboutDialog.exec();
+
+    if (status == QDialog::Accepted)
+    {
+    }
+}
+
+void MainWindow::run()
+{
+    if (this->ui->actionRun->isChecked())
+    {
+        if (this->m_simulation) this->m_timer->start();
+        this->setStatusString(tr("Simulation running"), 1);
+    }
+    else
+    {
+        this->m_timer->stop();
+        this->setStatusString(tr("Simulation stopped"), 1);
+    }
+}
+void MainWindow::step()
+{
+    this->m_stepFlag = true;
+    if (this->m_simulation) this->m_timer->start();
+    this->setStatusString(tr("Simulation stepped"), 2);
+}
+
+void MainWindow::snapshot()
+{
+    int count = 0;
+    QDir dir(this->m_configFile.absolutePath());
+    QStringList list = dir.entryList(QDir::Files | QDir::Dirs, QDir::Name);
+    QStringList matches = list.filter(QRegularExpression(QString("^Snapshot\\d\\d\\d\\d\\d.*")));
+    if (matches.size() > 0)
+    {
+        QString numberString = matches.last().mid(8, 5);
+        count = numberString.toInt() + 1;
+    }
+    QString filename = dir.absoluteFilePath(QString("Snapshot%1.png").arg(count, 5, 10, QChar('0')));
+    if (this->m_simulationWidget->WriteStillFrame(filename))
+    {
+        QMessageBox::warning(this, "Snapshot Error", QString("Could not write '%1'\n").arg(filename));
+        return;
+    }
+    this->setStatusString(QString("\"%1\" saved").arg(filename), 1);
+}
+
+void MainWindow::objSnapshot()
+{
+    QFileInfo info(Preferences::valueQString("LastFileOpened"));
+
+    QString folder = QFileDialog::getExistingDirectory(this, tr("Choose folder to save current view as OBJ files"), info.absolutePath());
+
+    if (folder.isNull() == false)
+    {
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+        this->setStatusString(QString("Writing to \"%1\"").arg(folder), 1);
+        if (this->m_simulationWidget->WriteCADFrame(folder))
+        {
+            this->setStatusString(QString("Error: Folder '%1' write fail\n").arg(folder), 0);
+            return;
+        }
+        this->setStatusString(QString("Files written in '%1'\n").arg(folder), 1);
+        QApplication::restoreOverrideCursor();
+    }
+}
+
+void MainWindow::usdSnapshot()
+{
+    int count = 0;
+    QDir dir(this->m_configFile.absolutePath());
+    QStringList list = dir.entryList(QDir::Files | QDir::Dirs, QDir::Name);
+    QStringList matches = list.filter(QRegularExpression(QString("^Snapshot\\d\\d\\d\\d\\d.*")));
+    if (matches.size() > 0)
+    {
+        QString numberString = matches.last().mid(8, 5);
+        count = numberString.toInt() + 1;
+    }
+    QString filename = dir.absoluteFilePath(QString("Snapshot%1.usda").arg(count, 5, 10, QChar('0')));
+    // filename = QFileDialog::getSaveFileName(this, tr("Save current view as USD file"), filename, tr("Images (*.usd *.usda *.usdc)"));
+
+    if (filename.isNull() == false)
+    {
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+        this->setStatusString(QString("Writing \"%1\"").arg(filename), 1);
+        if (this->m_simulationWidget->WriteUSDFrame(filename))
+        {
+            QMessageBox::warning(this, "Snapshot Error", QString("Could not write '%1'\n").arg(filename));
+            return;
+        }
+        this->setStatusString(QString("\"%1\" saved").arg(filename), 1);
+        QApplication::restoreOverrideCursor();
+    }
+}
+
+
+void MainWindow::menuRecordMovie()
+{
+    if (this->ui->actionRecordMovie->isChecked())
+    {
+        this->m_movieFlag = true;
+        QFileInfo info(Preferences::valueQString("LastFileOpened"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save output as AVI file"), info.absolutePath(), tr("AVI Files (*.avi)"), nullptr);
+        if (fileName.isNull() == false)
+        {
+            this->m_movieFlag = true;
+            this->m_simulationWidget->StartAVISave(fileName);
+        }
+        else
+        {
+            this->m_movieFlag = false;
+            this->ui->actionRecordMovie->setChecked(false);
+        }
+    }
+    else
+    {
+        this->m_movieFlag = false;
+        if (this->m_simulationWidget->aviWriter()) menuStopAVISave();
+    }
+}
+
+void MainWindow::menuPreferences()
+{
+    DialogPreferences dialogPreferences(this);
+    dialogPreferences.initialise();
+
+    int status = dialogPreferences.exec();
+
+    if (status == QDialog::Accepted)   // write the new settings
+    {
+        dialogPreferences.update();
+        this->writeSettings();
+
+        // these settings have immediate effect
+        QColor cursorColour = Preferences::valueQColor("CursorColour");
+        this->m_simulationWidget->setCursorColour(QColor(cursorColour.red(), cursorColour.green(), cursorColour.blue(), cursorColour.alpha()));
+        this->m_simulationWidget->setCursorRadius(float(Preferences::valueDouble("CursorRadius")));
+        this->m_simulationWidget->setCursor3DNudge(float(Preferences::valueDouble("CursorNudge")));
+        this->m_simulationWidget->setFrontClip(float(Preferences::valueDouble("CameraFrontClip")));
+        this->m_simulationWidget->setBackClip(float(Preferences::valueDouble("CameraBackClip")));
+
+        this->m_simulationWidget->update();
+
+    }
+
+}
+
+void MainWindow::menuOutputs()
+{
+    if (this->m_simulation == nullptr) return;
+    DialogOutputSelect dialogOutputSelect(this);
+    dialogOutputSelect.setSimulation(this->m_simulation);
+    int status = dialogOutputSelect.exec();
+    if (status == QDialog::Accepted)
+    {
+        this->ui->treeWidgetElements->fillVisibitilityLists(this->m_simulation);
+        this->setStatusString(tr("Outputs set"), 1);
+    }
+    else
+    {
+        this->setStatusString(tr("Outputs setting cancelled"), 1);
+    }
+}
+
+void MainWindow::menuLoadDefaultView()
+{
+    this->ui->doubleSpinBoxTrackingOffset->setValue(Preferences::valueDouble("DefaultTrackingOffset"));
+
+    this->m_simulationWidget->setCameraDistance(float(Preferences::valueDouble("DefaultCameraDistance")));
+    this->m_simulationWidget->setFOV(float(Preferences::valueDouble("DefaultCameraFoV")));
+    this->m_simulationWidget->setCameraVecX(float(Preferences::valueDouble("DefaultCameraVecX")));
+    this->m_simulationWidget->setCameraVecY(float(Preferences::valueDouble("DefaultCameraVecY")));
+    this->m_simulationWidget->setCameraVecZ(float(Preferences::valueDouble("DefaultCameraVecZ")));
+    this->m_simulationWidget->setCOIx(float(Preferences::valueDouble("DefaultCameraCOIX")));
+    this->m_simulationWidget->setCOIy(float(Preferences::valueDouble("DefaultCameraCOIY")));
+    this->m_simulationWidget->setCOIz(float(Preferences::valueDouble("DefaultCameraCOIZ")));
+    this->m_simulationWidget->setUpX(float(Preferences::valueDouble("DefaultCameraUpX")));
+    this->m_simulationWidget->setUpY(float(Preferences::valueDouble("DefaultCameraUpY")));
+    this->m_simulationWidget->setUpZ(float(Preferences::valueDouble("DefaultCameraUpZ")));
+    this->m_simulationWidget->setBackClip(float(Preferences::valueDouble("DefaultCameraBackClip")));
+    this->m_simulationWidget->setFrontClip(float(Preferences::valueDouble("DefaultCameraFrontClip")));
+
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::menuSaveDefaultView()
+{
+    Preferences::insert("DefaultTrackingOffset", this->ui->doubleSpinBoxTrackingOffset->value());
+
+    Preferences::insert("DefaultCameraDistance", this->m_simulationWidget->cameraDistance());
+    Preferences::insert("DefaultCameraFoV", this->m_simulationWidget->FOV());
+    Preferences::insert("DefaultCameraCOIX", this->m_simulationWidget->COIx());
+    Preferences::insert("DefaultCameraCOIY", this->m_simulationWidget->COIy());
+    Preferences::insert("DefaultCameraCOIZ", this->m_simulationWidget->COIz());
+    Preferences::insert("DefaultCameraVecX", this->m_simulationWidget->cameraVecX());
+    Preferences::insert("DefaultCameraVecY", this->m_simulationWidget->cameraVecY());
+    Preferences::insert("DefaultCameraVecZ", this->m_simulationWidget->cameraVecZ());
+    Preferences::insert("DefaultCameraUpX", this->m_simulationWidget->upX());
+    Preferences::insert("DefaultCameraUpY", this->m_simulationWidget->upY());
+    Preferences::insert("DefaultCameraUpZ", this->m_simulationWidget->upZ());
+    Preferences::insert("DefaultCameraBackClip", this->m_simulationWidget->backClip());
+    Preferences::insert("DefaultCameraFrontClip", this->m_simulationWidget->frontClip());
+    Preferences::Write();
+}
+
+void MainWindow::menu640x480()
+{
+    this->resizeSimulationWindow(640, 480);
+}
+
+void MainWindow::menu800x600()
+{
+    this->resizeSimulationWindow(800, 600);
+}
+
+void MainWindow::menu1280x720()
+{
+    this->resizeSimulationWindow(1280, 720);
+}
+
+void MainWindow::menu1920x1080()
+{
+    this->resizeSimulationWindow(1920, 1080);
+}
+
+void MainWindow::buttonCameraRight()
+{
+    this->m_simulationWidget->setCameraVecX(0);
+    this->m_simulationWidget->setCameraVecY(1);
+    this->m_simulationWidget->setCameraVecZ(0);
+    this->m_simulationWidget->setUpX(0);
+    this->m_simulationWidget->setUpY(0);
+    this->m_simulationWidget->setUpZ(1);
+    this->m_simulationWidget->update();
+}
+
+
+void MainWindow::buttonCameraTop()
+{
+    this->m_simulationWidget->setCameraVecX(0);
+    this->m_simulationWidget->setCameraVecY(0);
+    this->m_simulationWidget->setCameraVecZ(-1);
+    this->m_simulationWidget->setUpX(0);
+    this->m_simulationWidget->setUpY(1);
+    this->m_simulationWidget->setUpZ(0);
+    this->m_simulationWidget->update();
+}
+
+
+void MainWindow::buttonCameraFront()
+{
+    this->m_simulationWidget->setCameraVecX(-1);
+    this->m_simulationWidget->setCameraVecY(0);
+    this->m_simulationWidget->setCameraVecZ(0);
+    this->m_simulationWidget->setUpX(0);
+    this->m_simulationWidget->setUpY(0);
+    this->m_simulationWidget->setUpZ(1);
+    this->m_simulationWidget->update();
+}
+
+
+void MainWindow::buttonCameraLeft()
+{
+    this->m_simulationWidget->setCameraVecX(0);
+    this->m_simulationWidget->setCameraVecY(-1);
+    this->m_simulationWidget->setCameraVecZ(0);
+    this->m_simulationWidget->setUpX(0);
+    this->m_simulationWidget->setUpY(0);
+    this->m_simulationWidget->setUpZ(1);
+    this->m_simulationWidget->update();
+}
+
+
+void MainWindow::buttonCameraBottom()
+{
+    this->m_simulationWidget->setCameraVecX(0);
+    this->m_simulationWidget->setCameraVecY(0);
+    this->m_simulationWidget->setCameraVecZ(1);
+    this->m_simulationWidget->setUpX(0);
+    this->m_simulationWidget->setUpY(1);
+    this->m_simulationWidget->setUpZ(0);
+    this->m_simulationWidget->update();
+}
+
+
+void MainWindow::buttonCameraBack()
+{
+    this->m_simulationWidget->setCameraVecX(1);
+    this->m_simulationWidget->setCameraVecY(0);
+    this->m_simulationWidget->setCameraVecZ(0);
+    this->m_simulationWidget->setUpX(0);
+    this->m_simulationWidget->setUpY(0);
+    this->m_simulationWidget->setUpZ(1);
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::menuStopAVISave()
+{
+    this->m_movieFlag = false;
+    this->m_simulationWidget->StopAVISave();
+}
+
+void MainWindow::menuStartOBJSequenceSave()
+{
+    this->m_objFileFormat = MainWindow::obj;
+    QFileInfo info(Preferences::valueQString("LastFileOpened"));
+
+    this->m_objFileSequenceFolder = QFileDialog::getExistingDirectory(this, tr("Choose folder for writing the OBJ file sequence"), info.absolutePath());
+
+    if (this->m_objFileSequenceFolder.isNull() == false)
+    {
+        this->m_saveOBJFileSequenceFlag = true;    }
+}
+
+void MainWindow::menuStartUSDSequenceSave()
+{
+    this->m_objFileFormat = MainWindow::usda;
+    QFileInfo info(Preferences::valueQString("LastFileOpened"));
+
+    this->m_objFileSequenceFolder = QFileDialog::getExistingDirectory(this, tr("Choose folder for writing the USD file sequence"), info.absolutePath());
+
+    if (this->m_objFileSequenceFolder.isNull() == false)
+    {
+        this->m_saveOBJFileSequenceFlag = true;
+    }
+}
+
+void MainWindow::menuStopOBJSequenceSave()
+{
+    this->m_saveOBJFileSequenceFlag = false;
+}
+
+void MainWindow::menuStopUSDSequenceSave()
+{
+    this->m_saveOBJFileSequenceFlag = false;
+}
+
+void MainWindow::menuNew()
+{
+    if (this->isWindowModified())
+    {
+        QMessageBox msgBox;
+        msgBox.setText("The document has been modified.");
+        msgBox.setInformativeText("Click OK to create a new document, and Cancel to continue working on the current document");
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = msgBox.exec();
+        switch (ret)
+        {
+        case QMessageBox::Ok:
+            break;
+        case QMessageBox::Cancel:
+            return;
+        default:
+            // should never be reached
+            return;
+        }
+    }
+
+    DialogGlobal dialogGlobal(this);
+    dialogGlobal.setExistingBodies(nullptr);
+    dialogGlobal.lateInitialise();
+
+    int status = dialogGlobal.exec();
+
+    if (status == QDialog::Accepted)
+    {
+        if (this->m_movieFlag) { menuStopAVISave(); }
+        if (this->m_simulation) delete this->m_simulation;
+        this->m_simulation = nullptr;
+        this->m_simulationWidget->setSimulation(this->m_simulation);
+        this->m_stepCount = 0;
+        this->ui->actionRun->setChecked(false);
+        this->m_timer->stop();
+        this->m_saveOBJFileSequenceFlag = false;
+        this->m_simulation = new Simulation();
+        std::unique_ptr<Global> newGlobal = dialogGlobal.outputGlobal();
+        newGlobal->setSimulation(this->m_simulation);
+        this->m_simulation->SetGlobal(std::move(newGlobal));
+        this->m_simulationWidget->setSimulation(this->m_simulation);
+        this->m_simulationWidget->update();
+        this->ui->treeWidgetElements->setSimulation(this->m_simulation);
+        std::unique_ptr<Marker> marker = std::make_unique<Marker>(nullptr);
+        marker->setName("WorldMarker"s);
+        auto markersMap = this->m_simulation->GetMarkerList();
+        (*markersMap)[marker->name()] = std::move(marker);
+        this->ui->treeWidgetElements->fillVisibitilityLists(this->m_simulation);
+        this->updateComboBoxTrackingMarker();
+        this->m_noName = true;
+        this->setWindowModified(false);
+        enterConstructionMode();
+        this->updateEnable();
+        this->setStatusString(tr("New document created"), 1);
+    }
+    else
+    {
+        this->setStatusString(tr("New document cancelled"), 1);
+    }
+}
+
+void MainWindow::menuImportMeshes()
+{
+    if (this->m_simulation == nullptr) return;
+    std::string lastFolder;
+    if (this->m_noName) lastFolder = pystring::os::path::dirname(Preferences::valueQString("LastFileOpened").toStdString());
+    else lastFolder = this->m_configFile.absolutePath().toStdString();
+
+    QStringList meshFileNames = QFileDialog::getOpenFileNames(dynamic_cast<QWidget *>(parent()), tr("Select the geometry files required"), QString::fromStdString(lastFolder), "Meshes (*.obj *.ply)");
+    std::vector<std::string> errorList;
+    if (meshFileNames.size())
+    {
+        for (auto &&it : meshFileNames)
+        {
+            // first check that this is a valid mesh
+            std::string meshFileName = it.toStdString();
+            std::unique_ptr<FacetedObject> mesh = std::make_unique<FacetedObject>();
+            if (mesh->ParseMeshFile(meshFileName))
+            {
+                errorList.push_back("Error parsing "s + meshFileName);
+                continue;
+            }
+
+            // now create the body
+            std::unique_ptr<Body> body = std::make_unique<Body>(/*this->m_simulation->GetWorldID()*/);
+            body->setSimulation(this->m_simulation);
+            body->SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
+            body->SetGraphicFile1(meshFileName);
+
+            // get a unique file name
+            auto bodyList = this->m_simulation->GetBodyList();
+            auto markerList = this->m_simulation->GetMarkerList();
+            std::string ext, suggestedName;
+            pystring::os::path::splitext(suggestedName, ext, pystring::os::path::basename(meshFileName));
+            for (size_t i = 0; i < suggestedName.size(); i++)
+            {
+                if (std::isalnum(suggestedName[i]) || suggestedName[i] == '_') continue;
+                suggestedName[i] = '_';
+            }
+            std::string suggestedCMMarkerName = suggestedName + "_CM_Marker"s;
+            auto suggestedNameIt = bodyList->find(suggestedName);
+            auto suggestedMarkerNameIt = markerList->find(suggestedCMMarkerName);
+            size_t count = 0;
+            while (suggestedNameIt != bodyList->end() || suggestedMarkerNameIt != markerList->end() || count > 999)
+            {
+                count++;
+                std::string newSuggestedName = suggestedName + std::to_string(count);
+                suggestedCMMarkerName = newSuggestedName + "_CM_Marker"s;
+                suggestedNameIt = bodyList->find(newSuggestedName);
+                suggestedMarkerNameIt = markerList->find(suggestedCMMarkerName);
+                if (suggestedNameIt == bodyList->end() && suggestedMarkerNameIt == markerList->end())
+                {
+                    suggestedName = newSuggestedName;
+                    break;
+                }
+            }
+            if (count > 999)
+            {
+                errorList.push_back("Error setting name for "s + meshFileName);
+                continue;
+            }
+            body->setName(suggestedName);
+
+            // and set the mass
+            double mass, ixx, iyy, izz, ixy, izx, iyz;
+            pgd::Vector3 centreOfMass;
+            pgd::Matrix3x3 inertialTensor;
+            double density = body->GetConstructionDensity();
+            bool clockwise = false;
+            pgd::Vector3 translation;
+            mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+            std::string massError/* = Body::MassCheck(&mass)*/; // FIX_ME
+            if (massError.size() == 0)
+            {
+                body->SetConstructionPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
+                body->SetPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
+                // now recalculate the inertial tensor arount the centre of mass
+                translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
+                mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+            }
+            else
+            {
+                QMessageBox::warning(this, tr("Calculate Mass Properties: %1").arg(meshFileName.c_str()), tr("Calculated mass properties are invalid so using defaults:\n%1").arg(massError.c_str()));
+                pgd::Vector3 boundingBoxCentre = (pgd::Vector3(mesh->upperBound()) + pgd::Vector3(mesh->lowerBound())) / 2;
+                body->SetConstructionPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
+                body->SetPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
+                mass = 1;
+                inertialTensor.SetInertia(1, 1, 1, 0, 0, 0);
+            }
+            inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+            body->SetMass(mass, ixx, iyy, izz, ixy, izx, iyz);
+
+            // set the default properties
+            body->setSize1(Preferences::valueDouble("BodyAxesSize"));
+            body->setSize2(Preferences::valueDouble("BodyBlendFraction"));
+            body->setColour1(Preferences::valueQColor("BodyColour1").name(QColor::HexArgb).toStdString());
+            body->setColour2(Preferences::valueQColor("BodyColour2").name(QColor::HexArgb).toStdString());
+            body->setColour3(Preferences::valueQColor("BodyColour3").name(QColor::HexArgb).toStdString());
+
+            // this is needed because there are some parts of Body that do not have a public interface
+            body->saveToAttributes();
+            body->createFromAttributes();
+
+            // insert the new centre of mass marker
+            std::unique_ptr<Marker> cmMarker = std::make_unique<Marker>(body.get());
+            cmMarker->setName(suggestedCMMarkerName);
+            cmMarker->setSimulation(this->m_simulation);
+            cmMarker->setSize1(Preferences::valueDouble("MarkerSize", 0.01));
+
+            // and add to the simulation
+            (*bodyList)[suggestedName] = std::move(body);
+            (*markerList)[suggestedCMMarkerName] = std::move(cmMarker);
+        }
+    }
+    else
+    {
+        this->setStatusString("Import meshes as Bodies cancelled", 2);
+        return;
+    }
+    this->setStatusString("Import Meshes as Bodies Successful", 1);
+    for (size_t i = 0; i < errorList.size(); i++)
+    {
+        this->log(QString::fromStdString(errorList[i] + "\n"s));
+    }
+    this->setWindowModified(true);
+    this->updateEnable();
+    this->updateComboBoxTrackingMarker();
+    this->ui->treeWidgetElements->fillVisibitilityLists(this->m_simulation);
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::menuToggleFullScreen()
+{
+    // might want to remember things like whether the screen was maximised or minimised
+    if (this->isFullScreen())
+    {
+        this->ui->menuBar->show();
+        this->showNormal();
+    }
+    else
+    {
+        this->ui->menuBar->hide();
+        this->showFullScreen();
+    }
+}
+
+void MainWindow::menuCreateJoint()
+{
+    menuCreateEditJoint(nullptr);
+}
+
+void MainWindow::menuCreateEditJoint(Joint *joint)
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateJoint", "this->m_simulation undefined");
+    Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
+    DialogJoints dialogJoints(this);
+    dialogJoints.setSimulation(this->m_simulation);
+    dialogJoints.setInputJoint(joint);
+    dialogJoints.lateInitialise();
+    int status = dialogJoints.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (!joint) // creating a new joint
+        {
+            std::unique_ptr<Joint> newJoint = dialogJoints.outputJoint();
+            std::string newJointName = newJoint->name();
+            newJoint->LateInitialisation();
+            this->ui->treeWidgetElements->insertJoint(QString().fromStdString(newJointName), newJoint->visible(), newJoint->dump());
+            (*this->m_simulation->GetJointList())[newJointName] = std::move(newJoint);
+            this->setStatusString(QString("New joint created: %1").arg(QString::fromStdString(newJointName)), 1);
+        }
+        else // replacing an existing joint
+        {
+            std::unique_ptr<Joint> replacementJoint = dialogJoints.outputJoint();
+            std::string replacementJointName = replacementJoint->name();
+            replacementJoint->LateInitialisation();
+            // the only thing that currently depends on joints is the ThreeJointDriver
+            for (auto &&driverIt : *this->m_simulation->GetDriverList())
+            {
+                ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt.second.get());
+                if (threeHingeJointDriver) threeHingeJointDriver->saveToAttributes();
+            }
+            (*this->m_simulation->GetJointList())[replacementJointName] = std::move(replacementJoint);
+            for (auto driverIt = this->m_simulation->GetDriverList()->begin(); driverIt != this->m_simulation->GetDriverList()->end(); /* no increment */)
+            {
+                ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt->second.get());
+                if (threeHingeJointDriver)
+                {
+                    std::string *lastError = threeHingeJointDriver->createFromAttributes();
+                    if (lastError)
+                    {
+                        QMessageBox::warning(this, QString("Error creating ThreeHingeJointDriver \"%1\"").arg(QString::fromStdString(driverIt->first)),
+                                             QString("Error message:\n\"%1\"").arg(QString::fromStdString(*lastError)));
+                        this->setStatusString(QString("ThreeHingeJointDriver deleted: %1").arg(QString::fromStdString(driverIt->first)), 1);
+                        this->deleteExistingDriver(QString::fromStdString(driverIt->first));
+                        driverIt = this->m_simulation->GetDriverList()->erase(driverIt);
+                    }
+                    else { driverIt++; }
+                }
+                else { driverIt++; }
+            }
+            this->setStatusString(QString("Joint edited: %1").arg(QString::fromStdString(replacementJointName)), 1);
+        }
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Joint creation cancelled"), 2);
+    }
+}
+
+void MainWindow::menuCreateBody()
+{
+    menuCreateEditBody(nullptr);
+}
+
+void MainWindow::menuCreateEditBody(Body *body)
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateBody", "m_simulation undefined");
+    DialogBodyBuilder dialogBodyBuilder(this);
+    dialogBodyBuilder.setSimulation(this->m_simulation);
+    dialogBodyBuilder.setInputBody(body);
+    dialogBodyBuilder.lateInitialise();
+    pgd::Vector3 originalContructionPosition;
+    pgd::Vector3 originalPosition;
+    pgd::Quaternion originalOrientation;
+    if (body)
+    {
+        originalContructionPosition = body->GetConstructionPosition();
+        originalPosition = body->GetPosition();
+        originalOrientation = body->GetQuaternion();
+    }
+    int status = dialogBodyBuilder.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (!body) // this is the create body option so there will be no dependencies
+        {
+            std::unique_ptr<Body> newBody = dialogBodyBuilder.outputBody();
+            newBody->LateInitialisation();
+            std::string newBodyName = newBody->name();
+            // insert the new centre of mass marker unless it already exists
+            std::string cmMarkerName = newBodyName + "_CM_Marker"s;
+            if (!this->m_simulation->GetMarker(cmMarkerName))
+            {
+                std::unique_ptr<Marker> cmMarker = std::make_unique<Marker>(newBody.get());
+                cmMarker->setName(cmMarkerName);
+                cmMarker->setSimulation(this->m_simulation);
+                cmMarker->setSize1(Preferences::valueDouble("MarkerSize", 0.01));
+                this->ui->treeWidgetElements->insertMarker(QString().fromStdString(cmMarkerName), cmMarker->visible(), cmMarker->dump());
+                (*this->m_simulation->GetMarkerList())[cmMarkerName] = std::move(cmMarker);
+                this->setStatusString(QString("New marker created: %1").arg(QString::fromStdString(cmMarkerName)), 1);
+            }
+            else
+            {
+                this->setStatusString(QString("Unable to create: %1. Marker already exists.").arg(QString::fromStdString(cmMarkerName)), 1);
+            }
+            // insert the new body
+            this->ui->treeWidgetElements->insertBody(QString().fromStdString(newBodyName), newBody->visible(), newBody->dump());
+            (*this->m_simulation->GetBodyList())[newBodyName] = std::move(newBody);
+            this->setStatusString(QString("New body created: %1").arg(QString::fromStdString(newBodyName)), 0);
+            this->updateComboBoxTrackingMarker();
+        }
+        else // this is an edit so things may have moved and we need to deal with that
+        {
+            this->setStatusString(QString("Body edited: %1").arg(QString::fromStdString(body->name())), 1);
+            pgd::Vector3 deltaPosition = pgd::Vector3(body->GetConstructionPosition()) - originalContructionPosition;
+            if (Preferences::valueBool("DialogBodyBuilderMoveMarkers", false) == false) // need to compensate the move in construction position
+            {
+                for (auto &&it : *this->m_simulation->GetMarkerList())
+                {
+                    if (it.second->GetBody() == body)
+                        it.second->OffsetPosition(-deltaPosition.x, -deltaPosition.y, -deltaPosition.z);
+                }
+            }
+            // and handle the CM marker if it exists
+            std::string cmMarkerName = body->name() + "_CM_Marker"s;
+            Marker *cmMarker = this->m_simulation->GetMarker(cmMarkerName);
+            if (cmMarker && cmMarker->GetBody()->name() == body->name())
+            {
+                cmMarker->SetPosition(0, 0, 0); // this puts it back at the centre of mass
+            }
+            else
+            {
+                if (cmMarker) this->setStatusString(QString("Unable to move: %1. Marker attached to a different body.").arg(QString::fromStdString(cmMarkerName)), 0);
+                else this->setStatusString(QString("Unable to move: %1. Marker does not exists.").arg(QString::fromStdString(cmMarkerName)), 0);
+            }
+            //            // completely reloading everything will work but is rather slow
+            //            QByteArray xmlData = QByteArray::fromStdString(this->m_simulation->SaveToXML());
+            //            menuOpen(this->m_configFile.absoluteFilePath(), &xmlData);
+            //            this->setWindowModified(true);
+            //            enterConstructionMode();
+
+            body->setRedraw(true);
+            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            for (auto &&it : objectList)
+            {
+
+                if (it->isUpstreamObject(body))
+                {
+                    it->saveToAttributes();
+                    it->createFromAttributes();
+                    it->setRedraw(true);
+                    // everything needs a redraw but somethings also need extra work
+                    if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                }
+            }
+        }
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Body creation cancelled"), 2);
+    }
+}
+
+void MainWindow::menuCreateMarker()
+{
+    menuCreateEditMarker(nullptr);
+}
+
+void MainWindow::menuCreateEditMarker(Marker *marker)
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateEditMarker", "m_simulation undefined");
+    Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
+    DialogMarkers dialogMarkers(this);
+    dialogMarkers.setCursor3DPosition(this->m_simulationWidget->cursor3DPosition());
+    dialogMarkers.setInputMarker(marker);
+    dialogMarkers.setSimulation(this->m_simulation);
+    dialogMarkers.lateInitialise();
+    if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit Marker..."))
+    {
+        if (this->m_simulationWidget->getClosestHit())
+        {
+            pgd::Vector3 location = this->m_simulationWidget->getClosestHit()->worldLocation();
+            dialogMarkers.overrideStartPosition(location);
+        }
+    }
+    int status = dialogMarkers.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (!marker) // create so no dependencies
+        {
+            std::unique_ptr<Marker> newMarker = dialogMarkers.outputMarker();
+            std::string newMarkerName = newMarker->name();
+            this->ui->treeWidgetElements->insertMarker(QString().fromStdString(newMarkerName), newMarker->visible(), newMarker->dump());
+            (*this->m_simulation->GetMarkerList())[newMarkerName] = std::move(newMarker);
+            this->setStatusString(QString("New marker created: %1").arg(QString::fromStdString(newMarkerName)), 1);
+        }
+        else // editing a marker so need to cope with dependencies
+        {
+            marker->setRedraw(true);
+            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            for (auto &&it : objectList)
+            {
+                if (it->isUpstreamObject(marker))
+                {
+                    it->saveToAttributes();
+                    it->createFromAttributes();
+                    it->setRedraw(true);
+                    // everything needs a redraw but somethings also need extra work
+                    if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                }
+            }
+            this->setStatusString(QString("Marker edited: %1").arg(QString::fromStdString(marker->name())), 1);
+        }
+
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Marker creation cancelled"), 2);
+    }
+}
+
+void MainWindow::menuCreateMuscle()
+{
+    menuCreateEditMuscle(nullptr);
+}
+
+void MainWindow::menuCreateEditMuscle(Muscle *muscle)
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateMuscle", "this->m_simulation undefined");
+    Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
+    DialogMuscles dialogMuscles(this);
+    dialogMuscles.setSimulation(this->m_simulation);
+    dialogMuscles.setInputMuscle(muscle);
+    dialogMuscles.lateInitialise();
+    int status = dialogMuscles.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (!muscle) // creating a new muscle
+        {
+            std::unique_ptr<Strap> newStrap = dialogMuscles.outputStrap();
+            std::string newStrapName = newStrap->name();
+            (*this->m_simulation->GetStrapList())[newStrapName] = std::move(newStrap);
+            std::unique_ptr<Muscle> newMuscle = dialogMuscles.outputMuscle();
+            muscle = newMuscle.get();
+            std::string newMuscleName = newMuscle->name();
+            this->ui->treeWidgetElements->insertMuscle(QString().fromStdString(newMuscleName), newMuscle->visible(), newMuscle->dump());
+            (*this->m_simulation->GetMuscleList())[newMuscleName] = std::move(newMuscle);
+            this->setStatusString(QString("New muscle created: %1").arg(QString::fromStdString(newMuscleName)), 1);
+        }
+        else // replacing an existing muscle
+        {
+            std::unique_ptr<Strap> replacementStrap = dialogMuscles.outputStrap();
+            std::string replacementStrapName = replacementStrap->name();
+            (*this->m_simulation->GetStrapList())[replacementStrapName] = std::move(replacementStrap);
+            std::unique_ptr<Muscle> replacementMuscle = dialogMuscles.outputMuscle();
+            muscle = replacementMuscle.get();
+            std::string replacementMuscleName = replacementMuscle->name();
+            //            this->ui->treeWidgetElements->insertMuscle(QString().fromStdString(replacementMuscleName), replacementMuscle->visible(), replacementMuscle->dump());
+            (*this->m_simulation->GetMuscleList())[replacementMuscleName] = std::move(replacementMuscle);
+            this->setStatusString(QString("Muscle edited: %1").arg(QString::fromStdString(replacementMuscleName)), 1);
+        }
+
+        this->setWindowModified(true);
+        Muscle::StrapColourControl colourControl = Muscle::fixedColour;
+        QString text = this->ui->comboBoxMuscleColourMap->currentText();
+        if (text == "Strap Colour") colourControl = Muscle::fixedColour;
+        else if (text == "Activation Colour") colourControl = Muscle::activationMap;
+        else if (text == "Strain Colour") colourControl = Muscle::strainMap;
+        else if (text == "Force Colour") colourControl = Muscle::forceMap;
+        muscle->setStrapColourControl(colourControl);
+        muscle->LateInitialisation();
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Muscle creation cancelled"), 2);
+    }
+}
+
+void MainWindow::menuCreateGeom()
+{
+    menuCreateEditGeom(nullptr);
+}
+
+void MainWindow::menuCreateEditGeom(Geom *geom)
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateGeom", "this->m_simulation undefined");
+    Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
+    DialogGeoms dialogGeoms(this);
+    dialogGeoms.setSimulation(this->m_simulation);
+    dialogGeoms.setInputGeom(geom);
+    dialogGeoms.lateInitialise();
+    int status = dialogGeoms.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (!geom) // creating a new geom
+        {
+            std::unique_ptr<Geom> newGeom = dialogGeoms.outputGeom();
+            std::string newGeomName = newGeom->name();
+            this->ui->treeWidgetElements->insertGeom(QString().fromStdString(newGeomName), newGeom->visible(), newGeom->dump());
+            (*this->m_simulation->GetGeomList())[newGeomName] = std::move(newGeom);
+            this->setStatusString(QString("New geom created: %1").arg(QString::fromStdString(newGeomName)), 1);
+        }
+        else // replacing an existing geom
+        {
+            std::unique_ptr<Geom> replacementGeom = dialogGeoms.outputGeom();
+            std::string replacementGeomName = replacementGeom->name();
+            (*this->m_simulation->GetGeomList())[replacementGeomName] = std::move(replacementGeom);
+            // handle dependencies
+            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            for (auto &&it : objectList)
+            {
+                if (it->isUpstreamObject(geom))  // have to look for the old object because that's what needs to be replaced
+                {
+                    it->saveToAttributes();
+                    it->createFromAttributes();
+                    it->setRedraw(true);
+                    // everything needs a redraw but somethings also need extra work
+                    if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                }
+            }
+
+            this->setStatusString(QString("Geom edited: %1").arg(QString::fromStdString(replacementGeomName)), 1);
+        }
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Geom creation cancelled"), 2);
+    }
+}
+
+
+
+void MainWindow::menuCreateDriver()
+{
+    menuCreateEditDriver(nullptr);
+}
+
+void MainWindow::menuCreateEditDriver(Driver *driver)
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateDriver", "this->m_simulation undefined");
+    Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
+    if (dynamic_cast<TegotaeDriver *>(driver) || dynamic_cast<ThreeHingeJointDriver *>(driver) || dynamic_cast<TwoHingeJointDriver *>(driver)
+        || dynamic_cast<MarkerPositionDriver *>(driver) || dynamic_cast<MarkerEllipseDriver *>(driver))
+    {
+        QMessageBox::warning(this, "GUI Based Editing Not Implemented", QString("Driver %1 could not be edited").arg(QString::fromStdString(driver->name())));
+        return;
+    }
+    DialogDrivers dialogDrivers(this);
+    dialogDrivers.setSimulation(this->m_simulation);
+    dialogDrivers.setInputDriver(driver);
+    dialogDrivers.lateInitialise();
+    int status = dialogDrivers.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (!driver) // creating a new driver
+        {
+            std::unique_ptr<Driver> newDriver = dialogDrivers.outputDriver();
+            std::string newDriverName = newDriver->name();
+            this->ui->treeWidgetElements->insertDriver(QString().fromStdString(newDriverName), newDriver->visible(), newDriver->dump());
+            (*this->m_simulation->GetDriverList())[newDriverName] = std::move(newDriver);
+            this->setStatusString(QString("New driver created: %1").arg(QString::fromStdString(newDriverName)), 1);
+        }
+        else // replacing an existing driver
+        {
+            std::unique_ptr<Driver> replacementDriver = dialogDrivers.outputDriver();
+            std::string replacementDriverName = replacementDriver->name();
+            (*this->m_simulation->GetDriverList())[replacementDriverName] = std::move(replacementDriver);
+            this->setStatusString(QString("Driver edited: %1").arg(QString::fromStdString(replacementDriverName)), 1);
+        }
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Driver creation cancelled"), 2);
+    }
+}
+
+void MainWindow::menuEditGlobal()
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuEditGlobal", "this->m_simulation undefined");
+    DialogGlobal dialogGlobal(this);
+    dialogGlobal.setInputGlobal(this->m_simulation->GetGlobal());
+    dialogGlobal.setExistingBodies(this->m_simulation->GetBodyList());
+    dialogGlobal.lateInitialise();
+
+    int status = dialogGlobal.exec();
+
+    if (status == QDialog::Accepted)   // write the new settings
+    {
+        this->m_simulation->SetGlobal(dialogGlobal.outputGlobal());
+        this->m_simulation->GetGlobal()->setSimulation(this->m_simulation);
+        this->setStatusString(tr("Global values edited"), 1);
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetGlobal()->TimeLimit());
+        this->m_simulationWidget->setAxesScale(float(this->m_simulation->GetGlobal()->size1()));
+        this->m_simulationWidget->setBackgroundColour(QString::fromStdString(this->m_simulation->GetGlobal()->colour1().GetHexArgb()));
+        this->m_simulationWidget->update();
+    }
+    else
+    {
+        this->setStatusString(tr("Global values unchanged"), 2);
+    }
+}
+
+void MainWindow::enterRunMode()
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::enterRunMode", "this->m_simulation undefined");
+    this->m_mode = MainWindow::runMode;
+    for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterRunMode();
+    for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+    this->ui->actionRunMode->setChecked(true);
+    this->ui->actionConstructionMode->setChecked(false);
+    this->updateEnable();
+    this->m_simulationWidget->getDrawMuscleMap()->clear(); // force a redraw of all muscles
+    this->m_simulationWidget->getDrawFluidSacMap()->clear(); // force a redraw of all fluid sacs
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::enterConstructionMode()
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::enterConstructionMode", "this->m_simulation undefined");
+    Q_ASSERT_X(this->m_stepCount == 0, "MainWindow::enterConstructionMode", "this->m_stepCount not zero");
+    this->m_mode = MainWindow::constructionMode;
+    for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterConstructionMode();
+    for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+    this->ui->actionRunMode->setChecked(false);
+    this->ui->actionConstructionMode->setChecked(true);
+    this->updateEnable();
+    this->m_simulationWidget->getDrawMuscleMap()->clear(); // force a redraw of all muscles
+    this->m_simulationWidget->getDrawFluidSacMap()->clear(); // force a redraw of all fluid sacs
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::menuCreateAssembly()
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateAssembly", "this->m_simulation undefined");
+    DialogAssembly dialogAssembly(this);
+    dialogAssembly.setSimulation(this->m_simulation);
+    dialogAssembly.initialise();
+    connect(&dialogAssembly, SIGNAL(jointCreated(const QString &)), this->ui->treeWidgetElements, SLOT(insertJoint(const QString &)));
+    connect(&dialogAssembly, SIGNAL(markerCreated(const QString &)), this->ui->treeWidgetElements, SLOT(insertMarker(const QString &)));
+    connect(&dialogAssembly, SIGNAL(jointDeleted(const QString &)), this->ui->treeWidgetElements, SLOT(deleteJoint(const QString &)));
+    connect(&dialogAssembly, SIGNAL(markerDeleted(const QString &)), this->ui->treeWidgetElements, SLOT(deleteMarker(const QString &)));
+    int status = dialogAssembly.exec();
+    if (status == QDialog::Accepted)
+    {
+        this->setStatusString(tr("Assembly constraints created"), 2);
+        this->setWindowModified(true);
+    }
+    else
+    {
+        this->setStatusString(tr("Assembly cancelled"), 2);
+    }
+    this->updateEnable();
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::menuDeleteAssembly()
+{
+    int ret = QMessageBox::warning(this, tr("Delete Assembly"), tr("This action cannot be undone.\nAre you sure you want to continue?"), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (ret == QMessageBox::Ok)
+    {
+        for (auto iter = this->m_simulation->GetJointList()->begin(); iter != this->m_simulation->GetJointList()->end(); /* no increment */)
+        {
+            if (iter->second->group() == "assembly"s)
+            {
+                QString name = QString::fromStdString(iter->first);
+                iter++;
+                this->deleteExistingJoint(name, true);
+            }
+            else
+            {
+                iter++;
+            }
+        }
+        for (auto iter = this->m_simulation->GetMarkerList()->begin(); iter != this->m_simulation->GetMarkerList()->end(); /* no increment */)
+        {
+            if (iter->second->group() == "assembly"s)
+            {
+                QString name = QString::fromStdString(iter->first);
+                iter++;
+                this->deleteExistingMarker(name, true);
+            }
+            else
+            {
+                iter++;
+            }
+        }
+        this->setStatusString(tr("Assembly constraints deleted"), 2);
+        this->setWindowModified(true);
+        this->updateEnable();
+        this->m_simulationWidget->update();
+    }
+}
+
+void MainWindow::menuExportMarkers()
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuExportMarkers", "this->m_simulation undefined");
+    DialogMarkerImportExport dialogMarkerImportExport(this);
+    dialogMarkerImportExport.setSimulation(this->m_simulation);
+    dialogMarkerImportExport.setAllowImport(this->m_mode == MainWindow::constructionMode);
+    std::vector<std::unique_ptr<Marker>> markerList;
+    dialogMarkerImportExport.setMarkerList(&markerList);
+    int status = dialogMarkerImportExport.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (dialogMarkerImportExport.markerList() == nullptr)
+        {
+            this->setStatusString(QString("Markers exported."), 1);
+        }
+        else
+        {
+            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            for (size_t i =0; i < markerList.size(); i++)
+            {
+                std::unique_ptr<Marker> marker = std::move(markerList[i]);
+                std::string markerName = marker->name();
+                this->ui->treeWidgetElements->insertMarker(QString().fromStdString(markerName), marker->visible(), marker->dump());
+                auto markerIt = this->m_simulation->GetMarkerList()->find(markerName);
+                if (markerIt != this->m_simulation->GetMarkerList()->end()) // replacement marker
+                {
+                    markerIt->second->setRedraw(true);
+                    for (auto &&it : objectList)
+                    {
+                        if (it->isUpstreamObject(markerIt->second.get()))
+                        {
+                            it->saveToAttributes();
+                            it->createFromAttributes();
+                            it->setRedraw(true);
+                            // everything needs a redraw but somethings also need extra work
+                            if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                        }
+                    }
+                }
+                (*this->m_simulation->GetMarkerList())[markerName] = std::move(marker);
+            }
+            this->setWindowModified(true);
+            this->updateComboBoxTrackingMarker();
+            this->updateEnable();
+            this->m_simulationWidget->update();
+        }
+    }
+    else
+    {
+        this->setStatusString(tr("Marker import/export cancelled."), 2);
+    }
+}
+
+void MainWindow::menuResetView()
+{
+    this->ui->doubleSpinBoxTrackingOffset->setValue(Preferences::valueDouble("ResetTrackingOffset"));
+
+    this->m_simulationWidget->setCameraDistance(float(Preferences::valueDouble("ResetCameraDistance")));
+    this->m_simulationWidget->setFOV(float(Preferences::valueDouble("ResetCameraFoV")));
+    this->m_simulationWidget->setCameraVecX(float(Preferences::valueDouble("ResetCameraVecX")));
+    this->m_simulationWidget->setCameraVecY(float(Preferences::valueDouble("ResetCameraVecY")));
+    this->m_simulationWidget->setCameraVecZ(float(Preferences::valueDouble("ResetCameraVecZ")));
+    this->m_simulationWidget->setCOIx(float(Preferences::valueDouble("ResetCameraCOIX")));
+    this->m_simulationWidget->setCOIy(float(Preferences::valueDouble("ResetCameraCOIY")));
+    this->m_simulationWidget->setCOIz(float(Preferences::valueDouble("ResetCameraCOIZ")));
+    this->m_simulationWidget->setUpX(float(Preferences::valueDouble("ResetCameraUpX")));
+    this->m_simulationWidget->setUpY(float(Preferences::valueDouble("ResetCameraUpY")));
+    this->m_simulationWidget->setUpZ(float(Preferences::valueDouble("ResetCameraUpZ")));
+    this->m_simulationWidget->setBackClip(float(Preferences::valueDouble("ResetCameraBackClip")));
+    this->m_simulationWidget->setFrontClip(float(Preferences::valueDouble("ResetCameraFrontClip")));
+
+    this->m_simulationWidget->setCursor3DPosition(QVector3D(0, 0, 0));
+    this->m_simulationWidget->setCursorRadius(float(Preferences::valueDouble("ResetCursorRadius")));
+    this->m_simulationWidget->setAxesScale(float(Preferences::valueDouble("ResetAxesSize")));
+
+    this->ui->doubleSpinBoxDistance->setValue(Preferences::valueDouble("ResetCameraDistance"));
+    this->ui->doubleSpinBoxFoV->setValue(Preferences::valueDouble("ResetCameraFoV"));
+    this->ui->doubleSpinBoxCOIX->setValue(Preferences::valueDouble("ResetCameraCOIX"));
+    this->ui->doubleSpinBoxCOIY->setValue(Preferences::valueDouble("ResetCameraCOIY"));
+    this->ui->doubleSpinBoxCOIZ->setValue(Preferences::valueDouble("ResetCameraCOIZ"));
+    this->ui->doubleSpinBoxFar->setValue(Preferences::valueDouble("ResetCameraBackClip"));
+    this->ui->doubleSpinBoxNear->setValue(Preferences::valueDouble("ResetCameraFrontClip"));
+    this->ui->doubleSpinBoxTrackingOffset->setValue(Preferences::valueDouble("ResetTrackingOffset"));
+
+    this->ui->radioButtonTrackingNone->setChecked(true);
+
+    this->ui->doubleSpinBoxCursorSize->setValue(Preferences::valueDouble("ResetCursorRadius"));
+
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::menuRawXMLEditor()
+{
+    TextEditDialog textEditDialog(this);
+    textEditDialog.useXMLSyntaxHighlighter();
+    textEditDialog.setEditorText(QString::fromStdString(this->m_simulation->SaveToXML()));
+    textEditDialog.setModified(false);
+    int status = textEditDialog.exec();
+    if (status == QDialog::Accepted) // write the new settings
+    {
+        if (textEditDialog.isModified())
+        {
+            QByteArray editFileData = textEditDialog.editorText().toUtf8();
+            menuOpen(this->m_configFile.absoluteFilePath(), &editFileData);
+            this->setWindowModified(true);
+            enterConstructionMode();
+            this->updateEnable();
+            this->m_simulationWidget->update();
+        }
+        else
+        {
+            this->ui->statusBar->showMessage(tr("Raw XML Editor no changes made"));
+        }
+    }
+    else
+    {
+        this->ui->statusBar->showMessage(tr("Raw XML Editor cancelled"));
+    }
+}
+
+void MainWindow::menuCreateMirrorElements()
+{
+    DialogCreateMirrorElements dialog(this);
+    dialog.useXMLSyntaxHighlighter();
+    dialog.setEditorText(QString::fromStdString(this->m_simulation->SaveToXML()));
+    dialog.setModified(false);
+    int status = dialog.exec();
+    if (status == QDialog::Accepted) // write the new settings
+    {
+        if (dialog.isModified())
+        {
+            QByteArray editFileData = dialog.editorText().toUtf8();
+            menuOpen(this->m_configFile.absoluteFilePath(), &editFileData);
+            this->setWindowModified(true);
+            enterConstructionMode();
+            this->updateEnable();
+            this->m_simulationWidget->update();
+        }
+        else
+        {
+            this->ui->statusBar->showMessage(tr("Create Mirror Elements no changes made"));
+        }
+    }
+    else
+    {
+        this->ui->statusBar->showMessage(tr("Create Mirror Elements cancelled"));
+    }
+}
+
+void MainWindow::menuCreateTestingDrivers()
+{
+    DialogCreateTestingDrivers dialog(this);
+    dialog.useXMLSyntaxHighlighter();
+    dialog.setEditorText(QString::fromStdString(this->m_simulation->SaveToXML()));
+    dialog.setModified(false);
+    int status = dialog.exec();
+    if (status == QDialog::Accepted) // write the new settings
+    {
+        if (dialog.isModified())
+        {
+            QByteArray editFileData = dialog.editorText().toUtf8();
+            menuOpen(this->m_configFile.absoluteFilePath(), &editFileData);
+            this->setWindowModified(true);
+            enterConstructionMode();
+            this->updateEnable();
+            this->m_simulationWidget->update();
+        }
+        else
+        {
+            this->ui->statusBar->showMessage(tr("Create Mirror Elements no changes made"));
+        }
+    }
+    else
+    {
+        this->ui->statusBar->showMessage(tr("Create Mirror Elements cancelled"));
+    }
+}
+
+void MainWindow::menuRename()
+{
+    DialogRename dialog(this);
+    dialog.useXMLSyntaxHighlighter();
+    dialog.setEditorText(QString::fromStdString(this->m_simulation->SaveToXML()));
+    auto objectList = this->m_simulation->GetObjectList();
+    dialog.setNameList(&objectList);
+    dialog.setModified(false);
+    int status = dialog.exec();
+    if (status == QDialog::Accepted) // write the new settings
+    {
+        if (dialog.isModified())
+        {
+            QByteArray editFileData = dialog.editorText().toUtf8();
+            menuOpen(this->m_configFile.absoluteFilePath(), &editFileData);
+            this->setWindowModified(true);
+            enterConstructionMode();
+            this->updateEnable();
+            this->m_simulationWidget->update();
+        }
+        else
+        {
+            this->ui->statusBar->showMessage(tr("Rename: no changes made"));
+        }
+    }
+    else
+    {
+        this->ui->statusBar->showMessage(tr("Rename cancelled"));
+    }
+}
+
+void MainWindow::elementInfo(const QString &elementType, const QString &elementName)
+{
+    DialogInfo *dialog = new DialogInfo(this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true); // needed so I can display this modelessly
+    dialog->useXMLSyntaxHighlighter();
+    NamedObject *element = this->m_simulation->GetNamedObject(elementName.toStdString());
+    if (!element) return;
+    element->saveToAttributes();
+    std::vector<std::string> lines;
+    lines.push_back("<"s + elementType.toUpper().toStdString());
+    for (auto &&it : element->attributeMap()) lines.push_back("    "s + it.first + "=\"" + it.second + "\"");
+    lines.push_back("/>"s);
+    Muscle *muscle = dynamic_cast<Muscle *>(element);
+    if (muscle)
+    {
+        muscle->GetStrap()->saveToAttributes();
+        lines.push_back("<STRAP"s);
+        for (auto &&it : muscle->GetStrap()->attributeMap()) lines.push_back("    "s + it.first + "=\"" + it.second + "\"");
+        lines.push_back("/>"s);
+    }
+    std::string text = pystring::join("\n"s, lines);
+    dialog->setEditorText(QString::fromStdString(text));
+    dialog->setWindowTitle(QString("%1 ID=\"%2\" Information").arg(elementType, elementName));
+    dialog->setModal(false);
+    dialog->show();
+}
+
+void MainWindow::elementHide(const QString &elementType, const QString &elementName)
+{
+    this->ui->treeWidgetElements->setVisibleSwitch(elementType.toUpper(), elementName, false);
+}
+
+void MainWindow::menuClearMeshCache()
+{
+    FacetedObject::ClearMeshStore();
+    this->log("Mesh cache cleared");
+    this->ui->statusBar->showMessage("Mesh cache cleared");
+}
+
+void MainWindow::copy()
+{
+    QWidget *focused = QApplication::focusWidget();
+    if ( focused != nullptr )
+    {
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier ));
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyRelease, Qt::Key_C, Qt::ControlModifier ));
+    }
+}
+
+void MainWindow::cut()
+{
+    QWidget *focused = QApplication::focusWidget();
+    if ( focused != nullptr )
+    {
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier ));
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyRelease, Qt::Key_X, Qt::ControlModifier ));
+    }
+}
+
+void MainWindow::paste()
+{
+    QWidget *focused = QApplication::focusWidget();
+    if ( focused != nullptr )
+    {
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier ));
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyRelease, Qt::Key_V, Qt::ControlModifier ));
+    }
+}
+
+void MainWindow::selectAll()
+{
+    QWidget *focused = QApplication::focusWidget();
+    if ( focused != nullptr )
+    {
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyPress, Qt::Key_A, Qt::ControlModifier ));
+        QApplication::postEvent( focused, new QKeyEvent( QEvent::KeyRelease, Qt::Key_A, Qt::ControlModifier ));
+    }
+}
+
+void MainWindow::updateRecentFiles(const QString &recentFile)
+{
+    // remove any existing reference to recentFile
+    for (int i = m_recentFileList.size() - 1; i >= 0; i--)
+    {
+        if (m_recentFileList[i] == recentFile) { m_recentFileList.removeAt(i); }
+    }
+    // add recentFile to the front of the list
+    m_recentFileList.push_front(recentFile);
+    // remove any non-existent files
+    for (int i = m_recentFileList.size() - 1; i >= 0; i--)
+    {
+        QFileInfo checkFile(m_recentFileList[i]);
+        if (checkFile.exists() && checkFile.isFile()) continue;
+        m_recentFileList.removeAt(i);
+    }
+    // remove the last elements of the list if necessary
+    for (int i = m_recentFileList.size(); i >= m_maxRecentFiles; i--) { m_recentFileList.pop_back(); }
+    // delete the old recent file menu and create a new one
+    QList<QMenu *>  menuList = this->menuBar()->findChildren<QMenu *>();
+    for (auto && menu: menuList)
+    {
+        if (menu->title() == "Open Recent")
+        {
+            disconnect(menu, SIGNAL(triggered(QAction *)), nullptr, nullptr);
+            menu->clear();
+            for (auto &&file : m_recentFileList) { menu->addAction(file); }
+            menu->addSeparator();
+            menu->addAction("Clear Menu");
+            connect(menu, SIGNAL(triggered(QAction *)), this, SLOT(menuOpenRecent(QAction *)));
+            break;
+        }
+    }
+    Preferences::insert("RecentFileList", m_recentFileList);
+}
+
+void MainWindow::menuOpenRecent(QAction *action)
+{
+    if (action->text() == "Clear Menu")
+    {
+        m_recentFileList.clear();
+        updateRecentFiles("");
+        return;
+    }
+    menuOpen(action->text(), nullptr);
+}

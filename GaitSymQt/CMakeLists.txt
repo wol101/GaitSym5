@@ -42,7 +42,10 @@ add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC)
 # ODE definitions
 add_compile_definitions(dIDEDOUBLE dTRIMESH_ENABLED=1 dTRIMESH_OPCODE=1 dTRIMESH_GIMPACT=0 dTRIMESH_16BIT_INDICES=0
     CCD_IDEDOUBLE dLIBCCD_ENABLED=1 dTHREADING_INTF_DISABLED=1 dTRIMESH_OPCODE_USE_OLD_TRIMESH_TRIMESH_COLLIDER=0
-    ICE_NO_DLL dTLS_ENABLED=0 HAVE_MALLOC_H USE_UNIX_ERRORS)
+    ICE_NO_DLL dTLS_ENABLED=0 USE_UNIX_ERRORS)
+if (MSVC)
+    add_compile_definitions(HAVE_MALLOC_H)
+endif()
 
 # gle definitions
 add_compile_definitions(DEBUG_OUTPUT)
@@ -115,7 +118,6 @@ set(PROJECT_SOURCES
     ../GaitSymQt/LineEditUniqueName.cpp
     ../GaitSymQt/MainWindow.cpp
     ../GaitSymQt/MainWindow.ui
-    ../GaitSymQt/MainWindowActions.cpp
     ../GaitSymQt/MeshStore.cpp
     ../GaitSymQt/Preferences.cpp
     ../GaitSymQt/SimulationWidget.cpp
@@ -1070,7 +1072,6 @@ set(PROJECT_SOURCES
     ../GaitSymQt/LineEditPath.h
     ../GaitSymQt/LineEditUniqueName.h
     ../GaitSymQt/MainWindow.h
-    ../GaitSymQt/MainWindowActions.h
     ../GaitSymQt/MeshStore.h
     ../GaitSymQt/Preferences.h
     ../GaitSymQt/SimulationWidget.h
