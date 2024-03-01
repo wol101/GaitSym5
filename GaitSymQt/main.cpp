@@ -101,77 +101,33 @@ int main(int argc, char *argv[])
     int styleCode = Preferences::valueInt("StyleCode");
     QStringList styles = QStyleFactory::keys();
     qDebug() << styles;
-    if (styleCode == 0 && styles.contains("Fusion", Qt::CaseInsensitive))
+    while (true)
     {
-        application.setStyle(QStyleFactory::create("Fusion"));
-    }
-    else if (styleCode == 1 && styles.contains("Windows", Qt::CaseInsensitive))
-    {
-        application.setStyle(QStyleFactory::create("Windows"));
-    }
-    else if (styleCode == 2 && styles.contains("windowsvista", Qt::CaseInsensitive))
-    {
-        application.setStyle(QStyleFactory::create("windowsvista"));
-    }
-    else if (styleCode == 2 && styles.contains("gtk", Qt::CaseInsensitive))
-    {
-        application.setStyle(QStyleFactory::create("gtk"));
-    }
-    else if (styleCode == 2 && styles.contains("macintosh", Qt::CaseInsensitive))
-    {
-        application.setStyle(QStyleFactory::create("macintosh"));
-    }
-    else if (styleCode == 3)
-    {
-        QFile file(":/stylesheets/coffee.qss");
-        file.open(QFile::ReadOnly);
-        QString styleSheet = QLatin1String(file.readAll());
-        application.setStyleSheet(styleSheet);
-    }
-    else if (styleCode == 4)
-    {
-        QFile file(":/stylesheets/pagefold.qss");
-        file.open(QFile::ReadOnly);
-        QString styleSheet = QLatin1String(file.readAll());
-        application.setStyleSheet(styleSheet);
-    }
-    else if (styleCode == 5 && styles.contains("Fusion", Qt::CaseInsensitive))
-    {
-        application.setStyle(QStyleFactory::create("Fusion"));
-        // increase font size for better reading
-        QFont defaultFont = QApplication::font();
-        defaultFont.setPointSize(defaultFont.pointSize()+2);
-        application.setFont(defaultFont);
-        // modify palette to dark
-        QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window,QColor(53,53,53));
-        darkPalette.setColor(QPalette::WindowText,Qt::white);
-        darkPalette.setColor(QPalette::Disabled,QPalette::WindowText,QColor(127,127,127));
-        darkPalette.setColor(QPalette::Base,QColor(42,42,42));
-        darkPalette.setColor(QPalette::AlternateBase,QColor(66,66,66));
-        darkPalette.setColor(QPalette::ToolTipBase,Qt::white);
-        darkPalette.setColor(QPalette::ToolTipText,Qt::white);
-        darkPalette.setColor(QPalette::Text,Qt::white);
-        darkPalette.setColor(QPalette::Disabled,QPalette::Text,QColor(127,127,127));
-        darkPalette.setColor(QPalette::Dark,QColor(35,35,35));
-        darkPalette.setColor(QPalette::Shadow,QColor(20,20,20));
-        darkPalette.setColor(QPalette::Button,QColor(53,53,53));
-        darkPalette.setColor(QPalette::ButtonText,Qt::white);
-        darkPalette.setColor(QPalette::Disabled,QPalette::ButtonText,QColor(127,127,127));
-        darkPalette.setColor(QPalette::BrightText,Qt::red);
-        darkPalette.setColor(QPalette::Link,QColor(42,130,218));
-        darkPalette.setColor(QPalette::Highlight,QColor(42,130,218));
-        darkPalette.setColor(QPalette::Disabled,QPalette::Highlight,QColor(80,80,80));
-        darkPalette.setColor(QPalette::HighlightedText,Qt::white);
-        darkPalette.setColor(QPalette::Disabled,QPalette::HighlightedText,QColor(127,127,127));
-        application.setPalette(darkPalette);
-    }
-    else if (styleCode ==6)
-    {
-        QFile file(":/stylesheets/qdarkstyle/style.qss");
-        file.open(QFile::ReadOnly);
-        QString styleSheet = QLatin1String(file.readAll());
-        application.setStyleSheet(styleSheet);
+        if (styleCode == 0 && styles.contains("Fusion", Qt::CaseInsensitive))
+        {
+            application.setStyle(QStyleFactory::create("Fusion"));
+            break;
+        }
+        if (styleCode == 1 && styles.contains("Windows", Qt::CaseInsensitive))
+        {
+            application.setStyle(QStyleFactory::create("Windows"));
+            break;
+        }
+        if (styleCode == 2 && styles.contains("windowsvista", Qt::CaseInsensitive))
+        {
+            application.setStyle(QStyleFactory::create("windowsvista"));
+            break;
+        }
+        if (styleCode == 2 && styles.contains("gtk", Qt::CaseInsensitive))
+        {
+            application.setStyle(QStyleFactory::create("gtk"));
+
+        }
+        if (styleCode == 2 && styles.contains("macOS", Qt::CaseInsensitive))
+        {
+            application.setStyle(QStyleFactory::create("macOS"));
+        }
+        break;
     }
 
     MainWindow window;
