@@ -719,7 +719,6 @@ QByteArray MainWindow::readResource(const QString &resource)
 
 void MainWindow::updateEnable()
 {
-#ifndef dNODEBUG
     qDebug() << "void MainWindow::updateEnable()";
     qDebug() << "m_simulation = " << m_simulation;
     qDebug() << "m_mode = " << m_mode;
@@ -734,7 +733,6 @@ void MainWindow::updateEnable()
         qDebug() << "m_simulation->GetControllerList()->size() = " << m_simulation->GetControllerList()->size();
         qDebug() << "m_simulation->HasAssembly() = " << m_simulation->HasAssembly();
     }
-#endif
     ui->actionOutput->setEnabled(m_simulation != nullptr);
     ui->actionRestart->setEnabled(m_simulation != nullptr && m_mode == runMode && m_noName == false && isWindowModified() == false);
     ui->actionSave->setEnabled(m_simulation != nullptr && m_noName == false && isWindowModified() == true);

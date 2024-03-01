@@ -32,42 +32,18 @@ QMap<QString, SettingsItem> Preferences::m_settings;
 
 void Preferences::Write()
 {
-#ifndef dNODEBUG
     qDebug() << "Writing preferences to \"" << fileName() << "\"\n";
-#endif
     Preferences::setQtValue("XML", ExportData());
     Preferences::sync();
-
-//    Preferences::clear();
-//    for (QMap<QString, SettingsItem>::const_iterator i = m_settings.constBegin(); i != m_settings.constEnd(); i++)
-//    {
-//        Preferences::setQtValue(i.key(), i.value().value);
-//    }
-//    Preferences::sync();
 }
 
 void Preferences::Read()
 {
-#ifndef dNODEBUG
     qDebug() << "Reading preferences from \"" << fileName() << "\"\n";
-#endif
     QByteArray xmlData = Preferences::qtValue("XML", QByteArray()).toByteArray();
     int status = __LINE__;
     if (xmlData.size()) { status = ImportData(xmlData); }
     if (status) { LoadDefaults(); }
-
-//    LoadDefaults();
-//    // check whether the settings are the right ones
-//    if (Preferences::qtValue("SettingsCode", QString()) != m_settings["SettingsCode"].value)
-//    {
-//        Write();
-//    }
-//    else
-//    {
-//        QStringList keys = Preferences::allKeys();
-//        for (int i = 0; i < keys.size(); i++)
-//            insert(keys[i], Preferences::qtValue(keys[i], QVariant()));
-//    }
 }
 
 void Preferences::Export(const QString &filename)

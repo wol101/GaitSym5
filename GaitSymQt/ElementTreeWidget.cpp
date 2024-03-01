@@ -78,10 +78,6 @@ ElementTreeWidget::ElementTreeWidget(QWidget *parent) : QTreeWidget(parent)
     m_muscleTree->setData(1, Qt::CheckStateRole, QVariant());
     m_muscleTree->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-#ifndef EXPERIMENTAL
-    m_fluidSacTree->setHidden(true);
-#endif
-
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequest(QPoint)));
 

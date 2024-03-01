@@ -32,13 +32,10 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     QString buildDate = QString("Build: %1 %2").arg(__DATE__, __TIME__);
     QString buildType;
-#ifdef dNODEBUG
+#ifdef NDEBUG
     buildType = "Release";
 #else
     buildType = "Debug";
-#endif
-#ifdef EXPERIMENTAL
-    buildType += " Experimental";
 #endif
 
     QString buildInformation = QSysInfo::buildAbi();
