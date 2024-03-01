@@ -75,7 +75,7 @@ void ODEPhysicsEngine::CreateBodies()
 {
     // first create the bodies
     pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-    for (auto &&iter :  *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->GetBodyList())
     {
         dBodyID bodyID = dBodyCreate(m_worldID);
         dBodySetData(bodyID, iter.second.get());
@@ -97,7 +97,7 @@ void ODEPhysicsEngine::CreateBodies()
 
 void ODEPhysicsEngine::CreateJoints()
 {
-    for (auto &&iter :  *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->GetJointList())
     {
         while (true)
         {
@@ -145,7 +145,7 @@ void ODEPhysicsEngine::CreateJoints()
 
 void ODEPhysicsEngine::CreateGeoms()
 {
-    for (auto &&iter :  *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->GetGeomList())
     {
         while (true)
         {
@@ -193,7 +193,7 @@ void ODEPhysicsEngine::CreateGeoms()
 
 void ODEPhysicsEngine::MoveBodies()
 {
-    for (auto &&iter :  *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->GetBodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
         pgd::Vector3 position = iter.second->GetPosition();
@@ -259,7 +259,7 @@ int ODEPhysicsEngine::Step()
     }
 
     // update the objects with the new data
-    for (auto &&iter :  *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->GetBodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
         const double *position = dBodyGetPosition(bodyID);
@@ -272,7 +272,7 @@ int ODEPhysicsEngine::Step()
         iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
-    for (auto &&iter :  *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->GetJointList())
     {
         while (true)
         {
