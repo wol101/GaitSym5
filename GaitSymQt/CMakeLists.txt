@@ -1007,6 +1007,7 @@ set(PROJECT_SOURCES
     ../src/ParseXML.cpp
     ../src/PGDMath.cpp
     ../src/PhysicsEngine.cpp
+    ../src/PhysXPhysicsEngine.cpp
     ../src/PIDErrorInController.cpp
     ../src/PIDMuscleLengthController.cpp
     ../src/PlaneGeom.cpp
@@ -1144,6 +1145,7 @@ set(PROJECT_SOURCES
     ../src/ODEPhysicsEngine.h
     ../src/ParseXML.h
     ../src/PhysicsEngine.h
+    ../src/PhysXPhysicsEngine.h
     ../src/PGDMath.h
     ../src/PIDErrorInController.h
     ../src/PIDMuscleLengthController.h
