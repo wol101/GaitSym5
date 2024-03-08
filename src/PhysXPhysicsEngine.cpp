@@ -165,7 +165,8 @@ void PhysXPhysicsEngine::CreateGeoms()
                 physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
                 shape->setLocalPose(transform);
                 m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
-                shape->release(); // this way shape gets automatically released with actor
+                material->release();
+                shape->release();
                 break;
             }
             PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
