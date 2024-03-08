@@ -9,6 +9,7 @@
 #include "HingeJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
+#include "Marker.h"
 
 using namespace std::string_literals;
 
@@ -63,6 +64,8 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     sceneDesc.cpuDispatcher	= m_dispatcher;
     sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
     m_scene = m_physics->createScene(sceneDesc);
+    m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
+    m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
     physx::PxPvdSceneClient* pvdClient = m_scene->getScenePvdClient();
     if(pvdClient)
@@ -93,13 +96,11 @@ void PhysXPhysicsEngine::CreateBodies()
         pgd::Vector3 position = iter.second->GetPosition();
         pgd::Quaternion quaternion = iter.second->GetQuaternion();
         pgd::Vector3 linearVelocity = iter.second->GetLinearVelocity();
-        pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();
+        pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();        
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
         physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
-
         rigidDynamic->setMass(mass);
         rigidDynamic->setMassSpaceInertiaTensor(physx::PxVec3(ixx, iyy, izz)); // this is only approximate, if products of inertia are significant then an appropriate mass space transform needs to be set using setCMassLocalPose() and then the principle moments of inertia used
-
         rigidDynamic->setLinearVelocity(physx::PxVec3(linearVelocity.x, linearVelocity.y, linearVelocity.z));
         rigidDynamic->setLinearVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
         m_scene->addActor(*rigidDynamic);
@@ -116,36 +117,24 @@ void PhysXPhysicsEngine::CreateJoints()
             HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
             if (hingeJoint)
             {
-                pgd::Vector3 anchor = hingeJoint->anchor();
-                pgd::Vector3 axis = hingeJoint->axis();
-                pgd::Vector2 stops = hingeJoint->stops();
-                jointID = dJointCreateHinge(m_worldID, nullptr);
-                dJointSetData(jointID, hingeJoint);
-                iter.second->setData(jointID);
-                dBodyID body1 = (hingeJoint->body1()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(hingeJoint->body1()->data());
-                dBodyID body2 = (hingeJoint->body2()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(hingeJoint->body2()->data());
-                dJointAttach(jointID, body1, body2);
-                dJointSetFeedback(jointID, jointFeedback.get());
-                dJointSetHingeAnchor(jointID, anchor.x, anchor.y, anchor.z);
-                dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
-                double loStop = (stops[0] < -M_PI) ? -dInfinity : stops[0];
-                double hiStop = (stops[1] > M_PI) ? dInfinity : stops[1];
-                dJointSetHingeParam(jointID, dParamLoStop, loStop); // needs to be done twice to guarantee to see the stops properly
-                dJointSetHingeParam(jointID, dParamHiStop, hiStop);
-                dJointSetHingeParam(jointID, dParamLoStop, loStop);
-                dJointSetHingeParam(jointID, dParamHiStop, hiStop);
-                double springConstant = hingeJoint->stopSpring();
-                double dampingConstant = hingeJoint->stopDamp();
-                double integrationStep = simulation()->GetTimeIncrement();
-                if (springConstant >= std::numeric_limits<double>::epsilon() && dampingConstant >= std::numeric_limits<double>::epsilon())
-                {
-                    double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
-                    double CFM = 1/(integrationStep * springConstant + dampingConstant);
-                    dJointSetHingeParam (jointID, dParamStopCFM, CFM);
-                    dJointSetHingeParam (jointID, dParamStopERP, ERP);
-                }
-                if (hingeJoint->stopBounce() >= 0) { dJointSetHingeParam (jointID, dParamBounce, hingeJoint->stopBounce()); }
-                m_jointFeedback[iter.first] = std::move(jointFeedback);
+                Marker *marker1 = hingeJoint->body1Marker();
+                Marker *marker2 = hingeJoint->body2Marker();
+                pgd::Vector3 p1 = marker1->GetPosition();
+                pgd::Vector3 p2 = marker2->GetPosition();
+                pgd::Quaternion q1 = marker1->GetQuaternion();
+                pgd::Quaternion q2 = marker2->GetQuaternion();
+                physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
+                physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
+                physx::PxRigidActor *actor0 = m_bodyMap[hingeJoint->body1()->name()];
+                physx::PxRigidActor *actor1 = m_bodyMap[hingeJoint->body2()->name()];
+                physx::PxRevoluteJoint *revolute = PxRevoluteJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
+                revolute->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+
+                // pgd::Vector2 stops = hingeJoint->stops();
+                // double springConstant = hingeJoint->stopSpring();
+                // double dampingConstant = hingeJoint->stopDamp();
+                // revolute->setLimit(physx::PxJointAngularLimitPair(stops[0], stops[1], physx::PxSpring(springConstant, dampingConstant)));
+                // revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
                 break;
             }
             break;
@@ -153,55 +142,50 @@ void PhysXPhysicsEngine::CreateJoints()
     }
 }
 
+
 void PhysXPhysicsEngine::CreateGeoms()
 {
     for (auto &&iter : *simulation()->GetGeomList())
     {
         while (true)
         {
-
-            {
-                PxShape* shape = mPhysics.createShape(PxBoxGeometry(2.f, 2.f, 2.f), &materialPtr, 1, true, shapeFlags);
-                rigidDynamic->attachShape(*shape);
-                shape->release(); // this way shape gets automatically released with actor
-            }
-
-
-            dGeomID geomID = nullptr;
             SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get());
             if (sphereGeom)
             {
                 double radius = sphereGeom->radius();
                 pgd::Vector3 position = sphereGeom->GetPosition();
                 pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
-                geomID = dCreateSphere(m_spaceID, radius);
-                dGeomSetData(geomID, sphereGeom);
-                iter.second->setData(geomID);
-                dGeomSphereSetRadius(geomID, radius);
-                dBodyID bodyID = reinterpret_cast<dBodyID>(sphereGeom->GetBody()->data());
-                dGeomSetBody(geomID, bodyID);
-                dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
-                dGeomSetOffsetQuaternion(geomID, quaternion.constData());
+                physx::PxReal staticFriction = 1.0f;
+                physx::PxReal dynamicFriction = 1.0f;
+                physx::PxReal restitution = 1.0f;
+                physx::PxMaterial *material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                bool isExclusive = true;
+                physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
+                physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
+                physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
+                shape->setLocalPose(transform);
+                m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
+                shape->release(); // this way shape gets automatically released with actor
                 break;
             }
             PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
             if (planeGeom)
             {
-                double a, b, c, d;
-                planeGeom->GetPlane(&a, &b, &c, &d);
-                double length = std::sqrt(a * a + b * b + c * c);
-                if (length < std::numeric_limits<double>::epsilon()) // standard fixup
-                {
-                    a = 0; b = 0; c = 1; d = 0;
-                }
-                else
-                {
-                    a = a / length; b = b / length; c = c / length;
-                }
-                geomID = dCreatePlane(m_spaceID, a, b, c, d);
-                dGeomSetData(geomID, planeGeom);
-                iter.second->setData(geomID);
-                dGeomSetBody(geomID, nullptr);
+                // double a, b, c, d;
+                // planeGeom->GetPlane(&a, &b, &c, &d);
+                // double length = std::sqrt(a * a + b * b + c * c);
+                // if (length < std::numeric_limits<double>::epsilon()) // standard fixup
+                // {
+                //     a = 0; b = 0; c = 1; d = 0;
+                // }
+                // else
+                // {
+                //     a = a / length; b = b / length; c = c / length;
+                // }
+                // geomID = dCreatePlane(m_spaceID, a, b, c, d);
+                // dGeomSetData(geomID, planeGeom);
+                // iter.second->setData(geomID);
+                // dGeomSetBody(geomID, nullptr);
                 break;
             }
             break;
@@ -213,11 +197,11 @@ void PhysXPhysicsEngine::MoveBodies()
 {
     for (auto &&iter : *simulation()->GetBodyList())
     {
-        dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
-        pgd::Vector3 position = iter.second->GetPosition();
-        dBodySetPosition(bodyID, position.x, position.y, position.z);
-        pgd::Quaternion quaternion = iter.second->GetQuaternion();
-        dBodySetQuaternion(bodyID, quaternion.constData());
+        // dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
+        // pgd::Vector3 position = iter.second->GetPosition();
+        // dBodySetPosition(bodyID, position.x, position.y, position.z);
+        // pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        // dBodySetQuaternion(bodyID, quaternion.constData());
     }
 }
 
