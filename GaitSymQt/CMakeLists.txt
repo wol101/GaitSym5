@@ -1351,10 +1351,6 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 if (MSVC)
-    # these flags are initially set under Qt Creator/Projects/Current Configuration/Advanced
-    # set(CMAKE_CXX_FLAGS_RELEASE "-bigobj -O3 -DNDEBUG") # default flags CMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG
-    # set(CMAKE_CXX_FLAGS_DEBUG "-bigobj -g") # default flags CMAKE_CXX_FLAGS_DEBUG=-g
-    # target_compile_options(GaitSym5 PRIVATE /bigobj /MT)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
     add_compile_definitions(_USE_MATH_DEFINES)
 endif ()

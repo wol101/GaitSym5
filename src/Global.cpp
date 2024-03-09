@@ -410,6 +410,16 @@ void Global::setNumericalErrorsScore(double NumericalErrorsScore)
     m_NumericalErrorsScore = NumericalErrorsScore;
 }
 
+Global::PhysicsEngine Global::physicsEngine() const
+{
+    return m_PhysicsEngine;
+}
+
+void Global::setPhysicsEngine(PhysicsEngine newPhysicsEngine)
+{
+    m_PhysicsEngine = newPhysicsEngine;
+}
+
 Global::FitnessType Global::fitnessType() const
 {
     return m_FitnessType;

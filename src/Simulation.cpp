@@ -57,6 +57,7 @@
 #include "MarkerEllipseDriver.h"
 #include "PhysicsEngine.h"
 #include "ODEPhysicsEngine.h"
+#include "PhysXPhysicsEngine.h"
 
 #include "pystring.h"
 
@@ -163,12 +164,30 @@ void Simulation::UpdateSimulation()
 {
     if (!m_physicsEngine)
     {
-        m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
-        if (m_physicsEngine->Initialise(this))
+        switch (m_global->physicsEngine())
         {
-            std::cerr << "Error: unable to initialise the physics engine\n";
-            m_SimulationError = true;
-            return;
+        case Global::PhysicsEngine::ODE:
+        {
+            m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
+            if (m_physicsEngine->Initialise(this))
+            {
+                std::cerr << "Error: unable to initialise the physics engine\n";
+                m_SimulationError = true;
+                return;
+            }
+            break;
+        }
+        case Global::PhysicsEngine::PhysX:
+        {
+            m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
+            if (m_physicsEngine->Initialise(this))
+            {
+                std::cerr << "Error: unable to initialise the physics engine\n";
+                m_SimulationError = true;
+                return;
+            }
+            break;
+        }
         }
     }
 

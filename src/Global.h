@@ -26,6 +26,7 @@ public:
 
     SMART_ENUM(StepType, stepTypeStrings, stepTypeCount, World, Quick);
     SMART_ENUM(FitnessType, fitnessTypeStrings, fitnessTypeCount, KinematicMatch, KinematicMatchMiniMax);
+    SMART_ENUM(PhysicsEngine, physicsEngineTypeStrings, physicsEngineTypeCount, ODE, PhysX);
 
     virtual std::string *createFromAttributes() override;
     virtual void saveToAttributes() override;
@@ -36,6 +37,9 @@ public:
 
     StepType stepType() const;
     void setStepType(StepType stepType);
+
+    PhysicsEngine physicsEngine() const;
+    void setPhysicsEngine(PhysicsEngine newPhysicsEngine);
 
     bool AllowConnectedCollisions() const;
     void setAllowConnectedCollisions(bool AllowConnectedCollisions);
@@ -107,6 +111,7 @@ public:
 private:
     FitnessType m_FitnessType = KinematicMatch;
     StepType m_StepType = World;
+    PhysicsEngine m_PhysicsEngine = PhysX;
     bool m_AllowConnectedCollisions = false;
     bool m_AllowInternalCollisions = false;
     int m_PermittedNumericalErrors = 0;
