@@ -382,3 +382,94 @@ void Geom::appendToAttributes()
     setAttribute("ExcludeIDList"s, pystring::join(" "s, geomNames));
 }
 
+void Geom::SetGeomLocation(GeomLocation geomLocation)
+{
+    m_GeomLocation = geomLocation;
+}
+
+Geom::GeomLocation Geom::GetGeomLocation() const
+{
+    return m_GeomLocation;
+}
+
+double Geom::GetContactSoftCFM() const
+{
+    return m_CFM;
+}
+
+double Geom::GetContactSoftERP() const
+{
+    return m_ERP;
+}
+
+void Geom::SetContactMu(double mu)
+{
+    m_Mu = mu;
+}
+
+double Geom::GetContactMu() const
+{
+    return m_Mu;
+}
+
+void Geom::SetContactBounce(double bounce)
+{
+    m_Bounce = bounce;
+}
+
+double Geom::GetContactBounce() const
+{
+    return m_Bounce;
+}
+
+void Geom::SetRho(double rho)
+{
+    m_Rho = rho;
+}
+
+double Geom::GetRho() const
+{
+    return m_Rho;
+}
+
+void Geom::SetAbort(bool abort)
+{
+    m_Abort = abort;
+}
+
+bool Geom::GetAbort() const
+{
+    return m_Abort;
+}
+
+void Geom::SetAdhesion(bool adhesion)
+{
+    m_Adhesion = adhesion;
+}
+
+bool Geom::GetAdhesion() const
+{
+    return m_Adhesion;
+}
+
+void Geom::AddContact(Contact *contact)
+{
+    m_ContactList.push_back(contact);
+}
+
+std::vector<Contact *> *Geom::GetContactList()
+{
+    return &m_ContactList;
+}
+
+void Geom::ClearContacts()
+{
+    m_ContactList.clear();
+}
+
+std::vector<Geom *> *Geom::GetExcludeList()
+{
+    return &m_ExcludeList;
+}
+
+

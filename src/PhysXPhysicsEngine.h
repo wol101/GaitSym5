@@ -27,6 +27,7 @@ public:
     physx::PxDefaultCpuDispatcher *m_dispatcher = nullptr;
     physx::PxScene *m_scene = nullptr;
     physx::PxPvd *m_pvd = nullptr;
+    physx::PxRigidStatic *m_world = nullptr;
 
     float m_defaultLength = 1.0f;
     float m_defaultSpeed = 10.0f;
@@ -34,7 +35,6 @@ public:
 
     std::map<std::string, physx::PxRigidDynamic*> m_bodyMap;
     std::map<std::string, physx::PxJoint*> m_jointMap;
-
 };
 
 #endif // PhysXPhysicsEngine_H

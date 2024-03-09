@@ -47,17 +47,16 @@ public:
     pgd::Quaternion GetWorldQuaternion() const;
 
 
-    void SetGeomLocation(GeomLocation l) { m_GeomLocation = l; }
-    GeomLocation GetGeomLocation() { return m_GeomLocation; }
-
-    double GetContactSoftCFM() { return m_CFM; }
-    double GetContactSoftERP() { return m_ERP; }
-    void SetContactMu(double mu) { m_Mu = mu; }
-    double GetContactMu() { return m_Mu; }
-    void SetContactBounce(double bounce) { m_Bounce = bounce; }
-    double GetContactBounce() { return m_Bounce; }
-    void SetRho(double rho) { m_Rho = rho; }
-    double GetRho() { return m_Rho; }
+    void SetGeomLocation(GeomLocation l);
+    GeomLocation GetGeomLocation() const;
+    double GetContactSoftCFM() const;
+    double GetContactSoftERP() const;
+    void SetContactMu(double mu);
+    double GetContactMu() const;
+    void SetContactBounce(double bounce);
+    double GetContactBounce() const;
+    void SetRho(double rho);
+    double GetRho() const;
 
     void SetSpringDamp(double springConstant, double dampingConstant, double integrationStep);
     void SetSpringERP(double springConstant, double ERP, double integrationStep);
@@ -66,17 +65,17 @@ public:
     void SetCFMDamp(double CFM, double dampingConstant, double integrationStep);
     void SetERPDamp(double ERP, double dampingConstant, double integrationStep);
 
-    void SetAbort(bool abort) { m_Abort = abort; }
-    bool GetAbort() { return m_Abort; }
+    void SetAbort(bool abort);
+    bool GetAbort() const;
 
-    void SetAdhesion(bool adhesion) { m_Adhesion = adhesion; }
-    bool GetAdhesion() { return m_Adhesion; }
+    void SetAdhesion(bool adhesion);
+    bool GetAdhesion() const;
 
-    void AddContact(Contact *contact) { m_ContactList.push_back(contact); }
-    std::vector<Contact *> *GetContactList() { return &m_ContactList; }
-    void ClearContacts() { m_ContactList.clear(); }
+    void AddContact(Contact *contact);
+    std::vector<Contact *> *GetContactList();
+    void ClearContacts();
 
-    std::vector<Geom *> *GetExcludeList() { return &m_ExcludeList; }
+    std::vector<Geom *> *GetExcludeList();
 
     virtual std::string dumpToString();
     virtual std::string *createFromAttributes();

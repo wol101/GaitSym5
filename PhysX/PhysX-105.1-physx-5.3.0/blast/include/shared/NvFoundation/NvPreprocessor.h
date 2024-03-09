@@ -453,10 +453,12 @@ General defines
 #define NV_OFFSET_OF_RT(Class, Member)                                                                                 \
     (reinterpret_cast<size_t>(&reinterpret_cast<Class*>(NV_OFFSETOF_BASE)->Member) - size_t(NV_OFFSETOF_BASE))
 
+// wis
 // check that exactly one of NDEBUG and _DEBUG is defined
-#if !defined(NDEBUG) ^ defined(_DEBUG)
-#error Exactly one of NDEBUG and _DEBUG needs to be defined!
-#endif
+// #if !defined(NDEBUG) ^ defined(_DEBUG)
+// #error Exactly one of NDEBUG and _DEBUG needs to be defined!
+// #endif
+// ~wis
 
 // make sure NV_CHECKED is defined in all _DEBUG configurations as well
 #if !NV_CHECKED && NV_DEBUG

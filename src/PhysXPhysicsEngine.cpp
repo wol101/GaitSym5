@@ -75,6 +75,9 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
     }
 
+    // create the fixed world body
+    m_world = m_physics->createRigidStatic(physx::PxTransform());
+
     // create the PhysX versions of the main elements
     CreateBodies();
     CreateJoints();
@@ -88,7 +91,6 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
 
 void PhysXPhysicsEngine::CreateBodies()
 {
-    // first create the bodies
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter : *simulation()->GetBodyList())
     {
@@ -104,6 +106,7 @@ void PhysXPhysicsEngine::CreateBodies()
         rigidDynamic->setMassSpaceInertiaTensor(physx::PxVec3(ixx, iyy, izz)); // this is only approximate, if products of inertia are significant then an appropriate mass space transform needs to be set using setCMassLocalPose() and then the principle moments of inertia used
         rigidDynamic->setLinearVelocity(physx::PxVec3(linearVelocity.x, linearVelocity.y, linearVelocity.z));
         rigidDynamic->setAngularVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
+        rigidDynamic->userData = iter.second.get();
         m_scene->addActor(*rigidDynamic);
         m_bodyMap[iter.first] = rigidDynamic;
     }
@@ -136,6 +139,7 @@ void PhysXPhysicsEngine::CreateJoints()
                 double dampingConstant = hingeJoint->stopDamp();
                 revolute->setLimit(physx::PxJointAngularLimitPair(stops[0], stops[1], physx::PxSpring(springConstant, dampingConstant)));
                 revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+                revolute->userData = hingeJoint;
                 m_jointMap[iter.first] = revolute;
                 break;
             }
@@ -157,15 +161,16 @@ void PhysXPhysicsEngine::CreateGeoms()
                 double radius = sphereGeom->radius();
                 pgd::Vector3 position = sphereGeom->GetPosition();
                 pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
-                physx::PxReal staticFriction = 1.0f;
-                physx::PxReal dynamicFriction = 1.0f;
-                physx::PxReal restitution = 1.0f;
+                physx::PxReal staticFriction = sphereGeom->GetContactMu();
+                physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
+                physx::PxReal restitution = sphereGeom->GetContactBounce();
                 physx::PxMaterial *material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
                 physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
                 shape->setLocalPose(transform);
+                shape->userData = sphereGeom;
                 m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
                 material->release();
                 shape->release();
@@ -174,21 +179,20 @@ void PhysXPhysicsEngine::CreateGeoms()
             PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
             if (planeGeom)
             {
-                // double a, b, c, d;
-                // planeGeom->GetPlane(&a, &b, &c, &d);
-                // double length = std::sqrt(a * a + b * b + c * c);
-                // if (length < std::numeric_limits<double>::epsilon()) // standard fixup
-                // {
-                //     a = 0; b = 0; c = 1; d = 0;
-                // }
-                // else
-                // {
-                //     a = a / length; b = b / length; c = c / length;
-                // }
-                // geomID = dCreatePlane(m_spaceID, a, b, c, d);
-                // dGeomSetData(geomID, planeGeom);
-                // iter.second->setData(geomID);
-                // dGeomSetBody(geomID, nullptr);
+                double a, b, c, d;
+                planeGeom->GetPlane(&a, &b, &c, &d);
+                physx::PxReal staticFriction = sphereGeom->GetContactMu();
+                physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
+                physx::PxReal restitution = sphereGeom->GetContactBounce();
+                physx::PxMaterial *material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                bool isExclusive = true;
+                physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
+                physx::PxShape *shape = m_physics->createShape(physx::PxPlaneGeometry(), *material, isExclusive, shapeFlags);
+                physx::PxTransform transform = PxTransformFromPlaneEquation(physx::PxPlane(a, b, c, d));
+                shape->setLocalPose(transform);
+                shape->userData = planeGeom;
+                if (sphereGeom->GetBody()->name() == "World"s) m_world->attachShape(*shape);
+                else m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
                 break;
             }
             break;
