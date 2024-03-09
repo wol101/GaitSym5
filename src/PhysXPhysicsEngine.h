@@ -33,6 +33,7 @@ public:
     bool m_recordMemoryAllocations = true;
 
     std::map<std::string, physx::PxRigidDynamic*> m_bodyMap;
+    std::map<std::string, physx::PxJoint*> m_jointMap;
 
 };
 

@@ -1051,6 +1051,16 @@ pgd::Vector3 Body::dragTorque() const
     return m_dragTorque;
 }
 
+Body::DragControl Body::dragControl() const
+{
+    return m_dragControl;
+}
+
+void Body::setDragControl(const DragControl &newDragControl)
+{
+    m_dragControl = newDragControl;
+}
+
 void Body::LateInitialisation()
 {
     this->SetPosition(m_initialPosition[0], m_initialPosition[1], m_initialPosition[2]);

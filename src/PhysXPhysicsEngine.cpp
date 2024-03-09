@@ -80,29 +80,30 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     CreateJoints();
     CreateGeoms();
 
+    // And PhysX requires that bodies be moved to their starting positions after joints have been created
+    MoveBodies();
+
     return 0;
 }
 
 void PhysXPhysicsEngine::CreateBodies()
 {
     // first create the bodies
-    pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-
+    const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter : *simulation()->GetBodyList())
     {
         double mass, ixx, iyy, izz, ixy, izx, iyz;
         iter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         // pgd::Vector3 constructionPosition = iter.second->GetConstructionPosition();
-        pgd::Vector3 position = iter.second->GetPosition();
-        pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        pgd::Vector3 position = iter.second->GetConstructionPosition();
         pgd::Vector3 linearVelocity = iter.second->GetLinearVelocity();
         pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();        
-        physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
+        physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(zeroRotation.x, zeroRotation.y, zeroRotation.z, zeroRotation.n));
         physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
         rigidDynamic->setMass(mass);
         rigidDynamic->setMassSpaceInertiaTensor(physx::PxVec3(ixx, iyy, izz)); // this is only approximate, if products of inertia are significant then an appropriate mass space transform needs to be set using setCMassLocalPose() and then the principle moments of inertia used
         rigidDynamic->setLinearVelocity(physx::PxVec3(linearVelocity.x, linearVelocity.y, linearVelocity.z));
-        rigidDynamic->setLinearVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
+        rigidDynamic->setAngularVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
         m_scene->addActor(*rigidDynamic);
         m_bodyMap[iter.first] = rigidDynamic;
     }
@@ -130,11 +131,12 @@ void PhysXPhysicsEngine::CreateJoints()
                 physx::PxRevoluteJoint *revolute = PxRevoluteJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
                 revolute->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
 
-                // pgd::Vector2 stops = hingeJoint->stops();
-                // double springConstant = hingeJoint->stopSpring();
-                // double dampingConstant = hingeJoint->stopDamp();
-                // revolute->setLimit(physx::PxJointAngularLimitPair(stops[0], stops[1], physx::PxSpring(springConstant, dampingConstant)));
-                // revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+                pgd::Vector2 stops = hingeJoint->stops();
+                double springConstant = hingeJoint->stopSpring();
+                double dampingConstant = hingeJoint->stopDamp();
+                revolute->setLimit(physx::PxJointAngularLimitPair(stops[0], stops[1], physx::PxSpring(springConstant, dampingConstant)));
+                revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+                m_jointMap[iter.first] = revolute;
                 break;
             }
             break;
@@ -198,21 +200,16 @@ void PhysXPhysicsEngine::MoveBodies()
 {
     for (auto &&iter : *simulation()->GetBodyList())
     {
-        // dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
-        // pgd::Vector3 position = iter.second->GetPosition();
-        // dBodySetPosition(bodyID, position.x, position.y, position.z);
-        // pgd::Quaternion quaternion = iter.second->GetQuaternion();
-        // dBodySetQuaternion(bodyID, quaternion.constData());
+        physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
+        pgd::Vector3 position = iter.second->GetPosition();
+        pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
+        rigidDynamic->setGlobalPose(transform);
     }
 }
 
 int PhysXPhysicsEngine::Step()
 {
-    // check collisions first
-    dJointGroupEmpty(m_contactGroup);
-    m_contactFeedbackList.clear();
-    dSpaceCollide(m_spaceID, this, &NearCallback);
-
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())
     {
@@ -220,11 +217,13 @@ int PhysXPhysicsEngine::Step()
         double tension = iter.second->GetTension();
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
-            PointForce *pf = (*pointForceList)[i].get();
+            const PointForce *pf = pointForceList->at(i).get();
             if (pf->body)
-                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
-                                   pf->vector[0] * tension, pf->vector[1] * tension, pf->vector[2] * tension,
-                                   pf->point[0], pf->point[1], pf->point[2]);
+            {
+                physx::PxRigidDynamic* rigidDynamic = m_bodyMap[pf->body->name()];
+                physx::PxRigidBodyExt::addForceAtPos(*rigidDynamic, physx::PxVec3(pf->vector[0] * tension, pf->vector[1] * tension, pf->vector[2] * tension),
+                                                     physx::PxVec3(pf->point[0], pf->point[1], pf->point[2]), physx::PxForceMode::eFORCE, true);
+            }
         }
     }
 
@@ -234,53 +233,63 @@ int PhysXPhysicsEngine::Step()
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
             const PointForce *pf = &iter.second->pointForceList().at(i);
-            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
-                               pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
+            if (pf->body)
+            {
+                physx::PxRigidDynamic* rigidDynamic = m_bodyMap[pf->body->name()];
+                physx::PxRigidBodyExt::addForceAtPos(*rigidDynamic, physx::PxVec3(pf->vector[0], pf->vector[1], pf->vector[2]),
+                                                     physx::PxVec3(pf->point[0], pf->point[1], pf->point[2]), physx::PxForceMode::eFORCE, true);
+            }
         }
     }
 
     // apply the forces from the drag
-    for (auto &&bodyIter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->GetBodyList())
     {
-        pgd::Vector3 dragForce = bodyIter.second->dragForce();
-        pgd::Vector3 dragTorque = bodyIter.second->dragTorque();
-        bodyIter.second->ComputeDrag();
-        dBodyAddRelForce(reinterpret_cast<dBodyID>(bodyIter.second->data()), dragForce.x, dragForce.y, dragForce.z);
-        dBodyAddRelTorque(reinterpret_cast<dBodyID>(bodyIter.second->data()), dragTorque.x, dragTorque.y, dragTorque.z);
+        if (iter.second->dragControl() == Body::NoDrag) continue;
+        pgd::Vector3 dragForce = iter.second->dragForce();
+        pgd::Vector3 dragTorque = iter.second->dragTorque();
+        iter.second->ComputeDrag();
+        Marker marker(iter.second.get());
+        pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
+        pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
+        physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
+        rigidDynamic->addForce(physx::PxVec3(worldDragForce[0], worldDragForce[1], worldDragForce[2]), physx::PxForceMode::eFORCE, true);
+        rigidDynamic->addTorque(physx::PxVec3(worldDragTorque[0], worldDragTorque[1], worldDragTorque[2]), physx::PxForceMode::eFORCE, true);
     }
 
     // run the simulation
     m_scene->simulate(simulation()->GetGlobal()->StepSize());
     m_scene->fetchResults(true);
 
-    PxScene* scene;
+#ifdef DEBUG_ACTORS
+    physx::PxScene* scene;
     PxGetPhysics().getScenes(&scene,1);
-    PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
+    physx::PxU32 nbActors = scene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC | physx::PxActorTypeFlag::eRIGID_STATIC);
     if (nbActors)
     {
-        std::vector<PxRigidActor*> actors(nbActors);
-        scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
+        std::vector<physx::PxRigidActor *> actors(nbActors);
+        scene->getActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC | physx::PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<physx::PxActor**>(&actors[0]), nbActors);
         for (size_t i = 0; i < actors.size(); i++)
         {
             auto actor = actors[i];
             if (actor->getName()) std::cerr << i << " " << actor->getName() << "\n";
             else std::cerr << i << "\n";
-            PxBounds3 bounds = actor->getWorldBounds(1.01f);
-            PxVec3 center = bounds.getCenter();
+            physx::PxBounds3 bounds = actor->getWorldBounds(1.01f);
+            physx::PxVec3 center = bounds.getCenter();
             std::cerr << center[0] << " " << center[1] << " " << center[2] << "\n";
         }
     }
+#endif
 
     // update the objects with the new data
     for (auto &&iter : *simulation()->GetBodyList())
     {
-        dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
-        const double *position = dBodyGetPosition(bodyID);
-        const double *quaternion = dBodyGetQuaternion(bodyID);
-        const double *linearVelocity = dBodyGetLinearVel(bodyID);
-        const double *angularVelocity = dBodyGetAngularVel(bodyID);
-        iter.second->SetPosition(position[0], position[1], position[2]);
-        iter.second->SetQuaternion(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
+        physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
+        physx::PxTransform transform = rigidDynamic->getGlobalPose();
+        physx::PxVec3 linearVelocity = rigidDynamic->getLinearVelocity();
+        physx::PxVec3 angularVelocity = rigidDynamic->getAngularVelocity();
+        iter.second->SetPosition(transform.p[0], transform.p[1], transform.p[2]);
+        iter.second->SetQuaternion(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
         iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
         iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
@@ -292,19 +301,36 @@ int PhysXPhysicsEngine::Step()
             HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
             if (hingeJoint)
             {
-                dJointID jointID = reinterpret_cast<dJointID>(hingeJoint->data());
-                dVector3 axis, anchor;
-                dJointGetHingeAnchor(jointID, anchor);
-                dJointGetHingeAxis(jointID, axis);
-                double angle = dJointGetHingeAngle(jointID);
-                double angleRate = dJointGetHingeAngleRate(jointID);
-                hingeJoint->setAnchor(&anchor[0]);
-                hingeJoint->setAxis(&axis[0]);
+                physx::PxRevoluteJoint *joint = dynamic_cast<physx::PxRevoluteJoint *>(m_jointMap[iter.first]);
+                if (!joint)
+                {
+                    std::cerr << "Error in PhysXPhysicsEngine::Step(): joint type mismatch\n";
+                    continue;
+                }
+                physx::PxConstraint *constraint = joint->getConstraint();
+                if (!constraint->isValid())
+                {
+                    std::cerr << "Error in PhysXPhysicsEngine::Step(): constraint not valid\n";
+                    continue;
+                }
+                physx::PxVec3 linear;
+                physx::PxVec3 angular;
+                constraint->getForce(linear, angular);
+                double angle = joint->getAngle();
+                double angleRate = joint->getVelocity();
+                physx::PxTransform localTransform = joint->getLocalPose(physx::PxJointActorIndex::Enum::eACTOR0);
+                physx::PxRigidActor *actor0, *actor1;
+                joint->getActors(actor0, actor1);
+                physx::PxTransform bodyTransform = actor0->getGlobalPose();
+                physx::PxTransform worldTransform = localTransform.transform(bodyTransform);
+                physx::PxVec3 axis = worldTransform.rotate(physx::PxVec3(1, 0, 0));
+
+                hingeJoint->setForce(pgd::Vector3(linear[0], linear[1], linear[2]));
+                hingeJoint->setTorque(pgd::Vector3(angular[0], angular[1], angular[2]));
+                hingeJoint->setAnchor(pgd::Vector3(worldTransform.p[0], worldTransform.p[1], worldTransform.p[2]));
+                hingeJoint->setAxis(pgd::Vector3(axis[0], axis[1], axis[2]));
                 hingeJoint->setAngle(angle);
                 hingeJoint->setAngleRate(angleRate);
-                dJointFeedback *jointFeedback = dJointGetFeedback(jointID);
-                hingeJoint->setForce(pgd::Vector3(jointFeedback->f1));
-                hingeJoint->setTorque(pgd::Vector3(jointFeedback->t1));
                 break;
             }
             break;

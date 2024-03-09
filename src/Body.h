@@ -129,6 +129,9 @@ public:
 
     pgd::Vector3 dragTorque() const;
 
+    DragControl dragControl() const;
+    void setDragControl(const DragControl &newDragControl);
+
 private:
 
     pgd::Vector3 m_constructionPosition = {0, 0, 0};

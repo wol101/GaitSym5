@@ -14,8 +14,6 @@
 #include "PGDMath.h"
 #include "SmartEnum.h"
 
-#include <set>
-
 class Body;
 
 class Marker: public NamedObject

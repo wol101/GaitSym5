@@ -74,7 +74,7 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
 void ODEPhysicsEngine::CreateBodies()
 {
     // first create the bodies
-    pgd::Quaternion zeroRotation( 1, 0, 0, 0);
+    const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter : *simulation()->GetBodyList())
     {
         dBodyID bodyID = dBodyCreate(m_worldID);
@@ -217,11 +217,13 @@ int ODEPhysicsEngine::Step()
         double tension = iter.second->GetTension();
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
-            PointForce *pf = (*pointForceList)[i].get();
+            const PointForce *pf = pointForceList->at(i).get();
             if (pf->body)
+            {
                 dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
                                    pf->vector[0] * tension, pf->vector[1] * tension, pf->vector[2] * tension,
                                    pf->point[0], pf->point[1], pf->point[2]);
+            }
         }
     }
 
@@ -231,19 +233,23 @@ int ODEPhysicsEngine::Step()
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
             const PointForce *pf = &iter.second->pointForceList().at(i);
-            dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
-                               pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
+            if (pf->body)
+            {
+                dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
+                                   pf->vector[0], pf->vector[1], pf->vector[2], pf->point[0], pf->point[1], pf->point[2]);
+            }
         }
     }
 
     // apply the forces from the drag
-    for (auto &&bodyIter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->GetBodyList())
     {
-        pgd::Vector3 dragForce = bodyIter.second->dragForce();
-        pgd::Vector3 dragTorque = bodyIter.second->dragTorque();
-        bodyIter.second->ComputeDrag();
-        dBodyAddRelForce(reinterpret_cast<dBodyID>(bodyIter.second->data()), dragForce.x, dragForce.y, dragForce.z);
-        dBodyAddRelTorque(reinterpret_cast<dBodyID>(bodyIter.second->data()), dragTorque.x, dragTorque.y, dragTorque.z);
+        if (iter.second->dragControl() == Body::NoDrag) continue;
+        pgd::Vector3 dragForce = iter.second->dragForce();
+        pgd::Vector3 dragTorque = iter.second->dragTorque();
+        iter.second->ComputeDrag();
+        dBodyAddRelForce(reinterpret_cast<dBodyID>(iter.second->data()), dragForce.x, dragForce.y, dragForce.z);
+        dBodyAddRelTorque(reinterpret_cast<dBodyID>(iter.second->data()), dragTorque.x, dragTorque.y, dragTorque.z);
     }
 
     // run the simulation
