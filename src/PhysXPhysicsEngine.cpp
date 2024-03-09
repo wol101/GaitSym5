@@ -58,9 +58,13 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
         return __LINE__;
     }
 
+    PxInitExtensions(*m_physics, m_pvd);
+
     physx::PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+    physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
+    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
     sceneDesc.cpuDispatcher	= m_dispatcher;
     sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
     m_scene = m_physics->createScene(sceneDesc);
@@ -68,7 +72,7 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
     physx::PxPvdSceneClient* pvdClient = m_scene->getScenePvdClient();
-    if (pvdClient)
+    if(pvdClient)
     {
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
