@@ -20,6 +20,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 add_compile_definitions(PX_PHYSX_STATIC_LIB)
 # options
 # PX_SUPPORT_GPU_PHYSX
+# PX_SUPPORT_PVD
 # PX_ENABLE_FEATURES_UNDER_CONSTRUCTION
 # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
 
@@ -30,6 +31,8 @@ add_compile_definitions(PX_PHYSX_STATIC_LIB)
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
     add_compile_definitions(PX_CHECKED)
     message(STATUS "PX_CHECKED defined")
+    add_compile_definitions(PX_SUPPORT_PVD)
+    message(STATUS "PX_SUPPORT_PVD defined")
 endif()
 if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
     add_compile_definitions(PX_SIMD_DISABLED)

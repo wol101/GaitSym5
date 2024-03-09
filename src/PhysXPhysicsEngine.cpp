@@ -68,7 +68,7 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
     physx::PxPvdSceneClient* pvdClient = m_scene->getScenePvdClient();
-    if(pvdClient)
+    if (pvdClient)
     {
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
@@ -76,7 +76,9 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     }
 
     // create the fixed world body
-    m_world = m_physics->createRigidStatic(physx::PxTransform());
+    physx::PxTransform transform(physx::PxVec3(0, 0, 0));
+    m_world = m_physics->createRigidStatic(transform);
+    m_scene->addActor(*m_world);
 
     // create the PhysX versions of the main elements
     CreateBodies();
@@ -181,9 +183,9 @@ void PhysXPhysicsEngine::CreateGeoms()
             {
                 double a, b, c, d;
                 planeGeom->GetPlane(&a, &b, &c, &d);
-                physx::PxReal staticFriction = sphereGeom->GetContactMu();
+                physx::PxReal staticFriction = planeGeom->GetContactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
-                physx::PxReal restitution = sphereGeom->GetContactBounce();
+                physx::PxReal restitution = planeGeom->GetContactBounce();
                 physx::PxMaterial *material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
@@ -191,8 +193,8 @@ void PhysXPhysicsEngine::CreateGeoms()
                 physx::PxTransform transform = PxTransformFromPlaneEquation(physx::PxPlane(a, b, c, d));
                 shape->setLocalPose(transform);
                 shape->userData = planeGeom;
-                if (sphereGeom->GetBody()->name() == "World"s) m_world->attachShape(*shape);
-                else m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
+                if (planeGeom->GetBody() == nullptr) m_world->attachShape(*shape);
+                else m_bodyMap[planeGeom->GetBody()->name()]->attachShape(*shape);
                 break;
             }
             break;
