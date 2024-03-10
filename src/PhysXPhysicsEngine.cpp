@@ -62,7 +62,8 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     PxInitExtensions(*m_physics, m_pvd);
 
     physx::PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
-    sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+    pgd::Vector3 gravity = simulation()->GetGlobal()->Gravity();
+    sceneDesc.gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
     physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
