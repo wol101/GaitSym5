@@ -26,6 +26,7 @@ PhysXPhysicsEngine::~PhysXPhysicsEngine()
 {
     PX_RELEASE(m_scene);
     PX_RELEASE(m_dispatcher);
+    PxCloseExtensions();
     PX_RELEASE(m_physics);
     if(m_pvd)
     {
