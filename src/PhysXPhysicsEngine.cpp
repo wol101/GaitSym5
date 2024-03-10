@@ -102,14 +102,17 @@ void PhysXPhysicsEngine::CreateBodies()
     {
         double mass, ixx, iyy, izz, ixy, izx, iyz;
         iter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
-        // pgd::Vector3 constructionPosition = iter.second->GetConstructionPosition();
         pgd::Vector3 position = iter.second->GetConstructionPosition();
         pgd::Vector3 linearVelocity = iter.second->GetLinearVelocity();
         pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();        
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(zeroRotation.x, zeroRotation.y, zeroRotation.z, zeroRotation.n));
         physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
+        physx::PxMat33 inertialTensor(physx::PxVec3(ixx, ixy, izx), physx::PxVec3(ixy, iyy, iyz), physx::PxVec3(izx, iyz, izz)); // construct from 3 column vectors
+        physx::PxQuat massFrame;
+        physx::PxVec3 diagonal = physx::PxMassProperties::getMassSpaceInertia(inertialTensor, massFrame);
         rigidDynamic->setMass(mass);
-        rigidDynamic->setMassSpaceInertiaTensor(physx::PxVec3(ixx, iyy, izz)); // this is only approximate, if products of inertia are significant then an appropriate mass space transform needs to be set using setCMassLocalPose() and then the principle moments of inertia used
+        rigidDynamic->setMassSpaceInertiaTensor(diagonal);
+        rigidDynamic->setCMassLocalPose(physx::PxTransform(physx::PxVec3(0, 0, 0), massFrame));
         rigidDynamic->setLinearVelocity(physx::PxVec3(linearVelocity.x, linearVelocity.y, linearVelocity.z));
         rigidDynamic->setAngularVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
         rigidDynamic->userData = iter.second.get();
@@ -143,7 +146,7 @@ void PhysXPhysicsEngine::CreateJoints()
                 pgd::Vector2 stops = hingeJoint->stops();
                 double springConstant = hingeJoint->stopSpring();
                 double dampingConstant = hingeJoint->stopDamp();
-                revolute->setLimit(physx::PxJointAngularLimitPair(stops[0], stops[1], physx::PxSpring(springConstant, dampingConstant)));
+                revolute->setLimit(physx::PxJointAngularLimitPair(-stops[1], -stops[0], physx::PxSpring(springConstant, dampingConstant))); // note the stops are reversed from the ODE values
                 revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
                 revolute->userData = hingeJoint;
                 m_jointMap[iter.first] = revolute;
