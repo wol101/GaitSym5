@@ -175,7 +175,7 @@ void ODEPhysicsEngine::CreateGeoms()
                 geomID = dCreatePlane(m_spaceID, a, b, c, d);
                 dGeomSetData(geomID, planeGeom);
                 iter.second->setData(geomID);
-                dGeomSetBody(geomID, nullptr);
+                dGeomSetBody(geomID, nullptr); // planes have to be attached to the world
                 break;
             }
             break;

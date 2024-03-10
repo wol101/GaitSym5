@@ -10,11 +10,17 @@
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
+#include "Contact.h"
 
 using namespace std::string_literals;
 
-static physx::PxDefaultAllocator		g_allocator;
-static physx::PxDefaultErrorCallback	g_errorCallback;
+static physx::PxDefaultAllocator g_allocator;
+static physx::PxDefaultErrorCallback g_errorCallback;
+ContactReportCallback g_contactReportCallback;
+static physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+                                                      physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+                                                      physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize);
+
 
 #define PVD_HOST "127.0.0.1"
 
@@ -68,7 +74,8 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
     sceneDesc.cpuDispatcher	= m_dispatcher;
-    sceneDesc.filterShader	= physx::PxDefaultSimulationFilterShader;
+    sceneDesc.filterShader	= contactReportFilterShader;
+    sceneDesc.simulationEventCallback = &g_contactReportCallback;
     m_scene = m_physics->createScene(sceneDesc);
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
@@ -84,6 +91,7 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     // create the fixed world body
     physx::PxTransform transform(physx::PxVec3(0, 0, 0));
     m_world = m_physics->createRigidStatic(transform);
+    m_world->userData = nullptr;
     m_scene->addActor(*m_world);
 
     // create the PhysX versions of the main elements
@@ -102,11 +110,12 @@ void PhysXPhysicsEngine::CreateBodies()
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter : *simulation()->GetBodyList())
     {
+        Body *body = iter.second.get();
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        iter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
-        pgd::Vector3 position = iter.second->GetConstructionPosition();
-        pgd::Vector3 linearVelocity = iter.second->GetLinearVelocity();
-        pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();        
+        body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        pgd::Vector3 position = body->GetConstructionPosition();
+        pgd::Vector3 linearVelocity = body->GetLinearVelocity();
+        pgd::Vector3 angularVelocity = body->GetAngularVelocity();
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(zeroRotation.x, zeroRotation.y, zeroRotation.z, zeroRotation.n));
         physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
         physx::PxMat33 inertialTensor(physx::PxVec3(ixx, ixy, izx), physx::PxVec3(ixy, iyy, iyz), physx::PxVec3(izx, iyz, izz)); // construct from 3 column vectors
@@ -117,7 +126,7 @@ void PhysXPhysicsEngine::CreateBodies()
         rigidDynamic->setCMassLocalPose(physx::PxTransform(physx::PxVec3(0, 0, 0), massFrame));
         rigidDynamic->setLinearVelocity(physx::PxVec3(linearVelocity.x, linearVelocity.y, linearVelocity.z));
         rigidDynamic->setAngularVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
-        rigidDynamic->userData = iter.second.get();
+        rigidDynamic->userData = body;
         m_scene->addActor(*rigidDynamic);
         m_bodyMap[iter.first] = rigidDynamic;
     }
@@ -202,8 +211,9 @@ void PhysXPhysicsEngine::CreateGeoms()
                 physx::PxTransform transform = PxTransformFromPlaneEquation(physx::PxPlane(a, b, c, d));
                 shape->setLocalPose(transform);
                 shape->userData = planeGeom;
-                if (planeGeom->GetBody() == nullptr) m_world->attachShape(*shape);
-                else m_bodyMap[planeGeom->GetBody()->name()]->attachShape(*shape);
+                m_world->attachShape(*shape); // planes have to be attached to non-dynamic bodies
+                material->release();
+                shape->release();
                 break;
             }
             break;
@@ -225,6 +235,9 @@ void PhysXPhysicsEngine::MoveBodies()
 
 int PhysXPhysicsEngine::Step()
 {
+    // clear the contacts
+    g_contactReportCallback.contactData()->clear();
+
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())
     {
@@ -352,16 +365,51 @@ int PhysXPhysicsEngine::Step()
         }
     }
 
-    for (size_t i = 0; i < simulation()->GetContactList()->size(); i++)
+    simulation()->GetContactList()->clear();
+    double timeStep =simulation()->GetGlobal()->StepSize();
+    for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     {
-        // Contact *contact = simulation()->GetContactList()->at(i).get();
-        // dJointID jointID = reinterpret_cast<dJointID>(contact->data());
-        // dJointFeedback *jointFeedback = dJointGetFeedback(jointID);
-        // contact->setForce(pgd::Vector3(jointFeedback->f1));
-        // contact->setTorque(pgd::Vector3(jointFeedback->t1));
+        physx::PxActor *actors[2];
+        actors[0] = g_contactReportCallback.contactData()->at(i).actors[0];
+        actors[1] = g_contactReportCallback.contactData()->at(i).actors[1];
+        for (size_t j = 0; j < g_contactReportCallback.contactData()->at(i).positions.size(); j++)
+        {
+            physx::PxVec3 position = g_contactReportCallback.contactData()->at(i).positions[j];
+            physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
+            physx::PxShape *shape0 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
+            physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
+            std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
+            myContact->setSimulation(simulation());
+            myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
+            myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
+            Geom *geom0 = reinterpret_cast<Geom *>(shape0->userData);
+            Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
+            geom0->AddContact(myContact.get());
+            geom1->AddContact(myContact.get());
+            simulation()->GetContactList()->push_back(std::move(myContact));
+        }
     }
 
     return 0;
 }
 
+
+static physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+                                                      physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+                                                      physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+{
+    PX_UNUSED(attributes0);
+    PX_UNUSED(attributes1);
+    PX_UNUSED(filterData0);
+    PX_UNUSED(filterData1);
+    PX_UNUSED(constantBlockSize);
+    PX_UNUSED(constantBlock);
+
+    // all initial and persisting reports for everything, with per-point data
+    pairFlags = physx::PxPairFlag::eSOLVE_CONTACT | physx::PxPairFlag::eDETECT_DISCRETE_CONTACT |
+                physx::PxPairFlag::eNOTIFY_TOUCH_FOUND |
+                physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS |
+                physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+    return physx::PxFilterFlag::eDEFAULT;
+}
 

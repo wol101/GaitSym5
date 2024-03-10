@@ -24,7 +24,7 @@ using namespace std::string_literals;
 // The plane's normal vector is (a, b, c), and it must have length 1.
 // d is then the distance of the plane along that normal vector
 
-// Note: planes are non placeable in ODE
+// Note: planes are non placeable in ODE and have to be attached to non-dynamic actors in PhysX
 
 PlaneGeom::PlaneGeom(double a, double b, double c, double d)
 {
