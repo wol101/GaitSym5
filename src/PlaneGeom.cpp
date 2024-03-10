@@ -22,8 +22,9 @@ using namespace std::string_literals;
 // The plane equation is:
 // a * x + b * y + c * z = d
 // The plane's normal vector is (a, b, c), and it must have length 1.
+// d is then the distance of the plane along that normal vector
 
-// Note: planes are non placeable so do not try and place them!
+// Note: planes are non placeable in ODE
 
 PlaneGeom::PlaneGeom(double a, double b, double c, double d)
 {
@@ -50,7 +51,7 @@ void PlaneGeom::SetPlane(double a, double b, double c, double d)
     m_a = a;
     m_b = b;
     m_c = c;
-    m_c = d;
+    m_d = d;
 }
 
 void PlaneGeom::GetPlane(double *a, double *b, double *c, double *d)

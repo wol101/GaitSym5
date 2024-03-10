@@ -172,14 +172,6 @@ void ODEPhysicsEngine::CreateGeoms()
                 double a, b, c, d;
                 planeGeom->GetPlane(&a, &b, &c, &d);
                 double length = std::sqrt(a * a + b * b + c * c);
-                if (length < std::numeric_limits<double>::epsilon()) // standard fixup
-                {
-                    a = 0; b = 0; c = 1; d = 0;
-                }
-                else
-                {
-                    a = a / length; b = b / length; c = c / length;
-                }
                 geomID = dCreatePlane(m_spaceID, a, b, c, d);
                 dGeomSetData(geomID, planeGeom);
                 iter.second->setData(geomID);
