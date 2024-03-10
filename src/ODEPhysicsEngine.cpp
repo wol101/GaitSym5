@@ -359,7 +359,7 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
     // just use the largest for mu, rho and bounce
     double mu = std::max(g1->GetContactMu(), g2->GetContactMu());
     double bounce = std::max(g1->GetContactBounce(), g2->GetContactBounce());
-    double rho = std::max(g1->GetRho(), g2->GetRho());
+    double rho = std::max(g1->GetContactRho(), g2->GetContactRho());
     if (erp < 0) // the only one that needs checking because all the others are std::max so values <0 will never be chosen if one value is >0
     {
         if (g1->GetContactSoftERP() < 0) erp = g2->GetContactSoftERP();

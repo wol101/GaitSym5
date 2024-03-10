@@ -55,8 +55,10 @@ public:
     double GetContactMu() const;
     void SetContactBounce(double bounce);
     double GetContactBounce() const;
-    void SetRho(double rho);
-    double GetRho() const;
+    void SetContactRho(double rho);
+    double GetContactRho() const;
+    double GetContactSpringConstant() const;
+    double GetContactDampingConstant() const;
 
     void SetSpringDamp(double springConstant, double dampingConstant, double integrationStep);
     void SetSpringERP(double springConstant, double ERP, double integrationStep);

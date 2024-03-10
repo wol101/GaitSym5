@@ -115,7 +115,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
     m_outputGeom->setGeomMarker(markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get());
     m_outputGeom->SetSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->GetTimeIncrement());
     m_outputGeom->SetContactMu(ui->lineEditMu->value());
-    m_outputGeom->SetRho(ui->lineEditRho->value());
+    m_outputGeom->SetContactRho(ui->lineEditRho->value());
     m_outputGeom->SetContactBounce(ui->lineEditBounce->value());
     m_outputGeom->SetAbort(ui->checkBoxAbort->isChecked());
 

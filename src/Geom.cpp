@@ -285,7 +285,7 @@ std::string *Geom::createFromAttributes()
 
     if (findAttribute("Rho"s, &buf))
     {
-        this->SetRho(GSUtil::Double(buf));
+        this->SetContactRho(GSUtil::Double(buf));
     }
 
     m_ExcludeList.clear();
@@ -379,14 +379,24 @@ double Geom::GetContactBounce() const
     return m_Bounce;
 }
 
-void Geom::SetRho(double rho)
+void Geom::SetContactRho(double rho)
 {
     m_Rho = rho;
 }
 
-double Geom::GetRho() const
+double Geom::GetContactRho() const
 {
     return m_Rho;
+}
+
+double Geom::GetContactSpringConstant() const
+{
+    return m_SpringConstant;
+}
+
+double Geom::GetContactDampingConstant() const
+{
+    return m_DampingConstant;
 }
 
 void Geom::SetAbort(bool abort)

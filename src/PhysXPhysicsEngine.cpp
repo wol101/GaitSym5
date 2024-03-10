@@ -183,8 +183,20 @@ void PhysXPhysicsEngine::CreateGeoms()
                 pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
                 physx::PxReal staticFriction = sphereGeom->GetContactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
-                physx::PxReal restitution = sphereGeom->GetContactBounce();
-                physx::PxMaterial *material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                physx::PxMaterial *material;
+                if (sphereGeom->GetContactBounce() > 0)
+                {
+                    physx::PxReal restitution = sphereGeom->GetContactBounce();
+                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                }
+                else
+                {
+                    physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
+                    physx::PxReal damping = sphereGeom->GetContactDampingConstant();
+                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                    material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
+                    material->setDamping(damping);
+                }
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
@@ -203,8 +215,20 @@ void PhysXPhysicsEngine::CreateGeoms()
                 planeGeom->GetPlane(&a, &b, &c, &d);
                 physx::PxReal staticFriction = planeGeom->GetContactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
-                physx::PxReal restitution = planeGeom->GetContactBounce();
-                physx::PxMaterial *material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                physx::PxMaterial *material;
+                if (sphereGeom->GetContactBounce() > 0)
+                {
+                    physx::PxReal restitution = sphereGeom->GetContactBounce();
+                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                }
+                else
+                {
+                    physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
+                    physx::PxReal damping = sphereGeom->GetContactDampingConstant();
+                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                    material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
+                    material->setDamping(damping);
+                }
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxPlaneGeometry(), *material, isExclusive, shapeFlags);
