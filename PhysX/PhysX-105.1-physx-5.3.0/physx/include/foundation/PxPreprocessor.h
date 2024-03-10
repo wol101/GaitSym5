@@ -436,14 +436,13 @@ _Pragma(" clang diagnostic pop")
 #define PX_OFFSETOF_BASE 0x100 // casting the null ptr takes a special-case code path, which we don't want
 #define PX_OFFSET_OF_RT(Class, Member)	(reinterpret_cast<size_t>(&reinterpret_cast<Class*>(PX_OFFSETOF_BASE)->Member) - size_t(PX_OFFSETOF_BASE))
 
-// wis
-// #if PX_WINDOWS_FAMILY
-// 	// check that exactly one of NDEBUG and _DEBUG is defined
-// 	#if !defined(NDEBUG) ^ defined(_DEBUG)
-// 		#error Exactly one of NDEBUG and _DEBUG needs to be defined!
-// 	#endif
-// #endif
-// ~wis
+#if PX_WINDOWS_FAMILY
+    // check that exactly one of NDEBUG and _DEBUG is defined
+    #if !defined(NDEBUG) ^ defined(_DEBUG)
+        // #error Exactly one of NDEBUG and _DEBUG needs to be defined! // wis
+        #warning Exactly one of NDEBUG and _DEBUG needs to be defined!
+    #endif
+#endif
 
 // make sure PX_CHECKED is defined in all _DEBUG configurations as well
 #if !PX_CHECKED && PX_DEBUG

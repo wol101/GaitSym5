@@ -216,15 +216,15 @@ void PhysXPhysicsEngine::CreateGeoms()
                 physx::PxReal staticFriction = planeGeom->GetContactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (sphereGeom->GetContactBounce() > 0)
+                if (planeGeom->GetContactBounce() > 0)
                 {
-                    physx::PxReal restitution = sphereGeom->GetContactBounce();
+                    physx::PxReal restitution = planeGeom->GetContactBounce();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                 }
                 else
                 {
-                    physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
-                    physx::PxReal damping = sphereGeom->GetContactDampingConstant();
+                    physx::PxReal restitution = -1 * planeGeom->GetContactSpringConstant();
+                    physx::PxReal damping = planeGeom->GetContactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                     material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
                     material->setDamping(damping);

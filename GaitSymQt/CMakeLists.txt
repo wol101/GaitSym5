@@ -23,6 +23,7 @@ add_compile_definitions(PX_PHYSX_STATIC_LIB)
 # PX_SUPPORT_PVD
 # PX_ENABLE_FEATURES_UNDER_CONSTRUCTION
 # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
+# DISABLE_CUDA_PHYSX
 
 # build style (do not define any for release code)
 # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
