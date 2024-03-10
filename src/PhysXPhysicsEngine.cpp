@@ -376,16 +376,18 @@ int PhysXPhysicsEngine::Step()
         {
             physx::PxVec3 position = g_contactReportCallback.contactData()->at(i).positions[j];
             physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
-            physx::PxShape *shape0 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
-            physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
+            physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
+            physx::PxShape *shape2 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
             std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
             myContact->setSimulation(simulation());
             myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
             myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
-            Geom *geom0 = reinterpret_cast<Geom *>(shape0->userData);
             Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
-            geom0->AddContact(myContact.get());
+            Geom *geom2 = reinterpret_cast<Geom *>(shape2->userData);
             geom1->AddContact(myContact.get());
+            geom2->AddContact(myContact.get());
+            myContact->setBody1(geom1->GetBody());
+            myContact->setBody2(geom2->GetBody());
             simulation()->GetContactList()->push_back(std::move(myContact));
         }
     }

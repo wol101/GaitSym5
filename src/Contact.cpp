@@ -43,4 +43,24 @@ void Contact::setTorque(const pgd::Vector3 &newTorque)
     m_torque = newTorque;
 }
 
+Body *Contact::body1() const
+{
+    return m_body1;
+}
+
+void Contact::setBody1(Body *newBody1)
+{
+    m_body1 = newBody1;
+}
+
+Body *Contact::body2() const
+{
+    return m_body2;
+}
+
+void Contact::setBody2(Body *newBody2)
+{
+    m_body2 = newBody2;
+}
+
 

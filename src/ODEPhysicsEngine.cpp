@@ -410,6 +410,8 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
                 myContact->setPosition(pgd::Vector3(contact[i].geom.pos[0], contact[i].geom.pos[1], contact[i].geom.pos[2]));
                 g1->AddContact(myContact.get());
                 g2->AddContact(myContact.get());
+                myContact->setBody1(g1->GetBody());
+                myContact->setBody2(g2->GetBody());
                 s->simulation()->GetContactList()->push_back(std::move(myContact));
                 s->contactFeedbackList()->push_back(std::move(jointFeedback));
             }
