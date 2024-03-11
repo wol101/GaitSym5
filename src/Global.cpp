@@ -9,12 +9,10 @@
 
 #include "Global.h"
 #include "GSUtil.h"
-#include "Simulation.h"
 
 #include "pystring.h"
 
 #include <string>
-#include <algorithm>
 
 using namespace std::string_literals;
 
@@ -123,6 +121,21 @@ std::string *Global::createFromAttributes()
     double m_DoubleList[3];
     size_t i;
 
+    if (findAttribute("PhysicsEngine", &buf) == nullptr) return lastErrorPtr();
+    for (i = 0; i < physicsEngineTypeCount; i++)
+    {
+        if (strcmp(buf.c_str(), physicsEngineTypeStrings(i)) == 0)
+        {
+            m_PhysicsEngine = PhysicsEngine(i);
+            break;
+        }
+    }
+    if (i >= physicsEngineTypeCount)
+    {
+        setLastError("Error GLOBAL: Unrecognised PhysicsEngine=\""s + buf + "\""s);
+        return lastErrorPtr();
+    }
+
     // gravity
     if (findAttribute("GravityVector", &buf) == nullptr) return lastErrorPtr();
     GSUtil::Double(buf, 3, m_DoubleList);
@@ -213,7 +226,7 @@ std::string *Global::createFromAttributes()
             break;
         }
     }
-    if (i > 1)
+    if (i >= stepTypeCount)
     {
         setLastError("GLOBAL: Unrecognised StepType=\""s + buf + "\""s);
         return lastErrorPtr();
@@ -302,6 +315,7 @@ void Global::appendToAttributes()
     setAttribute("IntegrationStepSize", *GSUtil::ToString(m_StepSize, &buf));
     setAttribute("MechanicalEnergyLimit", *GSUtil::ToString(m_MechanicalEnergyLimit, &buf));
     setAttribute("MetabolicEnergyLimit", *GSUtil::ToString(m_MetabolicEnergyLimit, &buf));
+    setAttribute("PhysicsEngine", physicsEngineTypeStrings(m_PhysicsEngine));
     setAttribute("StepType", stepTypeStrings(m_StepType));
     setAttribute("TimeLimit", *GSUtil::ToString(m_TimeLimit, &buf));
     setAttribute("NumericalErrorsScore", *GSUtil::ToString(m_NumericalErrorsScore, &buf));
