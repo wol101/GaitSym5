@@ -17,6 +17,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# customise the behaviour
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # generates detailed compile_commands.json file
+if(CMAKE_BUILD_TYPE STREQUAL Release)
+    add_compile_definitions(QT_NO_DEBUG_OUTPUT) # stops qDebug from generating any output
+    message(STATUS "QT_NO_DEBUG_OUTPUT defined")
+endif()
+
 add_compile_definitions(PX_PHYSX_STATIC_LIB)
 # options
 # PX_SUPPORT_GPU_PHYSX
