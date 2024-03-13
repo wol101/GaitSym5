@@ -280,7 +280,7 @@ std::string *Global::createFromAttributes()
     if (buf.size())
     {
         pystring::split(buf, encodedMeshSearchPath, ":"s);
-        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_MeshSearchPath.push_back(percentDecode(encodedMeshSearchPath[i]));
+        for (i = 0; i < encodedMeshSearchPath.size(); i++) m_MeshSearchPath.push_back(percentDecode(encodedMeshSearchPath[i]));
     }
 
     return nullptr;
