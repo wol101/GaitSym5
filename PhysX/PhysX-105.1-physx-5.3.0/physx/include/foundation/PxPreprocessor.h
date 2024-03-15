@@ -439,7 +439,7 @@ _Pragma(" clang diagnostic pop")
 #if PX_WINDOWS_FAMILY
     // check that exactly one of NDEBUG and _DEBUG is defined
     #if !defined(NDEBUG) ^ defined(_DEBUG)
-        // #error Exactly one of NDEBUG and _DEBUG needs to be defined! // wis
+        // #error Exactly one of NDEBUG and _DEBUG needs to be defined! // WIS
         #warning Exactly one of NDEBUG and _DEBUG needs to be defined!
     #endif
 #endif
