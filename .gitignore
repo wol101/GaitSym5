@@ -56,3 +56,4 @@ compile_commands.json
 # Visual Studio
 */.vs
 
+GaitSymQt/build/
