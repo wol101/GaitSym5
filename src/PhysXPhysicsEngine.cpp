@@ -44,15 +44,16 @@ PhysXPhysicsEngine::~PhysXPhysicsEngine()
     PX_RELEASE(m_foundation);
 }
 
-int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
 {
-    int err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::Initialise(theSimulation);
     if (err) { return err; }
 
     m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, g_allocator, g_errorCallback);
-    if(!m_foundation)
+    if (!m_foundation)
     {
-        return __LINE__;
+        setLastError("Error: PhysXPhysicsEngine error in PxCreateFoundation"s);
+        return lastErrorPtr();
     }
 
     m_pvd = PxCreatePvd(*m_foundation);
@@ -62,7 +63,8 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale(m_defaultLength, m_defaultSpeed), m_recordMemoryAllocations, m_pvd);
     if (!m_physics)
     {
-        return __LINE__;
+        setLastError("Error: PhysXPhysicsEngine error in PxCreatePhysics"s);
+        return lastErrorPtr();
     }
 
     PxInitExtensions(*m_physics, m_pvd);
@@ -81,7 +83,7 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
     physx::PxPvdSceneClient* pvdClient = m_scene->getScenePvdClient();
-    if(pvdClient)
+    if (pvdClient)
     {
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
@@ -102,10 +104,10 @@ int PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     // And PhysX requires that bodies be moved to their starting positions after joints have been created
     MoveBodies();
 
-    return 0;
+    return nullptr;
 }
 
-void PhysXPhysicsEngine::CreateBodies()
+std::string *PhysXPhysicsEngine::CreateBodies()
 {
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter : *simulation()->GetBodyList())
@@ -130,9 +132,10 @@ void PhysXPhysicsEngine::CreateBodies()
         m_scene->addActor(*rigidDynamic);
         m_bodyMap[iter.first] = rigidDynamic;
     }
+    return nullptr;
 }
 
-void PhysXPhysicsEngine::CreateJoints()
+std::string *PhysXPhysicsEngine::CreateJoints()
 {
     for (auto &&iter : *simulation()->GetJointList())
     {
@@ -166,10 +169,11 @@ void PhysXPhysicsEngine::CreateJoints()
             break;
         }
     }
+    return nullptr;
 }
 
 
-void PhysXPhysicsEngine::CreateGeoms()
+std::string *PhysXPhysicsEngine::CreateGeoms()
 {
     for (auto &&iter : *simulation()->GetGeomList())
     {
@@ -243,9 +247,10 @@ void PhysXPhysicsEngine::CreateGeoms()
             break;
         }
     }
+    return nullptr;
 }
 
-void PhysXPhysicsEngine::MoveBodies()
+std::string *PhysXPhysicsEngine::MoveBodies()
 {
     for (auto &&iter : *simulation()->GetBodyList())
     {
@@ -255,9 +260,10 @@ void PhysXPhysicsEngine::MoveBodies()
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
         rigidDynamic->setGlobalPose(transform);
     }
+    return nullptr;
 }
 
-int PhysXPhysicsEngine::Step()
+std::string *PhysXPhysicsEngine::Step()
 {
     // clear the contacts
     g_contactReportCallback.contactData()->clear();
@@ -416,7 +422,7 @@ int PhysXPhysicsEngine::Step()
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 

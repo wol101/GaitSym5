@@ -58,15 +58,15 @@ public:
     PhysXPhysicsEngine();
     virtual ~PhysXPhysicsEngine();
 
-    virtual int Initialise(Simulation *theSimulation);
-    virtual int Step();
+    virtual std::string *Initialise(Simulation *theSimulation);
+    virtual std::string *Step();
 
  private:
 
-    void CreateBodies();
-    void CreateJoints();
-    void CreateGeoms();
-    void MoveBodies();
+    std::string *CreateBodies();
+    std::string *CreateJoints();
+    std::string *CreateGeoms();
+    std::string *MoveBodies();
 
     // Simulation variables
     physx::PxFoundation *m_foundation = nullptr;

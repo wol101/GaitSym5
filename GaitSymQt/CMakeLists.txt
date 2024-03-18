@@ -1010,6 +1010,7 @@ set(PROJECT_SOURCES
     ../src/MarkerEllipseDriver.cpp
     ../src/MarkerPositionDriver.cpp
     ../src/MovingAverage.cpp
+    ../src/MuJoCoPhysicsEngine.cpp
     ../src/Muscle.cpp
     ../src/NamedObject.cpp
     ../src/NPointStrap.cpp
@@ -1150,6 +1151,7 @@ set(PROJECT_SOURCES
     ../src/MovingAverage.h
     ../src/MPIStuff.h
     ../src/Muscle.h
+    ../src/MuJoCoPhysicsEngine.h
     ../src/NamedObject.h
     ../src/NPointStrap.h
     ../src/ObjectiveMain.h

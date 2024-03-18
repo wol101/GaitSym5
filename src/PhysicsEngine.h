@@ -15,8 +15,8 @@ public:
     PhysicsEngine& operator=(const PhysicsEngine&) = delete;
     PhysicsEngine& operator=(PhysicsEngine&&) = delete;
 
-    virtual int Initialise(Simulation *simulation);
-    virtual int Step() = 0;
+    virtual std::string *Initialise(Simulation *simulation);
+    virtual std::string *Step() = 0;
 
     Simulation *simulation() const;
     void setSimulation(Simulation *newSimulation);

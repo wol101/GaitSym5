@@ -8,10 +8,10 @@ PhysicsEngine::~PhysicsEngine()
 {
 }
 
-int PhysicsEngine::Initialise(Simulation *simulation)
+std::string *PhysicsEngine::Initialise(Simulation *simulation)
 {
     m_simulation = simulation;
-    return 0;
+    return nullptr;
 }
 
 Simulation *PhysicsEngine::simulation() const

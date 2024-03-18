@@ -35,9 +35,9 @@ ODEPhysicsEngine::~ODEPhysicsEngine()
     dCloseODE();
 }
 
-int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *ODEPhysicsEngine::Initialise(Simulation *theSimulation)
 {
-    int err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::Initialise(theSimulation);
     if (err) { return err; }
 
     // initialise the ODE world
@@ -68,10 +68,10 @@ int ODEPhysicsEngine::Initialise(Simulation *theSimulation)
     // And ODE requires that bodies be moved to their starting positions after joints have been created
     MoveBodies();
 
-    return 0;
+    return nullptr;
 }
 
-void ODEPhysicsEngine::CreateBodies()
+std::string *ODEPhysicsEngine::CreateBodies()
 {
     // first create the bodies
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
@@ -93,9 +93,10 @@ void ODEPhysicsEngine::CreateBodies()
         pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();
         dBodySetAngularVel(bodyID, angularVelocity.x, angularVelocity.y, angularVelocity.z);
     }
+    return nullptr;
 }
 
-void ODEPhysicsEngine::CreateJoints()
+std::string *ODEPhysicsEngine::CreateJoints()
 {
     for (auto &&iter : *simulation()->GetJointList())
     {
@@ -141,9 +142,10 @@ void ODEPhysicsEngine::CreateJoints()
             break;
         }
     }
+    return nullptr;
 }
 
-void ODEPhysicsEngine::CreateGeoms()
+std::string *ODEPhysicsEngine::CreateGeoms()
 {
     for (auto &&iter : *simulation()->GetGeomList())
     {
@@ -181,9 +183,10 @@ void ODEPhysicsEngine::CreateGeoms()
             break;
         }
     }
+    return nullptr;
 }
 
-void ODEPhysicsEngine::MoveBodies()
+std::string *ODEPhysicsEngine::MoveBodies()
 {
     for (auto &&iter : *simulation()->GetBodyList())
     {
@@ -193,9 +196,10 @@ void ODEPhysicsEngine::MoveBodies()
         pgd::Quaternion quaternion = iter.second->GetQuaternion();
         dBodySetQuaternion(bodyID, quaternion.constData());
     }
+    return nullptr;
 }
 
-int ODEPhysicsEngine::Step()
+std::string *ODEPhysicsEngine::Step()
 {
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
@@ -305,7 +309,7 @@ int ODEPhysicsEngine::Step()
         contact->setTorque(pgd::Vector3(jointFeedback->t1));
     }
 
-    return 0;
+    return nullptr;
 }
 
 // this is called by dSpaceCollide when two objects in space are

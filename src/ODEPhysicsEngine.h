@@ -14,8 +14,8 @@ public:
     ODEPhysicsEngine();
     virtual ~ODEPhysicsEngine();
 
-    virtual int Initialise(Simulation *theSimulation);
-    virtual int Step();
+    virtual std::string *Initialise(Simulation *theSimulation);
+    virtual std::string *Step();
 
     dWorldID worldID() const;
 
@@ -30,10 +30,10 @@ public:
 private:
     static void NearCallback(void *data, dGeomID o1, dGeomID o2);
 
-    void CreateBodies();
-    void CreateJoints();
-    void CreateGeoms();
-    void MoveBodies();
+    std::string *CreateBodies();
+    std::string *CreateJoints();
+    std::string *CreateGeoms();
+    std::string *MoveBodies();
 
     // Simulation variables
     dWorldID m_worldID;
