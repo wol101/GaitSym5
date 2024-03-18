@@ -58,6 +58,7 @@
 #include "PhysicsEngine.h"
 #include "ODEPhysicsEngine.h"
 #include "PhysXPhysicsEngine.h"
+#include "MuJoCoPhysicsEngine.h"
 
 #include "pystring.h"
 
@@ -162,6 +163,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 //----------------------------------------------------------------------------
 void Simulation::UpdateSimulation()
 {
+    std::string *err = nullptr;
     if (!m_physicsEngine)
     {
         switch (m_global->physicsEngine())
@@ -169,9 +171,10 @@ void Simulation::UpdateSimulation()
         case Global::PhysicsEngine::ODE:
         {
             m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
-            if (m_physicsEngine->Initialise(this))
+            err = m_physicsEngine->Initialise(this);
+            if (err)
             {
-                std::cerr << "Error: unable to initialise the physics engine\n";
+                std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << err << "\n";
                 m_SimulationError = true;
                 return;
             }
@@ -180,9 +183,22 @@ void Simulation::UpdateSimulation()
         case Global::PhysicsEngine::PhysX:
         {
             m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
-            if (m_physicsEngine->Initialise(this))
+            err = m_physicsEngine->Initialise(this);
+            if (err)
             {
-                std::cerr << "Error: unable to initialise the physics engine\n";
+                std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << err << "\n";
+                m_SimulationError = true;
+                return;
+            }
+            break;
+        }
+        case Global::PhysicsEngine::MuJoCo:
+        {
+            m_physicsEngine = std::make_unique<MuJoCoPhysicsEngine>();
+            err = m_physicsEngine->Initialise(this);
+            if (err)
+            {
+                std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << err << "\n";
                 m_SimulationError = true;
                 return;
             }

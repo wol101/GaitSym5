@@ -9,6 +9,7 @@
 
 #include "Joint.h"
 #include "Marker.h"
+#include "Body.h"
 #include "GSUtil.h"
 #include "Simulation.h"
 
@@ -71,14 +72,9 @@ std::string *Joint::createFromAttributes()
         setLastError("Joint ID=\""s + name() +"\" Body2Marker not found"s);
         return lastErrorPtr();
     }
-//    if (marker1Iterator->second->GetBody() == nullptr)
-//    {
-//        setLastError("Joint ID=\""s + name() +"\" Marker 1 cannot be attached to World"s);
-//        return lastErrorPtr();
-//    }
-    if (marker1Iterator->second->GetBody() == nullptr && marker2Iterator->second->GetBody() == nullptr)
+    if (marker1Iterator->second->GetBody() ==  marker2Iterator->second->GetBody())
     {
-        setLastError("Joint ID=\""s + name() +"\" both markers attached to World"s);
+        setLastError("Joint ID=\""s + name() +"\" both markers attached to the same body ID=\""s + marker1Iterator->second->GetBody()->name() + "\""s);
         return lastErrorPtr();
     }
     this->setBody1Marker(marker1Iterator->second.get());

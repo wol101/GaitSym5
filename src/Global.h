@@ -26,7 +26,7 @@ public:
 
     SMART_ENUM(StepType, stepTypeStrings, stepTypeCount, World, Quick);
     SMART_ENUM(FitnessType, fitnessTypeStrings, fitnessTypeCount, KinematicMatch, KinematicMatchMiniMax);
-    SMART_ENUM(PhysicsEngine, physicsEngineTypeStrings, physicsEngineTypeCount, ODE, PhysX);
+    SMART_ENUM(PhysicsEngine, physicsEngineTypeStrings, physicsEngineTypeCount, ODE, PhysX, MuJoCo);
 
     virtual std::string *createFromAttributes() override;
     virtual void saveToAttributes() override;

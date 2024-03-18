@@ -32,6 +32,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
 
     // create the MuJoCo xml versions of the main elements
     err = CreateTree();
+    if (err) { return err; }
 
     char error[1000] = "";
     m_mjModel = LoadModelFromString(m_mjXML, error, sizeof(error));
@@ -43,7 +44,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
 
     m_mjData = mj_makeData(m_mjModel);
 
-    return nullptr;
+    return err;
 }
 
 std::string *MuJoCoPhysicsEngine::CreateTree()
@@ -64,7 +65,6 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 
     m_rootTreeBody.body = maxMassBody;
     m_JointLoopDetector.clear();
-    m_JointLoopDetector.insert(m_rootTreeBody.body);
     std::string *err = AddNodeToTree(&m_rootTreeBody);
     return err;
 }
@@ -73,7 +73,8 @@ std::string *MuJoCoPhysicsEngine::AddNodeToTree(TreeBody *treeBody)
 {
     if (m_JointLoopDetector.count(treeBody->body) > 0)
     {
-        setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add %s twice", treeBody->body));
+        if (treeBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", treeBody->body->name().c_str()));
+        else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", "World"));
         return lastErrorPtr();
     }
     m_JointLoopDetector.insert(treeBody->body);
@@ -81,8 +82,7 @@ std::string *MuJoCoPhysicsEngine::AddNodeToTree(TreeBody *treeBody)
     {
         if (jointIter.second->body1() == treeBody->body)
         {
-
-            std::unique_ptr<TreeBody> newTreeBody = std::unique_ptr<TreeBody>();
+            std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
             newTreeBody->body = jointIter.second->body2();
             newTreeBody->parent = treeBody->body;
             newTreeBody->jointToParent = jointIter.second.get();
@@ -93,12 +93,7 @@ std::string *MuJoCoPhysicsEngine::AddNodeToTree(TreeBody *treeBody)
         }
         if (jointIter.second->body2() == treeBody->body)
         {
-            if (m_JointLoopDetector.count(jointIter.second->body2()) > 0)
-            {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. %s to %s forms a loop", treeBody->body, jointIter.second->body2()->name().c_str()));
-                return lastErrorPtr();
-            }
-            std::unique_ptr<TreeBody> newTreeBody = std::unique_ptr<TreeBody>();
+            std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
             newTreeBody->body = jointIter.second->body1();
             newTreeBody->parent = treeBody->body;
             newTreeBody->jointToParent = jointIter.second.get();
