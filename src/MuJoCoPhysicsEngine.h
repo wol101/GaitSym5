@@ -42,14 +42,16 @@ public:
     struct TreeBody
     {
         Body *body;
-        Body *parent;
+        TreeBody *parent;
         Joint *jointToParent;
         std::vector<std::unique_ptr<TreeBody>> childList;
     };
     TreeBody m_rootTreeBody;
     std::string *CreateTree();
-    std::string *AddNodeToTree(TreeBody *treeBody);
-    std::set<Body *> m_JointLoopDetector;
+    // std::string *AddNodeToTree(TreeBody *treeBody);
+    std::set<Body *> m_jointLoopDetector;
+    std::vector<Joint *> m_jointsLeftToInclude;
+    std::vector<TreeBody *> m_bodiesLeftToInclude;
 
 };
 

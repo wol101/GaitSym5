@@ -64,47 +64,97 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     }
 
     m_rootTreeBody.body = maxMassBody;
-    m_JointLoopDetector.clear();
-    std::string *err = AddNodeToTree(&m_rootTreeBody);
-    return err;
-}
+    m_jointLoopDetector.clear();
+    m_jointsLeftToInclude.clear();
+    m_jointsLeftToInclude.reserve(simulation()->GetJointList()->size());
+    for (auto &&iter : *simulation()->GetJointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
+    m_bodiesLeftToInclude.reserve(simulation()->GetBodyList()->size());
+    m_bodiesLeftToInclude.push_back(&m_rootTreeBody);
+    while (m_bodiesLeftToInclude.size())
+    {
+#define DEBUG_CREATE_TREE
+#ifdef DEBUG_CREATE_TREE
+        for (auto &&iter : m_bodiesLeftToInclude)
+        {
+            std::cerr << "TreeBody " << iter->body->name() << "\n";
+            for (auto &&iter2 : iter->childList)
+            {
+                std::cerr << "Child " << iter2->body->name() << "\n";
+            }
+        }
+#endif
+        TreeBody *currentBody = m_bodiesLeftToInclude.back();
+        m_bodiesLeftToInclude.pop_back();
+        auto iter = m_jointsLeftToInclude.begin();
+        while (iter != m_jointsLeftToInclude.end())
+        {
+            if ((*iter)->body1() != currentBody->body && (*iter)->body2() != currentBody->body)
+            {
+                iter++;
+                continue;
+            }
+            // we have found a link to a child
+            if (m_jointLoopDetector.count(currentBody->body) > 0)
+            {
+                if (currentBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", currentBody->body->name().c_str()));
+                else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", "World"));
+                return lastErrorPtr();
+            }
+            std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
+            newTreeBody->body = ((*iter)->body1() == currentBody->body) ? (*iter)->body2() : (*iter)->body1();
+            newTreeBody->parent = currentBody;
+            newTreeBody->jointToParent = *iter;
+            m_bodiesLeftToInclude.push_back(newTreeBody.get());
+            m_jointLoopDetector.insert(currentBody->body);
+            currentBody->childList.push_back(std::move(newTreeBody));
+            iter = m_jointsLeftToInclude.erase(iter);
+        }
+        if (m_jointsLeftToInclude.size() > 0 && m_bodiesLeftToInclude.size() == 0)
+        {
+            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Body list exhausted before joint list"));
+            return lastErrorPtr();
+        }
+    }
 
-std::string *MuJoCoPhysicsEngine::AddNodeToTree(TreeBody *treeBody)
-{
-    if (m_JointLoopDetector.count(treeBody->body) > 0)
-    {
-        if (treeBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", treeBody->body->name().c_str()));
-        else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", "World"));
-        return lastErrorPtr();
-    }
-    m_JointLoopDetector.insert(treeBody->body);
-    for (auto &&jointIter : *simulation()->GetJointList())
-    {
-        if (jointIter.second->body1() == treeBody->body)
-        {
-            std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
-            newTreeBody->body = jointIter.second->body2();
-            newTreeBody->parent = treeBody->body;
-            newTreeBody->jointToParent = jointIter.second.get();
-            treeBody->childList.push_back(std::move(newTreeBody));
-            std::string *err = AddNodeToTree(treeBody->childList.back().get());
-            if (err) return err;
-            continue;
-        }
-        if (jointIter.second->body2() == treeBody->body)
-        {
-            std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
-            newTreeBody->body = jointIter.second->body1();
-            newTreeBody->parent = treeBody->body;
-            newTreeBody->jointToParent = jointIter.second.get();
-            treeBody->childList.push_back(std::move(newTreeBody));
-            std::string *err = AddNodeToTree(treeBody->childList.back().get());
-            if (err) return err;
-            continue;
-        }
-    }
     return nullptr;
 }
+
+// std::string *MuJoCoPhysicsEngine::AddNodeToTree(TreeBody *treeBody)
+// {
+//     if (m_JointLoopDetector.count(treeBody->body) > 0)
+//     {
+//         if (treeBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", treeBody->body->name().c_str()));
+//         else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", "World"));
+//         return lastErrorPtr();
+//     }
+//     m_JointLoopDetector.insert(treeBody->body);
+//     for (auto &&jointIter : *simulation()->GetJointList())
+//     {
+//         if (jointIter.second->body1() == treeBody->body)
+//         {
+//             std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
+//             newTreeBody->body = jointIter.second->body2();
+//             newTreeBody->parent = treeBody->body;
+//             newTreeBody->jointToParent = jointIter.second.get();
+//             treeBody->childList.push_back(std::move(newTreeBody));
+//             std::string *err = AddNodeToTree(treeBody->childList.back().get());
+//             if (err) return err;
+//             continue;
+//         }
+//         if (jointIter.second->body2() == treeBody->body)
+//         {
+//             std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
+//             newTreeBody->body = jointIter.second->body1();
+//             newTreeBody->parent = treeBody->body;
+//             newTreeBody->jointToParent = jointIter.second.get();
+//             treeBody->childList.push_back(std::move(newTreeBody));
+//             std::string *err = AddNodeToTree(treeBody->childList.back().get());
+//             if (err) return err;
+//             continue;
+//         }
+//     }
+//     return nullptr;
+// }
 
 std::string *MuJoCoPhysicsEngine::CreateBodies()
 {
