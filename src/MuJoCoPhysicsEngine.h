@@ -5,8 +5,8 @@
 
 #include "mujoco/mujoco.h"
 
-#include <set>
 #include <memory>
+#include <set>
 
 class Body;
 class Joint;
@@ -49,7 +49,7 @@ public:
     TreeBody m_rootTreeBody;
     std::string *CreateTree();
     // std::string *AddNodeToTree(TreeBody *treeBody);
-    std::set<Body *> m_jointLoopDetector;
+    std::multiset<Body *> m_jointLoopDetector;
     std::vector<Joint *> m_jointsLeftToInclude;
     std::vector<TreeBody *> m_bodiesLeftToInclude;
 

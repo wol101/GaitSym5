@@ -13,6 +13,8 @@
 #include "Contact.h"
 #include "GSUtil.h"
 
+#include <deque>
+
 using namespace std::string_literals;
 
 MuJoCoPhysicsEngine::MuJoCoPhysicsEngine()
@@ -38,7 +40,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     m_mjModel = LoadModelFromString(m_mjXML, error, sizeof(error));
     if (!m_mjModel)
     {
-        setLastError("Error: MuJoCoPhysicsEngine error in LoadModelFromString\n"s + error);
+        setLastError("Error: MuJoCoPhysicsEngine error in LoadModelFromString\n"s + std::string(error));
         return lastErrorPtr();
     }
 
@@ -65,9 +67,11 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 
     m_rootTreeBody.body = maxMassBody;
     m_jointLoopDetector.clear();
+    m_jointLoopDetector.insert(m_rootTreeBody.body);
     m_jointsLeftToInclude.clear();
     m_jointsLeftToInclude.reserve(simulation()->GetJointList()->size());
     for (auto &&iter : *simulation()->GetJointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
+    m_bodiesLeftToInclude.clear();
     m_bodiesLeftToInclude.reserve(simulation()->GetBodyList()->size());
     m_bodiesLeftToInclude.push_back(&m_rootTreeBody);
     while (m_bodiesLeftToInclude.size())
@@ -76,12 +80,18 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 #ifdef DEBUG_CREATE_TREE
         for (auto &&iter : m_bodiesLeftToInclude)
         {
+            std::cerr << "TreeBodies left " << m_bodiesLeftToInclude.size() << "\n";
             std::cerr << "TreeBody " << iter->body->name() << "\n";
             for (auto &&iter2 : iter->childList)
             {
                 std::cerr << "Child " << iter2->body->name() << "\n";
             }
         }
+        for (auto &&iter : m_jointLoopDetector)
+        {
+            std::cerr << "Loop detector bodies left " << m_jointLoopDetector.size() << "\n";
+            std::cerr << "Body " << iter->name() << "\n";
+         }
 #endif
         TreeBody *currentBody = m_bodiesLeftToInclude.back();
         m_bodiesLeftToInclude.pop_back();
@@ -94,7 +104,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
                 continue;
             }
             // we have found a link to a child
-            if (m_jointLoopDetector.count(currentBody->body) > 0)
+            if (m_jointLoopDetector.count(currentBody->body) > 1)
             {
                 if (currentBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", currentBody->body->name().c_str()));
                 else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", "World"));
@@ -105,7 +115,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
             newTreeBody->parent = currentBody;
             newTreeBody->jointToParent = *iter;
             m_bodiesLeftToInclude.push_back(newTreeBody.get());
-            m_jointLoopDetector.insert(currentBody->body);
+            m_jointLoopDetector.insert(newTreeBody->body);
             currentBody->childList.push_back(std::move(newTreeBody));
             iter = m_jointsLeftToInclude.erase(iter);
         }
@@ -115,6 +125,21 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
             return lastErrorPtr();
         }
     }
+
+#ifdef DEBUG_CREATE_TREE
+    std::deque<TreeBody *> toProcess;
+    toProcess.push_back(&m_rootTreeBody);
+    while (toProcess.size())
+    {
+        std::cerr << "TreeBody " << toProcess.front()->body->name() << "\n";
+        for (auto &&iter2 : toProcess.front()->childList)
+        {
+            std::cerr << "Child " << iter2->body->name() << "\n";
+            toProcess.push_back(iter2.get());
+        }
+        toProcess.pop_front();
+    }
+#endif
 
     return nullptr;
 }

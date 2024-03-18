@@ -174,7 +174,7 @@ void Simulation::UpdateSimulation()
             err = m_physicsEngine->Initialise(this);
             if (err)
             {
-                std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << err << "\n";
+                std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << *err << "\n";
                 m_SimulationError = true;
                 return;
             }
@@ -186,7 +186,7 @@ void Simulation::UpdateSimulation()
             err = m_physicsEngine->Initialise(this);
             if (err)
             {
-                std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << err << "\n";
+                std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << *err << "\n";
                 m_SimulationError = true;
                 return;
             }
@@ -198,7 +198,7 @@ void Simulation::UpdateSimulation()
             err = m_physicsEngine->Initialise(this);
             if (err)
             {
-                std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << err << "\n";
+                std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << *err << "\n";
                 m_SimulationError = true;
                 return;
             }
