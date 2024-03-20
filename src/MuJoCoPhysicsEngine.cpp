@@ -357,7 +357,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         std::vector<mjtNum> qpos((size_t(qposSize)));
         std::vector<mjtNum> qvel((size_t(qvelSize)));
         mj_getState(m_mjModel, m_mjData, qpos.data(), mjSTATE_QPOS);
-        mj_getState(m_mjModel, m_mjData, qpos.data(), mjSTATE_QVEL);
+        mj_getState(m_mjModel, m_mjData, qvel.data(), mjSTATE_QVEL);
         for (int i = 0; i < qposSize; i++)
         {
             std::cerr << qpos[i] << "\n";
