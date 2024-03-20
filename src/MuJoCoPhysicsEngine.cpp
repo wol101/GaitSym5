@@ -45,6 +45,10 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     }
 
     m_mjData = mj_makeData(m_mjModel);
+    mj_forward(m_mjModel, m_mjData);
+
+    // move to start positions
+    MoveBodies();
 
     return err;
 }
@@ -311,21 +315,42 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
 
 std::string *MuJoCoPhysicsEngine::MoveBodies()
 {
-#if 0
-    for (auto &&iter : *simulation()->GetBodyList())
+    std::string *err = nullptr;
+    for (size_t i = 0; i < m_mjModel->nbody; i++)
     {
-        physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
-        pgd::Vector3 position = iter.second->GetPosition();
-        pgd::Quaternion quaternion = iter.second->GetQuaternion();
-        physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
-        rigidDynamic->setGlobalPose(transform);
+        mjtObj type = mjOBJ_BODY;
+        std::string bodyName(mj_id2name(m_mjModel, type, i));
+        Body *body = simulation()->GetBody(bodyName);
+        pgd::Vector3 position = body->GetPosition();
+        pgd::Quaternion quaternion = body->GetQuaternion();
+        std::string parentName(m_mjModel->names + m_mjModel->name_bodyadr[m_mjModel->body_parentid[i]]);
+        Body *parent = simulation()->GetBody(parentName);
+        Marker marker(parent);
+        marker.SetWorldPosition(position);
+        marker.SetWorldQuaternion(quaternion);
+
+        int stateSize = mj_stateSize(m_mjModel, mjSTATE_PHYSICS);
+        std::vector<mjtNum> state((size_t(stateSize)));
+        mj_getState(m_mjModel, m_mjData, state.data(), mjSTATE_PHYSICS);
     }
-#endif
-    return nullptr;
+
+    return err;
 }
 
 std::string *MuJoCoPhysicsEngine::Step()
 {
+
+    // Apply Cartesian force and torque (outside xfrc_applied mechanism).
+    MJAPI void mj_applyFT(const mjModel* m, mjData* d, const mjtNum force[3], const mjtNum torque[3],
+                          const mjtNum point[3], int body, mjtNum* qfrc_target);
+
+    // Set perturb pos,quat in d->mocap when selected body is mocap, and in d->qpos otherwise.
+    // Write d->qpos only if flg_paused and subtree root for selected body has free joint.
+    MJAPI void mjv_applyPerturbPose(const mjModel* m, mjData* d, const mjvPerturb* pert,
+                                    int flg_paused);
+
+    // Set perturb force,torque in d->xfrc_applied, if selected body is dynamic.
+    MJAPI void mjv_applyPerturbForce(const mjModel* m, mjData* d, const mjvPerturb* pert);
 #if 0
     // clear the contacts
     g_contactReportCallback.contactData()->clear();
