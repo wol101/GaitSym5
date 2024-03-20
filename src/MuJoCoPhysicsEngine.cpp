@@ -36,6 +36,10 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     err = CreateTree();
     if (err) { return err; }
 
+    std::ofstream of("D:\\wis\\Scratch\\test.xml");
+    of << m_mjXML;
+    of.close();
+
     char error[1000] = "";
     m_mjModel = LoadModelFromString(m_mjXML, error, sizeof(error));
     if (!m_mjModel)
@@ -182,7 +186,7 @@ void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::stri
     {
         xmlString->append(iter.first + "=\""s + iter.second + "\" "s);
     }
-    if (attributes.size() > 0) xmlString->pop_back();
+    xmlString->pop_back();
     if (terminate) { xmlString->append("/>\n"s); }
     else { xmlString->append(">\n"s); }
 }
@@ -216,7 +220,7 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
     attributes.clear();
     attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
-    XMLInitiateTag(&m_mjXML, "inertial", attributes);
+    XMLInitiateTag(&m_mjXML, "inertial", attributes, true);
 
     err = CreateJoint(treeBody.jointToParent);
     if (err) return err;
@@ -230,6 +234,12 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
         }
     }
 
+    for (auto &&iter : treeBody.childList)
+    {
+        CreateBody(*iter);
+    }
+
+    XMLTerminateTag(&m_mjXML, "body");
     return nullptr;
 }
 
