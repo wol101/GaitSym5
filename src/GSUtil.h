@@ -522,8 +522,9 @@ static std::string *ToString(const uint64_t *v, size_t n, std::string *output);
 static std::string *ToString(const bool *v, size_t n, std::string *output);
 static std::string *ToString(const pgd::Matrix3x3 &m, std::string *output);
 static std::string *ToString(const pgd::Quaternion &v, std::string *output);
-static std::string *ToString(const pgd::Vector3 &v, std::string *output);
 static std::string *ToString(const pgd::Vector2 &v, std::string *output);
+static std::string *ToString(const pgd::Vector3 &v, std::string *output);
+static std::string *ToString(const pgd::Vector4 &v, std::string *output);
 static std::string *ToString(uint32_t address, uint16_t port, std::string *output);
 
 static std::string ToString(double v);
@@ -542,7 +543,9 @@ static std::string ToString(const uint64_t *v, size_t n);
 static std::string ToString(const bool *v, size_t n);
 static std::string ToString(const pgd::Matrix3x3 &m);
 static std::string ToString(const pgd::Quaternion &v);
+static std::string ToString(const pgd::Vector2 &v);
 static std::string ToString(const pgd::Vector3 &v);
+static std::string ToString(const pgd::Vector4 &v);
 static std::string ToString(uint32_t address, uint16_t port);
 
 static std::string ToString(const char * const printfFormatString, ...);

@@ -49,8 +49,10 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     return err;
 }
 
-std::string *MuJoCoPhysicsEngine::CreateTree()
+std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a single connected model in the world
 {
+    std::string *err = nullptr;
+
     // with no hint just assume the biggest body is the root
     Body *maxMassBody = nullptr;
     double maxMass = -std::numeric_limits<double>::max();
@@ -142,24 +144,31 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 #endif
 
     // start building the XML
-    XMLInitiateTag(*m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
+    XMLInitiateTag(&m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
 
     // set some options
-    XMLInitiateTag(*m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->StepSize())}});
+    XMLInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->StepSize())}}, true);
 
     // create the world body
-    XMLInitiateTag(*m_mjXML, "worldbody"s);
+    XMLInitiateTag(&m_mjXML, "worldbody"s);
 
-    int depth = 1;
-    TreeBody *currentTreeBody = &m_rootTreeBody;
-    while (depth)
+    // create any geoms attached to world
+    for (auto &&iter : *simulation()->GetGeomList())
     {
-        CreateBody(const Body *body)
+        if (iter.second->GetBody() == nullptr)
+        {
+            err = CreateGeom(iter.second.get());
+            if (err) return err;
+        }
     }
 
-    XMLTerminateTag(m_mjXML, "mujoco"s);
+    // this creates the whole model recursively
+    CreateBody(m_rootTreeBody);
 
-    return nullptr;
+    XMLTerminateTag(&m_mjXML, "worldbody"s);
+    XMLTerminateTag(&m_mjXML, "mujoco"s);
+
+    return err;
 }
 
 void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
@@ -179,138 +188,117 @@ void XMLTerminateTag(std::string *xmlString, const std::string &tag)
     xmlString->append("</"s + tag + ">\n"s);
 }
 
-std::string *MuJoCoPhysicsEngine::CreateBody(const Body *body)
+std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
 {
-    double mass, ixx, iyy, izz, ixy, izx, iyz;
-    body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    std::string *err = nullptr;
+    Body *body = treeBody.body;
     pgd::Vector3 position = body->GetConstructionPosition();
     pgd::Quaternion quaternion(true);
     std::map<std::string, std::string> attributes;
     attributes["name"s] = body->name();
     attributes["pos"s] = GSUtil::ToString(position);
     attributes["quat"s] = GSUtil::ToString(quaternion);
-    attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
     XMLInitiateTag(&m_mjXML, "body", attributes);
-    return nullptr;
-}
 
-std::string *MuJoCoPhysicsEngine::CreateJoints()
-{
-#if 0
-    for (auto &&iter : *simulation()->GetJointList())
-    {
-        while (true)
-        {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
-            {
-                Marker *marker1 = hingeJoint->body1Marker();
-                Marker *marker2 = hingeJoint->body2Marker();
-                pgd::Vector3 p1 = marker1->GetPosition();
-                pgd::Vector3 p2 = marker2->GetPosition();
-                pgd::Quaternion q1 = marker1->GetQuaternion();
-                pgd::Quaternion q2 = marker2->GetQuaternion();
-                physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
-                physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
-                physx::PxRigidActor *actor0 = m_bodyMap[hingeJoint->body1()->name()];
-                physx::PxRigidActor *actor1 = m_bodyMap[hingeJoint->body2()->name()];
-                physx::PxRevoluteJoint *revolute = PxRevoluteJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
-                revolute->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+    double mass, ixx, iyy, izz, ixy, izx, iyz;
+    body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    attributes.clear();
+    attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
+    XMLInitiateTag(&m_mjXML, "inertial", attributes);
 
-                pgd::Vector2 stops = hingeJoint->stops();
-                double springConstant = hingeJoint->stopSpring();
-                double dampingConstant = hingeJoint->stopDamp();
-                revolute->setLimit(physx::PxJointAngularLimitPair(-stops[1], -stops[0], physx::PxSpring(springConstant, dampingConstant))); // note the stops are reversed from the ODE values
-                revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
-                revolute->userData = hingeJoint;
-                m_jointMap[iter.first] = revolute;
-                break;
-            }
-            break;
-        }
-    }
-#endif
-    return nullptr;
-}
+    err = CreateJoint(treeBody.jointToParent);
+    if (err) return err;
 
-
-std::string *MuJoCoPhysicsEngine::CreateGeoms()
-{
-#if 0
     for (auto &&iter : *simulation()->GetGeomList())
     {
-        while (true)
+        if (iter.second->GetBody() == body)
         {
-            SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get());
-            if (sphereGeom)
-            {
-                double radius = sphereGeom->radius();
-                pgd::Vector3 position = sphereGeom->GetPosition();
-                pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
-                physx::PxReal staticFriction = sphereGeom->GetContactMu();
-                physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
-                physx::PxMaterial *material;
-                if (sphereGeom->GetContactBounce() > 0)
-                {
-                    physx::PxReal restitution = sphereGeom->GetContactBounce();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                }
-                else
-                {
-                    physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
-                    physx::PxReal damping = sphereGeom->GetContactDampingConstant();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
-                    material->setDamping(damping);
-                }
-                bool isExclusive = true;
-                physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
-                physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
-                physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
-                shape->setLocalPose(transform);
-                shape->userData = sphereGeom;
-                m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
-                material->release();
-                shape->release();
-                break;
-            }
-            PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
-            if (planeGeom)
-            {
-                double a, b, c, d;
-                planeGeom->GetPlane(&a, &b, &c, &d);
-                physx::PxReal staticFriction = planeGeom->GetContactMu();
-                physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
-                physx::PxMaterial *material;
-                if (planeGeom->GetContactBounce() > 0)
-                {
-                    physx::PxReal restitution = planeGeom->GetContactBounce();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                }
-                else
-                {
-                    physx::PxReal restitution = -1 * planeGeom->GetContactSpringConstant();
-                    physx::PxReal damping = planeGeom->GetContactDampingConstant();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
-                    material->setDamping(damping);
-                }
-                bool isExclusive = true;
-                physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
-                physx::PxShape *shape = m_physics->createShape(physx::PxPlaneGeometry(), *material, isExclusive, shapeFlags);
-                physx::PxTransform transform = PxTransformFromPlaneEquation(physx::PxPlane(a, b, c, d));
-                shape->setLocalPose(transform);
-                shape->userData = planeGeom;
-                m_world->attachShape(*shape); // planes have to be attached to non-dynamic bodies
-                material->release();
-                shape->release();
-                break;
-            }
-            break;
+            err = CreateGeom(iter.second.get());
+            if (err) return err;
         }
     }
-#endif
+
     return nullptr;
+}
+
+std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
+{
+    std::string *err = nullptr;
+    std::map<std::string, std::string> attributes;
+    if (!joint)
+    {
+        attributes["name"s] = GSUtil::ToString("root%02d", m_freeJointCount);
+        m_freeJointCount++;
+        XMLInitiateTag(&m_mjXML, "freejoint"s, attributes, true);
+        return err;
+    }
+
+    while (true)
+    {
+        const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(joint);
+        if (hingeJoint)
+        {
+            Marker *marker1 = hingeJoint->body1Marker();
+            // Marker *marker2 = hingeJoint->body2Marker();
+            pgd::Vector3 p1 = marker1->GetPosition();
+            // pgd::Vector3 p2 = marker2->GetPosition();
+            pgd::Vector3 axis = marker1->GetAxis(Marker::X);
+            pgd::Vector2 stops = hingeJoint->stops();
+            // double springConstant = hingeJoint->stopSpring();
+            // double dampingConstant = hingeJoint->stopDamp();
+            attributes["name"s] = hingeJoint->name();
+            attributes["axis"s] = GSUtil::ToString(axis);
+            attributes["pos"s] = GSUtil::ToString(p1);
+            attributes["limited"s] = GSUtil::ToString(true);
+            attributes["range"s] = GSUtil::ToString(stops);
+            XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            break;
+        }
+        break;
+    }
+    return err;
+}
+
+
+std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
+{
+    std::string *err = nullptr;
+    std::map<std::string, std::string> attributes;
+    while (true)
+    {
+        const SphereGeom *sphereGeom = dynamic_cast<const SphereGeom *>(geom);
+        if (sphereGeom)
+        {
+            double radius = sphereGeom->radius();
+            pgd::Vector3 position = sphereGeom->GetPosition();
+            pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
+            // double staticFriction = sphereGeom->GetContactMu();
+            // double dynamicFriction = staticFriction;
+            // double contactBounce = sphereGeom->GetContactBounce();
+            attributes["name"s] = sphereGeom->name();
+            attributes["type"s] = "sphere"s;
+            attributes["size"s] = GSUtil::ToString(radius);
+            attributes["pos"s] = GSUtil::ToString(position);
+            attributes["quat"s] = GSUtil::ToString(quaternion);
+            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            break;
+        }
+        const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom);
+        if (planeGeom)
+        {
+            Marker *marker = planeGeom->geomMarker();
+            pgd::Vector3 position = marker->GetPosition();
+            pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
+            attributes["name"s] = planeGeom->name();
+            attributes["type"s] = "plane"s;
+            attributes["pos"s] = GSUtil::ToString(position);
+            attributes["axis"s] = GSUtil::ToString(zAxis);
+            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            break;
+        }
+        break;
+    }
+    return err;
 }
 
 std::string *MuJoCoPhysicsEngine::MoveBodies()

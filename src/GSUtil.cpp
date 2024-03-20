@@ -896,6 +896,14 @@ std::string *GSUtil::ToString(const pgd::Matrix3x3 &m, std::string *output)
     return output;
 }
 
+std::string *GSUtil::ToString(const pgd::Vector2 &v, std::string *output)
+{
+    char buf[32 * 2];
+    int l = snprintf(buf, sizeof(buf), "%.18g %.18g", v.x, v.y); // 17 digits is enough to round trip
+    output->assign(buf, size_t(l));
+    return output;
+}
+
 std::string *GSUtil::ToString(const pgd::Vector3 &v, std::string *output)
 {
     char buf[32 * 3];
@@ -904,10 +912,10 @@ std::string *GSUtil::ToString(const pgd::Vector3 &v, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const pgd::Vector2 &v, std::string *output)
+std::string *GSUtil::ToString(const pgd::Vector4 &v, std::string *output)
 {
-    char buf[32 * 2];
-    int l = snprintf(buf, sizeof(buf), "%.18g %.18g", v.x, v.y); // 17 digits is enough to round trip
+    char buf[32 * 4];
+    int l = snprintf(buf, sizeof(buf), "%.18g %.18g %.18g", v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
@@ -1018,7 +1026,19 @@ std::string GSUtil::ToString(const pgd::Quaternion &v)
     return *ToString(v, &output);
 }
 
+std::string GSUtil::ToString(const pgd::Vector2 &v)
+{
+    std::string output;
+    return *ToString(v, &output);
+}
+
 std::string GSUtil::ToString(const pgd::Vector3 &v)
+{
+    std::string output;
+    return *ToString(v, &output);
+}
+
+std::string GSUtil::ToString(const pgd::Vector4 &v)
 {
     std::string output;
     return *ToString(v, &output);

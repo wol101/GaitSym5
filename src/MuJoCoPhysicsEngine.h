@@ -24,12 +24,26 @@ public:
     // utility functions
     static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = {{}}, bool terminate = false);
     static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
- private:
 
-    std::string *CreateBody(const Body *body);
-    std::string *CreateJoints();
-    std::string *CreateGeoms();
+private:
+    struct TreeBody
+    {
+        Body *body;
+        TreeBody *parent;
+        Joint *jointToParent;
+        std::vector<std::unique_ptr<TreeBody>> childList;
+    };
+
+    std::string *CreateTree();
+    std::string *CreateBody(const TreeBody &treeBody);
+    std::string *CreateJoint(const Joint *joint);
+    std::string *CreateGeom(const Geom *geom);
+
     std::string *MoveBodies();
+
+    // Returns a newly-allocated mjModel, loaded from the contents of xml.
+    // On failure returns nullptr and populates the error array if present.
+    mjModel* LoadModelFromString(const std::string &xml, char* error = nullptr, int error_size = 0, mjVFS* vfs = nullptr);
 
     // Simulation variables
     // MuJoCo model and data
@@ -38,24 +52,12 @@ public:
 
     std::string m_mjXML;
 
-    // Returns a newly-allocated mjModel, loaded from the contents of xml.
-    // On failure returns nullptr and populates the error array if present.
-    mjModel* LoadModelFromString(const std::string &xml, char* error = nullptr, int error_size = 0, mjVFS* vfs = nullptr);
-
-    struct TreeBody
-    {
-        Body *body;
-        TreeBody *parent;
-        Joint *jointToParent;
-        std::vector<std::unique_ptr<TreeBody>> childList;
-    };
     TreeBody m_rootTreeBody;
-    std::string *CreateTree();
-    // std::string *AddNodeToTree(TreeBody *treeBody);
     std::multiset<Body *> m_jointLoopDetector;
     std::vector<Joint *> m_jointsLeftToInclude;
     std::vector<TreeBody *> m_bodiesLeftToInclude;
 
+    int m_freeJointCount = 0;
 };
 
 #endif // MuJoCoPhysicsEngine_H
