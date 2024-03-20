@@ -54,13 +54,11 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     // move to start positions
     MoveBodies();
 
-    return err;
+    return nullptr;
 }
 
 std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a single connected model in the world
 {
-    std::string *err = nullptr;
-
     // with no hint just assume the biggest body is the root
     Body *maxMassBody = nullptr;
     double maxMass = -std::numeric_limits<double>::max();
@@ -165,7 +163,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
     {
         if (iter.second->GetBody() == nullptr)
         {
-            err = CreateGeom(iter.second.get());
+            std::string *err = CreateGeom(iter.second.get());
             if (err) return err;
         }
     }
@@ -176,7 +174,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
     XMLTerminateTag(&m_mjXML, "worldbody"s);
     XMLTerminateTag(&m_mjXML, "mujoco"s);
 
-    return err;
+    return nullptr;
 }
 
 void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
@@ -198,7 +196,6 @@ void MuJoCoPhysicsEngine::XMLTerminateTag(std::string *xmlString, const std::str
 
 std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
 {
-    std::string *err = nullptr;
     Body *body = treeBody.body;
     pgd::Vector3 position = body->GetConstructionPosition();
     pgd::Quaternion quaternion(true);
@@ -219,10 +216,12 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     double mass, ixx, iyy, izz, ixy, izx, iyz;
     body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
     attributes.clear();
+    attributes["pos"s] = GSUtil::ToString(pgd::Vector3());
+    attributes["mass"s] = GSUtil::ToString(mass);
     attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
     XMLInitiateTag(&m_mjXML, "inertial", attributes, true);
 
-    err = CreateJoint(treeBody.jointToParent);
+    std::string *err = CreateJoint(treeBody.jointToParent);
     if (err) return err;
 
     for (auto &&iter : *simulation()->GetGeomList())
@@ -236,7 +235,8 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
 
     for (auto &&iter : treeBody.childList)
     {
-        CreateBody(*iter);
+        err = CreateBody(*iter);
+        if (err) return err;
     }
 
     XMLTerminateTag(&m_mjXML, "body");
@@ -245,14 +245,13 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
 
 std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
 {
-    std::string *err = nullptr;
     std::map<std::string, std::string> attributes;
     if (!joint)
     {
         attributes["name"s] = GSUtil::ToString("root%02d", m_freeJointCount);
         m_freeJointCount++;
         XMLInitiateTag(&m_mjXML, "freejoint"s, attributes, true);
-        return err;
+        return nullptr;
     }
 
     while (true)
@@ -278,13 +277,12 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
         }
         break;
     }
-    return err;
+    return nullptr;
 }
 
 
 std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
 {
-    std::string *err = nullptr;
     std::map<std::string, std::string> attributes;
     while (true)
     {
@@ -314,42 +312,64 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
             attributes["name"s] = planeGeom->name();
             attributes["type"s] = "plane"s;
             attributes["pos"s] = GSUtil::ToString(position);
-            attributes["axis"s] = GSUtil::ToString(zAxis);
+            attributes["zaxis"s] = GSUtil::ToString(zAxis);
+            attributes["size"s] = GSUtil::ToString(pgd::Vector3(1, 1, 1));
             XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
         break;
     }
-    return err;
+    return nullptr;
 }
 
 std::string *MuJoCoPhysicsEngine::MoveBodies()
 {
-    std::string *err = nullptr;
     for (size_t i = 0; i < m_mjModel->nbody; i++)
     {
         mjtObj type = mjOBJ_BODY;
-        std::string bodyName(mj_id2name(m_mjModel, type, i));
+        std::string bodyName(m_mjModel->names + m_mjModel->name_bodyadr[i]);
+        if (bodyName == "world"s) { continue; }
         Body *body = simulation()->GetBody(bodyName);
+        if (!body)
+        {
+            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" not found", bodyName.c_str()));
+            return lastErrorPtr();
+        }
         pgd::Vector3 position = body->GetPosition();
         pgd::Quaternion quaternion = body->GetQuaternion();
         std::string parentName(m_mjModel->names + m_mjModel->name_bodyadr[m_mjModel->body_parentid[i]]);
-        Body *parent = simulation()->GetBody(parentName);
+        Body *parent = nullptr;
+        if (parentName != "world"s)
+        {
+            parent = simulation()->GetBody(parentName);
+            if (!parent)
+            {
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" not found", parentName.c_str()));
+                return lastErrorPtr();
+            }
+        }
         Marker marker(parent);
         marker.SetWorldPosition(position);
         marker.SetWorldQuaternion(quaternion);
 
-        int stateSize = mj_stateSize(m_mjModel, mjSTATE_PHYSICS);
-        std::vector<mjtNum> state((size_t(stateSize)));
-        mj_getState(m_mjModel, m_mjData, state.data(), mjSTATE_PHYSICS);
+        int qposSize = mj_stateSize(m_mjModel, mjSTATE_QPOS);
+        int qvelSize = mj_stateSize(m_mjModel, mjSTATE_QVEL);
+        std::vector<mjtNum> qpos((size_t(qposSize)));
+        std::vector<mjtNum> qvel((size_t(qvelSize)));
+        mj_getState(m_mjModel, m_mjData, qpos.data(), mjSTATE_QPOS);
+        mj_getState(m_mjModel, m_mjData, qpos.data(), mjSTATE_QVEL);
+        for (int i = 0; i < qposSize; i++)
+        {
+            std::cerr << qpos[i] << "\n";
+        }
     }
 
-    return err;
+    return nullptr;
 }
 
 std::string *MuJoCoPhysicsEngine::Step()
 {
-
+#if 0
     // Apply Cartesian force and torque (outside xfrc_applied mechanism).
     MJAPI void mj_applyFT(const mjModel* m, mjData* d, const mjtNum force[3], const mjtNum torque[3],
                           const mjtNum point[3], int body, mjtNum* qfrc_target);
@@ -361,7 +381,7 @@ std::string *MuJoCoPhysicsEngine::Step()
 
     // Set perturb force,torque in d->xfrc_applied, if selected body is dynamic.
     MJAPI void mjv_applyPerturbForce(const mjModel* m, mjData* d, const mjvPerturb* pert);
-#if 0
+
     // clear the contacts
     g_contactReportCallback.contactData()->clear();
 
