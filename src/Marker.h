@@ -25,12 +25,16 @@ public:
     // these functions set the geom position relative to its body
     void SetPosition(double x, double y, double z);
     void SetQuaternion(double qs0, double qx1, double qy2, double qz3);
+    void SetPosition(const pgd::Vector3 &position);
+    void SetQuaternion(const pgd::Quaternion &quaternion);
     std::string *SetPosition (const std::string &buf);
     std::string *SetPosition(const std::string &body, double x, double y, double z);
-    std::string *SetWorldPosition(double x, double y, double z);
+    void SetWorldPosition(double x, double y, double z);
+    void SetWorldPosition(const pgd::Vector3 &pWorld);
     std::string *SetQuaternion(const std::string &buf);
     std::string *SetQuaternion(const std::string &body, double qs0, double qx1, double qy2, double qz3);
-    std::string *SetWorldQuaternion(double qs0, double qx1, double qy2, double qz3);
+    void SetWorldQuaternion(double qs0, double qx1, double qy2, double qz3);
+    void SetWorldQuaternion(const pgd::Quaternion &qWorld);
     void OffsetPosition(double x, double y, double z);
 
     SMART_ENUM(Axis, axisStrings, axisCount, X, Y, Z);

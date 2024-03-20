@@ -28,9 +28,9 @@ public:
 private:
     struct TreeBody
     {
-        Body *body;
-        TreeBody *parent;
-        Joint *jointToParent;
+        Body *body = nullptr;
+        TreeBody *parent = nullptr;
+        Joint *jointToParent = nullptr;
         std::vector<std::unique_ptr<TreeBody>> childList;
     };
 

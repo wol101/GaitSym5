@@ -183,7 +183,7 @@ void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::stri
     else { xmlString->append(">\n"s); }
 }
 
-void XMLTerminateTag(std::string *xmlString, const std::string &tag)
+void MuJoCoPhysicsEngine::XMLTerminateTag(std::string *xmlString, const std::string &tag)
 {
     xmlString->append("</"s + tag + ">\n"s);
 }
@@ -194,6 +194,14 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     Body *body = treeBody.body;
     pgd::Vector3 position = body->GetConstructionPosition();
     pgd::Quaternion quaternion(true);
+    if (treeBody.parent)
+    {
+        Marker marker(treeBody.parent->body);
+        marker.SetWorldPosition(position);
+        position = marker.GetPosition();
+        marker.SetWorldQuaternion(quaternion);
+        quaternion = marker.GetQuaternion();
+    }
     std::map<std::string, std::string> attributes;
     attributes["name"s] = body->name();
     attributes["pos"s] = GSUtil::ToString(position);

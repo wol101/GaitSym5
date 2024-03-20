@@ -31,10 +31,20 @@ void Marker::SetPosition(double x, double y, double z)
     m_position.x = x; m_position.y = y; m_position.z = z;
 }
 
+void Marker::SetPosition(const pgd::Vector3 &position)
+{
+    m_position = position;
+}
+
 void Marker::SetQuaternion(double qs0, double qx1, double qy2, double qz3)
 {
     m_quaternion.n = qs0;
     m_quaternion.x = qx1; m_quaternion.y = qy2; m_quaternion.z = qz3;
+}
+
+void Marker::SetQuaternion(const pgd::Quaternion &quaternion)
+{
+    m_quaternion = quaternion;
 }
 
 // parses the position allowing a relative position specified by BODY ID
@@ -145,13 +155,13 @@ std::string *Marker::SetPosition(const std::string &body, double x, double y, do
     return nullptr;
 }
 
-std::string *Marker::SetWorldPosition(double x, double y, double z)
+void Marker::SetWorldPosition(double x, double y, double z)
 {
-//    pgd::Vector3 result;
+    //    pgd::Vector3 result;
     if (m_body)
     {
-//        dBodyGetPosRelPoint(m_body->GetBodyID(), x, y, z, result); // convert from world to body
-//        SetPosition(result[0], result[1], result[2]);
+        //        dBodyGetPosRelPoint(m_body->GetBodyID(), x, y, z, result); // convert from world to body
+        //        SetPosition(result[0], result[1], result[2]);
         pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->GetQuaternion()), pgd::Vector3(x, y, z) - pgd::Vector3(m_body->GetPosition()));
         SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
     }
@@ -159,7 +169,19 @@ std::string *Marker::SetWorldPosition(double x, double y, double z)
     {
         SetPosition(x, y, z);
     }
-    return nullptr;
+}
+
+void Marker::SetWorldPosition(const pgd::Vector3 &pWorld)
+{
+    if (m_body)
+    {
+        pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->GetQuaternion()), pWorld - pgd::Vector3(m_body->GetPosition()));
+        SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+    }
+    else
+    {
+        SetPosition(pWorld);
+    }
 }
 
 // parses the quaternion allowing a relative position specified by BODY ID
@@ -275,7 +297,7 @@ std::string *Marker::SetQuaternion(const std::string &body, double qs0, double q
     return nullptr;
 }
 
-std::string *Marker::SetWorldQuaternion(double qs0, double qx1, double qy2, double qz3)
+void Marker::SetWorldQuaternion(double qs0, double qx1, double qy2, double qz3)
 {
     if (m_body)
     {
@@ -288,7 +310,20 @@ std::string *Marker::SetWorldQuaternion(double qs0, double qx1, double qy2, doub
     {
         SetQuaternion(qs0, qx1, qy2, qz3);
     }
-    return nullptr;
+}
+
+void Marker::SetWorldQuaternion(const pgd::Quaternion &qWorld)
+{
+    if (m_body)
+    {
+        pgd::Quaternion qBody = m_body->GetQuaternion();
+        pgd::Quaternion qLocal = ~qBody * qWorld;
+        SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+    }
+    else
+    {
+        SetQuaternion(qWorld);
+    }
 }
 
 void Marker::OffsetPosition(double x, double y, double z)
