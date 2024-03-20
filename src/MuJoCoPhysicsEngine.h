@@ -22,7 +22,7 @@ public:
     virtual std::string *Step();
 
     // utility functions
-    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = {{}}, bool terminate = false);
+    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
     static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
 
 private:

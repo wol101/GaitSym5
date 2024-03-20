@@ -177,7 +177,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
 
 void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
 {
-    xmlString->push_back('<');
+    xmlString->append("<"s + tag + " "s);
     for (auto &&iter : attributes)
     {
         xmlString->append(iter.first + "=\""s + iter.second + "\" "s);
