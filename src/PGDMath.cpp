@@ -707,6 +707,17 @@ pgd::Quaternion::Quaternion(const double *q_nxyz)
     z = q_nxyz[3];
 }
 
+pgd::Quaternion::Quaternion(bool identity)
+{
+    if (identity)
+    {
+        n = 1;
+        x = 0;
+        y = 0;
+        z = 0;
+    }
+}
+
 void pgd::Quaternion::Set(double nn, double x, double y, double z)
 {
     this->n = nn;

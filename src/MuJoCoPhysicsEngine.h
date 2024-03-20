@@ -21,9 +21,12 @@ public:
     virtual std::string *Initialise(Simulation *theSimulation);
     virtual std::string *Step();
 
+    // utility functions
+    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = {{}}, bool terminate = false);
+    static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
  private:
 
-    std::string *CreateBodies();
+    std::string *CreateBody(const Body *body);
     std::string *CreateJoints();
     std::string *CreateGeoms();
     std::string *MoveBodies();

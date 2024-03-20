@@ -188,6 +188,7 @@ public:
     Quaternion(void);
     Quaternion(double nn, double x, double y, double z);
     Quaternion(const double *q_nxyz);
+    Quaternion(bool identity);
 
     void Set(double nn, double x, double y, double z);
     void Set(const double *q_nxyz);

@@ -76,7 +76,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     m_bodiesLeftToInclude.push_back(&m_rootTreeBody);
     while (m_bodiesLeftToInclude.size())
     {
-#define DEBUG_CREATE_TREE
+// #define DEBUG_CREATE_TREE
 #ifdef DEBUG_CREATE_TREE
         for (auto &&iter : m_bodiesLeftToInclude)
         {
@@ -141,73 +141,56 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     }
 #endif
 
+    // start building the XML
+    XMLInitiateTag(*m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
+
+    // set some options
+    XMLInitiateTag(*m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->StepSize())}});
+
+    // create the world body
+    XMLInitiateTag(*m_mjXML, "worldbody"s);
+
+    int depth = 1;
+    TreeBody *currentTreeBody = &m_rootTreeBody;
+    while (depth)
+    {
+        CreateBody(const Body *body)
+    }
+
+    XMLTerminateTag(m_mjXML, "mujoco"s);
+
     return nullptr;
 }
 
-// std::string *MuJoCoPhysicsEngine::AddNodeToTree(TreeBody *treeBody)
-// {
-//     if (m_JointLoopDetector.count(treeBody->body) > 0)
-//     {
-//         if (treeBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", treeBody->body->name().c_str()));
-//         else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in AddNodeToTree. Trying to add \"%s\" twice", "World"));
-//         return lastErrorPtr();
-//     }
-//     m_JointLoopDetector.insert(treeBody->body);
-//     for (auto &&jointIter : *simulation()->GetJointList())
-//     {
-//         if (jointIter.second->body1() == treeBody->body)
-//         {
-//             std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
-//             newTreeBody->body = jointIter.second->body2();
-//             newTreeBody->parent = treeBody->body;
-//             newTreeBody->jointToParent = jointIter.second.get();
-//             treeBody->childList.push_back(std::move(newTreeBody));
-//             std::string *err = AddNodeToTree(treeBody->childList.back().get());
-//             if (err) return err;
-//             continue;
-//         }
-//         if (jointIter.second->body2() == treeBody->body)
-//         {
-//             std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
-//             newTreeBody->body = jointIter.second->body1();
-//             newTreeBody->parent = treeBody->body;
-//             newTreeBody->jointToParent = jointIter.second.get();
-//             treeBody->childList.push_back(std::move(newTreeBody));
-//             std::string *err = AddNodeToTree(treeBody->childList.back().get());
-//             if (err) return err;
-//             continue;
-//         }
-//     }
-//     return nullptr;
-// }
-
-std::string *MuJoCoPhysicsEngine::CreateBodies()
+void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
 {
-#if 0
-    const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-    for (auto &&iter : *simulation()->GetBodyList())
+    xmlString->push_back('<');
+    for (auto &&iter : attributes)
     {
-        Body *body = iter.second.get();
-        double mass, ixx, iyy, izz, ixy, izx, iyz;
-        body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
-        pgd::Vector3 position = body->GetConstructionPosition();
-        pgd::Vector3 linearVelocity = body->GetLinearVelocity();
-        pgd::Vector3 angularVelocity = body->GetAngularVelocity();
-        physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(zeroRotation.x, zeroRotation.y, zeroRotation.z, zeroRotation.n));
-        physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
-        physx::PxMat33 inertialTensor(physx::PxVec3(ixx, ixy, izx), physx::PxVec3(ixy, iyy, iyz), physx::PxVec3(izx, iyz, izz)); // construct from 3 column vectors
-        physx::PxQuat massFrame;
-        physx::PxVec3 diagonal = physx::PxMassProperties::getMassSpaceInertia(inertialTensor, massFrame);
-        rigidDynamic->setMass(mass);
-        rigidDynamic->setMassSpaceInertiaTensor(diagonal);
-        rigidDynamic->setCMassLocalPose(physx::PxTransform(physx::PxVec3(0, 0, 0), massFrame));
-        rigidDynamic->setLinearVelocity(physx::PxVec3(linearVelocity.x, linearVelocity.y, linearVelocity.z));
-        rigidDynamic->setAngularVelocity(physx::PxVec3(angularVelocity.x, angularVelocity.y, angularVelocity.z));
-        rigidDynamic->userData = body;
-        m_scene->addActor(*rigidDynamic);
-        m_bodyMap[iter.first] = rigidDynamic;
+        xmlString->append(iter.first + "=\""s + iter.second + "\" "s);
     }
-#endif
+    if (attributes.size() > 0) xmlString->pop_back();
+    if (terminate) { xmlString->append("/>\n"s); }
+    else { xmlString->append(">\n"s); }
+}
+
+void XMLTerminateTag(std::string *xmlString, const std::string &tag)
+{
+    xmlString->append("</"s + tag + ">\n"s);
+}
+
+std::string *MuJoCoPhysicsEngine::CreateBody(const Body *body)
+{
+    double mass, ixx, iyy, izz, ixy, izx, iyz;
+    body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    pgd::Vector3 position = body->GetConstructionPosition();
+    pgd::Quaternion quaternion(true);
+    std::map<std::string, std::string> attributes;
+    attributes["name"s] = body->name();
+    attributes["pos"s] = GSUtil::ToString(position);
+    attributes["quat"s] = GSUtil::ToString(quaternion);
+    attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
+    XMLInitiateTag(&m_mjXML, "body", attributes);
     return nullptr;
 }
 
