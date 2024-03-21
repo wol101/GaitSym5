@@ -324,10 +324,53 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
 
 std::string *MuJoCoPhysicsEngine::MoveBodies()
 {
+    // in mucojo everything is done via the joints
+    // these are specified in mjModel as
+    // int*      jnt_type;             // type of joint (mjtJoint)                 (njnt x 1)
+    // int*      jnt_qposadr;          // start addr in 'qpos' for joint's data    (njnt x 1)
+    // int*      jnt_dofadr;           // start addr in 'qvel' for joint's data    (njnt x 1)
+    // int*      jnt_bodyid;           // id of joint's body                       (njnt x 1)
+    // and these point to values in mjData that can be set at the beginning of the simulation
+    // mjtNum* qpos;              // position                                         (nq x 1)
+    // mjtNum* qvel;              // velocity                                         (nv x 1)
+    // the number of values in qpos and qvel varies with the joint type
+    // mjtJoint = mjJNT_FREE has 7 values in qpos and 3 in qvel
+    // mjtJoint = mjJNT_HINGE has 1 in qpos and 1 in qvel
+    // note: these state values are sticky unless something like mj_resetData is called
+
+    for (size_t jointID = 0; jointID < m_mjModel->njnt; jointID++)
+    {
+        int jnt_type = m_mjModel->jnt_type[jointID];
+        int jnt_qposadr = m_mjModel->jnt_qposadr[jointID];
+        int jnt_dofadr = m_mjModel->jnt_dofadr[jointID];
+        std::string name(mj_id2name(m_mjModel, mjOBJ_JOINT, jointID));
+        switch (jnt_type)
+        {
+        case mjJNT_FREE:
+        {
+            pgd::Quaternion q(m_mjData->qpos[jnt_qposadr] + 0, m_mjData->qpos[jnt_qposadr] + 1, m_mjData->qpos[jnt_qposadr] + 2, m_mjData->qpos[jnt_qposadr] + 3);
+            pgd::Vector3 p(m_mjData->qpos[jnt_qposadr] + 4, m_mjData->qpos[jnt_qposadr] + 5, m_mjData->qpos[jnt_qposadr] + 6);
+            pgd::Vector3 v(m_mjData->qpos[jnt_dofadr] + 0, m_mjData->qpos[jnt_dofadr] + 0, m_mjData->qpos[jnt_dofadr] + 2);
+            pgd::Vector3 av(m_mjData->qpos[jnt_dofadr] + 3, m_mjData->qpos[jnt_dofadr] + 4, m_mjData->qpos[jnt_dofadr] + 5);
+            break;
+        }
+        case mjJNT_HINGE:
+        {
+            double a = m_mjData->qpos[jnt_qposadr];
+            double av = m_mjData->qpos[jnt_dofadr];
+            break;
+        }
+        default:
+            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", name.c_str()));
+            return lastErrorPtr();
+        }
+    }
+
+/*
     for (size_t i = 0; i < m_mjModel->nbody; i++)
     {
         mjtObj type = mjOBJ_BODY;
-        std::string bodyName(m_mjModel->names + m_mjModel->name_bodyadr[i]);
+        std::string bodyName(mj_id2name(m_mjModel, mjOBJ_BODY, i));
         if (bodyName == "world"s) { continue; }
         Body *body = simulation()->GetBody(bodyName);
         if (!body)
@@ -337,7 +380,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         }
         pgd::Vector3 position = body->GetPosition();
         pgd::Quaternion quaternion = body->GetQuaternion();
-        std::string parentName(m_mjModel->names + m_mjModel->name_bodyadr[m_mjModel->body_parentid[i]]);
+        std::string parentName(mj_id2name(m_mjModel, mjOBJ_BODY,m_mjModel->body_parentid[i]));
         Body *parent = nullptr;
         if (parentName != "world"s)
         {
@@ -363,7 +406,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             std::cerr << qpos[i] << "\n";
         }
     }
-
+*/
     return nullptr;
 }
 
