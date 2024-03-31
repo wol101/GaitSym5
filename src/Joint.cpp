@@ -77,6 +77,19 @@ std::string *Joint::createFromAttributes()
         setLastError("Joint ID=\""s + name() +"\" both markers attached to the same body ID=\""s + marker1Iterator->second->GetBody()->name() + "\""s);
         return lastErrorPtr();
     }
+    // pgd::Vector3 distanceVector = marker2Iterator->second->GetWorldPosition() - marker1Iterator->second->GetWorldPosition();
+    // pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->GetWorldQuaternion(), marker2Iterator->second->GetWorldQuaternion());
+    // if (distanceVector.Magnitude() > std::numeric_limits<double>::epsilon())
+    // {
+    //     setLastError("Joint ID=\""s + name() +"\" marker distance is too large: Magnitude() = "s + GSUtil::ToString(distanceVector.Magnitude2()));
+    //     return lastErrorPtr();
+    // }
+    // if (pgd::QGetAngle(rotationQuaternion) > std::numeric_limits<double>::epsilon())
+    // {
+    //     setLastError("Joint ID=\""s + name() +"\" marker rotation is too large: QGetAngle() = "s + GSUtil::ToString(pgd::RadToDeg(pgd::QGetAngle(rotationQuaternion))) + " radians"s);
+    //     return lastErrorPtr();
+    // }
+
     this->setBody1Marker(marker1Iterator->second.get());
     this->setBody2Marker(marker2Iterator->second.get());
 

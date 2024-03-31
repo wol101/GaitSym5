@@ -13,8 +13,6 @@
 #include "Contact.h"
 #include "GSUtil.h"
 
-#include <deque>
-
 using namespace std::string_literals;
 
 MuJoCoPhysicsEngine::MuJoCoPhysicsEngine()
@@ -153,6 +151,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
     XMLInitiateTag(&m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
 
     // set some options
+    XMLInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
     XMLInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->StepSize())}}, true);
 
     // create the world body
@@ -212,6 +211,7 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     attributes["pos"s] = GSUtil::ToString(position);
     attributes["quat"s] = GSUtil::ToString(quaternion);
     XMLInitiateTag(&m_mjXML, "body", attributes);
+    XMLInitiateTag(&m_mjXML, "geom", {{"type"s, "sphere"s}, {"size"s, ".1"s}}, true); // this is just a CM marker for debugging
 
     double mass, ixx, iyy, izz, ixy, izx, iyz;
     body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
@@ -260,16 +260,19 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
         if (hingeJoint)
         {
             Marker *marker1 = hingeJoint->body1Marker();
-            // Marker *marker2 = hingeJoint->body2Marker();
+            Marker *marker2 = hingeJoint->body2Marker();
             pgd::Vector3 p1 = marker1->GetPosition();
-            // pgd::Vector3 p2 = marker2->GetPosition();
-            pgd::Vector3 axis = marker1->GetAxis(Marker::X);
+            pgd::Vector3 p2 = marker2->GetPosition();
+            pgd::Vector3 axis1 = marker1->GetAxis(Marker::X);
+            pgd::Vector3 axis2 = marker2->GetAxis(Marker::X);
             pgd::Vector2 stops = hingeJoint->stops();
             // double springConstant = hingeJoint->stopSpring();
             // double dampingConstant = hingeJoint->stopDamp();
             attributes["name"s] = hingeJoint->name();
-            attributes["axis"s] = GSUtil::ToString(axis);
-            attributes["pos"s] = GSUtil::ToString(p1);
+            // attributes["axis"s] = GSUtil::ToString(axis1);
+            attributes["axis"s] = GSUtil::ToString(axis2);
+            // attributes["pos"s] = GSUtil::ToString(p1);
+            attributes["pos"s] = GSUtil::ToString(p2);
             attributes["limited"s] = GSUtil::ToString(true);
             attributes["range"s] = GSUtil::ToString(stops);
             XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);

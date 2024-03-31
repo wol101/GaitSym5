@@ -547,7 +547,7 @@ std::string *TwoHingeJointDriver::createFromAttributes()
     if (!m_proximalJoint) m_proximalJoint = dynamic_cast<BallJoint *>(simulation()->GetJoint(buf));
     if (!m_proximalJoint)
     {
-        setLastError("TwoHingeJointDriver ID=\""s + name() + "\" ProximalJointID joint not found or not Hinge, Universal or Ball\""s + buf + "\"");
+        setLastError("TwoHingeJointDriver ID=\""s + name() + "\" ProximalJointID joint not found or not Hinge, Universal or Ball \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("DistalJointID"s, &buf) == nullptr) return lastErrorPtr();

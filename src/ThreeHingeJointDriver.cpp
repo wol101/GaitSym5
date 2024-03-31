@@ -557,7 +557,7 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
     if (!m_proximalJoint) m_proximalJoint = dynamic_cast<BallJoint *>(simulation()->GetJoint(buf));
     if (!m_proximalJoint)
     {
-        setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" ProximalJointID joint not found or not Hinge, Universal or Ball\""s + buf + "\"");
+        setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" ProximalJointID joint not found or not Hinge, Universal or Ball \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("IntermediateJointID"s, &buf) == nullptr) return lastErrorPtr();
