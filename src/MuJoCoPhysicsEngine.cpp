@@ -200,11 +200,8 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     pgd::Quaternion quaternion(true);
     if (treeBody.parent)
     {
-        Marker marker(treeBody.parent->body);
-        marker.SetWorldPosition(position);
-        position = marker.GetPosition();
-        marker.SetWorldQuaternion(quaternion);
-        quaternion = marker.GetQuaternion();
+        pgd::Vector3 parentConstructionPosition = treeBody.parent->body->GetConstructionPosition(); // only need position because construction rotation is always zero
+        position = position - parentConstructionPosition;
     }
     std::map<std::string, std::string> attributes;
     attributes["name"s] = body->name();

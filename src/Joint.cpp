@@ -77,18 +77,21 @@ std::string *Joint::createFromAttributes()
         setLastError("Joint ID=\""s + name() +"\" both markers attached to the same body ID=\""s + marker1Iterator->second->GetBody()->name() + "\""s);
         return lastErrorPtr();
     }
-    // pgd::Vector3 distanceVector = marker2Iterator->second->GetWorldPosition() - marker1Iterator->second->GetWorldPosition();
-    // pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->GetWorldQuaternion(), marker2Iterator->second->GetWorldQuaternion());
-    // if (distanceVector.Magnitude() > std::numeric_limits<double>::epsilon())
-    // {
-    //     setLastError("Joint ID=\""s + name() +"\" marker distance is too large: Magnitude() = "s + GSUtil::ToString(distanceVector.Magnitude2()));
-    //     return lastErrorPtr();
-    // }
-    // if (pgd::QGetAngle(rotationQuaternion) > std::numeric_limits<double>::epsilon())
-    // {
-    //     setLastError("Joint ID=\""s + name() +"\" marker rotation is too large: QGetAngle() = "s + GSUtil::ToString(pgd::RadToDeg(pgd::QGetAngle(rotationQuaternion))) + " radians"s);
-    //     return lastErrorPtr();
-    // }
+
+    // these checks use the construction positions and rotations (body rotations are always zero at construction)
+    pgd::Vector3 distanceVector = marker2Iterator->second->GetConstructionPosition() - marker1Iterator->second->GetConstructionPosition();
+    pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->GetQuaternion(), marker2Iterator->second->GetQuaternion());
+    double testEpsilon = std::numeric_limits<double>::epsilon() * 100.0;
+    if (distanceVector.Magnitude2() > testEpsilon)
+    {
+        setLastError(GSUtil::ToString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.Magnitude2(), testEpsilon));
+        return lastErrorPtr();
+    }
+    if (pgd::QGetAngle(rotationQuaternion) > testEpsilon)
+    {
+        setLastError(GSUtil::ToString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::QGetAngle(rotationQuaternion), testEpsilon));
+        return lastErrorPtr();
+    }
 
     this->setBody1Marker(marker1Iterator->second.get());
     this->setBody2Marker(marker2Iterator->second.get());

@@ -9,7 +9,6 @@
 
 #include "Marker.h"
 #include "PGDMath.h"
-#include "DataFile.h"
 #include "Simulation.h"
 #include "Body.h"
 #include "GSUtil.h"
@@ -374,11 +373,24 @@ pgd::Vector3 Marker::GetWorldPosition() const
     if (m_body)
     {
         // get the position in world coordinates
-//        pgd::Vector3 p;
-//        dBodyGetRelPointPos(m_body->GetBodyID(), m_position.x, m_position.y, m_position.z, p);
-//        return pgd::Vector3(p[0], p[1], p[2]);
+        //        pgd::Vector3 p;
+        //        dBodyGetRelPointPos(m_body->GetBodyID(), m_position.x, m_position.y, m_position.z, p);
+        //        return pgd::Vector3(p[0], p[1], p[2]);
         pgd::Vector3 bodyWorldPosition = pgd::QVRotate(m_body->GetQuaternion(), m_position) + pgd::Vector3(m_body->GetPosition());
         return bodyWorldPosition;
+    }
+    else
+    {
+        return m_position;
+    }
+}
+
+pgd::Vector3 Marker::GetConstructionPosition() const
+{
+    if (m_body)
+    {
+        pgd::Vector3 bodyConstructionPosition = m_position + pgd::Vector3(m_body->GetConstructionPosition()); // no rotation
+        return bodyConstructionPosition;
     }
     else
     {

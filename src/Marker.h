@@ -51,6 +51,8 @@ public:
     pgd::Vector3 GetWorldLinearVelocity();
     pgd::Vector3 GetWorldAngularVelocity();
 
+    pgd::Vector3 GetConstructionPosition() const;
+
     // these functions get things into and out of marker based coordinates
     pgd::Vector3 GetPosition(const pgd::Vector3 &worldCoordinates) const;
     pgd::Vector3 GetWorldPosition(const pgd::Vector3 &localCoordinates) const;
