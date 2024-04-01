@@ -256,11 +256,11 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
         const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(joint);
         if (hingeJoint)
         {
-            Marker *marker1 = hingeJoint->body1Marker();
+            // Marker *marker1 = hingeJoint->body1Marker();
             Marker *marker2 = hingeJoint->body2Marker();
-            pgd::Vector3 p1 = marker1->GetPosition();
+            // pgd::Vector3 p1 = marker1->GetPosition();
             pgd::Vector3 p2 = marker2->GetPosition();
-            pgd::Vector3 axis1 = marker1->GetAxis(Marker::X);
+            // pgd::Vector3 axis1 = marker1->GetAxis(Marker::X);
             pgd::Vector3 axis2 = marker2->GetAxis(Marker::X);
             pgd::Vector2 stops = hingeJoint->stops();
             // double springConstant = hingeJoint->stopSpring();
@@ -343,21 +343,28 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         int jnt_type = m_mjModel->jnt_type[jointID];
         int jnt_qposadr = m_mjModel->jnt_qposadr[jointID];
         int jnt_dofadr = m_mjModel->jnt_dofadr[jointID];
-        std::string name(mj_id2name(m_mjModel, mjOBJ_JOINT, jointID));
+        std::string name(mj_id2name(m_mjModel, mjOBJ_JOINT, int(jointID)));
+        std::cerr << "Joint Name = " << name << "\n";
         switch (jnt_type)
         {
         case mjJNT_FREE:
         {
-            pgd::Quaternion q(m_mjData->qpos[jnt_qposadr] + 0, m_mjData->qpos[jnt_qposadr] + 1, m_mjData->qpos[jnt_qposadr] + 2, m_mjData->qpos[jnt_qposadr] + 3);
-            pgd::Vector3 p(m_mjData->qpos[jnt_qposadr] + 4, m_mjData->qpos[jnt_qposadr] + 5, m_mjData->qpos[jnt_qposadr] + 6);
-            pgd::Vector3 v(m_mjData->qpos[jnt_dofadr] + 0, m_mjData->qpos[jnt_dofadr] + 0, m_mjData->qpos[jnt_dofadr] + 2);
-            pgd::Vector3 av(m_mjData->qpos[jnt_dofadr] + 3, m_mjData->qpos[jnt_dofadr] + 4, m_mjData->qpos[jnt_dofadr] + 5);
+            pgd::Vector3 p(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2]);
+            pgd::Quaternion q(m_mjData->qpos[jnt_qposadr + 3], m_mjData->qpos[jnt_qposadr + 4], m_mjData->qpos[jnt_qposadr + 5], m_mjData->qpos[jnt_qposadr + 6]);
+            pgd::Vector3 v(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
+            pgd::Vector3 av(m_mjData->qvel[jnt_dofadr + 3], m_mjData->qvel[jnt_dofadr + 4], m_mjData->qvel[jnt_dofadr + 5]);
+            std::cerr << "Position = " << GSUtil::ToString(p) << "\n";
+            std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
+            std::cerr << "Velocity = " << GSUtil::ToString(v) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
             break;
         }
         case mjJNT_HINGE:
         {
             double a = m_mjData->qpos[jnt_qposadr];
-            double av = m_mjData->qpos[jnt_dofadr];
+            double av = m_mjData->qvel[jnt_dofadr];
+            std::cerr << "Angle = " << GSUtil::ToString(a) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
             break;
         }
         default:
