@@ -354,7 +354,7 @@ pgd::Vector3 Marker::GetAxis(Marker::Axis axis) const
     return pgd::Vector3(1, 0, 0); // just to stop warnings
 }
 
-void Marker::GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
+void Marker::GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
 {
     pgd::Matrix3x3 m(this->GetQuaternion());
     x->x = m.e11;
@@ -366,6 +366,12 @@ void Marker::GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
     z->x = m.e13;
     z->y = m.e23;
     z->z = m.e33;
+}
+
+pgd::Matrix3x3  Marker::GetBasis() const
+{
+    pgd::Matrix3x3 m(this->GetQuaternion());
+    return m;
 }
 
 pgd::Vector3 Marker::GetWorldPosition() const
@@ -431,7 +437,7 @@ pgd::Quaternion Marker::GetQuaternion(const pgd::Quaternion &worldQuaternion) co
     return (~GetWorldQuaternion()) * worldQuaternion;
 }
 
-pgd::Vector3 Marker::GetWorldLinearVelocity()
+pgd::Vector3 Marker::GetWorldLinearVelocity() const
 {
     if (m_body)
     {
@@ -455,11 +461,23 @@ pgd::Vector3 Marker::GetWorldLinearVelocity()
     }
 }
 
-pgd::Vector3 Marker::GetWorldAngularVelocity()
+pgd::Vector3 Marker::GetWorldAngularVelocity() const
 {
     pgd::Vector3 worldAngularVelocity;
     if (m_body) { worldAngularVelocity = m_body->GetAngularVelocity(); }
     return worldAngularVelocity;
+}
+
+pgd::Vector3 Marker::GetLinearVelocity() const
+{
+    pgd::Vector3 worldVelocity = GetWorldLinearVelocity();
+    return GetVector(worldVelocity);
+}
+
+pgd::Vector3 Marker::GetAngularVelocity() const
+{
+    pgd::Vector3 worldAngularVelocity = GetWorldAngularVelocity();
+    return GetVector(worldAngularVelocity);
 }
 
 pgd::Quaternion Marker::GetWorldQuaternion() const
@@ -489,7 +507,7 @@ pgd::Vector3 Marker::GetWorldAxis(Marker::Axis axis) const
     return pgd::Vector3(1, 0, 0); // just to stop warnings
 }
 
-void Marker::GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
+void Marker::GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
 {
     pgd::Matrix3x3 m(this->GetWorldQuaternion());
     x->x = m.e11;
@@ -501,6 +519,12 @@ void Marker::GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
     z->x = m.e13;
     z->y = m.e23;
     z->z = m.e33;
+}
+
+pgd::Matrix3x3 Marker::GetWorldBasis() const
+{
+    pgd::Matrix3x3 m(this->GetWorldQuaternion());
+    return m;
 }
 
 std::string Marker::dumpToString()
@@ -592,4 +616,3 @@ void Marker::SetBody(Body *body)
 {
     m_body = body;
 }
-

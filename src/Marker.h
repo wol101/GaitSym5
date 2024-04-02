@@ -43,13 +43,17 @@ public:
     pgd::Vector3 GetPosition() const;
     pgd::Quaternion GetQuaternion() const;
     pgd::Vector3 GetAxis(Marker::Axis axis) const;
-    void GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z);
+    void GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const;
+    pgd::Matrix3x3 GetBasis() const;
     pgd::Vector3 GetWorldPosition() const;
     pgd::Quaternion GetWorldQuaternion() const;
     pgd::Vector3 GetWorldAxis(Marker::Axis axis) const;
-    void GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z);
-    pgd::Vector3 GetWorldLinearVelocity();
-    pgd::Vector3 GetWorldAngularVelocity();
+    void GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const;
+    pgd::Matrix3x3 GetWorldBasis() const;
+    pgd::Vector3 GetWorldLinearVelocity() const;
+    pgd::Vector3 GetWorldAngularVelocity() const;
+    pgd::Vector3 GetLinearVelocity() const;
+    pgd::Vector3 GetAngularVelocity() const;
 
     pgd::Vector3 GetConstructionPosition() const;
 

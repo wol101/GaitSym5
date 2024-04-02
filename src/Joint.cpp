@@ -155,29 +155,19 @@ pgd::Quaternion Joint::GetWorldRotation() const
     return result;
 }
 
-pgd::Vector3 Joint::GetBody1Distance() const
+pgd::Vector3 Joint::GetWorldLinearVelocity() const
 {
-    pgd::Vector3 result = m_body1Marker->GetVector(m_body2Marker->GetWorldPosition()) - m_body1Marker->GetPosition();
+    pgd::Vector3 result = m_body2Marker->GetWorldLinearVelocity() - m_body1Marker->GetWorldLinearVelocity();
     return result;
 }
 
-pgd::Quaternion Joint::GetBody1Rotation() const
+pgd::Vector3 Joint::GetWorldAngularVelocity() const
 {
-    pgd::Quaternion result = pgd::FindRotation(m_body1Marker->GetQuaternion(), m_body1Marker->GetQuaternion(m_body2Marker->GetWorldQuaternion()));
+    pgd::Vector3 result = m_body2Marker->GetWorldAngularVelocity() - m_body1Marker->GetWorldAngularVelocity();
     return result;
 }
 
-pgd::Vector3 Joint::GetBody2Distance() const
-{
-    pgd::Vector3 result = m_body2Marker->GetPosition() - m_body2Marker->GetVector(m_body1Marker->GetWorldPosition());
-    return result;
-}
 
-pgd::Quaternion Joint::GetBody2Rotation() const
-{
-    pgd::Quaternion result = pgd::FindRotation(m_body2Marker->GetQuaternion(m_body1Marker->GetWorldQuaternion()), m_body2Marker->GetQuaternion());
-    return result;
-}
 
 pgd::Vector3 Joint::force() const
 {
