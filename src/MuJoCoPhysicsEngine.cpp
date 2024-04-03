@@ -367,8 +367,13 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
             Joint *joint = simulation()->GetJoint(name);
             pgd::Quaternion rotation = joint->GetWorldRotation();
-            pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, joint->body1Marker()->GetWorldBasis());
+            pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
+            pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
             pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->GetWorldAngularVelocity());
+            double angle; pgd::Vector3 axis;
+            pgd::MakeAxisAngleFromQ(rotation, &axis, &angle);
+            std::cerr << "Axis = " << GSUtil::ToString(axis) << " Angle = " << pgd::RadToDeg(angle) << " degrees\n";
+            std::cerr << "Basis = " << GSUtil::ToString(basis) << "\n";
             std::cerr << "Euler Angles = " << GSUtil::ToString(eulerAngles) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(angularVelocity) << "\n";
             break;

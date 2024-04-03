@@ -152,6 +152,7 @@ pgd::Vector3 Joint::GetWorldDistance() const
 pgd::Quaternion Joint::GetWorldRotation() const
 {
     pgd::Quaternion result = pgd::FindRotation(m_body1Marker->GetWorldQuaternion(), m_body2Marker->GetWorldQuaternion());
+    // pgd::Quaternion result2 = pgd::FindRotation(m_body1Marker->GetBody()->GetQuaternion(), m_body2Marker->GetBody()->GetQuaternion()); // just checking that using the marker gives the same result as usning the body
     return result;
 }
 

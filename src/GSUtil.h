@@ -472,16 +472,6 @@ template <class T> inline static int BinarySearchRange
     return -1;
 }
 
-static void EulerDecompositionXYZ(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
-static void EulerDecompositionXZY(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
-static void EulerDecompositionYXZ(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
-static void EulerDecompositionYZX(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
-static void EulerDecompositionZXY(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
-static void EulerDecompositionZYX(const double *mRot, double& thetaX, double& thetaY, double& thetaZ);
-
-static void FindRotation(const double *R1, const double *R2, double *rotMat);
-static void DumpMatrix(const double *mRot);
-
 static void Tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList);
 
 static double *GetQuaternion(char *bufPtrs[], double *q);

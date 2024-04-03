@@ -236,6 +236,7 @@ Vector3  MakeEulerAnglesFromQRadian(const Quaternion &q);
 Quaternion MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast = false);
 Quaternion MakeQFromAxisAngle(const Vector3 &axis, double angle, bool fast = false);
 void MakeAxisAngleFromQ(Quaternion q1, double *xa, double *ya, double *za, double *angle);
+void MakeAxisAngleFromQ(pgd::Quaternion q, pgd::Vector3 *axis, double *angle);
 Quaternion FindRotation(const Quaternion &qa, const Quaternion &qb);
 double FindAngle(const Quaternion &qa, const Quaternion &qb);
 Vector3 FindAxis(const Quaternion &qa, const Quaternion &qb);
@@ -297,6 +298,7 @@ Vector3 operator*(const Vector3 &u, const Matrix3x3 &m);
 
 Matrix3x3 MakeMFromQ(const pgd::Quaternion &q);
 Quaternion MakeQfromM (const pgd::Matrix3x3 &R);
+pgd::Matrix3x3 FindRotation(const pgd::Matrix3x3 &R1, const pgd::Matrix3x3 &R2);
 Vector3 ClosestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pgd::Vector3 &M);
 Quaternion slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, bool normalise = true);
 

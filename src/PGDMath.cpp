@@ -1076,7 +1076,7 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis)
 {
     {
-        // returns the Euler angles using marker axes as the basis
+        // returns the Euler angles XYZ using a specified basis
 
         // Theory:
         // Since the axes form an orthonormal basis A (each axis is a column of the matrix),
@@ -1086,72 +1086,19 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd
         // This translates into the following algorithm:
         // Compute R' = A^t*R*A
         // Decompose R' into Euler Angles around main axes to obtain angles X, Y, Z
-        // convert these into their matrix rotations
+        // If needed these can be converted into their matrix rotations
         // Compute the three rotations around the given axes:
         //    X' = A*X*A^t
         //    Y' = A*Y*A^t
-        //    Z' = A*Y*A^t
+        //    Z' = A*Z*A^t
 
         pgd::Matrix3x3 R(q);
         const pgd::Matrix3x3 &A = basis;
         pgd::Matrix3x3 At = A.Transpose();
         pgd::Matrix3x3 Rp = At * R * A;
         pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(pgd::MakeQfromM(Rp));
-        pgd::Matrix3x3 Xp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(1, 0, 0, (euler.x), true)) * At;
-        pgd::Matrix3x3 Yp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 1, 0, (euler.y), true)) * At;
-        pgd::Matrix3x3 Zp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 0, 1, (euler.z), true)) * At;
-        pgd::Quaternion Xpq = pgd::MakeQfromM(Xp);
-        pgd::Quaternion Ypq = pgd::MakeQfromM(Yp);
-        pgd::Quaternion Zpq = pgd::MakeQfromM(Zp);
 
-        // we can't just convert the quaternions into axis angle to get the angles because the axes might be reversed, or might be arbitrary if close to zero
-        double xMag = Xpq.GetVector().Magnitude();
-        double yMag = Ypq.GetVector().Magnitude();
-        double zMag = Zpq.GetVector().Magnitude();
-        double dotX = 0, dotY = 0, dotZ = 0;
-        pgd::Vector3 axisX, axisY, axisZ;
-        double angle0 = 0, angle1 = 0, angle2 = 0;
-        const double epsilon = std::numeric_limits<double>::epsilon();
-        if (xMag < epsilon || Xpq.n >= 1 || Xpq.n <= -1)
-        {
-            angle0 = 0;
-        }
-        else
-        {
-            angle0 = 2 * std::acos(Xpq.n); // acos produces a value from 0 to pi, so this angle is 0 to 2*pi
-            if (angle0 > M_PI) angle0 -= 2 * M_PI; // so this means the angle is restricted to the more usual -pi to pi
-            axisX = Xpq.GetVector() / xMag;
-            dotX =pgd::Dot(axisX, pgd::Vector3(A.e11, A.e21, A.e31));
-            if (dotX < 0)
-                angle0 = - angle0;
-        }
-        if (yMag < epsilon || Ypq.n >= 1 || Ypq.n <= -1)
-        {
-            angle1 = 0;
-        }
-        else
-        {
-            angle1 = 2 * std::acos(Ypq.n);
-            if (angle1 > M_PI) angle1 -= 2 * M_PI;
-            axisY = Ypq.GetVector() / yMag;
-            dotY =pgd::Dot(axisY, pgd::Vector3(A.e11, A.e21, A.e31));
-            if (dotY < 0)
-                angle1 = - angle1;
-        }
-        if (zMag < epsilon || Zpq.n >= 1 || Zpq.n <= -1)
-        {
-            angle2 = 0;
-        }
-        else
-        {
-            angle2 = 2 * std::acos(Zpq.n);
-            if (angle2 > M_PI) angle2 -= 2 * M_PI;
-            axisZ = Zpq.GetVector() / zMag;
-            dotZ =pgd::Dot(axisZ, pgd::Vector3(A.e11, A.e21, A.e31));
-            if (dotZ < 0)
-                angle2 = - angle2;
-        }
-        return pgd::Vector3(angle0, angle1, angle2);
+        return euler;
     }
 }
 
@@ -1229,30 +1176,45 @@ void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, double *xa, double *ya, double *
     }
 }
 
+void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, pgd::Vector3 *axis, double *angle)
+{
+    if (q.n > 1) q.Normalize();           // if w > 1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
+    *angle = 2 * std::acos(q.n);
+    double s = std::sqrt(1 - q.n * q.n);  // assuming quaternion normalised then w is less than 1, so term always positive.
+    if (s < DBL_EPSILON)                  // test to avoid divide by zero, s is always positive due to sqrt
+    {
+        // if s close to zero then direction of axis not important
+        *angle = 0;
+        axis->x = 1;
+        axis->y = 0;
+        axis->z = 0;
+    }
+    else
+    {
+        axis->x = q.x / s; // normalise axis
+        axis->y = q.y / s;
+        axis->z = q.z / s;
+    }
+}
+
 // wis - added routines to calculate the quaternion which rotates qa to qb
-// PS. I'm slightly unconvinced that [qb = qa * q]. It may depend on convention but I think [qb = q * qa] which changes things.
-//
-// based on http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 // if q is the quaternion which rotates from qa to qb then:
-// qb = qa * q
+// qb = q * qa
 //
-// multiplying both sides by conj(qa) gives:
-// q = conj(qa) * qb
-//
-// The real part of a multiplication is:
-// real((qa.w + i qa.x + j qa.y + k qa.z)*(qb.w + i qb.x + j qb.y + k qb.z)) = qa.w * qb.w - qa.x*qb.x - qa.y*qb.y- qa.z*qb.z
-//
-// So using the conjugate of qa gives:
-// real((qa.w - i qa.x - j qa.y - k qa.z)*(qb.w + i qb.x + j qb.y + k qb.z)) = qa.w*qb.w + qa.x*qb.x + qa.y*qb.y+ qa.z*qb.z
-//
-// real(q) = std::cos(t/2)
-//
-// Therefore
-// std::cos(theta/2) = qa.w*qb.w + qa.x*qb.x + qa.y*qb.y+ qa.z*qb.z
+// post multiplying both sides by conj(qa) gives:
+// q = qb * conj(qa)
 
 pgd::Quaternion pgd::FindRotation(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
-    return ((~qa) * qb);
+    // // check my algebra
+    // pgd::Quaternion result = ((~qa) * qb);
+    // pgd::Quaternion result2 = (qb * (~qa));
+
+    // pgd::Matrix3x3 ma(qa), mb(qb);
+    // pgd::Matrix3x3 result3m = mb * ma.Inverse();
+    // pgd::Quaternion result3 = pgd::MakeQfromM(result3m);
+
+    return (qb * (~qa));
 }
 
 double pgd::FindAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
@@ -1777,6 +1739,20 @@ pgd::Quaternion pgd::MakeQfromM (const pgd::Matrix3x3 &R)
     }
     return q;
 }
+
+// finds the rotation matrix that will transform R1 to R2
+// where R1 and R2 are both rotation matrices
+// works because the transpose of a rotation matrix is the inverse (and quicker to calculate)
+pgd::Matrix3x3 pgd::FindRotation(const pgd::Matrix3x3 &R1, const pgd::Matrix3x3 &R2)
+{
+    // theory:
+    // X.R1 = R2
+    // X.R1.R1' = R2.R1'
+    // X = R2.R1'
+    pgd::Matrix3x3 rotMat = R2 * R1.Transpose();
+    return rotMat;
+}
+
 
 // find the closest point to point P on a line defined as origin B and direction M
 // using formulae from www.geometrictools.com

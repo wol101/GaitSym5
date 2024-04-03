@@ -376,7 +376,7 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
         angle1 = 2 * std::acos(Ypq.n);
         if (angle1 > M_PI) angle1 -= 2 * M_PI;
         axisY = Ypq.GetVector() / yMag;
-        dotY =pgd::Dot(axisY, pgd::Vector3(A.e11, A.e21, A.e31));
+        dotY =pgd::Dot(axisY, pgd::Vector3(A.e12, A.e22, A.e32));
         if (dotY < 0)
             angle1 = - angle1;
     }
@@ -389,7 +389,7 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
         angle2 = 2 * std::acos(Zpq.n);
         if (angle2 > M_PI) angle2 -= 2 * M_PI;
         axisZ = Zpq.GetVector() / zMag;
-        dotZ =pgd::Dot(axisZ, pgd::Vector3(A.e11, A.e21, A.e31));
+        dotZ =pgd::Dot(axisZ, pgd::Vector3(A.e13, A.e23, A.e33));
         if (dotZ < 0)
             angle2 = - angle2;
     }
