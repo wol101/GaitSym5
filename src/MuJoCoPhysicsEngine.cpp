@@ -52,6 +52,13 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     // move to start positions
     MoveBodies();
 
+    // create internal mapping lists
+    for (int bodyID = 0; bodyID < m_mjModel->nbody; bodyID++)
+    {
+        std::string name(mj_id2name(m_mjModel, mjOBJ_BODY, bodyID));
+        m_bodyMap[name] = bodyID;
+    }
+
     return nullptr;
 }
 
@@ -373,8 +380,10 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             // now set the values in the MuJoCo data structure
             m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
             m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
-            m_mjData->qvel[jnt_dofadr + 0] = v.x; m_mjData->qvel[jnt_dofadr + 1] = v.y; m_mjData->qvel[jnt_dofadr + 2] = v.z;
-            m_mjData->qvel[jnt_dofadr + 3] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
+            m_mjData->qvel[jnt_dofadr + 0] = av.x; m_mjData->qvel[jnt_dofadr + 1] = av.y; m_mjData->qvel[jnt_dofadr + 2] = av.z;
+            m_mjData->qvel[jnt_dofadr + 3] = v.x; m_mjData->qvel[jnt_dofadr + 4] = v.y; m_mjData->qvel[jnt_dofadr + 5] = v.z;
+            // m_mjData->qvel[jnt_dofadr + 0] = v.x; m_mjData->qvel[jnt_dofadr + 1] = v.y; m_mjData->qvel[jnt_dofadr + 2] = v.z;
+            // m_mjData->qvel[jnt_dofadr + 3] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
             break;
         }
         case mjJNT_HINGE:
@@ -416,69 +425,11 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             return lastErrorPtr();
         }
     }
-
-/*
-    for (size_t i = 0; i < m_mjModel->nbody; i++)
-    {
-        mjtObj type = mjOBJ_BODY;
-        std::string bodyName(mj_id2name(m_mjModel, mjOBJ_BODY, i));
-        if (bodyName == "world"s) { continue; }
-        Body *body = simulation()->GetBody(bodyName);
-        if (!body)
-        {
-            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" not found", bodyName.c_str()));
-            return lastErrorPtr();
-        }
-        pgd::Vector3 position = body->GetPosition();
-        pgd::Quaternion quaternion = body->GetQuaternion();
-        std::string parentName(mj_id2name(m_mjModel, mjOBJ_BODY,m_mjModel->body_parentid[i]));
-        Body *parent = nullptr;
-        if (parentName != "world"s)
-        {
-            parent = simulation()->GetBody(parentName);
-            if (!parent)
-            {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" not found", parentName.c_str()));
-                return lastErrorPtr();
-            }
-        }
-        Marker marker(parent);
-        marker.SetWorldPosition(position);
-        marker.SetWorldQuaternion(quaternion);
-
-        int qposSize = mj_stateSize(m_mjModel, mjSTATE_QPOS);
-        int qvelSize = mj_stateSize(m_mjModel, mjSTATE_QVEL);
-        std::vector<mjtNum> qpos((size_t(qposSize)));
-        std::vector<mjtNum> qvel((size_t(qvelSize)));
-        mj_getState(m_mjModel, m_mjData, qpos.data(), mjSTATE_QPOS);
-        mj_getState(m_mjModel, m_mjData, qvel.data(), mjSTATE_QVEL);
-        for (int i = 0; i < qposSize; i++)
-        {
-            std::cerr << qpos[i] << "\n";
-        }
-    }
-*/
     return nullptr;
 }
 
 std::string *MuJoCoPhysicsEngine::Step()
 {
-#if 0
-    // Apply Cartesian force and torque (outside xfrc_applied mechanism).
-    MJAPI void mj_applyFT(const mjModel* m, mjData* d, const mjtNum force[3], const mjtNum torque[3],
-                          const mjtNum point[3], int body, mjtNum* qfrc_target);
-
-    // Set perturb pos,quat in d->mocap when selected body is mocap, and in d->qpos otherwise.
-    // Write d->qpos only if flg_paused and subtree root for selected body has free joint.
-    MJAPI void mjv_applyPerturbPose(const mjModel* m, mjData* d, const mjvPerturb* pert,
-                                    int flg_paused);
-
-    // Set perturb force,torque in d->xfrc_applied, if selected body is dynamic.
-    MJAPI void mjv_applyPerturbForce(const mjModel* m, mjData* d, const mjvPerturb* pert);
-
-    // clear the contacts
-    g_contactReportCallback.contactData()->clear();
-
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())
     {
@@ -489,9 +440,9 @@ std::string *MuJoCoPhysicsEngine::Step()
             const PointForce *pf = pointForceList->at(i).get();
             if (pf->body)
             {
-                physx::PxRigidDynamic* rigidDynamic = m_bodyMap[pf->body->name()];
-                physx::PxRigidBodyExt::addForceAtPos(*rigidDynamic, physx::PxVec3(pf->vector[0] * tension, pf->vector[1] * tension, pf->vector[2] * tension),
-                                                     physx::PxVec3(pf->point[0], pf->point[1], pf->point[2]), physx::PxForceMode::eFORCE, true);
+                pgd::Vector3 force = pf->vector * tension;
+                int body = m_bodyMap[pf->body->name()];
+                mj_applyFT(m_mjModel, m_mjData, force.constData(), nullptr, pf->point.constData(), body, m_mjData->qfrc_applied);
             }
         }
     }
@@ -504,9 +455,8 @@ std::string *MuJoCoPhysicsEngine::Step()
             const PointForce *pf = &iter.second->pointForceList().at(i);
             if (pf->body)
             {
-                physx::PxRigidDynamic* rigidDynamic = m_bodyMap[pf->body->name()];
-                physx::PxRigidBodyExt::addForceAtPos(*rigidDynamic, physx::PxVec3(pf->vector[0], pf->vector[1], pf->vector[2]),
-                                                     physx::PxVec3(pf->point[0], pf->point[1], pf->point[2]), physx::PxForceMode::eFORCE, true);
+                int body = m_bodyMap[pf->body->name()];
+                mj_applyFT(m_mjModel, m_mjData, pf->vector.constData(), nullptr, pf->point.constData(), body, m_mjData->qfrc_applied);
             }
         }
     }
@@ -521,118 +471,102 @@ std::string *MuJoCoPhysicsEngine::Step()
         Marker marker(iter.second.get());
         pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
         pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
-        physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
-        rigidDynamic->addForce(physx::PxVec3(worldDragForce[0], worldDragForce[1], worldDragForce[2]), physx::PxForceMode::eFORCE, true);
-        rigidDynamic->addTorque(physx::PxVec3(worldDragTorque[0], worldDragTorque[1], worldDragTorque[2]), physx::PxForceMode::eFORCE, true);
+        int body = m_bodyMap[iter.first];
+        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->GetPosition().constData(), body, m_mjData->qfrc_applied);
     }
 
-    // run the simulation
-    m_scene->simulate(simulation()->GetGlobal()->StepSize());
-    m_scene->fetchResults(true);
-
-#ifdef DEBUG_ACTORS
-    physx::PxScene* scene;
-    PxGetPhysics().getScenes(&scene,1);
-    physx::PxU32 nbActors = scene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC | physx::PxActorTypeFlag::eRIGID_STATIC);
-    if (nbActors)
-    {
-        std::vector<physx::PxRigidActor *> actors(nbActors);
-        scene->getActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC | physx::PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<physx::PxActor**>(&actors[0]), nbActors);
-        for (size_t i = 0; i < actors.size(); i++)
-        {
-            auto actor = actors[i];
-            if (actor->getName()) std::cerr << i << " " << actor->getName() << "\n";
-            else std::cerr << i << "\n";
-            physx::PxBounds3 bounds = actor->getWorldBounds(1.01f);
-            physx::PxVec3 center = bounds.getCenter();
-            std::cerr << center[0] << " " << center[1] << " " << center[2] << "\n";
-        }
-    }
-#endif
+    // NB. This is the simple case where we simply addply passive forces and step the model
+    // MuJoCo allows the step to be split so recalculated velocities can be used to generate forces
+    // this can be done using the mjcb_passive callback (which works with RK4 integrator)
+    // of by using mj_step1 and mj_step2 instead of mj_step (which does not work with RK4)
+    mj_step(m_mjModel, m_mjData);
 
     // update the objects with the new data
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (int bodyID = 0; bodyID < m_mjModel->nbody; bodyID++)
     {
-        physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
-        physx::PxTransform transform = rigidDynamic->getGlobalPose();
-        physx::PxVec3 linearVelocity = rigidDynamic->getLinearVelocity();
-        physx::PxVec3 angularVelocity = rigidDynamic->getAngularVelocity();
-        iter.second->SetPosition(transform.p[0], transform.p[1], transform.p[2]);
-        iter.second->SetQuaternion(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-        iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
-        iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
+        std::string name(mj_id2name(m_mjModel, mjOBJ_BODY, bodyID));
+        m_bodyMap[name] = bodyID;
+        Body *body = simulation()->GetBody(name);
+        if (!body) continue;
+        pgd::Vector3 p(m_mjData->xpos[bodyID + 0], m_mjData->xpos[bodyID + 1], m_mjData->xpos[bodyID + 2]);
+        pgd::Quaternion q(m_mjData->xquat[bodyID + 0], m_mjData->xquat[bodyID + 1], m_mjData->xquat[bodyID + 2], m_mjData->qpos[bodyID + 3]);
+        pgd::Vector3 av(m_mjData->cvel[bodyID + 0], m_mjData->qvel[bodyID + 1], m_mjData->qvel[bodyID + 2]);
+        pgd::Vector3 v(m_mjData->cvel[bodyID + 3], m_mjData->qvel[bodyID + 4], m_mjData->qvel[bodyID + 5]);
+        body->SetPosition(p);
+        body->SetQuaternion(q);
+        body->SetLinearVelocity(v);
+        body->SetAngularVelocity(av);
     }
 
-    for (auto &&iter : *simulation()->GetJointList())
-    {
-        while (true)
-        {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
-            {
-                physx::PxRevoluteJoint *joint = dynamic_cast<physx::PxRevoluteJoint *>(m_jointMap[iter.first]);
-                if (!joint)
-                {
-                    std::cerr << "Error in MuJoCoPhysicsEngine::Step(): joint type mismatch\n";
-                    continue;
-                }
-                physx::PxConstraint *constraint = joint->getConstraint();
-                if (!constraint->isValid())
-                {
-                    std::cerr << "Error in MuJoCoPhysicsEngine::Step(): constraint not valid\n";
-                    continue;
-                }
-                physx::PxVec3 linear;
-                physx::PxVec3 angular;
-                constraint->getForce(linear, angular);
-                double angle = joint->getAngle();
-                double angleRate = joint->getVelocity();
-                physx::PxTransform localTransform = joint->getLocalPose(physx::PxJointActorIndex::Enum::eACTOR0);
-                physx::PxRigidActor *actor0, *actor1;
-                joint->getActors(actor0, actor1);
-                physx::PxTransform bodyTransform = actor0->getGlobalPose();
-                physx::PxTransform worldTransform = localTransform.transform(bodyTransform);
-                physx::PxVec3 axis = worldTransform.rotate(physx::PxVec3(1, 0, 0));
+    // for (auto &&iter : *simulation()->GetJointList())
+    // {
+    //     while (true)
+    //     {
+    //         HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
+    //         if (hingeJoint)
+    //         {
+    //             physx::PxRevoluteJoint *joint = dynamic_cast<physx::PxRevoluteJoint *>(m_jointMap[iter.first]);
+    //             if (!joint)
+    //             {
+    //                 std::cerr << "Error in MuJoCoPhysicsEngine::Step(): joint type mismatch\n";
+    //                 continue;
+    //             }
+    //             physx::PxConstraint *constraint = joint->getConstraint();
+    //             if (!constraint->isValid())
+    //             {
+    //                 std::cerr << "Error in MuJoCoPhysicsEngine::Step(): constraint not valid\n";
+    //                 continue;
+    //             }
+    //             physx::PxVec3 linear;
+    //             physx::PxVec3 angular;
+    //             constraint->getForce(linear, angular);
+    //             double angle = joint->getAngle();
+    //             double angleRate = joint->getVelocity();
+    //             physx::PxTransform localTransform = joint->getLocalPose(physx::PxJointActorIndex::Enum::eACTOR0);
+    //             physx::PxRigidActor *actor0, *actor1;
+    //             joint->getActors(actor0, actor1);
+    //             physx::PxTransform bodyTransform = actor0->getGlobalPose();
+    //             physx::PxTransform worldTransform = localTransform.transform(bodyTransform);
+    //             physx::PxVec3 axis = worldTransform.rotate(physx::PxVec3(1, 0, 0));
 
-                hingeJoint->setForce(pgd::Vector3(linear[0], linear[1], linear[2]));
-                hingeJoint->setTorque(pgd::Vector3(angular[0], angular[1], angular[2]));
-                hingeJoint->setAnchor(pgd::Vector3(worldTransform.p[0], worldTransform.p[1], worldTransform.p[2]));
-                hingeJoint->setAxis(pgd::Vector3(axis[0], axis[1], axis[2]));
-                hingeJoint->setAngle(angle);
-                hingeJoint->setAngleRate(angleRate);
-                break;
-            }
-            break;
-        }
-    }
+    //             hingeJoint->setForce(pgd::Vector3(linear[0], linear[1], linear[2]));
+    //             hingeJoint->setTorque(pgd::Vector3(angular[0], angular[1], angular[2]));
+    //             hingeJoint->setAnchor(pgd::Vector3(worldTransform.p[0], worldTransform.p[1], worldTransform.p[2]));
+    //             hingeJoint->setAxis(pgd::Vector3(axis[0], axis[1], axis[2]));
+    //             hingeJoint->setAngle(angle);
+    //             hingeJoint->setAngleRate(angleRate);
+    //             break;
+    //         }
+    //         break;
+    //     }
+    // }
 
     simulation()->GetContactList()->clear();
-    double timeStep =simulation()->GetGlobal()->StepSize();
-    for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
-    {
-        physx::PxActor *actors[2];
-        actors[0] = g_contactReportCallback.contactData()->at(i).actors[0];
-        actors[1] = g_contactReportCallback.contactData()->at(i).actors[1];
-        for (size_t j = 0; j < g_contactReportCallback.contactData()->at(i).positions.size(); j++)
-        {
-            physx::PxVec3 position = g_contactReportCallback.contactData()->at(i).positions[j];
-            physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
-            physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
-            physx::PxShape *shape2 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
-            std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
-            myContact->setSimulation(simulation());
-            myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
-            myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
-            Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
-            Geom *geom2 = reinterpret_cast<Geom *>(shape2->userData);
-            geom1->AddContact(myContact.get());
-            geom2->AddContact(myContact.get());
-            myContact->setBody1(geom1->GetBody());
-            myContact->setBody2(geom2->GetBody());
-            simulation()->GetContactList()->push_back(std::move(myContact));
-        }
-    }
-#endif
+    // double timeStep =simulation()->GetGlobal()->StepSize();
+    // for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
+    // {
+    //     physx::PxActor *actors[2];
+    //     actors[0] = g_contactReportCallback.contactData()->at(i).actors[0];
+    //     actors[1] = g_contactReportCallback.contactData()->at(i).actors[1];
+    //     for (size_t j = 0; j < g_contactReportCallback.contactData()->at(i).positions.size(); j++)
+    //     {
+    //         physx::PxVec3 position = g_contactReportCallback.contactData()->at(i).positions[j];
+    //         physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
+    //         physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
+    //         physx::PxShape *shape2 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
+    //         std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
+    //         myContact->setSimulation(simulation());
+    //         myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
+    //         myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
+    //         Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
+    //         Geom *geom2 = reinterpret_cast<Geom *>(shape2->userData);
+    //         geom1->AddContact(myContact.get());
+    //         geom2->AddContact(myContact.get());
+    //         myContact->setBody1(geom1->GetBody());
+    //         myContact->setBody2(geom2->GetBody());
+    //         simulation()->GetContactList()->push_back(std::move(myContact));
+    //     }
+    // }
     return nullptr;
 }
 

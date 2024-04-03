@@ -30,6 +30,33 @@ Body::Body()
 {
 }
 
+void Body::SetConstructionPosition(double x, double y, double z)
+{
+    m_constructionPosition[0] = x;
+    m_constructionPosition[1] = y;
+    m_constructionPosition[2] = z;
+}
+
+void Body::SetConstructionPosition(const pgd::Vector3 &constructionPosition)
+{
+    m_constructionPosition = constructionPosition;
+}
+
+pgd::Vector3 Body::GetConstructionPosition() const
+{
+    return m_constructionPosition;
+}
+
+void Body::SetConstructionDensity(double constructionDensity)
+{
+    m_constructionDensity = constructionDensity;
+}
+
+double Body::GetConstructionDensity() const
+{
+    return m_constructionDensity;
+}
+
 void Body::SetPosition(double x, double y, double z)
 {
     m_currentPosition.Set(x, y, z);
@@ -41,6 +68,16 @@ void Body::SetQuaternion(double n, double x, double y, double z)
     m_currentQuaternion[1] = x;
     m_currentQuaternion[2] = y;
     m_currentQuaternion[3] = z;
+}
+
+void Body::SetPosition(const pgd::Vector3 &position)
+{
+    m_currentPosition = position;
+}
+
+void Body::SetQuaternion(const pgd::Quaternion &quaternion)
+{
+    m_currentQuaternion = quaternion;
 }
 
 // parses the position allowing a relative position specified by BODY ID
@@ -217,6 +254,11 @@ void Body::SetLinearVelocity(double x, double y, double z)
     m_currentLinearVelocity.Set(x, y, z);
 }
 
+void Body::SetLinearVelocity(const pgd::Vector3 &linearVelocity)
+{
+    m_currentLinearVelocity = linearVelocity;
+}
+
 // parses the linear velocity allowing a relative velocity specified by BODY ID
 // x y z - world coordinates
 // bodyName x y z - position relative to bodyName local coordinate system
@@ -311,6 +353,11 @@ double Body::GetGravitationalPotentialEnergy()
 void Body::SetAngularVelocity(double x, double y, double z)
 {
     m_currentAngularVelocity.Set(x, y, z);
+}
+
+void Body::SetAngularVelocity(const pgd::Vector3 &angularVelocity)
+{
+    m_currentAngularVelocity = angularVelocity;
 }
 
 // parses the angular velocity allowing a relative angular velocity specified by BODY ID

@@ -30,17 +30,22 @@ public:
     SMART_ENUM(DragControl, dragControlStrings, dragControlCount,
                NoDrag, DragCoefficients, DragCylinderX, DragCylinderY, DragCylinderZ);
 
-    void SetConstructionPosition(double x, double y, double z) { m_constructionPosition[0] = x; m_constructionPosition[1] = y; m_constructionPosition[2] = z; }
-    pgd::Vector3 GetConstructionPosition() const { return m_constructionPosition; }
-    void SetConstructionDensity(double constructionDensity) { m_constructionDensity = constructionDensity; }
-    double GetConstructionDensity() const { return m_constructionDensity; }
+    void SetConstructionPosition(double x, double y, double z);
+    void SetConstructionPosition(const pgd::Vector3 &constructionPosition);
+    pgd::Vector3 GetConstructionPosition() const;
+    void SetConstructionDensity(double constructionDensity);
+    double GetConstructionDensity() const;
 
     void SetPosition(double x, double y, double z);
     void SetQuaternion(double n, double x, double y, double z);
+    void SetPosition(const pgd::Vector3 &position);
+    void SetQuaternion(const pgd::Quaternion &quaternion);
     std::string *SetPosition(const std::string &buf);
     std::string *SetQuaternion(const std::string &buf);
     void SetLinearVelocity(double x, double y, double z);
     void SetAngularVelocity(double x, double y, double z);
+    void SetLinearVelocity(const pgd::Vector3 &linearVelocity);
+    void SetAngularVelocity(const pgd::Vector3 &angularVelocity);
     std::string *SetLinearVelocity(const std::string &buf);
     std::string *SetAngularVelocity(const std::string &buf);
     void SetPositionDelta(double x, double y, double z);

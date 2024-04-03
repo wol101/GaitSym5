@@ -58,6 +58,7 @@ private:
     std::vector<TreeBody *> m_bodiesLeftToInclude;
 
     int m_freeJointCount = 0;
+    std::map<std::string, int> m_bodyMap;
 };
 
 #endif // MuJoCoPhysicsEngine_H
