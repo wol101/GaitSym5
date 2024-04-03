@@ -344,27 +344,44 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         int jnt_qposadr = m_mjModel->jnt_qposadr[jointID];
         int jnt_dofadr = m_mjModel->jnt_dofadr[jointID];
         std::string name(mj_id2name(m_mjModel, mjOBJ_JOINT, int(jointID)));
-        std::cerr << "Joint Name = " << name << "\n";
         switch (jnt_type)
         {
         case mjJNT_FREE:
         {
+#ifdef DEBUG_MOVE_BODIES
             pgd::Vector3 p(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2]);
             pgd::Quaternion q(m_mjData->qpos[jnt_qposadr + 3], m_mjData->qpos[jnt_qposadr + 4], m_mjData->qpos[jnt_qposadr + 5], m_mjData->qpos[jnt_qposadr + 6]);
             pgd::Vector3 v(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
             pgd::Vector3 av(m_mjData->qvel[jnt_dofadr + 3], m_mjData->qvel[jnt_dofadr + 4], m_mjData->qvel[jnt_dofadr + 5]);
+            std::cerr << "Joint Name = " << name << "\n";
             std::cerr << "Position = " << GSUtil::ToString(p) << "\n";
             std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
             std::cerr << "Velocity = " << GSUtil::ToString(v) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
+#endif
+            // we currently only suport a single free body so it will always be linked to the m_rootTreeBody
+            Body *body = m_rootTreeBody.body;
+            if (!body)
+            {
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" root body not found", name.c_str()));
+                return lastErrorPtr();
+            }
+            pgd::Vector3 p = body->GetPosition();
+            pgd::Quaternion q = body->GetQuaternion();
+            pgd::Vector3 v = body->GetLinearVelocity();
+            pgd::Vector3 av = body->GetAngularVelocity();
+            // now set the values in the MuJoCo data structure
+            m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
+            m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
+            m_mjData->qvel[jnt_dofadr + 0] = v.x; m_mjData->qvel[jnt_dofadr + 1] = v.y; m_mjData->qvel[jnt_dofadr + 2] = v.z;
+            m_mjData->qvel[jnt_dofadr + 3] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
             break;
         }
         case mjJNT_HINGE:
         {
+#ifdef DEBUG_MOVE_BODIES
             double a = m_mjData->qpos[jnt_qposadr];
             double av = m_mjData->qvel[jnt_dofadr];
-            std::cerr << "Angle = " << GSUtil::ToString(a) << "\n";
-            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
             Joint *joint = simulation()->GetJoint(name);
             pgd::Quaternion rotation = joint->GetWorldRotation();
             pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
@@ -372,10 +389,26 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->GetWorldAngularVelocity());
             double angle; pgd::Vector3 axis;
             pgd::MakeAxisAngleFromQ(rotation, &axis, &angle);
+            std::cerr << "Joint Name = " << name << "\n";
+            std::cerr << "Angle = " << GSUtil::ToString(a) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
             std::cerr << "Axis = " << GSUtil::ToString(axis) << " Angle = " << pgd::RadToDeg(angle) << " degrees\n";
             std::cerr << "Basis = " << GSUtil::ToString(basis) << "\n";
             std::cerr << "Euler Angles = " << GSUtil::ToString(eulerAngles) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(angularVelocity) << "\n";
+#endif
+            Joint *joint = simulation()->GetJoint(name);
+            if (!joint)
+            {
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", name.c_str()));
+                return lastErrorPtr();
+            }
+            pgd::Quaternion rotation = joint->GetWorldRotation();
+            pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
+            pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
+            pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->GetWorldAngularVelocity());
+            m_mjData->qpos[jnt_qposadr] = eulerAngles.x;
+            m_mjData->qvel[jnt_dofadr] = angularVelocity.x;
             break;
         }
         default:
