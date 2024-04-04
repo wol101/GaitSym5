@@ -52,13 +52,6 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     // move to start positions
     MoveBodies();
 
-    // create internal mapping lists
-    for (int bodyID = 0; bodyID < m_mjModel->nbody; bodyID++)
-    {
-        std::string name(mj_id2name(m_mjModel, mjOBJ_BODY, bodyID));
-        m_bodyMap[name] = bodyID;
-    }
-
     return nullptr;
 }
 
@@ -431,6 +424,10 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
 std::string *MuJoCoPhysicsEngine::Step()
 {
     // apply the point forces from the muscles
+    // choices are to apply the forces and torques to the bodies directly using xfrc_applied
+    // or to convert to qfrc_applied using mj_applyFT
+    std::fill_n(m_mjData->qfrc_applied, m_mjModel->nv, 0);
+    std::vector<double> qfrc_target(m_mjModel->nv);
     for (auto &&iter :  *simulation()->GetMuscleList())
     {
         std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->GetPointForceList();
@@ -441,8 +438,9 @@ std::string *MuJoCoPhysicsEngine::Step()
             if (pf->body)
             {
                 pgd::Vector3 force = pf->vector * tension;
-                int body = m_bodyMap[pf->body->name()];
-                mj_applyFT(m_mjModel, m_mjData, force.constData(), nullptr, pf->point.constData(), body, m_mjData->qfrc_applied);
+                int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, pf->body->name().c_str());
+                mj_applyFT(m_mjModel, m_mjData, force.constData(), nullptr, pf->point.constData(), bodyID, qfrc_target.data());
+                for (size_t i = 0; i < m_mjModel->nv; i++) { m_mjData->qfrc_applied[i] += qfrc_target[i]; }
             }
         }
     }
@@ -455,8 +453,9 @@ std::string *MuJoCoPhysicsEngine::Step()
             const PointForce *pf = &iter.second->pointForceList().at(i);
             if (pf->body)
             {
-                int body = m_bodyMap[pf->body->name()];
-                mj_applyFT(m_mjModel, m_mjData, pf->vector.constData(), nullptr, pf->point.constData(), body, m_mjData->qfrc_applied);
+                int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, pf->body->name().c_str());
+                mj_applyFT(m_mjModel, m_mjData, pf->vector.constData(), nullptr, pf->point.constData(), bodyID, qfrc_target.data());
+                for (size_t i = 0; i < m_mjModel->nv; i++) { m_mjData->qfrc_applied[i] += qfrc_target[i]; }
             }
         }
     }
@@ -471,8 +470,9 @@ std::string *MuJoCoPhysicsEngine::Step()
         Marker marker(iter.second.get());
         pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
         pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
-        int body = m_bodyMap[iter.first];
-        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->GetPosition().constData(), body, m_mjData->qfrc_applied);
+        int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
+        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->GetPosition().constData(), bodyID, qfrc_target.data());
+        for (size_t i = 0; i < m_mjModel->nv; i++) { m_mjData->qfrc_applied[i] += qfrc_target[i]; }
     }
 
     // NB. This is the simple case where we simply addply passive forces and step the model
@@ -482,12 +482,10 @@ std::string *MuJoCoPhysicsEngine::Step()
     mj_step(m_mjModel, m_mjData);
 
     // update the objects with the new data
-    for (int bodyID = 0; bodyID < m_mjModel->nbody; bodyID++)
+    for (auto &&iter : *simulation()->GetBodyList())
     {
-        std::string name(mj_id2name(m_mjModel, mjOBJ_BODY, bodyID));
-        m_bodyMap[name] = bodyID;
-        Body *body = simulation()->GetBody(name);
-        if (!body) continue;
+        int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
+        Body *body = iter.second.get();
         pgd::Vector3 p(m_mjData->xpos[bodyID + 0], m_mjData->xpos[bodyID + 1], m_mjData->xpos[bodyID + 2]);
         pgd::Quaternion q(m_mjData->xquat[bodyID + 0], m_mjData->xquat[bodyID + 1], m_mjData->xquat[bodyID + 2], m_mjData->qpos[bodyID + 3]);
         pgd::Vector3 av(m_mjData->cvel[bodyID + 0], m_mjData->qvel[bodyID + 1], m_mjData->qvel[bodyID + 2]);
