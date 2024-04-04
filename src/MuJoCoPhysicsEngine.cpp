@@ -50,7 +50,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     mj_forward(m_mjModel, m_mjData);
 
     // move to start positions
-    MoveBodies();
+    // MoveBodies();
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
     InsertMJBodyIDs(&m_rootTreeBody);
@@ -285,8 +285,8 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             attributes["axis"s] = GSUtil::ToString(axis2);
             // attributes["pos"s] = GSUtil::ToString(p1);
             attributes["pos"s] = GSUtil::ToString(p2);
-            attributes["limited"s] = GSUtil::ToString(true);
-            attributes["range"s] = GSUtil::ToString(stops);
+            // attributes["limited"s] = GSUtil::ToString(true);
+            // attributes["range"s] = GSUtil::ToString(stops);
             XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
             break;
         }
@@ -321,15 +321,15 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
         const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom);
         if (planeGeom)
         {
-            Marker *marker = planeGeom->geomMarker();
-            pgd::Vector3 position = marker->GetPosition();
-            pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
-            attributes["name"s] = planeGeom->name();
-            attributes["type"s] = "plane"s;
-            attributes["pos"s] = GSUtil::ToString(position);
-            attributes["zaxis"s] = GSUtil::ToString(zAxis);
-            attributes["size"s] = GSUtil::ToString(pgd::Vector3(1, 1, 1));
-            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            // Marker *marker = planeGeom->geomMarker();
+            // pgd::Vector3 position = marker->GetPosition();
+            // pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
+            // attributes["name"s] = planeGeom->name();
+            // attributes["type"s] = "plane"s;
+            // attributes["pos"s] = GSUtil::ToString(position);
+            // attributes["zaxis"s] = GSUtil::ToString(zAxis);
+            // attributes["size"s] = GSUtil::ToString(pgd::Vector3(1, 1, 1));
+            // XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
         break;
