@@ -426,7 +426,6 @@ std::string *MuJoCoPhysicsEngine::Step()
     // apply the point forces from the muscles
     // choices are to apply the forces and torques to the bodies directly using xfrc_applied
     // or to convert to qfrc_applied using mj_applyFT
-    std::fill_n(m_mjData->qfrc_applied, m_mjModel->nv, 0);
     std::vector<double> qfrc_target(m_mjModel->nv);
     for (auto &&iter :  *simulation()->GetMuscleList())
     {
@@ -440,7 +439,6 @@ std::string *MuJoCoPhysicsEngine::Step()
                 pgd::Vector3 force = pf->vector * tension;
                 int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, pf->body->name().c_str());
                 mj_applyFT(m_mjModel, m_mjData, force.constData(), nullptr, pf->point.constData(), bodyID, qfrc_target.data());
-                for (size_t i = 0; i < m_mjModel->nv; i++) { m_mjData->qfrc_applied[i] += qfrc_target[i]; }
             }
         }
     }
@@ -455,7 +453,6 @@ std::string *MuJoCoPhysicsEngine::Step()
             {
                 int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, pf->body->name().c_str());
                 mj_applyFT(m_mjModel, m_mjData, pf->vector.constData(), nullptr, pf->point.constData(), bodyID, qfrc_target.data());
-                for (size_t i = 0; i < m_mjModel->nv; i++) { m_mjData->qfrc_applied[i] += qfrc_target[i]; }
             }
         }
     }
@@ -472,8 +469,10 @@ std::string *MuJoCoPhysicsEngine::Step()
         pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
         int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
         mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->GetPosition().constData(), bodyID, qfrc_target.data());
-        for (size_t i = 0; i < m_mjModel->nv; i++) { m_mjData->qfrc_applied[i] += qfrc_target[i]; }
     }
+
+    // copy the accumulated qfrc values to the main data structure
+    mju_addTo(m_mjData->qfrc_applied, qfrc_target.data(), m_mjModel->nv);
 
     // NB. This is the simple case where we simply addply passive forces and step the model
     // MuJoCo allows the step to be split so recalculated velocities can be used to generate forces
