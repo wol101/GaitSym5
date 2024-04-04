@@ -31,10 +31,13 @@ private:
         Body *body = nullptr;
         TreeBody *parent = nullptr;
         Joint *jointToParent = nullptr;
+        int bodyID = 0;
         std::vector<std::unique_ptr<TreeBody>> childList;
     };
 
     std::string *CreateTree();
+    void InsertMJBodyIDs(TreeBody *treeBody);
+
     std::string *CreateBody(const TreeBody &treeBody);
     std::string *CreateJoint(const Joint *joint);
     std::string *CreateGeom(const Geom *geom);
@@ -56,6 +59,7 @@ private:
     std::multiset<Body *> m_jointLoopDetector;
     std::vector<Joint *> m_jointsLeftToInclude;
     std::vector<TreeBody *> m_bodiesLeftToInclude;
+    std::vector<TreeBody *> m_flatTreeBodyList;
 
     int m_freeJointCount = 0;
 };

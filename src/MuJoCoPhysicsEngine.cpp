@@ -52,6 +52,9 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     // move to start positions
     MoveBodies();
 
+    // now the mjc body ids have been defined we can put them into the TreeBody tree
+    InsertMJBodyIDs(&m_rootTreeBody);
+
     return nullptr;
 }
 
@@ -174,6 +177,18 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
     XMLTerminateTag(&m_mjXML, "mujoco"s);
 
     return nullptr;
+}
+
+void MuJoCoPhysicsEngine::InsertMJBodyIDs(TreeBody *treeBody)
+{
+    mjtNum bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, treeBody->body->name().c_str());
+    treeBody->bodyID = bodyID;
+    m_flatTreeBodyList.push_back(treeBody);
+    if (treeBody->childList.size() == 0) return;
+    for (auto &&child : treeBody->childList)
+    {
+        InsertMJBodyIDs(child.get());
+    }
 }
 
 void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
@@ -359,7 +374,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             std::cerr << "Velocity = " << GSUtil::ToString(v) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
 #endif
-            // we currently only suport a single free body so it will always be linked to the m_rootTreeBody
+            // we currently only suport a single free body so it will always be linked to the m_rootTreeBody - FIX ME
             Body *body = m_rootTreeBody.body;
             if (!body)
             {
@@ -472,28 +487,51 @@ std::string *MuJoCoPhysicsEngine::Step()
     }
 
     // copy the accumulated qfrc values to the main data structure
-    mju_addTo(m_mjData->qfrc_applied, qfrc_target.data(), m_mjModel->nv);
+    std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
 
-    // NB. This is the simple case where we simply addply passive forces and step the model
+    // NB. This is the simple case where we simply add the passive forces and step the model
     // MuJoCo allows the step to be split so recalculated velocities can be used to generate forces
     // this can be done using the mjcb_passive callback (which works with RK4 integrator)
     // of by using mj_step1 and mj_step2 instead of mj_step (which does not work with RK4)
     mj_step(m_mjModel, m_mjData);
 
     // update the objects with the new data
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (size_t i = 0; i < m_flatTreeBodyList.size(); i++) // m_flatTreeBodyList defines the bodies in tree order so there are no parent defined after their children
     {
-        int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
-        Body *body = iter.second.get();
-        pgd::Vector3 p(m_mjData->xpos[bodyID + 0], m_mjData->xpos[bodyID + 1], m_mjData->xpos[bodyID + 2]);
-        pgd::Quaternion q(m_mjData->xquat[bodyID + 0], m_mjData->xquat[bodyID + 1], m_mjData->xquat[bodyID + 2], m_mjData->qpos[bodyID + 3]);
-        pgd::Vector3 av(m_mjData->cvel[bodyID + 0], m_mjData->qvel[bodyID + 1], m_mjData->qvel[bodyID + 2]);
-        pgd::Vector3 v(m_mjData->cvel[bodyID + 3], m_mjData->qvel[bodyID + 4], m_mjData->qvel[bodyID + 5]);
+        TreeBody *treeBody = m_flatTreeBodyList[i];
+        int bodyID = treeBody->bodyID;
+        Body *body = treeBody->body;
+        pgd::Vector3 p(m_mjData->xpos[bodyID * 3 + 0], m_mjData->xpos[bodyID * 3 + 1], m_mjData->xpos[bodyID * 3 + 2]);
+        pgd::Quaternion q(m_mjData->xquat[bodyID * 4 + 0], m_mjData->xquat[bodyID * 4 + 1], m_mjData->xquat[bodyID * 4 + 2], m_mjData->qpos[bodyID * 4 + 3]);
+        pgd::Vector3 av(m_mjData->cvel[bodyID * 6 + 0], m_mjData->qvel[bodyID * 6 + 1], m_mjData->qvel[bodyID * 6 + 2]);
+        pgd::Vector3 v(m_mjData->cvel[bodyID * 6 + 3], m_mjData->qvel[bodyID * 6 + 4], m_mjData->qvel[bodyID * 6 + 5]);
+        // if (treeBody->parent)
+        // {
+        //     Marker marker(treeBody->parent->body);
+        //     p = marker.GetWorldPosition(p);
+        //     q = marker.GetWorldQuaternion(q);
+        //     av = marker.GetWorldVector(av);
+        //     v = marker.GetWorldVector(v);
+        // }
         body->SetPosition(p);
         body->SetQuaternion(q);
         body->SetLinearVelocity(v);
         body->SetAngularVelocity(av);
     }
+
+    // for (auto &&iter : *simulation()->GetBodyList())
+    // {
+    //     int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
+    //     Body *body = iter.second.get();
+    //     pgd::Vector3 p(m_mjData->xpos[bodyID + 0], m_mjData->xpos[bodyID + 1], m_mjData->xpos[bodyID + 2]);
+    //     pgd::Quaternion q(m_mjData->xquat[bodyID + 0], m_mjData->xquat[bodyID + 1], m_mjData->xquat[bodyID + 2], m_mjData->qpos[bodyID + 3]);
+    //     pgd::Vector3 av(m_mjData->cvel[bodyID + 0], m_mjData->qvel[bodyID + 1], m_mjData->qvel[bodyID + 2]);
+    //     pgd::Vector3 v(m_mjData->cvel[bodyID + 3], m_mjData->qvel[bodyID + 4], m_mjData->qvel[bodyID + 5]);
+    //     body->SetPosition(p);
+    //     body->SetQuaternion(q);
+    //     body->SetLinearVelocity(v);
+    //     body->SetAngularVelocity(av);
+    // }
 
     // for (auto &&iter : *simulation()->GetJointList())
     // {
