@@ -111,7 +111,7 @@ public:
 private:
     FitnessType m_FitnessType = KinematicMatch;
     StepType m_StepType = World;
-    PhysicsEngine m_PhysicsEngine = PhysX;
+    PhysicsEngine m_PhysicsEngine = ODE;
     bool m_AllowConnectedCollisions = false;
     bool m_AllowInternalCollisions = false;
     int m_PermittedNumericalErrors = 0;

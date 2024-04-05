@@ -34,9 +34,11 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     err = CreateTree();
     if (err) { return err; }
 
+#ifdef DEBUG_MUJOCO_XML
     std::ofstream of("D:\\wis\\Scratch\\test.xml");
     of << m_mjXML;
     of.close();
+#endif
 
     char error[1000] = "";
     m_mjModel = LoadModelFromString(m_mjXML, error, sizeof(error));
@@ -85,8 +87,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
     m_bodiesLeftToInclude.push_back(&m_rootTreeBody);
     while (m_bodiesLeftToInclude.size())
     {
-// #define DEBUG_CREATE_TREE
-#ifdef DEBUG_CREATE_TREE
+#ifdef DEBUG_MUJOCO_CREATE_TREE
         for (auto &&iter : m_bodiesLeftToInclude)
         {
             std::cerr << "TreeBodies left " << m_bodiesLeftToInclude.size() << "\n";
@@ -135,7 +136,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a s
         }
     }
 
-#ifdef DEBUG_CREATE_TREE
+#ifdef DEBUG_MUJOCO_CREATE_TREE
     std::deque<TreeBody *> toProcess;
     toProcess.push_back(&m_rootTreeBody);
     while (toProcess.size())
@@ -364,7 +365,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         {
         case mjJNT_FREE:
         {
-#ifdef DEBUG_MOVE_BODIES
+#ifdef DEBUG_MUJOCO_MOVE_BODIES
             pgd::Vector3 p(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2]);
             pgd::Quaternion q(m_mjData->qpos[jnt_qposadr + 3], m_mjData->qpos[jnt_qposadr + 4], m_mjData->qpos[jnt_qposadr + 5], m_mjData->qpos[jnt_qposadr + 6]);
             pgd::Vector3 v(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
@@ -395,7 +396,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         }
         case mjJNT_HINGE:
         {
-#ifdef DEBUG_MOVE_BODIES
+#ifdef DEBUG_MUJOCO_MOVE_BODIES
             double a = m_mjData->qpos[jnt_qposadr];
             double av = m_mjData->qvel[jnt_dofadr];
             Joint *joint = simulation()->GetJoint(name);
@@ -516,7 +517,7 @@ std::string *MuJoCoPhysicsEngine::Step()
         body->SetQuaternion(q);
         body->SetLinearVelocity(v);
         body->SetAngularVelocity(av);
-#ifdef DEBUG_STEP
+#ifdef DEBUG_MUJOCO_STEP
         std::cerr << "\nBody Name = " << body->name() << "\n";
         std::cerr << "Body ID = " << bodyID << " Name from ID = " << mj_id2name(m_mjModel, mjOBJ_BODY, bodyID) << "\n";
         std::cerr << "Position = " << GSUtil::ToString(p) << "\n";

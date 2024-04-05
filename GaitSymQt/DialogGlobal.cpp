@@ -46,6 +46,7 @@ DialogGlobal::~DialogGlobal()
 void DialogGlobal::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogGlobal::accept()";
+
     m_outputGlobal = std::make_unique<Global>();
     m_outputGlobal->setFitnessType(static_cast<Global::FitnessType>(ui->comboBoxFitnessType->currentIndex()));
     m_outputGlobal->setStepType(static_cast<Global::StepType>(ui->comboBoxStepType->currentIndex()));
@@ -118,6 +119,18 @@ void DialogGlobal::accept() // this catches OK and return/enter
             m_outputGlobal->setSize1(m_properties["GlobalAxesSize"].value.toDouble());
     }
 
+    QString tab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+    m_outputGlobal->setPhysicsEngine(Global::ODE);
+    for (size_t i = 0; i < Global::physicsEngineTypeCount; i++)
+    {
+        if (tab == Global::physicsEngineTypeStrings(i))
+        {
+            m_outputGlobal->setPhysicsEngine(static_cast<Global::PhysicsEngine>(i));
+            break;
+        }
+        if (i == Global::physicsEngineTypeCount - 1) qDebug() << "DialogGlobal::accept() unsupported tab name";
+    }
+
     Preferences::insert("DialogGlobalGeometry", saveGeometry());
     QDialog::accept();
 }
@@ -169,8 +182,24 @@ void DialogGlobal::updateUI(const Global *globalPtr)
         ui->comboBoxDistanceTravelledBodyIDName->setCurrentText(distanceTravelledBodyID);
     }
 
-    ui->comboBoxFitnessType->setCurrentIndex(static_cast<int>(globalPtr->fitnessType()));
-    ui->comboBoxStepType->setCurrentIndex(static_cast<int>(globalPtr->stepType()));
+    {
+        QStringList fitnessTypeList;
+        for (int i = 0; i < ui->comboBoxFitnessType->count(); i++) { fitnessTypeList.push_back(ui->comboBoxFitnessType->itemText(i)); }
+        QString fitnessType(Global::fitnessTypeStrings(globalPtr->fitnessType()));
+        ui->comboBoxFitnessType->setCurrentIndex(fitnessTypeList.indexOf(fitnessType));
+    }
+    {
+        QStringList stepTypeList;
+        for (int i = 0; i < ui->comboBoxStepType->count(); i++) { stepTypeList.push_back(ui->comboBoxStepType->itemText(i)); }
+        QString stepType(Global::stepTypeStrings(globalPtr->stepType()));
+        ui->comboBoxStepType->setCurrentIndex(stepTypeList.indexOf(stepType));
+    }
+    {
+        QStringList tabNames;
+        for (int i = 0; i < ui->tabWidget->count(); i++) { tabNames.push_back(ui->tabWidget->tabText(i)); }
+        QString physicsEngine(Global::physicsEngineTypeStrings(globalPtr->physicsEngine()));
+        ui->tabWidget->setCurrentIndex(tabNames.indexOf(physicsEngine));
+    }
 
     ui->lineEditCFM->setValue(globalPtr->CFM());
     ui->lineEditContactMaxCorrectingVel->setValue(globalPtr->ContactMaxCorrectingVel());
