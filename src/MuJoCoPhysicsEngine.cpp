@@ -272,18 +272,18 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
         if (hingeJoint)
         {
             // Marker *marker1 = hingeJoint->body1Marker();
-            Marker *marker2 = hingeJoint->body2Marker();
             // pgd::Vector3 p1 = marker1->GetPosition();
-            pgd::Vector3 p2 = marker2->GetPosition();
             // pgd::Vector3 axis1 = marker1->GetAxis(Marker::X);
+            // attributes["axis"s] = GSUtil::ToString(axis1);
+            // attributes["pos"s] = GSUtil::ToString(p1);
+            Marker *marker2 = hingeJoint->body2Marker();
+            pgd::Vector3 p2 = marker2->GetPosition();
             pgd::Vector3 axis2 = marker2->GetAxis(Marker::X);
             pgd::Vector2 stops = hingeJoint->stops();
             // double springConstant = hingeJoint->stopSpring();
             // double dampingConstant = hingeJoint->stopDamp();
             attributes["name"s] = hingeJoint->name();
-            // attributes["axis"s] = GSUtil::ToString(axis1);
             attributes["axis"s] = GSUtil::ToString(axis2);
-            // attributes["pos"s] = GSUtil::ToString(p1);
             attributes["pos"s] = GSUtil::ToString(p2);
             attributes["limited"s] = GSUtil::ToString(true);
             pgd::Vector2 reversedStops(-stops[1], -stops[0]);
@@ -322,15 +322,15 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
         const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom);
         if (planeGeom)
         {
-            // Marker *marker = planeGeom->geomMarker();
-            // pgd::Vector3 position = marker->GetPosition();
-            // pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
-            // attributes["name"s] = planeGeom->name();
-            // attributes["type"s] = "plane"s;
-            // attributes["pos"s] = GSUtil::ToString(position);
-            // attributes["zaxis"s] = GSUtil::ToString(zAxis);
-            // attributes["size"s] = GSUtil::ToString(pgd::Vector3(1, 1, 1));
-            // XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            Marker *marker = planeGeom->geomMarker();
+            pgd::Vector3 position = marker->GetPosition();
+            pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
+            attributes["name"s] = planeGeom->name();
+            attributes["type"s] = "plane"s;
+            attributes["pos"s] = GSUtil::ToString(position);
+            attributes["zaxis"s] = GSUtil::ToString(zAxis);
+            attributes["size"s] = GSUtil::ToString(pgd::Vector3(1, 1, 1));
+            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
         break;
@@ -386,7 +386,6 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             pgd::Quaternion q = body->GetQuaternion();
             pgd::Vector3 v = body->GetLinearVelocity();
             pgd::Vector3 av = body->GetAngularVelocity();
-            av.z = 1;
             // now set the values in the MuJoCo data structure
             m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
             m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
