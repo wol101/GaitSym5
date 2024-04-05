@@ -486,7 +486,7 @@ std::string *MuJoCoPhysicsEngine::Step()
     }
 
     // copy the accumulated qfrc values to the main data structure
-    // std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
+    std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
 
     // NB. This is the simple case where we simply add the passive forces and step the model
     // MuJoCo allows the step to be split so recalculated velocities can be used to generate forces
