@@ -160,7 +160,8 @@ std::string *PhysXPhysicsEngine::CreateJoints()
                 pgd::Vector2 stops = hingeJoint->stops();
                 double springConstant = hingeJoint->stopSpring();
                 double dampingConstant = hingeJoint->stopDamp();
-                revolute->setLimit(physx::PxJointAngularLimitPair(-stops[1], -stops[0], physx::PxSpring(springConstant, dampingConstant))); // note the stops are reversed from the ODE values
+                pgd::Vector2 reversedStops(-stops[1], -stops[0]);
+                revolute->setLimit(physx::PxJointAngularLimitPair(reversedStops[0], reversedStops[1], physx::PxSpring(springConstant, dampingConstant))); // note the stops are reversed from the ODE values
                 revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
                 revolute->userData = hingeJoint;
                 m_jointMap[iter.first] = revolute;

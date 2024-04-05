@@ -50,7 +50,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     mj_forward(m_mjModel, m_mjData);
 
     // move to start positions
-    //MoveBodies();
+    MoveBodies();
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
     InsertMJBodyIDs(&m_rootTreeBody);
@@ -285,8 +285,9 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             attributes["axis"s] = GSUtil::ToString(axis2);
             // attributes["pos"s] = GSUtil::ToString(p1);
             attributes["pos"s] = GSUtil::ToString(p2);
-            // attributes["limited"s] = GSUtil::ToString(true);
-            // attributes["range"s] = GSUtil::ToString(stops);
+            attributes["limited"s] = GSUtil::ToString(true);
+            pgd::Vector2 reversedStops(-stops[1], -stops[0]);
+            attributes["range"s] = GSUtil::ToString(reversedStops);
             XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
             break;
         }
@@ -486,7 +487,7 @@ std::string *MuJoCoPhysicsEngine::Step()
     }
 
     // copy the accumulated qfrc values to the main data structure
-    std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
+    // std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
 
     // NB. This is the simple case where we simply add the passive forces and step the model
     // MuJoCo allows the step to be split so recalculated velocities can be used to generate forces
