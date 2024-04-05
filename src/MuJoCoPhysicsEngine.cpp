@@ -517,7 +517,6 @@ std::string *MuJoCoPhysicsEngine::Step()
         body->SetQuaternion(q);
         body->SetLinearVelocity(v);
         body->SetAngularVelocity(av);
-#define DEBUG_STEP
 #ifdef DEBUG_STEP
         std::cerr << "\nBody Name = " << body->name() << "\n";
         std::cerr << "Body ID = " << bodyID << " Name from ID = " << mj_id2name(m_mjModel, mjOBJ_BODY, bodyID) << "\n";
