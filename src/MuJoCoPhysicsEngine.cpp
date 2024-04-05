@@ -50,7 +50,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     mj_forward(m_mjModel, m_mjData);
 
     // move to start positions
-    MoveBodies();
+    //MoveBodies();
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
     InsertMJBodyIDs(&m_rootTreeBody);
@@ -387,8 +387,8 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             pgd::Vector3 av = body->GetAngularVelocity();
             av.z = 1;
             // now set the values in the MuJoCo data structure
-            // m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
-            // m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
+            m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
+            m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
             m_mjData->qvel[jnt_dofadr + 0] = v.x; m_mjData->qvel[jnt_dofadr + 1] = v.y; m_mjData->qvel[jnt_dofadr + 2] = v.z;
             m_mjData->qvel[jnt_dofadr + 3] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
             break;
@@ -413,7 +413,6 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             std::cerr << "Euler Angles = " << GSUtil::ToString(eulerAngles) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(angularVelocity) << "\n";
 #endif
-/*
             Joint *joint = simulation()->GetJoint(name);
             if (!joint)
             {
@@ -427,7 +426,6 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             m_mjData->qpos[jnt_qposadr] = eulerAngles.x;
             m_mjData->qvel[jnt_dofadr] = angularVelocity.x;
             break;
-*/
         }
         default:
             setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", name.c_str()));
@@ -488,7 +486,7 @@ std::string *MuJoCoPhysicsEngine::Step()
     }
 
     // copy the accumulated qfrc values to the main data structure
-    //std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
+    std::copy_n(qfrc_target.data(), m_mjModel->nv, m_mjData->qfrc_applied);
 
     // NB. This is the simple case where we simply add the passive forces and step the model
     // MuJoCo allows the step to be split so recalculated velocities can be used to generate forces
