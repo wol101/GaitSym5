@@ -595,6 +595,7 @@ void StrokeFont::Draw()
         // ModelMatrix = Translation * Rotation * Scale
         QMatrix4x4 model = translationRotation * scale;
 
+#if 0 // FIX ME
         // Store the vertex attribute bindings for the program.
         m_VBO.bind();
 #if QT_VERSION >= 0x060000
@@ -613,7 +614,7 @@ void StrokeFont::Draw()
         m_glWidget->fixedColourObjectShader()->setUniformValue("mvpMatrix", m_vpMatrix * model);
 
         f->glDrawArrays(GL_LINES, 0, GLsizei(n_lines * 2));
-
+#endif
     }
 }
 

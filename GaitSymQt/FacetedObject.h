@@ -13,6 +13,8 @@
 #include "MeshStore.h"
 #include "PGDMath.h"
 
+#include "threepp/threepp.hpp"
+
 #include <QColor>
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
@@ -40,8 +42,6 @@ public:
         double d = {0};
         int illum = {0};
     };
-
-
 
     int ParseMeshFile(const std::string &filename);
     int ParseOBJFile(const std::string &filename);
@@ -124,14 +124,18 @@ public:
     const QMatrix4x4 &model();
     void setModel(const QMatrix4x4 &model);
 
-
+#if 0
     QOpenGLTexture *texture() const;
     void setTexture(std::unique_ptr<QOpenGLTexture> &&texture);
+#endif
 
     double decal() const;
     void setDecal(double decal);
 
     std::string filename() const;
+
+    static std::shared_ptr<threepp::Scene> scene();
+    static void setScene(const std::shared_ptr<threepp::Scene> &newScene);
 
 private:
 
@@ -162,13 +166,16 @@ private:
     QColor m_blendColour = {255, 255, 255, 255};
     double m_blendFraction = 0;
     SimulationWidget *m_simulationWidget = nullptr;
+#if 0
     QOpenGLBuffer m_VBO;
     bool m_VBOAllocated = false;
     std::unique_ptr<QOpenGLTexture> m_texture;
+#endif
     double m_decal = 0;
 
     static MeshStore m_meshStore;
 
+    static std::shared_ptr<threepp::Scene> m_scene;
 };
 
 #endif

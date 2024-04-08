@@ -44,6 +44,9 @@
 
 using namespace std::literals::string_literals;
 
+MeshStore FacetedObject::m_meshStore;
+std::shared_ptr<threepp::Scene> FacetedObject::m_scene;
+
 // create object
 FacetedObject::FacetedObject()
 {
@@ -948,6 +951,30 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
 
 void FacetedObject::Draw()
 {
+    auto geometry = threepp::BufferGeometry::create();
+    std::vector<float> position;
+    position.reserve(m_vertexList.size());
+    for (size_t i =0; i < m_vertexList.size(); i++) { position.push_back(float(m_vertexList[i])); }
+    std::vector<float> normal;
+    position.reserve(m_normalList.size());
+    for (size_t i =0; i < m_normalList.size(); i++) { normal.push_back(float(m_normalList[i])); }
+    std::vector<float> color;
+    position.reserve(m_colourList.size());
+    for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(float(m_colourList[i])); }
+    std::vector<float> uv;
+    position.reserve(m_uvList.size());
+    for (size_t i =0; i < m_uvList.size(); i++) { uv.push_back(float(m_uvList[i])); }
+    geometry->setAttribute("position", threepp::FloatBufferAttribute::create(position, 3));
+    geometry->setAttribute("normal", threepp::FloatBufferAttribute::create(normal, 3));
+    geometry->setAttribute("color", threepp::FloatBufferAttribute::create(color, 3));
+    geometry->setAttribute("uv", threepp::FloatBufferAttribute::create(uv, 2));
+    auto material = threepp::MeshBasicMaterial::create();
+    material->color.setHex(0x00ff00);
+    material->wireframe = true;
+    auto mesh = threepp::Mesh::create(geometry, material);
+    m_scene->add(mesh);
+
+#if 0
 #if QT_VERSION >= 0x060000
         QOpenGLFunctions_3_3_Core *f = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_3_3_Core>(QOpenGLContext::currentContext());
 #else
@@ -1061,6 +1088,7 @@ void FacetedObject::Draw()
     m_simulationWidget->facetedObjectShader()->disableAttributeArray("vertexUV");
 
     m_simulationWidget->facetedObjectShader()->release();
+#endif
 }
 
 // Write a FacetedObject out as a POVRay file
@@ -2410,6 +2438,7 @@ void FacetedObject::setModel(const QMatrix4x4 &model)
     m_model = model;
 }
 
+#if 0
 QOpenGLTexture *FacetedObject::texture() const
 {
     return m_texture.get();
@@ -2419,6 +2448,7 @@ void FacetedObject::setTexture(std::unique_ptr<QOpenGLTexture> &&texture)
 {
     m_texture = std::move(texture);
 }
+#endif
 
 double FacetedObject::decal() const
 {
@@ -2433,6 +2463,16 @@ void FacetedObject::setDecal(double decal)
 std::string FacetedObject::filename() const
 {
     return m_filename;
+}
+
+std::shared_ptr<threepp::Scene> FacetedObject::scene()
+{
+    return m_scene;
+}
+
+void FacetedObject::setScene(const std::shared_ptr<threepp::Scene> &newScene)
+{
+    m_scene = newScene;
 }
 
 QColor FacetedObject::blendColour() const

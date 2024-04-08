@@ -10,8 +10,6 @@
 #include "MeshStore.h"
 #include "FacetedObject.h"
 
-MeshStore FacetedObject::m_meshStore;
-
 MeshStore::MeshStore()
 {
 }

@@ -1,8 +1,6 @@
 #ifndef SIMULATIONWIDGET_H
 #define SIMULATIONWIDGET_H
 
-#ifndef USE_THREEPP
-
 #include "StrokeFont.h"
 #include "IntersectionHits.h"
 #include "DrawBody.h"
@@ -14,6 +12,8 @@
 #include "FacetedSphere.h"
 #include "AVIWriter.h"
 #include "TrackBall.h"
+
+#include "threepp/threepp.hpp"
 
 #include <QOpenGLWidget>
 #include <QElapsedTimer>
@@ -146,8 +146,10 @@ public:
     MainWindow *getMainWindow() const;
     void setMainWindow(MainWindow *mainWindow);
 
+#if 0
     QOpenGLShaderProgram *facetedObjectShader() const;
     QOpenGLShaderProgram *fixedColourObjectShader() const;
+#endif
     QMatrix4x4 proj() const;
     QMatrix4x4 view() const;
 
@@ -283,38 +285,19 @@ private:
     std::vector<size_t> m_hitsIndexByZ;
     QString m_lastMenuItem;
 
+#if 0
     QOpenGLVertexArrayObject *m_vao = nullptr;
     QOpenGLShaderProgram *m_facetedObjectShader = nullptr;
     QOpenGLShaderProgram *m_fixedColourObjectShader = nullptr;
+#endif
     QMatrix4x4 m_proj;
     QMatrix4x4 m_view;
-    QMatrix4x4 m_model;
 
-};
-
-#else
-
-#include "threepp/threepp.hpp"
-
-#include <QOpenGLWidget>
-
-class openglwidget : public QOpenGLWidget
-{
-    Q_OBJECT
-public:
-    explicit openglwidget(QWidget *parent = nullptr);
-
-protected:
-    virtual void initializeGL() Q_DECL_OVERRIDE;
-    virtual void paintGL() Q_DECL_OVERRIDE;
-
-private:
     std::unique_ptr<threepp::GLRenderer> m_renderer;
     std::shared_ptr<threepp::Scene> m_scene;
-    std::shared_ptr<threepp::PerspectiveCamera> m_camera;
+    std::shared_ptr<threepp::Camera> m_camera;
     std::shared_ptr<threepp::OrbitControls> m_orbitControls;
-};
 
-#endif
+};
 
 #endif // SIMULATIONWIDGET_H
