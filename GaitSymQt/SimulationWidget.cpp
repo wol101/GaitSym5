@@ -83,8 +83,9 @@ void SimulationWidget::initializeGL()
     m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
     m_scene = threepp::Scene::create();
     m_camera = threepp::OrthographicCamera::create();
-    m_scene->background = threepp::Color::aliceblue;
     FacetedObject::setScene(m_scene);
+    threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
+    m_scene->background = color;
 }
 
 #if 0
