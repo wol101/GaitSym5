@@ -28,6 +28,7 @@ class FacetedObject
 {
 public:
     FacetedObject();
+    ~FacetedObject();
 
     virtual void Draw();
 
@@ -150,6 +151,7 @@ private:
 
     pgd::Vector3 m_displayPosition = {0, 0, 0};
     pgd::Vector3 m_displayScale = {1, 1, 1};
+    pgd::Quaternion m_displayQuaternion = {1, 0, 0, 0};
     pgd::Matrix3x3 m_displayRotation = {1, 0, 0,
                                         0, 1, 0,
                                         0, 0, 1};
@@ -176,6 +178,7 @@ private:
     static MeshStore m_meshStore;
 
     static std::shared_ptr<threepp::Scene> m_scene;
+    std::shared_ptr<threepp::Mesh> m_mesh;
 };
 
 #endif

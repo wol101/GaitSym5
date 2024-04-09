@@ -52,6 +52,12 @@ FacetedObject::FacetedObject()
 {
 }
 
+FacetedObject::~FacetedObject()
+{
+    if (m_mesh) { m_mesh->removeFromParent(); }
+}
+
+
 // utility front end to try and parse different sorts of mesh files
 int FacetedObject::ParseMeshFile(const std::string &filename)
 {
@@ -951,28 +957,35 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
 
 void FacetedObject::Draw()
 {
-    auto geometry = threepp::BufferGeometry::create();
-    std::vector<float> position;
-    position.reserve(m_vertexList.size());
-    for (size_t i =0; i < m_vertexList.size(); i++) { position.push_back(float(m_vertexList[i])); }
-    std::vector<float> normal;
-    position.reserve(m_normalList.size());
-    for (size_t i =0; i < m_normalList.size(); i++) { normal.push_back(float(m_normalList[i])); }
-    std::vector<float> color;
-    position.reserve(m_colourList.size());
-    for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(float(m_colourList[i])); }
-    std::vector<float> uv;
-    position.reserve(m_uvList.size());
-    for (size_t i =0; i < m_uvList.size(); i++) { uv.push_back(float(m_uvList[i])); }
-    geometry->setAttribute("position", threepp::FloatBufferAttribute::create(position, 3));
-    geometry->setAttribute("normal", threepp::FloatBufferAttribute::create(normal, 3));
-    geometry->setAttribute("color", threepp::FloatBufferAttribute::create(color, 3));
-    geometry->setAttribute("uv", threepp::FloatBufferAttribute::create(uv, 2));
-    auto material = threepp::MeshBasicMaterial::create();
-    material->color.setHex(0x00ff00);
-    material->wireframe = true;
-    auto mesh = threepp::Mesh::create(geometry, material);
-    m_scene->add(mesh);
+    if (!m_mesh)
+    {
+        auto geometry = threepp::BufferGeometry::create();
+        std::vector<float> position;
+        position.reserve(m_vertexList.size());
+        for (size_t i =0; i < m_vertexList.size(); i++) { position.push_back(float(m_vertexList[i])); }
+        std::vector<float> normal;
+        normal.reserve(m_normalList.size());
+        for (size_t i =0; i < m_normalList.size(); i++) { normal.push_back(float(m_normalList[i])); }
+        std::vector<float> color;
+        color.reserve(m_colourList.size());
+        for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(float(m_colourList[i])); }
+        std::vector<float> uv;
+        uv.reserve(m_uvList.size());
+        for (size_t i =0; i < m_uvList.size(); i++) { uv.push_back(float(m_uvList[i])); }
+        geometry->setAttribute("position", threepp::FloatBufferAttribute::create(position, 3));
+        geometry->setAttribute("normal", threepp::FloatBufferAttribute::create(normal, 3));
+        geometry->setAttribute("color", threepp::FloatBufferAttribute::create(color, 3));
+        geometry->setAttribute("uv", threepp::FloatBufferAttribute::create(uv, 2));
+        auto material = threepp::MeshBasicMaterial::create();
+        material->color.setHex(0x00ff00);
+        material->wireframe = true;
+        m_mesh = threepp::Mesh::create(geometry, material);
+        m_scene->add(m_mesh);
+    }
+    m_mesh->position.set(m_displayPosition.x, m_displayPosition.z, m_displayPosition.z);
+    m_mesh->scale.set(m_displayScale.x, m_displayScale.z, m_displayScale.z);
+    m_mesh->quaternion.set(m_displayQuaternion.x, m_displayQuaternion.y, m_displayQuaternion.z, m_displayQuaternion.n);
+    m_mesh->matrixWorldNeedsUpdate = true;
 
 #if 0
 #if QT_VERSION >= 0x060000
@@ -2388,12 +2401,14 @@ void FacetedObject::SetDisplayScale(const pgd::Vector3 &displayScale)
 void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 &R)
 {
     m_displayRotation = R;
+    m_displayQuaternion = pgd::MakeQfromM(R);
     m_modelValid = false;
 }
 
 // pgd::Quaternion q [ w, x, y, z ], where w is the real part and (x, y, z) form the vector part.
 void FacetedObject::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
+    m_displayQuaternion = q;
     m_displayRotation = pgd::MakeMFromQ(q);
     m_modelValid = false;
 }
