@@ -154,13 +154,13 @@ void SimulationWidget::initializeGL()
 
 void SimulationWidget::paintGL()
 {
-    // camera first
+    // camera first [FIX ME - should probably only create a new camera if it has changed]
     if (m_orthographicProjection)
     {
         float aspectRatio = float(width()) / float(height());
         float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
         float halfViewWidth = halfViewHeight * aspectRatio;
-        m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, -halfViewHeight, halfViewHeight, m_frontClip, m_backClip);
+        m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, halfViewHeight, -halfViewHeight, m_frontClip, m_backClip);
     }
     else
     {
@@ -173,15 +173,19 @@ void SimulationWidget::paintGL()
     m_camera->position = eye;
     m_camera->up = up;
     m_camera->lookAt(centre);
+    m_camera->matrixWorldNeedsUpdate = true;
 
     // draw things to the scene
-    if (m_simulation)
+    static bool firstTime = true;
+    if (m_simulation && firstTime)
     {
         drawModel();
+        firstTime = false;
+        m_renderer->render(*m_scene, *m_camera);
     }
 
     // and render
-    m_renderer->render(*m_scene, *m_camera);
+    // m_renderer->render(*m_scene, *m_camera);
 }
 
 #if 0
@@ -1118,6 +1122,8 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
+#if 0
+
     auto jointList = m_simulation->GetJointList();
     auto drawJointMapIter = m_drawJointMap.begin();
     while (drawJointMapIter != m_drawJointMap.end())
@@ -1250,6 +1256,8 @@ void SimulationWidget::drawModel()
         it->second->setVisible(iter.second->visible());
         it->second->Draw();
     }
+
+#endif
 
     m_drawables.clear();
     for (auto &&it : m_drawBodyMap) m_drawables.push_back(it.second.get());
