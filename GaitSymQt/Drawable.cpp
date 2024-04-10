@@ -1,3 +1,4 @@
+
 /*
  *  Drawable.cpp
  *  GaitSymODE2019
@@ -82,6 +83,17 @@ std::string Drawable::className() const
 const std::vector<FacetedObject *> &Drawable::facetedObjectList() const
 {
     return m_facetedObjectList;
+}
+
+std::shared_ptr<threepp::Scene> Drawable::scene() const
+{
+    return m_scene;
+}
+
+void Drawable::setScene(const std::shared_ptr<threepp::Scene> &newScene)
+{
+    m_scene = newScene;
+    for (auto &&iter : m_facetedObjectList) { iter->setScene(newScene); }
 }
 
 

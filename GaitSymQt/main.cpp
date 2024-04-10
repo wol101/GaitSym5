@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+#if 0
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setRenderableType(QSurfaceFormat::OpenGL);
     fmt.setVersion(3, 3); // OpenGL 3.3
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
     fmt.setOption(QSurfaceFormat::DebugContext, true);
 #endif
     QSurfaceFormat::setDefaultFormat(fmt);
+#endif
 
     QApplication application(argc, argv);
 

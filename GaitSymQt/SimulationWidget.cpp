@@ -82,8 +82,8 @@ void SimulationWidget::initializeGL()
 {
     m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
     m_scene = threepp::Scene::create();
-    m_camera = threepp::OrthographicCamera::create();
-    FacetedObject::setScene(m_scene);
+    // m_camera = threepp::OrthographicCamera::create();
+    m_camera = threepp::PerspectiveCamera::create(30, 2, 0.1f, 100.0f);
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
     m_scene->background = color;
 }
@@ -155,37 +155,33 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     // camera first [FIX ME - should probably only create a new camera if it has changed]
-    if (m_orthographicProjection)
-    {
-        float aspectRatio = float(width()) / float(height());
-        float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
-        float halfViewWidth = halfViewHeight * aspectRatio;
-        m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, halfViewHeight, -halfViewHeight, m_frontClip, m_backClip);
-    }
-    else
-    {
-        float aspectRatio = float(width()) / float(height());
-        m_camera = threepp::PerspectiveCamera::create(m_FOV, aspectRatio, m_frontClip, m_backClip);
-    }
+    // if (m_orthographicProjection)
+    // {
+    //     float aspectRatio = float(width()) / float(height());
+    //     float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+    //     float halfViewWidth = halfViewHeight * aspectRatio;
+    //     m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, halfViewHeight, -halfViewHeight, m_frontClip, m_backClip);
+    // }
+    // else
+    // {
+    //     float aspectRatio = float(width()) / float(height());
+    //     m_camera = threepp::PerspectiveCamera::create(m_FOV, aspectRatio, m_frontClip, m_backClip);
+    // }
     threepp::Vector3 eye(m_COIx - m_cameraVecX * m_cameraDistance, m_COIy - m_cameraVecY * m_cameraDistance, m_COIz - m_cameraVecZ * m_cameraDistance);
     threepp::Vector3 centre(m_COIx, m_COIy, m_COIz);
     threepp::Vector3 up(m_upX, m_upY, m_upZ);
     m_camera->position = eye;
     m_camera->up = up;
     m_camera->lookAt(centre);
-    m_camera->matrixWorldNeedsUpdate = true;
 
     // draw things to the scene
-    static bool firstTime = true;
-    if (m_simulation && firstTime)
+    if (m_simulation)
     {
         drawModel();
-        firstTime = false;
-        m_renderer->render(*m_scene, *m_camera);
     }
 
     // and render
-    // m_renderer->render(*m_scene, *m_camera);
+    m_renderer->render(*m_scene, *m_camera);
 }
 
 #if 0
@@ -1111,6 +1107,7 @@ void SimulationWidget::drawModel()
             auto drawBody = std::make_unique<DrawBody>();
             drawBody->setBody(iter.second.get());
             drawBody->initialise(this);
+            drawBody->setScene(m_scene);
             m_drawBodyMap[iter.first] = std::move(drawBody);
             it = m_drawBodyMap.find(iter.first);
         }

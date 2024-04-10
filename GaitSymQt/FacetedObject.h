@@ -135,8 +135,8 @@ public:
 
     std::string filename() const;
 
-    static std::shared_ptr<threepp::Scene> scene();
-    static void setScene(const std::shared_ptr<threepp::Scene> &newScene);
+    std::shared_ptr<threepp::Scene> scene();
+    void setScene(const std::shared_ptr<threepp::Scene> &newScene);
 
 private:
 
@@ -177,7 +177,7 @@ private:
 
     static MeshStore m_meshStore;
 
-    static std::shared_ptr<threepp::Scene> m_scene;
+    std::shared_ptr<threepp::Scene> m_scene;
     std::shared_ptr<threepp::Mesh> m_mesh;
 };
 

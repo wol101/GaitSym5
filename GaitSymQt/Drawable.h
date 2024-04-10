@@ -12,6 +12,8 @@
 
 #include "PGDMath.h"
 
+#include "threepp/threepp.hpp"
+
 #include <vector>
 #include <string>
 
@@ -37,8 +39,12 @@ public:
 
     const std::vector<FacetedObject *> &facetedObjectList() const;
 
+    std::shared_ptr<threepp::Scene> scene() const;
+    void setScene(const std::shared_ptr<threepp::Scene> &newScene);
+
 protected:
     std::vector<FacetedObject *> m_facetedObjectList;
+    std::shared_ptr<threepp::Scene> m_scene;
 
 #if defined(GAITSYM_DEBUG_BUILD) && defined(GAITSYM_MEMORY_ALLOCATION_DEBUG)
     static uint64_t m_objectCount;
