@@ -80,10 +80,11 @@ SimulationWidget::SimulationWidget(QWidget *parent)
 
 void SimulationWidget::initializeGL()
 {
+    // this is where I would expect to initialise the renderer and the scene but something in the
+    // renderer is not sticky so it needs to be initialised each time paintGL is called
     // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
     // m_scene = threepp::Scene::create();
-    // // m_camera = threepp::OrthographicCamera::create();
-    // m_camera = threepp::PerspectiveCamera::create(30, 2, 0.1f, 100.0f);
+    // m_camera = threepp::OrthographicCamera::create();
     // threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
     // m_scene->background = color;
 }
@@ -154,8 +155,9 @@ void SimulationWidget::initializeGL()
 
 void SimulationWidget::paintGL()
 {
-    //m_renderer->setSize(threepp::WindowSize(width(), height()));
     m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
+    // m_renderer->resetState();
+    // m_renderer->setSize(threepp::WindowSize(width(), height()));
 
     m_scene = threepp::Scene::create();
     // m_camera = threepp::OrthographicCamera::create();
@@ -288,6 +290,7 @@ void SimulationWidget::paintGL()
 
 void SimulationWidget::resizeGL(int width, int height)
 {
+    // m_renderer->setSize(threepp::WindowSize(width, height)); // not needed because I set the size in paintGL
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
     emit EmitResize(openGLWidth, openGLHeight);

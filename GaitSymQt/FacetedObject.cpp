@@ -956,42 +956,40 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
 void FacetedObject::Draw()
 {
     if (m_vertexList.size() == 0) return;
-    // if (!m_mesh)
+    if (!m_mesh)
     {
-        // auto geometry = threepp::BufferGeometry::create();
-        // std::vector<float> position;
-        // position.reserve(m_vertexList.size());
-        // for (size_t i =0; i < m_vertexList.size(); i++) { position.push_back(float(m_vertexList[i])); }
-        // std::vector<float> normal;
-        // normal.reserve(m_normalList.size());
-        // for (size_t i =0; i < m_normalList.size(); i++) { normal.push_back(float(m_normalList[i])); }
-        // std::vector<float> color;
-        // color.reserve(m_colourList.size());
-        // for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(float(m_colourList[i])); }
-        // std::vector<float> uv;
-        // uv.reserve(m_uvList.size());
-        // for (size_t i =0; i < m_uvList.size(); i++) { uv.push_back(float(m_uvList[i])); }
-        // geometry->setAttribute("position", threepp::FloatBufferAttribute::create(position, 3));
-        // geometry->setAttribute("normal", threepp::FloatBufferAttribute::create(normal, 3));
-        // geometry->setAttribute("color", threepp::FloatBufferAttribute::create(color, 3));
-        // geometry->setAttribute("uv", threepp::FloatBufferAttribute::create(uv, 2));
-        // auto material = threepp::MeshBasicMaterial::create();
-        // material->color.setHex(0x00ff00);
-        // material->wireframe = true;
-        // m_mesh = threepp::Mesh::create(geometry, material);
-        // m_scene->add(m_mesh);
-        const auto sphereGeometry = threepp::SphereGeometry::create(0.5f);
-        const auto sphereMaterial = threepp::MeshBasicMaterial::create();
-        sphereMaterial->color.setHex(0x00ffff);
-        sphereMaterial->wireframe = true;
-        m_mesh = threepp::Mesh::create(sphereGeometry, sphereMaterial);
+        auto geometry = threepp::BufferGeometry::create();
+        std::vector<float> position;
+        position.reserve(m_vertexList.size());
+        for (size_t i =0; i < m_vertexList.size(); i++) { position.push_back(float(m_vertexList[i])); }
+        std::vector<float> normal;
+        normal.reserve(m_normalList.size());
+        for (size_t i =0; i < m_normalList.size(); i++) { normal.push_back(float(m_normalList[i])); }
+        std::vector<float> color;
+        color.reserve(m_colourList.size());
+        for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(float(m_colourList[i])); }
+        std::vector<float> uv;
+        uv.reserve(m_uvList.size());
+        for (size_t i =0; i < m_uvList.size(); i++) { uv.push_back(float(m_uvList[i])); }
+        geometry->setAttribute("position", threepp::FloatBufferAttribute::create(position, 3));
+        geometry->setAttribute("normal", threepp::FloatBufferAttribute::create(normal, 3));
+        geometry->setAttribute("color", threepp::FloatBufferAttribute::create(color, 3));
+        geometry->setAttribute("uv", threepp::FloatBufferAttribute::create(uv, 2));
+        auto material = threepp::MeshBasicMaterial::create();
+        material->color.setHex(0x00ff00);
+        material->wireframe = true;
+        m_mesh = threepp::Mesh::create(geometry, material);
+        // const auto sphereGeometry = threepp::SphereGeometry::create(0.5f);
+        // const auto sphereMaterial = threepp::MeshBasicMaterial::create();
+        // sphereMaterial->color.setHex(0x00ffff);
+        // sphereMaterial->wireframe = true;
+        // m_mesh = threepp::Mesh::create(sphereGeometry, sphereMaterial);
         qDebug() << QTime::currentTime().toString() << " Mesh Created";
     }
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);
     m_mesh->scale.set(m_displayScale.x, m_displayScale.y, m_displayScale.z);
     m_mesh->quaternion.set(m_displayQuaternion.x, m_displayQuaternion.y, m_displayQuaternion.z, m_displayQuaternion.n);
     if (m_scene) { m_scene->add(m_mesh); }
-    qDebug() << QTime::currentTime().toString() << " Position " << GSUtil::ToString(m_displayPosition).c_str();
 
 #if 0
 #if QT_VERSION >= 0x060000
