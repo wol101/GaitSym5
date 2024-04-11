@@ -41,6 +41,9 @@
 
 #include <cmath>
 
+#include <QDebug>
+#include <sstream>
+
 
 using namespace threepp;
 
@@ -568,6 +571,11 @@ struct GLRenderer::Impl {
 
         object->modelViewMatrix.multiplyMatrices(camera->matrixWorldInverse, *object->matrixWorld);
         object->normalMatrix.getNormalMatrix(object->modelViewMatrix);
+
+        std::stringstream out;
+        out << "object->modelViewMatrix\n" << object->modelViewMatrix << "\n";
+        out << "camera->projectionMatrix\n" << camera->projectionMatrix << "\n";
+        qDebug() << out.str().c_str() << "\n";
 
         renderBufferDirect(camera, scene, geometry, material, object, group);
 

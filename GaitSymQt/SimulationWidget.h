@@ -285,8 +285,8 @@ private:
     std::vector<size_t> m_hitsIndexByZ;
     QString m_lastMenuItem;
 
+    QOpenGLVertexArrayObject m_vao;
 #if 0
-    QOpenGLVertexArrayObject *m_vao = nullptr;
     QOpenGLShaderProgram *m_facetedObjectShader = nullptr;
     QOpenGLShaderProgram *m_fixedColourObjectShader = nullptr;
 #endif

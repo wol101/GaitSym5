@@ -53,10 +53,6 @@ FacetedObject::FacetedObject()
 
 FacetedObject::~FacetedObject()
 {
-    if (m_mesh)
-    {
-        m_mesh->removeFromParent();
-    }
 }
 
 
@@ -959,7 +955,8 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
 
 void FacetedObject::Draw()
 {
-    if (!m_mesh)
+    if (m_vertexList.size() == 0) return;
+    // if (!m_mesh)
     {
         // auto geometry = threepp::BufferGeometry::create();
         // std::vector<float> position;
@@ -988,12 +985,12 @@ void FacetedObject::Draw()
         sphereMaterial->color.setHex(0x00ffff);
         sphereMaterial->wireframe = true;
         m_mesh = threepp::Mesh::create(sphereGeometry, sphereMaterial);
-        if (m_scene) { m_scene->add(m_mesh); }
         qDebug() << QTime::currentTime().toString() << " Mesh Created";
     }
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);
     m_mesh->scale.set(m_displayScale.x, m_displayScale.y, m_displayScale.z);
     m_mesh->quaternion.set(m_displayQuaternion.x, m_displayQuaternion.y, m_displayQuaternion.z, m_displayQuaternion.n);
+    if (m_scene) { m_scene->add(m_mesh); }
     qDebug() << QTime::currentTime().toString() << " Position " << GSUtil::ToString(m_displayPosition).c_str();
 
 #if 0

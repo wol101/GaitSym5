@@ -80,12 +80,12 @@ SimulationWidget::SimulationWidget(QWidget *parent)
 
 void SimulationWidget::initializeGL()
 {
-    m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
-    m_scene = threepp::Scene::create();
-    // m_camera = threepp::OrthographicCamera::create();
-    m_camera = threepp::PerspectiveCamera::create(30, 2, 0.1f, 100.0f);
-    threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
-    m_scene->background = color;
+    // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
+    // m_scene = threepp::Scene::create();
+    // // m_camera = threepp::OrthographicCamera::create();
+    // m_camera = threepp::PerspectiveCamera::create(30, 2, 0.1f, 100.0f);
+    // threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
+    // m_scene->background = color;
 }
 
 #if 0
@@ -154,6 +154,15 @@ void SimulationWidget::initializeGL()
 
 void SimulationWidget::paintGL()
 {
+    //m_renderer->setSize(threepp::WindowSize(width(), height()));
+    m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
+
+    m_scene = threepp::Scene::create();
+    // m_camera = threepp::OrthographicCamera::create();
+    m_camera = threepp::PerspectiveCamera::create(30, 2, 0.1f, 100.0f);
+    threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
+    m_scene->background = color;
+
     // camera first [FIX ME - should probably only create a new camera if it has changed]
     // if (m_orthographicProjection)
     // {
@@ -182,6 +191,7 @@ void SimulationWidget::paintGL()
 
     // and render
     m_renderer->render(*m_scene, *m_camera);
+    m_scene->clear();
 }
 
 #if 0
@@ -278,7 +288,6 @@ void SimulationWidget::paintGL()
 
 void SimulationWidget::resizeGL(int width, int height)
 {
-    m_renderer->setSize(threepp::WindowSize(width, height));
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
     emit EmitResize(openGLWidth, openGLHeight);
@@ -1107,10 +1116,11 @@ void SimulationWidget::drawModel()
             auto drawBody = std::make_unique<DrawBody>();
             drawBody->setBody(iter.second.get());
             drawBody->initialise(this);
-            drawBody->setScene(m_scene);
+            // drawBody->setScene(m_scene);
             m_drawBodyMap[iter.first] = std::move(drawBody);
             it = m_drawBodyMap.find(iter.first);
         }
+        it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->axes()->setVisible(iter.second->visible());
         it->second->meshEntity1()->setVisible(m_drawBodyMesh1 && iter.second->visible());
