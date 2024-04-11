@@ -997,13 +997,8 @@ void FacetedObject::Draw()
             material->transparent = false;
         }
         m_mesh = threepp::Mesh::create(geometry, material);
-        m_mesh->castShadow = true;
-        m_mesh->receiveShadow = true;
-        // const auto sphereGeometry = threepp::SphereGeometry::create(0.5f);
-        // const auto sphereMaterial = threepp::MeshBasicMaterial::create();
-        // sphereMaterial->color.setHex(0x00ffff);
-        // sphereMaterial->wireframe = true;
-        // m_mesh = threepp::Mesh::create(sphereGeometry, sphereMaterial);
+        // m_mesh->castShadow = true;
+        // m_mesh->receiveShadow = true;
         qDebug() << QTime::currentTime().toString() << " Mesh Created";
     }
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);

@@ -156,7 +156,7 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
-    m_renderer->shadowMap().enabled = true;
+    // m_renderer->shadowMap().enabled = true;
 
     m_scene = threepp::Scene::create();
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
