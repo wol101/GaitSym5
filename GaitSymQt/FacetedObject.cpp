@@ -975,9 +975,26 @@ void FacetedObject::Draw()
         geometry->setAttribute("normal", threepp::FloatBufferAttribute::create(normal, 3));
         geometry->setAttribute("color", threepp::FloatBufferAttribute::create(color, 3));
         geometry->setAttribute("uv", threepp::FloatBufferAttribute::create(uv, 2));
-        auto material = threepp::MeshBasicMaterial::create();
-        material->color.setHex(0x00ff00);
-        material->wireframe = true;
+        auto material = threepp::MeshStandardMaterial::create();
+        if (m_blendFraction < 1.0)
+        {
+            material->vertexColors = true;
+        }
+        else
+        {
+            material->color.setRGB(m_blendColour.redF(), m_blendColour.greenF(), m_blendColour.blueF());
+        }
+        material->roughness = 0.5;
+        material->metalness = 0.5;
+        if (m_blendColour.alphaF() < 1.0)
+        {
+            material->transparent = true;
+            material->opacity = m_blendColour.alphaF();
+        }
+        else
+        {
+            material->transparent = false;
+        }
         m_mesh = threepp::Mesh::create(geometry, material);
         // const auto sphereGeometry = threepp::SphereGeometry::create(0.5f);
         // const auto sphereMaterial = threepp::MeshBasicMaterial::create();
@@ -989,6 +1006,7 @@ void FacetedObject::Draw()
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);
     m_mesh->scale.set(m_displayScale.x, m_displayScale.y, m_displayScale.z);
     m_mesh->quaternion.set(m_displayQuaternion.x, m_displayQuaternion.y, m_displayQuaternion.z, m_displayQuaternion.n);
+    if (m_visible == false) return;
     if (m_scene) { m_scene->add(m_mesh); }
 
 #if 0

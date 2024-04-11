@@ -297,6 +297,7 @@ private:
     std::shared_ptr<threepp::Scene> m_scene;
     std::shared_ptr<threepp::Camera> m_camera;
     std::shared_ptr<threepp::OrbitControls> m_orbitControls;
+    bool m_wireframe = false;
 
 };
 

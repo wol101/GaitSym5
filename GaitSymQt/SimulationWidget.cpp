@@ -186,6 +186,14 @@ void SimulationWidget::paintGL()
         drawModel();
     }
 
+    if (m_wireframe)
+    {
+        auto material = threepp::MeshBasicMaterial::create();
+        material->color.setHex(0x00ff00);
+        material->wireframe = true;
+        m_scene->overrideMaterial = material;
+    }
+
     // and render
     m_renderer->render(*m_scene, *m_camera);
     m_scene->clear();
