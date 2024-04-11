@@ -990,12 +990,15 @@ void FacetedObject::Draw()
         {
             material->transparent = true;
             material->opacity = m_blendColour.alphaF();
+            material->side = threepp::Side::Double;
         }
         else
         {
             material->transparent = false;
         }
         m_mesh = threepp::Mesh::create(geometry, material);
+        m_mesh->castShadow = true;
+        m_mesh->receiveShadow = true;
         // const auto sphereGeometry = threepp::SphereGeometry::create(0.5f);
         // const auto sphereMaterial = threepp::MeshBasicMaterial::create();
         // sphereMaterial->color.setHex(0x00ffff);

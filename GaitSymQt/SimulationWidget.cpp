@@ -156,6 +156,7 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
+    m_renderer->shadowMap().enabled = true;
 
     m_scene = threepp::Scene::create();
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
@@ -179,6 +180,29 @@ void SimulationWidget::paintGL()
     m_camera->position = eye;
     m_camera->up = up;
     m_camera->lookAt(centre);
+
+    // some lights
+    auto light1 = threepp::PointLight::create(threepp::Color::yellow);
+    light1->castShadow = true;
+    light1->shadow->bias = -0.005f;
+    light1->distance = 0;
+    light1->position.set(-100, 100, 100);
+
+    auto light2 = threepp::PointLight::create(threepp::Color::white);
+    light2->castShadow = true;
+    light2->shadow->bias = -0.005f;
+    light2->distance = 0;
+    light2->position.set(100, 100, 100);
+
+    auto light3 = threepp::PointLight::create(threepp::Color::purple);
+    light3->castShadow = true;
+    light3->shadow->bias = -0.005f;
+    light3->distance = 0;
+    light3->position.set(0, -100, 0);
+
+    m_scene->add(light1);
+    m_scene->add(light2);
+    m_scene->add(light3);
 
     // draw things to the scene
     if (m_simulation)
