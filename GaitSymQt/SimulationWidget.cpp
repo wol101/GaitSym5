@@ -156,28 +156,23 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
-    // m_renderer->resetState();
-    // m_renderer->setSize(threepp::WindowSize(width(), height()));
 
     m_scene = threepp::Scene::create();
-    // m_camera = threepp::OrthographicCamera::create();
-    m_camera = threepp::PerspectiveCamera::create(30, 2, 0.1f, 100.0f);
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
     m_scene->background = color;
 
-    // camera first [FIX ME - should probably only create a new camera if it has changed]
-    // if (m_orthographicProjection)
-    // {
-    //     float aspectRatio = float(width()) / float(height());
-    //     float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
-    //     float halfViewWidth = halfViewHeight * aspectRatio;
-    //     m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, halfViewHeight, -halfViewHeight, m_frontClip, m_backClip);
-    // }
-    // else
-    // {
-    //     float aspectRatio = float(width()) / float(height());
-    //     m_camera = threepp::PerspectiveCamera::create(m_FOV, aspectRatio, m_frontClip, m_backClip);
-    // }
+    if (m_orthographicProjection)
+    {
+        float aspectRatio = float(width()) / float(height());
+        float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+        float halfViewWidth = halfViewHeight * aspectRatio;
+        m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, halfViewHeight, -halfViewHeight, m_frontClip, m_backClip);
+    }
+    else
+    {
+        float aspectRatio = float(width()) / float(height());
+        m_camera = threepp::PerspectiveCamera::create(m_FOV, aspectRatio, m_frontClip, m_backClip);
+    }
     threepp::Vector3 eye(m_COIx - m_cameraVecX * m_cameraDistance, m_COIy - m_cameraVecY * m_cameraDistance, m_COIz - m_cameraVecZ * m_cameraDistance);
     threepp::Vector3 centre(m_COIx, m_COIy, m_COIz);
     threepp::Vector3 up(m_upX, m_upY, m_upZ);
@@ -290,7 +285,6 @@ void SimulationWidget::paintGL()
 
 void SimulationWidget::resizeGL(int width, int height)
 {
-    // m_renderer->setSize(threepp::WindowSize(width, height)); // not needed because I set the size in paintGL
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
     emit EmitResize(openGLWidth, openGLHeight);
