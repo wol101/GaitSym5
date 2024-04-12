@@ -80,106 +80,66 @@ SimulationWidget::SimulationWidget(QWidget *parent)
 
 void SimulationWidget::initializeGL()
 {
-    // this is where I would expect to initialise the renderer and the scene but something in the
-    // renderer is not sticky so it needs to be initialised each time paintGL is called
-    // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
-    // m_scene = threepp::Scene::create();
-    // m_camera = threepp::OrthographicCamera::create();
-    // threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
-    // m_scene->background = color;
+    // if m_renderer was working properly, this is where it would be defined
+    // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(4096, 4096));
+    m_scene = threepp::Scene::create();
+    m_orthographicCamera = threepp::OrthographicCamera::create();
+    m_perspectiveCamera = threepp::PerspectiveCamera::create();
 }
 
-#if 0
-void SimulationWidget::initializeGL()
-{
-    initializeOpenGLFunctions();
-
-    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-    qDebug() << "Driver Version String:" << versionString;
-    qDebug() << "Current Context:" << format();
-
-    int openGLVersion = format().majorVersion() * 100 + format().minorVersion() * 10;
-    if (openGLVersion < 330)
-    {
-        QString errorMessage = QString("This application requires OpenGL 3.3 or greater.\nCurrent version is %1.\nApplication will abort.").arg(versionString);
-        QMessageBox::critical(this, tr("GaitSym5"), errorMessage);
-        exit(EXIT_FAILURE);
-    }
-
-    // Create a vertex array object. In OpenGL ES 2.0 and OpenGL 2.x
-    // implementations this is optional and support may not be present
-    // at all. Nonetheless the below code works in all cases and makes
-    // sure there is a VAO when one is needed.
-    m_vao = new QOpenGLVertexArrayObject(this);
-    m_vao->create();
-    QOpenGLVertexArrayObject::Binder vaoBinder(m_vao);
-
-    glClearColor(GLclampf(m_backgroundColour.redF()), GLclampf(m_backgroundColour.greenF()), GLclampf(m_backgroundColour.blueF()), GLclampf(m_backgroundColour.alphaF()));
-
-    m_facetedObjectShader = new QOpenGLShaderProgram(this);
-    m_facetedObjectShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/opengl/vertex_shader.glsl");
-    m_facetedObjectShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/opengl/fragment_shader.glsl");
-    m_facetedObjectShader->bindAttributeLocation("vertex", 0); // instead of "layout (location = 0)" in shader
-    m_facetedObjectShader->bindAttributeLocation("vertexNormal", 1); // instead of "layout (location = 1)" in shader
-    m_facetedObjectShader->bindAttributeLocation("vertexColor", 2); // instead of "layout (location = 2)" in shader
-    m_facetedObjectShader->bindAttributeLocation("vertexUV", 3); // instead of "layout (location = 3)" in shader
-    m_facetedObjectShader->link();
-
-    m_facetedObjectShader->bind();
-
-    m_facetedObjectShader->setUniformValue("diffuse", QVector4D(0.5, 0.5, 0.5, 1.0) );  // diffuse
-    m_facetedObjectShader->setUniformValue("ambient", QVector4D(0.5, 0.5, 0.5, 1.0) );  // ambient
-    m_facetedObjectShader->setUniformValue("specular", QVector4D(0.5, 0.5, 0.5, 1.0) );  // specular reflectivity
-    m_facetedObjectShader->setUniformValue("shininess", 5.0f ); // specular shininess
-    m_facetedObjectShader->setUniformValue("blendColour", QVector4D(1.0, 1.0, 1.0, 1.0) );  // blend colour
-    m_facetedObjectShader->setUniformValue("blendFraction", 0.0f ); // blend fraction
-    m_facetedObjectShader->setUniformValue("hasTexture", 0 ); // use texture fraction
-
-    m_facetedObjectShader->release();
-
-    m_fixedColourObjectShader = new QOpenGLShaderProgram(this);
-    m_fixedColourObjectShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/opengl/vertex_shader_2.glsl");
-    m_fixedColourObjectShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/opengl/fragment_shader_2.glsl");
-    m_fixedColourObjectShader->bindAttributeLocation("vertex", 0);
-    m_fixedColourObjectShader->bindAttributeLocation("vertexColor", 1);
-    m_fixedColourObjectShader->link();
-
-    m_fixedColourObjectShader->bind();
-    m_fixedColourObjectShader->release();
-
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_BLEND);
-
-}
-#endif
 
 void SimulationWidget::paintGL()
 {
-    m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(width(), height()));
+    threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
+#if 1
+    m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
+#else
+    // m_renderer->resetState();
+    m_renderer->setSize(windowSize);
+#endif
     // m_renderer->shadowMap().enabled = true;
 
-    m_scene = threepp::Scene::create();
+    // m_scene = threepp::Scene::create();
+    m_scene->clear();
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
     m_scene->background = color;
 
-    if (m_orthographicProjection)
-    {
-        float aspectRatio = float(width()) / float(height());
-        float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
-        float halfViewWidth = halfViewHeight * aspectRatio;
-        m_camera = threepp::OrthographicCamera::create(-halfViewWidth, halfViewWidth, halfViewHeight, -halfViewHeight, m_frontClip, m_backClip);
-    }
-    else
-    {
-        float aspectRatio = float(width()) / float(height());
-        m_camera = threepp::PerspectiveCamera::create(m_FOV, aspectRatio, m_frontClip, m_backClip);
-    }
+    float aspectRatio = windowSize.aspect();
     threepp::Vector3 eye(m_COIx - m_cameraVecX * m_cameraDistance, m_COIy - m_cameraVecY * m_cameraDistance, m_COIz - m_cameraVecZ * m_cameraDistance);
     threepp::Vector3 centre(m_COIx, m_COIy, m_COIz);
     threepp::Vector3 up(m_upX, m_upY, m_upZ);
-    m_camera->position = eye;
-    m_camera->up = up;
-    m_camera->lookAt(centre);
+    float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+    float halfViewWidth = halfViewHeight * aspectRatio;
+    m_orthographicCamera->left = -halfViewWidth;
+    m_orthographicCamera->right = halfViewWidth;
+    m_orthographicCamera->top = halfViewHeight;
+    m_orthographicCamera->bottom = -halfViewHeight;
+    m_orthographicCamera->near = m_frontClip;
+    m_orthographicCamera->far = m_backClip;
+    m_orthographicCamera->position = eye;
+    m_orthographicCamera->up = up;
+    m_orthographicCamera->lookAt(centre);
+    m_orthographicCamera->updateProjectionMatrix();
+    m_orthographicCamera->updateMatrixWorld(true);
+    m_perspectiveCamera->fov = m_FOV;
+    m_perspectiveCamera->aspect = aspectRatio;
+    m_perspectiveCamera->near = m_frontClip;
+    m_perspectiveCamera->far = m_backClip;
+    m_perspectiveCamera->position = eye;
+    m_perspectiveCamera->up = up;
+    m_perspectiveCamera->lookAt(centre);
+    m_perspectiveCamera->updateProjectionMatrix();
+    m_perspectiveCamera->updateMatrixWorld(true);
+
+    // I need my own copies of the matrices
+    m_proj.setToIdentity();
+    if (m_orthographicProjection) { m_proj.ortho(-halfViewWidth, halfViewWidth, -halfViewHeight, halfViewHeight, m_frontClip, m_backClip); }
+    else { m_proj.perspective(m_FOV, aspectRatio, m_frontClip, m_backClip); }
+
+    // set the view matrix
+    m_view.setToIdentity();
+    m_view.lookAt(QVector3D(eye.x, eye.z, eye.z), QVector3D(centre.x, centre.y, centre.z), QVector3D(up.x, up.y, up.z));
+
 
     // some lights
     auto light1 = threepp::PointLight::create(threepp::Color::yellow);
@@ -210,6 +170,20 @@ void SimulationWidget::paintGL()
         drawModel();
     }
 
+    // the 3d cursor
+    // qDebug() << "Cursor " << m_cursor3DPosition.x() << " " << m_cursor3DPosition.y() << " " << m_cursor3DPosition.z();
+    m_cursor3D->SetDisplayPosition(double(m_cursor3DPosition.x()), double(m_cursor3DPosition.y()), double(m_cursor3DPosition.z()));
+    m_cursor3D->SetDisplayScale(double(m_cursorRadius), double(m_cursorRadius), double(m_cursorRadius));
+    m_cursor3D->setSimulationWidget(this);
+    m_cursor3D->Draw();
+
+    // the global axes
+    m_globalAxes->SetDisplayPosition(0, 0, 0);
+    m_globalAxes->SetDisplayScale(double(m_axesScale), double(m_axesScale), double(m_axesScale));
+    m_globalAxes->setSimulationWidget(this);
+    m_globalAxes->Draw();
+
+
     if (m_wireframe)
     {
         auto material = threepp::MeshBasicMaterial::create();
@@ -219,8 +193,14 @@ void SimulationWidget::paintGL()
     }
 
     // and render
-    m_renderer->render(*m_scene, *m_camera);
-    m_scene->clear();
+    if (m_orthographicProjection)
+    {
+        m_renderer->render(*m_scene, *m_orthographicCamera);
+    }
+    else
+    {
+        m_renderer->render(*m_scene, *m_perspectiveCamera);
+    }
 }
 
 #if 0
@@ -319,6 +299,9 @@ void SimulationWidget::resizeGL(int width, int height)
 {
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
+    // if m_renderer was working properly, this is where the resize would happen
+    // threepp::WindowSize windowSize(openGLWidth, openGLHeight);
+    // m_renderer->setSize(windowSize);
     emit EmitResize(openGLWidth, openGLHeight);
 }
 

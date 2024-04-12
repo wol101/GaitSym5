@@ -624,12 +624,7 @@ void MainWindow::setUIFoV(float v)
 void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
 {
     showNormal();
-#if QT_VERSION >= 0x050E00
    QScreen *screen = this->screen();
-#else
-   QScreen *screen = this->window()->windowHandle()->screen();
-#endif
-
     if (!screen)
     {
         setStatusString("Error: Unable to access screen for resize", 0);

@@ -24,12 +24,6 @@
 #include <QDir>
 #include <QDebug>
 
-#include <QOpenGLFunctions_3_3_Core>
-#if QT_VERSION >= 0x060000
-#include <QOpenGLVersionFunctionsFactory>
-#endif
-
-
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -1006,122 +1000,6 @@ void FacetedObject::Draw()
     m_mesh->quaternion.set(m_displayQuaternion.x, m_displayQuaternion.y, m_displayQuaternion.z, m_displayQuaternion.n);
     if (m_visible == false) return;
     if (m_scene) { m_scene->add(m_mesh); }
-
-#if 0
-#if QT_VERSION >= 0x060000
-        QOpenGLFunctions_3_3_Core *f = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_3_3_Core>(QOpenGLContext::currentContext());
-#else
-    QOpenGLFunctions_3_3_Core *f = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_3_3_Core>();
-#endif
-
-    if (m_VBOAllocated == false)
-    {
-        m_VBOAllocated = true;
-        // order vertex data as x, y, z, xn, yn, zn, r, g, b, u, v
-        size_t vertBufSize = m_vertexList.size() + m_normalList.size() + m_colourList.size()  + m_uvList.size();
-        std::unique_ptr<GLfloat []> vertBuf = std::make_unique<GLfloat []>(vertBufSize);
-        GLfloat *vertBufPtr = vertBuf.get();
-        double *vertexListPtr = m_vertexList.data();
-        double *normalListPtr = m_normalList.data();
-        double *colourListPtr = m_colourList.data();
-        double *uvListPtr = m_uvList.data();
-        for (size_t i = 0; i < m_vertexList.size() / 3; i++)
-        {
-            *vertBufPtr++ = GLfloat(*vertexListPtr++);
-            *vertBufPtr++ = GLfloat(*vertexListPtr++);
-            *vertBufPtr++ = GLfloat(*vertexListPtr++);
-            *vertBufPtr++ = GLfloat(*normalListPtr++);
-            *vertBufPtr++ = GLfloat(*normalListPtr++);
-            *vertBufPtr++ = GLfloat(*normalListPtr++);
-            *vertBufPtr++ = GLfloat(*colourListPtr++);
-            *vertBufPtr++ = GLfloat(*colourListPtr++);
-            *vertBufPtr++ = GLfloat(*colourListPtr++);
-            *vertBufPtr++ = GLfloat(*uvListPtr++);
-            *vertBufPtr++ = GLfloat(*uvListPtr++);
-        }
-
-        // Setup our vertex buffer object.
-        m_VBO.create();
-        m_VBO.bind();
-        m_VBO.allocate(vertBuf.get(), int(vertBufSize * sizeof(GLfloat)));
-        m_VBO.release();
-    }
-    if (m_visible == false) return;
-
-    // select the rendering program
-    m_simulationWidget->facetedObjectShader()->bind();
-
-    // select the vertex attribute bindings for the program.
-    m_VBO.bind();
-    int stride = 11 * sizeof(GLfloat);
-    int offset = 0;
-    m_simulationWidget->facetedObjectShader()->enableAttributeArray("vertex");
-    m_simulationWidget->facetedObjectShader()->setAttributeBuffer("vertex", GL_FLOAT, offset, 3, stride);
-    offset += 3 * sizeof(GLfloat);
-    m_simulationWidget->facetedObjectShader()->enableAttributeArray("vertexNormal");
-    m_simulationWidget->facetedObjectShader()->setAttributeBuffer("vertexNormal", GL_FLOAT, offset, 3, stride);
-    offset += 3 * sizeof(GLfloat);
-    m_simulationWidget->facetedObjectShader()->enableAttributeArray("vertexColour");
-    m_simulationWidget->facetedObjectShader()->setAttributeBuffer("vertexColour", GL_FLOAT, offset, 3, stride);
-    offset += 3 * sizeof(GLfloat);
-    m_simulationWidget->facetedObjectShader()->enableAttributeArray("vertexUV");
-    m_simulationWidget->facetedObjectShader()->setAttributeBuffer("vertexUV", GL_FLOAT, offset, 2, stride);
-
-    m_VBO.release();
-
-    // set the uniforms
-    QMatrix4x4 model = this->model(); // this recalculates the model matrix
-    QMatrix4x4 modelView = m_simulationWidget->view() * model;
-    m_simulationWidget->facetedObjectShader()->setUniformValue("mvMatrix", modelView);
-    QMatrix4x4 modelViewProjection = m_simulationWidget->proj() * modelView;
-    m_simulationWidget->facetedObjectShader()->setUniformValue("mvpMatrix", modelViewProjection);
-    QMatrix3x3 normalMatrix = modelView.normalMatrix();
-    m_simulationWidget->facetedObjectShader()->setUniformValue("normalMatrix", normalMatrix);
-
-    GLfloat r = GLfloat(m_blendColour.redF());
-    GLfloat g = GLfloat(m_blendColour.greenF());
-    GLfloat b = GLfloat(m_blendColour.blueF());
-    GLfloat alpha = GLfloat(m_blendColour.alphaF());
-    GLfloat blendFraction = GLfloat(m_blendFraction);
-    GLfloat ambientProportion = 0.2f; // new for per vertex colour
-    GLfloat diffuseProportion = 0.8f;
-    GLfloat specularProportion = 0.3f;
-    GLfloat specularPower = 20.0f;
-    QVector4D ambient(ambientProportion, ambientProportion, ambientProportion, alpha);
-    QVector4D diffuse(diffuseProportion, diffuseProportion, diffuseProportion, alpha);
-    QVector4D specular(specularProportion, specularProportion, specularProportion, alpha);
-    QVector4D blendColour(r, g, b, alpha);
-    m_simulationWidget->facetedObjectShader()->setUniformValue("ambient", ambient);
-    m_simulationWidget->facetedObjectShader()->setUniformValue("diffuse", diffuse);
-    m_simulationWidget->facetedObjectShader()->setUniformValue("specular", specular);
-    m_simulationWidget->facetedObjectShader()->setUniformValue("shininess", specularPower);
-    m_simulationWidget->facetedObjectShader()->setUniformValue("blendColour", blendColour);
-    m_simulationWidget->facetedObjectShader()->setUniformValue("blendFraction", blendFraction);
-    // decal is set to avoid z-fighting for decals (0 is normal, 1 and higher will be put in front)
-    m_simulationWidget->facetedObjectShader()->setUniformValue("decal", GLfloat(m_decal));
-
-    if (m_texture)
-    {
-        f->glActiveTexture(GL_TEXTURE0);
-        m_simulationWidget->facetedObjectShader()->setUniformValue("textureSampler", 0);
-        m_simulationWidget->facetedObjectShader()->setUniformValue("hasTexture", true);
-        m_texture->bind();
-        f->glDrawArrays(GL_TRIANGLES, 0, GLsizei(m_vertexList.size() / 3));
-        m_texture->release();
-    }
-    else
-    {
-        m_simulationWidget->facetedObjectShader()->setUniformValue("hasTexture", false);
-        f->glDrawArrays(GL_TRIANGLES, 0, GLsizei(m_vertexList.size() / 3));
-    }
-
-    m_simulationWidget->facetedObjectShader()->disableAttributeArray("vertex");
-    m_simulationWidget->facetedObjectShader()->disableAttributeArray("vertexNormal");
-    m_simulationWidget->facetedObjectShader()->disableAttributeArray("vertexColour");
-    m_simulationWidget->facetedObjectShader()->disableAttributeArray("vertexUV");
-
-    m_simulationWidget->facetedObjectShader()->release();
-#endif
 }
 
 // Write a FacetedObject out as a POVRay file

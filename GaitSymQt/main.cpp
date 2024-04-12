@@ -19,9 +19,7 @@
 #include <QOpenGLFunctions>
 #include <QMessageBox>
 #include <QTimer>
-#if QT_VERSION >= 0x060000
 #include <QColorSpace>
-#endif
 
 #if defined(GAITSYM_DEBUG_BUILD) && defined(Q_OS_WIN)
 #include <crtdbg.h>
@@ -36,12 +34,6 @@ int main(int argc, char *argv[])
 
     // read in the Preferences file
     Preferences::Read();
-
-//    QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL); // AA_UseOpenGLES not currently supported
-#if QT_VERSION < 0x060000
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
 
 #if 0
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
@@ -71,34 +63,6 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication application(argc, argv);
-
-    try
-    {
-        QOffscreenSurface surf;
-        surf.create();
-        QOpenGLContext ctx;
-        ctx.create();
-        ctx.makeCurrent(&surf);
-        const char *p = reinterpret_cast<const char *>(ctx.functions()->glGetString(GL_VERSION));
-        std::string glVersionString(p ? p : "");
-        p  = reinterpret_cast<const char *>(ctx.functions()->glGetString(GL_EXTENSIONS));
-        std::string glExtensionsString(p ? p : "");
-        double glVersion = std::stod(glVersionString);
-        qDebug () << glVersionString.c_str();
-        qDebug () << glExtensionsString.c_str();
-        if (glVersion <= 3.2)
-        {
-            QString errorMessage = QString("This application requires OpenGL 3.3 or greater.\nCurrent version is %1.\nApplication will abort.").arg(glVersionString.c_str());
-            QMessageBox::critical(nullptr, "GaitSym5", errorMessage);
-            exit(EXIT_FAILURE);
-        }
-    }
-    catch (...)
-    {
-        QString errorMessage = QString("This application requires OpenGL 3.3 or greater.\nUnknown failure initialising OpenGL.\nApplication will abort.");
-        QMessageBox::critical(nullptr, "GaitSym5", errorMessage);
-        exit(EXIT_FAILURE);
-    }
 
     int styleCode = Preferences::valueInt("StyleCode");
     QStringList styles = QStyleFactory::keys();

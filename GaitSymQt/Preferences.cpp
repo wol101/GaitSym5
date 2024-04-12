@@ -21,10 +21,6 @@
 
 #include <cfloat>
 
-#if QT_VERSION < 0x060000
-#define QMetaType(x) (x)
-#endif
-
 const QString Preferences::applicationName("GaitSym5");
 const QString Preferences::organizationName("AnimalSimulationLaboratory");
 QSettings Preferences::m_qtSettings(QSettings::IniFormat, QSettings::UserScope, Preferences::getOrganizationName(), Preferences::getApplicationName());
@@ -82,11 +78,7 @@ QByteArray Preferences::ExportData()
         setting.setAttribute("display", QString::number(item.display));
         setting.setAttribute("label", item.label);
 
-#if QT_VERSION < 0x060000
-        QMetaType::Type type = static_cast<QMetaType::Type>(item.value.type());
-#else
         QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());
-#endif
         switch (type)
         {
         case QMetaType::QStringList:
@@ -179,11 +171,7 @@ void Preferences::ParseQDomElement(const QDomElement &docElem)
             {
                 item.key = e.attribute("key");
                 QString typeName = e.attribute("type");
-#if QT_VERSION < 0x060000
-                item.type = static_cast<QMetaType::Type>(QVariant::nameToType(typeName.toUtf8()));
-#else
                 item.type = static_cast<QMetaType::Type>(QMetaType::fromName(typeName.toUtf8()).id());
-#endif
                 item.display = toBool(e.attribute("display"));
                 item.label = e.attribute("label");
                 QStringList stringList;
@@ -527,11 +515,7 @@ void Preferences::insert(const QString &key, const QVariant &value)
     }
     else
     {
-#if QT_VERSION < 0x060000
-        auto typeID = value.type();
-#else
         auto typeID = value.typeId();
-#endif
         if (static_cast<QMetaType::Type>(typeID) != QMetaType::QByteArray)
             qDebug("Preferences::value %s \"%s\" missing", value.typeName(), qUtf8Printable(key));
         item.key = key;
@@ -574,11 +558,7 @@ void Preferences::insert(const QString &key, const QVariant &value, const QVaria
     }
     else
     {
-#if QT_VERSION < 0x060000
-        auto typeID = value.type();
-#else
         auto typeID = value.typeId();
-#endif
         item.key = key;
         item.display = false;
         item.label = key;
@@ -626,11 +606,7 @@ QVariant Preferences::qtValue(const QString &key, const QVariant &defaultValue)
         if (m_qtSettings.contains(newKey2))
         {
             QString typeName = m_qtSettings.value(newKey2).toString();
-#if QT_VERSION < 0x060000
-            variant.convert(QVariant::nameToType(typeName.toUtf8())); // convert to the type stored in the settings
-#else
             variant.convert(QMetaType::fromName(typeName.toUtf8())); // convert to the type stored in the settings
-#endif
         }
         else
         {

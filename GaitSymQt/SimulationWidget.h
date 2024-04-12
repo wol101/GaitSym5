@@ -285,18 +285,13 @@ private:
     std::vector<size_t> m_hitsIndexByZ;
     QString m_lastMenuItem;
 
-    QOpenGLVertexArrayObject m_vao;
-#if 0
-    QOpenGLShaderProgram *m_facetedObjectShader = nullptr;
-    QOpenGLShaderProgram *m_fixedColourObjectShader = nullptr;
-#endif
     QMatrix4x4 m_proj;
     QMatrix4x4 m_view;
 
     std::unique_ptr<threepp::GLRenderer> m_renderer;
     std::shared_ptr<threepp::Scene> m_scene;
-    std::shared_ptr<threepp::Camera> m_camera;
-    std::shared_ptr<threepp::OrbitControls> m_orbitControls;
+    std::shared_ptr<threepp::OrthographicCamera> m_orthographicCamera;
+    std::shared_ptr<threepp::PerspectiveCamera> m_perspectiveCamera;
     bool m_wireframe = false;
 
 };
