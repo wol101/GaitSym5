@@ -81,7 +81,7 @@ SimulationWidget::SimulationWidget(QWidget *parent)
 void SimulationWidget::initializeGL()
 {
     // if m_renderer was working properly, this is where it would be defined
-    // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(4096, 4096));
+    m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(4096, 4096));
     m_scene = threepp::Scene::create();
     m_orthographicCamera = threepp::OrthographicCamera::create();
     m_perspectiveCamera = threepp::PerspectiveCamera::create();
@@ -94,8 +94,8 @@ void SimulationWidget::paintGL()
 #if 1
     m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
 #else
-    // m_renderer->resetState();
     m_renderer->setSize(windowSize);
+    m_renderer->resetState();
 #endif
     // m_renderer->shadowMap().enabled = true;
 
@@ -1141,8 +1141,6 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-#if 0
-
     auto jointList = m_simulation->GetJointList();
     auto drawJointMapIter = m_drawJointMap.begin();
     while (drawJointMapIter != m_drawJointMap.end())
@@ -1165,6 +1163,7 @@ void SimulationWidget::drawModel()
             m_drawJointMap[iter.first] = std::move(drawJoint);
             it = m_drawJointMap.find(iter.first);
         }
+        it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
         it->second->Draw();
@@ -1192,6 +1191,7 @@ void SimulationWidget::drawModel()
             m_drawGeomMap[iter.first] = std::move(drawGeom);
             it = m_drawGeomMap.find(iter.first);
         }
+        it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
         it->second->Draw();
@@ -1219,6 +1219,7 @@ void SimulationWidget::drawModel()
             m_drawMarkerMap[iter.first] = std::move(drawMarker);
             it = m_drawMarkerMap.find(iter.first);
         }
+        it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
         it->second->Draw();
@@ -1246,6 +1247,7 @@ void SimulationWidget::drawModel()
             m_drawMuscleMap[iter.first] = std::move(drawMuscle);
             it = m_drawMuscleMap.find(iter.first);
         }
+        it->second->setScene(m_scene);
         it->second->setVisible(iter.second->visible());
         it->second->Draw();
     }
@@ -1272,11 +1274,10 @@ void SimulationWidget::drawModel()
             m_drawFluidSacMap[iter.first] = std::move(drawFluidSac);
             it = m_drawFluidSacMap.find(iter.first);
         }
+        it->second->setScene(m_scene);
         it->second->setVisible(iter.second->visible());
         it->second->Draw();
     }
-
-#endif
 
     m_drawables.clear();
     for (auto &&it : m_drawBodyMap) m_drawables.push_back(it.second.get());
