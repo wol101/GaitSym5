@@ -57,8 +57,8 @@
 #include <regex>
 #include <stdio.h>
 
-SimulationWidget::SimulationWidget(QWidget *parent)
-    : QOpenGLWidget(parent)
+SimulationWidget::SimulationWidget()
+    : QOpenGLWindow()
 {
     m_cursorColour = Preferences::valueQColor("CursorColour");
     m_cursorLevel = size_t(Preferences::valueInt("CursorLevel"));
@@ -73,8 +73,6 @@ SimulationWidget::SimulationWidget(QWidget *parent)
     m_trackball = std::make_unique<Trackball>();
 
     setCursor(Qt::CrossCursor);
-    setFocusPolicy(Qt::WheelFocus);
-    setMouseTracking(true);
 }
 
 
@@ -91,11 +89,11 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-#if 1
+#if 0
     m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
 #else
     m_renderer->setSize(windowSize);
-    m_renderer->resetState();
+    // m_renderer->resetState();
 #endif
     // m_renderer->shadowMap().enabled = true;
 
@@ -297,12 +295,14 @@ void SimulationWidget::paintGL()
 
 void SimulationWidget::resizeGL(int width, int height)
 {
+    makeCurrent(); // only needed if OpenGL commands get called
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
     // if m_renderer was working properly, this is where the resize would happen
     // threepp::WindowSize windowSize(openGLWidth, openGLHeight);
     // m_renderer->setSize(windowSize);
     emit EmitResize(openGLWidth, openGLHeight);
+    doneCurrent();
 }
 
 void SimulationWidget::mousePressEvent(QMouseEvent *event)

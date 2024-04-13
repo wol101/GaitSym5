@@ -205,7 +205,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     boxLayout->setContentsMargins(0, 0, 0, 0);
     boxLayout->setSpacing(0);
     m_simulationWidget = new SimulationWidget();
-    boxLayout->addWidget(m_simulationWidget);
+    QWidget *container = QWidget::createWindowContainer(m_simulationWidget);
+    boxLayout->addWidget(container);
     m_simulationWidget->setMainWindow(this);
 
     // connect the ViewControlWidget to the GLWidget

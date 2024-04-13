@@ -15,7 +15,7 @@
 
 #include "threepp/threepp.hpp"
 
-#include <QOpenGLWidget>
+#include <QOpenGLWindow>
 #include <QElapsedTimer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLFunctions_3_3_Core>
@@ -43,12 +43,12 @@ struct SimpleLight
     void SetPosition(GLfloat x, GLfloat y, GLfloat z, GLfloat a) { position[0] = x; position[1] = y; position[2] = z; position[3] = a; }
 };
 
-class SimulationWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
+class SimulationWidget : public QOpenGLWindow, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
 
 public:
-    SimulationWidget(QWidget *parent = nullptr);
+    SimulationWidget();
 
     Simulation *simulation() const;
     void setSimulation(Simulation *simulation);
