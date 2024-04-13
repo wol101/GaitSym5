@@ -89,6 +89,9 @@ void SimulationWidget::paintGL()
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
         m_renderer->shadowMap().enabled = true;
+        m_renderer->physicallyCorrectLights = false;
+        m_renderer->checkShaderErrors = false;
+        m_renderer->autoClear = false;
     }
     else { m_renderer->setSize(windowSize); }
     if (!m_scene) { m_scene = threepp::Scene::create(); }
@@ -137,27 +140,31 @@ void SimulationWidget::paintGL()
 
 
     // some lights
-    auto light1 = threepp::PointLight::create(threepp::Color::yellow);
-    light1->castShadow = true;
-    light1->shadow->bias = -0.005f;
-    light1->distance = 0;
-    light1->position.set(-100, 100, 100);
-
-    auto light2 = threepp::PointLight::create(threepp::Color::white);
-    light2->castShadow = true;
-    light2->shadow->bias = -0.005f;
-    light2->distance = 0;
-    light2->position.set(100, 100, 100);
-
-    auto light3 = threepp::PointLight::create(threepp::Color::purple);
-    light3->castShadow = true;
-    light3->shadow->bias = -0.005f;
-    light3->distance = 0;
-    light3->position.set(0, -100, 0);
-
+    auto light1 = threepp::AmbientLight::create(threepp::Color::yellow, 0.2);
     m_scene->add(light1);
+
+    auto light2 = threepp::DirectionalLight::create(threepp::Color::purple);
+    light2->shadow->camera->as<threepp::OrthographicCamera>()->top = 15;
+    light2->shadow->camera->as<threepp::OrthographicCamera>()->bottom = -15;
+    light2->shadow->camera->as<threepp::OrthographicCamera>()->left = 15;
+    light2->shadow->camera->as<threepp::OrthographicCamera>()->right = -15;
+    light2->position.set(100, -100, 100);
+    light2->castShadow = true;
     m_scene->add(light2);
+
+    auto light3 = threepp::PointLight::create(threepp::Color::green);
+    light3->castShadow = true;
+    light3->distance = 200;
+    light3->position.set(0, 100, 100);
+    light3->shadow->mapSize.set(2048, 2048);
     m_scene->add(light3);
+
+    auto light4 = threepp::SpotLight::create(threepp::Color::peachpuff);
+    light4->distance = 200;
+    light4->angle = threepp::math::degToRad(5);
+    light4->position.set(0, -100, 20);
+    light4->castShadow = true;
+    m_scene->add(light4);
 
     // draw things to the scene
     if (m_simulation)
@@ -188,6 +195,7 @@ void SimulationWidget::paintGL()
     }
 
     // and render
+    m_renderer->clear();
     if (m_orthographicProjection)
     {
         m_renderer->render(*m_scene, *m_orthographicCamera);
