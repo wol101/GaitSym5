@@ -79,25 +79,22 @@ SimulationWidget::SimulationWidget()
 void SimulationWidget::initializeGL()
 {
     // if m_renderer was working properly, this is where it would be defined
-    m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(4096, 4096));
-    m_scene = threepp::Scene::create();
-    m_orthographicCamera = threepp::OrthographicCamera::create();
-    m_perspectiveCamera = threepp::PerspectiveCamera::create();
+    // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(4096, 4096));
+    // m_scene = threepp::Scene::create();
+    // m_orthographicCamera = threepp::OrthographicCamera::create();
+    // m_perspectiveCamera = threepp::PerspectiveCamera::create();
 }
 
 
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-#if 0
-    m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
-#else
-    m_renderer->setSize(windowSize);
-    // m_renderer->resetState();
-#endif
-    // m_renderer->shadowMap().enabled = true;
+    if (!m_renderer) { m_renderer = std::make_unique<threepp::GLRenderer>(windowSize); }
+    else { m_renderer->setSize(windowSize); }
+    if (!m_scene) { m_scene = threepp::Scene::create(); }
+    if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
+    if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
 
-    // m_scene = threepp::Scene::create();
     m_scene->clear();
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
     m_scene->background = color;
