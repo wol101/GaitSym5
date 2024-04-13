@@ -138,6 +138,12 @@ public:
     std::shared_ptr<threepp::Scene> scene();
     void setScene(const std::shared_ptr<threepp::Scene> &newScene);
 
+    bool castShadow() const;
+    void setCastShadow(bool newCastShadow);
+
+    bool receiveShadow() const;
+    void setReceiveShadow(bool newReceiveShadow);
+
 private:
 
     std::vector<double> m_vertexList;
@@ -179,6 +185,8 @@ private:
 
     std::shared_ptr<threepp::Scene> m_scene;
     std::shared_ptr<threepp::Mesh> m_mesh;
+    bool m_castShadow = true;
+    bool m_receiveShadow = false;
 };
 
 #endif

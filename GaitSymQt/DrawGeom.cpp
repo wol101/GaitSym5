@@ -124,6 +124,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         size_t ny = nx;
         m_facetedObject = std::make_unique<FacetedCheckerboard>(nx, ny, checkerSize, checkerSize, m_geomColor1, m_geomColor2);
         m_facetedObject->setSimulationWidget(simulationWidget);
+        m_facetedObject->setReceiveShadow(true);
         m_facetedObjectList.push_back(m_facetedObject.get());
         return;
     }

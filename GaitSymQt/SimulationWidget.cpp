@@ -78,18 +78,18 @@ SimulationWidget::SimulationWidget()
 
 void SimulationWidget::initializeGL()
 {
-    // if m_renderer was working properly, this is where it would be defined
-    // m_renderer = std::make_unique<threepp::GLRenderer>(threepp::WindowSize(4096, 4096));
-    // m_scene = threepp::Scene::create();
-    // m_orthographicCamera = threepp::OrthographicCamera::create();
-    // m_perspectiveCamera = threepp::PerspectiveCamera::create();
+    // initialisation has been moved to paintGL because threepp::GLRenderer requires a valid framebuffer
 }
 
 
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-    if (!m_renderer) { m_renderer = std::make_unique<threepp::GLRenderer>(windowSize); }
+    if (!m_renderer)
+    {
+        m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
+        m_renderer->shadowMap().enabled = true;
+    }
     else { m_renderer->setSize(windowSize); }
     if (!m_scene) { m_scene = threepp::Scene::create(); }
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
@@ -292,14 +292,10 @@ void SimulationWidget::paintGL()
 
 void SimulationWidget::resizeGL(int width, int height)
 {
-    makeCurrent(); // only needed if OpenGL commands get called
+    // all the camera resize code is in paintGL because we need to recalculate anyway
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
-    // if m_renderer was working properly, this is where the resize would happen
-    // threepp::WindowSize windowSize(openGLWidth, openGLHeight);
-    // m_renderer->setSize(windowSize);
     emit EmitResize(openGLWidth, openGLHeight);
-    doneCurrent();
 }
 
 void SimulationWidget::mousePressEvent(QMouseEvent *event)

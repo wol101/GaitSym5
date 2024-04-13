@@ -991,8 +991,8 @@ void FacetedObject::Draw()
             material->transparent = false;
         }
         m_mesh = threepp::Mesh::create(geometry, material);
-        // m_mesh->castShadow = true;
-        // m_mesh->receiveShadow = true;
+        m_mesh->castShadow = m_castShadow;
+        m_mesh->receiveShadow = m_receiveShadow;
         qDebug() << QTime::currentTime().toString() << " Mesh Created";
     }
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);
@@ -2386,6 +2386,26 @@ std::shared_ptr<threepp::Scene> FacetedObject::scene()
 void FacetedObject::setScene(const std::shared_ptr<threepp::Scene> &newScene)
 {
     m_scene = newScene;
+}
+
+bool FacetedObject::castShadow() const
+{
+    return m_castShadow;
+}
+
+void FacetedObject::setCastShadow(bool newCastShadow)
+{
+    m_castShadow = newCastShadow;
+}
+
+bool FacetedObject::receiveShadow() const
+{
+    return m_receiveShadow;
+}
+
+void FacetedObject::setReceiveShadow(bool newReceiveShadow)
+{
+    m_receiveShadow = newReceiveShadow;
 }
 
 QColor FacetedObject::blendColour() const
