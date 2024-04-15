@@ -85,7 +85,7 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-    if (!m_renderer)
+    if (!m_renderer || m_renderer->shadowMap().enabled) // with shadows enabled Qt embedding seems to require a new renderer each paint
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
         m_renderer->shadowMap().enabled = true;
@@ -93,7 +93,10 @@ void SimulationWidget::paintGL()
         m_renderer->checkShaderErrors = false;
         m_renderer->autoClear = false;
     }
-    else { m_renderer->setSize(windowSize); }
+    else
+    {
+        m_renderer->setSize(windowSize);
+    }
     if (!m_scene) { m_scene = threepp::Scene::create(); }
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
