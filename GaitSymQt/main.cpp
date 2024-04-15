@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
     // read in the Preferences file
     Preferences::Read();
 
-#if 0
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setRenderableType(QSurfaceFormat::OpenGL);
     fmt.setVersion(3, 3); // OpenGL 3.3
@@ -51,16 +50,11 @@ int main(int argc, char *argv[])
     fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
     fmt.setSwapInterval(1);
     fmt.setSamples(Preferences::valueInt("OpenGLMultisample", 8));
-#if QT_VERSION < 0x060000
-    fmt.setColorSpace(QSurfaceFormat::sRGBColorSpace);
-#else
     fmt.setColorSpace(QColorSpace(QColorSpace::SRgb));
-#endif
 #if defined(GAITSYM_DEBUG_BUILD)
     fmt.setOption(QSurfaceFormat::DebugContext, true);
 #endif
     QSurfaceFormat::setDefaultFormat(fmt);
-#endif
 
     QApplication application(argc, argv);
 
