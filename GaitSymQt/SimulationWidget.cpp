@@ -91,7 +91,7 @@ void SimulationWidget::paintGL()
         m_renderer->shadowMap().enabled = true;
         m_renderer->physicallyCorrectLights = false;
         m_renderer->checkShaderErrors = false;
-        m_renderer->autoClear = false;
+        m_renderer->autoClear = true;
     }
     else
     {
@@ -198,7 +198,6 @@ void SimulationWidget::paintGL()
     }
 
     // and render
-    m_renderer->clear();
     if (m_orthographicProjection)
     {
         m_renderer->render(*m_scene, *m_orthographicCamera);

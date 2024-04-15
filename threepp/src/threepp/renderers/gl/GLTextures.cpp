@@ -119,9 +119,6 @@ void gl::GLTextures::uploadTexture(TextureProperties* textureProperties, Texture
 
     GLint textureType = GL_TEXTURE_2D;
 
-    std::string className(typeid(texture).name());
-    std::cerr << className << "\n";
-
     auto dataTexture3D = dynamic_cast<DataTexture3D*>(&texture);
     if (dataTexture3D) {
         textureType = GL_TEXTURE_3D;
