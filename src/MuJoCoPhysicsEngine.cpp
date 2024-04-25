@@ -60,7 +60,53 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::CreateTree() // FIX ME - currently assumes a single connected model in the world
+std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
+{
+    std::vector<std::string> bodyNames;
+    bodyNames.reserve(simulation()->GetBodyList()->size());
+    for (auto &&iter : *simulation()->GetBodyList()) { bodyNames.push_back(iter.first); }
+    std::vector<bool> connectivity(bodyNames.size() * bodyNames.size());
+    for (auto &&iter : *simulation()->GetJointList())
+    {
+        size_t i1 = std::numeric_limits<size_t>::max(), i2 = std::numeric_limits<size_t>::max();
+        for (size_t i = 0; i < bodyNames.size(); i++)
+        {
+            if (bodyNames[i] == iter.second->body1()->name())
+            {
+                i1 = i;
+                break;
+            }
+        }
+        for (size_t i = 0; i < bodyNames.size(); i++)
+        {
+            if (bodyNames[i] == iter.second->body2()->name())
+            {
+                i2 = i;
+                break;
+            }
+        }
+        assert(i1 !=  std::numeric_limits<size_t>::max());
+        assert(i2 !=  std::numeric_limits<size_t>::max());
+        connectivity[i1 + bodyNames.size() * i2] = true;
+        connectivity[i2 + bodyNames.size() * i1] = true;
+    }
+
+    m_connectedGroups.clear();
+    for (size_t i1 = 0; i1 < bodyNames.size(); i1++)
+    {
+        for (size_t i2 = 0; i2 < bodyNames.size(); i2++)
+        {
+            if (connectivity[i1 + bodyNames.size() * i2])
+        }
+    }
+
+}
+
+bool MuCoJoPhysicsEngine::IsConnected()
+{
+}
+
+std::string *MuJoCoPhysicsEngine::CreateTree()
 {
     // with no hint just assume the biggest body is the root
     Body *maxMassBody = nullptr;

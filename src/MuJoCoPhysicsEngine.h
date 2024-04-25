@@ -35,6 +35,7 @@ private:
         std::vector<std::unique_ptr<TreeBody>> childList;
     };
 
+    std::string *CreateConnectedGroups();
     std::string *CreateTree();
     void InsertMJBodyIDs(TreeBody *treeBody);
 
@@ -60,6 +61,8 @@ private:
     std::vector<Joint *> m_jointsLeftToInclude;
     std::vector<TreeBody *> m_bodiesLeftToInclude;
     std::vector<TreeBody *> m_flatTreeBodyList;
+
+    std::vector<std::map<std::string, Body *>> m_connectedGroups;
 
     int m_freeJointCount = 0;
 };
