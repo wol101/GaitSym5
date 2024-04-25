@@ -62,6 +62,30 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
 
 std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
 {
+    // algorithm
+    // get a body from the unconnected list
+    // find all the bodies it is connected to using the joint list
+    // check all theses bodies for connections and repeat
+    // each time a body is found connected, remove it from the uncconected list
+    // once no more new connections are found move to the next body in the unconnected list
+
+    std::map<std::string, Body *> startingList;
+    for (auto &&iter : *simulation()->GetBodyList()) { startingList[iter.first] = iter.second.get(); }
+
+    while (startingList.size())
+    {
+        std::map<std::string, Body *> toTestList;
+        toTestList[startingList.begin()->first] = startingList.begin()->second;
+        while (toTestList.size())
+        {
+            for (auto &&iter : *simulation()->GetJointList())
+            {
+
+            }
+        }
+
+    }
+
     std::vector<std::string> bodyNames;
     bodyNames.reserve(simulation()->GetBodyList()->size());
     for (auto &&iter : *simulation()->GetBodyList()) { bodyNames.push_back(iter.first); }
@@ -102,9 +126,6 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
 
 }
 
-bool MuCoJoPhysicsEngine::IsConnected()
-{
-}
 
 std::string *MuJoCoPhysicsEngine::CreateTree()
 {
