@@ -65,13 +65,6 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
 
 std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
 {
-    // algorithm
-    // get a body from the unconnected list
-    // find all the bodies it is connected to using the joint list
-    // check all theses bodies for connections and repeat
-    // each time a body is found connected, remove it from the uncconected list
-    // once no more new connections are found move to the next body in the unconnected list
-
     std::map<std::string, Body *> untestedBodies;
     for (auto &&iter : *simulation()->GetBodyList()) { untestedBodies[iter.first] = iter.second.get(); }
     std::map<std::string, Joint *> untestedJoints;
@@ -80,23 +73,23 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
     while (untestedBodies.size())
     {
         std::map<std::string, Body *> bodiesToTest;
-        auto bodyIter = untestedBodies.erase(untestedBodies.begin());
-        bodiesToTest[bodyIter->first] = bodyIter->second;
+        auto bodyHandle = untestedBodies.extract(untestedBodies.begin());
+        bodiesToTest[bodyHandle.key()] = bodyHandle.mapped();
         auto currentConnectedGroup = std::make_unique<std::map<std::string, Body *>>();
-        currentConnectedGroup->at(bodyIter->first) = bodyIter->second;
-        while (bodiesToTest.size())
+        (*currentConnectedGroup)[bodyHandle.key()] = bodyHandle.mapped();
+        while (bodiesToTest.size() && untestedJoints.size())
         {
-            auto bodyIter = bodiesToTest.erase(bodiesToTest.begin());
+            bodyHandle = bodiesToTest.extract(bodiesToTest.begin());
             for (auto jointIter = untestedJoints.begin(); jointIter != untestedJoints.end(); /* no increment */)
             {
-                if (jointIter->second->body1() == bodyIter->second || jointIter->second->body2() == bodyIter->second)
+                if (jointIter->second->body1() == bodyHandle.mapped() || jointIter->second->body2() == bodyHandle.mapped())
                 {
-                    Body *linkedBody = jointIter->second->body1() == bodyIter->second ? jointIter->second->body2() : jointIter->second->body1();
+                    Body *linkedBody = jointIter->second->body1() == bodyHandle.mapped() ? jointIter->second->body2() : jointIter->second->body1();
                     auto linkedBodyIter = untestedBodies.find(linkedBody->name());
                     if (linkedBodyIter != untestedBodies.end()) // needed because we might have loops
                     {
                         bodiesToTest[linkedBody->name()] = linkedBody;
-                        currentConnectedGroup->at(linkedBody->name()) = linkedBody;
+                        (*currentConnectedGroup)[linkedBody->name()] = linkedBody;
                         untestedBodies.erase(linkedBodyIter);
                     }
                     else
