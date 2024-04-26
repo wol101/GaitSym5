@@ -39,6 +39,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     err = CreateTree();
     if (err) { return err; }
 
+// #define DEBUG_MUJOCO_XML
 #ifdef DEBUG_MUJOCO_XML
     std::ofstream of("D:\\wis\\Scratch\\test.xml");
     of << m_mjXML;
@@ -106,7 +107,7 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
                 }
             }
         }
-#define DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
+// #define DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
 #ifdef DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
         std::cerr << "New Group\n";
         for (auto && iter : *currentConnectedGroup)
@@ -154,7 +155,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
         m_bodiesLeftToInclude.push_back(&m_rootTreeBodyList[i]);
         while (m_bodiesLeftToInclude.size())
         {
-#define DEBUG_MUJOCO_CREATE_TREE
+// #define DEBUG_MUJOCO_CREATE_TREE
 #ifdef DEBUG_MUJOCO_CREATE_TREE
             for (auto &&iter : m_bodiesLeftToInclude)
             {
@@ -196,11 +197,6 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
                 m_jointLoopDetector.insert(newTreeBody->body);
                 currentBody->childList.push_back(std::move(newTreeBody));
                 iter = m_jointsLeftToInclude.erase(iter);
-            }
-            if (m_jointsLeftToInclude.size() > 0 && m_bodiesLeftToInclude.size() == 0)
-            {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Body list exhausted before joint list"));
-                return lastErrorPtr();
             }
         }
     }
