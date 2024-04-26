@@ -13,6 +13,8 @@
 #include "Contact.h"
 #include "GSUtil.h"
 
+#include <deque>
+
 using namespace std::string_literals;
 
 MuJoCoPhysicsEngine::MuJoCoPhysicsEngine()
@@ -58,7 +60,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     MoveBodies();
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
-    InsertMJBodyIDs(&m_rootTreeBody);
+    for (auto &&iter : m_rootTreeBodyList) { InsertMJBodyIDs(&iter); }
 
     return nullptr;
 }
@@ -106,6 +108,7 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
         }
 #define DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
 #ifdef DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
+        std::cerr << "New Group\n";
         for (auto && iter : *currentConnectedGroup)
         {
             std::cerr << "currentConnectedGroup[" << iter.first << "] = " << iter.second->name() << "\n";
@@ -121,91 +124,102 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
 std::string *MuJoCoPhysicsEngine::CreateTree()
 {
     // with no hint just assume the biggest body is the root
+    for (auto &&groupIter : m_connectedGroups)
+    {
     Body *maxMassBody = nullptr;
     double maxMass = -std::numeric_limits<double>::max();
-    for (auto &&iter : *simulation()->GetBodyList())
-    {
-        Body *body = iter.second.get();
-        double mass = body->GetMass();
-        if (mass > maxMass)
+        for (auto &&bodyIter : *groupIter)
         {
-            maxMass = mass;
-            maxMassBody = body;
+            Body *body = bodyIter.second;
+            double mass = body->GetMass();
+            if (mass > maxMass)
+            {
+                maxMass = mass;
+                maxMassBody = body;
+            }
         }
+        m_rootTreeBodyList.emplace_back();
+        m_rootTreeBodyList.back().body = maxMassBody;
     }
 
-    m_rootTreeBody.body = maxMassBody;
-    m_jointLoopDetector.clear();
-    m_jointLoopDetector.insert(m_rootTreeBody.body);
-    m_jointsLeftToInclude.clear();
-    m_jointsLeftToInclude.reserve(simulation()->GetJointList()->size());
-    for (auto &&iter : *simulation()->GetJointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
-    m_bodiesLeftToInclude.clear();
-    m_bodiesLeftToInclude.reserve(simulation()->GetBodyList()->size());
-    m_bodiesLeftToInclude.push_back(&m_rootTreeBody);
-    while (m_bodiesLeftToInclude.size())
+    for (size_t i = 0; i < m_rootTreeBodyList.size(); i++)
     {
+        m_jointLoopDetector.clear();
+        m_jointLoopDetector.insert(m_rootTreeBodyList[i].body);
+        m_jointsLeftToInclude.clear();
+        m_jointsLeftToInclude.reserve(simulation()->GetJointList()->size());
+        for (auto &&iter : *simulation()->GetJointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
+        m_bodiesLeftToInclude.clear();
+        m_bodiesLeftToInclude.reserve(simulation()->GetBodyList()->size());
+        m_bodiesLeftToInclude.push_back(&m_rootTreeBodyList[i]);
+        while (m_bodiesLeftToInclude.size())
+        {
+#define DEBUG_MUJOCO_CREATE_TREE
 #ifdef DEBUG_MUJOCO_CREATE_TREE
-        for (auto &&iter : m_bodiesLeftToInclude)
-        {
-            std::cerr << "TreeBodies left " << m_bodiesLeftToInclude.size() << "\n";
-            std::cerr << "TreeBody " << iter->body->name() << "\n";
-            for (auto &&iter2 : iter->childList)
+            for (auto &&iter : m_bodiesLeftToInclude)
             {
-                std::cerr << "Child " << iter2->body->name() << "\n";
+                std::cerr << "TreeBodies left " << m_bodiesLeftToInclude.size() << "\n";
+                std::cerr << "TreeBody " << iter->body->name() << "\n";
+                for (auto &&iter2 : iter->childList)
+                {
+                    std::cerr << "Child " << iter2->body->name() << "\n";
+                }
             }
-        }
-        for (auto &&iter : m_jointLoopDetector)
-        {
-            std::cerr << "Loop detector bodies left " << m_jointLoopDetector.size() << "\n";
-            std::cerr << "Body " << iter->name() << "\n";
-         }
+            for (auto &&iter : m_jointLoopDetector)
+            {
+                std::cerr << "Loop detector bodies left " << m_jointLoopDetector.size() << "\n";
+                std::cerr << "Body " << iter->name() << "\n";
+            }
 #endif
-        TreeBody *currentBody = m_bodiesLeftToInclude.back();
-        m_bodiesLeftToInclude.pop_back();
-        auto iter = m_jointsLeftToInclude.begin();
-        while (iter != m_jointsLeftToInclude.end())
-        {
-            if ((*iter)->body1() != currentBody->body && (*iter)->body2() != currentBody->body)
+            TreeBody *currentBody = m_bodiesLeftToInclude.back();
+            m_bodiesLeftToInclude.pop_back();
+            auto iter = m_jointsLeftToInclude.begin();
+            while (iter != m_jointsLeftToInclude.end())
             {
-                iter++;
-                continue;
+                if ((*iter)->body1() != currentBody->body && (*iter)->body2() != currentBody->body)
+                {
+                    iter++;
+                    continue;
+                }
+                // we have found a link to a child
+                if (m_jointLoopDetector.count(currentBody->body) > 1)
+                {
+                    if (currentBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", currentBody->body->name().c_str()));
+                    else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", "World"));
+                    return lastErrorPtr();
+                }
+                std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
+                newTreeBody->body = ((*iter)->body1() == currentBody->body) ? (*iter)->body2() : (*iter)->body1();
+                newTreeBody->parent = currentBody;
+                newTreeBody->jointToParent = *iter;
+                m_bodiesLeftToInclude.push_back(newTreeBody.get());
+                m_jointLoopDetector.insert(newTreeBody->body);
+                currentBody->childList.push_back(std::move(newTreeBody));
+                iter = m_jointsLeftToInclude.erase(iter);
             }
-            // we have found a link to a child
-            if (m_jointLoopDetector.count(currentBody->body) > 1)
+            if (m_jointsLeftToInclude.size() > 0 && m_bodiesLeftToInclude.size() == 0)
             {
-                if (currentBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", currentBody->body->name().c_str()));
-                else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", "World"));
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Body list exhausted before joint list"));
                 return lastErrorPtr();
             }
-            std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
-            newTreeBody->body = ((*iter)->body1() == currentBody->body) ? (*iter)->body2() : (*iter)->body1();
-            newTreeBody->parent = currentBody;
-            newTreeBody->jointToParent = *iter;
-            m_bodiesLeftToInclude.push_back(newTreeBody.get());
-            m_jointLoopDetector.insert(newTreeBody->body);
-            currentBody->childList.push_back(std::move(newTreeBody));
-            iter = m_jointsLeftToInclude.erase(iter);
-        }
-        if (m_jointsLeftToInclude.size() > 0 && m_bodiesLeftToInclude.size() == 0)
-        {
-            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Body list exhausted before joint list"));
-            return lastErrorPtr();
         }
     }
 
 #ifdef DEBUG_MUJOCO_CREATE_TREE
-    std::deque<TreeBody *> toProcess;
-    toProcess.push_back(&m_rootTreeBody);
-    while (toProcess.size())
+    for (auto &&iter : m_rootTreeBodyList)
     {
-        std::cerr << "TreeBody " << toProcess.front()->body->name() << "\n";
-        for (auto &&iter2 : toProcess.front()->childList)
+        std::deque<TreeBody *> toProcess;
+        toProcess.push_back(&iter);
+        while (toProcess.size())
         {
-            std::cerr << "Child " << iter2->body->name() << "\n";
-            toProcess.push_back(iter2.get());
+            std::cerr << "TreeBody " << toProcess.front()->body->name() << "\n";
+            for (auto &&iter2 : toProcess.front()->childList)
+            {
+                std::cerr << "Child " << iter2->body->name() << "\n";
+                toProcess.push_back(iter2.get());
+            }
+            toProcess.pop_front();
         }
-        toProcess.pop_front();
     }
 #endif
 
@@ -230,7 +244,10 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     }
 
     // this creates the whole model recursively
-    CreateBody(m_rootTreeBody);
+    for (auto &&iter : m_rootTreeBodyList)
+    {
+        CreateBody(iter);
+    }
 
     XMLTerminateTag(&m_mjXML, "worldbody"s);
     XMLTerminateTag(&m_mjXML, "mujoco"s);
@@ -418,7 +435,9 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         int jnt_type = m_mjModel->jnt_type[jointID];
         int jnt_qposadr = m_mjModel->jnt_qposadr[jointID];
         int jnt_dofadr = m_mjModel->jnt_dofadr[jointID];
-        std::string name(mj_id2name(m_mjModel, mjOBJ_JOINT, int(jointID)));
+        int jnt_bodyid = m_mjModel->jnt_bodyid[jointID];
+        std::string jointName(mj_id2name(m_mjModel, mjOBJ_JOINT, int(jointID)));
+        std::string bodyName(mj_id2name(m_mjModel, mjOBJ_BODY, int(jnt_bodyid)));
         switch (jnt_type)
         {
         case mjJNT_FREE:
@@ -428,17 +447,16 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             pgd::Quaternion q(m_mjData->qpos[jnt_qposadr + 3], m_mjData->qpos[jnt_qposadr + 4], m_mjData->qpos[jnt_qposadr + 5], m_mjData->qpos[jnt_qposadr + 6]);
             pgd::Vector3 v(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
             pgd::Vector3 av(m_mjData->qvel[jnt_dofadr + 3], m_mjData->qvel[jnt_dofadr + 4], m_mjData->qvel[jnt_dofadr + 5]);
-            std::cerr << "Joint Name = " << name << "\n";
+            std::cerr << "Joint Name = " << jointName << "\n";
             std::cerr << "Position = " << GSUtil::ToString(p) << "\n";
             std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
             std::cerr << "Velocity = " << GSUtil::ToString(v) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
 #endif
-            // we currently only suport a single free body so it will always be linked to the m_rootTreeBody - FIX ME
-            Body *body = m_rootTreeBody.body;
+            Body *body = simulation()->GetBody(bodyName);
             if (!body)
             {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" root body not found", name.c_str()));
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" body not found", bodyName.c_str()));
                 return lastErrorPtr();
             }
             pgd::Vector3 p = body->GetPosition();
@@ -457,14 +475,14 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
 #ifdef DEBUG_MUJOCO_MOVE_BODIES
             double a = m_mjData->qpos[jnt_qposadr];
             double av = m_mjData->qvel[jnt_dofadr];
-            Joint *joint = simulation()->GetJoint(name);
+            Joint *joint = simulation()->GetJoint(jointName);
             pgd::Quaternion rotation = joint->GetWorldRotation();
             pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
             pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
             pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->GetWorldAngularVelocity());
             double angle; pgd::Vector3 axis;
             pgd::MakeAxisAngleFromQ(rotation, &axis, &angle);
-            std::cerr << "Joint Name = " << name << "\n";
+            std::cerr << "Joint Name = " << jointName << "\n";
             std::cerr << "Angle = " << GSUtil::ToString(a) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
             std::cerr << "Axis = " << GSUtil::ToString(axis) << " Angle = " << pgd::RadToDeg(angle) << " degrees\n";
@@ -472,10 +490,10 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             std::cerr << "Euler Angles = " << GSUtil::ToString(eulerAngles) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::ToString(angularVelocity) << "\n";
 #endif
-            Joint *joint = simulation()->GetJoint(name);
+            Joint *joint = simulation()->GetJoint(jointName);
             if (!joint)
             {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", name.c_str()));
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
                 return lastErrorPtr();
             }
             pgd::Quaternion rotation = joint->GetWorldRotation();
@@ -487,7 +505,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             break;
         }
         default:
-            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", name.c_str()));
+            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", jointName.c_str()));
             return lastErrorPtr();
         }
     }

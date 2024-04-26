@@ -56,7 +56,7 @@ private:
 
     std::string m_mjXML;
 
-    TreeBody m_rootTreeBody;
+    std::vector<TreeBody> m_rootTreeBodyList;
     std::multiset<Body *> m_jointLoopDetector;
     std::vector<Joint *> m_jointsLeftToInclude;
     std::vector<TreeBody *> m_bodiesLeftToInclude;
