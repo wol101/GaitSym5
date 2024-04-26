@@ -62,7 +62,7 @@ private:
     std::vector<TreeBody *> m_bodiesLeftToInclude;
     std::vector<TreeBody *> m_flatTreeBodyList;
 
-    std::vector<std::map<std::string, Body *>> m_connectedGroups;
+    std::vector<std::unique_ptr<std::map<std::string, Body *>>> m_connectedGroups;
 
     int m_freeJointCount = 0;
 };

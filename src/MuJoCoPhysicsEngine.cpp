@@ -31,6 +31,9 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     if (err) { return err; }
 
     // create the MuJoCo xml versions of the main elements
+    err = CreateConnectedGroups();
+    if (err) { return err; }
+
     err = CreateTree();
     if (err) { return err; }
 
@@ -69,62 +72,57 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
     // each time a body is found connected, remove it from the uncconected list
     // once no more new connections are found move to the next body in the unconnected list
 
-    std::map<std::string, Body *> startingList;
-    for (auto &&iter : *simulation()->GetBodyList()) { startingList[iter.first] = iter.second.get(); }
+    std::map<std::string, Body *> untestedBodies;
+    for (auto &&iter : *simulation()->GetBodyList()) { untestedBodies[iter.first] = iter.second.get(); }
+    std::map<std::string, Joint *> untestedJoints;
+    for (auto &&iter : *simulation()->GetJointList()) { untestedJoints[iter.first] = iter.second.get(); }
 
-    while (startingList.size())
+    while (untestedBodies.size())
     {
-        std::map<std::string, Body *> toTestList;
-        toTestList[startingList.begin()->first] = startingList.begin()->second;
-        while (toTestList.size())
+        std::map<std::string, Body *> bodiesToTest;
+        auto bodyIter = untestedBodies.erase(untestedBodies.begin());
+        bodiesToTest[bodyIter->first] = bodyIter->second;
+        auto currentConnectedGroup = std::make_unique<std::map<std::string, Body *>>();
+        currentConnectedGroup->at(bodyIter->first) = bodyIter->second;
+        while (bodiesToTest.size())
         {
-            for (auto &&iter : *simulation()->GetJointList())
+            auto bodyIter = bodiesToTest.erase(bodiesToTest.begin());
+            for (auto jointIter = untestedJoints.begin(); jointIter != untestedJoints.end(); /* no increment */)
             {
-
+                if (jointIter->second->body1() == bodyIter->second || jointIter->second->body2() == bodyIter->second)
+                {
+                    Body *linkedBody = jointIter->second->body1() == bodyIter->second ? jointIter->second->body2() : jointIter->second->body1();
+                    auto linkedBodyIter = untestedBodies.find(linkedBody->name());
+                    if (linkedBodyIter != untestedBodies.end()) // needed because we might have loops
+                    {
+                        bodiesToTest[linkedBody->name()] = linkedBody;
+                        currentConnectedGroup->at(linkedBody->name()) = linkedBody;
+                        untestedBodies.erase(linkedBodyIter);
+                    }
+                    else
+                    {
+                        std::cerr << "Warning: MuJoCoPhysicsEngine::CreateConnectedGroups possible loop detected\n";
+                    }
+                    jointIter = untestedJoints.erase(jointIter);
+                }
+                else
+                {
+                    jointIter++;
+                }
             }
         }
-
-    }
-
-    std::vector<std::string> bodyNames;
-    bodyNames.reserve(simulation()->GetBodyList()->size());
-    for (auto &&iter : *simulation()->GetBodyList()) { bodyNames.push_back(iter.first); }
-    std::vector<bool> connectivity(bodyNames.size() * bodyNames.size());
-    for (auto &&iter : *simulation()->GetJointList())
-    {
-        size_t i1 = std::numeric_limits<size_t>::max(), i2 = std::numeric_limits<size_t>::max();
-        for (size_t i = 0; i < bodyNames.size(); i++)
+#define DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
+#ifdef DEBUG_MUJOCO_CREATE_CONNECTED_GROUPS
+        for (auto && iter : *currentConnectedGroup)
         {
-            if (bodyNames[i] == iter.second->body1()->name())
-            {
-                i1 = i;
-                break;
-            }
+            std::cerr << "currentConnectedGroup[" << iter.first << "] = " << iter.second->name() << "\n";
         }
-        for (size_t i = 0; i < bodyNames.size(); i++)
-        {
-            if (bodyNames[i] == iter.second->body2()->name())
-            {
-                i2 = i;
-                break;
-            }
-        }
-        assert(i1 !=  std::numeric_limits<size_t>::max());
-        assert(i2 !=  std::numeric_limits<size_t>::max());
-        connectivity[i1 + bodyNames.size() * i2] = true;
-        connectivity[i2 + bodyNames.size() * i1] = true;
+#endif
+        m_connectedGroups.push_back(std::move(currentConnectedGroup));
     }
-
-    m_connectedGroups.clear();
-    for (size_t i1 = 0; i1 < bodyNames.size(); i1++)
-    {
-        for (size_t i2 = 0; i2 < bodyNames.size(); i2++)
-        {
-            if (connectivity[i1 + bodyNames.size() * i2])
-        }
-    }
-
+    return nullptr;
 }
+
 
 
 std::string *MuJoCoPhysicsEngine::CreateTree()
