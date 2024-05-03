@@ -33,10 +33,6 @@
         <file>ViewControlWidget Images/TopViewPoints.png</file>
         <file>templates/NewConfigFileTemplate.xml</file>
         <file>templates/BodyTemplate.xml</file>
-        <file>opengl/fragment_shader.glsl</file>
-        <file>opengl/vertex_shader.glsl</file>
-        <file>opengl/fragment_shader_2.glsl</file>
-        <file>opengl/vertex_shader_2.glsl</file>
         <file>preferences/default_values.xml</file>
         <file>objects/axes.tri</file>
         <file>objects/global_axes.tri</file>

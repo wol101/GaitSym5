@@ -30,19 +30,6 @@
 class Simulation;
 class MainWindow;
 
-struct SimpleLight
-{
-    GLfloat ambient[4];
-    GLfloat diffuse[4];
-    GLfloat specular[4];
-    GLfloat position[4];
-
-    void SetAmbient(GLfloat r, GLfloat g, GLfloat b, GLfloat a) { ambient[0] = r; ambient[1] = g; ambient[2] = b; ambient[3] = a; }
-    void SetDiffuse(GLfloat r, GLfloat g, GLfloat b, GLfloat a) { diffuse[0] = r; diffuse[1] = g; diffuse[2] = b; diffuse[3] = a; }
-    void SetSpecular(GLfloat r, GLfloat g, GLfloat b, GLfloat a) { specular[0] = r; specular[1] = g; specular[2] = b; specular[3] = a; }
-    void SetPosition(GLfloat x, GLfloat y, GLfloat z, GLfloat a) { position[0] = x; position[1] = y; position[2] = z; position[3] = a; }
-};
-
 class SimulationWidget : public QOpenGLWindow, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
@@ -146,10 +133,6 @@ public:
     MainWindow *getMainWindow() const;
     void setMainWindow(MainWindow *mainWindow);
 
-#if 0
-    QOpenGLShaderProgram *facetedObjectShader() const;
-    QOpenGLShaderProgram *fixedColourObjectShader() const;
-#endif
     QMatrix4x4 proj() const;
     QMatrix4x4 view() const;
 

@@ -58,7 +58,7 @@
 #include <stdio.h>
 
 SimulationWidget::SimulationWidget()
-    : QOpenGLWindow()
+    : QOpenGLWindow(QOpenGLWindow::NoPartialUpdate) // choice of NoPartialUpdate, PartialUpdateBlit, PartialUpdateBlend, the last two use an additional framebuffer to allow partial redrawing
 {
     m_cursorColour = Preferences::valueQColor("CursorColour");
     m_cursorLevel = size_t(Preferences::valueInt("CursorLevel"));
@@ -70,7 +70,7 @@ SimulationWidget::SimulationWidget()
     m_cursor3D = std::make_unique<FacetedSphere>(1, m_cursorLevel, m_cursorColour, 1);
     m_globalAxes = std::make_unique<FacetedObject>();
     m_globalAxes->ReadFromResource(":/objects/global_axes.tri");
-    m_trackball = std::make_unique<Trackball>();
+    m_trackball = std::make_unique<Trackball>();   
 
     setCursor(Qt::CrossCursor);
 }
