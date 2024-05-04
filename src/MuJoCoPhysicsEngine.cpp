@@ -599,48 +599,37 @@ std::string *MuJoCoPhysicsEngine::Step()
 #endif
     }
 
-    // for (auto &&iter : *simulation()->GetJointList())
-    // {
-    //     while (true)
-    //     {
-    //         HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-    //         if (hingeJoint)
-    //         {
-    //             physx::PxRevoluteJoint *joint = dynamic_cast<physx::PxRevoluteJoint *>(m_jointMap[iter.first]);
-    //             if (!joint)
-    //             {
-    //                 std::cerr << "Error in MuJoCoPhysicsEngine::Step(): joint type mismatch\n";
-    //                 continue;
-    //             }
-    //             physx::PxConstraint *constraint = joint->getConstraint();
-    //             if (!constraint->isValid())
-    //             {
-    //                 std::cerr << "Error in MuJoCoPhysicsEngine::Step(): constraint not valid\n";
-    //                 continue;
-    //             }
-    //             physx::PxVec3 linear;
-    //             physx::PxVec3 angular;
-    //             constraint->getForce(linear, angular);
-    //             double angle = joint->getAngle();
-    //             double angleRate = joint->getVelocity();
-    //             physx::PxTransform localTransform = joint->getLocalPose(physx::PxJointActorIndex::Enum::eACTOR0);
-    //             physx::PxRigidActor *actor0, *actor1;
-    //             joint->getActors(actor0, actor1);
-    //             physx::PxTransform bodyTransform = actor0->getGlobalPose();
-    //             physx::PxTransform worldTransform = localTransform.transform(bodyTransform);
-    //             physx::PxVec3 axis = worldTransform.rotate(physx::PxVec3(1, 0, 0));
-
-    //             hingeJoint->setForce(pgd::Vector3(linear[0], linear[1], linear[2]));
-    //             hingeJoint->setTorque(pgd::Vector3(angular[0], angular[1], angular[2]));
-    //             hingeJoint->setAnchor(pgd::Vector3(worldTransform.p[0], worldTransform.p[1], worldTransform.p[2]));
-    //             hingeJoint->setAxis(pgd::Vector3(axis[0], axis[1], axis[2]));
-    //             hingeJoint->setAngle(angle);
-    //             hingeJoint->setAngleRate(angleRate);
-    //             break;
-    //         }
-    //         break;
-    //     }
-    // }
+    for (auto &&iter : *simulation()->GetJointList())
+    {
+        while (true)
+        {
+            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
+            if (hingeJoint)
+            {
+                int jointID = mj_name2id(m_mjModel, mjOBJ_JOINT, hingeJoint->name().c_str());
+                int jnt_type = m_mjModel->jnt_type[jointID];
+                if (jnt_type != mjJNT_HINGE                     )
+                {
+                    std::cerr << "Error: joint type mismatch in \"" << hingeJoint->name() << "\"\n";
+                }
+                int jnt_qposadr = m_mjModel->jnt_qposadr[jointID];
+                int jnt_dofadr = m_mjModel->jnt_dofadr[jointID];
+                pgd::Vector3 anchor(m_mjData->xanchor[jnt_qposadr * 3 + 0], m_mjData->xanchor[jnt_qposadr * 3 + 1], m_mjData->xanchor[jnt_qposadr * 3 + 2]);
+                pgd::Vector3 axis(m_mjData->xaxis[jnt_qposadr * 3 + 0], m_mjData->xaxis[jnt_qposadr * 3 + 1], m_mjData->xaxis[jnt_qposadr * 3 + 2]);
+                // a hinge joint only has 1 dof
+                pgd::Vector3 constraintTorque(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 0], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 1], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 2]);
+                pgd::Vector3 constraintForce(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 4], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 5], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 6]);
+                hingeJoint->setForce(constraintForce);
+                hingeJoint->setTorque(constraintTorque);
+                hingeJoint->setAnchor(anchor);
+                hingeJoint->setAxis(axis);
+                // hingeJoint->setAngle(angle);
+                // hingeJoint->setAngleRate(angleRate);
+                break;
+            }
+            break;
+        }
+    }
 
     simulation()->GetContactList()->clear();
     // double timeStep =simulation()->GetGlobal()->StepSize();
