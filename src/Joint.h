@@ -25,8 +25,6 @@ public:
 
     Joint();
 
-    void GetFeedback(pgd::Vector3 *position, pgd::Vector3 *force, pgd::Vector3 *torque);
-
     // some joints (particularly those with motors) need to do something before the simulation step
     virtual void Update() {}
 

@@ -654,12 +654,22 @@ std::string *MuJoCoPhysicsEngine::Step()
                 mjtNum angleRate = *jointvelSensorPtr;
                 int jointforceSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (hingeJoint->name() + "_force"s).c_str());
                 int jointforceSensorDim = m_mjModel->sensor_dim[jointforceSensorID];
+                assert(jointforceSensorDim == 3);
+                mjtNum *jointforceSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointforceSensorID];
+                pgd::Vector3 jointforce(jointforceSensorPtr[0], jointforceSensorPtr[1], jointforceSensorPtr[2]);
                 int jointtorqueSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (hingeJoint->name() + "_torque"s).c_str());
                 int jointtorqueSensorDim = m_mjModel->sensor_dim[jointtorqueSensorID];
-                hingeJoint->setAnchor(anchor);
-                hingeJoint->setAxis(axis);
-                hingeJoint->setAngle(angle);
-                hingeJoint->setAngleRate(angleRate);
+                assert(jointtorqueSensorDim == 3);
+                mjtNum *jointtorqueSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointtorqueSensorID];
+                pgd::Vector3 jointtorque(jointtorqueSensorPtr[0], jointtorqueSensorPtr[1], jointtorqueSensorPtr[2]);
+                // FIX ME
+                hingeJoint->setAnchor(anchor); // this probably doesn't change
+                hingeJoint->setAxis(axis); // this probably doesn't change
+                hingeJoint->setAngle(angle); // and these should be the same as the internally calculated values
+                hingeJoint->setAngleRate(angleRate); // and these should be the same as the internally calculated values
+                Marker marker(iter.second.get()->body1());
+                hingeJoint->setForce(marker.GetWorldVector(jointforce));
+                hingeJoint->setTorque(marker.GetWorldVector(jointtorque));
                 break;
             }
             break;
