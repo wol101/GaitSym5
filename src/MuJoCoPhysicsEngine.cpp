@@ -39,9 +39,9 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     err = CreateTree();
     if (err) { return err; }
 
-// #define DEBUG_MUJOCO_XML
+#define DEBUG_MUJOCO_XML
 #ifdef DEBUG_MUJOCO_XML
-    std::ofstream of("D:\\wis\\Scratch\\test.xml");
+    std::ofstream of("C:\\Scratch\\test.xml");
     of << m_mjXML;
     of.close();
 #endif
@@ -246,6 +246,11 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     }
 
     XMLTerminateTag(&m_mjXML, "worldbody"s);
+
+    XMLInitiateTag(&m_mjXML, "sensors"s);
+    m_mjXML.append(m_mjXMLSensors);
+    XMLTerminateTag(&m_mjXML, "sensors"s);
+
     XMLTerminateTag(&m_mjXML, "mujoco"s);
 
     return nullptr;
@@ -361,6 +366,25 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             pgd::Vector2 reversedStops(-stops[1], -stops[0]);
             attributes["range"s] = GSUtil::ToString(reversedStops);
             XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            // put a site on the joint
+            attributes.clear();
+            attributes["name"s] = hingeJoint->name() + "_site"s;
+            attributes["pos"s] = GSUtil::ToString(p2);
+            XMLInitiateTag(&m_mjXML, "site"s, attributes, true);
+            // we also need sensors to get reaction forces and torques
+            attributes.clear();
+            attributes["name"s] = hingeJoint->name() + "_jointpos"s;
+            attributes["joint"s] = hingeJoint->name();
+            XMLInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            attributes["name"s] = hingeJoint->name() + "_jointvel"s;
+            attributes["joint"s] = hingeJoint->name();
+            XMLInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
+            attributes.clear();
+            attributes["name"s] = hingeJoint->name() + "_force"s;
+            attributes["site"s] = hingeJoint->name() + "_site"s;
+            XMLInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            attributes["name"s] = hingeJoint->name() + "_torque"s;
+            XMLInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
             break;
         }
         break;
