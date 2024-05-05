@@ -632,23 +632,34 @@ std::string *MuJoCoPhysicsEngine::Step()
             {
                 int jointID = mj_name2id(m_mjModel, mjOBJ_JOINT, hingeJoint->name().c_str());
                 int jnt_type = m_mjModel->jnt_type[jointID];
-                if (jnt_type != mjJNT_HINGE                     )
-                {
-                    std::cerr << "Error: joint type mismatch in \"" << hingeJoint->name() << "\"\n";
-                }
-                int jnt_qposadr = m_mjModel->jnt_qposadr[jointID];
-                int jnt_dofadr = m_mjModel->jnt_dofadr[jointID];
-                pgd::Vector3 anchor(m_mjData->xanchor[jnt_qposadr * 3 + 0], m_mjData->xanchor[jnt_qposadr * 3 + 1], m_mjData->xanchor[jnt_qposadr * 3 + 2]);
-                pgd::Vector3 axis(m_mjData->xaxis[jnt_qposadr * 3 + 0], m_mjData->xaxis[jnt_qposadr * 3 + 1], m_mjData->xaxis[jnt_qposadr * 3 + 2]);
+                assert(jnt_type == mjJNT_HINGE);
+                // int jnt_qposadr = m_mjModel->jnt_qposadr[jointID]; // not used
+                // int jnt_dofadr = m_mjModel->jnt_dofadr[jointID]; // not used
+                pgd::Vector3 anchor(m_mjData->xanchor[jointID * 3 + 0], m_mjData->xanchor[jointID * 3 + 1], m_mjData->xanchor[jointID * 3 + 2]);
+                pgd::Vector3 axis(m_mjData->xaxis[jointID * 3 + 0], m_mjData->xaxis[jointID * 3 + 1], m_mjData->xaxis[jointID * 3 + 2]);
                 // a hinge joint only has 1 dof
-                pgd::Vector3 constraintTorque(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 0], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 1], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 2]);
-                pgd::Vector3 constraintForce(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 4], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 5], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 6]);
-                hingeJoint->setForce(constraintForce);
-                hingeJoint->setTorque(constraintTorque);
+                // pgd::Vector3 constraintTorque(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 0], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 1], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 2]);
+                // pgd::Vector3 constraintForce(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 4], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 5], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 6]);
+                // hingeJoint->setForce(constraintForce);
+                // hingeJoint->setTorque(constraintTorque);
+                int jointposSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (hingeJoint->name() + "_jointpos"s).c_str());
+                int jointposSensorDim = m_mjModel->sensor_dim[jointposSensorID];
+                assert(jointposSensorDim == 1);
+                mjtNum *jointposSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointposSensorID];
+                mjtNum angle = *jointposSensorPtr;
+                int jointvelSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (hingeJoint->name() + "_jointvel"s).c_str());
+                int jointvelSensorDim = m_mjModel->sensor_dim[jointvelSensorID];
+                assert(jointvelSensorDim == 1);
+                mjtNum *jointvelSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointvelSensorID];
+                mjtNum angleRate = *jointvelSensorPtr;
+                int jointforceSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (hingeJoint->name() + "_force"s).c_str());
+                int jointforceSensorDim = m_mjModel->sensor_dim[jointforceSensorID];
+                int jointtorqueSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (hingeJoint->name() + "_torque"s).c_str());
+                int jointtorqueSensorDim = m_mjModel->sensor_dim[jointtorqueSensorID];
                 hingeJoint->setAnchor(anchor);
                 hingeJoint->setAxis(axis);
-                // hingeJoint->setAngle(angle);
-                // hingeJoint->setAngleRate(angleRate);
+                hingeJoint->setAngle(angle);
+                hingeJoint->setAngleRate(angleRate);
                 break;
             }
             break;
