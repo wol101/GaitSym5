@@ -55,6 +55,7 @@ private:
     mjData *m_mjData = nullptr;
 
     std::string m_mjXML;
+    std::string m_mjXMLSensors;
 
     std::vector<TreeBody> m_rootTreeBodyList;
     std::multiset<Body *> m_jointLoopDetector;

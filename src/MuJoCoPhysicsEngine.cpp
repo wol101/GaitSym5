@@ -247,9 +247,9 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 
     XMLTerminateTag(&m_mjXML, "worldbody"s);
 
-    XMLInitiateTag(&m_mjXML, "sensors"s);
+    XMLInitiateTag(&m_mjXML, "sensor"s);
     m_mjXML.append(m_mjXMLSensors);
-    XMLTerminateTag(&m_mjXML, "sensors"s);
+    XMLTerminateTag(&m_mjXML, "sensor"s);
 
     XMLTerminateTag(&m_mjXML, "mujoco"s);
 
