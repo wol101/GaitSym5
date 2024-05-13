@@ -65,7 +65,7 @@ std::string *LightShadowCasting::createFromAttributes()
     if (LightBase::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
-    m_castShadow = GSUtil::Double(buf);
+    m_castShadow = GSUtil::Bool(buf);
     if (findAttribute("Near"s, &buf) == nullptr) return lastErrorPtr();
     m_near = float(GSUtil::Double(buf));
     if (findAttribute("Far"s, &buf) == nullptr) return lastErrorPtr();
@@ -202,7 +202,7 @@ std::string *LightDirectional::createFromAttributes()
         setLastError("LIGHT ID=\""s + name() +"\" invalid Up format"s);
         return lastErrorPtr();
     }
-    m_up.Set(m_up.data());
+    m_up.Set(up.data());
 
     return nullptr;
 }
@@ -289,7 +289,7 @@ std::string *LightSpot::createFromAttributes()
         setLastError("LIGHT ID=\""s + name() +"\" invalid Up format"s);
         return lastErrorPtr();
     }
-    m_up.Set(m_up.data());
+    m_up.Set(up.data());
 
     return nullptr;
 }
