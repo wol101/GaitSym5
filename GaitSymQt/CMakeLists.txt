@@ -1205,7 +1205,7 @@ set(PROJECT_SOURCES
     ../src/UniversalJoint.cpp
     ../src/XMLConverter.cpp
 
-    ../fast_double_parser/fast_double_parser.h
+    ../fast_double_parser/fast_double_parser/fast_double_parser.h
     ../GaitSymQt/AboutDialog.h
     ../GaitSymQt/AVIWriter.h
     ../GaitSymQt/BasicXMLSyntaxHighlighter.h

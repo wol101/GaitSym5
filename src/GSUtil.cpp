@@ -14,7 +14,7 @@
 #include "GSUtil.h"
 #include "PGDMath.h"
 
-#include "fast_double_parser.h"
+#include "fast_double_parser/fast_double_parser.h"
 
 #include <cmath>
 #include <vector>
@@ -694,6 +694,12 @@ std::string *GSUtil::ToString(const pgd::Vector4 &v, std::string *output)
     return output;
 }
 
+template<typename T> static std::string ToString(T v)
+{
+    std::string output;
+    return *ToString(v, &output);
+}
+
 std::string *GSUtil::ToString(uint32_t address, uint16_t port, std::string *output)
 {
     *output = (std::to_string(address & 0xff) + "."s +
@@ -823,6 +829,7 @@ std::string GSUtil::ToString(uint32_t address, uint16_t port)
     std::string output;
     return *ToString(address, port, &output);
 }
+
 
 // convert to string using printf style formatting and variable numbers of arguments
 std::string GSUtil::ToString(const char * const printfFormatString, ...)
@@ -1145,21 +1152,34 @@ int64_t GSUtil::fast_a_to_int64_t(const char *str)
     return val * neg;
 }
 
-double GSUtil::fast_a_to_double(const char *nptr, const char *endptr[])
-{
-    double x;
-    while (*nptr <= ' ') ++nptr;
-    *endptr = fast_double_parser::parse_number(nptr, &x);
-    return x;
-}
-
-uint64_t GSUtil::fast_a_to_uint64_t(const char *nptr, const char *endptr[])
+uint64_t GSUtil::fast_a_to_uint64_t(const char *nptr, const char **endptr)
 {
     uint64_t val = 0;
-    while (*nptr <= ' ') ++nptr;
+    while (*nptr > 0 && *nptr <= ' ') ++nptr;
     while(*nptr >= '0' && *nptr <= '9') { val = val*10 + (*nptr++ - '0'); }
     *endptr = nptr;
     return val;
+}
+
+// note: this does not parse NAN, INF or values like 0. and 001 following the JSON specifications
+// C++ compatibility should use std::from_char functions
+double GSUtil::fast_a_to_double(const char *nptr, const char **endptr)
+{
+    double value;
+    while (*nptr > 0 && *nptr <= ' ') ++nptr; // because fast_double_parser::parse_number does not skip leading space
+    *endptr = fast_double_parser::parse_number(nptr, &value);
+    return value;
+}
+
+// note: this does not parse NAN, INF or values like 0. and 001 following the JSON specifications
+// C++ compatibility should use std::from_char functions
+double GSUtil::fast_a_to_double(const char *nptr)
+{
+    double value;
+    while (*nptr > 0 && *nptr <= ' ') ++nptr; // because fast_double_parser::parse_number does not skip leading space
+    const char *endptr = fast_double_parser::parse_number(nptr, &value);
+    if (!endptr) { value = 0; }
+    return value;
 }
 
 double GSUtil::ThreeAxisDecompositionScore(double x[] , void *data)

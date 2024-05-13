@@ -256,7 +256,6 @@ std::string *NPointStrap::createFromAttributes()
 void NPointStrap::appendToAttributes()
 {
     Strap::appendToAttributes();
-    std::string buf;
     setAttribute("Type"s, "NPoint"s);
     setAttribute("OriginMarkerID"s, m_originMarker->name());
     setAttribute("InsertionMarkerID"s, m_insertionMarker->name());

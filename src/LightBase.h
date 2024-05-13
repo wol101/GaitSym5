@@ -13,6 +13,9 @@ public:
     virtual std::string *createFromAttributes();
     virtual void saveToAttributes();
     virtual void appendToAttributes();
+
+private:
+    float m_intensity = 0; // candela for three.js light models [Luminous intensity (candela) = Luminous flux (lumen) / Solid angle (steradian)]
 };
 
 class LightAmbient : public LightBase
@@ -36,6 +39,8 @@ private:
     bool m_castShadow = false;
     size_t m_mapWidth = 1024;
     size_t m_mapHeight = 1024;
+    float m_near = 0.1;
+    float m_far = 1000;
     pgd::Vector3 m_position;
 };
 
@@ -50,8 +55,6 @@ public:
 private:
     float m_width = 2;
     float m_height = 2;
-    float m_near = 0.1;
-    float m_far = 1000;
     pgd::Vector3 m_lookAt;
     pgd::Vector3 m_up;
 };
@@ -67,8 +70,6 @@ public:
 private:
     float m_fov = 1;
     float m_asapect = 1;
-    float m_near = 0.1;
-    float m_far = 1000;
     pgd::Vector3 m_lookAt;
     pgd::Vector3 m_up;
 };
@@ -80,11 +81,6 @@ public:
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
-
-private:
-    float m_near = 0.1;
-    float m_far = 1000;
-    pgd::Vector3 m_position;
 };
 
 

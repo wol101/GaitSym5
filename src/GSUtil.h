@@ -515,7 +515,6 @@ static std::string *ToString(const pgd::Quaternion &v, std::string *output);
 static std::string *ToString(const pgd::Vector2 &v, std::string *output);
 static std::string *ToString(const pgd::Vector3 &v, std::string *output);
 static std::string *ToString(const pgd::Vector4 &v, std::string *output);
-static std::string *ToString(uint32_t address, uint16_t port, std::string *output);
 
 static std::string ToString(double v);
 static std::string ToString(float v);
@@ -536,6 +535,10 @@ static std::string ToString(const pgd::Quaternion &v);
 static std::string ToString(const pgd::Vector2 &v);
 static std::string ToString(const pgd::Vector3 &v);
 static std::string ToString(const pgd::Vector4 &v);
+
+template<typename T> static std::string ToStringVector(const std::vector<T> &vector);
+
+static std::string *ToString(uint32_t address, uint16_t port, std::string *output);
 static std::string ToString(uint32_t address, uint16_t port);
 
 static std::string ToString(const char * const printfFormatString, ...);
@@ -573,8 +576,9 @@ static int8_t fast_a_to_int8_t(const char *str);
 static int16_t fast_a_to_int16_t(const char *str);
 static int32_t fast_a_to_int32_t(const char *str);
 static int64_t fast_a_to_int64_t(const char *str);
-static double fast_a_to_double(const char *nptr, const char *endptr[]);
-static uint64_t fast_a_to_uint64_t(const char *nptr, const char *endptr[]);
+static uint64_t fast_a_to_uint64_t(const char *nptr, const char **endptr);
+static double fast_a_to_double(const char *nptr, const char **endptr);
+static double fast_a_to_double(const char *nptr);
 
 void Logger(const std::string &file, const std::string &message);
 
@@ -587,5 +591,21 @@ static void nelmin ( double fn ( double x[] , void *data ), void *data, int n, d
 static double zeroin(double ax, double bx, double (*f)(double x, void *info), void *info, double tol);
 
 };
+
+template<typename T> std::string GSUtil::ToStringVector(const std::vector<T> &vector)
+
+{
+    std::string output;
+    std::string token;
+    token.reserve(32);
+    for (auto &&it : vector)
+    {
+        ToString(it, &token);
+        token.append(" ");
+        output.append(token);
+    }
+    if (!output.empty()) { output.pop_back(); }
+    return output;
+}
 
 #endif                   // GSUTIL_H__
