@@ -1327,15 +1327,21 @@ void SimulationWidget::SetupLights()
                 light->castShadow = spot->castShadow();
                 light->shadow->mapSize.set(spot->mapWidth(), spot->mapHeight());
                 light->position = position;
+                auto target = threepp::Object3D::create();
+                target->position = centre;
+                light->setTarget(*target);
+                light->angle = spot->fov();
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->near = spot->near();
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->far = spot->far();
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->aspect = spot->aspect();
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->fov = spot->fov();
                 light->shadow->camera->up = up;
                 light->shadow->camera->lookAt(centre);
+                light->shadow->camera->position = position;
                 light->shadow->camera->updateProjectionMatrix();
                 light->shadow->camera->updateMatrixWorld();
                 lightGroup->add(light);
+                lightGroup->add(target);
                 break;
             }
             if (dynamic_cast<LightPoint *>(baseLight.second.get()))
