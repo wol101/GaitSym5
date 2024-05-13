@@ -29,6 +29,7 @@
 #include "MainWindow.h"
 #include "GSUtil.h"
 #include "DataFile.h"
+#include "LightBase.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -142,31 +143,10 @@ void SimulationWidget::paintGL()
     m_view.lookAt(QVector3D(eye.x, eye.z, eye.z), QVector3D(centre.x, centre.y, centre.z), QVector3D(up.x, up.y, up.z));
 
     // some lights
-    auto light1 = threepp::AmbientLight::create(threepp::Color::yellow, 0.2);
-    m_scene->add(light1);
-
-    auto light2 = threepp::DirectionalLight::create(threepp::Color::purple);
-    light2->shadow->camera->as<threepp::OrthographicCamera>()->top = 15;
-    light2->shadow->camera->as<threepp::OrthographicCamera>()->bottom = -15;
-    light2->shadow->camera->as<threepp::OrthographicCamera>()->left = 15;
-    light2->shadow->camera->as<threepp::OrthographicCamera>()->right = -15;
-    light2->position.set(100, -100, 100);
-    light2->castShadow = true;
-    m_scene->add(light2);
-
-    auto light3 = threepp::PointLight::create(threepp::Color::green);
-    light3->distance = 200;
-    light3->position.set(0, 100, 100);
-    light3->shadow->mapSize.set(2048, 2048);
-    light3->castShadow = true;
-    m_scene->add(light3);
-
-    auto light4 = threepp::SpotLight::create(threepp::Color::peachpuff);
-    light4->distance = false;
-    light4->angle = threepp::math::degToRad(5);
-    light4->position.set(0, -100, 20);
-    light4->castShadow = true;
-    m_scene->add(light4);
+    if (m_simulation)
+    {
+        SetupLights();
+    }
 
     // draw things to the scene
     if (m_simulation)
@@ -1288,6 +1268,91 @@ void SimulationWidget::drawModel()
     for (auto &&it : m_drawMarkerMap) m_drawables.push_back(it.second.get());
     for (auto &&it : m_drawMuscleMap) m_drawables.push_back(it.second.get());
     for (auto &&it : m_drawFluidSacMap) m_drawables.push_back(it.second.get());
+}
+
+void SimulationWidget::SetupLights()
+{
+    auto lightGroup = threepp::Group::create();
+    for (auto &&baseLight : *m_simulation->GetlightList())
+    {
+        while (true)
+        {
+            threepp::Color colour(baseLight.second->colour1().r(), baseLight.second->colour1().g(), baseLight.second->colour1().b());
+            float intensity = baseLight.second->intensity();
+            std::string name = baseLight.second->name();
+            if (dynamic_cast<LightAmbient *>(baseLight.second.get()))
+            {
+                auto light = threepp::AmbientLight::create(colour, intensity);
+                light->name = name;
+                lightGroup->add(light);
+                break;
+            }
+            if (dynamic_cast<LightDirectional *>(baseLight.second.get()))
+            {
+                LightDirectional *directional = dynamic_cast<LightDirectional *>(baseLight.second.get());
+                threepp::Vector3 position(directional->position().x, directional->position().y, directional->position().z);
+                threepp::Vector3 centre(directional->lookAt().x, directional->lookAt().y, directional->lookAt().z);
+                threepp::Vector3 up(directional->up().x, directional->up().y, directional->up().z);
+                auto light = threepp::DirectionalLight::create(colour, intensity);
+                light->name = name;
+                light->castShadow = directional->castShadow();
+                light->shadow->mapSize.set(directional->mapWidth(), directional->mapHeight());
+                light->position = position;
+                light->shadow->camera->as<threepp::OrthographicCamera>()->near = directional->near();
+                light->shadow->camera->as<threepp::OrthographicCamera>()->far = directional->far();
+                light->shadow->camera->as<threepp::OrthographicCamera>()->top = directional->height() / 2;
+                light->shadow->camera->as<threepp::OrthographicCamera>()->bottom = -directional->height() / 2;
+                light->shadow->camera->as<threepp::OrthographicCamera>()->left = directional->width() / 2;
+                light->shadow->camera->as<threepp::OrthographicCamera>()->right = -directional->width() / 2;
+                light->shadow->camera->up = up;
+                light->shadow->camera->lookAt(centre);
+                light->shadow->camera->updateProjectionMatrix();
+                light->shadow->camera->updateMatrixWorld();
+                lightGroup->add(light);
+                break;
+            }
+            if (dynamic_cast<LightSpot *>(baseLight.second.get()))
+            {
+                LightSpot *spot = dynamic_cast<LightSpot *>(baseLight.second.get());
+                threepp::Vector3 position(spot->position().x, spot->position().y, spot->position().z);
+                threepp::Vector3 centre(spot->lookAt().x, spot->lookAt().y, spot->lookAt().z);
+                threepp::Vector3 up(spot->up().x, spot->up().y, spot->up().z);
+                auto light = threepp::SpotLight::create(colour, intensity);
+                light->name = name;
+                light->castShadow = spot->castShadow();
+                light->shadow->mapSize.set(spot->mapWidth(), spot->mapHeight());
+                light->position = position;
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->near = spot->near();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->far = spot->far();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->aspect = spot->aspect();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->fov = spot->fov();
+                light->shadow->camera->up = up;
+                light->shadow->camera->lookAt(centre);
+                light->shadow->camera->updateProjectionMatrix();
+                light->shadow->camera->updateMatrixWorld();
+                lightGroup->add(light);
+                break;
+            }
+            if (dynamic_cast<LightPoint *>(baseLight.second.get()))
+            {
+                LightPoint *point = dynamic_cast<LightPoint *>(baseLight.second.get());
+                threepp::Vector3 position(point->position().x, point->position().y, point->position().z);
+                auto light = threepp::SpotLight::create(colour, intensity);
+                light->name = name;
+                light->castShadow = point->castShadow();
+                light->shadow->mapSize.set(point->mapWidth(), point->mapHeight());
+                light->position = position;
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->near = point->near();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->far = point->far();
+                light->shadow->camera->updateProjectionMatrix();
+                light->shadow->camera->updateMatrixWorld();
+                lightGroup->add(light);
+                break;
+            }
+            break;
+        }
+    }
+    m_scene->add(lightGroup);
 }
 
 const IntersectionHits *SimulationWidget::getClosestHit() const

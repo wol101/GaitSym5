@@ -29,6 +29,16 @@ void LightBase::appendToAttributes()
     NamedObject::appendToAttributes();
 }
 
+float LightBase::intensity() const
+{
+    return m_intensity;
+}
+
+void LightBase::setIntensity(float newIntensity)
+{
+    m_intensity = newIntensity;
+}
+
 LightAmbient::LightAmbient()
 {
 }
@@ -101,6 +111,66 @@ void LightShadowCasting::appendToAttributes()
     setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
 }
 
+bool LightShadowCasting::castShadow() const
+{
+    return m_castShadow;
+}
+
+void LightShadowCasting::setCastShadow(bool newCastShadow)
+{
+    m_castShadow = newCastShadow;
+}
+
+size_t LightShadowCasting::mapWidth() const
+{
+    return m_mapWidth;
+}
+
+void LightShadowCasting::setMapWidth(size_t newMapWidth)
+{
+    m_mapWidth = newMapWidth;
+}
+
+size_t LightShadowCasting::mapHeight() const
+{
+    return m_mapHeight;
+}
+
+void LightShadowCasting::setMapHeight(size_t newMapHeight)
+{
+    m_mapHeight = newMapHeight;
+}
+
+float LightShadowCasting::near() const
+{
+    return m_near;
+}
+
+void LightShadowCasting::setNear(float newNear)
+{
+    m_near = newNear;
+}
+
+float LightShadowCasting::far() const
+{
+    return m_far;
+}
+
+void LightShadowCasting::setFar(float newFar)
+{
+    m_far = newFar;
+}
+
+pgd::Vector3 LightShadowCasting::position() const
+{
+    return m_position;
+}
+
+void LightShadowCasting::setPosition(const pgd::Vector3 &newPosition)
+{
+    m_position = newPosition;
+}
+
 LightDirectional::LightDirectional()
 {
 }
@@ -148,6 +218,46 @@ void LightDirectional::appendToAttributes()
     setAttribute("Up"s, GSUtil::ToString(m_up));
 }
 
+float LightDirectional::width() const
+{
+    return m_width;
+}
+
+void LightDirectional::setWidth(float newWidth)
+{
+    m_width = newWidth;
+}
+
+float LightDirectional::height() const
+{
+    return m_height;
+}
+
+void LightDirectional::setHeight(float newHeight)
+{
+    m_height = newHeight;
+}
+
+pgd::Vector3 LightDirectional::lookAt() const
+{
+    return m_lookAt;
+}
+
+void LightDirectional::setLookAt(const pgd::Vector3 &newLookAt)
+{
+    m_lookAt = newLookAt;
+}
+
+pgd::Vector3 LightDirectional::up() const
+{
+    return m_up;
+}
+
+void LightDirectional::setUp(const pgd::Vector3 &newUp)
+{
+    m_up = newUp;
+}
+
 LightSpot::LightSpot()
 {
 }
@@ -159,7 +269,7 @@ std::string *LightSpot::createFromAttributes()
     if (findAttribute("FoV"s, &buf) == nullptr) return lastErrorPtr();
     m_fov = float(GSUtil::Double(buf));
     if (findAttribute("Aspect"s, &buf) == nullptr) return lastErrorPtr();
-    m_asapect = float(GSUtil::Double(buf));
+    m_aspect = float(GSUtil::Double(buf));
 
     if (findAttribute("LookAt"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> lookAt;
@@ -190,9 +300,49 @@ void LightSpot::appendToAttributes()
     std::string buf;
     setAttribute("Type"s, "Spot"s);
     setAttribute("FoV"s, GSUtil::ToString(m_fov));
-    setAttribute("Aspect"s, GSUtil::ToString(m_asapect));
+    setAttribute("Aspect"s, GSUtil::ToString(m_aspect));
     setAttribute("LookAt"s, GSUtil::ToString(m_lookAt));
     setAttribute("Up"s, GSUtil::ToString(m_up));
+}
+
+float LightSpot::fov() const
+{
+    return m_fov;
+}
+
+void LightSpot::setFov(float newFov)
+{
+    m_fov = newFov;
+}
+
+float LightSpot::aspect() const
+{
+    return m_aspect;
+}
+
+void LightSpot::setAspect(float newAspect)
+{
+    m_aspect = newAspect;
+}
+
+pgd::Vector3 LightSpot::lookAt() const
+{
+    return m_lookAt;
+}
+
+void LightSpot::setLookAt(const pgd::Vector3 &newLookAt)
+{
+    m_lookAt = newLookAt;
+}
+
+pgd::Vector3 LightSpot::up() const
+{
+    return m_up;
+}
+
+void LightSpot::setUp(const pgd::Vector3 &newUp)
+{
+    m_up = newUp;
 }
 
 LightPoint::LightPoint()

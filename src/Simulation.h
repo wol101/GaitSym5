@@ -40,6 +40,7 @@ class SimulationWindow;
 class MainWindow;
 class Drivable;
 class PhysicsEngine;
+class LightBase;
 
 class Simulation : NamedObject
 {
@@ -75,6 +76,7 @@ public:
     Marker *GetMarker(const std::string &name);
     Reporter *GetReporter(const std::string &name);
     Controller *GetController(const std::string &name);
+    LightBase *GetLight(const std::string &name);
     bool GetOutputModelStateOccured() { return m_OutputModelStateOccured; }
 
     void SetTimeLimit(double timeLimit) { m_global->setTimeLimit(timeLimit); }
@@ -96,6 +98,7 @@ public:
     std::map<std::string, std::unique_ptr<Marker>> *GetMarkerList() { return &m_MarkerList; }
     std::map<std::string, std::unique_ptr<Reporter>> *GetReporterList() { return &m_ReporterList; }
     std::map<std::string, std::unique_ptr<Controller>> *GetControllerList() { return &m_ControllerList; }
+    std::map<std::string, std::unique_ptr<LightBase>> *GetlightList() { return &m_LightList; }
     std::vector<std::unique_ptr<Contact>> *GetContactList() { return &m_ContactList; }
 
     std::vector<std::string> GetNameList() const;
@@ -112,7 +115,6 @@ public:
     bool ShouldQuit();
     void SetContactAbort(const std::string &contactID) { m_ContactAbort = true;  m_ContactAbortList.push_back(contactID); }
     void SetDataTargetAbort(const std::string &dataTargetID) { m_DataTargetAbort = true; m_DataTargetAbortList.push_back(dataTargetID); }
-    int m_numericalErrorCount = 0;
 
     std::string SaveToXML();
     void OutputProgramState();
@@ -136,6 +138,7 @@ private:
     std::string *ParseDataTarget(const ParseXML::XMLElement *node);
     std::string *ParseReporter(const ParseXML::XMLElement *node);
     std::string *ParseController(const ParseXML::XMLElement *node);
+    std::string *ParseLight(const ParseXML::XMLElement *node);
 
     void DumpObjects();
     void DumpObject(NamedObject *namedObject);
@@ -155,6 +158,7 @@ private:
     std::map<std::string, std::unique_ptr<Marker>> m_MarkerList;
     std::map<std::string, std::unique_ptr<Reporter>> m_ReporterList;
     std::map<std::string, std::unique_ptr<Controller>> m_ControllerList;
+    std::map<std::string, std::unique_ptr<LightBase>> m_LightList;
 
     // this is a list of contacts that are active at the current time step
     std::vector<std::unique_ptr<Contact>> m_ContactList;
@@ -183,6 +187,7 @@ private:
     bool m_ContactAbort = false;
     std::vector<std::string> m_DataTargetAbortList;
     std::vector<std::string> m_ContactAbortList;
+    int m_numericalErrorCount = 0;
 
     // for fitness calculations
     double m_KinematicMatchFitness = 0;

@@ -59,6 +59,7 @@
 #include "ODEPhysicsEngine.h"
 #include "PhysXPhysicsEngine.h"
 #include "MuJoCoPhysicsEngine.h"
+#include "LightBase.h"
 
 #include "pystring.h"
 
@@ -903,6 +904,50 @@ std::string *Simulation::ParseController(const ParseXML::XMLElement *node)
     return nullptr;
 }
 
+std::string *Simulation::ParseLight(const ParseXML::XMLElement *node)
+{
+    std::unique_ptr<LightBase> light;
+    std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
+    std::string *errorMessage = nullptr;
+    while (true)
+    {
+        if (buf == "Ambient"s)
+        {
+            light = std::make_unique<LightAmbient>();
+            break;
+        }
+        if (buf == "Directional"s)
+        {
+            light = std::make_unique<LightDirectional>();
+            break;
+        }
+        if (buf == "Spot"s)
+        {
+            light = std::make_unique<LightSpot>();
+            break;
+        }
+        if (buf == "Point"s)
+        {
+            light = std::make_unique<LightPoint>();
+            break;
+        }
+        setLastError("Simulation::ParseLight Type=\""s + buf + "\" not recognised"s);
+        return lastErrorPtr();
+    }
+
+    light->setSimulation(this);
+    light->createAttributeMap(node->attributes);
+    errorMessage = light->createFromAttributes();
+    if (errorMessage)
+    {
+        setLastError(*errorMessage);
+        return lastErrorPtr();
+    }
+
+
+    m_LightList[light->name()] = std::move(light);
+    return nullptr;
+}
 
 // save the current model state to XML
 std::string Simulation::SaveToXML()
@@ -1043,6 +1088,14 @@ Controller *Simulation::GetController(const std::string &name)
     // use find to allow null return if name not found
     auto iter = m_ControllerList.find(name);
     if (iter != m_ControllerList.end()) return iter->second.get();
+    return nullptr;
+}
+
+LightBase *Simulation::GetLight(const std::string &name)
+{
+    // use find to allow null return if name not found
+    auto iter = m_LightList.find(name);
+    if (iter != m_LightList.end()) return iter->second.get();
     return nullptr;
 }
 
