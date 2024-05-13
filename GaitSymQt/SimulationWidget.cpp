@@ -1298,6 +1298,9 @@ void SimulationWidget::SetupLights()
                 light->castShadow = directional->castShadow();
                 light->shadow->mapSize.set(directional->mapWidth(), directional->mapHeight());
                 light->position = position;
+                auto target = threepp::Object3D::create();
+                target->position = centre;
+                light->setTarget(*target);
                 light->shadow->camera->as<threepp::OrthographicCamera>()->near = directional->near();
                 light->shadow->camera->as<threepp::OrthographicCamera>()->far = directional->far();
                 light->shadow->camera->as<threepp::OrthographicCamera>()->top = directional->height() / 2;
@@ -1305,10 +1308,12 @@ void SimulationWidget::SetupLights()
                 light->shadow->camera->as<threepp::OrthographicCamera>()->left = directional->width() / 2;
                 light->shadow->camera->as<threepp::OrthographicCamera>()->right = -directional->width() / 2;
                 light->shadow->camera->up = up;
+                light->shadow->camera->position = position;
                 light->shadow->camera->lookAt(centre);
                 light->shadow->camera->updateProjectionMatrix();
                 light->shadow->camera->updateMatrixWorld();
                 lightGroup->add(light);
+                lightGroup->add(target);
                 break;
             }
             if (dynamic_cast<LightSpot *>(baseLight.second.get()))
