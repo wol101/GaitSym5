@@ -115,6 +115,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
             else if ((*it)->tag == "REPORTER"s) ParseReporter(*it);
             else if ((*it)->tag == "CONTROLLER"s) ParseController(*it);
             else if ((*it)->tag == "FLUIDSAC"s) ParseFluidSac(*it);
+            else if ((*it)->tag == "LIGHT"s) ParseLight(*it);
             if (lastErrorPtr()->size())
             {
                 errorList.push_back(*lastErrorPtr());
@@ -966,6 +967,7 @@ std::string Simulation::SaveToXML()
     for (auto &&it : m_ControllerList) { it.second->saveToAttributes(); m_parseXML.AddElement("CONTROLLER"s, it.second->attributeMap()); }
     for (auto &&it : m_DriverList) { it.second->saveToAttributes(); m_parseXML.AddElement("DRIVER"s, it.second->attributeMap()); }
     for (auto &&it : m_DataTargetList) { it.second->saveToAttributes(); m_parseXML.AddElement("DATATARGET"s, it.second->attributeMap()); }
+    for (auto &&it : m_LightList) { it.second->saveToAttributes(); m_parseXML.AddElement("LIGHT"s, it.second->attributeMap()); }
 
     std::stringstream comment;
     comment << "Simulation Time: " << m_SimulationTime <<
