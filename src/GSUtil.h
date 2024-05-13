@@ -536,7 +536,7 @@ static std::string ToString(const pgd::Vector2 &v);
 static std::string ToString(const pgd::Vector3 &v);
 static std::string ToString(const pgd::Vector4 &v);
 
-template<typename T> static std::string ToStringVector(const std::vector<T> &vector);
+template<typename T> static std::string ToString(const std::vector<T> &vector);
 
 static std::string *ToString(uint32_t address, uint16_t port, std::string *output);
 static std::string ToString(uint32_t address, uint16_t port);
@@ -592,10 +592,10 @@ static double zeroin(double ax, double bx, double (*f)(double x, void *info), vo
 
 };
 
-template<typename T> std::string GSUtil::ToStringVector(const std::vector<T> &vector)
-
+template<typename T> std::string GSUtil::ToString(const std::vector<T> &vector) // template function definitions seem to behave better in the header
 {
     std::string output;
+    output.reserve(32 * vector.size());
     std::string token;
     token.reserve(32);
     for (auto &&it : vector)

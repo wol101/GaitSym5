@@ -98,7 +98,7 @@ void LightShadowCasting::appendToAttributes()
     setAttribute("Far"s, GSUtil::ToString(m_far));
     setAttribute("Position"s, GSUtil::ToString(m_position));
     std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
-    setAttribute("ShadowMapSize"s, GSUtil::ToStringVector<size_t>(shadowMap));
+    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
 }
 
 LightDirectional::LightDirectional()
