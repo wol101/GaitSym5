@@ -101,7 +101,7 @@ void SimulationWidget::paintGL()
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
 
-    m_scene->clear();
+    m_scene->clear(); // perhaps I shouldn't clear the lights every time
     threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
     m_scene->background = color;
 
@@ -141,7 +141,6 @@ void SimulationWidget::paintGL()
     m_view.setToIdentity();
     m_view.lookAt(QVector3D(eye.x, eye.z, eye.z), QVector3D(centre.x, centre.y, centre.z), QVector3D(up.x, up.y, up.z));
 
-
     // some lights
     auto light1 = threepp::AmbientLight::create(threepp::Color::yellow, 0.2);
     m_scene->add(light1);
@@ -156,14 +155,14 @@ void SimulationWidget::paintGL()
     m_scene->add(light2);
 
     auto light3 = threepp::PointLight::create(threepp::Color::green);
-    light3->castShadow = true;
     light3->distance = 200;
     light3->position.set(0, 100, 100);
     light3->shadow->mapSize.set(2048, 2048);
+    light3->castShadow = true;
     m_scene->add(light3);
 
     auto light4 = threepp::SpotLight::create(threepp::Color::peachpuff);
-    light4->distance = 200;
+    light4->distance = false;
     light4->angle = threepp::math::degToRad(5);
     light4->position.set(0, -100, 20);
     light4->castShadow = true;
