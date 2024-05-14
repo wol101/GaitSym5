@@ -29,6 +29,7 @@ void LightBase::saveToAttributes()
 void LightBase::appendToAttributes()
 {
     NamedObject::appendToAttributes();
+    setAttribute("Intensity"s, GSUtil::ToString(m_intensity));
 }
 
 float LightBase::intensity() const
@@ -117,7 +118,6 @@ std::string *LightDirectional::createFromAttributes()
 void LightDirectional::appendToAttributes()
 {
     LightBase::appendToAttributes();
-    std::string buf;
     setAttribute("Type"s, "Directional"s);
     setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
     setAttribute("Distance"s, GSUtil::ToString(m_distance));
@@ -274,8 +274,7 @@ std::string *LightSpot::createFromAttributes()
 void LightSpot::appendToAttributes()
 {
     LightBase::appendToAttributes();
-    std::string buf;
-    setAttribute("Type"s, "Directional"s);
+    setAttribute("Type"s, "Spot"s);
     setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
     setAttribute("Distance"s, GSUtil::ToString(m_distance));
     setAttribute("PositionMarkerID"s, m_positionMarker->name());
@@ -418,7 +417,6 @@ std::string *LightPoint::createFromAttributes()
 void LightPoint::appendToAttributes()
 {
     LightBase::appendToAttributes();
-    std::string buf;
     setAttribute("Type"s, "Point"s);
     setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
     setAttribute("Distance"s, GSUtil::ToString(m_distance));
