@@ -209,6 +209,11 @@ void LightDirectional::setTargetMarker(Marker *newTargetMarker)
     m_targetMarker = newTargetMarker;
 }
 
+float LightDirectional::minDistanceMultiplier() const
+{
+    return m_minDistanceMultiplier;
+}
+
 LightSpot::LightSpot()
 {
 }
@@ -361,6 +366,11 @@ void LightSpot::setTargetMarker(Marker *newTargetMarker)
     m_targetMarker = newTargetMarker;
 }
 
+float LightSpot::minDistanceMultiplier() const
+{
+    return m_minDistanceMultiplier;
+}
+
 LightPoint::LightPoint()
 {
 }
@@ -465,6 +475,11 @@ Marker *LightPoint::positionMarker() const
 void LightPoint::setPositionMarker(Marker *newPositionMarker)
 {
     m_positionMarker = newPositionMarker;
+}
+
+float LightPoint::minDistanceMultiplier() const
+{
+    return m_minDistanceMultiplier;
 }
 
 

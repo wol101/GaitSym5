@@ -62,6 +62,8 @@ public:
     Marker *targetMarker() const;
     void setTargetMarker(Marker *newTargetMarker);
 
+    float minDistanceMultiplier() const;
+
 private:
     bool m_castShadow = false;
     size_t m_mapWidth = 1024;
@@ -71,6 +73,8 @@ private:
     float m_distance = 100;
     Marker *m_positionMarker = nullptr;
     Marker *m_targetMarker = nullptr;
+
+    float m_minDistanceMultiplier = 1e4f;
 };
 
 class LightSpot : public LightBase
@@ -105,6 +109,8 @@ public:
     Marker *targetMarker() const;
     void setTargetMarker(Marker *newTargetMarker);
 
+    float minDistanceMultiplier() const;
+
 private:
     bool m_castShadow = false;
     size_t m_mapWidth = 1024;
@@ -114,6 +120,8 @@ private:
     float m_penumbra = 0.9f;
     Marker *m_positionMarker = nullptr;
     Marker *m_targetMarker = nullptr;
+
+    float m_minDistanceMultiplier = 1e4f;
 };
 
 class LightPoint : public LightBase
@@ -139,12 +147,16 @@ public:
     Marker *positionMarker() const;
     void setPositionMarker(Marker *newPositionMarker);
 
+    float minDistanceMultiplier() const;
+
 private:
     bool m_castShadow = false;
     size_t m_mapWidth = 1024;
     size_t m_mapHeight = 1024;
     float m_distance = 100;
     Marker *m_positionMarker = nullptr;
+
+    float m_minDistanceMultiplier = 1e4f;
 };
 
 
