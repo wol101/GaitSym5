@@ -265,7 +265,7 @@ std::string *LightSpot::createFromAttributes()
     }
 
     if (findAttribute("Angle"s, &buf) == nullptr) return lastErrorPtr();
-    m_angle = GSUtil::Bool(buf);
+    m_angle = float(GSUtil::Double(buf));
     if (findAttribute("Penumbra"s, &buf)) { m_penumbra = float(GSUtil::Double(buf)); }
 
     return nullptr;

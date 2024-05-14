@@ -1306,8 +1306,8 @@ void SimulationWidget::SetupLights()
                 light->shadow->camera->as<threepp::OrthographicCamera>()->far = directional->distance();
                 light->shadow->camera->as<threepp::OrthographicCamera>()->top = directional->height() / 2;
                 light->shadow->camera->as<threepp::OrthographicCamera>()->bottom = -directional->height() / 2;
-                light->shadow->camera->as<threepp::OrthographicCamera>()->left = directional->width() / 2;
-                light->shadow->camera->as<threepp::OrthographicCamera>()->right = -directional->width() / 2;
+                light->shadow->camera->as<threepp::OrthographicCamera>()->left = -directional->width() / 2;
+                light->shadow->camera->as<threepp::OrthographicCamera>()->right = directional->width() / 2;
                 light->shadow->camera->updateProjectionMatrix();
                 light->shadow->camera->updateMatrixWorld();
                 lightGroup->add(light);
