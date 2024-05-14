@@ -3,7 +3,7 @@
 
 #include "NamedObject.h"
 
-#include "PGDMath.h"
+class Marker;
 
 class LightBase : public NamedObject
 {
@@ -30,10 +30,10 @@ public:
     virtual void appendToAttributes();
 };
 
-class LightShadowCasting : public LightBase
+class LightDirectional : public LightBase
 {
 public:
-    LightShadowCasting();
+    LightDirectional();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -47,52 +47,33 @@ public:
     size_t mapHeight() const;
     void setMapHeight(size_t newMapHeight);
 
-    float near() const;
-    void setNear(float newNear);
-
-    float far() const;
-    void setFar(float newFar);
-
-    pgd::Vector3 position() const;
-    void setPosition(const pgd::Vector3 &newPosition);
-
-private:
-    bool m_castShadow = false;
-    size_t m_mapWidth = 1024;
-    size_t m_mapHeight = 1024;
-    float m_near = 0.1f;
-    float m_far = 1000;
-    pgd::Vector3 m_position;
-};
-
-class LightDirectional : public LightShadowCasting
-{
-public:
-    LightDirectional();
-
-    virtual std::string *createFromAttributes();
-    virtual void appendToAttributes();
-
     float width() const;
     void setWidth(float newWidth);
 
     float height() const;
     void setHeight(float newHeight);
 
-    pgd::Vector3 lookAt() const;
-    void setLookAt(const pgd::Vector3 &newLookAt);
+    float distance() const;
+    void setDistance(float newDistance);
 
-    pgd::Vector3 up() const;
-    void setUp(const pgd::Vector3 &newUp);
+    Marker *positionMarker() const;
+    void setPositionMarker(Marker *newPositionMarker);
+
+    Marker *targetMarker() const;
+    void setTargetMarker(Marker *newTargetMarker);
 
 private:
-    float m_width = 2;
-    float m_height = 2;
-    pgd::Vector3 m_lookAt;
-    pgd::Vector3 m_up;
+    bool m_castShadow = false;
+    size_t m_mapWidth = 1024;
+    size_t m_mapHeight = 1024;
+    float m_width = 100;
+    float m_height = 100;
+    float m_distance = 100;
+    Marker *m_positionMarker = nullptr;
+    Marker *m_targetMarker = nullptr;
 };
 
-class LightSpot : public LightShadowCasting
+class LightSpot : public LightBase
 {
 public:
     LightSpot();
@@ -100,32 +81,70 @@ public:
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
-    float fov() const;
-    void setFov(float newFov);
+    bool castShadow() const;
+    void setCastShadow(bool newCastShadow);
 
-    float aspect() const;
-    void setAspect(float newAspect);
+    size_t mapWidth() const;
+    void setMapWidth(size_t newMapWidth);
 
-    pgd::Vector3 lookAt() const;
-    void setLookAt(const pgd::Vector3 &newLookAt);
+    size_t mapHeight() const;
+    void setMapHeight(size_t newMapHeight);
 
-    pgd::Vector3 up() const;
-    void setUp(const pgd::Vector3 &newUp);
+    float distance() const;
+    void setDistance(float newDistance);
+
+    float angle() const;
+    void setAngle(float newAngle);
+
+    float penumbra() const;
+    void setPenumbra(float newPenumbra);
+
+    Marker *positionMarker() const;
+    void setPositionMarker(Marker *newPositionMarker);
+
+    Marker *targetMarker() const;
+    void setTargetMarker(Marker *newTargetMarker);
 
 private:
-    float m_fov = 1;
-    float m_aspect = 1;
-    pgd::Vector3 m_lookAt;
-    pgd::Vector3 m_up;
+    bool m_castShadow = false;
+    size_t m_mapWidth = 1024;
+    size_t m_mapHeight = 1024;
+    float m_distance = 100;
+    float m_angle = 0.1f;
+    float m_penumbra = 0.9f;
+    Marker *m_positionMarker = nullptr;
+    Marker *m_targetMarker = nullptr;
 };
 
-class LightPoint : public LightShadowCasting
+class LightPoint : public LightBase
 {
 public:
     LightPoint();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
+
+    bool castShadow() const;
+    void setCastShadow(bool newCastShadow);
+
+    size_t mapWidth() const;
+    void setMapWidth(size_t newMapWidth);
+
+    size_t mapHeight() const;
+    void setMapHeight(size_t newMapHeight);
+
+    float distance() const;
+    void setDistance(float newDistance);
+
+    Marker *positionMarker() const;
+    void setPositionMarker(Marker *newPositionMarker);
+
+private:
+    bool m_castShadow = false;
+    size_t m_mapWidth = 1024;
+    size_t m_mapHeight = 1024;
+    float m_distance = 100;
+    Marker *m_positionMarker = nullptr;
 };
 
 

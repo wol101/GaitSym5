@@ -1,6 +1,8 @@
 #include "LightBase.h"
 
 #include "GSUtil.h"
+#include "Simulation.h"
+#include "Marker.h"
 
 using namespace std::string_literals;
 
@@ -56,29 +58,37 @@ void LightAmbient::appendToAttributes()
     setAttribute("Type"s, "Ambient"s);
 }
 
-LightShadowCasting::LightShadowCasting()
+LightDirectional::LightDirectional()
 {
 }
 
-std::string *LightShadowCasting::createFromAttributes()
+std::string *LightDirectional::createFromAttributes()
 {
     if (LightBase::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
     m_castShadow = GSUtil::Bool(buf);
-    if (findAttribute("Near"s, &buf) == nullptr) return lastErrorPtr();
-    m_near = float(GSUtil::Double(buf));
-    if (findAttribute("Far"s, &buf) == nullptr) return lastErrorPtr();
-    m_far = float(GSUtil::Double(buf));
-    if (findAttribute("Position"s, &buf) == nullptr) return lastErrorPtr();
-    std::vector<double> position;
-    GSUtil::Double(buf, &position);
-    if (position.size() != 3)
+    if (findAttribute("Distance"s, &buf) == nullptr) return lastErrorPtr();
+    m_distance = float(GSUtil::Double(buf));
+
+    if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
+    auto positionMarker = simulation()->GetMarkerList()->find(buf);
+    if (positionMarker == simulation()->GetMarkerList()->end())
     {
-        setLastError("LIGHT ID=\""s + name() +"\" invalid Position format"s);
+        setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
     }
-    m_position.Set(position.data());
+    m_positionMarker = positionMarker->second.get();
+
+    if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
+    auto targetMarker = simulation()->GetMarkerList()->find(buf);
+    if (targetMarker == simulation()->GetMarkerList()->end())
+    {
+        setLastError("LIGHT ID=\""s + name() +"\" TargetMarkerID not found"s);
+        return lastErrorPtr();
+    }
+    m_targetMarker = targetMarker->second.get();
+
     if (findAttribute("ShadowMapSize"s, &buf))
     {
         std::vector<int> shadowMap;
@@ -97,125 +107,56 @@ std::string *LightShadowCasting::createFromAttributes()
             return lastErrorPtr();
         }
     }
-    return nullptr;
-}
 
-void LightShadowCasting::appendToAttributes()
-{
-    LightBase::appendToAttributes();
-    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
-    setAttribute("Near"s, GSUtil::ToString(m_near));
-    setAttribute("Far"s, GSUtil::ToString(m_far));
-    setAttribute("Position"s, GSUtil::ToString(m_position));
-    std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
-    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
-}
-
-bool LightShadowCasting::castShadow() const
-{
-    return m_castShadow;
-}
-
-void LightShadowCasting::setCastShadow(bool newCastShadow)
-{
-    m_castShadow = newCastShadow;
-}
-
-size_t LightShadowCasting::mapWidth() const
-{
-    return m_mapWidth;
-}
-
-void LightShadowCasting::setMapWidth(size_t newMapWidth)
-{
-    m_mapWidth = newMapWidth;
-}
-
-size_t LightShadowCasting::mapHeight() const
-{
-    return m_mapHeight;
-}
-
-void LightShadowCasting::setMapHeight(size_t newMapHeight)
-{
-    m_mapHeight = newMapHeight;
-}
-
-float LightShadowCasting::near() const
-{
-    return m_near;
-}
-
-void LightShadowCasting::setNear(float newNear)
-{
-    m_near = newNear;
-}
-
-float LightShadowCasting::far() const
-{
-    return m_far;
-}
-
-void LightShadowCasting::setFar(float newFar)
-{
-    m_far = newFar;
-}
-
-pgd::Vector3 LightShadowCasting::position() const
-{
-    return m_position;
-}
-
-void LightShadowCasting::setPosition(const pgd::Vector3 &newPosition)
-{
-    m_position = newPosition;
-}
-
-LightDirectional::LightDirectional()
-{
-}
-
-std::string *LightDirectional::createFromAttributes()
-{
-    if (LightShadowCasting::createFromAttributes()) return lastErrorPtr();
-    std::string buf;
-    if (findAttribute("Width"s, &buf) == nullptr) return lastErrorPtr();
-    m_width = float(GSUtil::Double(buf));
-    if (findAttribute("Height"s, &buf) == nullptr) return lastErrorPtr();
-    m_height = float(GSUtil::Double(buf));
-
-    if (findAttribute("LookAt"s, &buf) == nullptr) return lastErrorPtr();
-    std::vector<double> lookAt;
-    GSUtil::Double(buf, &lookAt);
-    if (lookAt.size() != 3)
-    {
-        setLastError("LIGHT ID=\""s + name() +"\" invalid LookAt format"s);
-        return lastErrorPtr();
-    }
-    m_lookAt.Set(lookAt.data());
-
-    if (findAttribute("Up"s, &buf) == nullptr) return lastErrorPtr();
-    std::vector<double> up;
-    GSUtil::Double(buf, &up);
-    if (up.size() != 3)
-    {
-        setLastError("LIGHT ID=\""s + name() +"\" invalid Up format"s);
-        return lastErrorPtr();
-    }
-    m_up.Set(up.data());
+    if (findAttribute("Width"s, &buf)) { m_width = float(GSUtil::Double(buf)); }
+    if (findAttribute("Height"s, &buf)) { m_height = float(GSUtil::Double(buf)); }
 
     return nullptr;
 }
 
 void LightDirectional::appendToAttributes()
 {
-    LightShadowCasting::appendToAttributes();
+    LightBase::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Directional"s);
+    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
+    setAttribute("Distance"s, GSUtil::ToString(m_distance));
+    setAttribute("PositionMarkerID"s, m_positionMarker->name());
+    setAttribute("TargetMarkerID"s, m_targetMarker->name());
+    std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
+    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
     setAttribute("Width"s, GSUtil::ToString(m_width));
     setAttribute("Height"s, GSUtil::ToString(m_height));
-    setAttribute("LookAt"s, GSUtil::ToString(m_lookAt));
-    setAttribute("Up"s, GSUtil::ToString(m_up));
+}
+
+bool LightDirectional::castShadow() const
+{
+    return m_castShadow;
+}
+
+void LightDirectional::setCastShadow(bool newCastShadow)
+{
+    m_castShadow = newCastShadow;
+}
+
+size_t LightDirectional::mapWidth() const
+{
+    return m_mapWidth;
+}
+
+void LightDirectional::setMapWidth(size_t newMapWidth)
+{
+    m_mapWidth = newMapWidth;
+}
+
+size_t LightDirectional::mapHeight() const
+{
+    return m_mapHeight;
+}
+
+void LightDirectional::setMapHeight(size_t newMapHeight)
+{
+    m_mapHeight = newMapHeight;
 }
 
 float LightDirectional::width() const
@@ -238,24 +179,34 @@ void LightDirectional::setHeight(float newHeight)
     m_height = newHeight;
 }
 
-pgd::Vector3 LightDirectional::lookAt() const
+float LightDirectional::distance() const
 {
-    return m_lookAt;
+    return m_distance;
 }
 
-void LightDirectional::setLookAt(const pgd::Vector3 &newLookAt)
+void LightDirectional::setDistance(float newDistance)
 {
-    m_lookAt = newLookAt;
+    m_distance = newDistance;
 }
 
-pgd::Vector3 LightDirectional::up() const
+Marker *LightDirectional::positionMarker() const
 {
-    return m_up;
+    return m_positionMarker;
 }
 
-void LightDirectional::setUp(const pgd::Vector3 &newUp)
+void LightDirectional::setPositionMarker(Marker *newPositionMarker)
 {
-    m_up = newUp;
+    m_positionMarker = newPositionMarker;
+}
+
+Marker *LightDirectional::targetMarker() const
+{
+    return m_targetMarker;
+}
+
+void LightDirectional::setTargetMarker(Marker *newTargetMarker)
+{
+    m_targetMarker = newTargetMarker;
 }
 
 LightSpot::LightSpot()
@@ -264,85 +215,150 @@ LightSpot::LightSpot()
 
 std::string *LightSpot::createFromAttributes()
 {
-    if (LightShadowCasting::createFromAttributes()) return lastErrorPtr();
+    if (LightBase::createFromAttributes()) return lastErrorPtr();
     std::string buf;
-    if (findAttribute("FoV"s, &buf) == nullptr) return lastErrorPtr();
-    m_fov = float(GSUtil::Double(buf));
-    if (findAttribute("Aspect"s, &buf) == nullptr) return lastErrorPtr();
-    m_aspect = float(GSUtil::Double(buf));
+    if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
+    m_castShadow = GSUtil::Bool(buf);
+    if (findAttribute("Distance"s, &buf) == nullptr) return lastErrorPtr();
+    m_distance = float(GSUtil::Double(buf));
 
-    if (findAttribute("LookAt"s, &buf) == nullptr) return lastErrorPtr();
-    std::vector<double> lookAt;
-    GSUtil::Double(buf, &lookAt);
-    if (lookAt.size() != 3)
+    if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
+    auto positionMarker = simulation()->GetMarkerList()->find(buf);
+    if (positionMarker == simulation()->GetMarkerList()->end())
     {
-        setLastError("LIGHT ID=\""s + name() +"\" invalid LookAt format"s);
+        setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
     }
-    m_lookAt.Set(lookAt.data());
+    m_positionMarker = positionMarker->second.get();
 
-    if (findAttribute("Up"s, &buf) == nullptr) return lastErrorPtr();
-    std::vector<double> up;
-    GSUtil::Double(buf, &up);
-    if (up.size() != 3)
+    if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
+    auto targetMarker = simulation()->GetMarkerList()->find(buf);
+    if (targetMarker == simulation()->GetMarkerList()->end())
     {
-        setLastError("LIGHT ID=\""s + name() +"\" invalid Up format"s);
+        setLastError("LIGHT ID=\""s + name() +"\" TargetMarkerID not found"s);
         return lastErrorPtr();
     }
-    m_up.Set(up.data());
+    m_targetMarker = targetMarker->second.get();
+
+    if (findAttribute("ShadowMapSize"s, &buf))
+    {
+        std::vector<int> shadowMap;
+        GSUtil::Int(buf, &shadowMap);
+        switch (shadowMap.size())
+        {
+        case 1:
+            m_mapWidth = m_mapHeight = shadowMap[0];
+            break;
+        case 2:
+            m_mapWidth = shadowMap[0];
+            m_mapHeight = shadowMap[1];
+            break;
+        default:
+            setLastError("LIGHT ID=\""s + name() +"\" invalid ShadowMapSize format"s);
+            return lastErrorPtr();
+        }
+    }
+
+    if (findAttribute("Angle"s, &buf) == nullptr) return lastErrorPtr();
+    m_angle = GSUtil::Bool(buf);
+    if (findAttribute("Penumbra"s, &buf)) { m_penumbra = float(GSUtil::Double(buf)); }
 
     return nullptr;
 }
 
 void LightSpot::appendToAttributes()
 {
-    LightShadowCasting::appendToAttributes();
+    LightBase::appendToAttributes();
     std::string buf;
-    setAttribute("Type"s, "Spot"s);
-    setAttribute("FoV"s, GSUtil::ToString(m_fov));
-    setAttribute("Aspect"s, GSUtil::ToString(m_aspect));
-    setAttribute("LookAt"s, GSUtil::ToString(m_lookAt));
-    setAttribute("Up"s, GSUtil::ToString(m_up));
+    setAttribute("Type"s, "Directional"s);
+    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
+    setAttribute("Distance"s, GSUtil::ToString(m_distance));
+    setAttribute("PositionMarkerID"s, m_positionMarker->name());
+    setAttribute("TargetMarkerID"s, m_targetMarker->name());
+    std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
+    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
+    setAttribute("Angle"s, GSUtil::ToString(m_angle));
+    setAttribute("Penumbra"s, GSUtil::ToString(m_penumbra));
 }
 
-float LightSpot::fov() const
+bool LightSpot::castShadow() const
 {
-    return m_fov;
+    return m_castShadow;
 }
 
-void LightSpot::setFov(float newFov)
+void LightSpot::setCastShadow(bool newCastShadow)
 {
-    m_fov = newFov;
+    m_castShadow = newCastShadow;
 }
 
-float LightSpot::aspect() const
+size_t LightSpot::mapWidth() const
 {
-    return m_aspect;
+    return m_mapWidth;
 }
 
-void LightSpot::setAspect(float newAspect)
+void LightSpot::setMapWidth(size_t newMapWidth)
 {
-    m_aspect = newAspect;
+    m_mapWidth = newMapWidth;
 }
 
-pgd::Vector3 LightSpot::lookAt() const
+size_t LightSpot::mapHeight() const
 {
-    return m_lookAt;
+    return m_mapHeight;
 }
 
-void LightSpot::setLookAt(const pgd::Vector3 &newLookAt)
+void LightSpot::setMapHeight(size_t newMapHeight)
 {
-    m_lookAt = newLookAt;
+    m_mapHeight = newMapHeight;
 }
 
-pgd::Vector3 LightSpot::up() const
+float LightSpot::distance() const
 {
-    return m_up;
+    return m_distance;
 }
 
-void LightSpot::setUp(const pgd::Vector3 &newUp)
+void LightSpot::setDistance(float newDistance)
 {
-    m_up = newUp;
+    m_distance = newDistance;
+}
+
+float LightSpot::angle() const
+{
+    return m_angle;
+}
+
+void LightSpot::setAngle(float newAngle)
+{
+    m_angle = newAngle;
+}
+
+float LightSpot::penumbra() const
+{
+    return m_penumbra;
+}
+
+void LightSpot::setPenumbra(float newPenumbra)
+{
+    m_penumbra = newPenumbra;
+}
+
+Marker *LightSpot::positionMarker() const
+{
+    return m_positionMarker;
+}
+
+void LightSpot::setPositionMarker(Marker *newPositionMarker)
+{
+    m_positionMarker = newPositionMarker;
+}
+
+Marker *LightSpot::targetMarker() const
+{
+    return m_targetMarker;
+}
+
+void LightSpot::setTargetMarker(Marker *newTargetMarker)
+{
+    m_targetMarker = newTargetMarker;
 }
 
 LightPoint::LightPoint()
@@ -351,15 +367,104 @@ LightPoint::LightPoint()
 
 std::string *LightPoint::createFromAttributes()
 {
-    if (LightShadowCasting::createFromAttributes()) return lastErrorPtr();
+    if (LightBase::createFromAttributes()) return lastErrorPtr();
+    std::string buf;
+    if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
+    m_castShadow = GSUtil::Bool(buf);
+    if (findAttribute("Distance"s, &buf) == nullptr) return lastErrorPtr();
+    m_distance = float(GSUtil::Double(buf));
+
+    if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
+    auto positionMarker = simulation()->GetMarkerList()->find(buf);
+    if (positionMarker == simulation()->GetMarkerList()->end())
+    {
+        setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
+        return lastErrorPtr();
+    }
+    m_positionMarker = positionMarker->second.get();
+
+    if (findAttribute("ShadowMapSize"s, &buf))
+    {
+        std::vector<int> shadowMap;
+        GSUtil::Int(buf, &shadowMap);
+        switch (shadowMap.size())
+        {
+        case 1:
+            m_mapWidth = m_mapHeight = shadowMap[0];
+            break;
+        case 2:
+            m_mapWidth = shadowMap[0];
+            m_mapHeight = shadowMap[1];
+            break;
+        default:
+            setLastError("LIGHT ID=\""s + name() +"\" invalid ShadowMapSize format"s);
+            return lastErrorPtr();
+        }
+    }
+
     return nullptr;
 }
 
 void LightPoint::appendToAttributes()
 {
-    LightShadowCasting::appendToAttributes();
+    LightBase::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Point"s);
+    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
+    setAttribute("Distance"s, GSUtil::ToString(m_distance));
+    setAttribute("PositionMarkerID"s, m_positionMarker->name());
+    std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
+    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
+}
+
+bool LightPoint::castShadow() const
+{
+    return m_castShadow;
+}
+
+void LightPoint::setCastShadow(bool newCastShadow)
+{
+    m_castShadow = newCastShadow;
+}
+
+size_t LightPoint::mapWidth() const
+{
+    return m_mapWidth;
+}
+
+void LightPoint::setMapWidth(size_t newMapWidth)
+{
+    m_mapWidth = newMapWidth;
+}
+
+size_t LightPoint::mapHeight() const
+{
+    return m_mapHeight;
+}
+
+void LightPoint::setMapHeight(size_t newMapHeight)
+{
+    m_mapHeight = newMapHeight;
+}
+
+float LightPoint::distance() const
+{
+    return m_distance;
+}
+
+void LightPoint::setDistance(float newDistance)
+{
+    m_distance = newDistance;
+}
+
+Marker *LightPoint::positionMarker() const
+{
+    return m_positionMarker;
+}
+
+void LightPoint::setPositionMarker(Marker *newPositionMarker)
+{
+    m_positionMarker = newPositionMarker;
 }
 
 
