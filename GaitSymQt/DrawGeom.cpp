@@ -125,6 +125,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         m_facetedObject = std::make_unique<FacetedCheckerboard>(nx, ny, checkerSize, checkerSize, m_geomColor1, m_geomColor2);
         m_facetedObject->setSimulationWidget(simulationWidget);
         m_facetedObject->setReceiveShadow(true);
+        // FIX ME - we need to give the floor some thickness so you can see something from the side. A thin stripy pole running along the X axis would do
         m_facetedObjectList.push_back(m_facetedObject.get());
         return;
     }
