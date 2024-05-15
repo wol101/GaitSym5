@@ -78,9 +78,6 @@ public:
     double TimeLimit() const;
     void setTimeLimit(double TimeLimit);
 
-    std::string DistanceTravelledBodyIDName() const;
-    void setDistanceTravelledBodyIDName(const std::string &DistanceTravelledBodyIDName);
-
     double SpringConstant() const;
     void setSpringConstant(double SpringConstant);
 
@@ -130,7 +127,6 @@ private:
     double m_LinearDamping = 0;
     double m_AngularDamping = 0;
     double m_NumericalErrorsScore = 0;
-    std::string m_DistanceTravelledBodyIDName;
     std::vector<std::string> m_MeshSearchPath = {"."s};
 };
 

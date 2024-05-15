@@ -50,7 +50,6 @@ void DialogGlobal::accept() // this catches OK and return/enter
     m_outputGlobal = std::make_unique<Global>();
     m_outputGlobal->setFitnessType(static_cast<Global::FitnessType>(ui->comboBoxFitnessType->currentIndex()));
     m_outputGlobal->setStepType(static_cast<Global::StepType>(ui->comboBoxStepType->currentIndex()));
-    m_outputGlobal->setDistanceTravelledBodyIDName(ui->comboBoxDistanceTravelledBodyIDName->currentText().toStdString());
     m_outputGlobal->setContactMaxCorrectingVel(ui->lineEditContactMaxCorrectingVel->value());
     m_outputGlobal->setContactSurfaceLayer(ui->lineEditContactSurfaceLayer->value());
     m_outputGlobal->setGravity(ui->lineEditGravityX->value(), ui->lineEditGravityY->value(), ui->lineEditGravityZ->value());
@@ -174,12 +173,6 @@ void DialogGlobal::updateUI(const Global *globalPtr)
         bool disabled = true;
         QStandardItem *item = model->item(int(Global::KinematicMatch));
         item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled : item->flags() | Qt::ItemIsEnabled);
-    }
-    else
-    {
-        for (auto &&iter : *m_existingBodies) ui->comboBoxDistanceTravelledBodyIDName->addItem(QString::fromStdString(iter.first));
-        QString distanceTravelledBodyID = QString::fromStdString(globalPtr->DistanceTravelledBodyIDName());
-        ui->comboBoxDistanceTravelledBodyIDName->setCurrentText(distanceTravelledBodyID);
     }
 
     {
@@ -379,7 +372,6 @@ void DialogGlobal::initialiseDefaultGlobal()
     m_defaultGlobal.setLinearDamping(Preferences::valueDouble("GlobalDefaultLinearDamping"));
     m_defaultGlobal.setAngularDamping(Preferences::valueDouble("GlobalDefaultAngularDamping"));
     m_defaultGlobal.setNumericalErrorsScore(Preferences::valueDouble("GlobalDefaultNumericalErrorsScore"));
-    m_defaultGlobal.setDistanceTravelledBodyIDName(Preferences::valueQString("GlobalDefaultDistanceTravelledBodyIDName").toStdString());
 
     m_defaultGlobal.MeshSearchPath()->clear();
     std::string buf = Preferences::valueQString("GlobalDefaultMeshSearchPath").toStdString();

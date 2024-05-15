@@ -254,8 +254,6 @@ std::string *Global::createFromAttributes()
     m_MechanicalEnergyLimit = GSUtil::Double(buf);
     if (findAttribute("MetabolicEnergyLimit", &buf) == nullptr) return lastErrorPtr();
     m_MetabolicEnergyLimit = GSUtil::Double(buf);
-    if (findAttribute("DistanceTravelledBodyID", &buf) == nullptr) return lastErrorPtr();
-    m_DistanceTravelledBodyIDName = buf;
     if (findAttribute("FitnessType", &buf) == nullptr) return lastErrorPtr();
     for (i = 0; i < fitnessTypeCount; i++)
     {
@@ -306,7 +304,6 @@ void Global::appendToAttributes()
     setAttribute("CFM", *GSUtil::ToString(m_CFM, &buf));
     setAttribute("ContactMaxCorrectingVel", *GSUtil::ToString(m_ContactMaxCorrectingVel, &buf));
     setAttribute("ContactSurfaceLayer", *GSUtil::ToString(m_ContactSurfaceLayer, &buf));
-    setAttribute("DistanceTravelledBodyID", m_DistanceTravelledBodyIDName);
     setAttribute("ERP", *GSUtil::ToString(m_ERP, &buf));
     setAttribute("FitnessType", fitnessTypeStrings(m_FitnessType));
     setAttribute("LinearDamping", *GSUtil::ToString(m_LinearDamping, &buf));
@@ -577,16 +574,6 @@ double Global::TimeLimit() const
 void Global::setTimeLimit(double TimeLimit)
 {
     m_TimeLimit = TimeLimit;
-}
-
-std::string Global::DistanceTravelledBodyIDName() const
-{
-    return m_DistanceTravelledBodyIDName;
-}
-
-void Global::setDistanceTravelledBodyIDName(const std::string &DistanceTravelledBodyIDName)
-{
-    m_DistanceTravelledBodyIDName = DistanceTravelledBodyIDName;
 }
 
 

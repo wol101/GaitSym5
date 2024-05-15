@@ -74,7 +74,7 @@ private:
     Marker *m_positionMarker = nullptr;
     Marker *m_targetMarker = nullptr;
 
-    float m_minDistanceMultiplier = 1e4f;
+    float m_minDistanceMultiplier = 1000.0f; // means that with a distance of 100, shadows are created from 0.1 to 100
 };
 
 class LightSpot : public LightBase
@@ -121,7 +121,7 @@ private:
     Marker *m_positionMarker = nullptr;
     Marker *m_targetMarker = nullptr;
 
-    float m_minDistanceMultiplier = 1e4f;
+    float m_minDistanceMultiplier = 1000.0f; // means that with a distance of 100, shadows are created from 0.1 to 100
 };
 
 class LightPoint : public LightBase
@@ -156,7 +156,7 @@ private:
     float m_distance = 100;
     Marker *m_positionMarker = nullptr;
 
-    float m_minDistanceMultiplier = 1e4f;
+    float m_minDistanceMultiplier = 1000.0f; // means that with a distance of 100, shadows are created from 0.1 to 100
 };
 
 
