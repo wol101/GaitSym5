@@ -9,6 +9,7 @@
 #include "threepp/core/Raycaster.hpp"
 
 #include "threepp/lights/Light.hpp"
+#include <iostream>
 
 using namespace threepp;
 
@@ -263,6 +264,7 @@ void Object3D::clear() {
     }
 
     this->children.clear();
+    std::cerr << "clear()\n"; int count = 0; for (auto &&it : this->children_) { std::cerr << count++ << " " << it.use_count() << "\n"; }
     this->children_.clear();
 }
 

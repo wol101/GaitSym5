@@ -28,7 +28,7 @@ class FacetedObject
 {
 public:
     FacetedObject();
-    ~FacetedObject();
+    virtual ~FacetedObject();
 
     virtual void Draw();
 
