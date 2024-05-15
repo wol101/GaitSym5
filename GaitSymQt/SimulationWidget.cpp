@@ -134,14 +134,20 @@ void SimulationWidget::paintGL()
     m_perspectiveCamera->updateProjectionMatrix();
     // m_perspectiveCamera->updateMatrixWorld(true);
 
-    // I need my own copies of the matrices
-    m_proj.setToIdentity();
-    if (m_orthographicProjection) { m_proj.ortho(-halfViewWidth, halfViewWidth, -halfViewHeight, halfViewHeight, m_frontClip, m_backClip); }
-    else { m_proj.perspective(m_FOV, aspectRatio, m_frontClip, m_backClip); }
-
-    // set the view matrix
-    m_view.setToIdentity();
-    m_view.lookAt(QVector3D(eye.x, eye.z, eye.z), QVector3D(centre.x, centre.y, centre.z), QVector3D(up.x, up.y, up.z));
+    // I need my own copies of the view and projection matrices
+    threepp::Matrix4 *view, *proj;
+    if (m_orthographicProjection)
+    {
+        proj = &m_orthographicCamera->projectionMatrix;
+        view = &m_orthographicCamera->matrixWorldInverse;
+    }
+    else
+    {
+        proj = &m_perspectiveCamera->projectionMatrix;
+        view = &m_perspectiveCamera->matrixWorldInverse;
+    }
+    m_proj = QMatrix4x4(proj->elements.data()).transposed();
+    m_view = QMatrix4x4(view->elements.data()).transposed();
 
     // some lights
     if (m_simulation && !m_lightGroup)
@@ -294,6 +300,7 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
     // the following mapping should always give the right values for the UnProject matrix
     GLfloat winX = (GLfloat(event->pos().x()) / GLfloat(width())) * 2 - 1;
     GLfloat winY = -1 * ((GLfloat(event->pos().y()) / GLfloat(height())) * 2 - 1);
+    qDebug() << "winX = " << winX << "winY = " << winY;
     intersectModel(winX, winY);
 
     if (m_moveMarkerMode)
@@ -1812,17 +1819,7 @@ QMatrix4x4 SimulationWidget::proj() const
     return m_proj;
 }
 
-#if 0
-QOpenGLShaderProgram *SimulationWidget::facetedObjectShader() const
-{
-    return m_facetedObjectShader;
-}
 
-QOpenGLShaderProgram *SimulationWidget::fixedColourObjectShader() const
-{
-    return m_fixedColourObjectShader;
-}
-#endif
 
 
 
