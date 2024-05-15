@@ -86,10 +86,10 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-    if (!m_renderer || m_renderer->shadowMap().enabled) // with shadows enabled Qt embedding seems to require a new renderer each paint
+    if (!m_renderer)
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
-        m_renderer->shadowMap().enabled = false ;
+        m_renderer->shadowMap().enabled = true;
         m_renderer->physicallyCorrectLights = false;
         m_renderer->checkShaderErrors = false;
         m_renderer->autoClear = true;
