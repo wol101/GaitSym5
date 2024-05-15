@@ -43,12 +43,18 @@ MeshStore FacetedObject::m_meshStore;
 // create object
 FacetedObject::FacetedObject()
 {
-    qDebug() << QTime::currentTime().toString() << "FacetedObject()";
+    // qDebug() << QTime::currentTime().toString() << "FacetedObject()";
 }
 
 FacetedObject::~FacetedObject()
 {
-    qDebug() << QTime::currentTime().toString() << "~FacetedObject m_mesh.use_count() = " << m_mesh.use_count();
+    // qDebug() << QTime::currentTime().toString() << "~FacetedObject m_mesh.use_count() = " << m_mesh.use_count();
+    if (m_mesh)
+    {
+        m_mesh->removeFromParent();
+        m_mesh->geometry()->dispose();
+        m_mesh->material()->dispose();
+    }
 }
 
 
@@ -995,11 +1001,11 @@ void FacetedObject::Draw()
         m_mesh = threepp::Mesh::create(geometry, material);
         m_mesh->castShadow = m_castShadow;
         m_mesh->receiveShadow = m_receiveShadow;
-        qDebug() << QTime::currentTime().toString() << " Mesh created";
+        // qDebug() << QTime::currentTime().toString() << " Mesh created";
     }
     else
     {
-        qDebug() << QTime::currentTime().toString() << " Mesh reused";
+        // qDebug() << QTime::currentTime().toString() << " Mesh reused";
     }
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);
     m_mesh->scale.set(m_displayScale.x, m_displayScale.y, m_displayScale.z);

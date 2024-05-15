@@ -89,7 +89,7 @@ void SimulationWidget::paintGL()
     if (!m_renderer || m_renderer->shadowMap().enabled) // with shadows enabled Qt embedding seems to require a new renderer each paint
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
-        m_renderer->shadowMap().enabled = true;
+        m_renderer->shadowMap().enabled = false ;
         m_renderer->physicallyCorrectLights = false;
         m_renderer->checkShaderErrors = false;
         m_renderer->autoClear = true;
@@ -98,13 +98,14 @@ void SimulationWidget::paintGL()
     {
         m_renderer->setSize(windowSize);
     }
-    if (!m_scene) { m_scene = threepp::Scene::create(); }
+    if (!m_scene)
+    {
+        m_scene = threepp::Scene::create();
+        threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
+        m_scene->background = color;
+    }
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
-
-    m_scene->clear(); // perhaps I shouldn't clear the lights every time
-    threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
-    m_scene->background = color;
 
     float aspectRatio = windowSize.aspect();
     threepp::Vector3 eye(m_COIx - m_cameraVecX * m_cameraDistance, m_COIy - m_cameraVecY * m_cameraDistance, m_COIz - m_cameraVecZ * m_cameraDistance);
@@ -122,7 +123,7 @@ void SimulationWidget::paintGL()
     m_orthographicCamera->up = up;
     m_orthographicCamera->lookAt(centre);
     m_orthographicCamera->updateProjectionMatrix();
-    m_orthographicCamera->updateMatrixWorld(true);
+    // m_orthographicCamera->updateMatrixWorld(true);
     m_perspectiveCamera->fov = m_FOV;
     m_perspectiveCamera->aspect = aspectRatio;
     m_perspectiveCamera->near = m_frontClip;
@@ -131,7 +132,7 @@ void SimulationWidget::paintGL()
     m_perspectiveCamera->up = up;
     m_perspectiveCamera->lookAt(centre);
     m_perspectiveCamera->updateProjectionMatrix();
-    m_perspectiveCamera->updateMatrixWorld(true);
+    // m_perspectiveCamera->updateMatrixWorld(true);
 
     // I need my own copies of the matrices
     m_proj.setToIdentity();
@@ -143,7 +144,7 @@ void SimulationWidget::paintGL()
     m_view.lookAt(QVector3D(eye.x, eye.z, eye.z), QVector3D(centre.x, centre.y, centre.z), QVector3D(up.x, up.y, up.z));
 
     // some lights
-    if (m_simulation)
+    if (m_simulation && !m_lightGroup)
     {
         SetupLights();
     }
@@ -1272,7 +1273,7 @@ void SimulationWidget::drawModel()
 
 void SimulationWidget::SetupLights()
 {
-    auto lightGroup = threepp::Group::create();
+    m_lightGroup = threepp::Group::create();
     for (auto &&baseLight : *m_simulation->GetlightList())
     {
         while (true)
@@ -1284,7 +1285,7 @@ void SimulationWidget::SetupLights()
             {
                 auto light = threepp::AmbientLight::create(colour, intensity);
                 light->name = name;
-                lightGroup->add(light);
+                m_lightGroup->add(light);
                 break;
             }
             if (dynamic_cast<LightDirectional *>(baseLight.second.get()))
@@ -1309,9 +1310,9 @@ void SimulationWidget::SetupLights()
                 light->shadow->camera->as<threepp::OrthographicCamera>()->left = -directional->width() / 2;
                 light->shadow->camera->as<threepp::OrthographicCamera>()->right = directional->width() / 2;
                 light->shadow->camera->updateProjectionMatrix();
-                light->shadow->camera->updateMatrixWorld();
-                lightGroup->add(light);
-                lightGroup->add(targetObj);
+                // light->shadow->camera->updateMatrixWorld();
+                m_lightGroup->add(light);
+                m_lightGroup->add(targetObj);
                 break;
             }
             if (dynamic_cast<LightSpot *>(baseLight.second.get()))
@@ -1332,9 +1333,9 @@ void SimulationWidget::SetupLights()
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->near = spot->distance() / spot->minDistanceMultiplier();
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->far = spot->distance();
                 light->shadow->camera->updateProjectionMatrix();
-                light->shadow->camera->updateMatrixWorld();
-                lightGroup->add(light);
-                lightGroup->add(targetObj);
+                // light->shadow->camera->updateMatrixWorld();
+                m_lightGroup->add(light);
+                m_lightGroup->add(targetObj);
                 break;
             }
             if (dynamic_cast<LightPoint *>(baseLight.second.get()))
@@ -1350,14 +1351,14 @@ void SimulationWidget::SetupLights()
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->near = point->distance() / point->minDistanceMultiplier();
                 light->shadow->camera->as<threepp::PerspectiveCamera>()->far = point->distance();
                 light->shadow->camera->updateProjectionMatrix();
-                light->shadow->camera->updateMatrixWorld();
-                lightGroup->add(light);
+                // light->shadow->camera->updateMatrixWorld();
+                m_lightGroup->add(light);
                 break;
             }
             break;
         }
     }
-    m_scene->add(lightGroup);
+    m_scene->add(m_lightGroup);
 }
 
 const IntersectionHits *SimulationWidget::getClosestHit() const
