@@ -90,6 +90,7 @@ void SimulationWidget::paintGL()
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
         m_renderer->shadowMap().enabled = true;
+        m_renderer->shadowMap().type = threepp::ShadowMap::PFCSoft;
         m_renderer->physicallyCorrectLights = false;
         m_renderer->checkShaderErrors = false;
         m_renderer->autoClear = true;
