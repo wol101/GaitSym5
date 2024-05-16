@@ -155,8 +155,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
     std::map<std::string, std::unique_ptr<Joint>> *jointsMap = m_simulation->GetJointList();
     for (size_t i = 0; i < m_jointList.size(); i++)
     {
-        HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_jointList[i]);
-        if (hingeJoint)
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_jointList[i]))
         {
             LineEditDouble *lineEdit = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             Q_ASSERT_X(lineEdit, "DialogAssembly::accept", "lineEdit not set");
@@ -177,8 +176,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
             emit jointCreated(QString::fromStdString(jointPtr->name()));
         }
 
-        UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_jointList[i]);
-        if (universalJoint)
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_jointList[i]))
         {
             LineEditDouble *lineEdit1 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             LineEditDouble *lineEdit2 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 3)->widget());
@@ -202,8 +200,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
             emit jointCreated(QString::fromStdString(jointPtr->name()));
         }
 
-        BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_jointList[i]);
-        if (ballJoint)
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_jointList[i]))
         {
             LineEditDouble *lineEdit1 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             LineEditDouble *lineEdit2 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 3)->widget());
@@ -295,8 +292,7 @@ void DialogAssembly::initialise()
     std::string bodyName;
     for (auto &&iter : assemblyJoints)
     {
-        LMotorJoint *lMotorJoint = dynamic_cast<LMotorJoint *>(iter.second);
-        if (lMotorJoint)
+        if (LMotorJoint *lMotorJoint = dynamic_cast<LMotorJoint *>(iter.second)
         {
             bodyName = lMotorJoint->GetBody2()->name();
             ui->comboBoxBodyList->setCurrentText(QString::fromStdString(bodyName));
@@ -344,8 +340,7 @@ void DialogAssembly::initialise()
     int row = 0;
     for (auto &&iter : *m_simulation->GetJointList())
     {
-        HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-        if (hingeJoint)
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get()))
         {
             QLabel *label = new QLabel();
             label->setText(QString::fromStdString(iter.first));
@@ -366,8 +361,7 @@ void DialogAssembly::initialise()
             row++;
         }
 
-        UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(iter.second.get());
-        if (universalJoint)
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(iter.second.get()))
         {
             QLabel *label = new QLabel();
             label->setText(QString::fromStdString(iter.first));
@@ -396,8 +390,7 @@ void DialogAssembly::initialise()
             row++;
         }
 
-        BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get());
-        if (ballJoint)
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
         {
             QLabel *label = new QLabel();
             label->setText(QString::fromStdString(iter.first));
@@ -459,16 +452,14 @@ void DialogAssembly::reset()
 
     for (size_t i = 0; i < m_jointList.size(); i++)
     {
-        HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_jointList[i]);
-        if (hingeJoint)
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_jointList[i]))
         {
             LineEditDouble *lineEdit = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             Q_ASSERT_X(lineEdit, "DialogAssembly::accept", "lineEdit not set");
             lineEdit->setValue(pgd::RadToDeg(hingeJoint->GetHingeAngle()));
         }
 
-        UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_jointList[i]);
-        if (universalJoint)
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_jointList[i]))
         {
             LineEditDouble *lineEdit1 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             LineEditDouble *lineEdit2 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 3)->widget());
@@ -478,8 +469,7 @@ void DialogAssembly::reset()
             lineEdit2->setValue(pgd::RadToDeg(universalJoint->GetUniversalAngle2()));
         }
 
-        BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_jointList[i]);
-        if (ballJoint)
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_jointList[i]))
         {
             LineEditDouble *lineEdit1 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 2)->widget());
             LineEditDouble *lineEdit2 = dynamic_cast<LineEditDouble *>(m_gridLayout->itemAtPosition(int(i), 3)->widget());

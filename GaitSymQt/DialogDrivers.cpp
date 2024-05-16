@@ -82,15 +82,12 @@ DialogDrivers::DialogDrivers(QWidget *parent) :
     QList<QWidget *> widgets = this->findChildren<QWidget *>();
     for (auto it = widgets.begin(); it != widgets.end(); it++)
     {
-        QComboBox *comboBox = dynamic_cast<QComboBox *>(*it);
-        if (comboBox) connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxChanged(int)));
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it);
-        if (lineEdit) connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditChanged(const QString &)));
+        if (QComboBox *comboBox = dynamic_cast<QComboBox *>(*it)) connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxChanged(int)));
+        if (QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it)) connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditChanged(const QString &)));
 //        commented out because the spin boxes are handled explicitly
-//        QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it);
-//        if (spinBox) connect(spinBox, SIGNAL(valueChanged(const QString &)), this, SLOT(spinBoxChanged(const QString &)));
-        QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it);
-        if (checkBox) connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
+//        if (QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it)) connect(spinBox, SIGNAL(valueChanged(const QString &)), this, SLOT(spinBoxChanged(const QString &)));
+        ;
+        if (QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it)) connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
     }
 
     connect(ui->spinBoxTargets, SIGNAL(valueChanged(int)), this, SLOT(spinBoxChangedTargets(int)));
@@ -305,8 +302,7 @@ void DialogDrivers::lateInitialise()
 
     while (true)
     {
-        FixedDriver *fixedDriver = dynamic_cast<FixedDriver *>(m_inputDriver);
-        if (fixedDriver)
+        if (FixedDriver *fixedDriver = dynamic_cast<FixedDriver *>(m_inputDriver))
         {
             if ((s = fixedDriver->findAttribute("Value"s)).size()) ui->lineEditFixedValue->setValue(GSUtil::Double(s));
             ui->tabWidget->setCurrentIndex(tabNames.indexOf("Fixed"));
@@ -314,8 +310,7 @@ void DialogDrivers::lateInitialise()
             break;
         }
 
-        StepDriver *stepDriver = dynamic_cast<StepDriver *>(m_inputDriver);
-        if (stepDriver)
+        if (StepDriver *stepDriver = dynamic_cast<StepDriver *>(m_inputDriver))
         {
             std::vector<double> valueList = stepDriver->valueList();
             std::vector<double> durationList = stepDriver->durationList();
@@ -333,8 +328,7 @@ void DialogDrivers::lateInitialise()
             break;
         }
 
-        CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver *>(m_inputDriver);
-        if (cyclicDriver)
+        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver *>(m_inputDriver))
         {
             std::vector<double> valueList = cyclicDriver->valueList();
             std::vector<double> durationList = cyclicDriver->durationList();
@@ -352,8 +346,7 @@ void DialogDrivers::lateInitialise()
             break;
         }
 
-        StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver *>(m_inputDriver);
-        if (stackedBoxcarDriver)
+        if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver *>(m_inputDriver))
         {
             int stackSize = GSUtil::Int(stackedBoxcarDriver->findAttribute("StackSize"s));
             std::vector<double> delays(static_cast<size_t>(stackSize));

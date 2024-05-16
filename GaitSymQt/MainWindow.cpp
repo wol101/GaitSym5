@@ -2071,14 +2071,12 @@ void MainWindow::menuCreateEditJoint(Joint *joint)
             // the only thing that currently depends on joints is the ThreeJointDriver
             for (auto &&driverIt : *this->m_simulation->GetDriverList())
             {
-                ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt.second.get());
-                if (threeHingeJointDriver) threeHingeJointDriver->saveToAttributes();
+                if (ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt.second.get())) threeHingeJointDriver->saveToAttributes();
             }
             (*this->m_simulation->GetJointList())[replacementJointName] = std::move(replacementJoint);
             for (auto driverIt = this->m_simulation->GetDriverList()->begin(); driverIt != this->m_simulation->GetDriverList()->end(); /* no increment */)
             {
-                ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt->second.get());
-                if (threeHingeJointDriver)
+                if (ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt->second.get()))
                 {
                     std::string *lastError = threeHingeJointDriver->createFromAttributes();
                     if (lastError)
@@ -2779,8 +2777,7 @@ void MainWindow::elementInfo(const QString &elementType, const QString &elementN
     lines.push_back("<"s + elementType.toUpper().toStdString());
     for (auto &&it : element->attributeMap()) lines.push_back("    "s + it.first + "=\"" + it.second + "\"");
     lines.push_back("/>"s);
-    Muscle *muscle = dynamic_cast<Muscle *>(element);
-    if (muscle)
+    if (Muscle *muscle = dynamic_cast<Muscle *>(element))
     {
         muscle->GetStrap()->saveToAttributes();
         lines.push_back("<STRAP"s);

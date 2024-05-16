@@ -44,14 +44,10 @@ DialogJoints::DialogJoints(QWidget *parent) :
     QList<QWidget *> widgets = this->findChildren<QWidget *>();
     for (auto it = widgets.begin(); it != widgets.end(); it++)
     {
-        QComboBox *comboBox = dynamic_cast<QComboBox *>(*it);
-        if (comboBox) connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxChanged(int)));
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it);
-        if (lineEdit) connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditChanged(const QString &)));
-        QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it);
-        if (spinBox) connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(spinBoxChanged(int)));
-        QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it);
-        if (checkBox) connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
+        if (QComboBox *comboBox = dynamic_cast<QComboBox *>(*it)) connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxChanged(int)));
+        if (QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it)) connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditChanged(const QString &)));
+        if (QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it)) connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(spinBoxChanged(int)));
+        if (QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it)) connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
     }
 
     ui->pushButtonOK->setEnabled(false);
@@ -347,8 +343,7 @@ void DialogJoints::lateInitialise()
     if ((s = m_inputJoint->findAttribute("CFM"s)).size()) ui->lineEditCFM->setValue(GSUtil::Double(s));
     if ((s = m_inputJoint->findAttribute("ERP"s)).size()) ui->lineEditERP->setValue(GSUtil::Double(s));
 
-    HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_inputJoint);
-    if (hingeJoint)
+    if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_inputJoint))
     {
         if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditHingeLowStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditHingeHighStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
@@ -361,8 +356,7 @@ void DialogJoints::lateInitialise()
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Hinge"));
     }
 
-    BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_inputJoint);
-    if (ballJoint)
+    if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_inputJoint))
     {
 #ifdef FIX_ME
         switch (ballJoint->GetMode())
@@ -387,16 +381,14 @@ void DialogJoints::lateInitialise()
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Ball"));
     }
 
-    FloatingHingeJoint *floatingHingeJoint = dynamic_cast<FloatingHingeJoint *>(m_inputJoint);
-    if (floatingHingeJoint)
+    if (FloatingHingeJoint *floatingHingeJoint = dynamic_cast<FloatingHingeJoint *>(m_inputJoint))
     {
         if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditFloatingHingeLowStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditFloatingHingeHighStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Floating Hinge"));
     }
 
-    FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(m_inputJoint);
-    if (fixedJoint)
+    if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(m_inputJoint))
     {
         ui->checkBoxLateFix->setChecked(fixedJoint->lateFix());
         std::string stressCalculationType = m_inputJoint->findAttribute("StressCalculationType"s);
@@ -419,8 +411,7 @@ void DialogJoints::lateInitialise()
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Fixed"));
     }
 
-    UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_inputJoint);
-    if (universalJoint)
+    if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_inputJoint))
     {
         if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditUniversalLowStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
         if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditUniversalHighStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));

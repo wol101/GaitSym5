@@ -30,8 +30,6 @@ DataTargetQuaternion::DataTargetQuaternion()
 // in this case this is the angle between the two quaternions
 double DataTargetQuaternion::calculateError(size_t valueListIndex)
 {
-    Body *body;
-    Geom *geom;
     pgd::Quaternion q;
     double angle = 0;
     if (valueListIndex >= m_QValueList.size())
@@ -40,19 +38,22 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
         return 0;
     }
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    while (true)
     {
-        q = body->GetQuaternion();
-        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
-    }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
-    {
-        q = geom->GetWorldQuaternion();
-        angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
-    }
-    else
-    {
+        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        {
+            q = body->GetQuaternion();
+            angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
+            break;
+        }
+        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        {
+            q = geom->GetWorldQuaternion();
+            angle = pgd::FindAngle(m_QValueList[size_t(valueListIndex)], q);
+            break;
+        }
         std::cerr << "DataTargetQuaternion target missing error " << name() << "\n";
+        break;
     }
     return angle;
 }
@@ -61,8 +62,6 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
 // in this case this is the angle between the two quaternions
 double DataTargetQuaternion::calculateError(double time)
 {
-    Body *body;
-    Geom *geom;
     pgd::Quaternion q;
     double angle = 0;
 
@@ -92,19 +91,22 @@ double DataTargetQuaternion::calculateError(double time)
     else interpolationFraction = (time - (*targetTimeList())[size_t(index)]) / delTime;
     pgd::Quaternion interpolatedTarget = pgd::slerp(m_QValueList[size_t(index)], m_QValueList[size_t(indexNext)], interpolationFraction);
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    while (true)
     {
-        q = body->GetQuaternion();
-        angle = pgd::FindAngle(interpolatedTarget, q);
-    }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
-    {
-        q = geom->GetWorldQuaternion();
-        angle = pgd::FindAngle(interpolatedTarget, q);
-    }
-    else
-    {
+        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        {
+            q = body->GetQuaternion();
+            angle = pgd::FindAngle(interpolatedTarget, q);
+            break;
+        }
+        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        {
+            q = geom->GetWorldQuaternion();
+            angle = pgd::FindAngle(interpolatedTarget, q);
+            break;
+        }
         std::cerr << "DataTargetQuaternion target missing error " << name() << "\n";
+        break;
     }
     return angle;
 }

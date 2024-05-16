@@ -561,44 +561,40 @@ void SimulationWidget::menuRequest(const QPoint &pos)
     {
         menu.addAction(tr("Create Marker..."));
         menu.addSeparator();
-        auto body = dynamic_cast<DrawBody *>(drawable);
-        if (body)
+        if (auto body = dynamic_cast<DrawBody *>(drawable))
         {
             menu.addAction(tr("Edit Body..."));
             menu.addAction(tr("Delete Body..."));
             break;
         }
-//        auto fluisac = dynamic_cast<DrawFluidSac *>(drawable);
-//        if (fluisac)
+//        if (auto fluisac = dynamic_cast<DrawFluidSac *>(drawable))
 //        {
 //            menu.addAction(tr("Edit Fluid Sac..."));
 //            menu.addAction(tr("Delete Fluid Sac..."));
 //            break;
 //        }
-        auto geom = dynamic_cast<DrawGeom *>(drawable);
-        if (geom)
+
+        if (auto geom = dynamic_cast<DrawGeom *>(drawable))
         {
             menu.addAction(tr("Edit Geom..."));
             menu.addAction(tr("Delete Geom..."));
             break;
         }
-        auto joint = dynamic_cast<DrawJoint *>(drawable);
-        if (joint)
+
+        if (auto joint = dynamic_cast<DrawJoint *>(drawable))
         {
             menu.addAction(tr("Edit Joint..."));
             menu.addAction(tr("Delete Joint..."));
             break;
         }
-        auto marker = dynamic_cast<DrawMarker *>(drawable);
-        if (marker)
+        if (auto marker = dynamic_cast<DrawMarker *>(drawable))
         {
             menu.addAction(tr("Edit Marker..."));
             menu.addAction(tr("Delete Marker..."));
             menu.addAction(tr("Move Marker"));
             break;
         }
-        auto muscle = dynamic_cast<DrawMuscle *>(drawable);
-        if (muscle)
+        if (auto muscle = dynamic_cast<DrawMuscle *>(drawable))
         {
             menu.addAction(tr("Edit Muscle..."));
             menu.addAction(tr("Delete Muscle..."));
@@ -1288,16 +1284,15 @@ void SimulationWidget::SetupLights()
             threepp::Color colour(baseLight.second->colour1().r(), baseLight.second->colour1().g(), baseLight.second->colour1().b());
             float intensity = baseLight.second->intensity();
             std::string name = baseLight.second->name();
-            if (dynamic_cast<LightAmbient *>(baseLight.second.get()))
+            if (LightAmbient *ambient = dynamic_cast<LightAmbient *>(baseLight.second.get()))
             {
                 auto light = threepp::AmbientLight::create(colour, intensity);
                 light->name = name;
                 m_lightGroup->add(light);
                 break;
             }
-            if (dynamic_cast<LightDirectional *>(baseLight.second.get()))
+            if (LightDirectional *directional = dynamic_cast<LightDirectional *>(baseLight.second.get()))
             {
-                LightDirectional *directional = dynamic_cast<LightDirectional *>(baseLight.second.get());
                 pgd::Vector3 p = directional->positionMarker()->GetWorldPosition();
                 pgd::Vector3 t = directional->targetMarker()->GetWorldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);
@@ -1322,9 +1317,8 @@ void SimulationWidget::SetupLights()
                 m_lightGroup->add(targetObj);
                 break;
             }
-            if (dynamic_cast<LightSpot *>(baseLight.second.get()))
+            if (LightSpot *spot = dynamic_cast<LightSpot *>(baseLight.second.get()))
             {
-                LightSpot *spot = dynamic_cast<LightSpot *>(baseLight.second.get());
                 pgd::Vector3 p = spot->positionMarker()->GetWorldPosition();
                 pgd::Vector3 t = spot->targetMarker()->GetWorldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);
@@ -1345,9 +1339,8 @@ void SimulationWidget::SetupLights()
                 m_lightGroup->add(targetObj);
                 break;
             }
-            if (dynamic_cast<LightPoint *>(baseLight.second.get()))
+            if (LightPoint *point = dynamic_cast<LightPoint *>(baseLight.second.get()))
             {
-                LightPoint *point = dynamic_cast<LightPoint *>(baseLight.second.get());
                 pgd::Vector3 p = point->positionMarker()->GetWorldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);
                 auto light = threepp::SpotLight::create(colour, intensity, point->distance());

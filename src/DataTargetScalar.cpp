@@ -61,17 +61,9 @@ double DataTargetScalar::calculateErrorScore(double value)
     std::vector<Contact *> *contactList;
     double force;
 
-    Body *body;
-    HingeJoint *hingeJoint;
-    BallJoint *ballJoint;
-    UniversalJoint *universalJoint;
-    Marker *marker;
-    Geom *geom;
-    TegotaeDriver *tegotaeDriver;
-
     while (true)
     {
-        if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+        if (Body *body = dynamic_cast<Body *>(GetTarget()))
         {
             switch (m_DataType)
             {
@@ -132,7 +124,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if ((marker = dynamic_cast<Marker *>(GetTarget())) != nullptr)
+        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
         {
             switch (m_DataType)
             {
@@ -181,7 +173,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
         {
             result = hingeJoint->anchor();
             switch (m_DataType)
@@ -222,7 +214,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
         {
             result = ballJoint->anchor();
             switch (m_DataType)
@@ -260,7 +252,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
         {
             result = universalJoint->anchor();
             switch (m_DataType)
@@ -298,7 +290,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
+        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
         {
             switch (m_DataType)
             {
@@ -361,7 +353,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if ((tegotaeDriver = dynamic_cast<TegotaeDriver *>(GetTarget())) != nullptr)
+        if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(GetTarget()))
         {
             pgd::Vector3 errorVector;
             switch (m_DataType)

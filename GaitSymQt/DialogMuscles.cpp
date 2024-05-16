@@ -90,18 +90,10 @@ DialogMuscles::DialogMuscles(QWidget *parent) :
     QList<QWidget *> widgets = this->findChildren<QWidget *>();
     for (auto it = widgets.begin(); it != widgets.end(); it++)
     {
-        QComboBox *comboBox = dynamic_cast<QComboBox *>(*it);
-        if (comboBox)
-            connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxChanged(int)));
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it);
-        if (lineEdit)
-            connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditChanged(const QString &)));
-        QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it);
-        if (spinBox)
-            connect(spinBox, SIGNAL(textChanged(const QString &)), this, SLOT(spinBoxChanged(const QString &)));
-        QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it);
-        if (checkBox)
-            connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
+        if (QComboBox *comboBox = dynamic_cast<QComboBox *>(*it)) connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(comboBoxChanged(int)));
+        if (QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it)) connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditChanged(const QString &)));
+        if (QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it)) connect(spinBox, SIGNAL(textChanged(const QString &)), this, SLOT(spinBoxChanged(const QString &)));
+        if (QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it)) connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged(int)));
     }
 
     ui->pushButtonOK->setEnabled(false);
@@ -470,8 +462,7 @@ void DialogMuscles::lateInitialise()
     ui->comboBoxInsertionMarker->setCurrentText(QString::fromStdString(m_inputMuscle->GetStrap()->findAttribute("InsertionMarkerID"s)));
     if ((s = m_inputMuscle->GetStrap()->findAttribute("Length"s)).size()) ui->lineEditLength->setValue(GSUtil::Double(s));
 
-    MAMuscle *maMuscle = dynamic_cast<MAMuscle *>(m_inputMuscle);
-    if (maMuscle)
+    if (MAMuscle *maMuscle = dynamic_cast<MAMuscle *>(m_inputMuscle))
     {
         if ((s = maMuscle->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea->setValue(GSUtil::Double(s));
         if ((s = maMuscle->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor->setValue(GSUtil::Double(s));
@@ -481,8 +472,7 @@ void DialogMuscles::lateInitialise()
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Minetti-Alexander"));
     }
 
-    MAMuscleComplete *maMuscleComplete = dynamic_cast<MAMuscleComplete *>(m_inputMuscle);
-    if (maMuscleComplete)
+    if (MAMuscleComplete *maMuscleComplete = dynamic_cast<MAMuscleComplete *>(m_inputMuscle))
     {
         if ((s = maMuscleComplete->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea_2->setValue(GSUtil::Double(s));
         if ((s = maMuscleComplete->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor_2->setValue(GSUtil::Double(s));
@@ -510,8 +500,7 @@ void DialogMuscles::lateInitialise()
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Minetti-Alexander Elastic"));
     }
 
-    DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(m_inputMuscle);
-    if (dampedSpringMuscle)
+    if (DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(m_inputMuscle))
     {
         if ((s = dampedSpringMuscle->findAttribute("UnloadedLength"s)).size()) ui->lineEditUnloadedLength->setValue(GSUtil::Double(s));
         if ((s = dampedSpringMuscle->findAttribute("SpringConstant"s)).size()) ui->lineEditSpringConstant->setValue(GSUtil::Double(s));
@@ -521,8 +510,7 @@ void DialogMuscles::lateInitialise()
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Damped Spring"));
     }
 
-    NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(m_inputMuscle->GetStrap());
-    if (nPointStrap)
+    if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(m_inputMuscle->GetStrap()))
     {
         s = nPointStrap->findAttribute("ViaPointMarkerIDList"s);
         if (s.size())
@@ -553,16 +541,14 @@ void DialogMuscles::lateInitialise()
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("N-Point"));
     }
 
-    CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(m_inputMuscle->GetStrap());
-    if (cylinderWrapStrap)
+    if (CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(m_inputMuscle->GetStrap()))
     {
         if ((s = cylinderWrapStrap->findAttribute("CylinderMarkerID"s)).size()) ui->comboBoxCylinderMarker->setCurrentText(QString::fromStdString(s));
         if ((s = cylinderWrapStrap->findAttribute("CylinderRadius"s)).size()) ui->lineEditCylinderRadius->setValue(GSUtil::Double(s));
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("Cylinder"));
     }
 
-    TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(m_inputMuscle->GetStrap());
-    if (twoCylinderWrapStrap)
+    if (TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(m_inputMuscle->GetStrap()))
     {
         if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1MarkerID"s)).size()) ui->comboBox2Cylinder1Marker->setCurrentText(QString::fromStdString(s));
         if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1Radius"s)).size()) ui->lineEdit2Cylinder1Radius->setValue(GSUtil::Double(s));

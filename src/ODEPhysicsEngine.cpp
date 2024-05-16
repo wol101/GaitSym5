@@ -104,8 +104,7 @@ std::string *ODEPhysicsEngine::CreateJoints()
         {
             dJointID jointID = nullptr;
             auto jointFeedback = std::make_unique<dJointFeedback>();
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
+            if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get()))
             {
                 pgd::Vector3 anchor = hingeJoint->anchor();
                 pgd::Vector3 axis = hingeJoint->axis();
@@ -152,8 +151,7 @@ std::string *ODEPhysicsEngine::CreateGeoms()
         while (true)
         {
             dGeomID geomID = nullptr;
-            SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get());
-            if (sphereGeom)
+            if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get()))
             {
                 double radius = sphereGeom->radius();
                 pgd::Vector3 position = sphereGeom->GetPosition();
@@ -168,8 +166,7 @@ std::string *ODEPhysicsEngine::CreateGeoms()
                 dGeomSetOffsetQuaternion(geomID, quaternion.constData());
                 break;
             }
-            PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
-            if (planeGeom)
+            if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get()))
             {
                 double a, b, c, d;
                 planeGeom->GetPlane(&a, &b, &c, &d);
@@ -278,8 +275,7 @@ std::string *ODEPhysicsEngine::Step()
     {
         while (true)
         {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
+            if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get()))
             {
                 dJointID jointID = reinterpret_cast<dJointID>(hingeJoint->data());
                 dVector3 axis, anchor;

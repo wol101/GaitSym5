@@ -345,8 +345,7 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
 
     while (true)
     {
-        const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(joint);
-        if (hingeJoint)
+        if (const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(joint))
         {
             // Marker *marker1 = hingeJoint->body1Marker();
             // pgd::Vector3 p1 = marker1->GetPosition();
@@ -398,8 +397,7 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
     std::map<std::string, std::string> attributes;
     while (true)
     {
-        const SphereGeom *sphereGeom = dynamic_cast<const SphereGeom *>(geom);
-        if (sphereGeom)
+        if (const SphereGeom *sphereGeom = dynamic_cast<const SphereGeom *>(geom))
         {
             double radius = sphereGeom->radius();
             pgd::Vector3 position = sphereGeom->GetPosition();
@@ -415,8 +413,7 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
             XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
-        const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom);
-        if (planeGeom)
+        if (const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom))
         {
             Marker *marker = planeGeom->geomMarker();
             pgd::Vector3 position = marker->GetPosition();
@@ -627,8 +624,7 @@ std::string *MuJoCoPhysicsEngine::Step()
     {
         while (true)
         {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
+            if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get()))
             {
                 int jointID = mj_name2id(m_mjModel, mjOBJ_JOINT, hingeJoint->name().c_str());
                 int jnt_type = m_mjModel->jnt_type[jointID];

@@ -63,14 +63,10 @@ DialogGeoms::DialogGeoms(QWidget *parent) :
     QList<QWidget *> widgets = this->findChildren<QWidget *>();
     for (auto it = widgets.begin(); it != widgets.end(); it++)
     {
-        QComboBox *comboBox = dynamic_cast<QComboBox *>(*it);
-        if (comboBox) connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DialogGeoms::comboBoxChanged); // QOverload<int> selects the (int) rather than the (QString) version of currentIndexChanged
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it);
-        if (lineEdit) connect(lineEdit, &QLineEdit::textChanged, this, &DialogGeoms::lineEditChanged);
-        QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it);
-        if (spinBox) connect(spinBox, &QSpinBox::textChanged, this, &DialogGeoms::spinBoxChanged);
-        QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it);
-        if (checkBox) connect(checkBox, &QCheckBox::stateChanged, this, &DialogGeoms::checkBoxChanged);
+        if (QComboBox *comboBox = dynamic_cast<QComboBox *>(*it)) connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DialogGeoms::comboBoxChanged); // QOverload<int> selects the (int) rather than the (QString) version of currentIndexChanged
+        if (QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it)) connect(lineEdit, &QLineEdit::textChanged, this, &DialogGeoms::lineEditChanged);
+        if (QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it)) connect(spinBox, &QSpinBox::textChanged, this, &DialogGeoms::spinBoxChanged);
+        if (QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it)) connect(checkBox, &QCheckBox::stateChanged, this, &DialogGeoms::checkBoxChanged);
     }
 
 }
@@ -273,23 +269,20 @@ void DialogGeoms::lateInitialise()
         m_gridLayoutExcludedGeoms->addItem(gridSpacerExcludedGeoms, ui->spinBoxNExcludedGeoms->value(), 0);
     }
 
-    SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_inputGeom);
-    if (sphereGeom)
+    if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_inputGeom))
     {
         if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Sphere"));
     }
 
-    CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_inputGeom);
-    if (cappedCylinderGeom)
+    if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_inputGeom))
     {
         if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GSUtil::Double(s));
         if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Capsule"));
     }
 
-    BoxGeom *boxGeom = dynamic_cast<BoxGeom *>(m_inputGeom);
-    if (boxGeom)
+    if (BoxGeom *boxGeom = dynamic_cast<BoxGeom *>(m_inputGeom))
     {
         if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GSUtil::Double(s));
         if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GSUtil::Double(s));
@@ -297,8 +290,7 @@ void DialogGeoms::lateInitialise()
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Box"));
     }
 
-    PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_inputGeom);
-    if (planeGeom)
+    if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_inputGeom))
     {
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Plane"));
     }

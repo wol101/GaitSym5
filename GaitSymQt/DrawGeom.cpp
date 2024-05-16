@@ -83,8 +83,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
     m_geomSize1 = m_geom->size1();
     m_geomSize2 = m_geom->size2();
 
-    SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_geom);
-    if (sphereGeom)
+    if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_geom))
     {
         m_facetedObject = std::make_unique<FacetedSphere>(sphereGeom->radius(), FacetedSphere::EstimateLevel(m_geomSegments), m_geomColor1, 1);
         m_facetedObject->setSimulationWidget(simulationWidget);
@@ -92,8 +91,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_geom);
-    if (cappedCylinderGeom)
+    if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_geom))
     {
         double length, radius;
         cappedCylinderGeom->getLengthRadius(&length, &radius);
@@ -103,8 +101,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    BoxGeom *boxGeom = dynamic_cast<BoxGeom *>(m_geom);
-    if (boxGeom)
+    if (BoxGeom *boxGeom = dynamic_cast<BoxGeom *>(m_geom))
     {
         double lx, ly, lz;
         boxGeom->GetDimensions(&lx, &ly, &lz);
@@ -114,8 +111,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_geom);
-    if (planeGeom)
+    if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_geom))
     {
         double planeSize = m_geomSize1;
         double checkerSize = m_geomSize2;
@@ -130,8 +126,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    ConvexGeom *convexGeom = dynamic_cast<ConvexGeom *>(m_geom);
-    if (convexGeom)
+    if (ConvexGeom *convexGeom = dynamic_cast<ConvexGeom *>(m_geom))
     {
         m_facetedObject = std::make_unique<FacetedObject>();
         m_facetedObject->setBlendColour(m_geomColor1, 1);
@@ -160,7 +155,6 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-
     qDebug() << "Error in DrawGeom::initialise: Unsupported GEOM type";
 }
 
@@ -171,39 +165,6 @@ void DrawGeom::updateEntityPose()
     pgd::Vector3 p = marker->GetWorldPosition();
     SetDisplayRotationFromQuaternion(q.data());
     SetDisplayPosition(p.x, p.y, p.z);
-
-//    SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_geom);
-//    if (sphereGeom)
-//    {
-//        Marker *marker = sphereGeom->geomMarker();
-//        pgd::Quaternion q = marker->GetWorldQuaternion();
-//        pgd::Vector3 p = marker->GetWorldPosition();
-//        SetDisplayRotationFromQuaternion(q.data());
-//        SetDisplayPosition(p.x, p.y, p.z);
-//        return;
-//    }
-
-//    CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_geom);
-//    if (cappedCylinderGeom)
-//    {
-//        Marker *marker = cappedCylinderGeom->geomMarker();
-//        pgd::Quaternion q = marker->GetWorldQuaternion();
-//        pgd::Vector3 p = marker->GetWorldPosition();
-//        SetDisplayRotationFromQuaternion(q.data());
-//        SetDisplayPosition(p.x, p.y, p.z);
-//        return;
-//    }
-
-//    PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_geom);
-//    if (planeGeom)
-//    {
-//        Marker *marker = planeGeom->geomMarker();
-//        pgd::Quaternion q = marker->GetWorldQuaternion();
-//        pgd::Vector3 p = marker->GetWorldPosition();
-//        SetDisplayRotation(q.data());
-//        SetDisplayPosition(p.x, p.y, p.z);
-//        return;
-//    }
 }
 
 void DrawGeom::Draw()

@@ -35,12 +35,6 @@ DataTargetVector::DataTargetVector()
 double DataTargetVector::calculateError(size_t valueListIndex)
 {
     pgd::Vector3 r;
-    Body *body;
-    Geom *geom;
-    HingeJoint *hingeJoint;
-    BallJoint *ballJoint;
-    UniversalJoint *universalJoint;
-    Marker *marker;
     double err = 0;
     pgd::Vector3 v;
     if (valueListIndex >= m_VValueList.size())
@@ -49,39 +43,46 @@ double DataTargetVector::calculateError(size_t valueListIndex)
         return 0;
     }
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    while (true)
     {
-        r = body->GetPosition();
-        err = (pgd::Vector3(r[0], r[1], r[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-    }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
-    {
-        v = geom->GetWorldPosition();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-    }
-    else if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
-    {
-        v = hingeJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-   }
-    else if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
-    {
-        v = ballJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-   }
-    else if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
-    {
-        v = universalJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-    }
-    else if ((marker = dynamic_cast<Marker *>(GetTarget())) != nullptr)
-    {
-        pgd::Vector3 vec = marker->GetWorldPosition();
-        err = (vec - m_VValueList[size_t(valueListIndex)]).Magnitude();
-    }
-    else
-    {
+        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        {
+            r = body->GetPosition();
+            err = (pgd::Vector3(r[0], r[1], r[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
+        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        {
+            v = geom->GetWorldPosition();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        {
+            v = hingeJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        {
+            v = ballJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        {
+            v = universalJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
+        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        {
+            pgd::Vector3 vec = marker->GetWorldPosition();
+            err = (vec - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
         std::cerr << "DataTargetVector target missing error " << name() << "\n";
+        break;
     }
     return err;
 }
@@ -91,12 +92,6 @@ double DataTargetVector::calculateError(size_t valueListIndex)
 double DataTargetVector::calculateError(double time)
 {
     pgd::Vector3 r;
-    Body *body;
-    Geom *geom;
-    HingeJoint *hingeJoint;
-    BallJoint *ballJoint;
-    UniversalJoint *universalJoint;
-    Marker *marker;
     double err = 0;
     pgd::Vector3 v;
 
@@ -124,39 +119,46 @@ double DataTargetVector::calculateError(double time)
     double interpZ = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_VValueList[size_t(index)].z, (*targetTimeList())[size_t(indexNext)], m_VValueList[size_t(indexNext)].z, time);
     pgd::Vector3 interpolatedTarget(interpX, interpY, interpZ);
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    while (true)
     {
-        r = body->GetPosition();
-        err = (pgd::Vector3(r[0], r[1], r[2]) - interpolatedTarget).Magnitude();
-    }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
-    {
-        v = geom->GetWorldPosition();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
-    }
-    else if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
-    {
-        v = hingeJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
-   }
-    else if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
-    {
-        v = ballJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
-   }
-    else if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
-    {
-        v = universalJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
-    }
-    else if ((marker = dynamic_cast<Marker *>(GetTarget())) != nullptr)
-    {
-        pgd::Vector3 vec = marker->GetWorldPosition();
-        err = (vec - interpolatedTarget).Magnitude();
-    }
-    else
-    {
+        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        {
+            r = body->GetPosition();
+            err = (pgd::Vector3(r[0], r[1], r[2]) - interpolatedTarget).Magnitude();
+            break;
+        }
+        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        {
+            v = geom->GetWorldPosition();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
+            break;
+        }
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        {
+            v = hingeJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
+            break;
+        }
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        {
+            v = ballJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
+            break;
+        }
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        {
+            v = universalJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - interpolatedTarget).Magnitude();
+            break;
+        }
+        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        {
+            pgd::Vector3 vec = marker->GetWorldPosition();
+            err = (vec - interpolatedTarget).Magnitude();
+            break;
+        }
         std::cerr << "DataTargetVector target missing error " << name() << "\n";
+        break;
     }
     return err;
 }
@@ -171,12 +173,6 @@ std::string DataTargetVector::dumpToString()
         setFirstDump(false);
         ss << "Time\tTargetX\tTargetY\tTargetZ\tActualX\tActualY\tActualZ\tDistance\n";
     }
-    Body *body;
-    Geom *geom;
-    HingeJoint *hingeJoint;
-    BallJoint *ballJoint;
-    UniversalJoint *universalJoint;
-    Marker *marker;
     pgd::Vector3 r;
     double err = 0;
     pgd::Vector3 v;
@@ -185,41 +181,50 @@ std::string DataTargetVector::dumpToString()
     auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());
     if (lowerBounds != targetTimeList()->end()) valueListIndex = std::distance(targetTimeList()->begin(), lowerBounds);
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    while (true)
     {
-        r = body->GetPosition();
-        err = (pgd::Vector3(r[0], r[1], r[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-    }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
-    {
-        v = geom->GetWorldPosition();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-        r = v;
-    }
-    else if ((hingeJoint = dynamic_cast<HingeJoint *>(GetTarget())) != nullptr)
-    {
-        v = hingeJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-        r = v;
-    }
-    else if ((ballJoint = dynamic_cast<BallJoint *>(GetTarget())) != nullptr)
-    {
-        v = ballJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-        r = v;
-    }
-    else if ((universalJoint = dynamic_cast<UniversalJoint *>(GetTarget())) != nullptr)
-    {
-        v = universalJoint->anchor();
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-        r = v;
-    }
-    else if ((marker = dynamic_cast<Marker *>(GetTarget())) != nullptr)
-    {
-        pgd::Vector3 vec = marker->GetWorldPosition();
-        v[0] = vec.x; v[1] = vec.y; v[2] = vec.z;
-        err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
-        r = v;
+        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        {
+            r = body->GetPosition();
+            err = (pgd::Vector3(r[0], r[1], r[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            break;
+        }
+        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        {
+            v = geom->GetWorldPosition();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            r = v;
+            break;
+        }
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        {
+            v = hingeJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            r = v;
+            break;
+        }
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        {
+            v = ballJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            r = v;
+            break;
+        }
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        {
+            v = universalJoint->anchor();
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            r = v;
+            break;
+        }
+        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        {
+            pgd::Vector3 vec = marker->GetWorldPosition();
+            v[0] = vec.x; v[1] = vec.y; v[2] = vec.z;
+            err = (pgd::Vector3(v[0], v[1], v[2]) - m_VValueList[size_t(valueListIndex)]).Magnitude();
+            r = v;
+            break;
+        }
     }
 
     ss << simulation()->GetTime() <<

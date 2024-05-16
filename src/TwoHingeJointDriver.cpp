@@ -112,8 +112,8 @@ void TwoHingeJointDriver::Update()
 
     while (true)
     {
-        HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_proximalJoint);
-        if (hingeJoint)
+
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_proximalJoint))
         {
             m_proximalJointAxis1 = normal1;
             m_proximalJointAngle1 = -angle1; // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
@@ -126,8 +126,8 @@ void TwoHingeJointDriver::Update()
             m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
             break;
         }
-        UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_proximalJoint);
-        if (universalJoint)
+
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_proximalJoint))
         {
             m_proximalJointAxis1 = normal1;
             m_proximalJointAngle1 = -angle1; // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
@@ -143,8 +143,8 @@ void TwoHingeJointDriver::Update()
             m_proximalJointRotation =  pgd::MakeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
             break;
         }
-        BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_proximalJoint);
-        if (ballJoint)
+
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_proximalJoint))
         {
             m_proximalJointAxis1 = normal1;
             m_proximalJointAngle1 = -angle1; // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
@@ -638,8 +638,8 @@ std::string *TwoHingeJointDriver::createFromAttributes()
         PIDMuscleLengthController *pidMuscleLengthController = dynamic_cast<PIDMuscleLengthController *>(it.second);
         if (!pidMuscleLengthController) continue;
         Strap *strapPtr = pidMuscleLengthController->muscle()->GetStrap();
-        TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strapPtr);
-        if (twoPointStrap)
+
+        if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strapPtr))
         {
             Marker *originMarker = createLocalMarkerCopy(twoPointStrap->GetOriginMarker());
             Marker *insertionMarker = createLocalMarkerCopy(twoPointStrap->GetInsertionMarker());
@@ -655,8 +655,8 @@ std::string *TwoHingeJointDriver::createFromAttributes()
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
-        NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strapPtr);
-        if (nPointStrap)
+
+        if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strapPtr))
         {
             Marker *originMarker = createLocalMarkerCopy(nPointStrap->GetOriginMarker());
             Marker *insertionMarker = createLocalMarkerCopy(nPointStrap->GetInsertionMarker());
@@ -675,8 +675,8 @@ std::string *TwoHingeJointDriver::createFromAttributes()
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
-        CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(strapPtr);
-        if (cylinderWrapStrap)
+
+        if (CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(strapPtr))
         {
             Marker *originMarker = createLocalMarkerCopy(cylinderWrapStrap->GetOriginMarker());
             Marker *insertionMarker = createLocalMarkerCopy(cylinderWrapStrap->GetInsertionMarker());
@@ -695,8 +695,8 @@ std::string *TwoHingeJointDriver::createFromAttributes()
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
-        TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(strapPtr);
-        if (twoCylinderWrapStrap)
+
+        if (TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(strapPtr))
         {
             Marker *originMarker = createLocalMarkerCopy(twoCylinderWrapStrap->GetOriginMarker());
             Marker *insertionMarker = createLocalMarkerCopy(twoCylinderWrapStrap->GetInsertionMarker());

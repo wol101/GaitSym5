@@ -141,8 +141,7 @@ std::string *PhysXPhysicsEngine::CreateJoints()
     {
         while (true)
         {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
+            if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get()))
             {
                 Marker *marker1 = hingeJoint->body1Marker();
                 Marker *marker2 = hingeJoint->body2Marker();
@@ -180,8 +179,7 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
     {
         while (true)
         {
-            SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get());
-            if (sphereGeom)
+            if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get()))
             {
                 double radius = sphereGeom->radius();
                 pgd::Vector3 position = sphereGeom->GetPosition();
@@ -213,8 +211,7 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
                 shape->release();
                 break;
             }
-            PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get());
-            if (planeGeom)
+            if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get()))
             {
                 double a, b, c, d;
                 planeGeom->GetPlane(&a, &b, &c, &d);
@@ -357,8 +354,7 @@ std::string *PhysXPhysicsEngine::Step()
     {
         while (true)
         {
-            HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get());
-            if (hingeJoint)
+            if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(iter.second.get()))
             {
                 physx::PxRevoluteJoint *joint = dynamic_cast<physx::PxRevoluteJoint *>(m_jointMap[iter.first]);
                 if (!joint)

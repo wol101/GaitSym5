@@ -224,8 +224,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 
     for (bool first = true; first; first = false) // this loop runs once to avoid nasty nested if-else statements
     {
-        TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(m_muscle->GetStrap());
-        if (twoPointStrap)
+
+        if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(m_muscle->GetStrap()))
         {
             std::vector<std::unique_ptr<PointForce >> *pointForceList = twoPointStrap->GetPointForceList();
             std::vector<pgd::Vector3> polyline;
@@ -237,8 +237,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             m_facetedObjectList.push_back(m_facetedObject1.get());
             break;
         }
-        NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(m_muscle->GetStrap());
-        if (nPointStrap)
+
+        if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(m_muscle->GetStrap()))
         {
             std::vector<std::unique_ptr<PointForce >> *pointForceList = nPointStrap->GetPointForceList();
             std::vector<pgd::Vector3> polyline;
@@ -252,8 +252,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             m_facetedObjectList.push_back(m_facetedObject1.get());
             break;
         }
-        CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(m_muscle->GetStrap());
-        if (cylinderWrapStrap)
+
+        if (CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(m_muscle->GetStrap()))
         {
             if (cylinderWrapStrap->GetNumWrapSegments() != int(m_strapCylinderWrapSegments))
             {
@@ -294,8 +294,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             m_facetedObjectList.push_back(m_facetedObject2.get());
             break;
         }
-        TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(m_muscle->GetStrap());
-        if (twoCylinderWrapStrap)
+
+        if (TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(m_muscle->GetStrap()))
         {
             if (twoCylinderWrapStrap->GetNumWrapSegments() != int(m_strapCylinderWrapSegments))
             {

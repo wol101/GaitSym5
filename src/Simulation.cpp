@@ -153,10 +153,8 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
     m_CycleTime = 0;
     for (auto &&driver : m_DriverList)
     {
-        CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get());
-        if (cyclicDriver) m_CycleTime = std::max(cyclicDriver->GetCycleTime(), m_CycleTime);
-        StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get());
-        if (stackedBoxcarDriver) m_CycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_CycleTime);
+        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get())) m_CycleTime = std::max(cyclicDriver->GetCycleTime(), m_CycleTime);
+        else if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get())) m_CycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_CycleTime);
     }
     return nullptr;
 }
@@ -257,8 +255,7 @@ void Simulation::UpdateSimulation()
         iter1->second->SetActivation();
 
         // check for breaking strain
-        DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(iter1->second.get());
-        if (dampedSpringMuscle)
+        if (DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(iter1->second.get()))
         {
             if (dampedSpringMuscle->ShouldBreak())
             {
@@ -315,8 +312,7 @@ void Simulation::UpdateSimulation()
     {
         for (auto &&it : m_DriverList)
         {
-            TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(it.second.get());
-            if (tegotaeDriver) tegotaeDriver->UpdateReactionForce();
+            if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(it.second.get())) tegotaeDriver->UpdateReactionForce();
         }
     }
 
@@ -392,15 +388,12 @@ bool Simulation::TestForCatastrophy()
         }
     }
 
-    HingeJoint *j;
-    FixedJoint *f;
-    int t;
     for (auto &&iter3 : m_JointList)
     {
-        j = dynamic_cast<HingeJoint *>(iter3.second.get());
-        if (j)
+
+        if (auto j = dynamic_cast<HingeJoint *>(iter3.second.get()))
         {
-            t = j->TestLimits();
+            int t = j->TestLimits();
             if (t < 0)
             {
                 std::cerr << "Failed due to LoStopTorqueLimit error in: " << iter3.second->name() << "\n";
@@ -413,8 +406,7 @@ bool Simulation::TestForCatastrophy()
             }
         }
 
-        f = dynamic_cast<FixedJoint *>(iter3.second.get());
-        if (f)
+        if (auto f = dynamic_cast<FixedJoint *>(iter3.second.get()))
         {
             if (f->CheckStressAbort())
             {
