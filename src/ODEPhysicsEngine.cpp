@@ -7,6 +7,7 @@
 #include "FluidSac.h"
 #include "Geom.h"
 #include "HingeJoint.h"
+#include "FixedJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 
@@ -138,6 +139,19 @@ std::string *ODEPhysicsEngine::CreateJoints()
                 m_jointFeedback[iter.first] = std::move(jointFeedback);
                 break;
             }
+            if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
+            {
+                jointID = dJointCreateFixed(m_worldID, nullptr);
+                dJointSetData(jointID, fixedJoint);
+                iter.second->setData(jointID);
+                dBodyID body1 = (fixedJoint->body1()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(fixedJoint->body1()->data());
+                dBodyID body2 = (fixedJoint->body2()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(fixedJoint->body2()->data());
+                dJointAttach(jointID, body1, body2);
+                dJointSetFeedback(jointID, jointFeedback.get());
+                m_jointFeedback[iter.first] = std::move(jointFeedback);
+                dJointSetFixed(jointID);
+                break;
+            }
             break;
         }
     }
@@ -192,6 +206,13 @@ std::string *ODEPhysicsEngine::MoveBodies()
         dBodySetPosition(bodyID, position.x, position.y, position.z);
         pgd::Quaternion quaternion = iter.second->GetQuaternion();
         dBodySetQuaternion(bodyID, quaternion.constData());
+    }
+    for (auto &&iter : *simulation()->GetJointList())
+    {
+        if (auto fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
+        {
+            if (fixedJoint->lateFix()) { dJointSetFixed(static_cast<dJointID>(iter.second->data())); }
+        }
     }
     return nullptr;
 }
