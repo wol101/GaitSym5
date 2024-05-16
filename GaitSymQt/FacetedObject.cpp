@@ -1010,8 +1010,8 @@ void FacetedObject::Draw()
     m_mesh->position.set(m_displayPosition.x, m_displayPosition.y, m_displayPosition.z);
     m_mesh->scale.set(m_displayScale.x, m_displayScale.y, m_displayScale.z);
     m_mesh->quaternion.set(m_displayQuaternion.x, m_displayQuaternion.y, m_displayQuaternion.z, m_displayQuaternion.n);
-    if (m_visible == false) return;
-    if (m_scene) { m_scene->add(m_mesh); }
+    m_mesh->visible = m_visible;
+    if (m_scene && m_mesh->parent != m_scene.get()) { m_scene->add(m_mesh); }
 }
 
 // Write a FacetedObject out as a POVRay file
