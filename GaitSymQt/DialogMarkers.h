@@ -70,9 +70,9 @@ protected:
 private:
     Ui::DialogMarkers *ui;
 
-    Simulation *m_simulation = nullptr;
-    Marker *m_inputMarker = nullptr;
-    std::unique_ptr<Marker> m_outputMarker;
+    GaitSym::Simulation *m_simulation = nullptr;
+    GaitSym::Marker *m_inputMarker = nullptr;
+    std::unique_ptr<GaitSym::Marker> m_outputMarker;
     QVector3D m_cursor3DPosition;
 
     QMap<QString, SettingsItem> m_properties;

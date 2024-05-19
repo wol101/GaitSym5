@@ -242,7 +242,7 @@ void ViewControlWidget::paintEvent (QPaintEvent *)
 
 int ViewControlWidget::FindClosestVertex(const double data[][3], int count, double x, double y, double z)
 {
-    double minSqDist = DBL_MAX;
+    double minSqDist = std::numeric_limits<double>::max();
     double sqDist, dx, dy, dz;
     int index = -1;
     for (int i = 0; i < count; i++)

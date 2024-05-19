@@ -130,40 +130,40 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
     {
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "BODY")
         {
-            QAction *action = menu.addAction(tr("Create New Body..."));
+            QAction *action = menu.addAction(tr("Create New GaitSym::Body..."));
             action->setEnabled(m_simulation != nullptr);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "MARKER")
         {
-            QAction *action = menu.addAction(tr("Create New Marker..."));
+            QAction *action = menu.addAction(tr("Create New GaitSym::Marker..."));
             action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "JOINT")
         {
-            QAction *action = menu.addAction(tr("Create New Joint..."));
+            QAction *action = menu.addAction(tr("Create New GaitSym::Joint..."));
             action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1
                     && m_simulation->GetMarkerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "GEOM")
         {
-            QAction *action = menu.addAction(tr("Create New Geom..."));
+            QAction *action = menu.addAction(tr("Create New GaitSym::Geom..."));
             action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 0
                     && m_simulation->GetMarkerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "MUSCLE")
         {
-            QAction *action = menu.addAction(tr("Create New Muscle..."));
+            QAction *action = menu.addAction(tr("Create New GaitSym::Muscle..."));
             action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1
                     && m_simulation->GetMarkerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "DRIVER")
         {
-            QAction *action = menu.addAction(tr("Create New Driver..."));
+            QAction *action = menu.addAction(tr("Create New GaitSym::Driver..."));
             action->setEnabled(m_simulation != nullptr && m_simulation->GetMuscleList()->size() > 0);
             menu.addSeparator();
         }
@@ -171,44 +171,44 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
         if (item->type() == ELEMENT_ITEM_TYPE
                 && item->parent()->data(0, Qt::DisplayRole).toString() == "BODY")
         {
-            menu.addAction(tr("Edit Body..."));
-            menu.addAction(tr("Delete Body..."));
+            menu.addAction(tr("Edit GaitSym::Body..."));
+            menu.addAction(tr("Delete GaitSym::Body..."));
             menu.addSeparator();
         }
         if (item->type() == ELEMENT_ITEM_TYPE
                 && item->parent()->data(0, Qt::DisplayRole).toString() == "MARKER")
         {
-            menu.addAction(tr("Edit Marker..."));
-            menu.addAction(tr("Delete Marker..."));
+            menu.addAction(tr("Edit GaitSym::Marker..."));
+            menu.addAction(tr("Delete GaitSym::Marker..."));
             menu.addSeparator();
         }
         if (item->type() == ELEMENT_ITEM_TYPE
                 && item->parent()->data(0, Qt::DisplayRole).toString() == "JOINT")
         {
-            menu.addAction(tr("Edit Joint..."));
-            menu.addAction(tr("Delete Joint..."));
+            menu.addAction(tr("Edit GaitSym::Joint..."));
+            menu.addAction(tr("Delete GaitSym::Joint..."));
             menu.addSeparator();
         }
         if (item->type() == ELEMENT_ITEM_TYPE
                 && item->parent()->data(0, Qt::DisplayRole).toString() == "GEOM")
         {
-            menu.addAction(tr("Edit Geom..."));
-            menu.addAction(tr("Delete Geom..."));
+            menu.addAction(tr("Edit GaitSym::Geom..."));
+            menu.addAction(tr("Delete GaitSym::Geom..."));
             menu.addSeparator();
         }
         if (item->type() == ELEMENT_ITEM_TYPE
                 && item->parent()->data(0, Qt::DisplayRole).toString() == "MUSCLE")
         {
-            menu.addAction(tr("Edit Muscle..."));
-            menu.addAction(tr("Delete Muscle..."));
+            menu.addAction(tr("Edit GaitSym::Muscle..."));
+            menu.addAction(tr("Delete GaitSym::Muscle..."));
             menu.addSeparator();
         }
 
         if (item->type() == ELEMENT_ITEM_TYPE
                 && item->parent()->data(0, Qt::DisplayRole).toString() == "DRIVER")
         {
-            menu.addAction(tr("Edit Driver..."));
-            menu.addAction(tr("Delete Driver..."));
+            menu.addAction(tr("Edit GaitSym::Driver..."));
+            menu.addAction(tr("Delete GaitSym::Driver..."));
             menu.addSeparator();
         }
     }
@@ -235,75 +235,75 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
     QAction *action = menu.exec(gp);
     if (action)
     {
-        if (action->text() == tr("Create New Body..."))
+        if (action->text() == tr("Create New GaitSym::Body..."))
         {
             emit createNewBody();
         }
-        if (action->text() == tr("Create New Marker..."))
+        if (action->text() == tr("Create New GaitSym::Marker..."))
         {
             emit createNewMarker();
         }
-        if (action->text() == tr("Create New Joint..."))
+        if (action->text() == tr("Create New GaitSym::Joint..."))
         {
             emit createNewJoint();
         }
-        if (action->text() == tr("Create New Geom..."))
+        if (action->text() == tr("Create New GaitSym::Geom..."))
         {
             emit createNewGeom();
         }
-        if (action->text() == tr("Create New Muscle..."))
+        if (action->text() == tr("Create New GaitSym::Muscle..."))
         {
             emit createNewMuscle();
         }
-        if (action->text() == tr("Create New Driver..."))
+        if (action->text() == tr("Create New GaitSym::Driver..."))
         {
             emit createNewDriver();
         }
-        if (action->text() == tr("Edit Body..."))
+        if (action->text() == tr("Edit GaitSym::Body..."))
         {
             emit editBody(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Edit Marker..."))
+        if (action->text() == tr("Edit GaitSym::Marker..."))
         {
             emit editMarker(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Edit Joint..."))
+        if (action->text() == tr("Edit GaitSym::Joint..."))
         {
             emit editJoint(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Edit Geom..."))
+        if (action->text() == tr("Edit GaitSym::Geom..."))
         {
             emit editGeom(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Edit Muscle..."))
+        if (action->text() == tr("Edit GaitSym::Muscle..."))
         {
             emit editMuscle(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Edit Driver..."))
+        if (action->text() == tr("Edit GaitSym::Driver..."))
         {
             emit editDriver(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Delete Body..."))
+        if (action->text() == tr("Delete GaitSym::Body..."))
         {
             emit deleteBody(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Delete Marker..."))
+        if (action->text() == tr("Delete GaitSym::Marker..."))
         {
             emit deleteMarker(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Delete Joint..."))
+        if (action->text() == tr("Delete GaitSym::Joint..."))
         {
             emit deleteJoint(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Delete Geom..."))
+        if (action->text() == tr("Delete GaitSym::Geom..."))
         {
             emit deleteGeom(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Delete Muscle..."))
+        if (action->text() == tr("Delete GaitSym::Muscle..."))
         {
             emit deleteMuscle(item->data(0, Qt::DisplayRole).toString());
         }
-        if (action->text() == tr("Delete Driver..."))
+        if (action->text() == tr("Delete GaitSym::Driver..."))
         {
             emit deleteDriver(item->data(0, Qt::DisplayRole).toString());
         }
@@ -704,7 +704,7 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     emit elementTreeWidgetItemChanged(item, column);
 }
 
-void ElementTreeWidget::fillVisibitilityLists(Simulation *simulation)
+void ElementTreeWidget::fillVisibitilityLists(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
     if (m_simulation == nullptr) return;
@@ -792,12 +792,12 @@ void ElementTreeWidget::setOutputSwitchAll(const QString &elementType, bool outp
     }
 }
 
-void ElementTreeWidget::setSimulation(Simulation *simulation)
+void ElementTreeWidget::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }
 
-Simulation *ElementTreeWidget::simulation() const
+GaitSym::Simulation *ElementTreeWidget::simulation() const
 {
     return m_simulation;
 }

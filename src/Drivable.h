@@ -11,13 +11,10 @@
 #define DRIVABLE_H
 
 #include <cstdint>
-#include <climits>
+#include <limits>
 
 namespace GaitSym
 {
-
-class Driver;
-class NamedObject;
 
 class Drivable
 {
@@ -33,7 +30,7 @@ protected:
 
 private:
     double m_dataSum = 0;
-    int64_t m_receiveDataStepCount = INT_MIN;
+    int64_t m_receiveDataStepCount = std::numeric_limits<int64_t>::min();
 };
 
 }

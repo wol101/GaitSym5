@@ -560,12 +560,12 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 
     while (m_simulation && m_mainWindow->mode() == MainWindow::constructionMode) // use while to prevent nesting of if else statements
     {
-        menu.addAction(tr("Create Marker..."));
+        menu.addAction(tr("Create GaitSym::Marker..."));
         menu.addSeparator();
         if (auto body = dynamic_cast<DrawBody *>(drawable))
         {
-            menu.addAction(tr("Edit Body..."));
-            menu.addAction(tr("Delete Body..."));
+            menu.addAction(tr("Edit GaitSym::Body..."));
+            menu.addAction(tr("Delete GaitSym::Body..."));
             break;
         }
 //        if (auto fluisac = dynamic_cast<DrawFluidSac *>(drawable))
@@ -577,28 +577,28 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 
         if (auto geom = dynamic_cast<DrawGeom *>(drawable))
         {
-            menu.addAction(tr("Edit Geom..."));
-            menu.addAction(tr("Delete Geom..."));
+            menu.addAction(tr("Edit GaitSym::Geom..."));
+            menu.addAction(tr("Delete GaitSym::Geom..."));
             break;
         }
 
         if (auto joint = dynamic_cast<DrawJoint *>(drawable))
         {
-            menu.addAction(tr("Edit Joint..."));
-            menu.addAction(tr("Delete Joint..."));
+            menu.addAction(tr("Edit GaitSym::Joint..."));
+            menu.addAction(tr("Delete GaitSym::Joint..."));
             break;
         }
         if (auto marker = dynamic_cast<DrawMarker *>(drawable))
         {
-            menu.addAction(tr("Edit Marker..."));
-            menu.addAction(tr("Delete Marker..."));
-            menu.addAction(tr("Move Marker"));
+            menu.addAction(tr("Edit GaitSym::Marker..."));
+            menu.addAction(tr("Delete GaitSym::Marker..."));
+            menu.addAction(tr("Move GaitSym::Marker"));
             break;
         }
         if (auto muscle = dynamic_cast<DrawMuscle *>(drawable))
         {
-            menu.addAction(tr("Edit Muscle..."));
-            menu.addAction(tr("Delete Muscle..."));
+            menu.addAction(tr("Edit GaitSym::Muscle..."));
+            menu.addAction(tr("Delete GaitSym::Muscle..."));
             break;
         }
         break;
@@ -622,31 +622,31 @@ void SimulationWidget::menuRequest(const QPoint &pos)
             update();
             break;
         }
-        if (action->text() == tr("Create Marker..."))
+        if (action->text() == tr("Create GaitSym::Marker..."))
         {
             emit EmitCreateMarkerRequest();
             break;
         }
-        if (action->text() == tr("Edit Marker..."))
+        if (action->text() == tr("Edit GaitSym::Marker..."))
         {
             emit EmitEditMarkerRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Edit Body..."))
+        if (action->text() == tr("Edit GaitSym::Body..."))
         {
             emit EmitEditBodyRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Edit Geom..."))
+        if (action->text() == tr("Edit GaitSym::Geom..."))
         {
             emit EmitEditGeomRequest(QString::fromStdString(name));
         }
-        if (action->text() == tr("Edit Joint..."))
+        if (action->text() == tr("Edit GaitSym::Joint..."))
         {
             emit EmitEditJointRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Edit Muscle..."))
+        if (action->text() == tr("Edit GaitSym::Muscle..."))
         {
             emit EmitEditMuscleRequest(QString::fromStdString(name));
             break;
@@ -656,26 +656,26 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 //            emit EmitEditFluidSacRequest(QString::fromStdString(name)));
 //            break;
 //        }
-        if (action->text() == tr("Delete Marker..."))
+        if (action->text() == tr("Delete GaitSym::Marker..."))
         {
             emit EmitDeleteMarkerRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Delete Body..."))
+        if (action->text() == tr("Delete GaitSym::Body..."))
         {
             emit EmitDeleteBodyRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Delete Geom..."))
+        if (action->text() == tr("Delete GaitSym::Geom..."))
         {
             emit EmitDeleteGeomRequest(QString::fromStdString(name));
         }
-        if (action->text() == tr("Delete Joint..."))
+        if (action->text() == tr("Delete GaitSym::Joint..."))
         {
             emit EmitDeleteJointRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Delete Muscle..."))
+        if (action->text() == tr("Delete GaitSym::Muscle..."))
         {
             emit EmitDeleteMuscleRequest(QString::fromStdString(name));
             break;
@@ -685,7 +685,7 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 //            emit EmitDeleteFluidSacRequest(QString::fromStdString(name));
 //            break;
 //        }
-        if (action->text() == tr("Move Marker"))
+        if (action->text() == tr("Move GaitSym::Marker"))
         {
             m_moveMarkerMode = true;
             m_moveMarkerName = name;
@@ -903,7 +903,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     pgd::Vector3 cameraVector(m_cameraVecX, m_cameraVecY, m_cameraVecZ);
     pgd::Vector3 centre(m_COIx, m_COIy, m_COIz);
     pgd::Vector3 eye =  centre - m_cameraDistance * cameraVector;
-    std::string translate = GSUtil::ToString("(%g,%g,%g)", eye.x, eye.y, eye.z);
+    std::string translate = GaitSym::GSUtil::ToString("(%g,%g,%g)", eye.x, eye.y, eye.z);
 
     // this code from gluLookAT
     pgd::Vector3 forward = centre - eye;
@@ -921,18 +921,18 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
                                 side.z, up.z, -forward.z);
     // convert to Euler angles
     pgd::Vector3 euler = pgd::MakeEulerAnglesFromQ(pgd::MakeQfromM(cameraMatrix));
-    std::string rotateXYZ = GSUtil::ToString("(%g,%g,%g)", euler.x, euler.y, euler.z);
+    std::string rotateXYZ = GaitSym::GSUtil::ToString("(%g,%g,%g)", euler.x, euler.y, euler.z);
 
     // we want to create a sensor that approximates that of a 35mm film camera so that the focal length is the 35mm equivalent
     // we use the width-based EFL rather than the diagonal becuase it isn't that important and width is easier to calculate
     float aspectRatio = float(width()) / float(height());
     float sensorWidth = 36; // 35mm film standard
     float sensorHeight = sensorWidth / aspectRatio;
-    std::string clippingRange = GSUtil::ToString("(%g,%g)", m_frontClip, m_backClip);
-    std::string focalLength = GSUtil::ToString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
-    std::string focusDistance = GSUtil::ToString("%g", m_cameraDistance);
-    std::string verticalAperture = GSUtil::ToString("%g", sensorHeight);
-    std::string horizontalAperture = GSUtil::ToString("%g", sensorWidth);
+    std::string clippingRange = GaitSym::GSUtil::ToString("(%g,%g)", m_frontClip, m_backClip);
+    std::string focalLength = GaitSym::GSUtil::ToString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
+    std::string focusDistance = GaitSym::GSUtil::ToString("%g", m_cameraDistance);
+    std::string verticalAperture = GaitSym::GSUtil::ToString("%g", sensorHeight);
+    std::string horizontalAperture = GaitSym::GSUtil::ToString("%g", sensorWidth);
     std::string projection = "perspective";
     if (m_orthographicProjection == true)
     {
@@ -940,8 +940,8 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
         // if the camera is switched back to perspective in omniverse, then the horizontal aperture needs to go back to 36 for the views to match
         float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
         float halfViewWidth = halfViewHeight * aspectRatio;
-        verticalAperture = GSUtil::ToString("%g", halfViewHeight * 20);
-        horizontalAperture = GSUtil::ToString("%g", halfViewWidth * 20);
+        verticalAperture = GaitSym::GSUtil::ToString("%g", halfViewHeight * 20);
+        horizontalAperture = GaitSym::GSUtil::ToString("%g", halfViewWidth * 20);
         projection = "orthographic";
     }
 
@@ -1038,12 +1038,12 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
         {
             if (facetedObjectIter->GetNumVertices() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().Magnitude2() != 0)
             {
-                facetedObjectIter->WriteUSDFile(usdStream, GSUtil::ToString("mesh%05d", meshCount));
+                facetedObjectIter->WriteUSDFile(usdStream, GaitSym::GSUtil::ToString("mesh%05d", meshCount));
                 meshCount++;
             }
         }
     }
-    m_globalAxes->WriteUSDFile(usdStream, GSUtil::ToString("mesh%05d", meshCount));
+    m_globalAxes->WriteUSDFile(usdStream, GaitSym::GSUtil::ToString("mesh%05d", meshCount));
     meshCount++;
 
     usdStream <<
@@ -1655,12 +1655,12 @@ void SimulationWidget::setUpX(float upX)
     m_upX = upX;
 }
 
-Simulation *SimulationWidget::simulation() const
+GaitSym::Simulation *SimulationWidget::simulation() const
 {
     return m_simulation;
 }
 
-void SimulationWidget::setSimulation(Simulation *simulation)
+void SimulationWidget::setSimulation(GaitSym::Simulation *simulation)
 {
     if (simulation == m_simulation) return;
     m_drawBodyMap.clear();

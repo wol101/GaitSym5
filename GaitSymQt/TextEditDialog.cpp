@@ -715,7 +715,7 @@ std::string TextEditDialog::attributeMachineArithmetic(const std::string &origin
     pkpy::PyObject *obj = vm->eval(expression);
     double newValue = pkpy::py_cast<double>(vm, obj);
     delete vm;
-    newString = GSUtil::ToString(newValue);
+    newString = GaitSym::GSUtil::ToString(newValue);
 #endif
     return newString;
 }
@@ -761,7 +761,7 @@ void TextEditDialog::resetPositions()
 
 std::string *TextEditDialog::validate()
 {
-    Simulation simulation;
+    GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
     std::string *errorMessage = simulation.LoadModel(editFileData.constData(), editFileData.size());
     if (errorMessage)

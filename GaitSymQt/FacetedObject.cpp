@@ -191,11 +191,11 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
             if (ptr >= endPtr) continue;
             if (*ptr == ' ')
             {
-                vertex.x = GSUtil::fast_a_to_double(ptr, &ptr);
+                vertex.x = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 if (ptr >= endPtr) continue;
-                vertex.y = GSUtil::fast_a_to_double(ptr, &ptr);
+                vertex.y = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 if (ptr >= endPtr) continue;
-                vertex.z = GSUtil::fast_a_to_double(ptr, &ptr);
+                vertex.z = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 vertexList.push_back(vertex);
                 if (vertex.x < m_lowerBound[0]) m_lowerBound[0] = vertex.x;
                 if (vertex.y < m_lowerBound[1]) m_lowerBound[1] = vertex.y;
@@ -210,11 +210,11 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
             {
                 ptr++;
                 if (ptr >= endPtr) continue;
-                normal.x = GSUtil::fast_a_to_double(ptr, &ptr);
+                normal.x = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 if (ptr >= endPtr) continue;
-                normal.y = GSUtil::fast_a_to_double(ptr, &ptr);
+                normal.y = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 if (ptr >= endPtr) continue;
-                normal.z = GSUtil::fast_a_to_double(ptr, &ptr);
+                normal.z = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 normalList.push_back(normal);
                 ptr++;
                 continue;
@@ -223,9 +223,9 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
             {
                 ptr++;
                 if (ptr >= endPtr) continue;
-                uv.x = GSUtil::fast_a_to_double(ptr, &ptr);
+                uv.x = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 if (ptr >= endPtr) continue;
-                uv.y = GSUtil::fast_a_to_double(ptr, &ptr);
+                uv.y = GaitSym::GSUtil::fast_a_to_double(ptr, &ptr);
                 uvList.push_back(uv);
                 ptr++;
                 continue;
@@ -259,11 +259,11 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 
             if (faceFormat == vertex_only)
             {
-                triangle.vertex[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
-                triangle.vertex[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
-                triangle.vertex[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 triangle.normal[0] = SIZE_MAX;
                 triangle.normal[1] = SIZE_MAX;
                 triangle.normal[2] = SIZE_MAX;
@@ -285,20 +285,20 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 
             if (faceFormat == vertex_normal)
             {
-                triangle.vertex[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr += 2;
                 if (ptr >= endPtr) continue;
-                triangle.normal[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.normal[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
-                triangle.vertex[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr += 2;
                 if (ptr >= endPtr) continue;
-                triangle.normal[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.normal[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
-                triangle.vertex[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr += 2;
                 if (ptr >= endPtr) continue;
-                triangle.normal[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.normal[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 triangle.uv[0] = SIZE_MAX;
                 triangle.uv[1] = SIZE_MAX;
                 triangle.material = currentMaterial;
@@ -317,22 +317,22 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 
             if (faceFormat == vertex_texture)
             {
-                triangle.vertex[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.uv[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.uv[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
                 triangle.normal[0] = SIZE_MAX;
-                triangle.vertex[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.uv[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.uv[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
                 triangle.normal[1] = SIZE_MAX;
-                triangle.vertex[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.uv[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.uv[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 triangle.normal[2] = SIZE_MAX;
                 triangle.material = currentMaterial;
                 triangleList.push_back(triangle);
@@ -350,29 +350,29 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 
             if (faceFormat == vertex_texture_normal)
             {
-                triangle.vertex[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.uv[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.uv[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.normal[0] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.normal[0] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
-                triangle.vertex[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.uv[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.uv[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.normal[1] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.normal[1] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 if (ptr >= endPtr) continue;
-                triangle.vertex[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.vertex[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.uv[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.uv[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 ptr++;
                 if (ptr >= endPtr) continue;
-                triangle.normal[2] = GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
+                triangle.normal[2] = GaitSym::GSUtil::fast_a_to_uint64_t(ptr, &ptr) - 1;
                 triangle.material = currentMaterial;
                 triangleList.push_back(triangle);
                 ptr++;
@@ -518,50 +518,50 @@ int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<st
         pystring::split(line, tokens);
         if (tokens.size() >= 2 && tokens[0] == "Ns"s)
         {
-            currentMaterial.Ns = GSUtil::Double(tokens[1]);
+            currentMaterial.Ns = GaitSym::GSUtil::Double(tokens[1]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Ka"s)
         {
-            currentMaterial.Ka[0] =GSUtil::Double(tokens[1]);
-            currentMaterial.Ka[1] =GSUtil::Double(tokens[2]);
-            currentMaterial.Ka[2] =GSUtil::Double(tokens[3]);
+            currentMaterial.Ka[0] =GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.Ka[1] =GaitSym::GSUtil::Double(tokens[2]);
+            currentMaterial.Ka[2] =GaitSym::GSUtil::Double(tokens[3]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Kd"s)
         {
-            currentMaterial.Kd[0] =GSUtil::Double(tokens[1]);
-            currentMaterial.Kd[1] =GSUtil::Double(tokens[2]);
-            currentMaterial.Kd[2] =GSUtil::Double(tokens[3]);
+            currentMaterial.Kd[0] =GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.Kd[1] =GaitSym::GSUtil::Double(tokens[2]);
+            currentMaterial.Kd[2] =GaitSym::GSUtil::Double(tokens[3]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Ks"s)
         {
-            currentMaterial.Ks[0] =GSUtil::Double(tokens[1]);
-            currentMaterial.Ks[1] =GSUtil::Double(tokens[2]);
-            currentMaterial.Ks[2] =GSUtil::Double(tokens[3]);
+            currentMaterial.Ks[0] =GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.Ks[1] =GaitSym::GSUtil::Double(tokens[2]);
+            currentMaterial.Ks[2] =GaitSym::GSUtil::Double(tokens[3]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Ke"s)
         {
-            currentMaterial.Ke[0] =GSUtil::Double(tokens[1]);
-            currentMaterial.Ke[1] =GSUtil::Double(tokens[2]);
-            currentMaterial.Ke[2] =GSUtil::Double(tokens[3]);
+            currentMaterial.Ke[0] =GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.Ke[1] =GaitSym::GSUtil::Double(tokens[2]);
+            currentMaterial.Ke[2] =GaitSym::GSUtil::Double(tokens[3]);
             continue;
         }
         if (tokens.size() >= 2 && tokens[0] == "Ni"s)
         {
-            currentMaterial.Ni = GSUtil::Double(tokens[1]);
+            currentMaterial.Ni = GaitSym::GSUtil::Double(tokens[1]);
             continue;
         }
         if (tokens.size() >= 2 && tokens[0] == "d"s)
         {
-            currentMaterial.d = GSUtil::Double(tokens[1]);
+            currentMaterial.d = GaitSym::GSUtil::Double(tokens[1]);
             continue;
         }
         if (tokens.size() >= 2 && tokens[0] == "illum"s)
         {
-            currentMaterial.illum = GSUtil::Int(tokens[1]);
+            currentMaterial.illum = GaitSym::GSUtil::Int(tokens[1]);
             continue;
         }
     }
@@ -810,22 +810,22 @@ int FacetedObject::ReadFromMemory(const char *data, size_t len, bool binary, con
     {
         if (data[len]) return __LINE__; // must be null terminated for ASCII case
         const char *endPtr;
-        size_t numTriangles = GSUtil::fast_a_to_uint64_t(data, &endPtr);
-        m_lowerBound[0] = GSUtil::fast_a_to_double(endPtr, &endPtr);
-        m_lowerBound[1] = GSUtil::fast_a_to_double(endPtr, &endPtr);
-        m_lowerBound[2] = GSUtil::fast_a_to_double(endPtr, &endPtr);
-        m_upperBound[0] = GSUtil::fast_a_to_double(endPtr, &endPtr);
-        m_upperBound[1] = GSUtil::fast_a_to_double(endPtr, &endPtr);
-        m_upperBound[2] = GSUtil::fast_a_to_double(endPtr, &endPtr);
+        size_t numTriangles = GaitSym::GSUtil::fast_a_to_uint64_t(data, &endPtr);
+        m_lowerBound[0] = GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr);
+        m_lowerBound[1] = GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr);
+        m_lowerBound[2] = GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr);
+        m_upperBound[0] = GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr);
+        m_upperBound[1] = GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr);
+        m_upperBound[2] = GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr);
         size_t numElements = numTriangles * 9;
         m_vertexList.reserve(numElements);
         m_normalList.reserve(numElements);
         m_colourList.reserve(numElements);
         m_uvList.reserve(numTriangles * 6);
-        for (size_t i = 0; i < numElements; i++) m_vertexList.push_back(GSUtil::fast_a_to_double(endPtr, &endPtr));
-        for (size_t i = 0; i < numElements; i++) m_normalList.push_back(GSUtil::fast_a_to_double(endPtr, &endPtr));
-        for (size_t i = 0; i < numElements; i++) m_colourList.push_back(GSUtil::fast_a_to_double(endPtr, &endPtr));
-        for (size_t i = 0; i < numTriangles * 6; i++) m_uvList.push_back(GSUtil::fast_a_to_double(endPtr, &endPtr));
+        for (size_t i = 0; i < numElements; i++) m_vertexList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
+        for (size_t i = 0; i < numElements; i++) m_normalList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
+        for (size_t i = 0; i < numElements; i++) m_colourList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
+        for (size_t i = 0; i < numTriangles * 6; i++) m_uvList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
     }
     m_meshStore.setTargetMemory(Preferences::valueDouble("MeshStoreMemoryFraction"));
     m_meshStore.addMesh(meshName, m_vertexList, m_normalList, m_colourList, m_uvList, m_lowerBound, m_upperBound);

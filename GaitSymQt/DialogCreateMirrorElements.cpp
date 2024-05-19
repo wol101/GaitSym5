@@ -143,7 +143,7 @@ void DialogCreateMirrorElements::enableControls()
 
 std::string *DialogCreateMirrorElements::validate()
 {
-    Simulation simulation;
+    GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
     std::string *errorMessage = simulation.LoadModel(editFileData.constData(), size_t(editFileData.size()));
     if (errorMessage)
@@ -199,8 +199,8 @@ void DialogCreateMirrorElements::apply()
 
 void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString, const std::string &toString, size_t axis)
 {
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> newElements;
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> newElements;
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
     // do we have to delete matching tags first?
     if (ui->checkBoxDeleteTo->isChecked())
     {
@@ -225,7 +225,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
             auto findID = tagElementIt->attributes.find("ID"s);
             if (findID != tagElementIt->attributes.end() && attributeFind(findID->second, fromString))
             {
-                std::unique_ptr<ParseXML::XMLElement> newElement = std::make_unique<ParseXML::XMLElement>();
+                std::unique_ptr<GaitSym::ParseXML::XMLElement> newElement = std::make_unique<GaitSym::ParseXML::XMLElement>();
                 newElement->tag = tagElementIt->tag;
                 newElement->attributes = tagElementIt->attributes;
                 auto newID = newElement->attributes.find("ID"s);
@@ -267,7 +267,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
             auto findID = tagElementIt->attributes.find("ID"s);
             if (findID != tagElementIt->attributes.end() && attributeFind(findID->second, fromString))
             {
-                std::unique_ptr<ParseXML::XMLElement> newElement = std::make_unique<ParseXML::XMLElement>();
+                std::unique_ptr<GaitSym::ParseXML::XMLElement> newElement = std::make_unique<GaitSym::ParseXML::XMLElement>();
                 newElement->tag = tagElementIt->tag;
                 newElement->attributes = tagElementIt->attributes;
                 auto newID = newElement->attributes.find("ID"s);
@@ -309,7 +309,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
             auto findID = tagElementIt->attributes.find("ID"s);
             if (findID != tagElementIt->attributes.end() && attributeFind(findID->second, fromString))
             {
-                std::unique_ptr<ParseXML::XMLElement> newElement = std::make_unique<ParseXML::XMLElement>();
+                std::unique_ptr<GaitSym::ParseXML::XMLElement> newElement = std::make_unique<GaitSym::ParseXML::XMLElement>();
                 newElement->tag = tagElementIt->tag;
                 newElement->attributes = tagElementIt->attributes;
                 for (auto &&attribute : newElement->attributes)
@@ -407,7 +407,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
                     std::vector<std::string> tokens;
                     pystring::split(quaternion->second, tokens);
                     std::vector<std::string> tokensPrime(tokens.begin() + 1, tokens.end()); // because tokens[0] is the body name
-                    pgd::Quaternion q = GSUtil::GetQuaternion(tokensPrime, 0);
+                    pgd::Quaternion q = GaitSym::GSUtil::GetQuaternion(tokensPrime, 0);
                     pgd::Vector3 unitX(1, 0, 0);
                     pgd::Vector3 unitXPrime = pgd::QVRotate(q, unitX);
                     // and it seems that reversing the non axes components does the trick
@@ -428,7 +428,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
                     }
                     // now convert this back to a quaternion
                     pgd::Quaternion qPrime = pgd::FindRotation(unitX, unitXPrime);
-                    quaternion->second = tokens[0] + " "s + GSUtil::ToString(qPrime);
+                    quaternion->second = tokens[0] + " "s + GaitSym::GSUtil::ToString(qPrime);
                 }
             }
         }

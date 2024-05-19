@@ -138,7 +138,7 @@ void DialogRename::enableControls()
 
 std::string *DialogRename::validate()
 {
-    Simulation simulation;
+    GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
     std::string *errorMessage = simulation.LoadModel(editFileData.constData(), size_t(editFileData.size()));
     if (errorMessage)
@@ -189,7 +189,7 @@ void DialogRename::apply()
 
 void DialogRename::applyRename(const std::string &fromString, const std::string &toString)
 {
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
 
     // loop through the elements changinf matching IDs
     for (auto &&tagElementIt : *elementList)
@@ -264,7 +264,7 @@ std::string DialogRename::attributeReplace(const std::string input, const std::s
     return qReplaceStr.toStdString();
 }
 
-void DialogRename::setNameList(std::vector<NamedObject *> *nameList)
+void DialogRename::setNameList(std::vector<GaitSym::NamedObject *> *nameList)
 {
     QSignalBlocker blocker(ui->lineEditFrom);
     m_nameList = nameList;

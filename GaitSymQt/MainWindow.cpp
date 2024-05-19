@@ -363,7 +363,7 @@ void MainWindow::processOneThing()
         if (m_simulation->ShouldQuit())
         {
             log(QString::fromStdString(capturedCerr.str()));
-            setStatusString(tr("Simulation ended normally"), 1);
+            setStatusString(tr("GaitSym::Simulation ended normally"), 1);
             log(QString("Fitness = %1\n").arg(m_simulation->CalculateInstantaneousFitness(), 0, 'f', 5));
             log(QString("Time = %1\n").arg(m_simulation->GetTime(), 0, 'f', 5));
             log(QString("Metabolic Energy = %1\n").arg(m_simulation->GetMetabolicEnergy(), 0, 'f', 5));
@@ -378,7 +378,7 @@ void MainWindow::processOneThing()
         if (m_simulation->TestForCatastrophy())
         {
             log(QString::fromStdString(capturedCerr.str()));
-            setStatusString(tr("Simulation aborted"), 1);
+            setStatusString(tr("GaitSym::Simulation aborted"), 1);
             ui->textEditLog->append(QString("Fitness = %1\n").arg(m_simulation->CalculateInstantaneousFitness(), 0, 'f', 5));
             m_simulationWidget->update();
             QString time = QString("%1").arg(m_simulation->GetTime(), 0, 'f', 5);
@@ -406,7 +406,7 @@ void MainWindow::handleCommandLineArguments()
 void MainWindow::handleTracking()
 {
     if (!m_simulation) return;
-    Marker *marker = m_simulation->GetMarker(ui->comboBoxTrackingMarker->currentText().toStdString());
+    GaitSym::Marker *marker = m_simulation->GetMarker(ui->comboBoxTrackingMarker->currentText().toStdString());
     if (marker)
     {
         pgd::Vector3 position = marker->GetWorldPosition();
@@ -518,11 +518,11 @@ void MainWindow::spinboxCursorNudgeChanged(double v)
 
 void MainWindow::comboBoxMuscleColourMapCurrentTextChanged(const QString &text)
 {
-    Muscle::StrapColourControl colourControl = Muscle::fixedColour;
-    if (text == "Strap Colour") colourControl = Muscle::fixedColour;
-    else if (text == "Activation Colour") colourControl = Muscle::activationMap;
-    else if (text == "Strain Colour") colourControl = Muscle::strainMap;
-    else if (text == "Force Colour") colourControl = Muscle::forceMap;
+    GaitSym::Muscle::StrapColourControl colourControl = GaitSym::Muscle::fixedColour;
+    if (text == "Strap Colour") colourControl = GaitSym::Muscle::fixedColour;
+    else if (text == "Activation Colour") colourControl = GaitSym::Muscle::activationMap;
+    else if (text == "Strain Colour") colourControl = GaitSym::Muscle::strainMap;
+    else if (text == "Force Colour") colourControl = GaitSym::Muscle::forceMap;
     Preferences::insert("StrapColourControl", static_cast<int>(colourControl));
     if (m_simulation)
     {
@@ -654,7 +654,7 @@ void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
         setStatusString(QString("Error: unable to achieve requested size: width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 0);
         return;
     }
-    setStatusString(QString("Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 1);
+    setStatusString(QString("GaitSym::Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 1);
 }
 
 SimulationWidget *MainWindow::simulationWidget() const
@@ -662,7 +662,7 @@ SimulationWidget *MainWindow::simulationWidget() const
     return m_simulationWidget;
 }
 
-Simulation *MainWindow::simulation() const
+GaitSym::Simulation *MainWindow::simulation() const
 {
     return m_simulation;
 }
@@ -772,10 +772,10 @@ MainWindow::Mode MainWindow::mode() const
 
 void MainWindow::deleteExistingBody(const QString &name, bool force)
 {
-    Body *body = m_simulation->GetBody(name.toStdString());
+    GaitSym::Body *body = m_simulation->GetBody(name.toStdString());
     if (!body)
     {
-        QMessageBox::warning(this, tr("Delete Body %1").arg(name), tr("Body cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete GaitSym::Body %1").arg(name), tr("GaitSym::Body cannot be found. Aborting delete."));
         return;
     }
 
@@ -795,7 +795,7 @@ void MainWindow::deleteExistingBody(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete Body %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Body %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -816,10 +816,10 @@ void MainWindow::deleteExistingBody(const QString &name, bool force)
 
 void MainWindow::deleteExistingMarker(const QString &name, bool force)
 {
-    Marker *marker = m_simulation->GetMarker(name.toStdString());
+    GaitSym::Marker *marker = m_simulation->GetMarker(name.toStdString());
     if (!marker)
     {
-        QMessageBox::warning(this, tr("Delete Marker %1").arg(name), tr("Marker cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete GaitSym::Marker %1").arg(name), tr("GaitSym::Marker cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
@@ -838,7 +838,7 @@ void MainWindow::deleteExistingMarker(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete Marker %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Marker %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -862,10 +862,10 @@ void MainWindow::deleteExistingMarker(const QString &name, bool force)
 
 void MainWindow::deleteExistingJoint(const QString &name, bool force)
 {
-    Joint *joint = m_simulation->GetJoint(name.toStdString());
+    GaitSym::Joint *joint = m_simulation->GetJoint(name.toStdString());
     if (!joint)
     {
-        QMessageBox::warning(this, tr("Delete Joint %1").arg(name), tr("Joint cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete GaitSym::Joint %1").arg(name), tr("GaitSym::Joint cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
@@ -884,7 +884,7 @@ void MainWindow::deleteExistingJoint(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete Joint %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Joint %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -907,10 +907,10 @@ void MainWindow::deleteExistingJoint(const QString &name, bool force)
 
 void MainWindow::deleteExistingMuscle(const QString &name, bool force)
 {
-    Muscle *muscle = m_simulation->GetMuscle(name.toStdString());
+    GaitSym::Muscle *muscle = m_simulation->GetMuscle(name.toStdString());
     if (!muscle)
     {
-        QMessageBox::warning(this, tr("Delete Muscle %1").arg(name), tr("Muscle cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete GaitSym::Muscle %1").arg(name), tr("GaitSym::Muscle cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
@@ -929,7 +929,7 @@ void MainWindow::deleteExistingMuscle(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete Muscle %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Muscle %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -953,10 +953,10 @@ void MainWindow::deleteExistingMuscle(const QString &name, bool force)
 
 void MainWindow::deleteExistingDriver(const QString &name, bool force)
 {
-    Driver *driver = m_simulation->GetDriver(name.toStdString());
+    GaitSym::Driver *driver = m_simulation->GetDriver(name.toStdString());
     if (!driver)
     {
-        QMessageBox::warning(this, tr("Delete Driver %1").arg(name), tr("Driver cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete GaitSym::Driver %1").arg(name), tr("GaitSym::Driver cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
@@ -975,7 +975,7 @@ void MainWindow::deleteExistingDriver(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete Driver %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Driver %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -997,10 +997,10 @@ void MainWindow::deleteExistingDriver(const QString &name, bool force)
 
 void MainWindow::deleteExistingGeom(const QString &name, bool force)
 {
-    Geom *geom = m_simulation->GetGeom(name.toStdString());
+    GaitSym::Geom *geom = m_simulation->GetGeom(name.toStdString());
     if (!geom)
     {
-        QMessageBox::warning(this, tr("Delete Geom %1").arg(name), tr("Geom cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete GaitSym::Geom %1").arg(name), tr("GaitSym::Geom cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
@@ -1019,7 +1019,7 @@ void MainWindow::deleteExistingGeom(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete Geom %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Geom %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -1042,37 +1042,37 @@ void MainWindow::deleteExistingGeom(const QString &name, bool force)
 
 void MainWindow::editExistingBody(const QString &name)
 {
-    Body *body = m_simulation->GetBody(name.toStdString());
+    GaitSym::Body *body = m_simulation->GetBody(name.toStdString());
     this->menuCreateEditBody(body);
 }
 
 void MainWindow::editExistingMarker(const QString &name)
 {
-    Marker *marker = m_simulation->GetMarker(name.toStdString());
+    GaitSym::Marker *marker = m_simulation->GetMarker(name.toStdString());
     this->menuCreateEditMarker(marker);
 }
 
 void MainWindow::editExistingJoint(const QString &name)
 {
-    Joint *joint = m_simulation->GetJoint(name.toStdString());
+    GaitSym::Joint *joint = m_simulation->GetJoint(name.toStdString());
     this->menuCreateEditJoint(joint);
 }
 
 void MainWindow::editExistingMuscle(const QString &name)
 {
-    Muscle *muscle = m_simulation->GetMuscle(name.toStdString());
+    GaitSym::Muscle *muscle = m_simulation->GetMuscle(name.toStdString());
     this->menuCreateEditMuscle(muscle);
 }
 
 void MainWindow::editExistingGeom(const QString &name)
 {
-    Geom *geom = m_simulation->GetGeom(name.toStdString());
+    GaitSym::Geom *geom = m_simulation->GetGeom(name.toStdString());
     this->menuCreateEditGeom(geom);
 }
 
 void MainWindow::editExistingDriver(const QString &name)
 {
-    Driver *driver = m_simulation->GetDriver(name.toStdString());
+    GaitSym::Driver *driver = m_simulation->GetDriver(name.toStdString());
     this->menuCreateEditDriver(driver);
 }
 
@@ -1135,7 +1135,7 @@ void MainWindow::comboBoxTrackingMarkerCurrentTextChanged(const QString &text)
 {
     if (m_simulation)
     {
-        Marker *marker = m_simulation->GetMarker(text.toStdString());
+        GaitSym::Marker *marker = m_simulation->GetMarker(text.toStdString());
         if (marker) Preferences::insert("TrackMarkerID", text);
     }
 }
@@ -1239,7 +1239,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     std::string *errorMessage = nullptr;
     if (fileData)
     {
-        this->m_simulation = new Simulation();
+        this->m_simulation = new GaitSym::Simulation();
         errorMessage = this->m_simulation->LoadModel(fileData->constData(), fileData->size());
     }
     else
@@ -1253,7 +1253,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
             this->updateEnable();
             return;
         }
-        this->m_simulation = new Simulation();
+        this->m_simulation = new GaitSym::Simulation();
         errorMessage = this->m_simulation->LoadModel(file.GetRawData(), file.GetSize());
     }
     if (errorMessage)
@@ -1505,19 +1505,19 @@ void MainWindow::run()
     if (this->ui->actionRun->isChecked())
     {
         if (this->m_simulation) this->m_timer->start();
-        this->setStatusString(tr("Simulation running"), 1);
+        this->setStatusString(tr("GaitSym::Simulation running"), 1);
     }
     else
     {
         this->m_timer->stop();
-        this->setStatusString(tr("Simulation stopped"), 1);
+        this->setStatusString(tr("GaitSym::Simulation stopped"), 1);
     }
 }
 void MainWindow::step()
 {
     this->m_stepFlag = true;
     if (this->m_simulation) this->m_timer->start();
-    this->setStatusString(tr("Simulation stepped"), 2);
+    this->setStatusString(tr("GaitSym::Simulation stepped"), 2);
 }
 
 void MainWindow::snapshot()
@@ -1868,14 +1868,14 @@ void MainWindow::menuNew()
         this->ui->actionRun->setChecked(false);
         this->m_timer->stop();
         this->m_saveOBJFileSequenceFlag = false;
-        this->m_simulation = new Simulation();
-        std::unique_ptr<Global> newGlobal = dialogGlobal.outputGlobal();
+        this->m_simulation = new GaitSym::Simulation();
+        std::unique_ptr<GaitSym::Global> newGlobal = dialogGlobal.outputGlobal();
         newGlobal->setSimulation(this->m_simulation);
         this->m_simulation->SetGlobal(std::move(newGlobal));
         this->m_simulationWidget->setSimulation(this->m_simulation);
         this->m_simulationWidget->update();
         this->ui->treeWidgetElements->setSimulation(this->m_simulation);
-        std::unique_ptr<Marker> marker = std::make_unique<Marker>(nullptr);
+        std::unique_ptr<GaitSym::Marker> marker = std::make_unique<GaitSym::Marker>(nullptr);
         marker->setName("WorldMarker"s);
         auto markersMap = this->m_simulation->GetMarkerList();
         (*markersMap)[marker->name()] = std::move(marker);
@@ -1916,7 +1916,7 @@ void MainWindow::menuImportMeshes()
             }
 
             // now create the body
-            std::unique_ptr<Body> body = std::make_unique<Body>(/*this->m_simulation->GetWorldID()*/);
+            std::unique_ptr<GaitSym::Body> body = std::make_unique<GaitSym::Body>(/*this->m_simulation->GetWorldID()*/);
             body->setSimulation(this->m_simulation);
             body->SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
             body->SetGraphicFile1(meshFileName);
@@ -1963,7 +1963,7 @@ void MainWindow::menuImportMeshes()
             bool clockwise = false;
             pgd::Vector3 translation;
             mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
-            std::string massError/* = Body::MassCheck(&mass)*/; // FIX_ME
+            std::string massError/* = GaitSym::Body::MassCheck(&mass)*/; // FIX_ME
             if (massError.size() == 0)
             {
                 body->SetConstructionPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
@@ -1991,12 +1991,12 @@ void MainWindow::menuImportMeshes()
             body->setColour2(Preferences::valueQColor("BodyColour2").name(QColor::HexArgb).toStdString());
             body->setColour3(Preferences::valueQColor("BodyColour3").name(QColor::HexArgb).toStdString());
 
-            // this is needed because there are some parts of Body that do not have a public interface
+            // this is needed because there are some parts of GaitSym::Body that do not have a public interface
             body->saveToAttributes();
             body->createFromAttributes();
 
             // insert the new centre of mass marker
-            std::unique_ptr<Marker> cmMarker = std::make_unique<Marker>(body.get());
+            std::unique_ptr<GaitSym::Marker> cmMarker = std::make_unique<GaitSym::Marker>(body.get());
             cmMarker->setName(suggestedCMMarkerName);
             cmMarker->setSimulation(this->m_simulation);
             cmMarker->setSize1(Preferences::valueDouble("MarkerSize", 0.01));
@@ -2043,7 +2043,7 @@ void MainWindow::menuCreateJoint()
     menuCreateEditJoint(nullptr);
 }
 
-void MainWindow::menuCreateEditJoint(Joint *joint)
+void MainWindow::menuCreateEditJoint(GaitSym::Joint *joint)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateJoint", "this->m_simulation undefined");
     Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
@@ -2056,7 +2056,7 @@ void MainWindow::menuCreateEditJoint(Joint *joint)
     {
         if (!joint) // creating a new joint
         {
-            std::unique_ptr<Joint> newJoint = dialogJoints.outputJoint();
+            std::unique_ptr<GaitSym::Joint> newJoint = dialogJoints.outputJoint();
             std::string newJointName = newJoint->name();
             newJoint->LateInitialisation();
             this->ui->treeWidgetElements->insertJoint(QString().fromStdString(newJointName), newJoint->visible(), newJoint->dump());
@@ -2065,7 +2065,7 @@ void MainWindow::menuCreateEditJoint(Joint *joint)
         }
         else // replacing an existing joint
         {
-            std::unique_ptr<Joint> replacementJoint = dialogJoints.outputJoint();
+            std::unique_ptr<GaitSym::Joint> replacementJoint = dialogJoints.outputJoint();
             std::string replacementJointName = replacementJoint->name();
             replacementJoint->LateInitialisation();
             // the only thing that currently depends on joints is the ThreeJointDriver
@@ -2091,7 +2091,7 @@ void MainWindow::menuCreateEditJoint(Joint *joint)
                 }
                 else { driverIt++; }
             }
-            this->setStatusString(QString("Joint edited: %1").arg(QString::fromStdString(replacementJointName)), 1);
+            this->setStatusString(QString("GaitSym::Joint edited: %1").arg(QString::fromStdString(replacementJointName)), 1);
         }
         this->setWindowModified(true);
         this->updateEnable();
@@ -2099,7 +2099,7 @@ void MainWindow::menuCreateEditJoint(Joint *joint)
     }
     else
     {
-        this->setStatusString(tr("Joint creation cancelled"), 2);
+        this->setStatusString(tr("GaitSym::Joint creation cancelled"), 2);
     }
 }
 
@@ -2108,7 +2108,7 @@ void MainWindow::menuCreateBody()
     menuCreateEditBody(nullptr);
 }
 
-void MainWindow::menuCreateEditBody(Body *body)
+void MainWindow::menuCreateEditBody(GaitSym::Body *body)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateBody", "m_simulation undefined");
     DialogBodyBuilder dialogBodyBuilder(this);
@@ -2129,14 +2129,14 @@ void MainWindow::menuCreateEditBody(Body *body)
     {
         if (!body) // this is the create body option so there will be no dependencies
         {
-            std::unique_ptr<Body> newBody = dialogBodyBuilder.outputBody();
+            std::unique_ptr<GaitSym::Body> newBody = dialogBodyBuilder.outputBody();
             newBody->LateInitialisation();
             std::string newBodyName = newBody->name();
             // insert the new centre of mass marker unless it already exists
             std::string cmMarkerName = newBodyName + "_CM_Marker"s;
             if (!this->m_simulation->GetMarker(cmMarkerName))
             {
-                std::unique_ptr<Marker> cmMarker = std::make_unique<Marker>(newBody.get());
+                std::unique_ptr<GaitSym::Marker> cmMarker = std::make_unique<GaitSym::Marker>(newBody.get());
                 cmMarker->setName(cmMarkerName);
                 cmMarker->setSimulation(this->m_simulation);
                 cmMarker->setSize1(Preferences::valueDouble("MarkerSize", 0.01));
@@ -2146,7 +2146,7 @@ void MainWindow::menuCreateEditBody(Body *body)
             }
             else
             {
-                this->setStatusString(QString("Unable to create: %1. Marker already exists.").arg(QString::fromStdString(cmMarkerName)), 1);
+                this->setStatusString(QString("Unable to create: %1. GaitSym::Marker already exists.").arg(QString::fromStdString(cmMarkerName)), 1);
             }
             // insert the new body
             this->ui->treeWidgetElements->insertBody(QString().fromStdString(newBodyName), newBody->visible(), newBody->dump());
@@ -2156,7 +2156,7 @@ void MainWindow::menuCreateEditBody(Body *body)
         }
         else // this is an edit so things may have moved and we need to deal with that
         {
-            this->setStatusString(QString("Body edited: %1").arg(QString::fromStdString(body->name())), 1);
+            this->setStatusString(QString("GaitSym::Body edited: %1").arg(QString::fromStdString(body->name())), 1);
             pgd::Vector3 deltaPosition = pgd::Vector3(body->GetConstructionPosition()) - originalContructionPosition;
             if (Preferences::valueBool("DialogBodyBuilderMoveMarkers", false) == false) // need to compensate the move in construction position
             {
@@ -2168,15 +2168,15 @@ void MainWindow::menuCreateEditBody(Body *body)
             }
             // and handle the CM marker if it exists
             std::string cmMarkerName = body->name() + "_CM_Marker"s;
-            Marker *cmMarker = this->m_simulation->GetMarker(cmMarkerName);
+            GaitSym::Marker *cmMarker = this->m_simulation->GetMarker(cmMarkerName);
             if (cmMarker && cmMarker->GetBody()->name() == body->name())
             {
                 cmMarker->SetPosition(0, 0, 0); // this puts it back at the centre of mass
             }
             else
             {
-                if (cmMarker) this->setStatusString(QString("Unable to move: %1. Marker attached to a different body.").arg(QString::fromStdString(cmMarkerName)), 0);
-                else this->setStatusString(QString("Unable to move: %1. Marker does not exists.").arg(QString::fromStdString(cmMarkerName)), 0);
+                if (cmMarker) this->setStatusString(QString("Unable to move: %1. GaitSym::Marker attached to a different body.").arg(QString::fromStdString(cmMarkerName)), 0);
+                else this->setStatusString(QString("Unable to move: %1. GaitSym::Marker does not exists.").arg(QString::fromStdString(cmMarkerName)), 0);
             }
             //            // completely reloading everything will work but is rather slow
             //            QByteArray xmlData = QByteArray::fromStdString(this->m_simulation->SaveToXML());
@@ -2205,7 +2205,7 @@ void MainWindow::menuCreateEditBody(Body *body)
     }
     else
     {
-        this->setStatusString(tr("Body creation cancelled"), 2);
+        this->setStatusString(tr("GaitSym::Body creation cancelled"), 2);
     }
 }
 
@@ -2214,7 +2214,7 @@ void MainWindow::menuCreateMarker()
     menuCreateEditMarker(nullptr);
 }
 
-void MainWindow::menuCreateEditMarker(Marker *marker)
+void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateEditMarker", "m_simulation undefined");
     Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
@@ -2223,7 +2223,7 @@ void MainWindow::menuCreateEditMarker(Marker *marker)
     dialogMarkers.setInputMarker(marker);
     dialogMarkers.setSimulation(this->m_simulation);
     dialogMarkers.lateInitialise();
-    if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit Marker..."))
+    if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit GaitSym::Marker..."))
     {
         if (this->m_simulationWidget->getClosestHit())
         {
@@ -2236,7 +2236,7 @@ void MainWindow::menuCreateEditMarker(Marker *marker)
     {
         if (!marker) // create so no dependencies
         {
-            std::unique_ptr<Marker> newMarker = dialogMarkers.outputMarker();
+            std::unique_ptr<GaitSym::Marker> newMarker = dialogMarkers.outputMarker();
             std::string newMarkerName = newMarker->name();
             this->ui->treeWidgetElements->insertMarker(QString().fromStdString(newMarkerName), newMarker->visible(), newMarker->dump());
             (*this->m_simulation->GetMarkerList())[newMarkerName] = std::move(newMarker);
@@ -2257,7 +2257,7 @@ void MainWindow::menuCreateEditMarker(Marker *marker)
                     if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
                 }
             }
-            this->setStatusString(QString("Marker edited: %1").arg(QString::fromStdString(marker->name())), 1);
+            this->setStatusString(QString("GaitSym::Marker edited: %1").arg(QString::fromStdString(marker->name())), 1);
         }
 
         this->setWindowModified(true);
@@ -2266,7 +2266,7 @@ void MainWindow::menuCreateEditMarker(Marker *marker)
     }
     else
     {
-        this->setStatusString(tr("Marker creation cancelled"), 2);
+        this->setStatusString(tr("GaitSym::Marker creation cancelled"), 2);
     }
 }
 
@@ -2275,7 +2275,7 @@ void MainWindow::menuCreateMuscle()
     menuCreateEditMuscle(nullptr);
 }
 
-void MainWindow::menuCreateEditMuscle(Muscle *muscle)
+void MainWindow::menuCreateEditMuscle(GaitSym::Muscle *muscle)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateMuscle", "this->m_simulation undefined");
     Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
@@ -2291,7 +2291,7 @@ void MainWindow::menuCreateEditMuscle(Muscle *muscle)
             std::unique_ptr<Strap> newStrap = dialogMuscles.outputStrap();
             std::string newStrapName = newStrap->name();
             (*this->m_simulation->GetStrapList())[newStrapName] = std::move(newStrap);
-            std::unique_ptr<Muscle> newMuscle = dialogMuscles.outputMuscle();
+            std::unique_ptr<GaitSym::Muscle> newMuscle = dialogMuscles.outputMuscle();
             muscle = newMuscle.get();
             std::string newMuscleName = newMuscle->name();
             this->ui->treeWidgetElements->insertMuscle(QString().fromStdString(newMuscleName), newMuscle->visible(), newMuscle->dump());
@@ -2303,21 +2303,21 @@ void MainWindow::menuCreateEditMuscle(Muscle *muscle)
             std::unique_ptr<Strap> replacementStrap = dialogMuscles.outputStrap();
             std::string replacementStrapName = replacementStrap->name();
             (*this->m_simulation->GetStrapList())[replacementStrapName] = std::move(replacementStrap);
-            std::unique_ptr<Muscle> replacementMuscle = dialogMuscles.outputMuscle();
+            std::unique_ptr<GaitSym::Muscle> replacementMuscle = dialogMuscles.outputMuscle();
             muscle = replacementMuscle.get();
             std::string replacementMuscleName = replacementMuscle->name();
             //            this->ui->treeWidgetElements->insertMuscle(QString().fromStdString(replacementMuscleName), replacementMuscle->visible(), replacementMuscle->dump());
             (*this->m_simulation->GetMuscleList())[replacementMuscleName] = std::move(replacementMuscle);
-            this->setStatusString(QString("Muscle edited: %1").arg(QString::fromStdString(replacementMuscleName)), 1);
+            this->setStatusString(QString("GaitSym::Muscle edited: %1").arg(QString::fromStdString(replacementMuscleName)), 1);
         }
 
         this->setWindowModified(true);
-        Muscle::StrapColourControl colourControl = Muscle::fixedColour;
+        GaitSym::Muscle::StrapColourControl colourControl = GaitSym::Muscle::fixedColour;
         QString text = this->ui->comboBoxMuscleColourMap->currentText();
-        if (text == "Strap Colour") colourControl = Muscle::fixedColour;
-        else if (text == "Activation Colour") colourControl = Muscle::activationMap;
-        else if (text == "Strain Colour") colourControl = Muscle::strainMap;
-        else if (text == "Force Colour") colourControl = Muscle::forceMap;
+        if (text == "Strap Colour") colourControl = GaitSym::Muscle::fixedColour;
+        else if (text == "Activation Colour") colourControl = GaitSym::Muscle::activationMap;
+        else if (text == "Strain Colour") colourControl = GaitSym::Muscle::strainMap;
+        else if (text == "Force Colour") colourControl = GaitSym::Muscle::forceMap;
         muscle->setStrapColourControl(colourControl);
         muscle->LateInitialisation();
         this->updateEnable();
@@ -2325,7 +2325,7 @@ void MainWindow::menuCreateEditMuscle(Muscle *muscle)
     }
     else
     {
-        this->setStatusString(tr("Muscle creation cancelled"), 2);
+        this->setStatusString(tr("GaitSym::Muscle creation cancelled"), 2);
     }
 }
 
@@ -2334,7 +2334,7 @@ void MainWindow::menuCreateGeom()
     menuCreateEditGeom(nullptr);
 }
 
-void MainWindow::menuCreateEditGeom(Geom *geom)
+void MainWindow::menuCreateEditGeom(GaitSym::Geom *geom)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateGeom", "this->m_simulation undefined");
     Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
@@ -2347,7 +2347,7 @@ void MainWindow::menuCreateEditGeom(Geom *geom)
     {
         if (!geom) // creating a new geom
         {
-            std::unique_ptr<Geom> newGeom = dialogGeoms.outputGeom();
+            std::unique_ptr<GaitSym::Geom> newGeom = dialogGeoms.outputGeom();
             std::string newGeomName = newGeom->name();
             this->ui->treeWidgetElements->insertGeom(QString().fromStdString(newGeomName), newGeom->visible(), newGeom->dump());
             (*this->m_simulation->GetGeomList())[newGeomName] = std::move(newGeom);
@@ -2355,7 +2355,7 @@ void MainWindow::menuCreateEditGeom(Geom *geom)
         }
         else // replacing an existing geom
         {
-            std::unique_ptr<Geom> replacementGeom = dialogGeoms.outputGeom();
+            std::unique_ptr<GaitSym::Geom> replacementGeom = dialogGeoms.outputGeom();
             std::string replacementGeomName = replacementGeom->name();
             (*this->m_simulation->GetGeomList())[replacementGeomName] = std::move(replacementGeom);
             // handle dependencies
@@ -2372,7 +2372,7 @@ void MainWindow::menuCreateEditGeom(Geom *geom)
                 }
             }
 
-            this->setStatusString(QString("Geom edited: %1").arg(QString::fromStdString(replacementGeomName)), 1);
+            this->setStatusString(QString("GaitSym::Geom edited: %1").arg(QString::fromStdString(replacementGeomName)), 1);
         }
         this->setWindowModified(true);
         this->updateEnable();
@@ -2380,7 +2380,7 @@ void MainWindow::menuCreateEditGeom(Geom *geom)
     }
     else
     {
-        this->setStatusString(tr("Geom creation cancelled"), 2);
+        this->setStatusString(tr("GaitSym::Geom creation cancelled"), 2);
     }
 }
 
@@ -2391,14 +2391,14 @@ void MainWindow::menuCreateDriver()
     menuCreateEditDriver(nullptr);
 }
 
-void MainWindow::menuCreateEditDriver(Driver *driver)
+void MainWindow::menuCreateEditDriver(GaitSym::Driver *driver)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateDriver", "this->m_simulation undefined");
     Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
     if (dynamic_cast<TegotaeDriver *>(driver) || dynamic_cast<ThreeHingeJointDriver *>(driver) || dynamic_cast<TwoHingeJointDriver *>(driver)
         || dynamic_cast<MarkerPositionDriver *>(driver) || dynamic_cast<MarkerEllipseDriver *>(driver))
     {
-        QMessageBox::warning(this, "GUI Based Editing Not Implemented", QString("Driver %1 could not be edited").arg(QString::fromStdString(driver->name())));
+        QMessageBox::warning(this, "GUI Based Editing Not Implemented", QString("GaitSym::Driver %1 could not be edited").arg(QString::fromStdString(driver->name())));
         return;
     }
     DialogDrivers dialogDrivers(this);
@@ -2410,7 +2410,7 @@ void MainWindow::menuCreateEditDriver(Driver *driver)
     {
         if (!driver) // creating a new driver
         {
-            std::unique_ptr<Driver> newDriver = dialogDrivers.outputDriver();
+            std::unique_ptr<GaitSym::Driver> newDriver = dialogDrivers.outputDriver();
             std::string newDriverName = newDriver->name();
             this->ui->treeWidgetElements->insertDriver(QString().fromStdString(newDriverName), newDriver->visible(), newDriver->dump());
             (*this->m_simulation->GetDriverList())[newDriverName] = std::move(newDriver);
@@ -2418,10 +2418,10 @@ void MainWindow::menuCreateEditDriver(Driver *driver)
         }
         else // replacing an existing driver
         {
-            std::unique_ptr<Driver> replacementDriver = dialogDrivers.outputDriver();
+            std::unique_ptr<GaitSym::Driver> replacementDriver = dialogDrivers.outputDriver();
             std::string replacementDriverName = replacementDriver->name();
             (*this->m_simulation->GetDriverList())[replacementDriverName] = std::move(replacementDriver);
-            this->setStatusString(QString("Driver edited: %1").arg(QString::fromStdString(replacementDriverName)), 1);
+            this->setStatusString(QString("GaitSym::Driver edited: %1").arg(QString::fromStdString(replacementDriverName)), 1);
         }
         this->setWindowModified(true);
         this->updateEnable();
@@ -2429,7 +2429,7 @@ void MainWindow::menuCreateEditDriver(Driver *driver)
     }
     else
     {
-        this->setStatusString(tr("Driver creation cancelled"), 2);
+        this->setStatusString(tr("GaitSym::Driver creation cancelled"), 2);
     }
 }
 
@@ -2447,7 +2447,7 @@ void MainWindow::menuEditGlobal()
     {
         this->m_simulation->SetGlobal(dialogGlobal.outputGlobal());
         this->m_simulation->GetGlobal()->setSimulation(this->m_simulation);
-        this->setStatusString(tr("Global values edited"), 1);
+        this->setStatusString(tr("GaitSym::Global values edited"), 1);
         this->setWindowModified(true);
         this->updateEnable();
         this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetGlobal()->TimeLimit());
@@ -2457,7 +2457,7 @@ void MainWindow::menuEditGlobal()
     }
     else
     {
-        this->setStatusString(tr("Global values unchanged"), 2);
+        this->setStatusString(tr("GaitSym::Global values unchanged"), 2);
     }
 }
 
@@ -2562,7 +2562,7 @@ void MainWindow::menuExportMarkers()
     DialogMarkerImportExport dialogMarkerImportExport(this);
     dialogMarkerImportExport.setSimulation(this->m_simulation);
     dialogMarkerImportExport.setAllowImport(this->m_mode == MainWindow::constructionMode);
-    std::vector<std::unique_ptr<Marker>> markerList;
+    std::vector<std::unique_ptr<GaitSym::Marker>> markerList;
     dialogMarkerImportExport.setMarkerList(&markerList);
     int status = dialogMarkerImportExport.exec();
     if (status == QDialog::Accepted)
@@ -2576,7 +2576,7 @@ void MainWindow::menuExportMarkers()
             std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
             for (size_t i =0; i < markerList.size(); i++)
             {
-                std::unique_ptr<Marker> marker = std::move(markerList[i]);
+                std::unique_ptr<GaitSym::Marker> marker = std::move(markerList[i]);
                 std::string markerName = marker->name();
                 this->ui->treeWidgetElements->insertMarker(QString().fromStdString(markerName), marker->visible(), marker->dump());
                 auto markerIt = this->m_simulation->GetMarkerList()->find(markerName);
@@ -2605,7 +2605,7 @@ void MainWindow::menuExportMarkers()
     }
     else
     {
-        this->setStatusString(tr("Marker import/export cancelled."), 2);
+        this->setStatusString(tr("GaitSym::Marker import/export cancelled."), 2);
     }
 }
 
@@ -2777,7 +2777,7 @@ void MainWindow::elementInfo(const QString &elementType, const QString &elementN
     lines.push_back("<"s + elementType.toUpper().toStdString());
     for (auto &&it : element->attributeMap()) lines.push_back("    "s + it.first + "=\"" + it.second + "\"");
     lines.push_back("/>"s);
-    if (Muscle *muscle = dynamic_cast<Muscle *>(element))
+    if (GaitSym::Muscle *muscle = dynamic_cast<GaitSym::Muscle *>(element))
     {
         muscle->GetStrap()->saveToAttributes();
         lines.push_back("<STRAP"s);

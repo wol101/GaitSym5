@@ -19,12 +19,12 @@
 #include <vector>
 #include <initializer_list>
 
+namespace rapidxml { template<class Ch> class xml_node; }
+
 namespace GaitSym
 {
 
 class Simulation;
-
-namespace rapidxml { template<class Ch> class xml_node; }
 
 class NamedObject
 {

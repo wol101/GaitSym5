@@ -55,12 +55,12 @@ std::string DrawJoint::name()
     else return std::string();
 }
 
-Joint *DrawJoint::joint() const
+GaitSym::Joint *DrawJoint::joint() const
 {
     return m_joint;
 }
 
-void DrawJoint::setJoint(Joint *joint)
+void DrawJoint::setJoint(GaitSym::Joint *joint)
 {
     m_joint = joint;
 }
@@ -162,7 +162,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
 
 void DrawJoint::updateEntityPose()
 {
-    Marker *marker = m_joint->body1Marker();
+    GaitSym::Marker *marker = m_joint->body1Marker();
     pgd::Quaternion q = marker->GetWorldQuaternion();
     pgd::Vector3 p = marker->GetWorldPosition();
     SetDisplayRotationFromQuaternion(q.data());

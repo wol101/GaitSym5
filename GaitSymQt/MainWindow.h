@@ -15,9 +15,7 @@
 
 class SimulationWidget;
 
-namespace Ui {
-class MainWindow;
-}
+namespace Ui { class MainWindow; }
 
 namespace GaitSym
 {
@@ -30,7 +28,6 @@ class Muscle;
 class NamedObject;
 class Simulation;
 }
-class MainWindow;
 
 class QAction;
 class QTreeWidgetItem;

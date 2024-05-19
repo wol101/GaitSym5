@@ -22,7 +22,7 @@ DialogMarkerImportExport::DialogMarkerImportExport(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("Marker Import/Export"));
+    setWindowTitle(tr("GaitSym::Marker Import/Export"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) |
                    Qt::Window); // allows the window to be resized on macs
@@ -92,7 +92,7 @@ void DialogMarkerImportExport::setAllowImport(bool newAllowImport)
     }
 }
 
-std::vector<std::unique_ptr<Marker> > *DialogMarkerImportExport::markerList() const
+std::vector<std::unique_ptr<GaitSym::Marker> > *DialogMarkerImportExport::markerList() const
 {
     return m_markerList;
 }
@@ -107,12 +107,12 @@ void DialogMarkerImportExport::radioButtonImportClicked()
     ui->lineEditFileName->setPathType(LineEditPath::FileForOpen);
 }
 
-void DialogMarkerImportExport::setMarkerList(std::vector<std::unique_ptr<Marker> > *markerList)
+void DialogMarkerImportExport::setMarkerList(std::vector<std::unique_ptr<GaitSym::Marker> > *markerList)
 {
     m_markerList = markerList;
 }
 
-void DialogMarkerImportExport::setSimulation(Simulation *simulation)
+void DialogMarkerImportExport::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }
@@ -218,7 +218,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s};
+            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -231,9 +231,9 @@ int DialogMarkerImportExport::ExportMarkers()
             line.push_back(markerIt.first);
             line.push_back(bodyName);
             pWorld = markerIt.second->GetWorldPosition();
-            line.push_back(GSUtil::ToString(pWorld.x));
-            line.push_back(GSUtil::ToString(pWorld.y));
-            line.push_back(GSUtil::ToString(pWorld.z));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.x));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.y));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -241,7 +241,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "RX"s, "RY"s, "RZ"s};
+            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "RX"s, "RY"s, "RZ"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -254,16 +254,16 @@ int DialogMarkerImportExport::ExportMarkers()
             line.push_back(markerIt.first);
             line.push_back(bodyName);
             pWorld = markerIt.second->GetWorldPosition();
-            line.push_back(GSUtil::ToString(pWorld.x));
-            line.push_back(GSUtil::ToString(pWorld.y));
-            line.push_back(GSUtil::ToString(pWorld.z));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.x));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.y));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.z));
             qWorld = markerIt.second->GetWorldQuaternion();
             pgd::Vector3 euler;
             if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::MakeEulerAnglesFromQRadian(qWorld);
             else euler = pgd::MakeEulerAnglesFromQ(qWorld);
-            line.push_back(GSUtil::ToString(euler.x));
-            line.push_back(GSUtil::ToString(euler.y));
-            line.push_back(GSUtil::ToString(euler.z));
+            line.push_back(GaitSym::GSUtil::ToString(euler.x));
+            line.push_back(GaitSym::GSUtil::ToString(euler.y));
+            line.push_back(GaitSym::GSUtil::ToString(euler.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -271,7 +271,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R"s, "AX"s, "AY"s, "AZ"s};
+            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "R"s, "AX"s, "AY"s, "AZ"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -284,17 +284,17 @@ int DialogMarkerImportExport::ExportMarkers()
             line.push_back(markerIt.first);
             line.push_back(bodyName);
             pWorld = markerIt.second->GetWorldPosition();
-            line.push_back(GSUtil::ToString(pWorld.x));
-            line.push_back(GSUtil::ToString(pWorld.y));
-            line.push_back(GSUtil::ToString(pWorld.z));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.x));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.y));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.z));
             qWorld = markerIt.second->GetWorldQuaternion();
             double xa, ya, za, angle;
             pgd::MakeAxisAngleFromQ(qWorld, &xa, &ya, &za, &angle);
             if (ui->checkBoxAnglesInRadians->isChecked() == false) angle = pgd::RadToDeg(angle);
-            line.push_back(GSUtil::ToString(angle));
-            line.push_back(GSUtil::ToString(xa));
-            line.push_back(GSUtil::ToString(ya));
-            line.push_back(GSUtil::ToString(za));
+            line.push_back(GaitSym::GSUtil::ToString(angle));
+            line.push_back(GaitSym::GSUtil::ToString(xa));
+            line.push_back(GaitSym::GSUtil::ToString(ya));
+            line.push_back(GaitSym::GSUtil::ToString(za));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -302,7 +302,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "QN"s, "QX"s, "QY"s, "QZ"s};
+            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "QN"s, "QX"s, "QY"s, "QZ"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -315,14 +315,14 @@ int DialogMarkerImportExport::ExportMarkers()
             line.push_back(markerIt.first);
             line.push_back(bodyName);
             pWorld = markerIt.second->GetWorldPosition();
-            line.push_back(GSUtil::ToString(pWorld.x));
-            line.push_back(GSUtil::ToString(pWorld.y));
-            line.push_back(GSUtil::ToString(pWorld.z));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.x));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.y));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.z));
             qWorld = markerIt.second->GetWorldQuaternion();
-            line.push_back(GSUtil::ToString(qWorld.n));
-            line.push_back(GSUtil::ToString(qWorld.x));
-            line.push_back(GSUtil::ToString(qWorld.y));
-            line.push_back(GSUtil::ToString(qWorld.z));
+            line.push_back(GaitSym::GSUtil::ToString(qWorld.n));
+            line.push_back(GaitSym::GSUtil::ToString(qWorld.x));
+            line.push_back(GaitSym::GSUtil::ToString(qWorld.y));
+            line.push_back(GaitSym::GSUtil::ToString(qWorld.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -330,7 +330,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R1C1"s, "R1C2"s, "R1C3"s, "R2C1"s, "R2C2"s, "R2C3"s, "R3C1"s, "R3C2"s, "R3C3"s};
+            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "R1C1"s, "R1C2"s, "R1C3"s, "R2C1"s, "R2C2"s, "R2C3"s, "R3C1"s, "R3C2"s, "R3C3"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -343,30 +343,30 @@ int DialogMarkerImportExport::ExportMarkers()
             line.push_back(markerIt.first);
             line.push_back(bodyName);
             pWorld = markerIt.second->GetWorldPosition();
-            line.push_back(GSUtil::ToString(pWorld.x));
-            line.push_back(GSUtil::ToString(pWorld.y));
-            line.push_back(GSUtil::ToString(pWorld.z));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.x));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.y));
+            line.push_back(GaitSym::GSUtil::ToString(pWorld.z));
             qWorld = markerIt.second->GetWorldQuaternion();
             pgd::Matrix3x3 matrix = MakeMFromQ(qWorld);
             for (size_t i =0; i < 9; i++)
-                line.push_back(GSUtil::ToString(matrix.data()[i]));
+                line.push_back(GaitSym::GSUtil::ToString(matrix.data()[i]));
             lines.push_back(pystring::join(separator, line));
         }
     }
 
     std::string data = pystring::join("\n"s, lines);
-    DataFile dataFile;
+    GaitSym::DataFile dataFile;
     dataFile.SetRawData(data.data(), data.size());
     QString fileName = ui->lineEditFileName->text();
     if (dataFile.WriteFile(fileName.toStdString()))
     {
         ui->plainTextEditLog->appendPlainText(QString("Error writing '%1'.\n").arg(fileName));
-        QMessageBox::information(this, "Marker Export Errors", QString("Error writing '%1'.\n").arg(fileName), QMessageBox::Ok);
+        QMessageBox::information(this, "GaitSym::Marker Export Errors", QString("Error writing '%1'.\n").arg(fileName), QMessageBox::Ok);
         return __LINE__;
     }
 
     ui->plainTextEditLog->appendPlainText(QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName));
-    QMessageBox::information(this, "Marker Export Results", QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName), QMessageBox::Ok);
+    QMessageBox::information(this, "GaitSym::Marker Export Results", QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName), QMessageBox::Ok);
     return 0;
 }
 
@@ -375,12 +375,12 @@ int DialogMarkerImportExport::ImportMarkers()
     Q_ASSERT_X(m_markerList, "DialogMarkerImportExport::ImportMarkers", "m_markerList not defined");
     size_t errorCount = 0;
     QString fileName = ui->lineEditFileName->text();
-    DataFile dataFile;
+    GaitSym::DataFile dataFile;
     if (dataFile.ReadFile(fileName.toStdString()))
     {
         errorCount++;
         ui->plainTextEditLog->appendPlainText(QString("Error: Could not read '%1'. No markers imported.\n").arg(fileName));
-        QMessageBox::warning(this, "Marker Import Error", QString("Could not read '%1'\nNo markers imported.").arg(fileName), QMessageBox::Ok);
+        QMessageBox::warning(this, "GaitSym::Marker Import Error", QString("Could not read '%1'\nNo markers imported.").arg(fileName), QMessageBox::Ok);
         return __LINE__;
     }
 
@@ -408,7 +408,7 @@ int DialogMarkerImportExport::ImportMarkers()
     }
     for (size_t i = startLine; i < lines.size(); i++)
     {
-        if (GSUtil::SplitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
+        if (GaitSym::GSUtil::SplitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
         if (!ui->checkBoxAllowOverwrite->isChecked() && m_simulation->GetMarker(tokens[0]))
         {
             errorCount++;
@@ -421,25 +421,25 @@ int DialogMarkerImportExport::ImportMarkers()
             ui->plainTextEditLog->appendPlainText(QString("Error: '%1' has the same name as a previously added marker.\n").arg(QString::fromStdString(tokens[0])));
             continue;
         }
-        Body *body = nullptr;
+        GaitSym::Body *body = nullptr;
         if (tokens[1] != "World"s)
         {
             body = m_simulation->GetBody(tokens[1]);
             if (!body && ui->checkBoxIgnoreMissingBodies->isChecked() == false)
             {
                 errorCount++;
-                ui->plainTextEditLog->appendPlainText(QString("Error: '%1' Body '%2' does not exist.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
+                ui->plainTextEditLog->appendPlainText(QString("Error: '%1' GaitSym::Body '%2' does not exist.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
                 continue;
             }
         }
-        std::unique_ptr<Marker> marker = std::make_unique<Marker>(nullptr);
+        std::unique_ptr<GaitSym::Marker> marker = std::make_unique<GaitSym::Marker>(nullptr);
         addedNames.insert(tokens[0]);
         marker->setSimulation(m_simulation);
         marker->setName(tokens[0]);
         marker->SetBody(body);
         marker->setSize1(Preferences::valueDouble("MarkerSize"));
         values.clear();
-        for (size_t j = 2; j < tokens.size(); j++) values.push_back(GSUtil::Double(tokens[j]));
+        for (size_t j = 2; j < tokens.size(); j++) values.push_back(GaitSym::GSUtil::Double(tokens[j]));
         for (size_t j = values.size(); j < 12; j++) values.push_back(0);
         if (ui->radioButtonPositionOnly->isChecked())
         {
@@ -475,7 +475,7 @@ int DialogMarkerImportExport::ImportMarkers()
                     values[9], values[10], values[11]));
             marker->SetWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
         }
-        ui->plainTextEditLog->appendPlainText(QString("Marker '%1' attached to '%2' created.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
+        ui->plainTextEditLog->appendPlainText(QString("GaitSym::Marker '%1' attached to '%2' created.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
         marker->saveToAttributes();
         marker->createFromAttributes();
         m_markerList->push_back(std::move(marker));
@@ -483,12 +483,12 @@ int DialogMarkerImportExport::ImportMarkers()
     if (errorCount == 0)
     {
         ui->plainTextEditLog->appendPlainText(QString("%1 markers created. No errors detected.\n").arg(m_markerList->size()));
-        QMessageBox::information(this, "Marker Import Results", QString("%1 markers created. No errors detected.").arg(m_markerList->size()), QMessageBox::Ok);
+        QMessageBox::information(this, "GaitSym::Marker Import Results", QString("%1 markers created. No errors detected.").arg(m_markerList->size()), QMessageBox::Ok);
     }
     else
     {
         ui->plainTextEditLog->appendPlainText(QString("%1 markers created. %2 errors detected.\n").arg(m_markerList->size()).arg(errorCount));
-        QMessageBox::information(this, "Marker Import Results", QString("%1 markers created. %2 errors detected.").arg(m_markerList->size()).arg(errorCount), QMessageBox::Ok);
+        QMessageBox::information(this, "GaitSym::Marker Import Results", QString("%1 markers created. %2 errors detected.").arg(m_markerList->size()).arg(errorCount), QMessageBox::Ok);
     }
     return 0;
 }

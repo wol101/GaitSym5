@@ -10,6 +10,8 @@
 #ifndef DIALOGOUTPUTSELECT_H
 #define DIALOGOUTPUTSELECT_H
 
+#include "Simulation.h"
+
 #include <QDialog>
 #include <QFont>
 
@@ -17,7 +19,7 @@ class QListWidget;
 class QLabel;
 class QDialogButtonBox;
 class QGridLayout;
-namespace GaitSym { class Simulation; }
+// namespace GaitSym { class Simulation; }
 
 namespace Ui { class DialogOutputSelect; }
 
@@ -29,7 +31,6 @@ public:
     virtual ~DialogOutputSelect() Q_DECL_OVERRIDE;
 
     Ui::DialogOutputSelect *ui() { return m_ui; }
-
 
     QListWidget *listWidgetBody() const;
     void setListWidgetBody(QListWidget *listWidgetBody);
@@ -58,8 +59,8 @@ public:
     QListWidget *listWidgetController() const;
     void setListWidgetController(QListWidget *listWidgetController);
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
 
 public slots:
@@ -95,7 +96,7 @@ private:
     int m_columns = 0;
     Ui::DialogOutputSelect *m_ui = nullptr;
 
-    Simulation *m_simulation = nullptr;
+    GaitSym::Simulation *m_simulation = nullptr;
 };
 
 #endif // DIALOGOUTPUTSELECT_H

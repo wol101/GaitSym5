@@ -19,6 +19,8 @@
 #include <sstream>
 #include <limits>
 
+using namespace GaitSym;
+
 AMotorJoint::AMotorJoint() : Joint()
 {
     // setJointID(dJointCreateAMotor(worldID, nullptr));

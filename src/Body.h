@@ -188,6 +188,6 @@ private:
     pgd::Matrix3x3 m_inertia;
 };
 
-
+}
 
 #endif

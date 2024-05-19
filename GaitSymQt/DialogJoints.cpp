@@ -29,7 +29,7 @@ DialogJoints::DialogJoints(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("Joint Builder"));
+    setWindowTitle(tr("GaitSym::Joint Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -62,18 +62,18 @@ void DialogJoints::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogJoints::accept()";
 
-    std::map<std::string, std::unique_ptr<Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
     QString tab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if (tab == "Hinge")
     {
-        std::unique_ptr<HingeJoint> joint = std::make_unique<HingeJoint>(/*m_simulation->GetWorldID()*/);
+        std::unique_ptr<GaitSym::HingeJoint> joint = std::make_unique<GaitSym::HingeJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
         pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
-        pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(Marker::Axis::X);
+        pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(GaitSym::Marker::Axis::X);
         joint->setAnchor(anchor);
         joint->setAxis(axis);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
@@ -93,15 +93,15 @@ void DialogJoints::accept() // this catches OK and return/enter
 
     else if (tab == "Ball")
     {
-        std::unique_ptr<BallJoint> joint;
+        std::unique_ptr<GaitSym::BallJoint> joint;
         QString mode = ui->comboBoxBallMode->currentText();
 #ifdef FIX_ME
-        BallJoint::Mode iMode = BallJoint::NoStops;
-        if (mode == "No Stops") iMode = BallJoint::NoStops;
-        else if (mode == "Fixed Euler") iMode = BallJoint::AMotorEuler;
-        else if (mode == "User Euler") iMode = BallJoint::AMotorUser;
+        GaitSym::BallJoint::Mode iMode = GaitSym::BallJoint::NoStops;
+        if (mode == "No Stops") iMode = GaitSym::BallJoint::NoStops;
+        else if (mode == "Fixed Euler") iMode = GaitSym::BallJoint::AMotorEuler;
+        else if (mode == "User Euler") iMode = GaitSym::BallJoint::AMotorUser;
 #endif
-        joint = std::make_unique<BallJoint>(/*m_simulation->GetWorldID(), iMode*/);
+        joint = std::make_unique<GaitSym::BallJoint>(/*m_simulation->GetWorldID(), iMode*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
@@ -115,7 +115,7 @@ void DialogJoints::accept() // this catches OK and return/enter
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
 #ifdef FIX_ME
-        if (iMode == BallJoint::AMotorEuler || iMode == BallJoint::AMotorUser)
+        if (iMode == GaitSym::BallJoint::AMotorEuler || iMode == GaitSym::BallJoint::AMotorUser)
         {
             joint->SetStops(pgd::DegToRad(ui->lineEditBallLowStop0->value()),
                             pgd::DegToRad(ui->lineEditBallHighStop0->value()),
@@ -130,13 +130,13 @@ void DialogJoints::accept() // this catches OK and return/enter
 
     else if (tab == "Floating Hinge")
     {
-        std::unique_ptr<FloatingHingeJoint> joint = std::make_unique<FloatingHingeJoint>(/*m_simulation->GetWorldID()*/);
+        std::unique_ptr<GaitSym::FloatingHingeJoint> joint = std::make_unique<GaitSym::FloatingHingeJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
-        pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(Marker::Axis::X);
+        pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(GaitSym::Marker::Axis::X);
         joint->setAxis(axis);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
@@ -147,7 +147,7 @@ void DialogJoints::accept() // this catches OK and return/enter
 
     else if (tab == "Fixed")
     {
-        std::unique_ptr<FixedJoint> joint = std::make_unique<FixedJoint>(/*m_simulation->GetWorldID()*/);
+        std::unique_ptr<GaitSym::FixedJoint> joint = std::make_unique<GaitSym::FixedJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
@@ -163,7 +163,7 @@ void DialogJoints::accept() // this catches OK and return/enter
             QImage image;
             if (image.load(ui->lineEditFixedStressBitmap->text()) == false || image.height() == 0 || image.width() == 0)
             {
-                QMessageBox::warning(this, tr("Create Joint"), QString("Error loading %1\nUnable to create joint.").arg(ui->lineEditFixedStressBitmap->text()));
+                QMessageBox::warning(this, tr("Create GaitSym::Joint"), QString("Error loading %1\nUnable to create joint.").arg(ui->lineEditFixedStressBitmap->text()));
                 return;
             }
             std::vector<unsigned char> stiffnessMap(size_t(image.height()) * size_t(image.width()));
@@ -183,23 +183,23 @@ void DialogJoints::accept() // this catches OK and return/enter
 
             if (mode == "Beam Low Pass")
             {
-                joint->SetStressCalculationType(FixedJoint::beam);
-                joint->SetLowPassType(FixedJoint::Butterworth2ndOrderLowPass);
+                joint->SetStressCalculationType(GaitSym::FixedJoint::beam);
+                joint->SetLowPassType(GaitSym::FixedJoint::Butterworth2ndOrderLowPass);
             }
             else if (mode == "Spring Low Pass")
             {
-                joint->SetStressCalculationType(FixedJoint::spring);
-                joint->SetLowPassType(FixedJoint::Butterworth2ndOrderLowPass);
+                joint->SetStressCalculationType(GaitSym::FixedJoint::spring);
+                joint->SetLowPassType(GaitSym::FixedJoint::Butterworth2ndOrderLowPass);
             }
             else if (mode == "Beam Moving Average")
             {
-                joint->SetStressCalculationType(FixedJoint::beam);
-                joint->SetLowPassType(FixedJoint::MovingAverageLowPass);
+                joint->SetStressCalculationType(GaitSym::FixedJoint::beam);
+                joint->SetLowPassType(GaitSym::FixedJoint::MovingAverageLowPass);
             }
             else if (mode == "Spring Moving Average")
             {
-                joint->SetStressCalculationType(FixedJoint::spring);
-                joint->SetLowPassType(FixedJoint::MovingAverageLowPass);
+                joint->SetStressCalculationType(GaitSym::FixedJoint::spring);
+                joint->SetLowPassType(GaitSym::FixedJoint::MovingAverageLowPass);
             }
             joint->SetWindow(size_t(ui->spinBoxFixedStressWindow->value()));
             joint->SetCutoffFrequency(ui->lineEditFixedStressCutoffFrequency->value());
@@ -210,7 +210,7 @@ void DialogJoints::accept() // this catches OK and return/enter
 
     else if (tab == "Universal")
     {
-        std::unique_ptr<UniversalJoint> joint = std::make_unique<UniversalJoint>(/*m_simulation->GetWorldID()*/);
+        std::unique_ptr<GaitSym::UniversalJoint> joint = std::make_unique<GaitSym::UniversalJoint>(/*m_simulation->GetWorldID()*/);
         joint->setName(ui->lineEditJointID->text().toStdString());
         joint->setSimulation(m_simulation);
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
@@ -288,7 +288,7 @@ void DialogJoints::lateInitialise()
     Q_ASSERT_X(m_simulation, "DialogJoints::lateInitialise", "m_simulation undefined");
 
     // get the lists in the right formats
-    std::map<std::string, std::unique_ptr<Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
     QStringList markerIDs;
     for (auto it = markerList->begin(); it != markerList->end(); it++)
         markerIDs.append(QString::fromStdString(it->first));
@@ -320,11 +320,11 @@ void DialogJoints::lateInitialise()
         auto nameSet = simulation()->GetNameSet();
         ui->lineEditJointID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("GaitSym::Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("GaitSym::Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditJointID->setText(initialName);
@@ -340,55 +340,55 @@ void DialogJoints::lateInitialise()
     ui->lineEditJointID->setEnabled(false);
     ui->comboBoxMarker1->setCurrentText(QString::fromStdString(m_inputJoint->findAttribute("Body1MarkerID"s)));
     ui->comboBoxMarker2->setCurrentText(QString::fromStdString(m_inputJoint->findAttribute("Body2MarkerID"s)));
-    if ((s = m_inputJoint->findAttribute("CFM"s)).size()) ui->lineEditCFM->setValue(GSUtil::Double(s));
-    if ((s = m_inputJoint->findAttribute("ERP"s)).size()) ui->lineEditERP->setValue(GSUtil::Double(s));
+    if ((s = m_inputJoint->findAttribute("CFM"s)).size()) ui->lineEditCFM->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputJoint->findAttribute("ERP"s)).size()) ui->lineEditERP->setValue(GaitSym::GSUtil::Double(s));
 
-    if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_inputJoint))
+    if (GaitSym::HingeJoint *hingeJoint = dynamic_cast<GaitSym::HingeJoint *>(m_inputJoint))
     {
-        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditHingeLowStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditHingeHighStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("LowStopTorqueLimit"s)).size()) ui->lineEditHingeLowStopTorqueLimit->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("HighStopTorqueLimit"s)).size()) ui->lineEditHingeHighStopTorqueLimit->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopTorqueWindow"s)).size()) ui->spinBoxHingeTorqueWindow->setValue(GSUtil::Int(s));
-        if ((s = m_inputJoint->findAttribute("StopCFM"s)).size()) ui->lineEditHingeStopCFM->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopERP"s)).size()) ui->lineEditHingeStopERP->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopBounce"s)).size()) ui->lineEditHingeStopBounce->setValue(GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditHingeLowStop->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditHingeHighStop->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStopTorqueLimit"s)).size()) ui->lineEditHingeLowStopTorqueLimit->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("HighStopTorqueLimit"s)).size()) ui->lineEditHingeHighStopTorqueLimit->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopTorqueWindow"s)).size()) ui->spinBoxHingeTorqueWindow->setValue(GaitSym::GSUtil::Int(s));
+        if ((s = m_inputJoint->findAttribute("StopCFM"s)).size()) ui->lineEditHingeStopCFM->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopERP"s)).size()) ui->lineEditHingeStopERP->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopBounce"s)).size()) ui->lineEditHingeStopBounce->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Hinge"));
     }
 
-    if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_inputJoint))
+    if (GaitSym::BallJoint *ballJoint = dynamic_cast<GaitSym::BallJoint *>(m_inputJoint))
     {
 #ifdef FIX_ME
         switch (ballJoint->GetMode())
         {
-        case BallJoint::NoStops:
+        case GaitSym::BallJoint::NoStops:
             ui->comboBoxBallMode->setCurrentText("No Stops");
             break;
-        case BallJoint::AMotorEuler:
+        case GaitSym::BallJoint::AMotorEuler:
             ui->comboBoxBallMode->setCurrentText("Fixed Euler");
             break;
-        case BallJoint::AMotorUser:
+        case GaitSym::BallJoint::AMotorUser:
             ui->comboBoxBallMode->setCurrentText("User Euler");
             break;
         }
 #endif
-        if ((s = m_inputJoint->findAttribute("LowStop0"s)).size()) ui->lineEditBallLowStop0->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop0"s)).size()) ui->lineEditBallHighStop0->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditBallLowStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditBallHighStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditBallLowStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditBallHighStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop0"s)).size()) ui->lineEditBallLowStop0->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop0"s)).size()) ui->lineEditBallHighStop0->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditBallLowStop1->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditBallHighStop1->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditBallLowStop2->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditBallHighStop2->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Ball"));
     }
 
-    if (FloatingHingeJoint *floatingHingeJoint = dynamic_cast<FloatingHingeJoint *>(m_inputJoint))
+    if (GaitSym::FloatingHingeJoint *floatingHingeJoint = dynamic_cast<GaitSym::FloatingHingeJoint *>(m_inputJoint))
     {
-        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditFloatingHingeLowStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditFloatingHingeHighStop->setValue(pgd::RadToDeg(GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("LowStop"s)).size()) ui->lineEditFloatingHingeLowStop->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop"s)).size()) ui->lineEditFloatingHingeHighStop->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Floating Hinge"));
     }
 
-    if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(m_inputJoint))
+    if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_inputJoint))
     {
         ui->checkBoxLateFix->setChecked(fixedJoint->lateFix());
         std::string stressCalculationType = m_inputJoint->findAttribute("StressCalculationType"s);
@@ -403,26 +403,26 @@ void DialogJoints::lateInitialise()
             if (lowPassType == "MovingAverageLowPass"s) text.append(" Moving Average");
         }
         ui->comboBoxFixedStressCalculationType->setCurrentIndex(ui->comboBoxFixedStressCalculationType->findText(text));
-        if ((s = m_inputJoint->findAttribute("CutoffFrequency"s)).size()) ui->lineEditFixedStressCutoffFrequency->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("Window"s)).size()) ui->spinBoxFixedStressWindow->setValue(GSUtil::Int(s));
-        if ((s = m_inputJoint->findAttribute("StressLimit"s)).size()) ui->lineEditFixedStressLimit->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StressBitmapPixelSize"s)).size()) ui->lineEditFixedStressBitmapPixelSize->setValue(GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("CutoffFrequency"s)).size()) ui->lineEditFixedStressCutoffFrequency->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("Window"s)).size()) ui->spinBoxFixedStressWindow->setValue(GaitSym::GSUtil::Int(s));
+        if ((s = m_inputJoint->findAttribute("StressLimit"s)).size()) ui->lineEditFixedStressLimit->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StressBitmapPixelSize"s)).size()) ui->lineEditFixedStressBitmapPixelSize->setValue(GaitSym::GSUtil::Double(s));
         if ((s = m_inputJoint->findAttribute("StressBitmap"s)).size()) ui->lineEditFixedStressBitmap->setText(QString::fromStdString(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Fixed"));
     }
 
-    if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_inputJoint))
+    if (GaitSym::UniversalJoint *universalJoint = dynamic_cast<GaitSym::UniversalJoint *>(m_inputJoint))
     {
-        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditUniversalLowStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditUniversalHighStop1->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("StopCFM1"s)).size()) ui->lineEditUniversalStopCFM1->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopERP1"s)).size()) ui->lineEditUniversalStopERP1->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopBounce1"s)).size()) ui->lineEditUniversalStopBounce1->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditUniversalLowStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditUniversalHighStop2->setValue(pgd::RadToDeg(GSUtil::Double(s)));
-        if ((s = m_inputJoint->findAttribute("StopCFM2"s)).size()) ui->lineEditUniversalStopCFM2->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopERP2"s)).size()) ui->lineEditUniversalStopERP2->setValue(GSUtil::Double(s));
-        if ((s = m_inputJoint->findAttribute("StopBounce2"s)).size()) ui->lineEditUniversalStopBounce2->setValue(GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("LowStop1"s)).size()) ui->lineEditUniversalLowStop1->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop1"s)).size()) ui->lineEditUniversalHighStop1->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("StopCFM1"s)).size()) ui->lineEditUniversalStopCFM1->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopERP1"s)).size()) ui->lineEditUniversalStopERP1->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopBounce1"s)).size()) ui->lineEditUniversalStopBounce1->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("LowStop2"s)).size()) ui->lineEditUniversalLowStop2->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("HighStop2"s)).size()) ui->lineEditUniversalHighStop2->setValue(pgd::RadToDeg(GaitSym::GSUtil::Double(s)));
+        if ((s = m_inputJoint->findAttribute("StopCFM2"s)).size()) ui->lineEditUniversalStopCFM2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopERP2"s)).size()) ui->lineEditUniversalStopERP2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = m_inputJoint->findAttribute("StopBounce2"s)).size()) ui->lineEditUniversalStopBounce2->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Universal"));
     }
 }
@@ -583,22 +583,22 @@ void DialogJoints::properties()
     }
 }
 
-Simulation *DialogJoints::simulation() const
+GaitSym::Simulation *DialogJoints::simulation() const
 {
     return m_simulation;
 }
 
-void DialogJoints::setSimulation(Simulation *simulation)
+void DialogJoints::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }
 
-std::unique_ptr<Joint> DialogJoints::outputJoint()
+std::unique_ptr<GaitSym::Joint> DialogJoints::outputJoint()
 {
     return std::move(m_outputJoint);
 }
 
-void DialogJoints::setInputJoint(Joint *inputJoint)
+void DialogJoints::setInputJoint(GaitSym::Joint *inputJoint)
 {
     m_inputJoint = inputJoint;
 }

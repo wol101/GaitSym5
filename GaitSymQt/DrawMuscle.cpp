@@ -63,7 +63,7 @@ std::string DrawMuscle::name()
     else return std::string();
 }
 
-Muscle *DrawMuscle::muscle() const
+GaitSym::Muscle *DrawMuscle::muscle() const
 {
     return m_muscle;
 }
@@ -168,7 +168,7 @@ void DrawMuscle::setStrapColourMap(const Colour::ColourMap &strapColourMap)
     m_strapColourMap = strapColourMap;
 }
 
-void DrawMuscle::setMuscle(Muscle *muscle)
+void DrawMuscle::setMuscle(GaitSym::Muscle *muscle)
 {
     m_muscle = muscle;
 }
@@ -180,24 +180,24 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     Colour colour(m_muscle->GetStrap()->colour1());
     switch (m_muscle->strapColourControl())
     {
-    case Muscle::fixedColour:
+    case GaitSym::Muscle::fixedColour:
         m_strapColor.setRedF(qreal(m_muscle->GetStrap()->colour1().r()));
         m_strapColor.setGreenF(qreal(m_muscle->GetStrap()->colour1().g()));
         m_strapColor.setBlueF(qreal(m_muscle->GetStrap()->colour1().b()));
         m_strapColor.setAlphaF(qreal(m_muscle->GetStrap()->colour1().alpha()));
         break;
-    case Muscle::activationMap:
+    case GaitSym::Muscle::activationMap:
         Colour::SetColourFromMap(float(m_muscle->GetActivation()), m_strapColourMap, &colour, false);
         m_strapColor = QColor(QString::fromStdString(colour.GetHexArgb()));
         break;
-    case Muscle::strainMap:
+    case GaitSym::Muscle::strainMap:
         if (dynamic_cast<DampedSpringMuscle *>(m_muscle)) Colour::SetColourFromMap(float(m_muscle->GetLength() / dynamic_cast<DampedSpringMuscle *>(m_muscle)->GetUnloadedLength()) - 0.5f, m_strapColourMap, &colour, false);
         else if (dynamic_cast<MAMuscleComplete *>(m_muscle)) Colour::SetColourFromMap(
                     float(m_muscle->GetLength() / (dynamic_cast<MAMuscleComplete *>(m_muscle)->fibreLength() + dynamic_cast<MAMuscleComplete *>(m_muscle)->tendonLength())) - 0.5f, m_strapColourMap, &colour, false);
         else if (dynamic_cast<MAMuscle *>(m_muscle)) Colour::SetColourFromMap(float(m_muscle->GetLength() / (dynamic_cast<MAMuscle *>(m_muscle)->fibreLength())) - 0.5f, m_strapColourMap, &colour, false);
         m_strapColor = QColor(QString::fromStdString(colour.GetHexArgb()));
         break;
-    case Muscle::forceMap:
+    case GaitSym::Muscle::forceMap:
         if (dynamic_cast<DampedSpringMuscle *>(m_muscle)) Colour::SetColourFromMap(
                     float(m_muscle->GetTension() / (dynamic_cast<DampedSpringMuscle *>(m_muscle)->GetUnloadedLength() * dynamic_cast<DampedSpringMuscle *>(m_muscle)->GetSpringConstant())), m_strapColourMap, &colour, false);
         else if (dynamic_cast<MAMuscleComplete *>(m_muscle)) Colour::SetColourFromMap(
@@ -269,7 +269,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             }
 
             // calculate the quaternion that rotates from cylinder coordinates to world coordinates
-//            const Body *body;
+//            const GaitSym::Body *body;
 //            pgd::Vector3 pos;
 //            pgd::Quaternion qq;
 //            double radius;

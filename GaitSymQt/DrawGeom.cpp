@@ -58,12 +58,12 @@ std::string DrawGeom::name()
     else return std::string();
 }
 
-Geom *DrawGeom::geom() const
+GaitSym::Geom *DrawGeom::geom() const
 {
     return m_geom;
 }
 
-void DrawGeom::setGeom(Geom *geom)
+void DrawGeom::setGeom(GaitSym::Geom *geom)
 {
     m_geom = geom;
 }
@@ -160,7 +160,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
 
 void DrawGeom::updateEntityPose()
 {
-    Marker *marker = m_geom->geomMarker();
+    GaitSym::Marker *marker = m_geom->geomMarker();
     pgd::Quaternion q = marker->GetWorldQuaternion();
     pgd::Vector3 p = marker->GetWorldPosition();
     SetDisplayRotationFromQuaternion(q.data());

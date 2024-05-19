@@ -37,12 +37,12 @@ std::string DrawMarker::name()
     else return std::string();
 }
 
-Marker *DrawMarker::marker() const
+GaitSym::Marker *DrawMarker::marker() const
 {
     return m_marker;
 }
 
-void DrawMarker::setMarker(Marker *marker)
+void DrawMarker::setMarker(GaitSym::Marker *marker)
 {
     m_marker = marker;
 }

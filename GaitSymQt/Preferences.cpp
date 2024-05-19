@@ -229,9 +229,9 @@ void Preferences::ParseQDomElement(const QDomElement &docElem)
                     item.value = e.attribute("value");
                     item.defaultValue = e.attribute("defaultValue");
                     if (e.hasAttribute("minimumValue")) item.minimumValue = e.attribute("minimumValue");
-                    else item.minimumValue = -FLT_MAX;
+                    else item.minimumValue = -std::numeric_limits<float>::max();
                     if (e.hasAttribute("maximumValue")) item.maximumValue = e.attribute("maximumValue");
-                    else item.maximumValue = FLT_MAX;
+                    else item.maximumValue = std::numeric_limits<float>::max();
                     item.value.convert(QMetaType(item.type));
                     item.defaultValue.convert(QMetaType(item.type));
                     item.minimumValue.convert(QMetaType(item.type));
@@ -241,9 +241,9 @@ void Preferences::ParseQDomElement(const QDomElement &docElem)
                     item.value = e.attribute("value");
                     item.defaultValue = e.attribute("defaultValue");
                     if (e.hasAttribute("minimumValue")) item.minimumValue = e.attribute("minimumValue");
-                    else item.minimumValue = -DBL_MAX;
+                    else item.minimumValue = -std::numeric_limits<double>::max();
                     if (e.hasAttribute("maximumValue")) item.maximumValue = e.attribute("maximumValue");
-                    else item.maximumValue = DBL_MAX;
+                    else item.maximumValue = std::numeric_limits<double>::max();
                     item.value.convert(QMetaType(item.type));
                     item.defaultValue.convert(QMetaType(item.type));
                     item.minimumValue.convert(QMetaType(item.type));
@@ -253,9 +253,9 @@ void Preferences::ParseQDomElement(const QDomElement &docElem)
                     item.value = e.attribute("value");
                     item.defaultValue = e.attribute("defaultValue");
                     if (e.hasAttribute("minimumValue")) item.minimumValue = e.attribute("minimumValue");
-                    else item.minimumValue = INT_MIN;
+                    else item.minimumValue = std::numeric_limits<int>::min();
                     if (e.hasAttribute("maximumValue")) item.maximumValue = e.attribute("maximumValue");
-                    else item.maximumValue = INT_MAX;
+                    else item.maximumValue = std::numeric_limits<int>::max();
                     item.value.convert(QMetaType(item.type));
                     item.defaultValue.convert(QMetaType(item.type));
                     item.minimumValue.convert(QMetaType(item.type));
@@ -527,16 +527,16 @@ void Preferences::insert(const QString &key, const QVariant &value)
         switch (item.type)
         {
         case QMetaType::Double:
-            item.minimumValue = -DBL_MAX;
-            item.maximumValue = DBL_MAX;
+            item.minimumValue = -std::numeric_limits<double>::max();
+            item.maximumValue = std::numeric_limits<double>::max();
             break;
         case QMetaType::Float:
-            item.minimumValue = -FLT_MAX;
-            item.maximumValue = FLT_MAX;
+            item.minimumValue = -std::numeric_limits<float>::max();
+            item.maximumValue = std::numeric_limits<float>::max();
             break;
         case QMetaType::Int:
-            item.minimumValue = INT_MIN;
-            item.maximumValue = INT_MAX;
+            item.minimumValue = std::numeric_limits<int>::min();
+            item.maximumValue = std::numeric_limits<int>::max();
             break;
         default:
             item.minimumValue = QString();
@@ -568,12 +568,12 @@ void Preferences::insert(const QString &key, const QVariant &value, const QVaria
         switch (item.type)
         {
         case QMetaType::Double:
-            item.minimumValue = -DBL_MAX;
-            item.maximumValue = DBL_MAX;
+            item.minimumValue = -std::numeric_limits<double>::max();
+            item.maximumValue = std::numeric_limits<double>::max();
             break;
         case QMetaType::Float:
-            item.minimumValue = -FLT_MAX;
-            item.maximumValue = FLT_MAX;
+            item.minimumValue = -std::numeric_limits<float>::max();
+            item.maximumValue = std::numeric_limits<float>::max();
             break;
         case QMetaType::Int:
             item.minimumValue = INT_MIN;

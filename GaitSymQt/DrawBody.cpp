@@ -43,7 +43,7 @@ std::string DrawBody::name()
     else return std::string();
 }
 
-Body *DrawBody::body() const
+GaitSym::Body *DrawBody::body() const
 {
     return m_body;
 }
@@ -78,7 +78,7 @@ FacetedObject *DrawBody::axes() const
     return m_axes.get();
 }
 
-void DrawBody::setBody(Body *body)
+void DrawBody::setBody(GaitSym::Body *body)
 {
     m_body = body;
 }

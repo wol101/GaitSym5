@@ -142,7 +142,7 @@ void DialogCreateTestingDrivers::enableControls()
 
 std::string *DialogCreateTestingDrivers::validate()
 {
-    Simulation simulation;
+    GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
     std::string *errorMessage = simulation.LoadModel(editFileData.constData(), editFileData.size());
     if (errorMessage)
@@ -194,8 +194,8 @@ void DialogCreateTestingDrivers::apply()
 
 void DialogCreateTestingDrivers::applyCreateTestingDrivers(double activationTime, double activationValue, const std::string &suffix)
 {
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> newElements;
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> newElements;
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
     // get the muscles first
     std::vector<std::string> muscleNames;
     for (auto &&tagElementIt : *elementList)
@@ -212,7 +212,7 @@ void DialogCreateTestingDrivers::applyCreateTestingDrivers(double activationTime
     // now create the new DRIVERS
     for (size_t i = 0; i < muscleNames.size(); i++)
     {
-        std::unique_ptr<ParseXML::XMLElement> newElement = std::make_unique<ParseXML::XMLElement>();
+        std::unique_ptr<GaitSym::ParseXML::XMLElement> newElement = std::make_unique<GaitSym::ParseXML::XMLElement>();
         newElement->tag = "DRIVER"s;
         newElement->attributes["ID"s] = muscleNames[i] + suffix;
         newElement->attributes["TargetIDList"s] = muscleNames[i];

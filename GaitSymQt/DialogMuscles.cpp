@@ -32,7 +32,7 @@ DialogMuscles::DialogMuscles(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("Muscle Builder"));
+    setWindowTitle(tr("GaitSym::Muscle Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -109,61 +109,61 @@ void DialogMuscles::accept() // this catches OK and return/enter
     qDebug() << "DialogMuscles::accept()";
     auto markerList = m_simulation->GetMarkerList();
     QString strapTab = ui->tabWidgetStrap->tabText(ui->tabWidgetStrap->currentIndex());
-    std::unique_ptr<Strap> strap;
+    std::unique_ptr<GaitSym::Strap> strap;
     if (strapTab == "N-Point")
     {
         if (ui->spinBoxNViaPoints->value() == 0)
         {
-            strap = std::make_unique<TwoPointStrap>();
-            Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
-            Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-            reinterpret_cast<TwoPointStrap *>(strap.get())->SetOrigin(originMarker);
-            reinterpret_cast<TwoPointStrap *>(strap.get())->SetInsertion(insertionMarker);
+            strap = std::make_unique<GaitSym::TwoPointStrap>();
+            GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
+            GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
+            reinterpret_cast<GaitSym::TwoPointStrap *>(strap.get())->SetOrigin(originMarker);
+            reinterpret_cast<GaitSym::TwoPointStrap *>(strap.get())->SetInsertion(insertionMarker);
         }
         else
         {
-            strap =  std::make_unique<NPointStrap>();
-            Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
-            Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-            reinterpret_cast<NPointStrap *>(strap.get())->SetOrigin(originMarker);
-            reinterpret_cast<NPointStrap *>(strap.get())->SetInsertion(insertionMarker);
-            std::vector<Marker *>viaPointMarkerList;
+            strap =  std::make_unique<GaitSym::NPointStrap>();
+            GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
+            GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
+            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->SetOrigin(originMarker);
+            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->SetInsertion(insertionMarker);
+            std::vector<GaitSym::Marker *>viaPointMarkerList;
             viaPointMarkerList.reserve(size_t(ui->spinBoxNViaPoints->value()));
             for (int i = 0; i < ui->spinBoxNViaPoints->value(); i++) viaPointMarkerList.push_back(markerList->at(m_viaPointComboBoxList[i]->currentText().toStdString()).get());
-            reinterpret_cast<NPointStrap *>(strap.get())->SetViaPoints(&viaPointMarkerList);
+            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->SetViaPoints(&viaPointMarkerList);
         }
     }
     else if (strapTab == "Cylinder")
     {
-        strap =  std::make_unique<CylinderWrapStrap>();
-        Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
-        Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-        reinterpret_cast<CylinderWrapStrap *>(strap.get())->SetOrigin(originMarker);
-        reinterpret_cast<CylinderWrapStrap *>(strap.get())->SetInsertion(insertionMarker);
-        Marker *cylinderMarker = markerList->at(ui->comboBoxCylinderMarker->currentText().toStdString()).get();
-        reinterpret_cast<CylinderWrapStrap *>(strap.get())->SetCylinder(cylinderMarker);
-        reinterpret_cast<CylinderWrapStrap *>(strap.get())->SetCylinderRadius(ui->lineEditCylinderRadius->value());
+        strap =  std::make_unique<GaitSym::CylinderWrapStrap>();
+        GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
+        GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetOrigin(originMarker);
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetInsertion(insertionMarker);
+        GaitSym::Marker *cylinderMarker = markerList->at(ui->comboBoxCylinderMarker->currentText().toStdString()).get();
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetCylinder(cylinderMarker);
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetCylinderRadius(ui->lineEditCylinderRadius->value());
     }
     else if (strapTab == "2-Cylinder")
     {
-        strap =  std::make_unique<TwoCylinderWrapStrap>();
-        Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
-        Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-        reinterpret_cast<TwoCylinderWrapStrap *>(strap.get())->SetOrigin(originMarker);
-        reinterpret_cast<TwoCylinderWrapStrap *>(strap.get())->SetInsertion(insertionMarker);
-        Marker *cylinder1Marker = markerList->at(ui->comboBox2Cylinder1Marker->currentText().toStdString()).get();
-        reinterpret_cast<TwoCylinderWrapStrap *>(strap.get())->SetCylinder1(cylinder1Marker);
-        reinterpret_cast<TwoCylinderWrapStrap *>(strap.get())->SetCylinder1Radius(ui->lineEdit2Cylinder1Radius->value());
-        Marker *cylinder2Marker = markerList->at(ui->comboBox2Cylinder2Marker->currentText().toStdString()).get();
-        reinterpret_cast<TwoCylinderWrapStrap *>(strap.get())->SetCylinder2(cylinder2Marker);
-        reinterpret_cast<TwoCylinderWrapStrap *>(strap.get())->SetCylinder2Radius(ui->lineEdit2Cylinder2Radius->value());
+        strap =  std::make_unique<GaitSym::TwoCylinderWrapStrap>();
+        GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
+        GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetOrigin(originMarker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetInsertion(insertionMarker);
+        GaitSym::Marker *cylinder1Marker = markerList->at(ui->comboBox2Cylinder1Marker->currentText().toStdString()).get();
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder1(cylinder1Marker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder1Radius(ui->lineEdit2Cylinder1Radius->value());
+        GaitSym::Marker *cylinder2Marker = markerList->at(ui->comboBox2Cylinder2Marker->currentText().toStdString()).get();
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder2(cylinder2Marker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder2Radius(ui->lineEdit2Cylinder2Radius->value());
     }
     Q_ASSERT_X(strap, "DialogMuscles::accept", "strap undefined");
     strap->setSimulation(m_simulation);
     strap->setLength(ui->lineEditLength->value());
     if (ui->spinBoxNTorqueMarkers->value())
     {
-        std::vector<Marker *>torqueMarkerList;
+        std::vector<GaitSym::Marker *>torqueMarkerList;
         torqueMarkerList.reserve(size_t(ui->spinBoxNTorqueMarkers->value()));
         for (int i = 0; i < ui->spinBoxNTorqueMarkers->value(); i++) torqueMarkerList.push_back(markerList->at(m_torqueMarkerComboBoxList[i]->currentText().toStdString()).get());
         strap->setTorqueMarkerList(torqueMarkerList);
@@ -172,7 +172,7 @@ void DialogMuscles::accept() // this catches OK and return/enter
     QString muscleTab = ui->tabWidgetMuscle->tabText(ui->tabWidgetMuscle->currentIndex());
     if (muscleTab == "Minetti-Alexander")
     {
-        std::unique_ptr<MAMuscle> muscle = std::make_unique<MAMuscle>();
+        std::unique_ptr<GaitSym::MAMuscle> muscle = std::make_unique<GaitSym::MAMuscle>();
         muscle->SetStrap(strap.get());
         double forcePerUnitArea = ui->lineEditForcePerUnitArea->value();
         double vMaxFactor = ui->lineEditVMaxFactor->value();
@@ -190,7 +190,7 @@ void DialogMuscles::accept() // this catches OK and return/enter
     }
     else if (muscleTab == "Minetti-Alexander Elastic")
     {
-        std::unique_ptr<MAMuscleComplete> muscle = std::make_unique<MAMuscleComplete>();
+        std::unique_ptr<GaitSym::MAMuscleComplete> muscle = std::make_unique<GaitSym::MAMuscleComplete>();
         muscle->SetStrap(strap.get());
         double forcePerUnitArea = ui->lineEditForcePerUnitArea_2->value();
         double vMaxFactor = ui->lineEditVMaxFactor_2->value();
@@ -247,7 +247,7 @@ void DialogMuscles::accept() // this catches OK and return/enter
     }
     else if (muscleTab == "Damped Spring")
     {
-        std::unique_ptr<DampedSpringMuscle> muscle = std::make_unique<DampedSpringMuscle>();
+        std::unique_ptr<GaitSym::DampedSpringMuscle> muscle = std::make_unique<GaitSym::DampedSpringMuscle>();
         muscle->SetStrap(strap.get());
         double unloadedLength = ui->lineEditUnloadedLength->value();
         double springConstant = ui->lineEditSpringConstant->value();
@@ -329,17 +329,17 @@ void DialogMuscles::closeEvent(QCloseEvent *event)
     QDialog::closeEvent(event);
 }
 
-std::unique_ptr<Strap> DialogMuscles::outputStrap()
+std::unique_ptr<GaitSym::Strap> DialogMuscles::outputStrap()
 {
     return std::move(m_outputStrap);
 }
 
-std::unique_ptr<Muscle> DialogMuscles::outputMuscle()
+std::unique_ptr<GaitSym::Muscle> DialogMuscles::outputMuscle()
 {
     return std::move(m_outputMuscle);
 }
 
-void DialogMuscles::setInputMuscle(Muscle *inputMuscle)
+void DialogMuscles::setInputMuscle(GaitSym::Muscle *inputMuscle)
 {
     m_inputMuscle = inputMuscle;
 }
@@ -439,11 +439,11 @@ void DialogMuscles::lateInitialise()
         auto nameSet = m_simulation->GetNameSet();
         ui->lineEditMuscleID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("GaitSym::Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("GaitSym::Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditMuscleID->setText(initialName);
@@ -460,57 +460,57 @@ void DialogMuscles::lateInitialise()
     ui->lineEditMuscleID->setEnabled(false);
     ui->comboBoxOriginMarker->setCurrentText(QString::fromStdString(m_inputMuscle->GetStrap()->findAttribute("OriginMarkerID"s)));
     ui->comboBoxInsertionMarker->setCurrentText(QString::fromStdString(m_inputMuscle->GetStrap()->findAttribute("InsertionMarkerID"s)));
-    if ((s = m_inputMuscle->GetStrap()->findAttribute("Length"s)).size()) ui->lineEditLength->setValue(GSUtil::Double(s));
+    if ((s = m_inputMuscle->GetStrap()->findAttribute("Length"s)).size()) ui->lineEditLength->setValue(GaitSym::GSUtil::Double(s));
 
-    if (MAMuscle *maMuscle = dynamic_cast<MAMuscle *>(m_inputMuscle))
+    if (GaitSym::MAMuscle *maMuscle = dynamic_cast<GaitSym::MAMuscle *>(m_inputMuscle))
     {
-        if ((s = maMuscle->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea->setValue(GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor->setValue(GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("PCA"s)).size()) ui->lineEditPCA->setValue(GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength->setValue(GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK->setValue(GSUtil::Double(s));
+        if ((s = maMuscle->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscle->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscle->findAttribute("PCA"s)).size()) ui->lineEditPCA->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscle->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscle->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Minetti-Alexander"));
     }
 
-    if (MAMuscleComplete *maMuscleComplete = dynamic_cast<MAMuscleComplete *>(m_inputMuscle))
+    if (GaitSym::MAMuscleComplete *maMuscleComplete = dynamic_cast<GaitSym::MAMuscleComplete *>(m_inputMuscle))
     {
-        if ((s = maMuscleComplete->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea_2->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor_2->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("PCA"s)).size()) ui->lineEditPCA_2->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength_2->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK_2->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("Width"s)).size()) ui->lineEditWidth->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TendonLength"s)).size()) ui->lineEditTendonLength->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("SerialStrainAtFmax"s)).size()) ui->lineEditSerialStrainAtFMax->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("SerialStrainRateAtFmax"s)).size()) ui->lineEditSerialStrainRateAtFMax->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ParallelStrainAtFmax"s)).size()) ui->lineEditParallelStrainAtFMax->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ParallelStrainRateAtFmax"s)).size()) ui->lineEditParallelStrainRateAtFMax->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("InitialFibreLength"s)).size()) ui->lineEditInitialFibreLength->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("FastTwitchProportion"s)).size()) ui->lineEditFastTwitchProportion->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TActivationA"s)).size()) ui->lineEditTActivationA->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TActivationB"s)).size()) ui->lineEditTActivationB->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TDeactivationA"s)).size()) ui->lineEditTDeactivationA->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TDeactivationB"s)).size()) ui->lineEditTDeactivationB->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ActivationRate"s)).size()) ui->lineEditActivationRate->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("StartActivation"s)).size()) ui->lineEditInitialActivation->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("MinimumActivation"s)).size()) ui->lineEditMinimumActivation->setValue(GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ActivationKinetics"s)).size()) ui->checkBoxUseActivation->setChecked(GSUtil::Bool(s));
+        if ((s = maMuscleComplete->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea_2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor_2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("PCA"s)).size()) ui->lineEditPCA_2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength_2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK_2->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("Width"s)).size()) ui->lineEditWidth->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("TendonLength"s)).size()) ui->lineEditTendonLength->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("SerialStrainAtFmax"s)).size()) ui->lineEditSerialStrainAtFMax->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("SerialStrainRateAtFmax"s)).size()) ui->lineEditSerialStrainRateAtFMax->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("ParallelStrainAtFmax"s)).size()) ui->lineEditParallelStrainAtFMax->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("ParallelStrainRateAtFmax"s)).size()) ui->lineEditParallelStrainRateAtFMax->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("InitialFibreLength"s)).size()) ui->lineEditInitialFibreLength->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("FastTwitchProportion"s)).size()) ui->lineEditFastTwitchProportion->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("TActivationA"s)).size()) ui->lineEditTActivationA->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("TActivationB"s)).size()) ui->lineEditTActivationB->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("TDeactivationA"s)).size()) ui->lineEditTDeactivationA->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("TDeactivationB"s)).size()) ui->lineEditTDeactivationB->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("ActivationRate"s)).size()) ui->lineEditActivationRate->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("StartActivation"s)).size()) ui->lineEditInitialActivation->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("MinimumActivation"s)).size()) ui->lineEditMinimumActivation->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscleComplete->findAttribute("ActivationKinetics"s)).size()) ui->checkBoxUseActivation->setChecked(GaitSym::GSUtil::Bool(s));
         if ((s = maMuscleComplete->findAttribute("SerialStrainModel"s)).size()) ui->comboBoxSerialStrainModel->setCurrentIndex(ui->comboBoxSerialStrainModel->findText(QString::fromStdString(s)));
         if ((s = maMuscleComplete->findAttribute("ParallelStrainModel"s)).size()) ui->comboBoxParallelStrainModel->setCurrentIndex(ui->comboBoxParallelStrainModel->findText(QString::fromStdString(s)));
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Minetti-Alexander Elastic"));
     }
 
-    if (DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(m_inputMuscle))
+    if (GaitSym::DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<GaitSym::DampedSpringMuscle *>(m_inputMuscle))
     {
-        if ((s = dampedSpringMuscle->findAttribute("UnloadedLength"s)).size()) ui->lineEditUnloadedLength->setValue(GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("SpringConstant"s)).size()) ui->lineEditSpringConstant->setValue(GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("Area"s)).size()) ui->lineEditArea->setValue(GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("Damping"s)).size()) ui->lineEditDamping->setValue(GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("BreakingStrain"s)).size()) ui->lineEditBreakingStrain->setValue(GSUtil::Double(s));
+        if ((s = dampedSpringMuscle->findAttribute("UnloadedLength"s)).size()) ui->lineEditUnloadedLength->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = dampedSpringMuscle->findAttribute("SpringConstant"s)).size()) ui->lineEditSpringConstant->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = dampedSpringMuscle->findAttribute("Area"s)).size()) ui->lineEditArea->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = dampedSpringMuscle->findAttribute("Damping"s)).size()) ui->lineEditDamping->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = dampedSpringMuscle->findAttribute("BreakingStrain"s)).size()) ui->lineEditBreakingStrain->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Damped Spring"));
     }
 
-    if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(m_inputMuscle->GetStrap()))
+    if (GaitSym::NPointStrap *nPointStrap = dynamic_cast<GaitSym::NPointStrap *>(m_inputMuscle->GetStrap()))
     {
         s = nPointStrap->findAttribute("ViaPointMarkerIDList"s);
         if (s.size())
@@ -541,19 +541,19 @@ void DialogMuscles::lateInitialise()
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("N-Point"));
     }
 
-    if (CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(m_inputMuscle->GetStrap()))
+    if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(m_inputMuscle->GetStrap()))
     {
         if ((s = cylinderWrapStrap->findAttribute("CylinderMarkerID"s)).size()) ui->comboBoxCylinderMarker->setCurrentText(QString::fromStdString(s));
-        if ((s = cylinderWrapStrap->findAttribute("CylinderRadius"s)).size()) ui->lineEditCylinderRadius->setValue(GSUtil::Double(s));
+        if ((s = cylinderWrapStrap->findAttribute("CylinderRadius"s)).size()) ui->lineEditCylinderRadius->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("Cylinder"));
     }
 
-    if (TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(m_inputMuscle->GetStrap()))
+    if (GaitSym::TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<GaitSym::TwoCylinderWrapStrap *>(m_inputMuscle->GetStrap()))
     {
         if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1MarkerID"s)).size()) ui->comboBox2Cylinder1Marker->setCurrentText(QString::fromStdString(s));
-        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1Radius"s)).size()) ui->lineEdit2Cylinder1Radius->setValue(GSUtil::Double(s));
+        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1Radius"s)).size()) ui->lineEdit2Cylinder1Radius->setValue(GaitSym::GSUtil::Double(s));
         if ((s = twoCylinderWrapStrap->findAttribute("Cylinder2MarkerID"s)).size()) ui->comboBox2Cylinder2Marker->setCurrentText(QString::fromStdString(s));
-        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder2Radius"s)).size()) ui->lineEdit2Cylinder2Radius->setValue(GSUtil::Double(s));
+        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder2Radius"s)).size()) ui->lineEdit2Cylinder2Radius->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("2-Cylinder"));
     }
 
@@ -564,7 +564,7 @@ void DialogMuscles::lateInitialise()
         for (int i = 0; i < ui->spinBoxNTorqueMarkers->value(); i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Torque Marker %1").arg(i));
+            label->setText(QString("Torque GaitSym::Marker %1").arg(i));
             m_gridLayoutTorqueMarkers->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(markerIDs);
@@ -664,7 +664,7 @@ void DialogMuscles::spinBoxChanged(const QString &/*text*/)
         for (int i = 0; i < requiredTorqueMarkers; i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Torque Marker %1").arg(i));
+            label->setText(QString("Torque GaitSym::Marker %1").arg(i));
             m_gridLayoutTorqueMarkers->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(markerIDs);
@@ -737,12 +737,12 @@ void DialogMuscles::properties()
     }
 }
 
-Simulation *DialogMuscles::simulation() const
+GaitSym::Simulation *DialogMuscles::simulation() const
 {
     return m_simulation;
 }
 
-void DialogMuscles::setSimulation(Simulation *simulation)
+void DialogMuscles::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }

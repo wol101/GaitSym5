@@ -47,7 +47,7 @@ DialogAssembly::DialogAssembly(QWidget *parent) :
 
     // make all the labels the same width as the largest
     QList<QLabel *> list = this->findChildren<QLabel *>();
-    int maxWidth = INT_MIN;
+    int maxWidth = std::numeric_limits<int>::min();
     for (auto &&iter : list) maxWidth = std::max(maxWidth, iter->width());
     for (auto &&iter : list) iter->resize(maxWidth, iter->height());
 }
@@ -88,17 +88,17 @@ void DialogAssembly::accept() // this catches OK and return/enter
     QString bodyName = ui->comboBoxBodyList->currentText();
     if (!bodyName.isEmpty())
     {
-        Body *body = m_simulation->GetBody(bodyName.toStdString());
+        GaitSym::Body *body = m_simulation->GetBody(bodyName.toStdString());
         // markers needed
-        std::unique_ptr<Marker> worldMarker = std::make_unique<Marker>(nullptr);
-        Marker *worldMarkerPtr = worldMarker.get();
+        std::unique_ptr<GaitSym::Marker> worldMarker = std::make_unique<GaitSym::Marker>(nullptr);
+        GaitSym::Marker *worldMarkerPtr = worldMarker.get();
         worldMarker->setName("World"s + body->name()+ "Joint_Body1"s + m_assemblyMarkerSuffix);
         worldMarker->setGroup("assembly"s);
         worldMarker->setSimulation(m_simulation);
         (*m_simulation->GetMarkerList())[worldMarkerPtr->name()] = std::move(worldMarker);
         emit markerCreated(QString::fromStdString(worldMarkerPtr->name()));
-        std::unique_ptr<Marker> bodyMarker = std::make_unique<Marker>(body);
-        Marker *bodyMarkerPtr = bodyMarker.get();
+        std::unique_ptr<GaitSym::Marker> bodyMarker = std::make_unique<GaitSym::Marker>(body);
+        GaitSym::Marker *bodyMarkerPtr = bodyMarker.get();
         bodyMarker->setName("World"s + body->name()+ "Joint_Body2"s + m_assemblyMarkerSuffix);
         bodyMarker->setGroup("assembly"s);
         bodyMarker->setSimulation(m_simulation);
@@ -111,7 +111,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
         std::unique_ptr<LMotorJoint> lMotorJoint = std::make_unique<LMotorJoint>(m_simulation->GetWorldID());
         LMotorJoint *lMotorJointPtr = lMotorJoint.get();
         lMotorJoint->setSimulation(m_simulation);
-        lMotorJoint->setName("World"s + body->name()+ "Joint"s + m_assemblyLinearMotorSuffix);
+        lMotorJoint->setName("World"s + body->name()+ "GaitSym::Joint"s + m_assemblyLinearMotorSuffix);
         lMotorJoint->setGroup("assembly"s);
         lMotorJoint->setBody1Marker(worldMarkerPtr);
         lMotorJoint->setBody2Marker(bodyMarkerPtr);
@@ -135,7 +135,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
         std::unique_ptr<AMotorJoint> aMotorJoint = std::make_unique<AMotorJoint>(m_simulation->GetWorldID());
         AMotorJoint *aMotorJointPtr = aMotorJoint.get();
         aMotorJoint->setSimulation(m_simulation);
-        aMotorJoint->setName("World"s + body->name() + "Joint"s + m_assemblyAngularMotorSuffix);
+        aMotorJoint->setName("World"s + body->name() + "GaitSym::Joint"s + m_assemblyAngularMotorSuffix);
         aMotorJoint->setGroup("assembly"s);
         aMotorJoint->setBody1Marker(worldMarkerPtr);
         aMotorJoint->setBody2Marker(bodyMarkerPtr);
@@ -152,7 +152,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
         emit jointCreated(QString::fromStdString(aMotorJointPtr->name()));
     }
 
-    std::map<std::string, std::unique_ptr<Joint>> *jointsMap = m_simulation->GetJointList();
+    std::map<std::string, std::unique_ptr<GaitSym::Joint>> *jointsMap = m_simulation->GetJointList();
     for (size_t i = 0; i < m_jointList.size(); i++)
     {
         if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_jointList[i]))
@@ -247,7 +247,7 @@ void DialogAssembly::reject() // this catches cancel, close and escape key
 void DialogAssembly::comboBoxBodyListCurrentIndexChanged(const QString &text)
 {
     if (!m_simulation) return;
-    Body *body = m_simulation->GetBody(text.toStdString());
+    GaitSym::Body *body = m_simulation->GetBody(text.toStdString());
     if (body)
     {
         pgd::Vector3 position(body->GetPosition());
@@ -272,7 +272,7 @@ void DialogAssembly::initialise()
     ui->lineEditPositionGain->setValue(Preferences::valueDouble("DialogAssemblyPositionGain", 100));
     ui->lineEditAngleGain->setValue(Preferences::valueDouble("DialogAssemblyAngleGain", 100));
 
-    std::map<std::string, Joint *> assemblyJoints;
+    std::map<std::string, GaitSym::Joint *> assemblyJoints;
     for (auto &&iter : *m_simulation->GetJointList())
         if (iter.second->group() == "assembly"s) assemblyJoints[iter.second->name()] = iter.second.get();
 
@@ -305,7 +305,7 @@ void DialogAssembly::initialise()
     for (auto &&iter : assemblyJoints)
     {
         AMotorJoint *aMotorJoint = dynamic_cast<AMotorJoint *>(iter.second);
-        if (aMotorJoint && aMotorJoint->name() == "World"s + bodyName + "Joint"s + m_assemblyAngularMotorSuffix)
+        if (aMotorJoint && aMotorJoint->name() == "World"s + bodyName + "GaitSym::Joint"s + m_assemblyAngularMotorSuffix)
         {
             if (aMotorJoint->targetAnglesList().size() == 3)
             {
@@ -487,12 +487,12 @@ void DialogAssembly::reset()
 #endif
 }
 
-Simulation *DialogAssembly::simulation() const
+GaitSym::Simulation *DialogAssembly::simulation() const
 {
     return m_simulation;
 }
 
-void DialogAssembly::setSimulation(Simulation *simulation)
+void DialogAssembly::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }

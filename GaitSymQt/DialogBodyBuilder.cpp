@@ -24,7 +24,7 @@ DialogBodyBuilder::DialogBodyBuilder(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("Body Builder"));
+    setWindowTitle(tr("GaitSym::Body Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -73,7 +73,7 @@ void DialogBodyBuilder::lateInitialise()
 {
     Q_ASSERT_X(m_simulation, "DialogBodyBuilder::lateInitialise", "m_simulation not defined");
 
-    Body referenceBody;
+    GaitSym::Body referenceBody;
     referenceBody.SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
     if (m_inputBody)
     {
@@ -88,11 +88,11 @@ void DialogBodyBuilder::lateInitialise()
         auto nameSet = m_simulation->GetNameSet();
         ui->lineEditID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("GaitSym::Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("GaitSym::Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 bodies
         }
         ui->lineEditID->setText(initialName);
@@ -179,18 +179,18 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
 
     // dMass mass;
     // dMassSetParameters(&mass, ui->lineEditMass->value(), 0, 0, 0, ui->lineEditI11->value(), ui->lineEditI22->value(), ui->lineEditI33->value(), ui->lineEditI12->value(), ui->lineEditI13->value(), ui->lineEditI23->value());
-    // std::string massError = Body::MassCheck(&mass);
+    // std::string massError = GaitSym::Body::MassCheck(&mass);
     // if (massError.size())
     // {
     //     QMessageBox::warning(this, tr("Calculate Mass Properties"), tr("Current mass properties are invalid:\n%1").arg(massError.c_str()));
     //     return;
     // }
 
-    Body *bodyPtr;
+    GaitSym::Body *bodyPtr;
     if (m_inputBody) bodyPtr = m_inputBody;
     else
     {
-        m_outputBody = std::make_unique<Body>(/*m_simulation->GetWorldID()*/);
+        m_outputBody = std::make_unique<GaitSym::Body>(/*m_simulation->GetWorldID()*/);
         bodyPtr = m_outputBody.get();
         bodyPtr->EnterConstructionMode();
     }
@@ -308,7 +308,7 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
             bodyPtr->setColour3(qvariant_cast<QColor>(m_properties["BodyColour3"].value).name(QColor::HexArgb).toStdString());
     }
 
-    // this is needed because there are some parts of Body that do not have a public interface
+    // this is needed because there are some parts of GaitSym::Body that do not have a public interface
     bodyPtr->saveToAttributes();
     bodyPtr->createFromAttributes();
 
@@ -346,7 +346,7 @@ void DialogBodyBuilder::calculate()
     pgd::Vector3 centreOfMass;
     pgd::Matrix3x3 inertialTensor;
     m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
-    // std::string massError = Body::MassCheck(&mass);
+    // std::string massError = GaitSym::Body::MassCheck(&mass);
     // if (massError.size())
     // {
     //     QMessageBox::warning(this, tr("Calculate Mass Properties"), tr("Valid mass properties cannot be calculated from this mesh:\n%1").arg(massError.c_str()));
@@ -491,22 +491,22 @@ std::string DialogBodyBuilder::findCompletePath(const std::string &filename)
     return std::string();
 }
 
-std::unique_ptr<Body> DialogBodyBuilder::outputBody()
+std::unique_ptr<GaitSym::Body> DialogBodyBuilder::outputBody()
 {
     return std::move(m_outputBody);
 }
 
-void DialogBodyBuilder::setInputBody(Body *inputBody)
+void DialogBodyBuilder::setInputBody(GaitSym::Body *inputBody)
 {
     m_inputBody = inputBody;
 }
 
-Simulation *DialogBodyBuilder::simulation() const
+GaitSym::Simulation *DialogBodyBuilder::simulation() const
 {
     return m_simulation;
 }
 
-void DialogBodyBuilder::setSimulation(Simulation *simulation)
+void DialogBodyBuilder::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }

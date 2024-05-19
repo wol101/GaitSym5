@@ -39,15 +39,15 @@ public:
     std::vector<std::unique_ptr<XMLElement>> *elementList();
 
 private:
-    ::rapidxml::xml_attribute<char> *CreateXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, const std::string &newValue, bool sorted);
+    rapidxml::xml_attribute<char> *CreateXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, const std::string &newValue, bool sorted);
     rapidxml::xml_node<char> *CreateXMLNode(rapidxml::xml_node<char> *parent, const std::string &name);
     rapidxml::xml_node<char> *CreateXMLNode(rapidxml::xml_node<char> *parent, const std::string &name, const std::string newValue);
     bool RemoveXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive);
-    ::rapidxml::xml_attribute<char> *FindXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive);
-    ::rapidxml::xml_attribute<char> *GetXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, std::string *attributeValue, bool caseSensitive);
+    rapidxml::xml_attribute<char> *FindXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive);
+    rapidxml::xml_attribute<char> *GetXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, std::string *attributeValue, bool caseSensitive);
 
-    ::rapidxml::xml_document<char> m_inputConfigDoc;
-    ::rapidxml::xml_document<char> m_ouputConfigDoc;
+    rapidxml::xml_document<char> m_inputConfigDoc;
+    rapidxml::xml_document<char> m_ouputConfigDoc;
     std::vector<char> m_inputConfigData;
     std::vector<std::unique_ptr<XMLElement>> m_elementList;
 };

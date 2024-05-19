@@ -28,7 +28,7 @@ DialogDrivers::DialogDrivers(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("Driver Builder"));
+    setWindowTitle(tr("GaitSym::Driver Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -117,13 +117,13 @@ void DialogDrivers::accept() // this catches OK and return/enter
     QString tab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if (tab == "Fixed")
     {
-        std::unique_ptr<FixedDriver> driver = std::make_unique<FixedDriver>();
+        std::unique_ptr<GaitSym::FixedDriver> driver = std::make_unique<GaitSym::FixedDriver>();
         driver->setValue(ui->lineEditFixedValue->value());
         m_outputDriver = std::move(driver);
     }
     else if (tab == "Step")
     {
-        std::unique_ptr<StepDriver> driver = std::make_unique<StepDriver>();
+        std::unique_ptr<GaitSym::StepDriver> driver = std::make_unique<GaitSym::StepDriver>();
         size_t steps = static_cast<size_t>(ui->spinBoxSteps->value());
         std::vector<double> durations;
         durations.reserve(steps);
@@ -141,7 +141,7 @@ void DialogDrivers::accept() // this catches OK and return/enter
 
     else if (tab == "Cyclic")
     {
-        std::unique_ptr<CyclicDriver> driver = std::make_unique<CyclicDriver>();
+        std::unique_ptr<GaitSym::CyclicDriver> driver = std::make_unique<GaitSym::CyclicDriver>();
         size_t steps = static_cast<size_t>(ui->spinBoxStepsPerCycle->value());
         std::vector<double> durations;
         durations.reserve(steps);
@@ -159,7 +159,7 @@ void DialogDrivers::accept() // this catches OK and return/enter
 
     else if (tab == "Boxcar")
     {
-        std::unique_ptr<StackedBoxcarDriver> driver = std::make_unique<StackedBoxcarDriver>();
+        std::unique_ptr<GaitSym::StackedBoxcarDriver> driver = std::make_unique<GaitSym::StackedBoxcarDriver>();
         driver->SetCycleTime(ui->lineEditBoxcarCycleTime->value());
         size_t stackSize = static_cast<size_t>(ui->spinBoxBoxcarStackSize->value());
         driver->SetStackSize(stackSize);
@@ -189,9 +189,9 @@ void DialogDrivers::accept() // this catches OK and return/enter
     for (int i = 0; i < m_targetComboBoxList.size(); i++)
     {
         std::string name = m_targetComboBoxList[i]->currentText().toStdString();
-        Muscle *muscle = m_simulation->GetMuscle(name);
+        GaitSym::Muscle *muscle = m_simulation->GetMuscle(name);
         if (muscle) { m_outputDriver->AddTarget(muscle); continue; }
-        Controller *controller = m_simulation->GetController(name);
+        GaitSym::Controller *controller = m_simulation->GetController(name);
         if (controller) { m_outputDriver->AddTarget(controller); continue; }
     }
 
@@ -259,11 +259,11 @@ void DialogDrivers::lateInitialise()
         auto nameSet = m_simulation->GetNameSet();
         ui->lineEditDriverID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("GaitSym::Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("GaitSym::Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditDriverID->setText(initialName);
@@ -302,15 +302,15 @@ void DialogDrivers::lateInitialise()
 
     while (true)
     {
-        if (FixedDriver *fixedDriver = dynamic_cast<FixedDriver *>(m_inputDriver))
+        if (GaitSym::FixedDriver *fixedDriver = dynamic_cast<GaitSym::FixedDriver *>(m_inputDriver))
         {
-            if ((s = fixedDriver->findAttribute("Value"s)).size()) ui->lineEditFixedValue->setValue(GSUtil::Double(s));
+            if ((s = fixedDriver->findAttribute("Value"s)).size()) ui->lineEditFixedValue->setValue(GaitSym::GSUtil::Double(s));
             ui->tabWidget->setCurrentIndex(tabNames.indexOf("Fixed"));
             spinBoxChangedBoxcarStackSize(1);
             break;
         }
 
-        if (StepDriver *stepDriver = dynamic_cast<StepDriver *>(m_inputDriver))
+        if (GaitSym::StepDriver *stepDriver = dynamic_cast<GaitSym::StepDriver *>(m_inputDriver))
         {
             std::vector<double> valueList = stepDriver->valueList();
             std::vector<double> durationList = stepDriver->durationList();
@@ -328,7 +328,7 @@ void DialogDrivers::lateInitialise()
             break;
         }
 
-        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver *>(m_inputDriver))
+        if (GaitSym::CyclicDriver *cyclicDriver = dynamic_cast<GaitSym::CyclicDriver *>(m_inputDriver))
         {
             std::vector<double> valueList = cyclicDriver->valueList();
             std::vector<double> durationList = cyclicDriver->durationList();
@@ -346,15 +346,15 @@ void DialogDrivers::lateInitialise()
             break;
         }
 
-        if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver *>(m_inputDriver))
+        if (GaitSym::StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<GaitSym::StackedBoxcarDriver *>(m_inputDriver))
         {
-            int stackSize = GSUtil::Int(stackedBoxcarDriver->findAttribute("StackSize"s));
+            int stackSize = GaitSym::GSUtil::Int(stackedBoxcarDriver->findAttribute("StackSize"s));
             std::vector<double> delays(static_cast<size_t>(stackSize));
             std::vector<double> widths(static_cast<size_t>(stackSize));
             std::vector<double> heights(static_cast<size_t>(stackSize));
-            GSUtil::Double(stackedBoxcarDriver->findAttribute("Delays"s), stackSize, delays.data());
-            GSUtil::Double(stackedBoxcarDriver->findAttribute("Widths"s), stackSize, widths.data());
-            GSUtil::Double(stackedBoxcarDriver->findAttribute("Heights"s), stackSize, heights.data());
+            GaitSym::GSUtil::Double(stackedBoxcarDriver->findAttribute("Delays"s), stackSize, delays.data());
+            GaitSym::GSUtil::Double(stackedBoxcarDriver->findAttribute("Widths"s), stackSize, widths.data());
+            GaitSym::GSUtil::Double(stackedBoxcarDriver->findAttribute("Heights"s), stackSize, heights.data());
             for (int i = 0; i < stackSize; i++)
             {
                 QLabel *label = new QLabel();
@@ -386,7 +386,7 @@ void DialogDrivers::lateInitialise()
             m_boxcarGridLayout->addItem(m_boxcarGridSpacer, stackSize, 0);
 
             ui->spinBoxBoxcarStackSize->setValue(stackSize);
-            ui->lineEditBoxcarCycleTime->setValue(GSUtil::Double(stackedBoxcarDriver->findAttribute("CycleTime"s)));
+            ui->lineEditBoxcarCycleTime->setValue(GaitSym::GSUtil::Double(stackedBoxcarDriver->findAttribute("CycleTime"s)));
             ui->tabWidget->setCurrentIndex(tabNames.indexOf("Boxcar"));
             break;
         }
@@ -563,22 +563,22 @@ void DialogDrivers::updateActivation()
     ui->pushButtonOK->setEnabled(okEnable);
 }
 
-Simulation *DialogDrivers::simulation() const
+GaitSym::Simulation *DialogDrivers::simulation() const
 {
     return m_simulation;
 }
 
-void DialogDrivers::setSimulation(Simulation *simulation)
+void DialogDrivers::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }
 
-void DialogDrivers::setInputDriver(Driver *inputDriver)
+void DialogDrivers::setInputDriver(GaitSym::Driver *inputDriver)
 {
     m_inputDriver = inputDriver;
 }
 
-std::unique_ptr<Driver> DialogDrivers::outputDriver()
+std::unique_ptr<GaitSym::Driver> DialogDrivers::outputDriver()
 {
     return std::move(m_outputDriver);
 }

@@ -28,7 +28,7 @@ DialogGeoms::DialogGeoms(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("Geom Builder"));
+    setWindowTitle(tr("GaitSym::Geom Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -80,30 +80,30 @@ void DialogGeoms::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogGeoms::accept()";
 
-    std::map<std::string, std::unique_ptr<Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
     QString strapTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if (strapTab == "Sphere")
     {
-        m_outputGeom = std::make_unique<SphereGeom>(ui->lineEditSphereRadius->value());
+        m_outputGeom = std::make_unique<GaitSym::SphereGeom>(ui->lineEditSphereRadius->value());
     }
     else if (strapTab == "Capsule")
     {
-        m_outputGeom = std::make_unique<CappedCylinderGeom>(ui->lineEditCapsuleRadius->value(), ui->lineEditCapsuleLength->value());
+        m_outputGeom = std::make_unique<GaitSym::CappedCylinderGeom>(ui->lineEditCapsuleRadius->value(), ui->lineEditCapsuleLength->value());
     }
     else if (strapTab == "Box")
     {
-        m_outputGeom = std::make_unique<BoxGeom>(ui->lineEditBoxLengthX->value(), ui->lineEditBoxLengthY->value(), ui->lineEditBoxLengthZ->value());
+        m_outputGeom = std::make_unique<GaitSym::BoxGeom>(ui->lineEditBoxLengthX->value(), ui->lineEditBoxLengthY->value(), ui->lineEditBoxLengthZ->value());
     }
     else if (strapTab == "Plane")
     {
-        Marker *geomMarker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
-        pgd::Vector3 normal = geomMarker->GetWorldAxis(Marker::Axis::Z);
+        GaitSym::Marker *geomMarker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
+        pgd::Vector3 normal = geomMarker->GetWorldAxis(GaitSym::Marker::Axis::Z);
         pgd::Vector3 point = geomMarker->GetWorldPosition();
         double a = normal.x;
         double b = normal.y;
         double c = normal.z;
         double d = normal.Dot(point);
-        m_outputGeom = std::make_unique<PlaneGeom>(a, b, c, d);
+        m_outputGeom = std::make_unique<GaitSym::PlaneGeom>(a, b, c, d);
     }
 
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());
@@ -115,14 +115,14 @@ void DialogGeoms::accept() // this catches OK and return/enter
     m_outputGeom->SetContactBounce(ui->lineEditBounce->value());
     m_outputGeom->SetAbort(ui->checkBoxAbort->isChecked());
 
-    std::vector<Geom *> *excludedGeoms = m_outputGeom->GetExcludeList();
+    std::vector<GaitSym::Geom *> *excludedGeoms = m_outputGeom->GetExcludeList();
     excludedGeoms->clear();
     if (ui->spinBoxNExcludedGeoms->value())
     {
         auto geomList = m_simulation->GetGeomList();
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
         {
-            Geom *geom = geomList->at(m_excludedGeomComboBoxList[i]->currentText().toStdString()).get();
+            GaitSym::Geom *geom = geomList->at(m_excludedGeomComboBoxList[i]->currentText().toStdString()).get();
             if (std::find(excludedGeoms->begin(), excludedGeoms->end(), geom) == excludedGeoms->end() && geom->name() != m_outputGeom->name())
                 excludedGeoms->push_back(geom);
         }
@@ -218,11 +218,11 @@ void DialogGeoms::lateInitialise()
         auto nameSet = simulation()->GetNameSet();
         ui->lineEditGeomID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("GaitSym::Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("GaitSym::Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditGeomID->setText(initialName);
@@ -237,15 +237,15 @@ void DialogGeoms::lateInitialise()
     ui->lineEditGeomID->setText(QString::fromStdString(m_inputGeom->findAttribute("ID"s)));
     ui->lineEditGeomID->setEnabled(false);
     ui->comboBoxGeomMarker->setCurrentText(QString::fromStdString(m_inputGeom->findAttribute("MarkerID"s)));
-    if ((s = m_inputGeom->findAttribute("SpringConstant"s)).size()) ui->lineEditSpring->setValue(GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("DampingConstant"s)).size()) ui->lineEditDamp->setValue(GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Bounce"s)).size()) ui->lineEditBounce->setValue(GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Mu"s)).size()) ui->lineEditMu->setValue(GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Rho"s)).size()) ui->lineEditRho->setValue(GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GSUtil::Bool(s));
-    if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GSUtil::Bool(s));
+    if ((s = m_inputGeom->findAttribute("SpringConstant"s)).size()) ui->lineEditSpring->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputGeom->findAttribute("DampingConstant"s)).size()) ui->lineEditDamp->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputGeom->findAttribute("Bounce"s)).size()) ui->lineEditBounce->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputGeom->findAttribute("Mu"s)).size()) ui->lineEditMu->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputGeom->findAttribute("Rho"s)).size()) ui->lineEditRho->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GaitSym::GSUtil::Bool(s));
+    if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GaitSym::GSUtil::Bool(s));
 
-    std::vector<Geom *> *excludeList = m_inputGeom->GetExcludeList();
+    std::vector<GaitSym::Geom *> *excludeList = m_inputGeom->GetExcludeList();
     if (excludeList->size())
     {
         QStringList geomIDs;
@@ -255,7 +255,7 @@ void DialogGeoms::lateInitialise()
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Excluded Geom %1").arg(i));
+            label->setText(QString("Excluded GaitSym::Geom %1").arg(i));
             m_gridLayoutExcludedGeoms->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(geomIDs);
@@ -269,28 +269,28 @@ void DialogGeoms::lateInitialise()
         m_gridLayoutExcludedGeoms->addItem(gridSpacerExcludedGeoms, ui->spinBoxNExcludedGeoms->value(), 0);
     }
 
-    if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_inputGeom))
+    if (GaitSym::SphereGeom *sphereGeom = dynamic_cast<GaitSym::SphereGeom *>(m_inputGeom))
     {
-        if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GSUtil::Double(s));
+        if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Sphere"));
     }
 
-    if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_inputGeom))
+    if (GaitSym::CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<GaitSym::CappedCylinderGeom *>(m_inputGeom))
     {
-        if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GSUtil::Double(s));
-        if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GSUtil::Double(s));
+        if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Capsule"));
     }
 
-    if (BoxGeom *boxGeom = dynamic_cast<BoxGeom *>(m_inputGeom))
+    if (GaitSym::BoxGeom *boxGeom = dynamic_cast<GaitSym::BoxGeom *>(m_inputGeom))
     {
-        if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GSUtil::Double(s));
-        if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GSUtil::Double(s));
-        if ((s = boxGeom->findAttribute("LengthZ"s)).size()) ui->lineEditBoxLengthZ->setValue(GSUtil::Double(s));
+        if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = boxGeom->findAttribute("LengthZ"s)).size()) ui->lineEditBoxLengthZ->setValue(GaitSym::GSUtil::Double(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Box"));
     }
 
-    if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_inputGeom))
+    if (GaitSym::PlaneGeom *planeGeom = dynamic_cast<GaitSym::PlaneGeom *>(m_inputGeom))
     {
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Plane"));
     }
@@ -333,7 +333,7 @@ void DialogGeoms::spinBoxChanged(const QString &/*text*/)
         for (int i = 0; i < requiredExcludedGeoms; i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Excluded Geom %1").arg(i));
+            label->setText(QString("Excluded GaitSym::Geom %1").arg(i));
             m_gridLayoutExcludedGeoms->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(geomIDs);
@@ -397,22 +397,22 @@ void DialogGeoms::properties()
     }
 }
 
-Simulation *DialogGeoms::simulation() const
+GaitSym::Simulation *DialogGeoms::simulation() const
 {
     return m_simulation;
 }
 
-void DialogGeoms::setSimulation(Simulation *simulation)
+void DialogGeoms::setSimulation(GaitSym::Simulation *simulation)
 {
     m_simulation = simulation;
 }
 
-std::unique_ptr<Geom> DialogGeoms::outputGeom()
+std::unique_ptr<GaitSym::Geom> DialogGeoms::outputGeom()
 {
     return std::move(m_outputGeom);
 }
 
-void DialogGeoms::setInputGeom(Geom *inputGeom)
+void DialogGeoms::setInputGeom(GaitSym::Geom *inputGeom)
 {
     m_inputGeom = inputGeom;
 }

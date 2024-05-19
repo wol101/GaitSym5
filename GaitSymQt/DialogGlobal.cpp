@@ -21,7 +21,7 @@ DialogGlobal::DialogGlobal(QWidget *parent) :
     ui(new Ui::DialogGlobal)
 {
     ui->setupUi(this);
-    setWindowTitle(tr("Global Builder"));
+    setWindowTitle(tr("GaitSym::Global Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -47,9 +47,9 @@ void DialogGlobal::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogGlobal::accept()";
 
-    m_outputGlobal = std::make_unique<Global>();
-    m_outputGlobal->setFitnessType(static_cast<Global::FitnessType>(ui->comboBoxFitnessType->currentIndex()));
-    m_outputGlobal->setStepType(static_cast<Global::StepType>(ui->comboBoxStepType->currentIndex()));
+    m_outputGlobal = std::make_unique<GaitSym::Global>();
+    m_outputGlobal->setFitnessType(static_cast<GaitSym::Global::FitnessType>(ui->comboBoxFitnessType->currentIndex()));
+    m_outputGlobal->setStepType(static_cast<GaitSym::Global::StepType>(ui->comboBoxStepType->currentIndex()));
     m_outputGlobal->setContactMaxCorrectingVel(ui->lineEditContactMaxCorrectingVel->value());
     m_outputGlobal->setContactSurfaceLayer(ui->lineEditContactSurfaceLayer->value());
     m_outputGlobal->setGravity(ui->lineEditGravityX->value(), ui->lineEditGravityY->value(), ui->lineEditGravityZ->value());
@@ -64,7 +64,7 @@ void DialogGlobal::accept() // this catches OK and return/enter
     m_outputGlobal->setAllowInternalCollisions(ui->checkBoxAllowInternalCollisions->isChecked());
     m_outputGlobal->setPermittedNumericalErrors(ui->spinBoxPermittedErrorCount->value());
 
-    m_outputGlobal->setName("Global");
+    m_outputGlobal->setName("GaitSym::Global");
 
     if (ui->checkBoxSpringDamping->isChecked())
     {
@@ -119,15 +119,15 @@ void DialogGlobal::accept() // this catches OK and return/enter
     }
 
     QString tab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    m_outputGlobal->setPhysicsEngine(Global::ODE);
-    for (size_t i = 0; i < Global::physicsEngineTypeCount; i++)
+    m_outputGlobal->setPhysicsEngine(GaitSym::Global::ODE);
+    for (size_t i = 0; i < GaitSym::Global::physicsEngineTypeCount; i++)
     {
-        if (tab == Global::physicsEngineTypeStrings(i))
+        if (tab == GaitSym::Global::physicsEngineTypeStrings(i))
         {
-            m_outputGlobal->setPhysicsEngine(static_cast<Global::PhysicsEngine>(i));
+            m_outputGlobal->setPhysicsEngine(static_cast<GaitSym::Global::PhysicsEngine>(i));
             break;
         }
-        if (i == Global::physicsEngineTypeCount - 1) qDebug() << "DialogGlobal::accept() unsupported tab name";
+        if (i == GaitSym::Global::physicsEngineTypeCount - 1) qDebug() << "DialogGlobal::accept() unsupported tab name";
     }
 
     Preferences::insert("DialogGlobalGeometry", saveGeometry());
@@ -159,11 +159,11 @@ void DialogGlobal::setDefaults()
     updateUI(&m_defaultGlobal);
 }
 
-void DialogGlobal::updateUI(const Global *globalPtr)
+void DialogGlobal::updateUI(const GaitSym::Global *globalPtr)
 {
     // assign the QComboBox items
-    for (size_t i = 0; i < Global::fitnessTypeCount; i++) ui->comboBoxFitnessType->addItem(globalPtr->fitnessTypeStrings(i));
-    for (size_t i = 0; i < Global::stepTypeCount; i++) ui->comboBoxStepType->addItem(globalPtr->stepTypeStrings(i));
+    for (size_t i = 0; i < GaitSym::Global::fitnessTypeCount; i++) ui->comboBoxFitnessType->addItem(globalPtr->fitnessTypeStrings(i));
+    for (size_t i = 0; i < GaitSym::Global::stepTypeCount; i++) ui->comboBoxStepType->addItem(globalPtr->stepTypeStrings(i));
 
     if (m_existingBodies == nullptr || m_existingBodies->size() == 0)
     {
@@ -171,26 +171,26 @@ void DialogGlobal::updateUI(const Global *globalPtr)
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(ui->comboBoxFitnessType->model());
         Q_ASSERT_X(model != nullptr, "DialogGlobal::lateInitialise", "qobject_cast<QStandardItemModel *> failed");
         bool disabled = true;
-        QStandardItem *item = model->item(int(Global::KinematicMatch));
+        QStandardItem *item = model->item(int(GaitSym::Global::KinematicMatch));
         item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled : item->flags() | Qt::ItemIsEnabled);
     }
 
     {
         QStringList fitnessTypeList;
         for (int i = 0; i < ui->comboBoxFitnessType->count(); i++) { fitnessTypeList.push_back(ui->comboBoxFitnessType->itemText(i)); }
-        QString fitnessType(Global::fitnessTypeStrings(globalPtr->fitnessType()));
+        QString fitnessType(GaitSym::Global::fitnessTypeStrings(globalPtr->fitnessType()));
         ui->comboBoxFitnessType->setCurrentIndex(fitnessTypeList.indexOf(fitnessType));
     }
     {
         QStringList stepTypeList;
         for (int i = 0; i < ui->comboBoxStepType->count(); i++) { stepTypeList.push_back(ui->comboBoxStepType->itemText(i)); }
-        QString stepType(Global::stepTypeStrings(globalPtr->stepType()));
+        QString stepType(GaitSym::Global::stepTypeStrings(globalPtr->stepType()));
         ui->comboBoxStepType->setCurrentIndex(stepTypeList.indexOf(stepType));
     }
     {
         QStringList tabNames;
         for (int i = 0; i < ui->tabWidget->count(); i++) { tabNames.push_back(ui->tabWidget->tabText(i)); }
-        QString physicsEngine(Global::physicsEngineTypeStrings(globalPtr->physicsEngine()));
+        QString physicsEngine(GaitSym::Global::physicsEngineTypeStrings(globalPtr->physicsEngine()));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf(physicsEngine));
     }
 
@@ -321,36 +321,36 @@ void DialogGlobal::properties()
     }
 }
 
-std::unique_ptr<Global> DialogGlobal::outputGlobal()
+std::unique_ptr<GaitSym::Global> DialogGlobal::outputGlobal()
 {
     return std::move(m_outputGlobal);
 }
 
-void DialogGlobal::setInputGlobal(const Global *inputGlobal)
+void DialogGlobal::setInputGlobal(const GaitSym::Global *inputGlobal)
 {
     m_inputGlobal = inputGlobal;
 }
 
-void DialogGlobal::setExistingBodies(const std::map<std::string, std::unique_ptr<Body>> *existingBodies)
+void DialogGlobal::setExistingBodies(const std::map<std::string, std::unique_ptr<GaitSym::Body>> *existingBodies)
 {
     m_existingBodies = existingBodies;
 }
 
 void DialogGlobal::initialiseDefaultGlobal()
 {
-    for (size_t i = 0; i < Global::fitnessTypeCount; i++)
+    for (size_t i = 0; i < GaitSym::Global::fitnessTypeCount; i++)
     {
-        if (Preferences::valueQString("GlobalDefaultFitnessType") == Global::fitnessTypeStrings(i))
+        if (Preferences::valueQString("GlobalDefaultFitnessType") == GaitSym::Global::fitnessTypeStrings(i))
         {
-            m_defaultGlobal.setFitnessType(static_cast<Global::FitnessType>(i));
+            m_defaultGlobal.setFitnessType(static_cast<GaitSym::Global::FitnessType>(i));
             break;
         }
     }
-    for (size_t i = 0; i < Global::stepTypeCount; i++)
+    for (size_t i = 0; i < GaitSym::Global::stepTypeCount; i++)
     {
-        if (Preferences::valueQString("GlobalDefaultStepType") == Global::stepTypeStrings(i))
+        if (Preferences::valueQString("GlobalDefaultStepType") == GaitSym::Global::stepTypeStrings(i))
         {
-            m_defaultGlobal.setStepType(static_cast<Global::StepType>(i));
+            m_defaultGlobal.setStepType(static_cast<GaitSym::Global::StepType>(i));
             break;
         }
     }
@@ -379,7 +379,7 @@ void DialogGlobal::initialiseDefaultGlobal()
     if (buf.size())
     {
         pystring::split(buf, encodedMeshSearchPath, ":"s);
-        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_defaultGlobal.MeshSearchPath()->push_back(Global::percentDecode(encodedMeshSearchPath[i]));
+        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_defaultGlobal.MeshSearchPath()->push_back(GaitSym::Global::percentDecode(encodedMeshSearchPath[i]));
     }
 }
 
