@@ -19,15 +19,18 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace GaitSym
+{
 class Body;
 class Driver;
 class Geom;
 class Joint;
-class MainWindow;
 class Marker;
 class Muscle;
 class NamedObject;
 class Simulation;
+}
+class MainWindow;
 
 class QAction;
 class QTreeWidgetItem;
@@ -43,7 +46,7 @@ public:
     enum Mode { constructionMode, runMode };
 
     Mode mode() const;
-    Simulation *simulation() const;
+    GaitSym::Simulation *simulation() const;
     SimulationWidget *simulationWidget() const;
 
     const QFileInfo &configFile() const;
@@ -100,12 +103,12 @@ public slots:
     void menuToggleFullScreen();
 
     void menuOpen(const QString &fileName, const QByteArray *fileData);
-    void menuCreateEditMarker(Marker *marker);
-    void menuCreateEditBody(Body *body);
-    void menuCreateEditJoint(Joint *joint);
-    void menuCreateEditGeom(Geom *geom);
-    void menuCreateEditMuscle(Muscle *muscle);
-    void menuCreateEditDriver(Driver *driver);
+    void menuCreateEditMarker(GaitSym::Marker *marker);
+    void menuCreateEditBody(GaitSym::Body *body);
+    void menuCreateEditJoint(GaitSym::Joint *joint);
+    void menuCreateEditGeom(GaitSym::Geom *geom);
+    void menuCreateEditMuscle(GaitSym::Muscle *muscle);
+    void menuCreateEditDriver(GaitSym::Driver *driver);
 
     void menuOpenRecent(QAction *action);
 
@@ -194,7 +197,7 @@ private:
     int m_logLevel = 1;
 
     QTimer *m_timer = nullptr;
-    Simulation *m_simulation = nullptr;
+    GaitSym::Simulation *m_simulation = nullptr;
 
     Mode m_mode = constructionMode;
     bool m_noName = true;

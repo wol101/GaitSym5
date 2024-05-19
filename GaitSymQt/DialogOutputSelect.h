@@ -10,8 +10,6 @@
 #ifndef DIALOGOUTPUTSELECT_H
 #define DIALOGOUTPUTSELECT_H
 
-#include "Preferences.h"
-
 #include <QDialog>
 #include <QFont>
 
@@ -19,11 +17,9 @@ class QListWidget;
 class QLabel;
 class QDialogButtonBox;
 class QGridLayout;
-class Simulation;
+namespace GaitSym { class Simulation; }
 
-namespace Ui {
-class DialogOutputSelect;
-}
+namespace Ui { class DialogOutputSelect; }
 
 class DialogOutputSelect : public QDialog
 {

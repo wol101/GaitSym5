@@ -19,7 +19,7 @@
 #include <vector>
 #include <memory>
 
-class Muscle;
+namespace GaitSym { class Muscle; }
 class FacetedObject;
 class SimulationWidget;
 
@@ -33,8 +33,8 @@ public:
     virtual void Draw();
     virtual std::string name();
 
-    Muscle *muscle() const;
-    void setMuscle(Muscle *muscle);
+    GaitSym::Muscle *muscle() const;
+    void setMuscle(GaitSym::Muscle *muscle);
 
     double strapRadius() const;
     void setStrapRadius(double strapRadius);
@@ -64,11 +64,11 @@ public:
     void setStrapCylinderColor(const QColor &strapCylinderColor);
 
 
-    Colour::ColourMap strapColourMap() const;
-    void setStrapColourMap(const Colour::ColourMap &strapColourMap);
+    GaitSym::Colour::ColourMap strapColourMap() const;
+    void setStrapColourMap(const GaitSym::Colour::ColourMap &strapColourMap);
 
 private:
-    Muscle *m_muscle = nullptr;
+    GaitSym::Muscle *m_muscle = nullptr;
 
     std::unique_ptr<FacetedObject> m_facetedObject1;
     std::unique_ptr<FacetedObject> m_facetedObject2;
@@ -86,7 +86,7 @@ private:
     QColor m_strapForceColor;
     QColor m_strapColor;
     QColor m_strapCylinderColor;
-    Colour::ColourMap m_strapColourMap = Colour::ColourMap::JetColourMap;
+    GaitSym::Colour::ColourMap m_strapColourMap = GaitSym::Colour::ColourMap::JetColourMap;
 };
 
 #endif // DRAWMUSCLE_H

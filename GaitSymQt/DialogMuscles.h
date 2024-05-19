@@ -7,16 +7,17 @@
 
 #include <memory>
 
+namespace GaitSym
+{
 class Simulation;
 class Muscle;
 class Strap;
+}
 class QGridLayout;
 class QLabel;
 class QComboBox;
 
-namespace Ui {
-class DialogMuscles;
-}
+namespace Ui { class DialogMuscles; }
 
 class DialogMuscles : public QDialog
 {
@@ -28,14 +29,14 @@ public:
 
     void lateInitialise();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setInputMuscle(Muscle *inputMuscle);
+    void setInputMuscle(GaitSym::Muscle *inputMuscle);
 
-    std::unique_ptr<Muscle> outputMuscle();
+    std::unique_ptr<GaitSym::Muscle> outputMuscle();
 
-    std::unique_ptr<Strap> outputStrap();
+    std::unique_ptr<GaitSym::Strap> outputStrap();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -53,10 +54,10 @@ protected:
 private:
     Ui::DialogMuscles *ui = nullptr;
 
-    Simulation *m_simulation = nullptr;
-    Muscle *m_inputMuscle = nullptr;
-    std::unique_ptr<Muscle> m_outputMuscle;
-    std::unique_ptr<Strap> m_outputStrap;
+    GaitSym::Simulation *m_simulation = nullptr;
+    GaitSym::Muscle *m_inputMuscle = nullptr;
+    std::unique_ptr<GaitSym::Muscle> m_outputMuscle;
+    std::unique_ptr<GaitSym::Strap> m_outputStrap;
 
     QList<QLabel *> m_viaPointLabelList;
     QList<QComboBox *> m_viaPointComboBoxList;

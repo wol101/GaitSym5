@@ -10,9 +10,7 @@ class MainWindow;
 class QTableWidget;
 class QTableWidgetItem;
 
-namespace Ui {
-class TextEditDialog;
-}
+namespace Ui { class TextEditDialog; }
 
 class TextEditDialog : public QDialog
 {

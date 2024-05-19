@@ -7,15 +7,11 @@
 #include <QDialog>
 #include <QMap>
 
-#include <map>
-#include <string>
 #include <memory>
 
-class Body;
+namespace GaitSym { class Body; }
 
-namespace Ui {
-class DialogGlobal;
-}
+namespace Ui { class DialogGlobal; }
 
 #include "Global.h"
 
@@ -29,11 +25,11 @@ public:
 
     void lateInitialise();
 
-    void setExistingBodies(const std::map<std::string, std::unique_ptr<Body>> *existingBodies);
+    void setExistingBodies(const std::map<std::string, std::unique_ptr<GaitSym::Body>> *existingBodies);
 
-    void setInputGlobal(const Global *inputGlobal);
+    void setInputGlobal(const GaitSym::Global *inputGlobal);
 
-    std::unique_ptr<Global> outputGlobal();
+    std::unique_ptr<GaitSym::Global> outputGlobal();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -50,15 +46,15 @@ private:
                                 double integration_stepsize, double *cfm, double *erp);
     static void ConvertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize,
                                                    double *spring_constant, double *damping_constant);
-    void updateUI(const Global *globalPtr);
+    void updateUI(const GaitSym::Global *globalPtr);
     void initialiseDefaultGlobal();
 
     Ui::DialogGlobal *ui;
 
-    const Global *m_inputGlobal = nullptr;
-    std::unique_ptr<Global> m_outputGlobal;
-    const std::map<std::string, std::unique_ptr<Body>> *m_existingBodies = nullptr;
-    Global m_defaultGlobal;
+    const GaitSym::Global *m_inputGlobal = nullptr;
+    std::unique_ptr<GaitSym::Global> m_outputGlobal;
+    const std::map<std::string, std::unique_ptr<GaitSym::Body>> *m_existingBodies = nullptr;
+    GaitSym::Global m_defaultGlobal;
 
     QMap<QString, SettingsItem> m_properties;
 

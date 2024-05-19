@@ -2,7 +2,6 @@
 #define DIALOGBODYBUILDER_H
 
 #include "Preferences.h"
-#include "Body.h"
 #include "FacetedObject.h"
 
 #include <QDialog>
@@ -10,15 +9,17 @@
 #include <memory>
 
 class QLineEdit;
+class LineEditPath;
 class FacetedObject;
 class SimulationWidget;
-class Body;
-class LineEditPath;
-class Simulation;
 
-namespace Ui {
-class DialogBodyBuilder;
+namespace GaitSym
+{
+class Body;
+class Simulation;
 }
+
+namespace Ui { class DialogBodyBuilder; }
 
 class DialogBodyBuilder : public QDialog
 {
@@ -30,12 +31,12 @@ public:
 
     void lateInitialise();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setInputBody(Body *inputBody);
+    void setInputBody(GaitSym::Body *inputBody);
 
-    std::unique_ptr<Body> outputBody();
+    std::unique_ptr<GaitSym::Body> outputBody();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -58,11 +59,11 @@ private:
     FacetedObject m_mesh2;
     FacetedObject m_mesh3;
     FacetedObject *m_referenceObject = nullptr;
-    Body *m_inputBody = nullptr;
-    std::unique_ptr<Body> m_outputBody;
-    Simulation *m_simulation = nullptr;
+    GaitSym::Body *m_inputBody = nullptr;
+    std::unique_ptr<GaitSym::Body> m_outputBody;
+    GaitSym::Simulation *m_simulation = nullptr;
 
-    const std::map<std::string, Body *> *m_existingBodies = nullptr;
+    const std::map<std::string, GaitSym::Body *> *m_existingBodies = nullptr;
     QMap<QString, SettingsItem> m_properties;
 
 };

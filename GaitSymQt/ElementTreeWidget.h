@@ -3,7 +3,7 @@
 
 #include <QTreeWidget>
 
-class Simulation;
+namespace GaitSym {  class Simulation; }
 class MainWindow;
 
 class ElementTreeWidget : public QTreeWidget
@@ -12,14 +12,14 @@ class ElementTreeWidget : public QTreeWidget
 public:
     explicit ElementTreeWidget(QWidget *parent = nullptr);
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
     MainWindow *mainWindow() const;
     void setMainWindow(MainWindow *mainWindow);
 
     void clearLists();
-    void fillVisibitilityLists(Simulation *simulation);
+    void fillVisibitilityLists(GaitSym::Simulation *simulation);
     void setVisibleSwitchAll(const QString &elementType, bool visibility);
     void setOutputSwitchAll(const QString &elementType, bool output);
     void setVisibleSwitch(const QString &elementType, const QString &elementName, bool visibility);
@@ -80,7 +80,7 @@ private slots:
 protected:
 
 private:
-    Simulation *m_simulation = nullptr;
+    GaitSym::Simulation *m_simulation = nullptr;
     MainWindow *m_mainWindow = nullptr;
 
     const int ROOT_ITEM_TYPE = 0;

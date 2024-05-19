@@ -5,17 +5,19 @@
 
 #include <memory>
 
+namespace GaitSym
+{
 class Driver;
 class Simulation;
+}
+
 class QGridLayout;
 class QSpacerItem;
 class QLabel;
 class QComboBox;
 class LineEditDouble;
 
-namespace Ui {
-class DialogDrivers;
-}
+namespace Ui { class DialogDrivers; }
 
 class DialogDrivers : public QDialog
 {
@@ -27,12 +29,12 @@ public:
 
     void lateInitialise();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setInputDriver(Driver *inputDriver);
+    void setInputDriver(GaitSym::Driver *inputDriver);
 
-    std::unique_ptr<Driver> outputDriver();
+    std::unique_ptr<GaitSym::Driver> outputDriver();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -52,10 +54,10 @@ protected:
 private:
     Ui::DialogDrivers *ui = nullptr;
 
-    Simulation *m_simulation = nullptr;
+    GaitSym::Simulation *m_simulation = nullptr;
     QStringList m_drivableIDs;
-    Driver *m_inputDriver = nullptr;
-    std::unique_ptr<Driver> m_outputDriver;
+    GaitSym::Driver *m_inputDriver = nullptr;
+    std::unique_ptr<GaitSym::Driver> m_outputDriver;
 
     QList<QLabel *> m_targetLabelList;
     QList<QComboBox *> m_targetComboBoxList;

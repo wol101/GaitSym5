@@ -6,11 +6,9 @@
 #include <QDialog>
 
 class BasicXMLSyntaxHighlighter;
-class NamedObject;
+namespace GaitSym { class NamedObject; }
 
-namespace Ui {
-class DialogRename;
-}
+namespace Ui { class DialogRename; }
 
 class DialogRename : public QDialog
 {
@@ -29,7 +27,7 @@ public:
     bool isModified() const;
     void setModified(bool modified);
 
-    void setNameList(std::vector<NamedObject *> *nameList);
+    void setNameList(std::vector<GaitSym::NamedObject *> *nameList);
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -57,9 +55,9 @@ private:
     BasicXMLSyntaxHighlighter *m_basicXMLSyntaxHighlighter = nullptr;
     QFont m_editorFont;
 
-    std::vector<NamedObject *> *m_nameList = nullptr;
+    std::vector<GaitSym::NamedObject *> *m_nameList = nullptr;
 
-    ParseXML m_parseXML;
+    GaitSym::ParseXML m_parseXML;
     std::string m_lastError;
 
 };

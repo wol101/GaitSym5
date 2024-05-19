@@ -6,18 +6,17 @@
 #include <QDialog>
 #include <QVector3D>
 
-#include <memory>
-
+namespace GaitSym
+{
 class Marker;
 class Simulation;
+}
 
 namespace pgd {
 class Vector3;
 }
 
-namespace Ui {
-class DialogMarkers;
-}
+namespace Ui { class DialogMarkers; }
 
 class DialogMarkers : public QDialog
 {
@@ -32,12 +31,12 @@ public:
 
     void setCursor3DPosition(const QVector3D &cursor3DPosition);
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setInputMarker(Marker *inputMarker);
+    void setInputMarker(GaitSym::Marker *inputMarker);
 
-    std::unique_ptr<Marker> outputMarker();
+    std::unique_ptr<GaitSym::Marker> outputMarker();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;

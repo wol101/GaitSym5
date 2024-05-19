@@ -12,13 +12,15 @@
 
 #include <QDialog>
 
+namespace GaitSym
+{
 class Simulation;
 class Joint;
+}
+
 class QGridLayout;
 
-namespace Ui {
-class DialogAssembly;
-}
+namespace Ui { class DialogAssembly; }
 
 class DialogAssembly : public QDialog
 {
@@ -30,8 +32,8 @@ public:
 
     void initialise();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
 signals:
     void jointCreated(const QString &joint);
@@ -52,8 +54,8 @@ protected:
 private:
     Ui::DialogAssembly *ui;
 
-    Simulation *m_simulation = nullptr;
-    std::vector<Joint *> m_jointList;
+    GaitSym::Simulation *m_simulation = nullptr;
+    std::vector<GaitSym::Joint *> m_jointList;
     QGridLayout *m_gridLayout = nullptr;
 
     std::string m_assemblyAngularMotorSuffix = {"_assembly_angular_motor"};

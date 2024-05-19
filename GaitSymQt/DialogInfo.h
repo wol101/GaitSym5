@@ -1,15 +1,11 @@
 #ifndef DIALOGINFO_H
 #define DIALOGINFO_H
 
-#include "ParseXML.h"
-
 #include <QDialog>
 
 class BasicXMLSyntaxHighlighter;
 
-namespace Ui {
-class DialogInfo;
-}
+namespace Ui { class DialogInfo; }
 
 class DialogInfo : public QDialog
 {

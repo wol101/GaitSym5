@@ -5,12 +5,13 @@
 
 #include <memory>
 
+namespace GaitSym
+{
 class Simulation;
 class Marker;
-
-namespace Ui {
-class DialogMarkerImportExport;
 }
+
+namespace Ui { class DialogMarkerImportExport; }
 
 class DialogMarkerImportExport : public QDialog
 {
@@ -23,11 +24,11 @@ public:
     int ImportMarkers();
     int ExportMarkers();
 
-    void setSimulation(Simulation *simulation);
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setMarkerList(std::vector<std::unique_ptr<Marker> > *markerList);
+    void setMarkerList(std::vector<std::unique_ptr<GaitSym::Marker> > *markerList);
 
-    std::vector<std::unique_ptr<Marker> > *markerList() const;
+    std::vector<std::unique_ptr<GaitSym::Marker> > *markerList() const;
 
     void setAllowImport(bool newAllowImport);
 
@@ -43,8 +44,8 @@ protected:
 private:
     Ui::DialogMarkerImportExport *ui;
 
-    Simulation *m_simulation = nullptr;
-    std::vector<std::unique_ptr<Marker>> *m_markerList = nullptr;
+    GaitSym::Simulation *m_simulation = nullptr;
+    std::vector<std::unique_ptr<GaitSym::Marker>> *m_markerList = nullptr;
     bool m_allowImport = false;
 
     void SetUIElementsFromPreferences();

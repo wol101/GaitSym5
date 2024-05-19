@@ -17,7 +17,7 @@
 #include <memory>
 #include <vector>
 
-class FluidSac;
+namespace GaitSym { class FluidSac; }
 class FacetedObject;
 class SimulationWidget;
 
@@ -31,8 +31,8 @@ public:
     virtual void Draw();
     virtual std::string name();
 
-    FluidSac *fluidSac() const;
-    void setFluidSac(FluidSac *fluidSac);
+    GaitSym::FluidSac *fluidSac() const;
+    void setFluidSac(GaitSym::FluidSac *fluidSac);
 
     QColor fluidSacColour() const;
     void setFluidSacColour(const QColor &fluidSacColour);
@@ -45,7 +45,7 @@ public:
 
 
 private:
-    FluidSac *m_fluidSac = nullptr;
+    GaitSym::FluidSac *m_fluidSac = nullptr;
 
     std::unique_ptr<FacetedObject> m_facetedObject;
     std::vector<std::unique_ptr<FacetedObject>> m_facetedObjectForceList;

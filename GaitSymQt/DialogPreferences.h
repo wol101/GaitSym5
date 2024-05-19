@@ -15,9 +15,7 @@
 
 #include "Preferences.h"
 
-namespace Ui {
-class DialogPreferences;
-}
+namespace Ui { class DialogPreferences; }
 
 class DialogPreferences : public QDialog
 {

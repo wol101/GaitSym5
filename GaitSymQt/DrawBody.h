@@ -17,7 +17,7 @@
 
 #include <memory>
 
-class Body;
+namespace GaitSym { class Body; }
 class FacetedObject;
 class SimulationWidget;
 
@@ -33,8 +33,8 @@ public:
 
     void updateEntityPose();
 
-    Body *body() const;
-    void setBody(Body *body);
+    GaitSym::Body *body() const;
+    void setBody(GaitSym::Body *body);
 
     QStringList meshSearchPath() const;
     void setMeshSearchPath(const QStringList &meshSearchPath);
@@ -48,7 +48,7 @@ public:
     FacetedObject *axes() const;
 
 private:
-    Body *m_body = nullptr;
+    GaitSym::Body *m_body = nullptr;
     QStringList m_meshSearchPath;
 
     std::unique_ptr<FacetedObject> m_axes;

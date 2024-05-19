@@ -10,8 +10,6 @@
 #ifndef GLUtils_h
 #define GLUtils_h
 
-#include "PGDMath.h"
-
 class StrokeFont;
 
 class GLUtils

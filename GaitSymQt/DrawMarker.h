@@ -14,7 +14,7 @@
 
 #include <memory>
 
-class Marker;
+namespace GaitSym { class Marker; }
 class SimulationWidget;
 
 class DrawMarker : public Drawable
@@ -29,11 +29,11 @@ public:
 
     void updateEntityPose();
 
-    Marker *marker() const;
-    void setMarker(Marker *marker);
+    GaitSym::Marker *marker() const;
+    void setMarker(GaitSym::Marker *marker);
 
 private:
-    Marker *m_marker = nullptr;
+    GaitSym::Marker *m_marker = nullptr;
     std::unique_ptr<FacetedObject> m_facetedObject;
 };
 

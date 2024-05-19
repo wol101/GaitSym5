@@ -18,7 +18,6 @@
 #include <QValidator>
 #include <QMessageBox>
 
-
 DialogBodyBuilder::DialogBodyBuilder(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogBodyBuilder)

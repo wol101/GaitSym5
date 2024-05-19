@@ -16,7 +16,7 @@
 
 #include <memory>
 
-class Geom;
+namespace GaitSym { class Geom;}
 class FacetedObject;
 class SimulationWidget;
 
@@ -32,11 +32,11 @@ public:
 
     void updateEntityPose();
 
-    Geom *geom() const;
-    void setGeom(Geom *geom);
+    GaitSym::Geom *geom() const;
+    void setGeom(GaitSym::Geom *geom);
 
 private:
-    Geom *m_geom = nullptr;
+    GaitSym::Geom *m_geom = nullptr;
 
     std::unique_ptr<FacetedObject> m_facetedObject;
 

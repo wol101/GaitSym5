@@ -21,8 +21,6 @@
 #include <QOpenGLTexture>
 
 class SimulationWidget;
-class DataFile;
-class TrimeshGeom;
 
 class FacetedObject
 {
@@ -125,11 +123,6 @@ public:
     const QMatrix4x4 &model();
     void setModel(const QMatrix4x4 &model);
 
-#if 0
-    QOpenGLTexture *texture() const;
-    void setTexture(std::unique_ptr<QOpenGLTexture> &&texture);
-#endif
-
     double decal() const;
     void setDecal(double decal);
 
@@ -174,11 +167,6 @@ private:
     QColor m_blendColour = {255, 255, 255, 255};
     double m_blendFraction = 0;
     SimulationWidget *m_simulationWidget = nullptr;
-#if 0
-    QOpenGLBuffer m_VBO;
-    bool m_VBOAllocated = false;
-    std::unique_ptr<QOpenGLTexture> m_texture;
-#endif
     double m_decal = 0;
 
     static MeshStore m_meshStore;

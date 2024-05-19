@@ -16,7 +16,7 @@
 
 #include <memory>
 
-class Joint;
+namespace GaitSym { class Joint; }
 class FacetedObject;
 class SimulationWidget;
 class TexturedQuad;
@@ -33,11 +33,11 @@ public:
 
     void updateEntityPose();
 
-    Joint *joint() const;
-    void setJoint(Joint *joint);
+    GaitSym::Joint *joint() const;
+    void setJoint(GaitSym::Joint *joint);
 
 private:
-    Joint *m_joint = nullptr;
+    GaitSym::Joint *m_joint = nullptr;
 
     std::unique_ptr<FacetedObject> m_facetedObject1;
     std::unique_ptr<FacetedObject> m_facetedObject2;

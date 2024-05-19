@@ -12,8 +12,6 @@
 
 #include "PGDMath.h"
 
-#include <limits.h>
-
 class Drawable;
 class FacetedObject;
 

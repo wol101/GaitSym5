@@ -7,15 +7,16 @@
 
 #include <memory>
 
+namespace GaitSym
+{
 class Geom;
 class Simulation;
+}
 class QGridLayout;
 class QLabel;
 class QComboBox;
 
-namespace Ui {
-class DialogGeoms;
-}
+namespace Ui { class DialogGeoms; }
 
 class DialogGeoms : public QDialog
 {
@@ -27,12 +28,12 @@ public:
 
     void lateInitialise();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setInputGeom(Geom *inputGeom);
+    void setInputGeom(GaitSym::Geom *inputGeom);
 
-    std::unique_ptr<Geom> outputGeom();
+    std::unique_ptr<GaitSym::Geom> outputGeom();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -49,9 +50,9 @@ protected:
 private:
     Ui::DialogGeoms *ui = nullptr;
 
-    Simulation *m_simulation = nullptr;
-    Geom *m_inputGeom = nullptr;
-    std::unique_ptr<Geom> m_outputGeom;
+    GaitSym::Simulation *m_simulation = nullptr;
+    GaitSym::Geom *m_inputGeom = nullptr;
+    std::unique_ptr<GaitSym::Geom> m_outputGeom;
 
     QList<QLabel *> m_excludedGeomLabelList;
     QList<QComboBox *> m_excludedGeomComboBoxList;

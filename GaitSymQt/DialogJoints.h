@@ -7,12 +7,13 @@
 
 #include <memory>
 
+namespace GaitSym
+{
 class Simulation;
 class Joint;
-
-namespace Ui {
-class DialogJoints;
 }
+
+namespace Ui { class DialogJoints; }
 
 class DialogJoints : public QDialog
 {
@@ -24,12 +25,12 @@ public:
 
     void lateInitialise();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
-    void setInputJoint(Joint *inputJoint);
+    void setInputJoint(GaitSym::Joint *inputJoint);
 
-    std::unique_ptr<Joint> outputJoint();
+    std::unique_ptr<GaitSym::Joint> outputJoint();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -47,9 +48,9 @@ protected:
 private:
     Ui::DialogJoints *ui = nullptr;
 
-    Simulation *m_simulation = nullptr;
-    Joint *m_inputJoint = nullptr;
-    std::unique_ptr<Joint> m_outputJoint;
+    GaitSym::Simulation *m_simulation = nullptr;
+    GaitSym::Joint *m_inputJoint = nullptr;
+    std::unique_ptr<GaitSym::Joint> m_outputJoint;
 
     QMap<QString, SettingsItem> m_properties;
 
