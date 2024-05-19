@@ -19,6 +19,7 @@
 #include <string.h>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 TwoCylinderWrapStrap::TwoCylinderWrapStrap()
 {

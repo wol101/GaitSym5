@@ -8,8 +8,6 @@
  */
 
 #include "FixedJoint.h"
-#include "DataFile.h"
-#include "Body.h"
 #include "Simulation.h"
 #include "GSUtil.h"
 #include "ButterworthFilter.h"
@@ -19,6 +17,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 FixedJoint::FixedJoint() : Joint()
 {

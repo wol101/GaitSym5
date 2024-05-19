@@ -15,6 +15,7 @@
 #include <cassert>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 Muscle::Muscle()
 {

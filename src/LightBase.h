@@ -3,10 +3,10 @@
 
 #include "NamedObject.h"
 
-class Marker;
-
 namespace GaitSym
 {
+
+class Marker;
 
 class Light : public NamedObject
 {

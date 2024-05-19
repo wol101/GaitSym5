@@ -20,6 +20,7 @@
 #include <iostream>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 XMLConverter::XMLConverter()
 {

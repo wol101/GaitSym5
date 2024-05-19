@@ -1,5 +1,7 @@
 #include "PhysicsEngine.h"
 
+using namespace GaitSym;
+
 PhysicsEngine::PhysicsEngine()
 {
 }

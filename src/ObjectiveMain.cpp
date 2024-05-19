@@ -23,6 +23,7 @@
 #define MAX_ARGS 4096
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 #if defined(USE_CL)
 int main(int argc, const char **argv)

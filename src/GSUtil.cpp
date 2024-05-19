@@ -36,6 +36,7 @@
 #endif
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 void GSUtil::Tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList)
 {

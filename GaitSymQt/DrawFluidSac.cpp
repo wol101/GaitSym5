@@ -74,7 +74,7 @@ void DrawFluidSac::initialise(SimulationWidget *simulationWidget)
 
     if (m_displayFluidSacForces)
     {
-        const std::vector<PointForce> &pointForceList = m_fluidSac->pointForceList();
+        const std::vector<GaitSym::PointForce> &pointForceList = m_fluidSac->pointForceList();
         for (size_t i = 0; i < pointForceList.size(); i++)
         {
             std::vector<pgd::Vector3> polyline;
@@ -89,7 +89,7 @@ void DrawFluidSac::initialise(SimulationWidget *simulationWidget)
     m_facetedObjectList.push_back(m_facetedObject.get());
 }
 
-FluidSac *DrawFluidSac::fluidSac() const
+GaitSym::FluidSac *DrawFluidSac::fluidSac() const
 {
     return m_fluidSac;
 }
@@ -124,7 +124,7 @@ void DrawFluidSac::setFluidSacForceScale(double fluidSacForceScale)
     m_fluidSacForceScale = fluidSacForceScale;
 }
 
-void DrawFluidSac::setFluidSac(FluidSac *fluidSac)
+void DrawFluidSac::setFluidSac(GaitSym::FluidSac *fluidSac)
 {
     m_fluidSac = fluidSac;
 }

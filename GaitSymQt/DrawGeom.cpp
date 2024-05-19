@@ -83,7 +83,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
     m_geomSize1 = m_geom->size1();
     m_geomSize2 = m_geom->size2();
 
-    if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(m_geom))
+    if (GaitSym::SphereGeom *sphereGeom = dynamic_cast<GaitSym::SphereGeom *>(m_geom))
     {
         m_facetedObject = std::make_unique<FacetedSphere>(sphereGeom->radius(), FacetedSphere::EstimateLevel(m_geomSegments), m_geomColor1, 1);
         m_facetedObject->setSimulationWidget(simulationWidget);
@@ -91,7 +91,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(m_geom))
+    if (GaitSym::CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<GaitSym::CappedCylinderGeom *>(m_geom))
     {
         double length, radius;
         cappedCylinderGeom->getLengthRadius(&length, &radius);
@@ -101,7 +101,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (BoxGeom *boxGeom = dynamic_cast<BoxGeom *>(m_geom))
+    if (GaitSym::BoxGeom *boxGeom = dynamic_cast<GaitSym::BoxGeom *>(m_geom))
     {
         double lx, ly, lz;
         boxGeom->GetDimensions(&lx, &ly, &lz);
@@ -111,7 +111,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(m_geom))
+    if (GaitSym::PlaneGeom *planeGeom = dynamic_cast<GaitSym::PlaneGeom *>(m_geom))
     {
         double planeSize = m_geomSize1;
         double checkerSize = m_geomSize2;
@@ -126,7 +126,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (ConvexGeom *convexGeom = dynamic_cast<ConvexGeom *>(m_geom))
+    if (GaitSym::ConvexGeom *convexGeom = dynamic_cast<GaitSym::ConvexGeom *>(m_geom))
     {
         m_facetedObject = std::make_unique<FacetedObject>();
         m_facetedObject->setBlendColour(m_geomColor1, 1);

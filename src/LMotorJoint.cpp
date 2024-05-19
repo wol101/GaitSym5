@@ -16,6 +16,8 @@
 
 #include <sstream>
 
+using namespace GaitSym;
+
 LMotorJoint::LMotorJoint() : Joint()
 {
 }

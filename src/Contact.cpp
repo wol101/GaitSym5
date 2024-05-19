@@ -9,6 +9,8 @@
 
 #include "Contact.h"
 
+using namespace GaitSym;
+
 Contact::Contact()
 {
 }

@@ -15,6 +15,7 @@
 #include <string>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 Global::Global()
 {

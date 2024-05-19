@@ -21,6 +21,7 @@
 #include <vector>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 NPointStrap::NPointStrap(): Strap()
 {

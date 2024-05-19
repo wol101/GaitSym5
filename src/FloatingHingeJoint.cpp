@@ -14,8 +14,8 @@
 #include "Marker.h"
 #include "GSUtil.h"
 
-
 using namespace std::string_literals;
+using namespace GaitSym;
 
 FloatingHingeJoint::FloatingHingeJoint() : Joint()
 {

@@ -24,6 +24,7 @@
 #include <cmath>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 static double CalculateForceError (double lce, void *params);
 

@@ -15,6 +15,7 @@
 #include "pystring.h"
 
 using namespace std::literals::string_literals;
+using namespace GaitSym;
 
 ParseXML::ParseXML()
 {

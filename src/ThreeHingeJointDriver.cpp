@@ -29,6 +29,7 @@
 #include <limits>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 ThreeHingeJointDriver::ThreeHingeJointDriver()
 {

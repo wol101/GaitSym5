@@ -16,6 +16,7 @@
 #include <deque>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 MuJoCoPhysicsEngine::MuJoCoPhysicsEngine()
 {

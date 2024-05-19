@@ -10,6 +10,8 @@
 #include "Drivable.h"
 #include "Driver.h"
 
+using namespace GaitSym;
+
 Drivable::Drivable()
 {
 }

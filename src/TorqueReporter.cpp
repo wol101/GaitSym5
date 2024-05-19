@@ -16,6 +16,8 @@
 #include <vector>
 #include <sstream>
 
+using namespace GaitSym;
+
 TorqueReporter::TorqueReporter()
 {
     mBody = nullptr;

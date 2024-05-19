@@ -19,6 +19,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 MarkerEllipseDriver::MarkerEllipseDriver()
 {

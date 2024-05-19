@@ -13,13 +13,14 @@
 #include <vector>
 #include <string>
 
+namespace pkpy { class VM; }
+
 namespace GaitSym
 {
 
 class Genome;
 class DataFile;
 class ExpressionParser;
-namespace pkpy { class VM; }
 
 class XMLConverter
 {

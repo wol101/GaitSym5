@@ -13,6 +13,7 @@
 #include "Contact.h"
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 static physx::PxDefaultAllocator g_allocator;
 static physx::PxDefaultErrorCallback g_errorCallback;

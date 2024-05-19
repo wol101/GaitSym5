@@ -78,7 +78,7 @@ private:
     BasicXMLSyntaxHighlighter *m_basicXMLSyntaxHighlighter = nullptr;
     QFont m_editorFont;
 
-    ParseXML m_parseXML;
+    GaitSym::ParseXML m_parseXML;
     std::string m_lastError;
     QString m_fileName;
 };

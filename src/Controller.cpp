@@ -10,8 +10,9 @@
 #include "Controller.h"
 #include "Simulation.h"
 
-#include <fstream>
 #include <sstream>
+
+using namespace GaitSym;
 
 Controller::Controller()
 {

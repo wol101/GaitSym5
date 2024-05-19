@@ -27,6 +27,7 @@
 #endif
 
 using namespace std::literals::string_literals;
+using namespace GaitSym;
 
 NamedObject::NamedObject()
 {

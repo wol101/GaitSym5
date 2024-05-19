@@ -13,6 +13,8 @@
 
 #include <algorithm>
 
+using namespace GaitSym;
+
 MovingAverage::MovingAverage() : Filter()
 {
 }

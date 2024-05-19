@@ -17,6 +17,7 @@
 #include <cassert>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 CyclicDriver::CyclicDriver()
 {

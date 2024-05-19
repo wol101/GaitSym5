@@ -10,6 +10,8 @@
 #include "SliderJoint.h"
 #include "Simulation.h"
 
+using namespace GaitSym;
+
 SliderJoint::SliderJoint() : Joint()
 {
 }

@@ -42,6 +42,8 @@
 
 const static size_t kStorageIncrement = 65536;
 
+using namespace GaitSym;
+
 // default constructor
 DataFile::DataFile()
 {

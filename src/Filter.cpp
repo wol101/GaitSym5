@@ -11,6 +11,8 @@
 
 #include "Filter.h"
 
+using namespace GaitSym;
+
 Filter::Filter()
 {
     m_xn = 0;

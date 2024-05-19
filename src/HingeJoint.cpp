@@ -18,12 +18,11 @@
 #include <sstream>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 HingeJoint::HingeJoint() : Joint()
 {
 }
-
-
 
 void HingeJoint::CalculateStopTorque()
 {

@@ -23,6 +23,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
+using namespace GaitSym;
 
 #define OUTSIDERANGE(x, minX, maxX) ((x) < (minX) || (x) > (maxX))
 
