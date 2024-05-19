@@ -12,6 +12,9 @@
 
 #include "Joint.h"
 
+namespace GaitSym
+{
+
 class Marker;
 
 class HingeJoint: public Joint
@@ -84,6 +87,6 @@ private:
     double m_angleRate = 0;
 };
 
-
+}
 
 #endif

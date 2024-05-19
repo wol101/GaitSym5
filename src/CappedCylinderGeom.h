@@ -12,6 +12,9 @@
 
 #include "Geom.h"
 
+namespace GaitSym
+{
+
 class CappedCylinderGeom:public Geom
 {
 public:
@@ -29,6 +32,7 @@ private:
     double m_length = 0;
 };
 
+}
 
 #endif
 

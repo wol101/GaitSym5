@@ -17,6 +17,9 @@
 #include <vector>
 #include <memory>
 
+namespace GaitSym
+{
+
 class ParseXML : NamedObject
 {
 public:
@@ -48,5 +51,7 @@ private:
     std::vector<char> m_inputConfigData;
     std::vector<std::unique_ptr<XMLElement>> m_elementList;
 };
+
+}
 
 #endif // PARSEXML_H

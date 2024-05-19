@@ -11,6 +11,9 @@
 
 #include "Controller.h"
 
+namespace GaitSym
+{
+
 class Muscle;
 
 class PIDMuscleLengthController : public Controller
@@ -42,5 +45,7 @@ private:
     double m_dt = 0;
     double m_current_length = 0;
 };
+
+}
 
 #endif // PIDMUSCLELENGTH_H

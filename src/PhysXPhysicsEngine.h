@@ -5,6 +5,9 @@
 
 #include "PxPhysicsAPI.h"
 
+namespace GaitSym
+{
+
 class ContactReportCallback: public physx::PxSimulationEventCallback
 {
 public:
@@ -83,5 +86,7 @@ public:
     std::map<std::string, physx::PxRigidDynamic*> m_bodyMap;
     std::map<std::string, physx::PxJoint*> m_jointMap;
 };
+
+}
 
 #endif // PhysXPhysicsEngine_H

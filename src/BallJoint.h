@@ -14,6 +14,9 @@
 #include "PGDMath.h"
 // #include "SmartEnum.h"
 
+namespace GaitSym
+{
+
 class Marker;
 
 class BallJoint: public Joint
@@ -51,6 +54,6 @@ private:
     pgd::Vector3 m_anchor;
 };
 
-
+}
 
 #endif

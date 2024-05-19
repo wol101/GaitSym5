@@ -12,6 +12,9 @@
 
 #include "Geom.h"
 
+namespace GaitSym
+{
+
 // The plane equation is:
 // a * x + b * y + c * z = d
 // The plane's normal vector is (a, b, c), and it must have length 1.
@@ -36,5 +39,6 @@ private:
     double m_d = 0;
 };
 
+}
 
 #endif

@@ -13,7 +13,8 @@
 #include "DataTarget.h"
 #include "PGDMath.h"
 
-#include <iostream>
+namespace GaitSym
+{
 
 class DataTargetVector : public DataTarget
 {
@@ -37,5 +38,7 @@ private:
     std::vector<pgd::Vector3> m_VValueList;
 
 };
+
+}
 
 #endif // DATATARGETVECTOR_H

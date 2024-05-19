@@ -12,6 +12,9 @@
 
 #include "Strap.h"
 
+namespace GaitSym
+{
+
 class Body;
 class Marker;
 
@@ -50,5 +53,6 @@ private:
     Marker *m_insertionMarker = nullptr;
 };
 
+}
 
 #endif

@@ -19,6 +19,9 @@
 
 using namespace std::string_literals;
 
+namespace GaitSym
+{
+
 class Global: public NamedObject
 {
 public:
@@ -129,5 +132,7 @@ private:
     double m_NumericalErrorsScore = 0;
     std::vector<std::string> m_MeshSearchPath = {"."s};
 };
+
+}
 
 #endif // GLOBAL_H

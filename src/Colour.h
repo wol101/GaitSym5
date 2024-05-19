@@ -14,6 +14,9 @@
 
 #include <string>
 
+namespace GaitSym
+{
+
 class Colour
 {
 public:
@@ -78,5 +81,6 @@ private:
     float m_alpha = {1};
 };
 
+}
 
 #endif // COLOUR_H

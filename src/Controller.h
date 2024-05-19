@@ -13,6 +13,9 @@
 #include "Drivable.h"
 #include "Driver.h"
 
+namespace GaitSym
+{
+
 class Controller : public Driver, public Drivable
 {
 public:
@@ -24,5 +27,7 @@ public:
     virtual void appendToAttributes();
 
 };
+
+}
 
 #endif // CONTROLLER_H

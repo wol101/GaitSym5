@@ -12,6 +12,9 @@
 
 #include "Geom.h"
 
+namespace GaitSym
+{
+
 class ConvexGeom: public Geom
 {
 public:
@@ -38,5 +41,7 @@ private:
     std::vector<unsigned int> m_polygons;
     int m_indexStart = 0; // allows both 1 indexed and 0 indexed triangle to make pasting in OBJ data easier
 };
+
+}
 
 #endif // CONVEXGEOM_H

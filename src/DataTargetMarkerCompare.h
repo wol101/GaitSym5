@@ -13,6 +13,9 @@
 #include "DataTarget.h"
 #include "SmartEnum.h"
 
+namespace GaitSym
+{
+
 class Marker;
 
 class DataTargetMarkerCompare : public DataTarget
@@ -37,5 +40,7 @@ private:
     std::vector<double> m_ValueList;
     double m_errorScore = 0;
 };
+
+}
 
 #endif // DATATARGETMARKERCOMPARE_H

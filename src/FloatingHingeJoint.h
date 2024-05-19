@@ -12,6 +12,9 @@
 
 #include "Joint.h"
 
+namespace GaitSym
+{
+
 class FloatingHingeJoint: public Joint
 {
 public:
@@ -32,6 +35,6 @@ private:
     pgd::Vector2 m_stops = {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
 };
 
-
+}
 
 #endif

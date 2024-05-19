@@ -16,6 +16,9 @@
 
 #include <vector>
 
+namespace GaitSym
+{
+
 class MovingAverage : public Filter
 {
 public:
@@ -38,5 +41,7 @@ private:
     double m_sum = 0;
     double m_average = 0;
 };
+
+}
 
 #endif // MOVINGAVERAGE_H

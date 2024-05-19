@@ -19,6 +19,9 @@
 
 #include "Muscle.h"
 
+namespace GaitSym
+{
+
 class Strap;
 
 class MAMuscle : public Muscle
@@ -72,11 +75,6 @@ private:
 
 };
 
-
-
-
-
-
-
+}
 
 #endif // MAMuscle_h

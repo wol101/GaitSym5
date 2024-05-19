@@ -10,9 +10,11 @@
 #ifndef DRIVABLE_H
 #define DRIVABLE_H
 
-#include <vector>
 #include <cstdint>
 #include <climits>
+
+namespace GaitSym
+{
 
 class Driver;
 class NamedObject;
@@ -33,5 +35,7 @@ private:
     double m_dataSum = 0;
     int64_t m_receiveDataStepCount = INT_MIN;
 };
+
+}
 
 #endif // DRIVABLE_H

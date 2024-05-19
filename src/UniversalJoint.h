@@ -12,6 +12,9 @@
 
 #include "Joint.h"
 
+namespace GaitSym
+{
+
 class Marker;
 
 class UniversalJoint: public Joint
@@ -74,6 +77,6 @@ private:
 
 };
 
-
+}
 
 #endif

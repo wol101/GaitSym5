@@ -16,6 +16,9 @@
 #include <string>
 #include <set>
 
+namespace GaitSym
+{
+
 class NamedObject;
 
 class DataTargetScalar: public DataTarget
@@ -53,5 +56,7 @@ private:
     std::vector<double> m_ValueList;
     double m_errorScore = 0;
 };
+
+}
 
 #endif // DATATARGETSCALAR_H

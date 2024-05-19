@@ -13,6 +13,9 @@
 #include "Reporter.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class Muscle;
 class Joint;
 class Body;
@@ -45,5 +48,7 @@ private:
 
 
 };
+
+}
 
 #endif // TORQUEREPORTER_H

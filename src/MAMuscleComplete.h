@@ -22,10 +22,12 @@
 #include "Muscle.h"
 #include "SmartEnum.h"
 
+namespace GaitSym
+{
+
 class Strap;
 class MAMuscle;
 class DampedSpringMuscle;
-class SimpleStrap;
 class Filter;
 
 class MAMuscleComplete : public Muscle
@@ -113,9 +115,6 @@ public:
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
-
-
-
     double forcePerUnitArea() const;
     void setForcePerUnitArea(double forcePerUnitArea);
 
@@ -202,9 +201,6 @@ private:
     double m_startActivation = 0;
 };
 
-
-
-
-
+}
 
 #endif // MAMuscleComplete_h

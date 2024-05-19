@@ -16,6 +16,9 @@
 
 #include <vector>
 
+namespace GaitSym
+{
+
 class Marker;
 
 class FluidSac : public NamedObject
@@ -73,5 +76,7 @@ private:
     // double m_lastTime = 0;
     double m_dotSacVolume = 0;
 };
+
+}
 
 #endif // FluidSac_H

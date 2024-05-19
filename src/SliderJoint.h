@@ -12,6 +12,9 @@
 
 #include "Joint.h"
 
+namespace GaitSym
+{
+
 class SliderJoint: public Joint
 {
 public:
@@ -44,5 +47,7 @@ private:
     double m_stopDamp = 0;
     double m_stopBounce = 0;
 };
+
+}
 
 #endif // SLIDERJOINT_H

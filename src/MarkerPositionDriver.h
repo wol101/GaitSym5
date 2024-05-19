@@ -14,6 +14,9 @@
 
 #include "Driver.h"
 
+namespace GaitSym
+{
+
 class Marker;
 
 class MarkerPositionDriver: public Driver
@@ -38,5 +41,7 @@ private:
 
     size_t m_index = 0;
 };
+
+}
 
 #endif

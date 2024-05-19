@@ -15,6 +15,9 @@
 #include <vector>
 #include "Driver.h"
 
+namespace GaitSym
+{
+
 class StackedBoxcarDriver : public Driver
 {
 public:
@@ -44,6 +47,8 @@ private:
     std::vector<double> m_Heights;
     size_t m_StackSize = 0;
 };
+
+}
 
 #endif // STACKEDBOXCARDRIVER_H
 

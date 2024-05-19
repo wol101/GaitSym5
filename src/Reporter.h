@@ -12,6 +12,9 @@
 
 #include "NamedObject.h"
 
+namespace GaitSym
+{
+
 class SimulationWindow;
 
 class Reporter : public NamedObject
@@ -22,5 +25,7 @@ public:
     virtual bool ShouldAbort() { return false; }
 
 };
+
+}
 
 #endif // REPORTER_H

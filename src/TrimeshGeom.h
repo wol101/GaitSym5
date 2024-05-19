@@ -12,6 +12,9 @@
 
 #include "Geom.h"
 
+namespace GaitSym
+{
+
 class TrimeshGeom : public Geom
 {
 public:
@@ -23,6 +26,8 @@ public:
 private:
     std::vector<double> m_vertexList;
 };
+
+}
 
 #endif // TRIMESHGEOM_H
 

@@ -16,6 +16,9 @@
 #include <memory>
 #include <map>
 
+namespace GaitSym
+{
+
 class Marker;
 class HingeJoint;
 class Strap;
@@ -103,5 +106,7 @@ private:
     static pgd::Vector3 GetEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations);
 
 };
+
+}
 
 #endif // TWOHINGEJOINTDRIVER_H

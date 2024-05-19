@@ -14,6 +14,9 @@
 
 #include "Driver.h"
 
+namespace GaitSym
+{
+
 class StepDriver: public Driver
 {
 public:
@@ -37,6 +40,8 @@ private:
     std::vector<double> m_changeTimes;
     size_t m_index = 0;
 };
+
+}
 
 #endif
 

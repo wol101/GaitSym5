@@ -12,6 +12,9 @@
 
 #include "Geom.h"
 
+namespace GaitSym
+{
+
 class BoxGeom : public Geom
 {
 public:
@@ -29,5 +32,6 @@ private:
     double m_lz = 0;
 };
 
+}
 
 #endif // BOXGEOM_H

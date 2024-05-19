@@ -14,6 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
+namespace GaitSym
+{
+
 class ArgParse
 {
 public:
@@ -93,5 +96,7 @@ private:
     size_t m_maxNumEndArguments = 0;
     std::string m_lastError;
 };
+
+}
 
 #endif // ARGPARSE_H

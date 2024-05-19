@@ -16,6 +16,9 @@
 #include "PGDMath.h"
 #include "SmartEnum.h"
 
+namespace GaitSym
+{
+
 class Body: public NamedObject
 {
 public:
@@ -184,5 +187,7 @@ private:
     double m_mass = 0;
     pgd::Matrix3x3 m_inertia;
 };
+
+
 
 #endif

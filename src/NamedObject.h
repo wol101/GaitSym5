@@ -19,6 +19,9 @@
 #include <vector>
 #include <initializer_list>
 
+namespace GaitSym
+{
+
 class Simulation;
 
 namespace rapidxml { template<class Ch> class xml_node; }
@@ -146,5 +149,7 @@ private:
 
     void *m_data = nullptr;
 };
+
+}
 
 #endif

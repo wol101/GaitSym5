@@ -8,6 +8,9 @@
 
 #include <vector>
 
+namespace GaitSym
+{
+
 class ODEPhysicsEngine : public PhysicsEngine
 {
 public:
@@ -52,5 +55,7 @@ private:
     std::vector<std::unique_ptr<dJointFeedback>> m_contactFeedbackList;
 
 };
+
+}
 
 #endif // ODEPHYSICSENGINE_H

@@ -13,6 +13,9 @@
 #include "NamedObject.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class Body;
 
 class Contact: public NamedObject
@@ -44,6 +47,7 @@ private:
     pgd::Vector3 m_torque;
 };
 
+}
 
 #endif
 

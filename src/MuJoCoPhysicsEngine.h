@@ -8,6 +8,9 @@
 #include <memory>
 #include <set>
 
+namespace GaitSym
+{
+
 class Body;
 class Joint;
 class Geom;
@@ -67,5 +70,7 @@ private:
 
     int m_freeJointCount = 0;
 };
+
+}
 
 #endif // MuJoCoPhysicsEngine_H

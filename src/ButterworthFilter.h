@@ -14,6 +14,9 @@
 
 #include "Filter.h"
 
+namespace GaitSym
+{
+
 class ButterworthFilter : public Filter
 {
 public:
@@ -45,5 +48,7 @@ private:
     double m_ynminus1;
     double m_ynminus2;
 };
+
+}
 
 #endif // BUTTERWORTHFILTER_H

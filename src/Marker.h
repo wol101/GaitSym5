@@ -14,6 +14,9 @@
 #include "PGDMath.h"
 #include "SmartEnum.h"
 
+namespace GaitSym
+{
+
 class Body;
 
 class Marker: public NamedObject
@@ -81,5 +84,6 @@ private:
     pgd::Quaternion m_quaternion = {1, 0, 0, 0}; // this is the orientation with respect to m_body (which can be World)
 };
 
+}
 
 #endif

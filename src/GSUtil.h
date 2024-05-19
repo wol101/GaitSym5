@@ -42,6 +42,9 @@
 #define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
 #define UNUSED(x) ((void)(x))
 
+namespace GaitSym
+{
+
 class GSUtil {
 public:
 
@@ -606,6 +609,8 @@ template<typename T> std::string GSUtil::ToString(const std::vector<T> &vector) 
     }
     if (!output.empty()) { output.pop_back(); }
     return output;
+}
+
 }
 
 #endif                   // GSUTIL_H__

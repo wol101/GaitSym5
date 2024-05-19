@@ -13,8 +13,10 @@
 #define DataFile_h
 
 #include <stddef.h>
-#include <stdint.h>
 #include <string>
+
+namespace GaitSym
+{
 
 class DataFile
 {
@@ -152,6 +154,7 @@ private:
 #endif
 };
 
+}
 
 #endif
 

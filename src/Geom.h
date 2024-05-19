@@ -18,6 +18,9 @@
 
 #include <vector>
 
+namespace GaitSym
+{
+
 class Contact;
 class SimulationWindow;
 class Marker;
@@ -114,5 +117,6 @@ private:
     double m_DampingConstant = 0;
 };
 
+}
 
 #endif

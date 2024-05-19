@@ -12,6 +12,9 @@
 
 #include "Geom.h"
 
+namespace GaitSym
+{
+
 class SphereGeom: public Geom
 {
 public:
@@ -28,6 +31,7 @@ private:
     double m_radius = 0;
 };
 
+}
 
 #endif
 

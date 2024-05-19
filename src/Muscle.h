@@ -17,6 +17,9 @@
 
 #include <string>
 
+namespace GaitSym
+{
+
 class Muscle: public Drivable, public NamedObject
 {
 public:
@@ -58,6 +61,8 @@ private:
     Strap *m_Strap = nullptr;
     enum StrapColourControl m_strapColourControl = fixedColour;
 };
+
+}
 
 #endif
 

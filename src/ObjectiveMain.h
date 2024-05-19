@@ -8,6 +8,9 @@
 #include <vector>
 #include <memory>
 
+namespace GaitSym
+{
+
 class Simulation;
 
 class ObjectiveMain
@@ -37,5 +40,7 @@ private:
     ArgParse m_argparse;
     bool m_debug = false;
 };
+
+}
 
 #endif // OBJECTIVEMAIN_H

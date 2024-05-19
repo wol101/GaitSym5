@@ -13,6 +13,9 @@
 #include "DataTarget.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class DataTargetQuaternion : public DataTarget
 {
 public:
@@ -35,5 +38,7 @@ private:
     std::vector<pgd::Quaternion> m_QValueList;
 
 };
+
+}
 
 #endif // DATATARGETQUATERNION_H

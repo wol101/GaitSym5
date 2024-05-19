@@ -15,6 +15,9 @@
 #include "Marker.h"
 #include "ButterworthFilter.h"
 
+namespace GaitSym
+{
+
 class Body;
 class Geom;
 
@@ -83,5 +86,7 @@ private:
     double m_delPhi = 0;
     int m_valueChangeDirection = 0;
 };
+
+}
 
 #endif // MARKERELLIPSEDRIVER_H

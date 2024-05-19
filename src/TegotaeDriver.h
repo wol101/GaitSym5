@@ -14,6 +14,9 @@
 #include "PGDMath.h"
 #include "Marker.h"
 
+namespace GaitSym
+{
+
 class Body;
 class Geom;
 
@@ -99,5 +102,7 @@ private:
     bool m_allow_negative_phi_dot = false;
 
 };
+
+}
 
 #endif // TEGOTAEDRIVER_H

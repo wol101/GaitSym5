@@ -13,6 +13,9 @@
 #include "NamedObject.h"
 #include "SmartEnum.h"
 
+namespace GaitSym
+{
+
 class Body;
 class SimulationWindow;
 
@@ -52,6 +55,8 @@ private:
     double m_lastValue = 0;
     double m_abortBonus = 0;
 };
+
+}
 
 #endif
 

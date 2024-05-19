@@ -14,6 +14,9 @@
 #include "Simulation.h"
 #include <vector>
 
+namespace GaitSym
+{
+
 class Body;
 class Marker;
 
@@ -73,6 +76,8 @@ private:
     std::vector<Marker *> m_torqueMarkerList;
 
 };
+
+}
 
 #endif
 

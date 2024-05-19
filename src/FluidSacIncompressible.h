@@ -12,6 +12,9 @@
 
 #include "FluidSac.h"
 
+namespace GaitSym
+{
+
 class FluidSacIncompressible : public FluidSac
 {
 public:
@@ -40,5 +43,7 @@ private:
     double m_bulkModulus = {0};
     double m_bulkModulusDamping = {0};
 };
+
+}
 
 #endif // FLUIDSACINCOMPRESSIBLE_H

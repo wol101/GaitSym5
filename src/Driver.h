@@ -16,6 +16,9 @@
 #include <map>
 #include <string>
 
+namespace GaitSym
+{
+
 class Drivable;
 
 class Driver : public NamedObject
@@ -62,5 +65,7 @@ private:
     int64_t m_lastStepCount = -1;
     double m_value = 0;
 };
+
+}
 
 #endif

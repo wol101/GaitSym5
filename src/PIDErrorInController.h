@@ -12,7 +12,8 @@
 
 #include "Controller.h"
 
-#include <cfloat>
+namespace GaitSym
+{
 
 class PIDErrorInController : public Controller
 {
@@ -40,5 +41,7 @@ private:
     double m_output = 0;
     double m_dt = 0;
 };
+
+}
 
 #endif // PIDCONTROLLER_H

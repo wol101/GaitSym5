@@ -14,6 +14,9 @@
 
 #include "Driver.h"
 
+namespace GaitSym
+{
+
 class CyclicDriver: public Driver
 {
 public:
@@ -41,5 +44,7 @@ private:
     double m_PhaseDelay = 0;
     size_t m_index = 0;
 };
+
+}
 
 #endif

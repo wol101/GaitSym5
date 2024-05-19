@@ -12,6 +12,9 @@
 
 #include "FluidSac.h"
 
+namespace GaitSym
+{
+
 class FluidSacIdealGas : public FluidSac
 {
 public:
@@ -41,5 +44,7 @@ private:
     double m_temperature = { 273.15 + 20 }; // 20 degrees C in Kelvin (NTP)
     double m_externalPressure = { 101.325e3 }; // NTP value
 };
+
+}
 
 #endif // FLUIDSACIDEALGAS_H

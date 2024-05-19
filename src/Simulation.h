@@ -23,6 +23,9 @@
 #include <vector>
 #include <set>
 
+namespace GaitSym
+{
+
 class Body;
 class Joint;
 class Geom;
@@ -210,6 +213,6 @@ private:
     std::unique_ptr<PhysicsEngine> m_physicsEngine;
 };
 
-
+}
 
 #endif //SIMULATION_H

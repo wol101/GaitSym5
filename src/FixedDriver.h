@@ -14,6 +14,9 @@
 
 #include "Driver.h"
 
+namespace GaitSym
+{
+
 class FixedDriver : public Driver
 {
 public:
@@ -29,5 +32,7 @@ public:
 
 private:
 };
+
+}
 
 #endif // FIXEDDRIVER_H

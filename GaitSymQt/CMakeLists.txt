@@ -1315,7 +1315,6 @@ set(PROJECT_SOURCES
     ../src/MarkerEllipseDriver.h
     ../src/MarkerPositionDriver.h
     ../src/MovingAverage.h
-    ../src/MPIStuff.h
     ../src/Muscle.h
     ../src/MuJoCoPhysicsEngine.h
     ../src/NamedObject.h
@@ -1330,7 +1329,6 @@ set(PROJECT_SOURCES
     ../src/PIDMuscleLengthController.h
     ../src/PlaneGeom.h
     ../src/Reporter.h
-    ../src/SimpleStrap.h
     ../src/Simulation.h
     ../src/SliderJoint.h
     ../src/SmartEnum.h

@@ -16,6 +16,9 @@
 
 #include <memory>
 
+namespace GaitSym
+{
+
 class ButterworthFilter;
 class MovingAverage;
 class Filter;
@@ -147,6 +150,7 @@ private:
     double m_highRange = 0;
 };
 
+}
 
 #endif
 

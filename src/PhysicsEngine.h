@@ -3,6 +3,9 @@
 
 #include "NamedObject.h"
 
+namespace GaitSym
+{
+
 class Simulation;
 
 class PhysicsEngine : public NamedObject
@@ -24,5 +27,7 @@ public:
 private:
     Simulation *m_simulation = nullptr;
 };
+
+}
 
 #endif // PHYSICSENGINE_H

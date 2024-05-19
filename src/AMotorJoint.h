@@ -13,6 +13,9 @@
 #include "Joint.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class AMotorJoint: public Joint
 {
 public:
@@ -72,5 +75,6 @@ private:
     bool m_dynamicFrictionFlag = false;
 };
 
+}
 
 #endif // AMOTORJOINT_H

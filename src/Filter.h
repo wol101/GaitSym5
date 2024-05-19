@@ -12,6 +12,8 @@
 #ifndef FILTER_H
 #define FILTER_H
 
+namespace GaitSym
+{
 
 class Filter
 {
@@ -29,5 +31,7 @@ public:
 private:
     double m_xn;
 };
+
+}
 
 #endif // FILTER_H

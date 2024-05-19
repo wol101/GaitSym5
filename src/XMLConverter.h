@@ -13,6 +13,9 @@
 #include <vector>
 #include <string>
 
+namespace GaitSym
+{
+
 class Genome;
 class DataFile;
 class ExpressionParser;
@@ -43,5 +46,6 @@ private:
     pkpy::VM *m_pythonVM = nullptr;
 };
 
+}
 
 #endif

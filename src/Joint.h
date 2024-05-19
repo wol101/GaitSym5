@@ -15,6 +15,9 @@
 #include "NamedObject.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class Body;
 class SimulationWindow;
 class Marker;
@@ -71,5 +74,7 @@ private:
     pgd::Vector3 m_force;
     pgd::Vector3 m_torque;
 };
+
+}
 
 #endif

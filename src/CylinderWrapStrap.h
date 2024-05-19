@@ -13,6 +13,9 @@
 #include "Strap.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class Marker;
 
 class CylinderWrapStrap: public Strap
@@ -81,6 +84,8 @@ private:
     Marker *m_cylinderMarker = nullptr;
 
 };
+
+}
 
 #endif
 

@@ -5,10 +5,13 @@
 
 class Marker;
 
-class LightBase : public NamedObject
+namespace GaitSym
+{
+
+class Light : public NamedObject
 {
 public:
-    LightBase();
+    Light();
 
     virtual std::string *createFromAttributes();
     virtual void saveToAttributes();
@@ -21,19 +24,19 @@ private:
     float m_intensity = 0; // candela for three.js light models [Luminous intensity (candela) = Luminous flux (lumen) / Solid angle (steradian)]
 };
 
-class LightAmbient : public LightBase
+class AmbientLight : public Light
 {
 public:
-    LightAmbient();
+    AmbientLight();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 };
 
-class LightDirectional : public LightBase
+class DirectionalLight : public Light
 {
 public:
-    LightDirectional();
+    DirectionalLight();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -77,10 +80,10 @@ private:
     float m_minDistanceMultiplier = 10000.0f; // means that with a distance of 100, shadows are created from 0.01 to 100
 };
 
-class LightSpot : public LightBase
+class SpotLight : public Light
 {
 public:
-    LightSpot();
+    SpotLight();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -124,10 +127,10 @@ private:
     float m_minDistanceMultiplier = 10000.0f; // means that with a distance of 100, shadows are created from 0.01 to 100
 };
 
-class LightPoint : public LightBase
+class PointLight : public Light
 {
 public:
-    LightPoint();
+    PointLight();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -159,6 +162,7 @@ private:
     float m_minDistanceMultiplier = 10000.0f; // means that with a distance of 100, shadows are created from 0.01 to 100
 };
 
+}
 
 #endif // LIGHTBASE_H
 

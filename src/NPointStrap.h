@@ -13,6 +13,9 @@
 #include "Strap.h"
 #include "PGDMath.h"
 
+namespace GaitSym
+{
+
 class Body;
 class Marker;
 
@@ -63,5 +66,6 @@ private:
     std::vector<Marker *> m_ViaPointMarkerList;
 };
 
+}
 
 #endif

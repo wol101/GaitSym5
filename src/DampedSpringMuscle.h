@@ -14,6 +14,9 @@
 
 #include "Muscle.h"
 
+namespace GaitSym
+{
+
 class Strap;
 
 class DampedSpringMuscle : public Muscle
@@ -55,11 +58,6 @@ private:
     double m_Activation = 0;
 };
 
-
-
-
-
-
-
+}
 
 #endif

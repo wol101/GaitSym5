@@ -6,11 +6,11 @@
 
 using namespace std::string_literals;
 
-LightBase::LightBase()
+Light::Light()
 {
 }
 
-std::string *LightBase::createFromAttributes()
+std::string *Light::createFromAttributes()
 {
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
@@ -19,53 +19,53 @@ std::string *LightBase::createFromAttributes()
     return nullptr;
 }
 
-void LightBase::saveToAttributes()
+void Light::saveToAttributes()
 {
     this->setTag("LIGHT"s);
     this->clearAttributeMap();
     this->appendToAttributes();
 }
 
-void LightBase::appendToAttributes()
+void Light::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     setAttribute("Intensity"s, GSUtil::ToString(m_intensity));
 }
 
-float LightBase::intensity() const
+float Light::intensity() const
 {
     return m_intensity;
 }
 
-void LightBase::setIntensity(float newIntensity)
+void Light::setIntensity(float newIntensity)
 {
     m_intensity = newIntensity;
 }
 
-LightAmbient::LightAmbient()
+AmbientLight::AmbientLight()
 {
 }
 
-std::string *LightAmbient::createFromAttributes()
+std::string *AmbientLight::createFromAttributes()
 {
-    if (LightBase::createFromAttributes()) return lastErrorPtr();
+    if (Light::createFromAttributes()) return lastErrorPtr();
     return nullptr;
 }
 
-void LightAmbient::appendToAttributes()
+void AmbientLight::appendToAttributes()
 {
-    LightBase::appendToAttributes();
+    Light::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Ambient"s);
 }
 
-LightDirectional::LightDirectional()
+DirectionalLight::DirectionalLight()
 {
 }
 
-std::string *LightDirectional::createFromAttributes()
+std::string *DirectionalLight::createFromAttributes()
 {
-    if (LightBase::createFromAttributes()) return lastErrorPtr();
+    if (Light::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
     m_castShadow = GSUtil::Bool(buf);
@@ -115,9 +115,9 @@ std::string *LightDirectional::createFromAttributes()
     return nullptr;
 }
 
-void LightDirectional::appendToAttributes()
+void DirectionalLight::appendToAttributes()
 {
-    LightBase::appendToAttributes();
+    Light::appendToAttributes();
     setAttribute("Type"s, "Directional"s);
     setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
     setAttribute("Distance"s, GSUtil::ToString(m_distance));
@@ -129,98 +129,98 @@ void LightDirectional::appendToAttributes()
     setAttribute("Height"s, GSUtil::ToString(m_height));
 }
 
-bool LightDirectional::castShadow() const
+bool DirectionalLight::castShadow() const
 {
     return m_castShadow;
 }
 
-void LightDirectional::setCastShadow(bool newCastShadow)
+void DirectionalLight::setCastShadow(bool newCastShadow)
 {
     m_castShadow = newCastShadow;
 }
 
-size_t LightDirectional::mapWidth() const
+size_t DirectionalLight::mapWidth() const
 {
     return m_mapWidth;
 }
 
-void LightDirectional::setMapWidth(size_t newMapWidth)
+void DirectionalLight::setMapWidth(size_t newMapWidth)
 {
     m_mapWidth = newMapWidth;
 }
 
-size_t LightDirectional::mapHeight() const
+size_t DirectionalLight::mapHeight() const
 {
     return m_mapHeight;
 }
 
-void LightDirectional::setMapHeight(size_t newMapHeight)
+void DirectionalLight::setMapHeight(size_t newMapHeight)
 {
     m_mapHeight = newMapHeight;
 }
 
-float LightDirectional::width() const
+float DirectionalLight::width() const
 {
     return m_width;
 }
 
-void LightDirectional::setWidth(float newWidth)
+void DirectionalLight::setWidth(float newWidth)
 {
     m_width = newWidth;
 }
 
-float LightDirectional::height() const
+float DirectionalLight::height() const
 {
     return m_height;
 }
 
-void LightDirectional::setHeight(float newHeight)
+void DirectionalLight::setHeight(float newHeight)
 {
     m_height = newHeight;
 }
 
-float LightDirectional::distance() const
+float DirectionalLight::distance() const
 {
     return m_distance;
 }
 
-void LightDirectional::setDistance(float newDistance)
+void DirectionalLight::setDistance(float newDistance)
 {
     m_distance = newDistance;
 }
 
-Marker *LightDirectional::positionMarker() const
+Marker *DirectionalLight::positionMarker() const
 {
     return m_positionMarker;
 }
 
-void LightDirectional::setPositionMarker(Marker *newPositionMarker)
+void DirectionalLight::setPositionMarker(Marker *newPositionMarker)
 {
     m_positionMarker = newPositionMarker;
 }
 
-Marker *LightDirectional::targetMarker() const
+Marker *DirectionalLight::targetMarker() const
 {
     return m_targetMarker;
 }
 
-void LightDirectional::setTargetMarker(Marker *newTargetMarker)
+void DirectionalLight::setTargetMarker(Marker *newTargetMarker)
 {
     m_targetMarker = newTargetMarker;
 }
 
-float LightDirectional::minDistanceMultiplier() const
+float DirectionalLight::minDistanceMultiplier() const
 {
     return m_minDistanceMultiplier;
 }
 
-LightSpot::LightSpot()
+SpotLight::SpotLight()
 {
 }
 
-std::string *LightSpot::createFromAttributes()
+std::string *SpotLight::createFromAttributes()
 {
-    if (LightBase::createFromAttributes()) return lastErrorPtr();
+    if (Light::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
     m_castShadow = GSUtil::Bool(buf);
@@ -271,9 +271,9 @@ std::string *LightSpot::createFromAttributes()
     return nullptr;
 }
 
-void LightSpot::appendToAttributes()
+void SpotLight::appendToAttributes()
 {
-    LightBase::appendToAttributes();
+    Light::appendToAttributes();
     setAttribute("Type"s, "Spot"s);
     setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
     setAttribute("Distance"s, GSUtil::ToString(m_distance));
@@ -285,98 +285,98 @@ void LightSpot::appendToAttributes()
     setAttribute("Penumbra"s, GSUtil::ToString(m_penumbra));
 }
 
-bool LightSpot::castShadow() const
+bool SpotLight::castShadow() const
 {
     return m_castShadow;
 }
 
-void LightSpot::setCastShadow(bool newCastShadow)
+void SpotLight::setCastShadow(bool newCastShadow)
 {
     m_castShadow = newCastShadow;
 }
 
-size_t LightSpot::mapWidth() const
+size_t SpotLight::mapWidth() const
 {
     return m_mapWidth;
 }
 
-void LightSpot::setMapWidth(size_t newMapWidth)
+void SpotLight::setMapWidth(size_t newMapWidth)
 {
     m_mapWidth = newMapWidth;
 }
 
-size_t LightSpot::mapHeight() const
+size_t SpotLight::mapHeight() const
 {
     return m_mapHeight;
 }
 
-void LightSpot::setMapHeight(size_t newMapHeight)
+void SpotLight::setMapHeight(size_t newMapHeight)
 {
     m_mapHeight = newMapHeight;
 }
 
-float LightSpot::distance() const
+float SpotLight::distance() const
 {
     return m_distance;
 }
 
-void LightSpot::setDistance(float newDistance)
+void SpotLight::setDistance(float newDistance)
 {
     m_distance = newDistance;
 }
 
-float LightSpot::angle() const
+float SpotLight::angle() const
 {
     return m_angle;
 }
 
-void LightSpot::setAngle(float newAngle)
+void SpotLight::setAngle(float newAngle)
 {
     m_angle = newAngle;
 }
 
-float LightSpot::penumbra() const
+float SpotLight::penumbra() const
 {
     return m_penumbra;
 }
 
-void LightSpot::setPenumbra(float newPenumbra)
+void SpotLight::setPenumbra(float newPenumbra)
 {
     m_penumbra = newPenumbra;
 }
 
-Marker *LightSpot::positionMarker() const
+Marker *SpotLight::positionMarker() const
 {
     return m_positionMarker;
 }
 
-void LightSpot::setPositionMarker(Marker *newPositionMarker)
+void SpotLight::setPositionMarker(Marker *newPositionMarker)
 {
     m_positionMarker = newPositionMarker;
 }
 
-Marker *LightSpot::targetMarker() const
+Marker *SpotLight::targetMarker() const
 {
     return m_targetMarker;
 }
 
-void LightSpot::setTargetMarker(Marker *newTargetMarker)
+void SpotLight::setTargetMarker(Marker *newTargetMarker)
 {
     m_targetMarker = newTargetMarker;
 }
 
-float LightSpot::minDistanceMultiplier() const
+float SpotLight::minDistanceMultiplier() const
 {
     return m_minDistanceMultiplier;
 }
 
-LightPoint::LightPoint()
+PointLight::PointLight()
 {
 }
 
-std::string *LightPoint::createFromAttributes()
+std::string *PointLight::createFromAttributes()
 {
-    if (LightBase::createFromAttributes()) return lastErrorPtr();
+    if (Light::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
     m_castShadow = GSUtil::Bool(buf);
@@ -414,9 +414,9 @@ std::string *LightPoint::createFromAttributes()
     return nullptr;
 }
 
-void LightPoint::appendToAttributes()
+void PointLight::appendToAttributes()
 {
-    LightBase::appendToAttributes();
+    Light::appendToAttributes();
     setAttribute("Type"s, "Point"s);
     setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
     setAttribute("Distance"s, GSUtil::ToString(m_distance));
@@ -425,57 +425,57 @@ void LightPoint::appendToAttributes()
     setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
 }
 
-bool LightPoint::castShadow() const
+bool PointLight::castShadow() const
 {
     return m_castShadow;
 }
 
-void LightPoint::setCastShadow(bool newCastShadow)
+void PointLight::setCastShadow(bool newCastShadow)
 {
     m_castShadow = newCastShadow;
 }
 
-size_t LightPoint::mapWidth() const
+size_t PointLight::mapWidth() const
 {
     return m_mapWidth;
 }
 
-void LightPoint::setMapWidth(size_t newMapWidth)
+void PointLight::setMapWidth(size_t newMapWidth)
 {
     m_mapWidth = newMapWidth;
 }
 
-size_t LightPoint::mapHeight() const
+size_t PointLight::mapHeight() const
 {
     return m_mapHeight;
 }
 
-void LightPoint::setMapHeight(size_t newMapHeight)
+void PointLight::setMapHeight(size_t newMapHeight)
 {
     m_mapHeight = newMapHeight;
 }
 
-float LightPoint::distance() const
+float PointLight::distance() const
 {
     return m_distance;
 }
 
-void LightPoint::setDistance(float newDistance)
+void PointLight::setDistance(float newDistance)
 {
     m_distance = newDistance;
 }
 
-Marker *LightPoint::positionMarker() const
+Marker *PointLight::positionMarker() const
 {
     return m_positionMarker;
 }
 
-void LightPoint::setPositionMarker(Marker *newPositionMarker)
+void PointLight::setPositionMarker(Marker *newPositionMarker)
 {
     m_positionMarker = newPositionMarker;
 }
 
-float LightPoint::minDistanceMultiplier() const
+float PointLight::minDistanceMultiplier() const
 {
     return m_minDistanceMultiplier;
 }
