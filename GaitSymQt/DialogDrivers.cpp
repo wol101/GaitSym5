@@ -28,7 +28,7 @@ DialogDrivers::DialogDrivers(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Driver Builder"));
+    setWindowTitle(tr("Driver Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -259,11 +259,11 @@ void DialogDrivers::lateInitialise()
         auto nameSet = m_simulation->GetNameSet();
         ui->lineEditDriverID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("GaitSym::Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("GaitSym::Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditDriverID->setText(initialName);

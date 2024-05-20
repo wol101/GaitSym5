@@ -560,12 +560,12 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 
     while (m_simulation && m_mainWindow->mode() == MainWindow::constructionMode) // use while to prevent nesting of if else statements
     {
-        menu.addAction(tr("Create GaitSym::Marker..."));
+        menu.addAction(tr("Create Marker..."));
         menu.addSeparator();
         if (auto body = dynamic_cast<DrawBody *>(drawable))
         {
-            menu.addAction(tr("Edit GaitSym::Body..."));
-            menu.addAction(tr("Delete GaitSym::Body..."));
+            menu.addAction(tr("Edit Body..."));
+            menu.addAction(tr("Delete Body..."));
             break;
         }
 //        if (auto fluisac = dynamic_cast<DrawFluidSac *>(drawable))
@@ -577,28 +577,28 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 
         if (auto geom = dynamic_cast<DrawGeom *>(drawable))
         {
-            menu.addAction(tr("Edit GaitSym::Geom..."));
-            menu.addAction(tr("Delete GaitSym::Geom..."));
+            menu.addAction(tr("Edit Geom..."));
+            menu.addAction(tr("Delete Geom..."));
             break;
         }
 
         if (auto joint = dynamic_cast<DrawJoint *>(drawable))
         {
-            menu.addAction(tr("Edit GaitSym::Joint..."));
-            menu.addAction(tr("Delete GaitSym::Joint..."));
+            menu.addAction(tr("Edit Joint..."));
+            menu.addAction(tr("Delete Joint..."));
             break;
         }
         if (auto marker = dynamic_cast<DrawMarker *>(drawable))
         {
-            menu.addAction(tr("Edit GaitSym::Marker..."));
-            menu.addAction(tr("Delete GaitSym::Marker..."));
-            menu.addAction(tr("Move GaitSym::Marker"));
+            menu.addAction(tr("Edit Marker..."));
+            menu.addAction(tr("Delete Marker..."));
+            menu.addAction(tr("Move Marker"));
             break;
         }
         if (auto muscle = dynamic_cast<DrawMuscle *>(drawable))
         {
-            menu.addAction(tr("Edit GaitSym::Muscle..."));
-            menu.addAction(tr("Delete GaitSym::Muscle..."));
+            menu.addAction(tr("Edit Muscle..."));
+            menu.addAction(tr("Delete Muscle..."));
             break;
         }
         break;
@@ -622,31 +622,31 @@ void SimulationWidget::menuRequest(const QPoint &pos)
             update();
             break;
         }
-        if (action->text() == tr("Create GaitSym::Marker..."))
+        if (action->text() == tr("Create Marker..."))
         {
             emit EmitCreateMarkerRequest();
             break;
         }
-        if (action->text() == tr("Edit GaitSym::Marker..."))
+        if (action->text() == tr("Edit Marker..."))
         {
             emit EmitEditMarkerRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Edit GaitSym::Body..."))
+        if (action->text() == tr("Edit Body..."))
         {
             emit EmitEditBodyRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Edit GaitSym::Geom..."))
+        if (action->text() == tr("Edit Geom..."))
         {
             emit EmitEditGeomRequest(QString::fromStdString(name));
         }
-        if (action->text() == tr("Edit GaitSym::Joint..."))
+        if (action->text() == tr("Edit Joint..."))
         {
             emit EmitEditJointRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Edit GaitSym::Muscle..."))
+        if (action->text() == tr("Edit Muscle..."))
         {
             emit EmitEditMuscleRequest(QString::fromStdString(name));
             break;
@@ -656,26 +656,26 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 //            emit EmitEditFluidSacRequest(QString::fromStdString(name)));
 //            break;
 //        }
-        if (action->text() == tr("Delete GaitSym::Marker..."))
+        if (action->text() == tr("Delete Marker..."))
         {
             emit EmitDeleteMarkerRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Delete GaitSym::Body..."))
+        if (action->text() == tr("Delete Body..."))
         {
             emit EmitDeleteBodyRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Delete GaitSym::Geom..."))
+        if (action->text() == tr("Delete Geom..."))
         {
             emit EmitDeleteGeomRequest(QString::fromStdString(name));
         }
-        if (action->text() == tr("Delete GaitSym::Joint..."))
+        if (action->text() == tr("Delete Joint..."))
         {
             emit EmitDeleteJointRequest(QString::fromStdString(name));
             break;
         }
-        if (action->text() == tr("Delete GaitSym::Muscle..."))
+        if (action->text() == tr("Delete Muscle..."))
         {
             emit EmitDeleteMuscleRequest(QString::fromStdString(name));
             break;
@@ -685,7 +685,7 @@ void SimulationWidget::menuRequest(const QPoint &pos)
 //            emit EmitDeleteFluidSacRequest(QString::fromStdString(name));
 //            break;
 //        }
-        if (action->text() == tr("Move GaitSym::Marker"))
+        if (action->text() == tr("Move Marker"))
         {
             m_moveMarkerMode = true;
             m_moveMarkerName = name;
@@ -1049,7 +1049,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     usdStream <<
     "}\n";
 
-    DataFile file;
+    GaitSym::DataFile file;
     file.SetRawData(usdStream.str().data(), usdStream.str().size());
     if (file.WriteFile(pathname.toStdString()))
     {
@@ -1285,14 +1285,14 @@ void SimulationWidget::SetupLights()
             threepp::Color colour(baseLight.second->colour1().r(), baseLight.second->colour1().g(), baseLight.second->colour1().b());
             float intensity = baseLight.second->intensity();
             std::string name = baseLight.second->name();
-            if (LightAmbient *ambient = dynamic_cast<LightAmbient *>(baseLight.second.get()))
+            if (GaitSym::AmbientLight *ambient = dynamic_cast<GaitSym::AmbientLight *>(baseLight.second.get()))
             {
                 auto light = threepp::AmbientLight::create(colour, intensity);
                 light->name = name;
                 m_lightGroup->add(light);
                 break;
             }
-            if (LightDirectional *directional = dynamic_cast<LightDirectional *>(baseLight.second.get()))
+            if (GaitSym::DirectionalLight *directional = dynamic_cast<GaitSym::DirectionalLight *>(baseLight.second.get()))
             {
                 pgd::Vector3 p = directional->positionMarker()->GetWorldPosition();
                 pgd::Vector3 t = directional->targetMarker()->GetWorldPosition();
@@ -1318,7 +1318,7 @@ void SimulationWidget::SetupLights()
                 m_lightGroup->add(targetObj);
                 break;
             }
-            if (LightSpot *spot = dynamic_cast<LightSpot *>(baseLight.second.get()))
+            if (GaitSym::SpotLight *spot = dynamic_cast<GaitSym::SpotLight *>(baseLight.second.get()))
             {
                 pgd::Vector3 p = spot->positionMarker()->GetWorldPosition();
                 pgd::Vector3 t = spot->targetMarker()->GetWorldPosition();
@@ -1340,7 +1340,7 @@ void SimulationWidget::SetupLights()
                 m_lightGroup->add(targetObj);
                 break;
             }
-            if (LightPoint *point = dynamic_cast<LightPoint *>(baseLight.second.get()))
+            if (GaitSym::PointLight *point = dynamic_cast<GaitSym::PointLight *>(baseLight.second.get()))
             {
                 pgd::Vector3 p = point->positionMarker()->GetWorldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);

@@ -14,6 +14,7 @@
 
 #include "Global.h"
 #include "Contact.h"
+#include "LightBase.h"
 #include "ParseXML.h"
 #include "SmartEnum.h"
 
@@ -43,7 +44,7 @@ class SimulationWindow;
 class MainWindow;
 class Drivable;
 class PhysicsEngine;
-class LightBase;
+class Light;
 
 class Simulation : NamedObject
 {
@@ -79,7 +80,7 @@ public:
     Marker *GetMarker(const std::string &name);
     Reporter *GetReporter(const std::string &name);
     Controller *GetController(const std::string &name);
-    LightBase *GetLight(const std::string &name);
+    Light *GetLight(const std::string &name);
     bool GetOutputModelStateOccured() { return m_OutputModelStateOccured; }
 
     void SetTimeLimit(double timeLimit) { m_global->setTimeLimit(timeLimit); }
@@ -101,7 +102,7 @@ public:
     std::map<std::string, std::unique_ptr<Marker>> *GetMarkerList() { return &m_MarkerList; }
     std::map<std::string, std::unique_ptr<Reporter>> *GetReporterList() { return &m_ReporterList; }
     std::map<std::string, std::unique_ptr<Controller>> *GetControllerList() { return &m_ControllerList; }
-    std::map<std::string, std::unique_ptr<LightBase>> *GetlightList() { return &m_LightList; }
+    std::map<std::string, std::unique_ptr<Light>> *GetlightList() { return &m_LightList; }
     std::vector<std::unique_ptr<Contact>> *GetContactList() { return &m_ContactList; }
 
     std::vector<std::string> GetNameList() const;
@@ -161,7 +162,7 @@ private:
     std::map<std::string, std::unique_ptr<Marker>> m_MarkerList;
     std::map<std::string, std::unique_ptr<Reporter>> m_ReporterList;
     std::map<std::string, std::unique_ptr<Controller>> m_ControllerList;
-    std::map<std::string, std::unique_ptr<LightBase>> m_LightList;
+    std::map<std::string, std::unique_ptr<Light>> m_LightList;
 
     // this is a list of contacts that are active at the current time step
     std::vector<std::unique_ptr<Contact>> m_ContactList;

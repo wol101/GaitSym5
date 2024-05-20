@@ -363,7 +363,7 @@ void MainWindow::processOneThing()
         if (m_simulation->ShouldQuit())
         {
             log(QString::fromStdString(capturedCerr.str()));
-            setStatusString(tr("GaitSym::Simulation ended normally"), 1);
+            setStatusString(tr("Simulation ended normally"), 1);
             log(QString("Fitness = %1\n").arg(m_simulation->CalculateInstantaneousFitness(), 0, 'f', 5));
             log(QString("Time = %1\n").arg(m_simulation->GetTime(), 0, 'f', 5));
             log(QString("Metabolic Energy = %1\n").arg(m_simulation->GetMetabolicEnergy(), 0, 'f', 5));
@@ -378,7 +378,7 @@ void MainWindow::processOneThing()
         if (m_simulation->TestForCatastrophy())
         {
             log(QString::fromStdString(capturedCerr.str()));
-            setStatusString(tr("GaitSym::Simulation aborted"), 1);
+            setStatusString(tr("Simulation aborted"), 1);
             ui->textEditLog->append(QString("Fitness = %1\n").arg(m_simulation->CalculateInstantaneousFitness(), 0, 'f', 5));
             m_simulationWidget->update();
             QString time = QString("%1").arg(m_simulation->GetTime(), 0, 'f', 5);
@@ -654,7 +654,7 @@ void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
         setStatusString(QString("Error: unable to achieve requested size: width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 0);
         return;
     }
-    setStatusString(QString("GaitSym::Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 1);
+    setStatusString(QString("Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 1);
 }
 
 SimulationWidget *MainWindow::simulationWidget() const
@@ -775,14 +775,14 @@ void MainWindow::deleteExistingBody(const QString &name, bool force)
     GaitSym::Body *body = m_simulation->GetBody(name.toStdString());
     if (!body)
     {
-        QMessageBox::warning(this, tr("Delete GaitSym::Body %1").arg(name), tr("GaitSym::Body cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete Body %1").arg(name), tr("Body cannot be found. Aborting delete."));
         return;
     }
 
     // get a list of dependencies
     std::string dependencyMessage;
-    std::vector<NamedObject *> dependencyList;
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> dependencyList;
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(body))
@@ -795,7 +795,7 @@ void MainWindow::deleteExistingBody(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Body %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete Body %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -819,13 +819,13 @@ void MainWindow::deleteExistingMarker(const QString &name, bool force)
     GaitSym::Marker *marker = m_simulation->GetMarker(name.toStdString());
     if (!marker)
     {
-        QMessageBox::warning(this, tr("Delete GaitSym::Marker %1").arg(name), tr("GaitSym::Marker cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete Marker %1").arg(name), tr("Marker cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
     std::string dependencyMessage;
-    std::vector<NamedObject *> dependencyList;
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> dependencyList;
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(marker))
@@ -838,7 +838,7 @@ void MainWindow::deleteExistingMarker(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Marker %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete Marker %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -865,13 +865,13 @@ void MainWindow::deleteExistingJoint(const QString &name, bool force)
     GaitSym::Joint *joint = m_simulation->GetJoint(name.toStdString());
     if (!joint)
     {
-        QMessageBox::warning(this, tr("Delete GaitSym::Joint %1").arg(name), tr("GaitSym::Joint cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete Joint %1").arg(name), tr("Joint cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
     std::string dependencyMessage;
-    std::vector<NamedObject *> dependencyList;
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> dependencyList;
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(joint))
@@ -884,7 +884,7 @@ void MainWindow::deleteExistingJoint(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Joint %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete Joint %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -910,13 +910,13 @@ void MainWindow::deleteExistingMuscle(const QString &name, bool force)
     GaitSym::Muscle *muscle = m_simulation->GetMuscle(name.toStdString());
     if (!muscle)
     {
-        QMessageBox::warning(this, tr("Delete GaitSym::Muscle %1").arg(name), tr("GaitSym::Muscle cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete Muscle %1").arg(name), tr("Muscle cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
     std::string dependencyMessage;
-    std::vector<NamedObject *> dependencyList;
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> dependencyList;
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(muscle))
@@ -929,7 +929,7 @@ void MainWindow::deleteExistingMuscle(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Muscle %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete Muscle %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -956,13 +956,13 @@ void MainWindow::deleteExistingDriver(const QString &name, bool force)
     GaitSym::Driver *driver = m_simulation->GetDriver(name.toStdString());
     if (!driver)
     {
-        QMessageBox::warning(this, tr("Delete GaitSym::Driver %1").arg(name), tr("GaitSym::Driver cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete Driver %1").arg(name), tr("Driver cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
     std::string dependencyMessage;
-    std::vector<NamedObject *> dependencyList;
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> dependencyList;
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(driver))
@@ -975,7 +975,7 @@ void MainWindow::deleteExistingDriver(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Driver %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete Driver %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -1000,13 +1000,13 @@ void MainWindow::deleteExistingGeom(const QString &name, bool force)
     GaitSym::Geom *geom = m_simulation->GetGeom(name.toStdString());
     if (!geom)
     {
-        QMessageBox::warning(this, tr("Delete GaitSym::Geom %1").arg(name), tr("GaitSym::Geom cannot be found. Aborting delete."));
+        QMessageBox::warning(this, tr("Delete Geom %1").arg(name), tr("Geom cannot be found. Aborting delete."));
         return;
     }
     // get a list of dependencies
     std::string dependencyMessage;
-    std::vector<NamedObject *> dependencyList;
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> dependencyList;
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(geom))
@@ -1019,7 +1019,7 @@ void MainWindow::deleteExistingGeom(const QString &name, bool force)
     if (dependencyMessage.size()) message += "The following dependencies will be deleted:\n" + QString::fromStdString(dependencyMessage) + QString("\n");
     message += "This action cannot be undone.\nAre you sure you want to continue?";
     int ret = QMessageBox::Ok;
-    if (!force) ret = QMessageBox::warning(this, tr("Delete GaitSym::Geom %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (!force) ret = QMessageBox::warning(this, tr("Delete Geom %1").arg(name), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
     if (ret == QMessageBox::Ok)
     {
         // first delete dependencies
@@ -1154,7 +1154,7 @@ void MainWindow::moveExistingMarker(const QString &s, const QVector3D &p)
     if (markerIt == m_simulation->GetMarkerList()->end()) return;
     markerIt->second->SetWorldPosition(double(p.x()), double(p.y()), double(p.z()));
     markerIt->second->setRedraw(true);
-    std::vector<NamedObject *> objectList = m_simulation->GetObjectList();
+    std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
     {
         if (it->isUpstreamObject(markerIt->second.get()))
@@ -1163,7 +1163,7 @@ void MainWindow::moveExistingMarker(const QString &s, const QVector3D &p)
             it->createFromAttributes();
             it->setRedraw(true);
             // everything needs a redraw but some things also need extra work
-            if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+            if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
         }
     }
     setWindowModified(true);
@@ -1244,7 +1244,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     }
     else
     {
-        DataFile file;
+        GaitSym::DataFile file;
         int err;
         err = file.ReadFile(canonicalFilePath.toStdString());
         if (err)
@@ -1505,19 +1505,19 @@ void MainWindow::run()
     if (this->ui->actionRun->isChecked())
     {
         if (this->m_simulation) this->m_timer->start();
-        this->setStatusString(tr("GaitSym::Simulation running"), 1);
+        this->setStatusString(tr("Simulation running"), 1);
     }
     else
     {
         this->m_timer->stop();
-        this->setStatusString(tr("GaitSym::Simulation stopped"), 1);
+        this->setStatusString(tr("Simulation stopped"), 1);
     }
 }
 void MainWindow::step()
 {
     this->m_stepFlag = true;
     if (this->m_simulation) this->m_timer->start();
-    this->setStatusString(tr("GaitSym::Simulation stepped"), 2);
+    this->setStatusString(tr("Simulation stepped"), 2);
 }
 
 void MainWindow::snapshot()
@@ -2071,12 +2071,12 @@ void MainWindow::menuCreateEditJoint(GaitSym::Joint *joint)
             // the only thing that currently depends on joints is the ThreeJointDriver
             for (auto &&driverIt : *this->m_simulation->GetDriverList())
             {
-                if (ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt.second.get())) threeHingeJointDriver->saveToAttributes();
+                if (GaitSym::ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<GaitSym::ThreeHingeJointDriver *>(driverIt.second.get())) threeHingeJointDriver->saveToAttributes();
             }
             (*this->m_simulation->GetJointList())[replacementJointName] = std::move(replacementJoint);
             for (auto driverIt = this->m_simulation->GetDriverList()->begin(); driverIt != this->m_simulation->GetDriverList()->end(); /* no increment */)
             {
-                if (ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<ThreeHingeJointDriver *>(driverIt->second.get()))
+                if (GaitSym::ThreeHingeJointDriver *threeHingeJointDriver = dynamic_cast<GaitSym::ThreeHingeJointDriver *>(driverIt->second.get()))
                 {
                     std::string *lastError = threeHingeJointDriver->createFromAttributes();
                     if (lastError)
@@ -2091,7 +2091,7 @@ void MainWindow::menuCreateEditJoint(GaitSym::Joint *joint)
                 }
                 else { driverIt++; }
             }
-            this->setStatusString(QString("GaitSym::Joint edited: %1").arg(QString::fromStdString(replacementJointName)), 1);
+            this->setStatusString(QString("Joint edited: %1").arg(QString::fromStdString(replacementJointName)), 1);
         }
         this->setWindowModified(true);
         this->updateEnable();
@@ -2099,7 +2099,7 @@ void MainWindow::menuCreateEditJoint(GaitSym::Joint *joint)
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Joint creation cancelled"), 2);
+        this->setStatusString(tr("Joint creation cancelled"), 2);
     }
 }
 
@@ -2146,7 +2146,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
             }
             else
             {
-                this->setStatusString(QString("Unable to create: %1. GaitSym::Marker already exists.").arg(QString::fromStdString(cmMarkerName)), 1);
+                this->setStatusString(QString("Unable to create: %1. Marker already exists.").arg(QString::fromStdString(cmMarkerName)), 1);
             }
             // insert the new body
             this->ui->treeWidgetElements->insertBody(QString().fromStdString(newBodyName), newBody->visible(), newBody->dump());
@@ -2156,7 +2156,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
         }
         else // this is an edit so things may have moved and we need to deal with that
         {
-            this->setStatusString(QString("GaitSym::Body edited: %1").arg(QString::fromStdString(body->name())), 1);
+            this->setStatusString(QString("Body edited: %1").arg(QString::fromStdString(body->name())), 1);
             pgd::Vector3 deltaPosition = pgd::Vector3(body->GetConstructionPosition()) - originalContructionPosition;
             if (Preferences::valueBool("DialogBodyBuilderMoveMarkers", false) == false) // need to compensate the move in construction position
             {
@@ -2175,8 +2175,8 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
             }
             else
             {
-                if (cmMarker) this->setStatusString(QString("Unable to move: %1. GaitSym::Marker attached to a different body.").arg(QString::fromStdString(cmMarkerName)), 0);
-                else this->setStatusString(QString("Unable to move: %1. GaitSym::Marker does not exists.").arg(QString::fromStdString(cmMarkerName)), 0);
+                if (cmMarker) this->setStatusString(QString("Unable to move: %1. Marker attached to a different body.").arg(QString::fromStdString(cmMarkerName)), 0);
+                else this->setStatusString(QString("Unable to move: %1. Marker does not exists.").arg(QString::fromStdString(cmMarkerName)), 0);
             }
             //            // completely reloading everything will work but is rather slow
             //            QByteArray xmlData = QByteArray::fromStdString(this->m_simulation->SaveToXML());
@@ -2185,7 +2185,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
             //            enterConstructionMode();
 
             body->setRedraw(true);
-            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            std::vector<GaitSym::NamedObject *> objectList = this->m_simulation->GetObjectList();
             for (auto &&it : objectList)
             {
 
@@ -2195,7 +2195,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
                     it->createFromAttributes();
                     it->setRedraw(true);
                     // everything needs a redraw but somethings also need extra work
-                    if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
                 }
             }
         }
@@ -2205,7 +2205,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Body creation cancelled"), 2);
+        this->setStatusString(tr("Body creation cancelled"), 2);
     }
 }
 
@@ -2223,7 +2223,7 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
     dialogMarkers.setInputMarker(marker);
     dialogMarkers.setSimulation(this->m_simulation);
     dialogMarkers.lateInitialise();
-    if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit GaitSym::Marker..."))
+    if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit Marker..."))
     {
         if (this->m_simulationWidget->getClosestHit())
         {
@@ -2245,7 +2245,7 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
         else // editing a marker so need to cope with dependencies
         {
             marker->setRedraw(true);
-            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            std::vector<GaitSym::NamedObject *> objectList = this->m_simulation->GetObjectList();
             for (auto &&it : objectList)
             {
                 if (it->isUpstreamObject(marker))
@@ -2254,10 +2254,10 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
                     it->createFromAttributes();
                     it->setRedraw(true);
                     // everything needs a redraw but somethings also need extra work
-                    if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
                 }
             }
-            this->setStatusString(QString("GaitSym::Marker edited: %1").arg(QString::fromStdString(marker->name())), 1);
+            this->setStatusString(QString("Marker edited: %1").arg(QString::fromStdString(marker->name())), 1);
         }
 
         this->setWindowModified(true);
@@ -2266,7 +2266,7 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Marker creation cancelled"), 2);
+        this->setStatusString(tr("Marker creation cancelled"), 2);
     }
 }
 
@@ -2288,7 +2288,7 @@ void MainWindow::menuCreateEditMuscle(GaitSym::Muscle *muscle)
     {
         if (!muscle) // creating a new muscle
         {
-            std::unique_ptr<Strap> newStrap = dialogMuscles.outputStrap();
+            std::unique_ptr<GaitSym::Strap> newStrap = dialogMuscles.outputStrap();
             std::string newStrapName = newStrap->name();
             (*this->m_simulation->GetStrapList())[newStrapName] = std::move(newStrap);
             std::unique_ptr<GaitSym::Muscle> newMuscle = dialogMuscles.outputMuscle();
@@ -2300,7 +2300,7 @@ void MainWindow::menuCreateEditMuscle(GaitSym::Muscle *muscle)
         }
         else // replacing an existing muscle
         {
-            std::unique_ptr<Strap> replacementStrap = dialogMuscles.outputStrap();
+            std::unique_ptr<GaitSym::Strap> replacementStrap = dialogMuscles.outputStrap();
             std::string replacementStrapName = replacementStrap->name();
             (*this->m_simulation->GetStrapList())[replacementStrapName] = std::move(replacementStrap);
             std::unique_ptr<GaitSym::Muscle> replacementMuscle = dialogMuscles.outputMuscle();
@@ -2308,7 +2308,7 @@ void MainWindow::menuCreateEditMuscle(GaitSym::Muscle *muscle)
             std::string replacementMuscleName = replacementMuscle->name();
             //            this->ui->treeWidgetElements->insertMuscle(QString().fromStdString(replacementMuscleName), replacementMuscle->visible(), replacementMuscle->dump());
             (*this->m_simulation->GetMuscleList())[replacementMuscleName] = std::move(replacementMuscle);
-            this->setStatusString(QString("GaitSym::Muscle edited: %1").arg(QString::fromStdString(replacementMuscleName)), 1);
+            this->setStatusString(QString("Muscle edited: %1").arg(QString::fromStdString(replacementMuscleName)), 1);
         }
 
         this->setWindowModified(true);
@@ -2325,7 +2325,7 @@ void MainWindow::menuCreateEditMuscle(GaitSym::Muscle *muscle)
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Muscle creation cancelled"), 2);
+        this->setStatusString(tr("Muscle creation cancelled"), 2);
     }
 }
 
@@ -2359,7 +2359,7 @@ void MainWindow::menuCreateEditGeom(GaitSym::Geom *geom)
             std::string replacementGeomName = replacementGeom->name();
             (*this->m_simulation->GetGeomList())[replacementGeomName] = std::move(replacementGeom);
             // handle dependencies
-            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            std::vector<GaitSym::NamedObject *> objectList = this->m_simulation->GetObjectList();
             for (auto &&it : objectList)
             {
                 if (it->isUpstreamObject(geom))  // have to look for the old object because that's what needs to be replaced
@@ -2368,11 +2368,11 @@ void MainWindow::menuCreateEditGeom(GaitSym::Geom *geom)
                     it->createFromAttributes();
                     it->setRedraw(true);
                     // everything needs a redraw but somethings also need extra work
-                    if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
                 }
             }
 
-            this->setStatusString(QString("GaitSym::Geom edited: %1").arg(QString::fromStdString(replacementGeomName)), 1);
+            this->setStatusString(QString("Geom edited: %1").arg(QString::fromStdString(replacementGeomName)), 1);
         }
         this->setWindowModified(true);
         this->updateEnable();
@@ -2380,7 +2380,7 @@ void MainWindow::menuCreateEditGeom(GaitSym::Geom *geom)
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Geom creation cancelled"), 2);
+        this->setStatusString(tr("Geom creation cancelled"), 2);
     }
 }
 
@@ -2395,10 +2395,10 @@ void MainWindow::menuCreateEditDriver(GaitSym::Driver *driver)
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuCreateDriver", "this->m_simulation undefined");
     Q_ASSERT_X(this->m_simulation->GetBodyList()->size(), "MainWindow::menuCreateEditMarker", "No bodies defined");
-    if (dynamic_cast<TegotaeDriver *>(driver) || dynamic_cast<ThreeHingeJointDriver *>(driver) || dynamic_cast<TwoHingeJointDriver *>(driver)
-        || dynamic_cast<MarkerPositionDriver *>(driver) || dynamic_cast<MarkerEllipseDriver *>(driver))
+    if (dynamic_cast<GaitSym::TegotaeDriver *>(driver) || dynamic_cast<GaitSym::ThreeHingeJointDriver *>(driver) || dynamic_cast<GaitSym::TwoHingeJointDriver *>(driver)
+        || dynamic_cast<GaitSym::MarkerPositionDriver *>(driver) || dynamic_cast<GaitSym::MarkerEllipseDriver *>(driver))
     {
-        QMessageBox::warning(this, "GUI Based Editing Not Implemented", QString("GaitSym::Driver %1 could not be edited").arg(QString::fromStdString(driver->name())));
+        QMessageBox::warning(this, "GUI Based Editing Not Implemented", QString("Driver %1 could not be edited").arg(QString::fromStdString(driver->name())));
         return;
     }
     DialogDrivers dialogDrivers(this);
@@ -2421,7 +2421,7 @@ void MainWindow::menuCreateEditDriver(GaitSym::Driver *driver)
             std::unique_ptr<GaitSym::Driver> replacementDriver = dialogDrivers.outputDriver();
             std::string replacementDriverName = replacementDriver->name();
             (*this->m_simulation->GetDriverList())[replacementDriverName] = std::move(replacementDriver);
-            this->setStatusString(QString("GaitSym::Driver edited: %1").arg(QString::fromStdString(replacementDriverName)), 1);
+            this->setStatusString(QString("Driver edited: %1").arg(QString::fromStdString(replacementDriverName)), 1);
         }
         this->setWindowModified(true);
         this->updateEnable();
@@ -2429,7 +2429,7 @@ void MainWindow::menuCreateEditDriver(GaitSym::Driver *driver)
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Driver creation cancelled"), 2);
+        this->setStatusString(tr("Driver creation cancelled"), 2);
     }
 }
 
@@ -2447,7 +2447,7 @@ void MainWindow::menuEditGlobal()
     {
         this->m_simulation->SetGlobal(dialogGlobal.outputGlobal());
         this->m_simulation->GetGlobal()->setSimulation(this->m_simulation);
-        this->setStatusString(tr("GaitSym::Global values edited"), 1);
+        this->setStatusString(tr("Global values edited"), 1);
         this->setWindowModified(true);
         this->updateEnable();
         this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetGlobal()->TimeLimit());
@@ -2457,7 +2457,7 @@ void MainWindow::menuEditGlobal()
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Global values unchanged"), 2);
+        this->setStatusString(tr("Global values unchanged"), 2);
     }
 }
 
@@ -2573,7 +2573,7 @@ void MainWindow::menuExportMarkers()
         }
         else
         {
-            std::vector<NamedObject *> objectList = this->m_simulation->GetObjectList();
+            std::vector<GaitSym::NamedObject *> objectList = this->m_simulation->GetObjectList();
             for (size_t i =0; i < markerList.size(); i++)
             {
                 std::unique_ptr<GaitSym::Marker> marker = std::move(markerList[i]);
@@ -2591,7 +2591,7 @@ void MainWindow::menuExportMarkers()
                             it->createFromAttributes();
                             it->setRedraw(true);
                             // everything needs a redraw but somethings also need extra work
-                            if (dynamic_cast<Strap *>(it)) dynamic_cast<Strap *>(it)->Calculate();
+                            if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
                         }
                     }
                 }
@@ -2605,7 +2605,7 @@ void MainWindow::menuExportMarkers()
     }
     else
     {
-        this->setStatusString(tr("GaitSym::Marker import/export cancelled."), 2);
+        this->setStatusString(tr("Marker import/export cancelled."), 2);
     }
 }
 
@@ -2770,7 +2770,7 @@ void MainWindow::elementInfo(const QString &elementType, const QString &elementN
     DialogInfo *dialog = new DialogInfo(this);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true); // needed so I can display this modelessly
     dialog->useXMLSyntaxHighlighter();
-    NamedObject *element = this->m_simulation->GetNamedObject(elementName.toStdString());
+    GaitSym::NamedObject *element = this->m_simulation->GetNamedObject(elementName.toStdString());
     if (!element) return;
     element->saveToAttributes();
     std::vector<std::string> lines;

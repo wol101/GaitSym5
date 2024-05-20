@@ -577,8 +577,8 @@ void TextEditDialog::attributeMachineApplyRowCreate(const std::string &matchTag,
     std::smatch match;
     bool tokenNumberDefined = std::regex_search(tokenNumber, match, regularExpression);
     size_t tokenNumberValue = size_t(std::atoi(tokenNumber.c_str()));
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> newElements;
-    std::vector<std::unique_ptr<ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> newElements;
+    std::vector<std::unique_ptr<GaitSym::ParseXML::XMLElement>> *elementList = m_parseXML.elementList();
     for (auto &&tagElementIt : *elementList)
     {
         if (attributeMachineMatch(tagElementIt->tag, matchTag))
@@ -588,7 +588,7 @@ void TextEditDialog::attributeMachineApplyRowCreate(const std::string &matchTag,
             {
                 if (attributeMachineMatch(matchAttributeIt.first, matchAttribute) && attributeMachineMatch(matchAttributeIt.second, matchAttributeValue))
                 {
-                    std::unique_ptr<ParseXML::XMLElement> newElement = std::make_unique<ParseXML::XMLElement>();
+                    std::unique_ptr<GaitSym::ParseXML::XMLElement> newElement = std::make_unique<GaitSym::ParseXML::XMLElement>();
                     newElement->tag = tagElementIt->tag;
                     newElement->attributes = tagElementIt->attributes;
                     for (auto &&changeAttributeIt : newElement->attributes)

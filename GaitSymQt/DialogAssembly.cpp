@@ -111,7 +111,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
         std::unique_ptr<LMotorJoint> lMotorJoint = std::make_unique<LMotorJoint>(m_simulation->GetWorldID());
         LMotorJoint *lMotorJointPtr = lMotorJoint.get();
         lMotorJoint->setSimulation(m_simulation);
-        lMotorJoint->setName("World"s + body->name()+ "GaitSym::Joint"s + m_assemblyLinearMotorSuffix);
+        lMotorJoint->setName("World"s + body->name()+ "Joint"s + m_assemblyLinearMotorSuffix);
         lMotorJoint->setGroup("assembly"s);
         lMotorJoint->setBody1Marker(worldMarkerPtr);
         lMotorJoint->setBody2Marker(bodyMarkerPtr);
@@ -135,7 +135,7 @@ void DialogAssembly::accept() // this catches OK and return/enter
         std::unique_ptr<AMotorJoint> aMotorJoint = std::make_unique<AMotorJoint>(m_simulation->GetWorldID());
         AMotorJoint *aMotorJointPtr = aMotorJoint.get();
         aMotorJoint->setSimulation(m_simulation);
-        aMotorJoint->setName("World"s + body->name() + "GaitSym::Joint"s + m_assemblyAngularMotorSuffix);
+        aMotorJoint->setName("World"s + body->name() + "Joint"s + m_assemblyAngularMotorSuffix);
         aMotorJoint->setGroup("assembly"s);
         aMotorJoint->setBody1Marker(worldMarkerPtr);
         aMotorJoint->setBody2Marker(bodyMarkerPtr);
@@ -305,7 +305,7 @@ void DialogAssembly::initialise()
     for (auto &&iter : assemblyJoints)
     {
         AMotorJoint *aMotorJoint = dynamic_cast<AMotorJoint *>(iter.second);
-        if (aMotorJoint && aMotorJoint->name() == "World"s + bodyName + "GaitSym::Joint"s + m_assemblyAngularMotorSuffix)
+        if (aMotorJoint && aMotorJoint->name() == "World"s + bodyName + "Joint"s + m_assemblyAngularMotorSuffix)
         {
             if (aMotorJoint->targetAnglesList().size() == 3)
             {

@@ -23,7 +23,7 @@ DialogMarkers::DialogMarkers(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Marker Builder"));
+    setWindowTitle(tr("Marker Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -202,11 +202,11 @@ void DialogMarkers::lateInitialise()
         auto nameSet = simulation()->GetNameSet();
         ui->lineEditMarkerID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("GaitSym::Marker%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("Marker%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("GaitSym::Marker%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("Marker%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 9999) break; // only do this for the first 9999 markers
         }
         ui->lineEditMarkerID->setText(initialName);

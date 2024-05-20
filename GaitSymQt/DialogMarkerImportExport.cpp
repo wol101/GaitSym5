@@ -22,7 +22,7 @@ DialogMarkerImportExport::DialogMarkerImportExport(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Marker Import/Export"));
+    setWindowTitle(tr("Marker Import/Export"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) |
                    Qt::Window); // allows the window to be resized on macs
@@ -218,7 +218,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s};
+            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -241,7 +241,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "RX"s, "RY"s, "RZ"s};
+            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "RX"s, "RY"s, "RZ"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -271,7 +271,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "R"s, "AX"s, "AY"s, "AZ"s};
+            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R"s, "AX"s, "AY"s, "AZ"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -302,7 +302,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "QN"s, "QX"s, "QY"s, "QZ"s};
+            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "QN"s, "QX"s, "QY"s, "QZ"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -330,7 +330,7 @@ int DialogMarkerImportExport::ExportMarkers()
     {
         if (ui->checkBoxHeaderRow->isChecked())
         {
-            std::vector<std::string> header = {"Name"s, "GaitSym::Body"s, "X"s, "Y"s, "Z"s, "R1C1"s, "R1C2"s, "R1C3"s, "R2C1"s, "R2C2"s, "R2C3"s, "R3C1"s, "R3C2"s, "R3C3"s};
+            std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R1C1"s, "R1C2"s, "R1C3"s, "R2C1"s, "R2C2"s, "R2C3"s, "R3C1"s, "R3C2"s, "R3C3"s};
             lines.push_back(pystring::join(separator, header));
         }
         for (auto &&markerIt : *m_simulation->GetMarkerList())
@@ -361,12 +361,12 @@ int DialogMarkerImportExport::ExportMarkers()
     if (dataFile.WriteFile(fileName.toStdString()))
     {
         ui->plainTextEditLog->appendPlainText(QString("Error writing '%1'.\n").arg(fileName));
-        QMessageBox::information(this, "GaitSym::Marker Export Errors", QString("Error writing '%1'.\n").arg(fileName), QMessageBox::Ok);
+        QMessageBox::information(this, "Marker Export Errors", QString("Error writing '%1'.\n").arg(fileName), QMessageBox::Ok);
         return __LINE__;
     }
 
     ui->plainTextEditLog->appendPlainText(QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName));
-    QMessageBox::information(this, "GaitSym::Marker Export Results", QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName), QMessageBox::Ok);
+    QMessageBox::information(this, "Marker Export Results", QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName), QMessageBox::Ok);
     return 0;
 }
 
@@ -380,7 +380,7 @@ int DialogMarkerImportExport::ImportMarkers()
     {
         errorCount++;
         ui->plainTextEditLog->appendPlainText(QString("Error: Could not read '%1'. No markers imported.\n").arg(fileName));
-        QMessageBox::warning(this, "GaitSym::Marker Import Error", QString("Could not read '%1'\nNo markers imported.").arg(fileName), QMessageBox::Ok);
+        QMessageBox::warning(this, "Marker Import Error", QString("Could not read '%1'\nNo markers imported.").arg(fileName), QMessageBox::Ok);
         return __LINE__;
     }
 
@@ -428,7 +428,7 @@ int DialogMarkerImportExport::ImportMarkers()
             if (!body && ui->checkBoxIgnoreMissingBodies->isChecked() == false)
             {
                 errorCount++;
-                ui->plainTextEditLog->appendPlainText(QString("Error: '%1' GaitSym::Body '%2' does not exist.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
+                ui->plainTextEditLog->appendPlainText(QString("Error: '%1' Body '%2' does not exist.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
                 continue;
             }
         }
@@ -475,7 +475,7 @@ int DialogMarkerImportExport::ImportMarkers()
                     values[9], values[10], values[11]));
             marker->SetWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
         }
-        ui->plainTextEditLog->appendPlainText(QString("GaitSym::Marker '%1' attached to '%2' created.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
+        ui->plainTextEditLog->appendPlainText(QString("Marker '%1' attached to '%2' created.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
         marker->saveToAttributes();
         marker->createFromAttributes();
         m_markerList->push_back(std::move(marker));
@@ -483,12 +483,12 @@ int DialogMarkerImportExport::ImportMarkers()
     if (errorCount == 0)
     {
         ui->plainTextEditLog->appendPlainText(QString("%1 markers created. No errors detected.\n").arg(m_markerList->size()));
-        QMessageBox::information(this, "GaitSym::Marker Import Results", QString("%1 markers created. No errors detected.").arg(m_markerList->size()), QMessageBox::Ok);
+        QMessageBox::information(this, "Marker Import Results", QString("%1 markers created. No errors detected.").arg(m_markerList->size()), QMessageBox::Ok);
     }
     else
     {
         ui->plainTextEditLog->appendPlainText(QString("%1 markers created. %2 errors detected.\n").arg(m_markerList->size()).arg(errorCount));
-        QMessageBox::information(this, "GaitSym::Marker Import Results", QString("%1 markers created. %2 errors detected.").arg(m_markerList->size()).arg(errorCount), QMessageBox::Ok);
+        QMessageBox::information(this, "Marker Import Results", QString("%1 markers created. %2 errors detected.").arg(m_markerList->size()).arg(errorCount), QMessageBox::Ok);
     }
     return 0;
 }

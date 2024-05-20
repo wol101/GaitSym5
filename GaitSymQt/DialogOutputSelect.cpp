@@ -77,7 +77,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetBody, 1, m_columns);
-        label = new QLabel("GaitSym::Body List", this);
+        label = new QLabel("Body List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetBody, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestBody(QPoint)));
@@ -98,7 +98,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetMarker, 1, m_columns);
-        label = new QLabel("GaitSym::Marker List", this);
+        label = new QLabel("Marker List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetMarker, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestMarker(QPoint)));
@@ -119,7 +119,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetJoint, 1, m_columns);
-        label = new QLabel("GaitSym::Joint List", this);
+        label = new QLabel("Joint List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetJoint, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestJoint(QPoint)));
@@ -140,7 +140,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetGeom, 1, m_columns);
-        label = new QLabel("GaitSym::Geom List", this);
+        label = new QLabel("Geom List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetGeom, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestGeom(QPoint)));
@@ -161,7 +161,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetMuscle, 1, m_columns);
-        label = new QLabel("GaitSym::Muscle List", this);
+        label = new QLabel("Muscle List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetMuscle, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestMuscle(QPoint)));
@@ -182,7 +182,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetDriver, 1, m_columns);
-        label = new QLabel("GaitSym::Driver List", this);
+        label = new QLabel("Driver List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetDriver, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestDriver(QPoint)));
@@ -203,7 +203,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetDataTarget, 1, m_columns);
-        label = new QLabel("GaitSym::DataTarget List", this);
+        label = new QLabel("DataTarget List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetDataTarget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestDataTarget(QPoint)));
@@ -224,7 +224,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetReporter, 1, m_columns);
-        label = new QLabel("GaitSym::Reporter List", this);
+        label = new QLabel("Reporter List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetReporter, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestReporter(QPoint)));
@@ -245,7 +245,7 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
             else item->setCheckState(Qt::Unchecked);
         }
         gridLayout->addWidget(m_listWidgetController, 1, m_columns);
-        label = new QLabel("GaitSym::Controller List", this);
+        label = new QLabel("Controller List", this);
         gridLayout->addWidget(label, 0, m_columns);
         m_columns++;
         QObject::connect(m_listWidgetController, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestController(QPoint)));

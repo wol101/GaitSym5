@@ -24,7 +24,7 @@ DialogBodyBuilder::DialogBodyBuilder(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Body Builder"));
+    setWindowTitle(tr("Body Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -88,11 +88,11 @@ void DialogBodyBuilder::lateInitialise()
         auto nameSet = m_simulation->GetNameSet();
         ui->lineEditID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("GaitSym::Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("GaitSym::Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 bodies
         }
         ui->lineEditID->setText(initialName);

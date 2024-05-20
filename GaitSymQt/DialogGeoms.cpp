@@ -28,7 +28,7 @@ DialogGeoms::DialogGeoms(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Geom Builder"));
+    setWindowTitle(tr("Geom Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -218,11 +218,11 @@ void DialogGeoms::lateInitialise()
         auto nameSet = simulation()->GetNameSet();
         ui->lineEditGeomID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("GaitSym::Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("GaitSym::Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditGeomID->setText(initialName);
@@ -255,7 +255,7 @@ void DialogGeoms::lateInitialise()
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Excluded GaitSym::Geom %1").arg(i));
+            label->setText(QString("Excluded Geom %1").arg(i));
             m_gridLayoutExcludedGeoms->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(geomIDs);
@@ -333,7 +333,7 @@ void DialogGeoms::spinBoxChanged(const QString &/*text*/)
         for (int i = 0; i < requiredExcludedGeoms; i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Excluded GaitSym::Geom %1").arg(i));
+            label->setText(QString("Excluded Geom %1").arg(i));
             m_gridLayoutExcludedGeoms->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(geomIDs);

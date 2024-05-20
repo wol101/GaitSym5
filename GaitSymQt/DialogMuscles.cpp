@@ -32,7 +32,7 @@ DialogMuscles::DialogMuscles(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Muscle Builder"));
+    setWindowTitle(tr("Muscle Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -439,11 +439,11 @@ void DialogMuscles::lateInitialise()
         auto nameSet = m_simulation->GetNameSet();
         ui->lineEditMuscleID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("GaitSym::Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("GaitSym::Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditMuscleID->setText(initialName);
@@ -564,7 +564,7 @@ void DialogMuscles::lateInitialise()
         for (int i = 0; i < ui->spinBoxNTorqueMarkers->value(); i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Torque GaitSym::Marker %1").arg(i));
+            label->setText(QString("Torque Marker %1").arg(i));
             m_gridLayoutTorqueMarkers->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(markerIDs);
@@ -664,7 +664,7 @@ void DialogMuscles::spinBoxChanged(const QString &/*text*/)
         for (int i = 0; i < requiredTorqueMarkers; i++)
         {
             QLabel *label = new QLabel();
-            label->setText(QString("Torque GaitSym::Marker %1").arg(i));
+            label->setText(QString("Torque Marker %1").arg(i));
             m_gridLayoutTorqueMarkers->addWidget(label, i, 0, Qt::AlignTop);
             QComboBox *comboBoxMarker = new QComboBox();
             comboBoxMarker->addItems(markerIDs);

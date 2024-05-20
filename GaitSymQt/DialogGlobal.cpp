@@ -21,7 +21,7 @@ DialogGlobal::DialogGlobal(QWidget *parent) :
     ui(new Ui::DialogGlobal)
 {
     ui->setupUi(this);
-    setWindowTitle(tr("GaitSym::Global Builder"));
+    setWindowTitle(tr("Global Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -64,7 +64,7 @@ void DialogGlobal::accept() // this catches OK and return/enter
     m_outputGlobal->setAllowInternalCollisions(ui->checkBoxAllowInternalCollisions->isChecked());
     m_outputGlobal->setPermittedNumericalErrors(ui->spinBoxPermittedErrorCount->value());
 
-    m_outputGlobal->setName("GaitSym::Global");
+    m_outputGlobal->setName("Global");
 
     if (ui->checkBoxSpringDamping->isChecked())
     {

@@ -29,7 +29,7 @@ DialogJoints::DialogJoints(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("GaitSym::Joint Builder"));
+    setWindowTitle(tr("Joint Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
@@ -163,7 +163,7 @@ void DialogJoints::accept() // this catches OK and return/enter
             QImage image;
             if (image.load(ui->lineEditFixedStressBitmap->text()) == false || image.height() == 0 || image.width() == 0)
             {
-                QMessageBox::warning(this, tr("Create GaitSym::Joint"), QString("Error loading %1\nUnable to create joint.").arg(ui->lineEditFixedStressBitmap->text()));
+                QMessageBox::warning(this, tr("Create Joint"), QString("Error loading %1\nUnable to create joint.").arg(ui->lineEditFixedStressBitmap->text()));
                 return;
             }
             std::vector<unsigned char> stiffnessMap(size_t(image.height()) * size_t(image.width()));
@@ -320,11 +320,11 @@ void DialogJoints::lateInitialise()
         auto nameSet = simulation()->GetNameSet();
         ui->lineEditJointID->addStrings(nameSet);
         int initialNameCount = 0;
-        QString initialName = QString("GaitSym::Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+        QString initialName = QString("Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
         while (nameSet.count(initialName.toStdString()))
         {
             initialNameCount++;
-            initialName = QString("GaitSym::Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
+            initialName = QString("Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditJointID->setText(initialName);

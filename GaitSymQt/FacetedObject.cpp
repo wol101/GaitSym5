@@ -91,7 +91,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
     }
 
     // read the whole file into memory
-    DataFile theFile;
+    GaitSym::DataFile theFile;
     if (theFile.ReadFile(filename) == true) return __LINE__;
     const char *ptr = theFile.GetRawData();
     const char *endPtr = ptr + theFile.GetSize();
@@ -476,7 +476,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 
 int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<std::string, OBJMaterial> *materialMap)
 {
-    DataFile materialsFile;
+    GaitSym::DataFile materialsFile;
     if (materialsFile.ReadFile(filename))
     {
         std::string strippedFilename = pystring::strip(filename);
@@ -596,7 +596,7 @@ int FacetedObject::ParsePLYFile(const std::string &filename)
         std::ifstream ss;
         ss.exceptions(std::ios::failbit|std::ios::badbit|std::ios::eofbit);
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-        ss.open(DataFile::ConvertUTF8ToWide(filename), std::ios::binary);
+        ss.open(GaitSym::DataFile::ConvertUTF8ToWide(filename), std::ios::binary);
 #else
         ss.open(filename, std::ios::binary);
 #endif
@@ -1024,7 +1024,7 @@ void FacetedObject::WritePOVRay(std::string filename)
         std::ofstream f;
         f.exceptions(std::ios::failbit|std::ios::badbit);
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-        f.open(DataFile::ConvertUTF8ToWide(filename));
+        f.open(GaitSym::DataFile::ConvertUTF8ToWide(filename));
 #else
         f.open(filename);
 #endif
@@ -1085,7 +1085,7 @@ void FacetedObject::WriteOBJFile(std::string filename)
         std::ofstream f;
         f.exceptions(std::ios::failbit|std::ios::badbit);
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-        f.open(DataFile::ConvertUTF8ToWide(filename));
+        f.open(GaitSym::DataFile::ConvertUTF8ToWide(filename));
 #else
         f.open(filename);
 #endif

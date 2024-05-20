@@ -15,9 +15,7 @@
 #include "UniversalJoint.h"
 #include "BallJoint.h"
 #include "FixedJoint.h"
-#include "FacetedConicSegment.h"
 #include "FacetedPolyline.h"
-#include "FacetedRect.h"
 #include "PGDMath.h"
 #include "Preferences.h"
 #include "Colour.h"
@@ -75,7 +73,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
     m_jointColor.setAlphaF(qreal(m_joint->colour1().alpha()));
     m_jointAxisSize = m_joint->size1();
 
-    if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(m_joint))
+    if (GaitSym::HingeJoint *hingeJoint = dynamic_cast<GaitSym::HingeJoint *>(m_joint))
     {
         double halfLen = m_jointAxisSize / 2.0;
         std::vector<pgd::Vector3> polyLine;
@@ -88,7 +86,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(m_joint))
+    if (GaitSym::UniversalJoint *universalJoint = dynamic_cast<GaitSym::UniversalJoint *>(m_joint))
     {
         double halfLen = m_jointAxisSize / 2.0;
         std::vector<pgd::Vector3> polyLine;
@@ -106,7 +104,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(m_joint))
+    if (GaitSym::BallJoint *ballJoint = dynamic_cast<GaitSym::BallJoint *>(m_joint))
     {
         double halfLen = m_jointAxisSize / 2.0;
         std::vector<pgd::Vector3> polyLine;
@@ -129,9 +127,9 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
         return;
     }
 
-    if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(m_joint))
+    if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
-        if (fixedJoint->GetStressCalculationType() != FixedJoint::none)
+        if (fixedJoint->GetStressCalculationType() != GaitSym::FixedJoint::none)
         {
             qDebug() << "Debug DrawJoint::initialise:" << m_joint->name().c_str() << " draw not implemented";
             // m_facetedObject1 = std::make_unique<FacetedRect>(fixedJoint->width(), fixedJoint->height(), m_jointColor, 1);
@@ -167,7 +165,7 @@ void DrawJoint::updateEntityPose()
     pgd::Vector3 p = marker->GetWorldPosition();
     SetDisplayRotationFromQuaternion(q.data());
     SetDisplayPosition(p.x, p.y, p.z);
-    if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(m_joint))
+    if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
         if (fixedJoint->CalculatePixmapNeeded() /*&& m_facetedObject1->texture()*/)
         {

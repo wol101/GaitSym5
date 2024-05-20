@@ -900,29 +900,29 @@ std::string *Simulation::ParseController(const ParseXML::XMLElement *node)
 
 std::string *Simulation::ParseLight(const ParseXML::XMLElement *node)
 {
-    std::unique_ptr<LightBase> light;
+    std::unique_ptr<Light> light;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
     std::string *errorMessage = nullptr;
     while (true)
     {
         if (buf == "Ambient"s)
         {
-            light = std::make_unique<LightAmbient>();
+            light = std::make_unique<AmbientLight>();
             break;
         }
         if (buf == "Directional"s)
         {
-            light = std::make_unique<LightDirectional>();
+            light = std::make_unique<DirectionalLight>();
             break;
         }
         if (buf == "Spot"s)
         {
-            light = std::make_unique<LightSpot>();
+            light = std::make_unique<SpotLight>();
             break;
         }
         if (buf == "Point"s)
         {
-            light = std::make_unique<LightPoint>();
+            light = std::make_unique<PointLight>();
             break;
         }
         setLastError("Simulation::ParseLight Type=\""s + buf + "\" not recognised"s);
@@ -1086,7 +1086,7 @@ Controller *Simulation::GetController(const std::string &name)
     return nullptr;
 }
 
-LightBase *Simulation::GetLight(const std::string &name)
+Light *Simulation::GetLight(const std::string &name)
 {
     // use find to allow null return if name not found
     auto iter = m_LightList.find(name);

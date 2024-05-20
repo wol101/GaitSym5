@@ -27,7 +27,7 @@
 #include <memory>
 #include <map>
 
-class Simulation;
+namespace GaitSym { class Simulation; }
 class MainWindow;
 
 class SimulationWidget : public QOpenGLWindow, protected QOpenGLFunctions_3_3_Core
@@ -37,8 +37,8 @@ class SimulationWidget : public QOpenGLWindow, protected QOpenGLFunctions_3_3_Co
 public:
     SimulationWidget();
 
-    Simulation *simulation() const;
-    void setSimulation(Simulation *simulation);
+    GaitSym::Simulation *simulation() const;
+    void setSimulation(GaitSym::Simulation *simulation);
 
     bool wireFrame() const;
     void setWireFrame(bool wireFrame);
@@ -198,7 +198,7 @@ private:
     void drawModel();
     bool intersectModel(float winX, float winY);
 
-    Simulation *m_simulation = nullptr;
+    GaitSym::Simulation *m_simulation = nullptr;
     MainWindow *m_mainWindow = nullptr;
 
     bool m_wireFrame = false;
