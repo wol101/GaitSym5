@@ -119,7 +119,12 @@ void OpenSimExporter::CreateBodySet()
         double mass, ixx, iyy, izz, ixy, izx, iyz;
         bodyIter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         XMLTagAndContent(&m_xmlString, "mass"s, GSUtil::ToString(mass));
-        XMLTagAndContent(&m_xmlString, "mass_center"s, "0 0 0"s); // The location of the mass center in the body frame
+        pgd::Vector3 p;
+        for (auto &&j : *m_simulation->GetJointList())
+        {
+            if (j.second->body2() == bodyIter.second.get()) { p = j.second->body2Marker()->GetPosition(); }
+        }
+        XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-p)); // The location of the mass center in the body frame which is based on the joint position
         XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString(".17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
         XMLTerminateTag(&m_xmlString, "Body"s);
     }
@@ -148,7 +153,7 @@ void OpenSimExporter::CreateJointSet()
             XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, hingeJoint->name() + "_angle_r"s}});
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(hingeJoint->stops()));
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(pgd::Vector2(-hingeJoint->stops()[1], -hingeJoint->stops()[0])));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -164,7 +169,11 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + hingeJoint->body1()->name());
             XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(hingeJoint->body1Marker()->GetPosition()));
-            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            pgd::Vector3 axis = hingeJoint->body1Marker()->GetAxis(GaitSym::Marker::X);
+            pgd::Vector3 zAxis(0, 0, 1);
+            pgd::Quaternion rotation = pgd::FindRotation(zAxis, axis);
+            pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(rotation);
+            XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
             XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
             XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, hingeJoint->body2()->name() + "_offset"s}});
@@ -174,7 +183,10 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + hingeJoint->body2()->name());
             XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(hingeJoint->body2Marker()->GetPosition()));
-            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            axis = hingeJoint->body1Marker()->GetAxis(GaitSym::Marker::X);
+            rotation = pgd::FindRotation(zAxis, axis);
+            euler = pgd::MakeEulerAnglesFromQRadian(rotation);
+            XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
             XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
             XMLTerminateTag(&m_xmlString, "frames"s);

@@ -1515,8 +1515,8 @@ void MainWindow::menuExportOpenSim()
             {
                 FacetedObject temp;
                 temp.AddFacetedObject(it.second->meshEntity1(), false, true);
-                pgd::Vector3 constructionPosition = body->GetConstructionPosition();
-                temp.Move(-constructionPosition.x, -constructionPosition.y, -constructionPosition.z);
+                // pgd::Vector3 constructionPosition = body->GetConstructionPosition();
+                // temp.Move(-constructionPosition.x, -constructionPosition.y, -constructionPosition.z);
                 QFileInfo info(fileName);
                 QDir currentDir(info.absolutePath());
                 QDir newDir(currentDir.absoluteFilePath("osim_meshes"));
