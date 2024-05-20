@@ -33,10 +33,6 @@ public:
     virtual std::string *Initialise(Simulation *theSimulation);
     virtual std::string *Step();
 
-    // utility functions
-    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
-    static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
-
 private:
     struct TreeBody
     {
@@ -56,6 +52,10 @@ private:
     std::string *CreateGeom(const Geom *geom);
 
     std::string *MoveBodies();
+
+    // utility functions
+    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
+    static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
 
     // Returns a newly-allocated mjModel, loaded from the contents of xml.
     // On failure returns nullptr and populates the error array if present.
