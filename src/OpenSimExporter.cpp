@@ -95,6 +95,8 @@ void OpenSimExporter::CreateBodySet()
         {
             std::string root, ext;
             pystring::os::path::splitext(root, ext, bodyIter.second->GetGraphicFile1());
+            std::string basename = pystring::os::path::basename(bodyIter.second->GetGraphicFile1());
+            std::string mesh_path = pystring::os::path::join(m_pathToObjFiles, basename);
             XMLInitiateTag(&m_xmlString, "Mesh"s, {{"name"s, root}});
             XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
@@ -102,7 +104,7 @@ void OpenSimExporter::CreateBodySet()
             XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(bodyIter.second->colour1().alpha()));
             XMLTagAndContent(&m_xmlString, "color"s, bodyIter.second->colour1().GetFloatColourRGB());
             XMLTerminateTag(&m_xmlString, "Appearance"s);
-            XMLTagAndContent(&m_xmlString, "mesh_file"s, bodyIter.second->GetGraphicFile1());
+            XMLTagAndContent(&m_xmlString, "mesh_file"s, mesh_path);
             XMLTerminateTag(&m_xmlString, "Mesh"s);
         }
         XMLTerminateTag(&m_xmlString, "attached_geometry"s);
@@ -165,7 +167,7 @@ void OpenSimExporter::CreateForceSet()
 
 void OpenSimExporter::CreateMarkerSet()
 {
-    XMLInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "sarkerset"s}});
+    XMLInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
     XMLTerminateTag(&m_xmlString, "objects"s);
     XMLTagAndContent(&m_xmlString, "groups"s, ""s);
@@ -204,6 +206,16 @@ void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string
     xmlString->append("<"s + tag + ">"s);
     xmlString->append(content);
     xmlString->append("</"s + tag + ">\n"s);
+}
+
+std::string OpenSimExporter::pathToObjFiles() const
+{
+    return m_pathToObjFiles;
+}
+
+void OpenSimExporter::setPathToObjFiles(const std::string &newPathToObjFiles)
+{
+    m_pathToObjFiles = newPathToObjFiles;
 }
 
 std::string *OpenSimExporter::xmlString()

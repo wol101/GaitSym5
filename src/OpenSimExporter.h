@@ -31,6 +31,9 @@ public:
 
     std::string *xmlString();
 
+    std::string pathToObjFiles() const;
+    void setPathToObjFiles(const std::string &newPathToObjFiles);
+
 private:
 
     void CreateBodySet();
@@ -48,6 +51,7 @@ private:
 
     Simulation *m_simulation = nullptr;
     std::string m_xmlString;
+    std::string m_pathToObjFiles;
 };
 
 } // namespace GaitSym

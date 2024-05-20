@@ -79,7 +79,7 @@ public slots:
     void menuDeleteAssembly();
     void menuEditGlobal();
     void menuExportMarkers();
-    void menuExporOpenSim();
+    void menuExportOpenSim();
     void menuImportMeshes();
     void menuNew();
     void menuOpen();

@@ -740,6 +740,7 @@ void MainWindow::updateEnable()
     ui->actionCreateMirrorElements->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
     ui->actionCreateTestingDrivers->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetMuscleList()->size() > 0);
     ui->actionExportMarkers->setEnabled(m_simulation != nullptr);
+    ui->actionExportOpenSim->setEnabled(m_simulation != nullptr);
     ui->actionRecordMovie->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
     ui->actionRun->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
     ui->actionStep->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
@@ -1490,7 +1491,7 @@ void MainWindow::menuSave()
     this->updateEnable();
 }
 
-void MainWindow::menuExporOpenSim()
+void MainWindow::menuExportOpenSim()
 {
     QString fileName;
     if (this->m_configFile.absoluteFilePath().isEmpty())
@@ -1507,6 +1508,14 @@ void MainWindow::menuExporOpenSim()
     {
         setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
         GaitSym::OpenSimExporter openSimExporter;
+        for (auto &&it : *m_simulationWidget->getDrawBodyMap())
+        {
+            if (it.second->meshEntity1())
+            {
+                std::string filename = it.second->meshEntity1()->filename();
+                if (filename.size()) { openSimExporter.setPathToObjFiles(pystring::os::path::dirname(filename)); }
+            }
+        }
         openSimExporter.Process(m_simulation);
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly))
