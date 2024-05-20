@@ -1510,14 +1510,26 @@ void MainWindow::menuExportOpenSim()
         GaitSym::OpenSimExporter openSimExporter;
         for (auto &&it : *m_simulationWidget->getDrawBodyMap())
         {
-            if (it.second->meshEntity1())
+            GaitSym::Body *body = m_simulation->GetBody(it.first);
+            if (it.second->meshEntity1() && body)
             {
+                FacetedObject temp;
+                temp.AddFacetedObject(it.second->meshEntity1(), false, true);
+                pgd::Vector3 constructionPosition = body->GetConstructionPosition();
+                temp.Move(-constructionPosition.x, -constructionPosition.y, -constructionPosition.z);
                 QFileInfo info(fileName);
                 QDir currentDir(info.absolutePath());
-                QString meshPath = QString::fromStdString(it.second->meshEntity1()->filename());
-                QString relativeMeshPath = currentDir.relativeFilePath(meshPath);
-                std::string filename = QDir::toNativeSeparators(relativeMeshPath).toStdString(); // this is clumsy but the filenames are stored with qt separators
-                if (filename.size()) { openSimExporter.setPathToObjFiles(pystring::os::path::dirname(filename)); }
+                QDir newDir(currentDir.absoluteFilePath("osim_meshes"));
+                currentDir.mkdir("osim_meshes");
+                openSimExporter.setPathToObjFiles("osim_meshes");
+                temp.WriteOBJFile(newDir.absoluteFilePath(QString::fromStdString(body->GetGraphicFile1())).toStdString());
+
+                // QFileInfo info(fileName);
+                // QDir currentDir(info.absolutePath());
+                // QString meshPath = QString::fromStdString(it.second->meshEntity1()->filename());
+                // QString relativeMeshPath = currentDir.relativeFilePath(meshPath);
+                // std::string filename = QDir::toNativeSeparators(relativeMeshPath).toStdString(); // this is clumsy but the filenames are stored with qt separators
+                // if (filename.size()) { openSimExporter.setPathToObjFiles(pystring::os::path::dirname(filename)); }
             }
         }
         openSimExporter.Process(m_simulation);
