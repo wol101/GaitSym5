@@ -15,6 +15,7 @@
 #include "Body.h"
 #include "Joint.h"
 #include "HingeJoint.h"
+#include "FixedJoint.h"
 #include "Marker.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
@@ -59,8 +60,8 @@ void OpenSimExporter::Process(Simulation *simulation)
     XMLTagAndContent(&m_xmlString, "publications"s, "Add publications statement here"s);
 
     // set some options
-    XMLTagAndContent(&m_xmlString, "length_units"s, "metres"s);
-    XMLTagAndContent(&m_xmlString, "force_units"s, "Newtons"s);
+    XMLTagAndContent(&m_xmlString, "length_units"s, "meters"s);
+    XMLTagAndContent(&m_xmlString, "force_units"s, "N"s);
     XMLTagAndContent(&m_xmlString, "gravity"s, GSUtil::ToString(m_simulation->GetGlobal()->Gravity()));
 
     CreateBodySet();
@@ -133,6 +134,89 @@ void OpenSimExporter::CreateJointSet()
 {
     XMLInitiateTag(&m_xmlString, "JointSet"s, {{"name"s, "jointset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
+
+    for (auto &&jointIter : *m_simulation->GetJointList())
+    {
+        if (const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(jointIter.second.get()))
+        {
+            XMLInitiateTag(&m_xmlString, "PinJoint"s, {{"name"s, hingeJoint->name()}});
+
+            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, hingeJoint->body1()->name() + "_offset"s);
+            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, hingeJoint->body2()->name() + "_offset"s);
+
+            XMLInitiateTag(&m_xmlString, "coordinates"s);
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, hingeJoint->name() + "_angle_r"s}});
+            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(hingeJoint->stops()));
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            XMLTerminateTag(&m_xmlString, "coordinates"s);
+
+            XMLInitiateTag(&m_xmlString, "frames"s);
+
+            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, hingeJoint->body1()->name() + "_offset"s}});
+            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + hingeJoint->body1()->name());
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(hingeJoint->body1Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, hingeJoint->body2()->name() + "_offset"s}});
+            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + hingeJoint->body2()->name());
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(hingeJoint->body2Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+            XMLTerminateTag(&m_xmlString, "frames"s);
+
+            XMLTerminateTag(&m_xmlString, "PinJoint"s);
+        }
+
+        if (const FixedJoint *fixedJoint = dynamic_cast<const FixedJoint *>(jointIter.second.get()))
+        {
+            XMLInitiateTag(&m_xmlString, "WeldJoint"s, {{"name"s, fixedJoint->name()}});
+
+            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, fixedJoint->body1()->name() + "_offset"s);
+            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, fixedJoint->body2()->name() + "_offset"s);
+
+            XMLInitiateTag(&m_xmlString, "frames"s);
+
+            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, fixedJoint->body1()->name() + "_offset"s}});
+            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + fixedJoint->body1()->name());
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(fixedJoint->body1Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, fixedJoint->body2()->name() + "_offset"s}});
+            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + fixedJoint->body2()->name());
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(fixedJoint->body2Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+            XMLTerminateTag(&m_xmlString, "frames"s);
+
+            XMLTerminateTag(&m_xmlString, "WeldJoint"s);
+        }
+    }
+
     XMLTerminateTag(&m_xmlString, "objects"s);
     XMLTagAndContent(&m_xmlString, "groups"s, ""s);
     XMLTerminateTag(&m_xmlString, "JointSet"s);
