@@ -27,37 +27,24 @@ class OpenSimExporter : public NamedObject
 public:
     OpenSimExporter();
 
-    std::string *Process(Simulation *simulation);
+    void Process(Simulation *simulation);
 
 private:
-    struct TreeBody
-    {
-        Body *body = nullptr;
-        TreeBody *parent = nullptr;
-        Joint *jointToParent = nullptr;
-        std::vector<std::unique_ptr<TreeBody>> childList;
-    };
 
-    std::string *CreateConnectedGroups();
-    std::string *CreateTree();
-
-    std::string *CreateBody(const TreeBody &treeBody);
-    std::string *CreateJoint(const Joint *joint);
-    std::string *CreateGeom(const Geom *geom);
+    void CreateBodySet();
+    void CreateJointSet();
+    void CreateControllerSet();
+    void CreateConstraintSet();
+    void CreateForceSet();
+    void CreateMarkerSet();
+    void CreateContactGeometrySet();
 
     // utility functions
     static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
     static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
+    static void XMLTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content);
 
     Simulation *m_simulation = nullptr;
-
-    std::vector<TreeBody> m_rootTreeBodyList;
-    std::multiset<Body *> m_jointLoopDetector;
-    std::vector<Joint *> m_jointsLeftToInclude;
-    std::vector<TreeBody *> m_bodiesLeftToInclude;
-    std::vector<TreeBody *> m_flatTreeBodyList;
-    std::vector<std::unique_ptr<std::map<std::string, Body *>>> m_connectedGroups;
-    int m_freeJointCount = 0;
     std::string m_xmlString;
 };
 

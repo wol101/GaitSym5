@@ -689,7 +689,7 @@ void DialogMarkers::properties()
     if (m_inputMarker)
     {
         radius.value = m_inputMarker->size1();
-        colour.value = QColor(QString::fromStdString(m_inputMarker->colour1().GetHexArgb()));
+        colour.value = QColor(QString::fromStdString(m_inputMarker->colour1().GetHexARGB()));
     }
     m_properties.clear();
     m_properties = { { radius.key, radius },

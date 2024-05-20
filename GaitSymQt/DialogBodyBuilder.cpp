@@ -455,9 +455,9 @@ void DialogBodyBuilder::properties()
     {
         bodyAxesSize.value = m_inputBody->size1();
         bodyBlendFraction.value = m_inputBody->size2();
-        bodyColour1.value = QColor(QString::fromStdString(m_inputBody->colour1().GetHexArgb()));
-        bodyColour2.value = QColor(QString::fromStdString(m_inputBody->colour2().GetHexArgb()));
-        bodyColour3.value = QColor(QString::fromStdString(m_inputBody->colour3().GetHexArgb()));
+        bodyColour1.value = QColor(QString::fromStdString(m_inputBody->colour1().GetHexARGB()));
+        bodyColour2.value = QColor(QString::fromStdString(m_inputBody->colour2().GetHexARGB()));
+        bodyColour3.value = QColor(QString::fromStdString(m_inputBody->colour3().GetHexARGB()));
     }
     m_properties.clear();
     m_properties = { { bodyAxesSize.key, bodyAxesSize },

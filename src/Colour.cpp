@@ -151,12 +151,40 @@ std::string Colour::GetIntColourRGBA()
     return output;
 }
 
-std::string Colour::GetHexArgb()
+std::string Colour::GetFloatColourRGB()
+{
+    std::string output;
+    char buf[32 * 4];
+    int l = snprintf(buf, sizeof(buf), "%.7f %.7f %.7f", double(m_r), double(m_g), double(m_b));
+    output.assign(buf, size_t(l));
+    return output;
+}
+
+std::string Colour::GetIntColourRGB()
+{
+    std::string output;
+    char buf[32 * 4];
+    int l = snprintf(buf, sizeof(buf), "%d %d %d", int(0.5f+m_r*255.0f), int(0.5f+m_g*255.0f), int(0.5f+m_b*255.0f));
+    output.assign(buf, size_t(l));
+    return output;
+}
+
+std::string Colour::GetHexARGB()
 {
     // name is #AARRGGBB
     std::string output;
     char buf[16];
     int l = snprintf(buf, sizeof(buf), "#%02x%02x%02x%02x", int(0.5f+m_alpha*255.0f), int(0.5f+m_r*255.0f), int(0.5f+m_g*255.0f), int(0.5f+m_b*255.0f));
+    output.assign(buf, size_t(l));
+    return output;
+}
+
+std::string Colour::GetHexRGB()
+{
+    // name is #RRGGBB
+    std::string output;
+    char buf[16];
+    int l = snprintf(buf, sizeof(buf), "#%02x%02x%02x", int(0.5f+m_r*255.0f), int(0.5f+m_g*255.0f), int(0.5f+m_b*255.0f));
     output.assign(buf, size_t(l));
     return output;
 }

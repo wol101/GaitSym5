@@ -54,7 +54,10 @@ public:
     explicit operator float*() { return &m_r; }
     std::string GetFloatColourRGBA();
     std::string GetIntColourRGBA();
-    std::string GetHexArgb();
+    std::string GetFloatColourRGB();
+    std::string GetIntColourRGB();
+    std::string GetHexARGB();
+    std::string GetHexRGB();
 
     static void SetColourFromMap(float index, ColourMap m, Colour *mappedColour, bool invert = false);
     static bool SetColourFromName(const std::string &name, Colour *namedColour);

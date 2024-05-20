@@ -304,7 +304,7 @@ void DialogGlobal::properties()
     if (m_inputGlobal)
     {
         globalAxesSize.value = m_inputGlobal->size1();
-        backgroundColour.value = QColor(QString::fromStdString(m_inputGlobal->colour1().GetHexArgb()));
+        backgroundColour.value = QColor(QString::fromStdString(m_inputGlobal->colour1().GetHexARGB()));
     }
     m_properties.clear();
     m_properties = { { globalAxesSize.key, globalAxesSize },
