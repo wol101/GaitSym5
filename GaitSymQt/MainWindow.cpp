@@ -45,6 +45,7 @@
 #include "TextEditDialog.h"
 #include "ThreeHingeJointDriver.h"
 #include "TwoHingeJointDriver.h"
+#include "OpenSimExporter.h"
 
 #include "pystring.h"
 
@@ -125,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionDeleteAssembly, SIGNAL(triggered()), this, SLOT(menuDeleteAssembly()));
     connect(ui->actionEditGlobal, SIGNAL(triggered()), this, SLOT(menuEditGlobal()));
     connect(ui->actionExportMarkers, SIGNAL(triggered()), this, SLOT(menuExportMarkers()));
+    connect(ui->actionExportOpenSim, SIGNAL(triggered()), this, SLOT(menuExportOpenSim()));
     connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), this, SLOT(menuImportMeshes()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(menuNew()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(menuOpen()));
@@ -1488,6 +1490,43 @@ void MainWindow::menuSave()
     this->updateEnable();
 }
 
+void MainWindow::menuExporOpenSim()
+{
+    QString fileName;
+    if (this->m_configFile.absoluteFilePath().isEmpty())
+    {
+        QFileInfo info(Preferences::valueQString("LastFileOpened"));
+        fileName = QFileDialog::getSaveFileName(this, tr("Export Model as OpenSim File"), QDir(info.absolutePath()).filePath(info.completeBaseName()), tr("OpenSym Files (*.osim)"), nullptr);
+    }
+    else
+    {
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Model State File"), QDir(this->m_configFile.absolutePath()).filePath(this->m_configFile.completeBaseName()), tr("Config Files (*.osim)"), nullptr);
+    }
+
+    if (fileName.isNull() == false)
+    {
+        setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
+        GaitSym::OpenSimExporter openSimExporter;
+        openSimExporter.Process(m_simulation);
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            setStatusString(QString("Error opening \"%1\" for OpenSim export").arg(fileName), 0);
+            return;
+        }
+        qint64 c = file.write(openSimExporter.xmlString()->data(), openSimExporter.xmlString()->size());
+        if (c != openSimExporter.xmlString()->size())
+        {
+            setStatusString(QString("Error writing \"%1\" for OpenSim export").arg(fileName), 0);
+            return;
+        }
+        setStatusString(QString("Exported \"%1\"").arg(fileName), 1);
+    }
+    else
+    {
+        setStatusString(QString("OpenSim export cancelled"), 1);
+    }
+}
 
 void MainWindow::menuAbout()
 {

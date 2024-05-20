@@ -29,6 +29,8 @@ public:
 
     void Process(Simulation *simulation);
 
+    std::string *xmlString();
+
 private:
 
     void CreateBodySet();

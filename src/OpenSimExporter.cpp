@@ -206,6 +206,11 @@ void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string
     xmlString->append("</"s + tag + ">\n"s);
 }
 
+std::string *OpenSimExporter::xmlString()
+{
+    return &m_xmlString;
+}
+
 
 
 } // namespace GaitSym

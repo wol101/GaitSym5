@@ -57,8 +57,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>157</width>
-              <height>688</height>
+              <width>194</width>
+              <height>854</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
@@ -859,8 +859,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>350</width>
-              <height>436</height>
+              <width>362</width>
+              <height>467</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_7">
@@ -966,8 +966,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1143</width>
-          <height>361</height>
+          <width>1137</width>
+          <height>309</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_11">
@@ -1033,7 +1033,7 @@
      <x>0</x>
      <y>0</y>
      <width>1157</width>
-     <height>17</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -1047,6 +1047,12 @@
      <addaction name="separator"/>
      <addaction name="actionClear_List"/>
     </widget>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionExportOpenSim"/>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
@@ -1058,6 +1064,8 @@
     <addaction name="separator"/>
     <addaction name="actionExportMarkers"/>
     <addaction name="actionImportMeshesAsBodies"/>
+    <addaction name="separator"/>
+    <addaction name="menuExport"/>
     <addaction name="separator"/>
     <addaction name="actionClearMeshCache"/>
     <addaction name="separator"/>
@@ -1703,6 +1711,11 @@
   <action name="actionStopUSDSequence">
    <property name="text">
     <string>Stop USD Sequence</string>
+   </property>
+  </action>
+  <action name="actionExportOpenSim">
+   <property name="text">
+    <string>OpenSim...</string>
    </property>
   </action>
  </widget>
