@@ -15,7 +15,7 @@
 #include <string>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Global::Global()
 {
@@ -577,5 +577,8 @@ void Global::setTimeLimit(double TimeLimit)
     m_TimeLimit = TimeLimit;
 }
 
+
+
+} // namespace GaitSym
 
 

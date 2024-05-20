@@ -73,7 +73,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Simulation::Simulation()
 {
@@ -1283,5 +1283,8 @@ bool Simulation::HasAssembly()
     }
     return false;
 }
+
+
+} // namespace GaitSym
 
 

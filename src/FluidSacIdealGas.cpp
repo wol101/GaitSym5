@@ -12,7 +12,7 @@
 #include "GSUtil.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 FluidSacIdealGas::FluidSacIdealGas()
 {
@@ -118,3 +118,6 @@ void FluidSacIdealGas::setR(double R)
 {
     m_R = R;
 }
+} // namespace GaitSym
+
+

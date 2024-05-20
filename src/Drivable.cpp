@@ -10,7 +10,7 @@
 #include "Drivable.h"
 #include "Driver.h"
 
-using namespace GaitSym;
+namespace GaitSym {
 
 Drivable::Drivable()
 {
@@ -42,3 +42,6 @@ void Drivable::setDataSum(double dataSum)
 {
     m_dataSum = dataSum;
 }
+} // namespace GaitSym
+
+

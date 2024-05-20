@@ -16,7 +16,7 @@
 #include <regex>
 
 using namespace  std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Colour::Colour()
 {
@@ -2528,3 +2528,6 @@ void Colour::SetColourFromMap(float index, ColourMap m, Colour *mappedColour, bo
     if (invert) i = 255 - i;
     mappedColour->SetColour((*mapPtr)[i][0], (*mapPtr)[i][1], (*mapPtr)[i][2], (*mapPtr)[i][3]);
 }
+} // namespace GaitSym
+
+

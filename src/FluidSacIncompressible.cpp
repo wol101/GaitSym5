@@ -12,7 +12,7 @@
 #include "GSUtil.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 FluidSacIncompressible::FluidSacIncompressible()
 {
@@ -106,4 +106,7 @@ void FluidSacIncompressible::setBulkModulusDamping(double newBulkModulusDamping)
 {
     m_bulkModulusDamping = newBulkModulusDamping;
 }
+
+} // namespace GaitSym
+
 

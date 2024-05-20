@@ -13,7 +13,7 @@
 #include <string>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 SphereGeom::SphereGeom(double radius)
 {
@@ -47,5 +47,8 @@ void SphereGeom::setRadius(double radius)
 {
     m_radius = radius;
 }
+
+
+} // namespace GaitSym
 
 

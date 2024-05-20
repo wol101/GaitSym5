@@ -25,7 +25,7 @@
 #include <deque>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 MuJoCoPhysicsEngine::MuJoCoPhysicsEngine()
 {
@@ -736,3 +736,6 @@ mjModel *MuJoCoPhysicsEngine::LoadModelFromString(const std::string &xml, char* 
     std::string str = "LoadModelFromString:" +  xml;
     return mj_loadXML(str.c_str(), vfs, error, error_size);
 }
+} // namespace GaitSym
+
+

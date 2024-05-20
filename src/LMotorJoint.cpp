@@ -16,7 +16,7 @@
 
 #include <sstream>
 
-using namespace GaitSym;
+namespace GaitSym {
 
 LMotorJoint::LMotorJoint() : Joint()
 {
@@ -542,5 +542,8 @@ std::string LMotorJoint::dumpToString()
 #endif // FIX_ME
 return ss.str();
 }
+
+
+} // namespace GaitSym
 
 

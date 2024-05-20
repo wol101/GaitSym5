@@ -12,7 +12,7 @@
 #include "GSUtil.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 PIDMuscleLengthController::PIDMuscleLengthController()
 {
@@ -108,4 +108,7 @@ Muscle *PIDMuscleLengthController::muscle()
 {
     return dynamic_cast<Muscle *>(GetTarget(""s));;
 }
+
+} // namespace GaitSym
+
 

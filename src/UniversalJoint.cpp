@@ -15,7 +15,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 UniversalJoint::UniversalJoint() : Joint()
 {
@@ -231,5 +231,8 @@ std::string UniversalJoint::dumpToString()
     return ss.str();
 }
 
+
+
+} // namespace GaitSym
 
 

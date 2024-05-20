@@ -18,7 +18,7 @@
 #include <limits>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 // The plane equation is:
 // a * x + b * y + c * z = d
@@ -98,5 +98,8 @@ void PlaneGeom::appendToAttributes()
     setAttribute("Type"s, "Plane"s);
     return;
 }
+
+
+} // namespace GaitSym
 
 

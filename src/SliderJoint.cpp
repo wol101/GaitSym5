@@ -10,7 +10,7 @@
 #include "SliderJoint.h"
 #include "Simulation.h"
 
-using namespace GaitSym;
+namespace GaitSym {
 
 SliderJoint::SliderJoint() : Joint()
 {
@@ -76,5 +76,8 @@ void SliderJoint::setStops(const pgd::Vector2 &newStops)
     m_stops = newStops;
 }
 
+
+
+} // namespace GaitSym
 
 

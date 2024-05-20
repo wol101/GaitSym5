@@ -26,7 +26,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 DataTargetScalar::DataTargetScalar()
 {
@@ -593,5 +593,8 @@ NamedObject *DataTargetScalar::GetTarget()
     return m_Target;
 }
 
+
+
+} // namespace GaitSym
 
 

@@ -19,7 +19,7 @@
 #include <string.h>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 CylinderWrapStrap::CylinderWrapStrap()
 {
@@ -665,4 +665,7 @@ void CylinderWrapStrap::appendToAttributes()
     setAttribute("CylinderMarkerID"s, m_cylinderMarker->name());
     setAttribute("CylinderRadius"s, *GSUtil::ToString(m_cylinderRadius, &buf));
 }
+
+} // namespace GaitSym
+
 

@@ -9,7 +9,7 @@
 
 #include "Contact.h"
 
-using namespace GaitSym;
+namespace GaitSym {
 
 Contact::Contact()
 {
@@ -64,5 +64,8 @@ void Contact::setBody2(Body *newBody2)
 {
     m_body2 = newBody2;
 }
+
+
+} // namespace GaitSym
 
 

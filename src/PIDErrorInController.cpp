@@ -14,7 +14,7 @@
 #include "pystring.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 PIDErrorInController::PIDErrorInController()
 {
@@ -95,4 +95,7 @@ std::string PIDErrorInController::dumpToString()
     s += dumpHelper({simulation()->GetTime(), m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, value()});
     return s;
 }
+
+} // namespace GaitSym
+
 

@@ -17,7 +17,6 @@
 #include "pystring.h"
 
 #include <sstream>
-#include <limits>
 
 namespace GaitSym {
 
@@ -333,5 +332,6 @@ std::string AMotorJoint::dumpToString()
     return ss.str();
 }
 
-}
+} // namespace GaitSym
+
 

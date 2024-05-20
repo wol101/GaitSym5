@@ -19,7 +19,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 FluidSac::FluidSac()
 {
@@ -402,4 +402,7 @@ void FluidSac::setDotSacVolume(double newDotSacVolume)
 {
     m_dotSacVolume = newDotSacVolume;
 }
+
+} // namespace GaitSym
+
 

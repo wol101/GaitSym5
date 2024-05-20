@@ -19,7 +19,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Marker::Marker(Body *body)
 {
@@ -617,3 +617,6 @@ void Marker::SetBody(Body *body)
 {
     m_body = body;
 }
+} // namespace GaitSym
+
+

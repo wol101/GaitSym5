@@ -20,7 +20,7 @@
 #include <limits>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 MarkerPositionDriver::MarkerPositionDriver()
 {
@@ -191,5 +191,8 @@ void MarkerPositionDriver::appendToAttributes()
     if (m_referenceMarker) setAttribute("ReferenceMarkerID"s, m_referenceMarker->name());
     else setAttribute("ReferenceMarkerID"s, "World"s);
 }
+
+
+} // namespace GaitSym
 
 

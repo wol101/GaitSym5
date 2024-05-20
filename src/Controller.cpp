@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-using namespace GaitSym;
+namespace GaitSym {
 
 Controller::Controller()
 {
@@ -56,3 +56,6 @@ void Controller::appendToAttributes()
 {
     Driver::appendToAttributes();
 }
+} // namespace GaitSym
+
+

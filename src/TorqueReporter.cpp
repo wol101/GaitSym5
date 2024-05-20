@@ -16,7 +16,7 @@
 #include <vector>
 #include <sstream>
 
-using namespace GaitSym;
+namespace GaitSym {
 
 TorqueReporter::TorqueReporter()
 {
@@ -156,3 +156,6 @@ void TorqueReporter::CalculateRotationFromAxis(double x, double y, double z, pgd
                          p[0], p[1], p[2],
                          q[0], q[1], q[2] );
 }
+} // namespace GaitSym
+
+

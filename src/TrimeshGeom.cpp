@@ -14,7 +14,7 @@
 #include "pystring.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 // create the trimesh object
 // m_vertexList is a list of traingular vertices in FacetedObject format
@@ -47,5 +47,8 @@ void TrimeshGeom::appendToAttributes()
 
     return;
 }
+
+
+} // namespace GaitSym
 
 

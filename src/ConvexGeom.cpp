@@ -17,7 +17,7 @@
 #include <string>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 ConvexGeom::ConvexGeom()
 {
@@ -140,4 +140,7 @@ std::vector<double> *ConvexGeom::vertices()
 {
     return &m_vertices;
 }
+
+} // namespace GaitSym
+
 

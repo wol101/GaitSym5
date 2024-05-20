@@ -16,7 +16,7 @@
 #include <cassert>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 FixedDriver::FixedDriver()
 {
@@ -61,4 +61,7 @@ void FixedDriver::appendToAttributes()
     setAttribute("Type"s, "Fixed"s);
     setAttribute("Value"s, *GSUtil::ToString(value(), &buf));
 }
+
+} // namespace GaitSym
+
 

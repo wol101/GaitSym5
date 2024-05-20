@@ -19,7 +19,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 DataTargetMarkerCompare::DataTargetMarkerCompare()
 {
@@ -318,4 +318,7 @@ void DataTargetMarkerCompare::appendToAttributes()
     setAttribute("Marker2Comparison"s, comparisonStrings(m_marker2Comparison));
     setAttribute("TargetValues"s, *GSUtil::ToString(m_ValueList.data(), m_ValueList.size(), &buf));
 }
+
+} // namespace GaitSym
+
 

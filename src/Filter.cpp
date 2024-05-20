@@ -11,7 +11,7 @@
 
 #include "Filter.h"
 
-using namespace GaitSym;
+namespace GaitSym {
 
 Filter::Filter()
 {
@@ -42,5 +42,8 @@ void Filter::setXn(double xn)
 {
     m_xn = xn;
 }
+
+
+} // namespace GaitSym
 
 

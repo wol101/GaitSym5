@@ -15,7 +15,7 @@
 #include "pystring.h"
 
 using namespace std::literals::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 ParseXML::ParseXML()
 {
@@ -267,5 +267,8 @@ void rapidxml::parse_error_handler(const char *what, void *where)
     std::cerr << "(where) " << where << "\n";
 }
 #endif
+
+
+} // namespace GaitSym
 
 

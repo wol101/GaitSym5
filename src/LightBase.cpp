@@ -14,7 +14,7 @@
 #include "Marker.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Light::Light()
 {
@@ -489,5 +489,8 @@ float PointLight::minDistanceMultiplier() const
 {
     return m_minDistanceMultiplier;
 }
+
+
+} // namespace GaitSym
 
 

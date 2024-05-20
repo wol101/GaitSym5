@@ -21,7 +21,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 DataTargetQuaternion::DataTargetQuaternion()
 {
@@ -231,4 +231,7 @@ void DataTargetQuaternion::appendToAttributes()
     setAttribute("TargetValues"s, *GSUtil::ToString(valueList.data(), valueList.size(), &buf));
     setAttribute("TargetID"s, m_Target->name());
 }
+
+} // namespace GaitSym
+
 

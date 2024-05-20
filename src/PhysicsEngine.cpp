@@ -9,7 +9,7 @@
 
 #include "PhysicsEngine.h"
 
-using namespace GaitSym;
+namespace GaitSym {
 
 PhysicsEngine::PhysicsEngine()
 {
@@ -34,4 +34,7 @@ void PhysicsEngine::setSimulation(Simulation *newSimulation)
 {
     m_simulation = newSimulation;
 }
+
+} // namespace GaitSym
+
 

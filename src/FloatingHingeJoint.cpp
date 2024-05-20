@@ -15,7 +15,7 @@
 #include "GSUtil.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 FloatingHingeJoint::FloatingHingeJoint() : Joint()
 {
@@ -69,5 +69,8 @@ void FloatingHingeJoint::setStops(const pgd::Vector2 &newStops)
 {
     m_stops = newStops;
 }
+
+
+} // namespace GaitSym
 
 

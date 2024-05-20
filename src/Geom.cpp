@@ -26,7 +26,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Geom::Geom()
 {
@@ -438,5 +438,8 @@ std::vector<Geom *> *Geom::GetExcludeList()
 {
     return &m_ExcludeList;
 }
+
+
+} // namespace GaitSym
 
 

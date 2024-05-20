@@ -20,7 +20,7 @@
 #include <iostream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 XMLConverter::XMLConverter()
 {
@@ -122,5 +122,8 @@ const std::string &XMLConverter::BaseXMLString() const
 {
     return m_BaseXMLString;
 }
+
+
+} // namespace GaitSym
 
 

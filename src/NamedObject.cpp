@@ -27,7 +27,7 @@
 #endif
 
 using namespace std::literals::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 NamedObject::NamedObject()
 {
@@ -415,4 +415,7 @@ std::string NamedObject::objectMessage() const // return value optimisation RVO 
 {
     return m_message;
 }
+
+} // namespace GaitSym
+
 

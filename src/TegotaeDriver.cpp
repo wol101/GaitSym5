@@ -26,7 +26,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 TegotaeDriver::TegotaeDriver()
 {
@@ -435,5 +435,8 @@ pgd::Vector3 TegotaeDriver::localErrorVector() const
 {
     return m_localErrorVector;
 }
+
+
+} // namespace GaitSym
 
 

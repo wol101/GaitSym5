@@ -17,7 +17,7 @@
 #include <cassert>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 CyclicDriver::CyclicDriver()
 {
@@ -148,4 +148,7 @@ double CyclicDriver::GetCycleTime() const
     }
     return cycleTime;
 }
+
+} // namespace GaitSym
+
 

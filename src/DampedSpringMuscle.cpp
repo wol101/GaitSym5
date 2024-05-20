@@ -17,7 +17,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 // constructor
 
@@ -128,4 +128,7 @@ std::string *DampedSpringMuscle::createFromAttributes()
     setAttribute("Damping"s, *GSUtil::ToString(m_Damping, &buf));
     setAttribute("BreakingStrain"s, *GSUtil::ToString(m_BreakingStrain, &buf));
 }
+
+} // namespace GaitSym
+
 

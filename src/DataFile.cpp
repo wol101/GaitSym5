@@ -42,7 +42,7 @@
 
 const static size_t kStorageIncrement = 65536;
 
-using namespace GaitSym;
+namespace GaitSym {
 
 // default constructor
 DataFile::DataFile()
@@ -1675,5 +1675,8 @@ std::string DataFile::ConvertWideToUTF8(const std::wstring& wstr)
 //    return converterX.to_bytes(wstr);
 }
 
+
+
+} // namespace GaitSym
 
 

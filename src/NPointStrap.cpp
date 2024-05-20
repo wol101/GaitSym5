@@ -21,7 +21,7 @@
 #include <vector>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 NPointStrap::NPointStrap(): Strap()
 {
@@ -266,5 +266,8 @@ void NPointStrap::appendToAttributes()
     std::string viaPointMarkerList = pystring::join(" "s, markerNames);
     setAttribute("ViaPointMarkerIDList"s, viaPointMarkerList);
 }
+
+
+} // namespace GaitSym
 
 

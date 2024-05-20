@@ -17,7 +17,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 FixedJoint::FixedJoint() : Joint()
 {
@@ -823,5 +823,8 @@ void FixedJoint::setLateFix(bool lateFix)
     m_lateFix = lateFix;
 }
 
+
+
+} // namespace GaitSym
 
 

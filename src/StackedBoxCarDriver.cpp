@@ -16,7 +16,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 StackedBoxcarDriver::StackedBoxcarDriver()
 {
@@ -130,5 +130,8 @@ void StackedBoxcarDriver::appendToAttributes()
     setAttribute("Widths", *GSUtil::ToString(m_Widths.data(), m_StackSize, &buf));
     setAttribute("Heights", *GSUtil::ToString(m_Heights.data(), m_StackSize, &buf));
 }
+
+
+} // namespace GaitSym
 
 

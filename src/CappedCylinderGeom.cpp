@@ -13,7 +13,7 @@
 #include <string>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 CappedCylinderGeom::CappedCylinderGeom(double radius, double length)
 {
@@ -59,5 +59,8 @@ void CappedCylinderGeom::getLengthRadius(double *length, double *radius) const
     *length = m_length;
 }
 
+
+
+} // namespace GaitSym
 
 

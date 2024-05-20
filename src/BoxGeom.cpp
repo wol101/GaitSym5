@@ -14,7 +14,7 @@
 #include <string>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 BoxGeom::BoxGeom(double lx, double ly, double lz)
 {
@@ -66,4 +66,7 @@ void BoxGeom::appendToAttributes()
 
     return;
 }
+
+} // namespace GaitSym
+
 

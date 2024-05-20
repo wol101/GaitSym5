@@ -22,7 +22,7 @@
 #include "Contact.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 static physx::PxDefaultAllocator g_allocator;
 static physx::PxDefaultErrorCallback g_errorCallback;
@@ -451,4 +451,7 @@ static physx::PxFilterFlags contactReportFilterShader(physx::PxFilterObjectAttri
                 physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
     return physx::PxFilterFlag::eDEFAULT;
 }
+
+} // namespace GaitSym
+
 

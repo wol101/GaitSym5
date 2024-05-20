@@ -9,8 +9,11 @@
 
 #include "Reporter.h"
 
-using namespace GaitSym;
+namespace GaitSym {
 
 Reporter::Reporter()
 {
 }
+} // namespace GaitSym
+
+

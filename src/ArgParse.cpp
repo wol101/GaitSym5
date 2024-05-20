@@ -18,7 +18,7 @@
 #include <regex>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 ArgParse::ArgParse()
 {
@@ -520,3 +520,6 @@ bool ArgParse::ArgumentsOK(const std::string s, const Argument &a)
     }
     return false;
 }
+} // namespace GaitSym
+
+

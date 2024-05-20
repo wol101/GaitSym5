@@ -21,7 +21,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Driver::Driver()
 {
@@ -219,4 +219,7 @@ void Driver::setValue(double value)
 {
     m_value = value;
 }
+
+} // namespace GaitSym
+
 

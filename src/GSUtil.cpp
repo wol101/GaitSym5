@@ -36,7 +36,7 @@
 #endif
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 void GSUtil::Tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList)
 {
@@ -2149,3 +2149,6 @@ double GSUtil::zeroin(double ax, double bx, double (*f)(double x, void *info), v
 }
 
 #endif
+} // namespace GaitSym
+
+

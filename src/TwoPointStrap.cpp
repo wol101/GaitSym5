@@ -18,7 +18,7 @@
 #include <string.h>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 TwoPointStrap::TwoPointStrap()
 {
@@ -263,5 +263,8 @@ Marker *TwoPointStrap::GetInsertionMarker() const
     return m_insertionMarker;
 }
 
+
+
+} // namespace GaitSym
 
 

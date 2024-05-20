@@ -13,7 +13,7 @@
 
 #include <algorithm>
 
-using namespace GaitSym;
+namespace GaitSym {
 
 MovingAverage::MovingAverage() : Filter()
 {
@@ -66,3 +66,6 @@ int MovingAverage::window() const
 {
     return m_window;
 }
+} // namespace GaitSym
+
+

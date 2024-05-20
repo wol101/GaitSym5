@@ -19,7 +19,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 MarkerEllipseDriver::MarkerEllipseDriver()
 {
@@ -541,3 +541,6 @@ void MarkerEllipseDriver::appendToAttributes()
     if (m_XRDriver3) setAttribute("XRDriver3ID"s, m_XRDriver3->name());
     if (m_YRDriver3) setAttribute("YRDriver3ID"s, m_YRDriver3->name());
 }
+} // namespace GaitSym
+
+

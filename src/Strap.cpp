@@ -19,7 +19,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Strap::Strap()
 {
@@ -254,5 +254,8 @@ std::string Strap::dumpToString()
 
 
 
+
+
+} // namespace GaitSym
 
 

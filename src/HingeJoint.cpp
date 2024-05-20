@@ -18,7 +18,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 HingeJoint::HingeJoint() : Joint()
 {
@@ -342,5 +342,8 @@ std::string HingeJoint::dumpToString()
     return ss.str();
 }
 
+
+
+} // namespace GaitSym
 
 

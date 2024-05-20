@@ -15,7 +15,7 @@
 #include <cassert>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Muscle::Muscle()
 {
@@ -148,5 +148,8 @@ void Muscle::LateInitialisation()
     CalculateStrap();
 }
 
+
+
+} // namespace GaitSym
 
 

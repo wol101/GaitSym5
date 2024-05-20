@@ -16,7 +16,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 BallJoint::BallJoint() : Joint()
 {
@@ -339,5 +339,8 @@ std::string BallJoint::dumpToString()
     return ss.str();
 }
 
+
+
+} // namespace GaitSym
 
 

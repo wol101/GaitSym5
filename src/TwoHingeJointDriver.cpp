@@ -29,7 +29,7 @@
 #include <limits>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 TwoHingeJointDriver::TwoHingeJointDriver()
 {
@@ -795,4 +795,7 @@ double TwoHingeJointDriver::actualLength() const
 {
     return m_actualLength;
 }
+
+} // namespace GaitSym
+
 

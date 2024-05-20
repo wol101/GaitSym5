@@ -26,7 +26,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 // constructor
 
@@ -215,5 +215,8 @@ std::string MAMuscle::dumpToString()
     return ss.str();
 }
 
+
+
+} // namespace GaitSym
 
 

@@ -29,7 +29,7 @@
 #include <limits>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 ThreeHingeJointDriver::ThreeHingeJointDriver()
 {
@@ -868,4 +868,7 @@ double ThreeHingeJointDriver::actualLength() const
 {
     return m_actualLength;
 }
+
+} // namespace GaitSym
+
 

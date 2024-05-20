@@ -24,7 +24,7 @@
 #include <cmath>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 static double CalculateForceError (double lce, void *params);
 
@@ -806,5 +806,8 @@ std::string MAMuscleComplete::dumpToString()
     return ss.str();
 }
 
+
+
+} // namespace GaitSym
 
 

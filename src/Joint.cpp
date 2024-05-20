@@ -14,7 +14,7 @@
 #include "Simulation.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 Joint::Joint()
 {
@@ -191,5 +191,8 @@ void Joint::setTorque(const pgd::Vector3 &newTorque)
     m_torque = newTorque;
 }
 
+
+
+} // namespace GaitSym
 
 

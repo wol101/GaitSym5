@@ -23,7 +23,7 @@
 #include <sstream>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 #define OUTSIDERANGE(x, minX, maxX) ((x) < (minX) || (x) > (maxX))
 
@@ -1153,3 +1153,6 @@ pgd::Quaternion Body::GetInitialQuaternion()
 {
     return m_initialQuaternion;
 }
+} // namespace GaitSym
+
+

@@ -18,7 +18,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 DataTarget::DataTarget()
 {
@@ -193,5 +193,8 @@ void DataTarget::appendToAttributes()
     setAttribute("MatchType", matchTypeStrings(m_matchType));
     setAttribute("InterpolationType", interpolationTypeStrings(m_interpolationType));
 }
+
+
+} // namespace GaitSym
 
 

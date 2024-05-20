@@ -21,7 +21,7 @@
 #include "PlaneGeom.h"
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 #define MAX_CONTACTS 64
 
@@ -518,5 +518,8 @@ dWorldID ODEPhysicsEngine::worldID() const
 {
     return m_worldID;
 }
+
+
+} // namespace GaitSym
 
 

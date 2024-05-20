@@ -18,7 +18,7 @@
 #include <algorithm>
 
 using namespace std::string_literals;
-using namespace GaitSym;
+namespace GaitSym {
 
 StepDriver::StepDriver()
 {
@@ -127,5 +127,8 @@ void StepDriver::setDurationList(const std::vector<double> &durationList)
 {
     m_durationList = durationList;
 }
+
+
+} // namespace GaitSym
 
 
