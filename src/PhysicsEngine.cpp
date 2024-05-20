@@ -1,3 +1,12 @@
+/*
+ *  PhysicsEngine.cpp
+ *  GaitSym5
+ *
+ *  Created by Bill Sellers on 20/03/2024.
+ *  Copyright 2024 Bill Sellers. All rights reserved.
+ *
+ */
+
 #include "PhysicsEngine.h"
 
 using namespace GaitSym;

@@ -1,3 +1,12 @@
+/*
+ *  LightBase.cpp
+ *  GaitSym5
+ *
+ *  Created by Bill Sellers on 20/05/2024.
+ *  Copyright 2024 Bill Sellers. All rights reserved.
+ *
+ */
+
 #include "LightBase.h"
 
 #include "GSUtil.h"

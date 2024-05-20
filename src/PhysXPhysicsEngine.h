@@ -1,3 +1,12 @@
+/*
+ *  PhysXPhysicsEngine.h
+ *  GaitSym5
+ *
+ *  Created by Bill Sellers on 20/03/2024.
+ *  Copyright 2024 Bill Sellers. All rights reserved.
+ *
+ */
+
 #ifndef PhysXPhysicsEngine_H
 #define PhysXPhysicsEngine_H
 

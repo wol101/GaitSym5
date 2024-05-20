@@ -19,7 +19,7 @@
 #include <sstream>
 #include <limits>
 
-using namespace GaitSym;
+namespace GaitSym {
 
 AMotorJoint::AMotorJoint() : Joint()
 {
@@ -333,5 +333,5 @@ std::string AMotorJoint::dumpToString()
     return ss.str();
 }
 
-
+}
 

@@ -1,3 +1,12 @@
+/*
+ *  LightBase.h
+ *  GaitSym5
+ *
+ *  Created by Bill Sellers on 20/05/2024.
+ *  Copyright 2024 Bill Sellers. All rights reserved.
+ *
+ */
+
 #ifndef LIGHTBASE_H
 #define LIGHTBASE_H
 
