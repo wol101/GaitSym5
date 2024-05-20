@@ -1512,7 +1512,11 @@ void MainWindow::menuExportOpenSim()
         {
             if (it.second->meshEntity1())
             {
-                std::string filename = it.second->meshEntity1()->filename();
+                QFileInfo info(fileName);
+                QDir currentDir(info.absolutePath());
+                QString meshPath = QString::fromStdString(it.second->meshEntity1()->filename());
+                QString relativeMeshPath = currentDir.relativeFilePath(meshPath);
+                std::string filename = QDir::toNativeSeparators(relativeMeshPath).toStdString(); // this is clumsy but the filenames are stored with qt separators
                 if (filename.size()) { openSimExporter.setPathToObjFiles(pystring::os::path::dirname(filename)); }
             }
         }
