@@ -120,26 +120,6 @@ void Strap::setVelocity(double Velocity)
     m_velocity = Velocity;
 }
 
-double Strap::GetLength() const
-{
-    return m_length;
-}
-
-double Strap::GetVelocity() const
-{
-    return m_velocity;
-}
-
-void Strap::SetTension(double tension)
-{
-    m_tension = tension;
-}
-
-double Strap::GetTension() const
-{
-    return m_tension;
-}
-
 std::vector<std::unique_ptr<PointForce> > *Strap::GetPointForceList()
 {
     return &m_pointForceList;
@@ -231,7 +211,7 @@ std::string Strap::dumpToString()
         for (auto &&it : m_torqueMarkerList) ss << "\tMarker\tWTX\tWTY\tWTZ\tMTX\tMTY\tMTZ\tWMAX\tWMAY\tWMAZ\tMMAX\tMMAY\tMMAZ";
         ss << "\n";
     }
-    ss << simulation()->GetTime() << "\t" << GetLength();
+    ss << simulation()->GetTime() << "\t" << Length();
     for (auto &&it: m_pointForceList)
     {
         ss << "\t" << it->body->name() << "\t" <<

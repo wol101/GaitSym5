@@ -12,15 +12,13 @@
 
 #include "NamedObject.h"
 
-#include <memory>
-#include <set>
-
 namespace GaitSym {
 
 class Body;
 class Joint;
 class Simulation;
 class Geom;
+class Marker;
 
 class OpenSimExporter : public NamedObject
 {
@@ -43,6 +41,8 @@ private:
     void CreateForceSet();
     void CreateMarkerSet();
     void CreateContactGeometrySet();
+
+    void CreatePathPointSet(std::string name, const std::vector<const Marker *> &markerList);
 
     // utility functions
     static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);

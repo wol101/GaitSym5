@@ -100,22 +100,22 @@ void Muscle::setStrapColourControl(const Muscle::StrapColourControl &strapColour
 
 double Muscle::GetLength() const
 {
-    return m_Strap->GetLength();
+    return m_Strap->Length();
 }
 
 double Muscle::GetVelocity() const
 {
-    return m_Strap->GetVelocity();
+    return m_Strap->Velocity();
 }
 
 double Muscle::GetTension() const
 {
-    return m_Strap->GetTension();
+    return m_Strap->Tension();
 }
 
 double Muscle::GetPower() const
 {
-    return -(m_Strap->GetTension() * m_Strap->GetVelocity());
+    return -(m_Strap->Tension() * m_Strap->Velocity());
 }
 
 void Muscle::CalculateStrap()

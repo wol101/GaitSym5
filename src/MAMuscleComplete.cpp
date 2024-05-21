@@ -127,7 +127,7 @@ void MAMuscleComplete::SetActivationKinetics(bool activationKinetics,
 void MAMuscleComplete::LateInitialisation()
 {
     Muscle::LateInitialisation();
-    m_Params.len = GetStrap()->GetLength();
+    m_Params.len = GetStrap()->Length();
 
     // lastlpe perhaps not set to anything useful
 
@@ -221,8 +221,8 @@ void MAMuscleComplete::SetActivation()
         m_Params.alpha = m_Stim;
     }
 
-    m_Params.len = GetStrap()->GetLength();
-    m_Params.v = GetStrap()->GetVelocity();
+    m_Params.len = GetStrap()->Length();
+    m_Params.v = GetStrap()->Velocity();
 
     double minlpe = m_Params.spe - (m_Params.spe * m_Params.width / 2);
     if (minlpe < 0) minlpe = 0;
@@ -325,7 +325,7 @@ void MAMuscleComplete::SetActivation()
         }
     }
 
-    GetStrap()->SetTension(m_Params.fse);
+    GetStrap()->setTension(m_Params.fse);
 }
 
 // calculate the metabolic power of the muscle

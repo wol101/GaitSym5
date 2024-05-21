@@ -27,7 +27,7 @@ DampedSpringMuscle::DampedSpringMuscle(): Muscle()
 
 double DampedSpringMuscle::GetElasticEnergy()
 {
-    double delLen = GetStrap()->GetLength() - m_UnloadedLength;
+    double delLen = GetStrap()->Length() - m_UnloadedLength;
     if (delLen < 0) return 0;
 
     // difference between these two values is the amount of energy lost by damping
@@ -45,7 +45,7 @@ void DampedSpringMuscle::SetActivation()
     m_Activation = dataSum();
 
     // calculate strain
-    double elasticStrain = (GetStrap()->GetLength() - m_UnloadedLength) / m_UnloadedLength;
+    double elasticStrain = (GetStrap()->Length() - m_UnloadedLength) / m_UnloadedLength;
 
     // calculate stress
     double elasticStress = elasticStrain * m_SpringConstant;
@@ -58,7 +58,7 @@ void DampedSpringMuscle::SetActivation()
     {
 
         // calculate damping (+ve when lengthening)
-        double relativeVelocity = GetStrap()->GetVelocity() / m_UnloadedLength;
+        double relativeVelocity = GetStrap()->Velocity() / m_UnloadedLength;
         double dampingStress = relativeVelocity * m_Damping;
 
         // now calculate tension
@@ -68,13 +68,13 @@ void DampedSpringMuscle::SetActivation()
         // stop any pushing
         if (tension < 0) tension = 0;
     }
-    GetStrap()->SetTension(tension);
+    GetStrap()->setTension(tension);
 }
 
 bool DampedSpringMuscle::ShouldBreak()
 {
     if (m_BreakingStrain <= 0) return false;
-    double elasticStrain = (GetStrap()->GetLength() - m_UnloadedLength) / m_UnloadedLength;
+    double elasticStrain = (GetStrap()->Length() - m_UnloadedLength) / m_UnloadedLength;
     if (elasticStrain > m_BreakingStrain)
     {
         std::cerr << "DampedSpringMuscle::ShouldBreak returns true\n";
@@ -94,8 +94,8 @@ std::string DampedSpringMuscle::dumpToString()
         ss << "Time\tact\ttension\tlength\tvelocity\tPMECH\n";
     }
     ss << simulation()->GetTime() << "\t" << m_Activation <<
-          "\t" << GetStrap()->GetTension() << "\t" << GetStrap()->GetLength() << "\t" << GetStrap()->GetVelocity() <<
-          "\t" << GetStrap()->GetVelocity() * GetStrap()->GetTension() <<
+          "\t" << GetStrap()->Tension() << "\t" << GetStrap()->Length() << "\t" << GetStrap()->Velocity() <<
+          "\t" << GetStrap()->Velocity() * GetStrap()->Tension() <<
           "\n";
     return ss.str();
 }

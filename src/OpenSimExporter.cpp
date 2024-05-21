@@ -17,8 +17,10 @@
 #include "HingeJoint.h"
 #include "FixedJoint.h"
 #include "Marker.h"
-#include "SphereGeom.h"
-#include "PlaneGeom.h"
+#include "MAMuscle.h"
+#include "MAMuscleComplete.h"
+#include "TwoPointStrap.h"
+#include "NPointStrap.h"
 
 #include "pystring.h"
 
@@ -347,9 +349,93 @@ void OpenSimExporter::CreateForceSet()
 {
     XMLInitiateTag(&m_xmlString, "ForceSet"s, {{"name"s, "forceset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
+
+    for (auto &&muscleIter : *m_simulation->GetMuscleList())
+    {
+        Muscle *muscle = muscleIter.second.get();
+        Strap *strap = muscleIter.second->GetStrap();
+        XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, muscle->name()}});
+        XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+
+        XMLInitiateTag(&m_xmlString, "GeometryPath"s, {{"name"s, "path"s}});
+
+        XMLInitiateTag(&m_xmlString, "Appearance"s);
+        XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(muscle->colour1().alpha()));
+        XMLTagAndContent(&m_xmlString, "color"s, muscle->colour1().GetFloatColourRGB());
+        XMLTerminateTag(&m_xmlString, "Appearance"s);
+        while (true)
+        {
+            if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strap))
+            {
+                CreatePathPointSet(muscle->name(), {twoPointStrap->GetOriginMarker(), twoPointStrap->GetInsertionMarker()});
+                break;
+            }
+            if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strap))
+            {
+                std::vector<const Marker *> markerList;
+                markerList.push_back(nPointStrap->GetOriginMarker());
+                for (auto &&markerIter : *nPointStrap->GetViaPointMarkers()) { markerList.push_back(markerIter); }
+                markerList.push_back(nPointStrap->GetInsertionMarker());
+                CreatePathPointSet(muscle->name(), markerList);
+                break;
+            }
+            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported strap type in Muscle ID=\"" << muscle->name() << "\"\n";
+        }
+        XMLInitiateTag(&m_xmlString, "PathWrapSet"s);
+        XMLTagAndContent(&m_xmlString, "objects"s, ""s);
+        XMLTagAndContent(&m_xmlString, "groups"s, ""s);
+        XMLTerminateTag(&m_xmlString, "PathWrapSet"s);
+
+        XMLTerminateTag(&m_xmlString, "GeometryPath"s);
+
+        while (true)
+        {
+            if (MAMuscle *maMuscle = dynamic_cast<MAMuscle *>(muscle))
+            {
+                XMLTagAndContent(&m_xmlString, "optimal_force"s, "1"s);
+                XMLTagAndContent(&m_xmlString, "max_isometric_force"s, GSUtil::ToString(maMuscle->pca() * maMuscle->forcePerUnitArea()));
+                XMLTagAndContent(&m_xmlString, "optimal_fiber_length"s, GSUtil::ToString(maMuscle->fibreLength()));
+                double tendonLength = strap->Length() - maMuscle->fibreLength();
+                XMLTagAndContent(&m_xmlString, "tendon_slack_length"s, GSUtil::ToString(std::max(tendonLength, 0.001)));
+                XMLTagAndContent(&m_xmlString, "pennation_angle_at_optimal"s, "0"s);
+                XMLTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::ToString(maMuscle->vMaxFactor()));
+                XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
+                XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
+                XMLTagAndContent(&m_xmlString, "KshapeActive"s, "0.5"s);
+                XMLTagAndContent(&m_xmlString, "KshapePassive"s, "4"s);
+                XMLTagAndContent(&m_xmlString, "Af"s, "0.3"s);
+                XMLTagAndContent(&m_xmlString, "Flen"s, "0.6"s);
+                XMLTagAndContent(&m_xmlString, "activation_time_constant"s, "0.01"s);
+                XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.04"s);
+                break;
+            }
+            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
+        }
+
+        XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s);
+    }
+
     XMLTerminateTag(&m_xmlString, "objects"s);
     XMLTagAndContent(&m_xmlString, "groups"s, ""s);
     XMLTerminateTag(&m_xmlString, "ForceSet"s);
+}
+
+void OpenSimExporter::CreatePathPointSet(std::string name, const std::vector<const Marker *> &markerList)
+{
+    XMLInitiateTag(&m_xmlString, "PathPointSet"s);
+    XMLInitiateTag(&m_xmlString, "objects"s);
+
+    for (size_t i = 0; i < markerList.size(); i++)
+    {
+        const Marker *marker = markerList[i];
+        XMLInitiateTag(&m_xmlString, "PathPoint"s, {{"name"s, name + "-P"s + GSUtil::ToString(i)}});
+        XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + marker->GetBody()->name());
+        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
+    }
+
+    XMLTerminateTag(&m_xmlString, "objects"s);
+    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
+    XMLTerminateTag(&m_xmlString, "PathPointSet"s);
 }
 
 void OpenSimExporter::CreateMarkerSet()

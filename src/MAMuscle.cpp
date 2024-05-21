@@ -86,7 +86,7 @@ void MAMuscle::SetAlpha(double alpha)
 
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    v = -GetStrap()->GetVelocity();
+    v = -GetStrap()->Velocity();
 
     // limit v
     if (v > m_VMax) v = m_VMax;
@@ -103,7 +103,7 @@ void MAMuscle::SetAlpha(double alpha)
 
     // now set the tension as a proportion of fFull
     fCE = m_Alpha * fFull;
-    GetStrap()->SetTension(fCE);
+    GetStrap()->setTension(fCE);
 }
 
 void MAMuscle::setFibreLength(double fibreLength)
@@ -152,7 +152,7 @@ double MAMuscle::GetMetabolicPower()
 {
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    double relV = -GetStrap()->GetVelocity() / m_VMax;
+    double relV = -GetStrap()->Velocity() / m_VMax;
 
     // limit relV
     if (relV > 1) relV = 1;
@@ -209,8 +209,8 @@ std::string MAMuscle::dumpToString()
         ss << "Time\tVMax\tF0\tK\tAlpha\tFCE\tLCE\tVCE\tPMECH\tPMET\n";
     }
     ss << simulation()->GetTime() << "\t" << m_VMax << "\t" << m_F0 << "\t" << m_K << "\t" << m_Alpha <<
-          "\t" << GetStrap()->GetTension() << "\t" << GetStrap()->GetLength() << "\t" << GetStrap()->GetVelocity() <<
-          "\t" << GetStrap()->GetVelocity() * GetStrap()->GetTension() << "\t" << GetMetabolicPower() <<
+          "\t" << GetStrap()->Tension() << "\t" << GetStrap()->Length() << "\t" << GetStrap()->Velocity() <<
+          "\t" << GetStrap()->Velocity() * GetStrap()->Tension() << "\t" << GetMetabolicPower() <<
           "\n";
     return ss.str();
 }

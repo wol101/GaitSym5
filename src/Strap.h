@@ -34,12 +34,6 @@ public:
     Strap();
     virtual ~Strap();
 
-    double GetLength() const;
-    double GetVelocity() const;
-
-    void SetTension(double tension);
-    double GetTension() const;
-
     void GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vector3 *markerTorque, pgd::Vector3 *worldMomentArm, pgd::Vector3 *markerMomentArm);
 
     std::vector<std::unique_ptr<PointForce >> *GetPointForceList();

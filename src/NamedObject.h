@@ -33,7 +33,7 @@ public:
     NamedObject();
     virtual ~NamedObject();
 
-    // destructor might be needed to clean up resources but I don't need the rest of the rule of 5
+    // destructor might be needed to clean up resources but I don't want the rest of the rule of 5
     NamedObject(const NamedObject&) = delete;
     NamedObject& operator=(const NamedObject&) = delete;
     NamedObject(NamedObject&&) = delete;
