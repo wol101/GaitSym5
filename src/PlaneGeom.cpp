@@ -9,12 +9,8 @@
 
 #include "PlaneGeom.h"
 #include "Marker.h"
-#include "GSUtil.h"
-#include "Body.h"
-
 
 #include <string>
-#include <algorithm>
 #include <limits>
 
 using namespace std::string_literals;
@@ -26,6 +22,7 @@ namespace GaitSym {
 // d is then the distance of the plane along that normal vector
 
 // Note: planes are non placeable in ODE and have to be attached to non-dynamic actors in PhysX
+// the Z axis of the marker is used as the normal, which means the X and Y axes are in the plane
 
 PlaneGeom::PlaneGeom(double a, double b, double c, double d)
 {

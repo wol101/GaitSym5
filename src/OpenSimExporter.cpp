@@ -21,6 +21,8 @@
 #include "MAMuscleComplete.h"
 #include "TwoPointStrap.h"
 #include "NPointStrap.h"
+#include "SphereGeom.h"
+#include "PlaneGeom.h"
 
 #include "pystring.h"
 
@@ -493,6 +495,51 @@ void OpenSimExporter::CreateContactGeometrySet()
 {
     XMLInitiateTag(&m_xmlString, "ContactGeometrySet"s, {{"name"s, "contactgeometryset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
+
+    for (auto &&geomIter : *m_simulation->GetGeomList())
+    {
+        Geom *geom = geomIter.second.get();
+        while (true)
+        {
+            if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(geom))
+            {
+                XMLInitiateTag(&m_xmlString, "ContactSphere"s, {{"name"s, m_legalNameMap[sphereGeom->name()]}});
+                XMLTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->GetBody()->name()]);
+                XMLTagAndContent(&m_xmlString, "radius"s, GSUtil::ToString(sphereGeom->radius()));
+                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(sphereGeom->geomMarker()->GetPosition()));
+                XMLInitiateTag(&m_xmlString, "Appearance"s);
+                XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(sphereGeom->colour1().alpha()));
+                XMLTagAndContent(&m_xmlString, "color"s, sphereGeom->colour1().GetFloatColourRGB());
+                XMLTerminateTag(&m_xmlString, "Appearance"s);
+                XMLTerminateTag(&m_xmlString, "ContactSphere"s);
+                break;
+            }
+            if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(geom))
+            {
+                XMLInitiateTag(&m_xmlString, "ContactHalfSpace"s, {{"name"s, m_legalNameMap[planeGeom->name()]}});
+                XMLTagAndContent(&m_xmlString, "socket_frame"s, "/ground"s); // has to be attached to the ground
+                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(planeGeom->geomMarker()->GetPosition()));
+                XMLInitiateTag(&m_xmlString, "Appearance"s);
+                XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(planeGeom->colour1().alpha()));
+                XMLTagAndContent(&m_xmlString, "color"s, planeGeom->colour1().GetFloatColourRGB());
+                XMLTerminateTag(&m_xmlString, "Appearance"s);
+                XMLInitiateTag(&m_xmlString, "SurfaceProperties"s);
+                XMLTagAndContent(&m_xmlString, "representation"s, "2"s); // representation (1:Points, 2:Wire, 3:Shaded) used to display the object
+                XMLTerminateTag(&m_xmlString, "SurfaceProperties"s);
+                // plane normal in opensim is defined by the X axis
+                // plane normal in gaitsym is defined by the Z axis
+                pgd::Vector3 normal = planeGeom->geomMarker()->GetWorldAxis(Marker::Z);
+                pgd::Quaternion quaternion = pgd::FindRotation(pgd::Vector3(1, 0, 0), normal);
+                pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(quaternion);
+                XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
+                XMLTerminateTag(&m_xmlString, "ContactHalfSpace"s);
+                break;
+            }
+            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
+            break;
+        }
+    }
+
     XMLTerminateTag(&m_xmlString, "objects"s);
     XMLTagAndContent(&m_xmlString, "groups"s, ""s);
     XMLTerminateTag(&m_xmlString, "ContactGeometrySet"s);
