@@ -445,6 +445,8 @@ void OpenSimExporter::CreateForceSet()
                 XMLTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::ToString(maMuscle->vMaxFactor()));
                 XMLTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
                 XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
+                XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
+                XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
                 break;
             }
             std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
