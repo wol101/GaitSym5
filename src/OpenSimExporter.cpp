@@ -462,6 +462,37 @@ void OpenSimExporter::CreateForceSet()
         XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s);
     }
 
+    // we need to add the coordinate limit forces here so the joint limits are enforced
+    for (auto &&jointIter : *m_simulation->GetJointList())
+    {
+        while (true)
+        {
+            if (const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(jointIter.second.get()))
+            {
+                XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit"s}});
+                XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                XMLTagAndContent(&m_xmlString, "coordinate"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s);
+                XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                double stopSpring = hingeJoint->stopSpring();
+                if (stopSpring < 0) { stopSpring = m_simulation->GetGlobal()->SpringConstant(); }
+                double stopDamp = hingeJoint->stopDamp();
+                if (stopDamp < 0) { stopDamp = m_simulation->GetGlobal()->DampingConstant(); }
+                XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
+                pgd::Vector2 stops = hingeJoint->stops();
+                stops.Set(pgd::RadToDeg(-stops[1]), pgd::RadToDeg(-stops[0]));
+                XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(stops[0]));
+                XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(stops[1]));
+                XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((stops[1] - stops[0]) / 1000));
+                XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+                break;
+            }
+            break;
+        }
+    }
+
+
     // we need to add the contact forces in here too
     // we assume that the only forces we want are between the contacts and the floor
     // first get the name of the floor geom
