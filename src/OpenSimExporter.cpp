@@ -462,6 +462,45 @@ void OpenSimExporter::CreateForceSet()
         XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s);
     }
 
+    // we need to add the contact forces in here too
+    // we assume that the only forces we want are between the contacts and the floor
+    // first get the name of the floor geom
+    std::string floorName;
+    for (auto &&geomIter : *m_simulation->GetGeomList()) { if (dynamic_cast<PlaneGeom *>(geomIter.second.get())) { floorName = geomIter.first; } }
+    // now create all the forces
+    for (auto &&geomIter : *m_simulation->GetGeomList())
+    {
+        Geom *geom = geomIter.second.get();
+        while (true)
+        {
+            if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(geom)) { break; }
+            if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(geom))
+            {
+                XMLInitiateTag(&m_xmlString, "HuntCrossleyForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
+                XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+
+                XMLInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s, {{"name"s, "contact_parameters"s}});
+                XMLInitiateTag(&m_xmlString, "objects"s);
+                XMLInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
+                XMLTagAndContent(&m_xmlString, "geometry"s, m_legalNameMap[floorName] + " "s + m_legalNameMap[sphereGeom->name()]);
+                XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::ToString(sphereGeom->GetContactSpringConstant()));
+                XMLTagAndContent(&m_xmlString, "dissipation"s, "0.5"s);
+                XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
+                XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
+                XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
+                XMLTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
+                XMLTerminateTag(&m_xmlString, "objects"s);
+                XMLTagAndContent(&m_xmlString, "groups"s, ""s);
+                XMLTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s);
+
+                XMLTerminateTag(&m_xmlString, "HuntCrossleyForce"s);
+                break;
+            }
+            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
+            break;
+        }
+    }
+
     XMLTerminateTag(&m_xmlString, "objects"s);
     XMLTagAndContent(&m_xmlString, "groups"s, ""s);
     XMLTerminateTag(&m_xmlString, "ForceSet"s);
@@ -530,21 +569,21 @@ void OpenSimExporter::CreateContactGeometrySet()
                 XMLInitiateTag(&m_xmlString, "SurfaceProperties"s);
                 XMLTagAndContent(&m_xmlString, "representation"s, "2"s); // representation (1:Points, 2:Wire, 3:Shaded) used to display the object
                 XMLTerminateTag(&m_xmlString, "SurfaceProperties"s);
-                // plane normal in opensim is defined by the X axis
+                // plane normal in opensim is defined by the -X axis
                 // plane normal in gaitsym is defined by the Z axis
                 pgd::Vector3 normal = planeGeom->geomMarker()->GetWorldAxis(Marker::Z);
                 // but we now need to convert this normal to the opensim Y up coordinate system
                 pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
                 pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
                 normal = pgd::QVRotate(rotation, normal);
-                pgd::Vector3 xAxis(1, 0, 0);
-                pgd::Quaternion quaternion = pgd::FindRotation(xAxis, normal); // now we just need to find the rotation that maps the X axis to this normal
+                pgd::Vector3 minusXAxis(-1, 0, 0);
+                pgd::Quaternion quaternion = pgd::FindRotation(minusXAxis, normal); // now we just need to find the rotation that maps the -X axis to this normal
                 euler = pgd::MakeEulerAnglesFromQRadian(quaternion);
                 XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
                 XMLTerminateTag(&m_xmlString, "ContactHalfSpace"s);
                 break;
             }
-            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
+            std::cerr << "OpenSimExporter::CreateContactGeometrySet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
             break;
         }
     }
