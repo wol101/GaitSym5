@@ -35,7 +35,7 @@ OpenSimExporter::OpenSimExporter()
 void OpenSimExporter::Process(Simulation *simulation)
 {
     m_simulation = simulation;
-    m_xmlString.clear();
+    m_xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"s;
 
     // create the name mappings
     for (auto &&nameIter : m_simulation->GetNameList())
@@ -405,6 +405,7 @@ void OpenSimExporter::CreateForceSet()
         XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(muscle->colour1().alpha()));
         XMLTagAndContent(&m_xmlString, "color"s, muscle->colour1().GetFloatColourRGB());
         XMLTerminateTag(&m_xmlString, "Appearance"s);
+
         while (true)
         {
             if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strap))
@@ -442,14 +443,8 @@ void OpenSimExporter::CreateForceSet()
                 XMLTagAndContent(&m_xmlString, "tendon_slack_length"s, GSUtil::ToString(std::max(tendonLength, 0.001)));
                 XMLTagAndContent(&m_xmlString, "pennation_angle_at_optimal"s, "0"s);
                 XMLTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::ToString(maMuscle->vMaxFactor()));
-                XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
-                XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
-                XMLTagAndContent(&m_xmlString, "KshapeActive"s, "0.5"s);
-                XMLTagAndContent(&m_xmlString, "KshapePassive"s, "4"s);
-                XMLTagAndContent(&m_xmlString, "Af"s, "0.3"s);
-                XMLTagAndContent(&m_xmlString, "Flen"s, "0.6"s);
-                XMLTagAndContent(&m_xmlString, "activation_time_constant"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.04"s);
+                XMLTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
+                XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
                 break;
             }
             std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
@@ -457,7 +452,6 @@ void OpenSimExporter::CreateForceSet()
         }
 
         XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s);
-        break;
     }
 
     XMLTerminateTag(&m_xmlString, "objects"s);
