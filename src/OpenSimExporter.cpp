@@ -119,12 +119,12 @@ void OpenSimExporter::CreateBodySet()
         double mass, ixx, iyy, izz, ixy, izx, iyz;
         bodyIter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         XMLTagAndContent(&m_xmlString, "mass"s, GSUtil::ToString(mass));
-        pgd::Vector3 p;
-        for (auto &&j : *m_simulation->GetJointList())
+        pgd::Vector3 referencePosition;
+        for (auto &&jointIter : *m_simulation->GetJointList())
         {
-            if (j.second->body2() == bodyIter.second.get()) { p = j.second->body2Marker()->GetPosition(); }
+            if (jointIter.second->body2() == bodyIter.second.get()) { referencePosition = jointIter.second->body2Marker()->GetPosition(); } // if a body is connected to a parent, then its reference is that joint
         }
-        XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-p)); // The location of the mass center in the body frame which is based on the joint position
+        XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
         XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString(".17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
         XMLTerminateTag(&m_xmlString, "Body"s);
     }
@@ -226,6 +226,97 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "frames"s);
 
             XMLTerminateTag(&m_xmlString, "WeldJoint"s);
+        }
+    }
+
+    // now handle ant free joints for parentless bodies
+    for (auto &&bodyIter : *m_simulation->GetBodyList())
+    {
+        bool parentlessBody = true;
+        for (auto &&jointIter : *m_simulation->GetJointList())
+        {
+            if (jointIter.second->body2() == bodyIter.second.get())
+            {
+                parentlessBody = false;
+                break;
+            }
+        }
+        if (parentlessBody)
+        {
+            pgd::Vector3 position = bodyIter.second->GetConstructionPosition();
+            pgd::Vector3 euler(-1.5707963267948966, 0, 0); // all GaitSym bodies are constructed with no rotation, and rotating -90 degrees about the X axis converts from Z up to Y up
+            pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+            position = pgd::QVRotate(rotation, position);
+            XMLInitiateTag(&m_xmlString, "FreeJoint"s, {{"name"s, "free_"s + bodyIter.second->name()}});
+
+            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s);
+            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, "/bodyset/"s + bodyIter.second->name());
+
+            XMLInitiateTag(&m_xmlString, "coordinates"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + bodyIter.second->name() + "_coord_0"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.x));
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-1.57079633 1.57079633"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + bodyIter.second->name() + "_coord_1"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.y));
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-1.57079633 1.57079633"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + bodyIter.second->name() + "_coord_2"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.z));
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-1.57079633 1.57079633"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + bodyIter.second->name() + "_coord_3"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(position.x));
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-99 99"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + bodyIter.second->name() + "_coord_4"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(position.y));
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-99 99"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + bodyIter.second->name() + "_coord_5"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(position.z));
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-99 99"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLTerminateTag(&m_xmlString, "coordinates"s);
+
+            XMLTerminateTag(&m_xmlString, "FreeJoint"s);
         }
     }
 
