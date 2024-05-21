@@ -110,7 +110,11 @@ void OpenSimExporter::Process(Simulation *simulation)
     // set some options
     XMLTagAndContent(&m_xmlString, "length_units"s, "meters"s);
     XMLTagAndContent(&m_xmlString, "force_units"s, "N"s);
-    XMLTagAndContent(&m_xmlString, "gravity"s, GSUtil::ToString(m_simulation->GetGlobal()->Gravity()));
+    // but we now need to convert gravity to the opensim Y up coordinate system
+    pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
+    pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+    pgd::Vector3 gravity = pgd::QVRotate(rotation, m_simulation->GetGlobal()->Gravity());
+    XMLTagAndContent(&m_xmlString, "gravity"s, GSUtil::ToString(gravity));
 
     CreateBodySet();
     CreateJointSet();
