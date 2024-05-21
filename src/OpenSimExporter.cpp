@@ -529,8 +529,13 @@ void OpenSimExporter::CreateContactGeometrySet()
                 // plane normal in opensim is defined by the X axis
                 // plane normal in gaitsym is defined by the Z axis
                 pgd::Vector3 normal = planeGeom->geomMarker()->GetWorldAxis(Marker::Z);
-                pgd::Quaternion quaternion = pgd::FindRotation(pgd::Vector3(1, 0, 0), normal);
-                pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(quaternion);
+                // but we now need to convert this normal to the opensim Y up coordinate system
+                pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
+                pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+                normal = pgd::QVRotate(rotation, normal);
+                pgd::Vector3 xAxis(1, 0, 0);
+                pgd::Quaternion quaternion = pgd::FindRotation(xAxis, normal); // now we just need to find the rotation that maps the X axis to this normal
+                euler = pgd::MakeEulerAnglesFromQRadian(quaternion);
                 XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
                 XMLTerminateTag(&m_xmlString, "ContactHalfSpace"s);
                 break;
