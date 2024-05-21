@@ -52,6 +52,8 @@ private:
     Simulation *m_simulation = nullptr;
     std::string m_xmlString;
     std::string m_pathToObjFiles;
+    std::map<std::string, std::string> m_legalNameMap;
+    std::map<std::string, std::string> m_legalNameReverseMap;
 };
 
 } // namespace GaitSym
