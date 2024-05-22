@@ -34,6 +34,14 @@ OpenSimExporter::OpenSimExporter()
     setName("GaitSym5_generated_model"s);
 }
 
+OpenSimExporter::~OpenSimExporter()
+{
+    if (m_currentIndent != 0)
+    {
+        std::cerr << "OpenSimExporter::~OpenSimExporter() error: terminated with non-zero indent\n";
+    }
+}
+
 void OpenSimExporter::Process(Simulation *simulation)
 {
     m_simulation = simulation;
@@ -175,7 +183,7 @@ void OpenSimExporter::CreateBodySet()
             if (jointIter.second->body2() == bodyIter.second.get()) { referencePosition = jointIter.second->body2Marker()->GetPosition(); } // if a body is connected to a parent, then its reference is that joint
         }
         XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
-        XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString(".17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
+        XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
         XMLTerminateTag(&m_xmlString, "Body"s);
     }
 
@@ -627,6 +635,7 @@ void OpenSimExporter::CreateContactGeometrySet()
 
 void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
 {
+    for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
     xmlString->append("<"s + tag + " "s);
     for (auto &&iter : attributes)
     {
@@ -635,15 +644,27 @@ void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &
     xmlString->pop_back();
     if (terminate) { xmlString->append("/>\n"s); }
     else { xmlString->append(">\n"s); }
+    m_currentIndent += 2;
 }
 
 void OpenSimExporter::XMLTerminateTag(std::string *xmlString, const std::string &tag)
 {
+    m_currentIndent -= 2;
+    if (m_currentIndent < 0)
+    {
+        std::cerr << "OpenSimExporter::XMLTerminateTag error: indent < 0 tag=\"" << "\"\n";
+        m_currentIndent = 0;
+    }
+    else
+    {
+        for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
+    }
     xmlString->append("</"s + tag + ">\n"s);
 }
 
 void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content)
 {
+    for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
     xmlString->append("<"s + tag + ">"s);
     xmlString->append(content);
     xmlString->append("</"s + tag + ">\n"s);

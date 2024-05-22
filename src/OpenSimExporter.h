@@ -24,6 +24,7 @@ class OpenSimExporter : public NamedObject
 {
 public:
     OpenSimExporter();
+    virtual ~OpenSimExporter();
 
     void Process(Simulation *simulation);
 
@@ -45,15 +46,17 @@ private:
     void CreatePathPointSet(std::string name, const std::vector<const Marker *> &markerList);
 
     // utility functions
-    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
-    static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
-    static void XMLTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content);
+    void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
+    void XMLTerminateTag(std::string *xmlString, const std::string &tag);
+    void XMLTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content);
 
     Simulation *m_simulation = nullptr;
     std::string m_xmlString;
     std::string m_pathToObjFiles;
     std::map<std::string, std::string> m_legalNameMap;
     std::map<std::string, std::string> m_legalNameReverseMap;
+
+    int m_currentIndent = 0;
 };
 
 } // namespace GaitSym
