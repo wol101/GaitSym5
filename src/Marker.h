@@ -68,6 +68,13 @@ public:
     pgd::Quaternion GetWorldQuaternion(const pgd::Quaternion &localQuaternion) const;
     pgd::Quaternion GetQuaternion(const pgd::Quaternion &worldQuaternion) const;
 
+    // utility statics
+    static pgd::Vector3 GetPosition(const Body &body, const pgd::Vector3 &worldCoordinates);
+    static pgd::Vector3 GetWorldPosition(const Body &body, const pgd::Vector3 &localCoordinates);
+    static pgd::Vector3 GetVector(const Body &body, const pgd::Vector3 &worldVector);
+    static pgd::Vector3 GetWorldVector(const Body &body, const pgd::Vector3 &localVector);
+    static pgd::Quaternion GetWorldQuaternion(const Body &body, const pgd::Quaternion &localQuaternion);
+    static pgd::Quaternion GetQuaternion(const Body &body, const pgd::Quaternion &worldQuaternion);
 
     virtual std::string dumpToString();
     virtual std::string *createFromAttributes();

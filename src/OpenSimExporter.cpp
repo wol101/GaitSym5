@@ -287,7 +287,7 @@ void OpenSimExporter::CreateJointSet()
         }
     }
 
-    // now handle ant free joints for parentless bodies
+    // now handle any free joints for parentless bodies
     for (auto &&bodyIter : *m_simulation->GetBodyList())
     {
         bool parentlessBody = true;
@@ -499,7 +499,6 @@ void OpenSimExporter::CreateForceSet()
             break;
         }
     }
-
 
     // we need to add the contact forces in here too
     // we assume that the only forces we want are between the contacts and the floor
