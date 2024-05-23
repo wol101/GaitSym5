@@ -33,6 +33,9 @@ public:
     std::string pathToObjFiles() const;
     void setPathToObjFiles(const std::string &newPathToObjFiles);
 
+    bool mocoExport() const;
+    void setMocoExport(bool newMocoExport);
+
 private:
 
     void CreateBodySet();
@@ -55,6 +58,8 @@ private:
     std::string m_pathToObjFiles;
     std::map<std::string, std::string> m_legalNameMap;
     std::map<std::string, std::string> m_legalNameReverseMap;
+
+    bool m_mocoExport = false;
 
     int m_currentIndent = 0;
 };

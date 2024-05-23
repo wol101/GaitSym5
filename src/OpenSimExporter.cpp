@@ -410,8 +410,17 @@ void OpenSimExporter::CreateForceSet()
     {
         Muscle *muscle = muscleIter.second.get();
         Strap *strap = muscleIter.second->GetStrap();
-        XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}});
-        XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+        if (m_mocoExport)
+        {
+            XMLInitiateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}});
+            XMLTagAndContent(&m_xmlString, "min_control"s, "0.01"s);
+            XMLTagAndContent(&m_xmlString, "max_control"s, "1.0"s);
+        }
+        else
+        {
+            XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}});
+            XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+        }
 
         XMLInitiateTag(&m_xmlString, "GeometryPath"s, {{"name"s, "path"s}});
 
@@ -461,13 +470,23 @@ void OpenSimExporter::CreateForceSet()
                 XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
                 XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
                 XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
+
+                XMLTagAndContent(&m_xmlString, "ignore_tendon_compliance"s, "true"s);
+                XMLTagAndContent(&m_xmlString, "ignore_activation_dynamics"s, "true"s);
+                XMLTagAndContent(&m_xmlString, "activation_time_constant"s, "0.015"s);
+                XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.060"s);
+                XMLTagAndContent(&m_xmlString, "active_force_width_scale"s, "1.0"s);
+                XMLTagAndContent(&m_xmlString, "fiber_damping"s, "0.01"s);
+                XMLTagAndContent(&m_xmlString, "tendon_strain_at_one_norm_force"s, "0.01"s);
+                XMLTagAndContent(&m_xmlString, "ignore_passive_fiber_force"s, "true"s);
                 break;
             }
             std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
             break;
         }
 
-        XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s);
+        if (m_mocoExport) { XMLTerminateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s); }
+        else { XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s); }
     }
 
     // we need to add the coordinate limit forces here so the joint limits are enforced
@@ -514,6 +533,26 @@ void OpenSimExporter::CreateForceSet()
             if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(geom)) { break; }
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(geom))
             {
+                if (m_mocoExport)
+                {
+                    XMLInitiateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
+
+                    XMLTagAndContent(&m_xmlString, "socket_sphere"s, m_legalNameMap[sphereGeom->name()]);
+                    XMLTagAndContent(&m_xmlString, "socket_half_space"s, m_legalNameMap[floorName]);
+                    XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::ToString(sphereGeom->GetContactSpringConstant()));
+                    XMLTagAndContent(&m_xmlString, "dissipation"s, GSUtil::ToString(2));
+                    XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
+                    XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
+                    XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
+                    XMLTagAndContent(&m_xmlString, "transition_velocity"s, GSUtil::ToString(0.2));
+                    XMLTagAndContent(&m_xmlString, "derivative_smoothing"s, GSUtil::ToString(1.0e-05));
+                    XMLTagAndContent(&m_xmlString, "hertz_smoothing"s, GSUtil::ToString(300));
+                    XMLTagAndContent(&m_xmlString, "hunt_crossley_smoothing"s, GSUtil::ToString(50));
+
+                    XMLTerminateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s);
+                }
+                else
+                {
                 XMLInitiateTag(&m_xmlString, "HuntCrossleyForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
                 XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
 
@@ -532,6 +571,7 @@ void OpenSimExporter::CreateForceSet()
                 XMLTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s);
 
                 XMLTerminateTag(&m_xmlString, "HuntCrossleyForce"s);
+                }
                 break;
             }
             std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
@@ -667,6 +707,16 @@ void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string
     xmlString->append("<"s + tag + ">"s);
     xmlString->append(content);
     xmlString->append("</"s + tag + ">\n"s);
+}
+
+bool OpenSimExporter::mocoExport() const
+{
+    return m_mocoExport;
+}
+
+void OpenSimExporter::setMocoExport(bool newMocoExport)
+{
+    m_mocoExport = newMocoExport;
 }
 
 std::string OpenSimExporter::pathToObjFiles() const

@@ -1508,6 +1508,7 @@ void MainWindow::menuExportOpenSim()
     {
         setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
         GaitSym::OpenSimExporter openSimExporter;
+        openSimExporter.setMocoExport(Preferences::valueBool("OpenSimMocoExport", false));
         for (auto &&it : *m_simulationWidget->getDrawBodyMap())
         {
             GaitSym::Body *body = m_simulation->GetBody(it.first);
