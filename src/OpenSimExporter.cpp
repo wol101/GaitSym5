@@ -305,7 +305,8 @@ void OpenSimExporter::CreateJointSet()
             pgd::Vector3 euler(-1.5707963267948966, 0, 0); // all GaitSym bodies are constructed with no rotation, and rotating -90 degrees about the X axis converts from Z up to Y up
             pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
             position = pgd::QVRotate(rotation, position);
-            XMLInitiateTag(&m_xmlString, "FreeJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}});
+            if (m_mocoExport)  { XMLInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); } // moco does not support FreeJoint so we have to create a custom joint that does the same thing
+            else { XMLInitiateTag(&m_xmlString, "FreeJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); }
 
             XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s);
             XMLTagAndContent(&m_xmlString, "socket_child_frame"s, "/bodyset/"s + m_legalNameMap[bodyIter.second->name()]);
@@ -316,7 +317,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.x));
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-1.57079633 1.57079633"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -326,7 +327,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.y));
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-1.57079633 1.57079633"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -336,7 +337,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.z));
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-1.57079633 1.57079633"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -374,7 +375,87 @@ void OpenSimExporter::CreateJointSet()
 
             XMLTerminateTag(&m_xmlString, "coordinates"s);
 
-            XMLTerminateTag(&m_xmlString, "FreeJoint"s);
+            if (m_mocoExport)
+            {
+                XMLInitiateTag(&m_xmlString, "frames"s);
+
+                XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, "ground_offset"s}});
+                XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+                XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+                XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+                XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+                XMLTagAndContent(&m_xmlString, "socket_parent"s, "/ground"s);
+                XMLTagAndContent(&m_xmlString, "translation"s, "0 0 0"s);
+                XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+                XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+                XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[bodyIter.second->name()] + "_offset"s}});
+                XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+                XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+                XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+                XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+                XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[bodyIter.second->name()]);
+                XMLTagAndContent(&m_xmlString, "translation"s, "0 0 0"s);
+                XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+                XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+                XMLTerminateTag(&m_xmlString, "frames"s);
+
+                XMLInitiateTag(&m_xmlString, "SpatialTransform"s);
+
+                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
+                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_0"s);
+                XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
+                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation2"s}});
+                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_1"s);
+                XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
+                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation3"s}});
+                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_2"s);
+                XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
+                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
+                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_3"s);
+                XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
+                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
+                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_4"s);
+                XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
+                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
+                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_5"s);
+                XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
+                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+                XMLTerminateTag(&m_xmlString, "SpatialTransform"s);
+            }
+
+            if (m_mocoExport) { XMLTerminateTag(&m_xmlString, "CustomJoint"s); }
+            else { XMLTerminateTag(&m_xmlString, "FreeJoint"s); }
         }
     }
 
