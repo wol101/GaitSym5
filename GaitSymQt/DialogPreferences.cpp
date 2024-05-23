@@ -384,12 +384,12 @@ QColor DialogPreferences::getAlphaColourHint(const QColor &colour)
 
 void DialogPreferences::importButtonClicked()
 {
-    QString lastImportedFile = Preferences::valueQString(tr("LastImportedFile"));
+    QString lastImportedFile = Preferences::valueQString(tr("PreferencesLastExportedFile"));
     QString fileName = QFileDialog::getOpenFileName(this, tr("Import Settings File"), lastImportedFile, tr("Exported Settings Files (*.xml);;Any File (*.* *)"), nullptr);
     if (fileName.isNull() == false)
     {
         Preferences::Import(fileName);
-        Preferences::insert("LastImportedFile", fileName);
+        Preferences::insert("PreferencesLastExportedFile", fileName);
         for (int i = 0; i < m_SettingsWidgetList.size(); i++)
         {
             SettingsItem item = m_SettingsWidgetList[i].item;
@@ -423,11 +423,11 @@ void DialogPreferences::importButtonClicked()
 
 void DialogPreferences::exportButtonClicked()
 {
-    QString lastExportedFile = Preferences::valueQString(tr("LastExportedFile"));
+    QString lastExportedFile = Preferences::valueQString(tr("PreferencesLastExportedFile"));
     QString fileName = QFileDialog::getSaveFileName(this, tr("Export Settings File"), lastExportedFile, tr("Exported Settings Files (*.xml)"), nullptr);
     if (fileName.isNull() == false)
     {
-        Preferences::insert("LastExportedFile", fileName);
+        Preferences::insert("PreferencesLastExportedFile", fileName);
         Preferences::Export(fileName);
     }
 }

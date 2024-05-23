@@ -410,17 +410,11 @@ void OpenSimExporter::CreateForceSet()
     {
         Muscle *muscle = muscleIter.second.get();
         Strap *strap = muscleIter.second->GetStrap();
-        if (m_mocoExport)
-        {
-            XMLInitiateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}});
-            XMLTagAndContent(&m_xmlString, "min_control"s, "0.01"s);
-            XMLTagAndContent(&m_xmlString, "max_control"s, "1.0"s);
-        }
-        else
-        {
-            XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}});
-            XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
-        }
+        if (m_mocoExport) { XMLInitiateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
+        else { XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
+        XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+        XMLTagAndContent(&m_xmlString, "min_control"s, "0.01"s);
+        XMLTagAndContent(&m_xmlString, "max_control"s, "1.0"s);
 
         XMLInitiateTag(&m_xmlString, "GeometryPath"s, {{"name"s, "path"s}});
 
@@ -459,26 +453,42 @@ void OpenSimExporter::CreateForceSet()
         {
             if (MAMuscle *maMuscle = dynamic_cast<MAMuscle *>(muscle))
             {
-                XMLTagAndContent(&m_xmlString, "optimal_force"s, "1"s);
                 XMLTagAndContent(&m_xmlString, "max_isometric_force"s, GSUtil::ToString(maMuscle->pca() * maMuscle->forcePerUnitArea()));
                 XMLTagAndContent(&m_xmlString, "optimal_fiber_length"s, GSUtil::ToString(maMuscle->fibreLength()));
                 double tendonLength = strap->Length() - maMuscle->fibreLength();
                 XMLTagAndContent(&m_xmlString, "tendon_slack_length"s, GSUtil::ToString(std::max(tendonLength, 0.001)));
                 XMLTagAndContent(&m_xmlString, "pennation_angle_at_optimal"s, "0"s);
                 XMLTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::ToString(maMuscle->vMaxFactor()));
-                XMLTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
-                XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
-
-                XMLTagAndContent(&m_xmlString, "ignore_tendon_compliance"s, "true"s);
-                XMLTagAndContent(&m_xmlString, "ignore_activation_dynamics"s, "true"s);
                 XMLTagAndContent(&m_xmlString, "activation_time_constant"s, "0.015"s);
-                XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.060"s);
-                XMLTagAndContent(&m_xmlString, "active_force_width_scale"s, "1.0"s);
-                XMLTagAndContent(&m_xmlString, "fiber_damping"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "tendon_strain_at_one_norm_force"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "ignore_passive_fiber_force"s, "true"s);
+                XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.050"s);
+                XMLTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
+                XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);               
+
+                if (m_mocoExport)
+                {
+                    XMLTagAndContent(&m_xmlString, "ignore_tendon_compliance"s, "true"s);
+                    XMLTagAndContent(&m_xmlString, "ignore_activation_dynamics"s, "true"s);
+                    XMLTagAndContent(&m_xmlString, "default_normalized_tendon_force"s, "0.5"s);
+                    XMLTagAndContent(&m_xmlString, "active_force_width_scale"s, "1.0"s);
+                    XMLTagAndContent(&m_xmlString, "fiber_damping"s, "0.01"s);
+                    XMLTagAndContent(&m_xmlString, "passive_fiber_strain_at_one_norm_force"s, "0.6"s);
+                    XMLTagAndContent(&m_xmlString, "tendon_strain_at_one_norm_force"s, "0.06"s);
+                    XMLTagAndContent(&m_xmlString, "ignore_passive_fiber_force"s, "true"s);
+                    XMLTagAndContent(&m_xmlString, "tendon_compliance_dynamics_mode"s, "explicit"s);
+                }
+                else
+                {
+                    XMLTagAndContent(&m_xmlString, "optimal_force"s, "1"s);
+                    XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
+                    XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
+                    XMLTagAndContent(&m_xmlString, "KshapeActive"s, "0.45"s);
+                    XMLTagAndContent(&m_xmlString, "KshapePassive"s, "5"s);
+                    XMLTagAndContent(&m_xmlString, "Af"s, "0.25"s);
+                    XMLTagAndContent(&m_xmlString, "Flen"s, "1.4"s);
+                    XMLTagAndContent(&m_xmlString, "fv_linear_extrap_threshold"s, "0.95"s);
+                    XMLTagAndContent(&m_xmlString, "maximum_pennation_angle"s, "1.47062890563"s);
+                    XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
+                }
                 break;
             }
             std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
@@ -537,8 +547,8 @@ void OpenSimExporter::CreateForceSet()
                 {
                     XMLInitiateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
 
-                    XMLTagAndContent(&m_xmlString, "socket_sphere"s, m_legalNameMap[sphereGeom->name()]);
-                    XMLTagAndContent(&m_xmlString, "socket_half_space"s, m_legalNameMap[floorName]);
+                    XMLTagAndContent(&m_xmlString, "socket_sphere"s, "/contactgeometryset/"s + m_legalNameMap[sphereGeom->name()]);
+                    XMLTagAndContent(&m_xmlString, "socket_half_space"s, "/contactgeometryset/"s + m_legalNameMap[floorName]);
                     XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::ToString(sphereGeom->GetContactSpringConstant()));
                     XMLTagAndContent(&m_xmlString, "dissipation"s, GSUtil::ToString(2));
                     XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));

@@ -1413,7 +1413,6 @@
         display="0"
         value=""/>
 
-
     <SETTING defaultValue="Courier,10,-1,5,50,0,0,0,0,0"
         display="1"
         key="DialogRenameEditorFont"
@@ -1429,6 +1428,8 @@
         display="0"
         value="false"/>
 
+    <SETTING defaultValue="false" display="1" key="OpenSimMocoExport" label="OpenSim Moco Export" type="bool" value="false"/>
+    <SETTING defaultValue="10" display="1" key="PreferencesLastExportedFile" label="PreferencesLastExportedFile" type="QString" value="exported_preferences.xml"/>
 
 </PREFERENCES>
 

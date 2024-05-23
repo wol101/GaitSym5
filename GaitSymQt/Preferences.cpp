@@ -19,8 +19,6 @@
 #include <QSettings>
 #include <QDataStream>
 
-#include <cfloat>
-
 const QString Preferences::applicationName("GaitSym5");
 const QString Preferences::organizationName("AnimalSimulationLaboratory");
 QSettings Preferences::m_qtSettings(QSettings::IniFormat, QSettings::UserScope, Preferences::getOrganizationName(), Preferences::getApplicationName());
@@ -516,7 +514,7 @@ void Preferences::insert(const QString &key, const QVariant &value)
     else
     {
         auto typeID = value.typeId();
-        if (static_cast<QMetaType::Type>(typeID) != QMetaType::QByteArray)
+        if (static_cast<QMetaType::Type>(typeID) != QMetaType::QByteArray) // QByteArray preferences are always things like the window geometry so I would not expect them
             qDebug("Preferences::value %s \"%s\" missing", value.typeName(), qUtf8Printable(key));
         item.key = key;
         item.display = false;
