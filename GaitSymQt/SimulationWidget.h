@@ -276,6 +276,7 @@ private:
     std::shared_ptr<threepp::OrthographicCamera> m_orthographicCamera;
     std::shared_ptr<threepp::PerspectiveCamera> m_perspectiveCamera;
     std::shared_ptr<threepp::Group> m_lightGroup;
+    std::shared_ptr<threepp::MeshBasicMaterial> m_wireFrameMaterial;
     bool m_wireframe = false;
 
 };

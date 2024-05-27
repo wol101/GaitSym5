@@ -106,6 +106,9 @@ void SimulationWidget::paintGL()
         m_scene->background = color;
         m_cursor3D->setScene(m_scene);
         m_globalAxes->setScene(m_scene);
+        m_wireFrameMaterial = threepp::MeshBasicMaterial::create();
+        m_wireFrameMaterial->color.setHex(0x00ff00);
+        m_wireFrameMaterial->wireframe = true;
     }
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
@@ -162,28 +165,29 @@ void SimulationWidget::paintGL()
     if (m_simulation)
     {
         drawModel();
+
+        // the 3d cursor
+        // qDebug() << "Cursor " << m_cursor3DPosition.x() << " " << m_cursor3DPosition.y() << " " << m_cursor3DPosition.z();
+        m_cursor3D->SetDisplayPosition(double(m_cursor3DPosition.x()), double(m_cursor3DPosition.y()), double(m_cursor3DPosition.z()));
+        m_cursor3D->SetDisplayScale(double(m_cursorRadius), double(m_cursorRadius), double(m_cursorRadius));
+        m_cursor3D->setSimulationWidget(this);
+        m_cursor3D->Draw();
+
+        // the global axes
+        m_globalAxes->SetDisplayPosition(0, 0, 0);
+        m_globalAxes->SetDisplayScale(double(m_axesScale), double(m_axesScale), double(m_axesScale));
+        m_globalAxes->setSimulationWidget(this);
+        m_globalAxes->Draw();
     }
-
-    // the 3d cursor
-    // qDebug() << "Cursor " << m_cursor3DPosition.x() << " " << m_cursor3DPosition.y() << " " << m_cursor3DPosition.z();
-    m_cursor3D->SetDisplayPosition(double(m_cursor3DPosition.x()), double(m_cursor3DPosition.y()), double(m_cursor3DPosition.z()));
-    m_cursor3D->SetDisplayScale(double(m_cursorRadius), double(m_cursorRadius), double(m_cursorRadius));
-    m_cursor3D->setSimulationWidget(this);
-    m_cursor3D->Draw();
-
-    // the global axes
-    m_globalAxes->SetDisplayPosition(0, 0, 0);
-    m_globalAxes->SetDisplayScale(double(m_axesScale), double(m_axesScale), double(m_axesScale));
-    m_globalAxes->setSimulationWidget(this);
-    m_globalAxes->Draw();
 
 
     if (m_wireframe)
     {
-        auto material = threepp::MeshBasicMaterial::create();
-        material->color.setHex(0x00ff00);
-        material->wireframe = true;
-        m_scene->overrideMaterial = material;
+        m_scene->overrideMaterial = m_wireFrameMaterial;
+    }
+    else
+    {
+        m_scene->overrideMaterial = nullptr;
     }
 
     // and render
