@@ -205,6 +205,27 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="checkBoxIgnoreMissingBodies">
+        <property name="text">
+         <string>Ignore Missing Bodies</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="checkBoxAllowOverwrite">
+        <property name="text">
+         <string>Allow Overwrite</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="checkBoxBodyLocalCoordinates">
+        <property name="text">
+         <string>Body Local Corrdinates</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -257,20 +278,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="checkBoxAllowOverwrite">
-        <property name="text">
-         <string>Allow Overwrite</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QCheckBox" name="checkBoxIgnoreMissingBodies">
-        <property name="text">
-         <string>Ignore Missing Bodies</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -283,6 +290,28 @@
    <header>LineEditPath.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lineEditFileName</tabstop>
+  <tabstop>radioButtonImport</tabstop>
+  <tabstop>radioButtonExport</tabstop>
+  <tabstop>radioButtonPositionOnly</tabstop>
+  <tabstop>radioButtonPositionEuler</tabstop>
+  <tabstop>radioButtonPositionAngleAxis</tabstop>
+  <tabstop>radioButtonPositionQuaternion</tabstop>
+  <tabstop>radioButtonPositionMatrix</tabstop>
+  <tabstop>checkBoxHeaderRow</tabstop>
+  <tabstop>checkBoxQuotedStrings</tabstop>
+  <tabstop>checkBoxAnglesInRadians</tabstop>
+  <tabstop>radioButtonCommaSeparator</tabstop>
+  <tabstop>radioButtonTabSeparator</tabstop>
+  <tabstop>radioButtonWhiteSpaceSeparator</tabstop>
+  <tabstop>checkBoxIgnoreMissingBodies</tabstop>
+  <tabstop>checkBoxAllowOverwrite</tabstop>
+  <tabstop>checkBoxBodyLocalCoordinates</tabstop>
+  <tabstop>plainTextEditLog</tabstop>
+  <tabstop>pushButtonOK</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
