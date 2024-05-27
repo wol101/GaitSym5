@@ -753,6 +753,7 @@ void MainWindow::updateEnable()
     ui->actionSaveUSDSnapshot->setEnabled(m_simulation != nullptr && m_mode == runMode);
     ui->actionStartUSDSequence->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false && m_saveOBJFileSequenceFlag == false);
     ui->actionStopUSDSequence->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false && m_saveOBJFileSequenceFlag == true && m_objFileFormat == usda);
+    ui->actionImportMarkers->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionImportMeshesAsBodies->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateBody->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateMarker->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
