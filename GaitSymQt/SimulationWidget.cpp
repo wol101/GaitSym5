@@ -104,6 +104,8 @@ void SimulationWidget::paintGL()
         m_scene = threepp::Scene::create();
         threepp::Color color(m_backgroundColour.redF(), m_backgroundColour.greenF(), m_backgroundColour.blueF());
         m_scene->background = color;
+        m_cursor3D->setScene(m_scene);
+        m_globalAxes->setScene(m_scene);
     }
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }

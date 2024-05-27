@@ -133,7 +133,11 @@ void NamedObject::setVisible(bool visible)
 std::string *NamedObject::createFromAttributes()
 {
     std::string buf;
-    if (findAttribute("ID"s, &buf) == nullptr) return lastErrorPtr();
+    if (findAttribute("ID"s, &buf) == nullptr)
+    {
+        setLastError("NamedObject ID not set"s);
+        return lastErrorPtr();
+    }
     this->setName(buf);
     if (findAttribute("Group"s, &buf)) this->setGroup(buf);
     if (findAttribute("Size1"s, &buf)) m_size1 = GSUtil::Double(buf);

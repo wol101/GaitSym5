@@ -169,7 +169,7 @@ std::string *DataTargetQuaternion::createFromAttributes()
     if (DataTarget::createFromAttributes()) return lastErrorPtr();
 
     std::string buf;
-    if (findAttribute("DataType"s, &buf) == nullptr) return lastErrorPtr();
+    // if (findAttribute("DataType"s, &buf) == nullptr) return lastErrorPtr();
     m_Target = nullptr;
     if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
     for (bool once = true; once; once = false)
