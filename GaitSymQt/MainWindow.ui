@@ -1062,6 +1062,7 @@
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
+    <addaction name="actionImportMarkers"/>
     <addaction name="actionExportMarkers"/>
     <addaction name="actionImportMeshesAsBodies"/>
     <addaction name="separator"/>
@@ -1655,9 +1656,9 @@
     <string>&amp;Reset View</string>
    </property>
   </action>
-  <action name="actionExportMarkers">
+  <action name="actionImportMarkers">
    <property name="text">
-    <string>&amp;Import/Export Markers...</string>
+    <string>&amp;Import Markers...</string>
    </property>
   </action>
   <action name="actionImportMeshesAsBodies">
@@ -1716,6 +1717,11 @@
   <action name="actionExportOpenSim">
    <property name="text">
     <string>OpenSim...</string>
+   </property>
+  </action>
+  <action name="actionExportMarkers">
+   <property name="text">
+    <string>Ex&amp;port Markers...</string>
    </property>
   </action>
  </widget>

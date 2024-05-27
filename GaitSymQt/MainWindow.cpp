@@ -23,7 +23,8 @@
 #include "DialogGlobal.h"
 #include "DialogInfo.h"
 #include "DialogJoints.h"
-#include "DialogMarkerImportExport.h"
+#include "DialogMarkerExport.h"
+#include "DialogMarkerImport.h"
 #include "DialogMarkers.h"
 #include "DialogMuscles.h"
 #include "DialogOutputSelect.h"
@@ -127,6 +128,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionEditGlobal, SIGNAL(triggered()), this, SLOT(menuEditGlobal()));
     connect(ui->actionExportMarkers, SIGNAL(triggered()), this, SLOT(menuExportMarkers()));
     connect(ui->actionExportOpenSim, SIGNAL(triggered()), this, SLOT(menuExportOpenSim()));
+    connect(ui->actionImportMarkers, SIGNAL(triggered()), this, SLOT(menuImportMarkers()));
     connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), this, SLOT(menuImportMeshes()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(menuNew()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(menuOpen()));
@@ -2624,19 +2626,30 @@ void MainWindow::menuDeleteAssembly()
 void MainWindow::menuExportMarkers()
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::menuExportMarkers", "this->m_simulation undefined");
-    DialogMarkerImportExport dialogMarkerImportExport(this);
-    dialogMarkerImportExport.setSimulation(this->m_simulation);
-    dialogMarkerImportExport.setAllowImport(this->m_mode == MainWindow::constructionMode);
-    std::vector<std::unique_ptr<GaitSym::Marker>> markerList;
-    dialogMarkerImportExport.setMarkerList(&markerList);
-    int status = dialogMarkerImportExport.exec();
+    DialogMarkerExport dialogMarkerExport(this);
+    dialogMarkerExport.setSimulation(this->m_simulation);
+    int status = dialogMarkerExport.exec();
     if (status == QDialog::Accepted)
     {
-        if (dialogMarkerImportExport.markerList() == nullptr)
-        {
-            this->setStatusString(QString("Markers exported."), 1);
-        }
-        else
+        setStatusString(QString("Marker export returned"), 1);
+    }
+    else
+    {
+        setStatusString(QString("Marker export cancelled"), 1);
+    }
+}
+
+void MainWindow::menuImportMarkers()
+{
+    Q_ASSERT_X(this->m_simulation, "MainWindow::menuImportMarkers", "this->m_simulation undefined");
+    DialogMarkerImport dialogMarkerImport(this);
+    dialogMarkerImport.setSimulation(this->m_simulation);
+    std::vector<std::unique_ptr<GaitSym::Marker>> markerList;
+    dialogMarkerImport.setMarkerList(&markerList);
+    int status = dialogMarkerImport.exec();
+    if (status == QDialog::Accepted)
+    {
+        if (markerList.size())
         {
             std::vector<GaitSym::NamedObject *> objectList = this->m_simulation->GetObjectList();
             for (size_t i =0; i < markerList.size(); i++)
@@ -2670,7 +2683,7 @@ void MainWindow::menuExportMarkers()
     }
     else
     {
-        this->setStatusString(tr("Marker import/export cancelled."), 2);
+        setStatusString(QString("Marker import cancelled"), 1);
     }
 }
 

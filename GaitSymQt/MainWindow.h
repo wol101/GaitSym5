@@ -80,6 +80,7 @@ public slots:
     void menuEditGlobal();
     void menuExportMarkers();
     void menuExportOpenSim();
+    void menuImportMarkers();
     void menuImportMeshes();
     void menuNew();
     void menuOpen();
