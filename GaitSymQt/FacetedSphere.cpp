@@ -242,12 +242,14 @@ void FacetedSphere::WritePOVRay(std::ostringstream &theString)
 
 size_t FacetedSphere::EstimateLevel(size_t requestedFaces, size_t *actualFaces)
 {
+    requestedFaces = std::clamp<size_t>(requestedFaces, 8, 65536);
     // basic octohedron has 8 faces (level 1)
     // and this is doubled each level
     // n = 8 x 2^(level - 1)
+    // this routine should always pr
     double actualLevel = 1 + (std::log(double(requestedFaces)) - std::log(8.0)) / std::log(2);
-    size_t level = size_t(std::ceil(actualLevel));
-    if (actualFaces) *actualFaces = 8 * size_t(std::pow(2.0, double(level)) + 0.5);
+    size_t level = size_t(std::round(actualLevel));
+    if (actualFaces) *actualFaces = 8 * size_t(std::pow(2.0, double(level - 1)) + 0.5);
     return level;
 }
 
