@@ -7,7 +7,7 @@
 #include "GSUtil.h"
 
 #include "pystring.h"
-// #include "pocketpy.h"
+#include "pocketpy.h"
 
 #include <QPlainTextEdit>
 #include <QMessageBox>
@@ -709,14 +709,14 @@ std::string TextEditDialog::attributeMachineReplace(const std::string input, con
 std::string TextEditDialog::attributeMachineArithmetic(const std::string &original, const std::string &arithmetic)
 {
     std::string newString;
-#ifdef FIX_ME
+
     pkpy::VM *vm = new pkpy::VM();
     std::string expression = "v="s + original + ";"s + arithmetic;
     pkpy::PyObject *obj = vm->eval(expression);
     double newValue = pkpy::py_cast<double>(vm, obj);
     delete vm;
     newString = GaitSym::GSUtil::ToString(newValue);
-#endif
+
     return newString;
 }
 

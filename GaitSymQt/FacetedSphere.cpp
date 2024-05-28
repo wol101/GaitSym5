@@ -249,7 +249,7 @@ size_t FacetedSphere::EstimateLevel(size_t requestedFaces, size_t *actualFaces)
     // this routine should always pr
     double actualLevel = 1 + (std::log(double(requestedFaces)) - std::log(8.0)) / std::log(2);
     size_t level = size_t(std::round(actualLevel));
-    if (actualFaces) *actualFaces = 8 * size_t(std::pow(2.0, double(level - 1)) + 0.5);
+    if (actualFaces) *actualFaces = 8 * size_t(std::round(std::pow(2.0, double(level - 1))));
     return level;
 }
 
