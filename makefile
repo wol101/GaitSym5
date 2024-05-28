@@ -49,7 +49,6 @@ ifeq ($(SYSTEM),OSX)
 	-DBYTE_ORDER_LITTLE_ENDIAN -DUSE_UNIX_ERRORS -DHAVE_ALLOCA_H -DMAKEFILE_OSX -DNDEBUG
 	LDFLAGS =
 	LIBS = -lpthread -lm -framework CoreServices
-	INC_DIRS = -Irapidxml-1.13 -Iexprtk -Iode-0.15/ode/src -Iode-0.15/libccd/src -Iode-0.15/OPCODE -Iode-0.15/include -Iann_1.1.2/include -Ipystring -Ienet-1.3.14/include -Iasio-1.18.2/include -Ifast_double_parser
 endif
 
 ifeq ($(SYSTEM),LINUX)
@@ -123,8 +122,6 @@ ifneq (,$(findstring csf,$(HOST)))
 	CXX = g++
 	CC = gcc
 	LIBS = -lpthread -lm
-	INC_DIRS = -Irapidxml-1.13 -Iexprtk -Iode-0.15/ode/src -Iode-0.15/libccd/src -Iode-0.15/OPCODE \
-	-Iode-0.15/include -Iann_1.1.2/include -Ipystring -Ienet-1.3.14/include -Iasio-1.18.2/include
 endif
 
 # vpath %.cpp src
@@ -1026,14 +1023,14 @@ obj/physx/%.o : src/%.cpp
 obj/mujoco/%.o : src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INC_DIRS) -c $< -o $@
 
-bin/gaitsym_2019: $(addprefix obj/cl/, $(GAITSYMOBJ) ) $(addprefix obj/libccd/, $(LIBCCDOBJ) ) $(addprefix obj/ode/, $(ODEOBJ) ) \
+bin/gaitsym_2019: $(addprefix obj/cl/, $(GAITSYMOBJ) ) $(addprefix obj/ode/, $(ODEOBJ) ) \
 $(addprefix obj/odejoints/, $(ODEJOINTSOBJ) ) $(addprefix obj/opcodeice/, $(OPCODEICEOBJ) ) $(addprefix obj/opcode/, $(OPCODEOBJ) ) \
-$(addprefix obj/pystring/, $(PYSTRINGOBJ) ) $(addprefix obj/pystring/, $(PHYSXOBJ) ) $(addprefix obj/pystring/, $(MUJOCOOBJ) )
+$(addprefix obj/pystring/, $(PYSTRINGOBJ) ) $(addprefix obj/physx/, $(PHYSXOBJ) ) $(addprefix obj/mujoco/, $(MUJOCOOBJ) )
 	$(CXX) -DUSE_CL $(LDFLAGS) -o $@ $^ $(LIBS)
 
-bin/gaitsym_2019_asio_async: $(addprefix obj/asio_async/, $(GAITSYMOBJ) ) $(addprefix obj/libccd/, $(LIBCCDOBJ) ) $(addprefix obj/ode/, $(ODEOBJ) ) \
+bin/gaitsym_2019_asio_async: $(addprefix obj/asio_async/, $(GAITSYMOBJ) ) $(addprefix obj/ode/, $(ODEOBJ) ) \
 $(addprefix obj/odejoints/, $(ODEJOINTSOBJ) ) $(addprefix obj/opcodeice/, $(OPCODEICEOBJ) ) $(addprefix obj/opcode/, $(OPCODEOBJ) ) \
-$(addprefix obj/pystring/, $(PYSTRINGOBJ) ) $(addprefix obj/pystring/, $(PHYSXOBJ) ) $(addprefix obj/pystring/, $(MUJOCOOBJ) )
+$(addprefix obj/pystring/, $(PYSTRINGOBJ) ) $(addprefix obj/physx/, $(PHYSXOBJ) ) $(addprefix obj/mujoco/, $(MUJOCOOBJ) )
 	$(CXX) $(LDFLAGS) -o $@ $^ $(SOCKET_LIBS) $(LIBS)
 
 clean:
