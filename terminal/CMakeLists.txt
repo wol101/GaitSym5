@@ -1019,12 +1019,16 @@ set(PROJECT_SOURCES
     ../src/TwoPointStrap.h
     ../src/UniversalJoint.h
     ../src/XMLConverter.h
+
     ../tinyply/tinyply.h
 
     ../rapidxml/rapidxml.hpp
     ../rapidxml/rapidxml_iterators.hpp
     ../rapidxml/rapidxml_print.hpp
     ../rapidxml/rapidxml_utils.hpp
+
+    ../src/ObjectiveMainASIOAsync.cpp
+    ../src/ObjectiveMainASIOAsync.h
 )
 
 IF(CMAKE_HOST_UNIX)
@@ -1070,6 +1074,7 @@ set(INCLUDE_DIRECTORIES
 ../rapidxml
 ../src
 ../tinyply
+../asio-1.18.2/include
 ../PhysX/PhysX-105.1-physx-5.3.0/physx/include
 ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/include
 ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk
@@ -1124,29 +1129,26 @@ set(INCLUDE_DIRECTORIES
 ../ode-0.15/ode/src
 )
 
-add_executable(gaitsym
+add_executable(gaitsym5
     ${PROJECT_SOURCES}
 )
 
-add_executable(gaitsym_asio
+add_executable(gaitsym5_asio
     ${PROJECT_SOURCES}
 )
 
-target_include_directories(gaitsym PRIVATE
+target_include_directories(gaitsym5 PRIVATE
     ${INCLUDE_DIRECTORIES}
 )
 
-target_include_directories(gaitsym_asio PRIVATE
+target_include_directories(gaitsym5_asio PRIVATE
     ${INCLUDE_DIRECTORIES}
 )
 
-add_compile_definitions(gaitsym PRIVATE USE_CL)
-add_compile_definitions(gaitsym PRIVATE USE_ASIO_ASYNC)
+target_compile_definitions(gaitsym5 PRIVATE USE_CL)
+target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
 
-# target_link_libraries(gaitsym PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
-
-if (MSVC)
+if (CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
     add_compile_definitions(_USE_MATH_DEFINES)
 endif ()
@@ -1168,3 +1170,7 @@ endfunction()
 
 # handy variable dump to General Messages window on QtCreator
 dump_cmake_variables()
+
+install(TARGETS gaitsym5 gaitsym5_asio
+    DESTINATION ${PROJECT_SOURCE_DIR}/../bin
+)

@@ -36,16 +36,16 @@
 
 using namespace std::string_literals;
 
-namespace GaitSym {
-
 #if defined(USE_ASIO_ASYNC)
 int main(int argc, const char **argv)
 {
-    ObjectiveMainASIOAsync objectiveMain(argc, argv);
+    GaitSym::ObjectiveMainASIOAsync objectiveMain(argc, argv);
     objectiveMain.Run();
     return 0;
 }
 #endif
+
+namespace GaitSym {
 
 ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
 {

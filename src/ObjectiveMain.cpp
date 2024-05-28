@@ -23,15 +23,16 @@
 #define MAX_ARGS 4096
 
 using namespace std::string_literals;
-namespace GaitSym {
 
 #if defined(USE_CL)
 int main(int argc, const char **argv)
 {
-    ObjectiveMain objectiveMain(argc, argv);
+    GaitSym::ObjectiveMain objectiveMain(argc, argv);
     objectiveMain.Run();
 }
 #endif
+
+namespace GaitSym {
 
 ObjectiveMain::ObjectiveMain(int argc, const char **argv)
 {
