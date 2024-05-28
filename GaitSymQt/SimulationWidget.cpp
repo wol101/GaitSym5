@@ -15,6 +15,7 @@
 #include "Muscle.h"
 #include "Marker.h"
 #include "FluidSac.h"
+#include "DataTarget.h"
 #include "FacetedObject.h"
 #include "TrackBall.h"
 #include "AVIWriter.h"
@@ -24,6 +25,7 @@
 #include "DrawMuscle.h"
 #include "DrawMarker.h"
 #include "DrawFluidSac.h"
+#include "DrawDataTarget.h"
 #include "FacetedSphere.h"
 #include "Preferences.h"
 #include "MainWindow.h"
@@ -1218,6 +1220,34 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
+    auto dataTargetList = m_simulation->GetDataTargetList();
+    auto drawDataTargetMapIter = m_drawDataTargetMap.begin();
+    while (drawDataTargetMapIter != m_drawDataTargetMap.end())
+    {
+        auto found = dataTargetList->find(drawDataTargetMapIter->first);
+        if (found == dataTargetList->end() || found->second->redraw() == true)
+        {
+            drawDataTargetMapIter = m_drawDataTargetMap.erase(drawDataTargetMapIter);
+        }
+        else drawDataTargetMapIter++;
+    }
+    for (auto &&iter : *dataTargetList)
+    {
+        auto it = m_drawDataTargetMap.find(iter.first);
+        if (it == m_drawDataTargetMap.end() || it->second->dataTarget() != iter.second.get())
+        {
+            auto drawDataTarget = std::make_unique<DrawDataTarget>();
+            drawDataTarget->setDataTarget(iter.second.get());
+            drawDataTarget->initialise(this);
+            m_drawDataTargetMap[iter.first] = std::move(drawDataTarget);
+            it = m_drawDataTargetMap.find(iter.first);
+        }
+        it->second->setScene(m_scene);
+        it->second->updateEntityPose();
+        it->second->setVisible(iter.second->visible());
+        it->second->Draw();
+    }
+
     auto muscleList = m_simulation->GetMuscleList();
     auto drawMuscleMapIter = m_drawMuscleMap.begin();
     while (drawMuscleMapIter != m_drawMuscleMap.end())
@@ -1536,6 +1566,11 @@ bool SimulationWidget::intersectModel(float winX, float winY)
     }
 #endif
     return (m_hits.size() != 0);
+}
+
+std::map<std::string, std::unique_ptr<DrawDataTarget>> *SimulationWidget::getDrawDataTargetMap()
+{
+    return &m_drawDataTargetMap;
 }
 
 std::map<std::string, std::unique_ptr<DrawMarker>> *SimulationWidget::getDrawMarkerMap()

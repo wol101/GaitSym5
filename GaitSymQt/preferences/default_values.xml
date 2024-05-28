@@ -721,6 +721,34 @@
         type="int"
         value="128" />
 
+    <SETTING defaultValue="500"
+        display="1"
+        key="DataTargetSize1"
+        label="DataTarget size 1"
+        minimumValue="0"
+        order="4"
+        path="0"
+        type="double"
+        value="500" />
+    <SETTING defaultValue="#ffF5FFFA"
+        display="1"
+        key="DataTargetColour1"
+        label="DataTarget colour 1"
+        order="4"
+        path="0"
+        type="QColor"
+        value="#ffF5FFFA" />
+    <SETTING defaultValue="128"
+        display="1"
+        key="DataTargetSegments"
+        label="DataTarget segment count"
+        maximumValue="1000"
+        minimumValue="3"
+        order="4"
+        path="0"
+        type="int"
+        value="128" />
+
     <SETTING defaultValue="#ffffff00"
         display="1"
         key="ContactForceColour"

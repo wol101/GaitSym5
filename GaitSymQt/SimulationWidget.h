@@ -1,6 +1,7 @@
 #ifndef SIMULATIONWIDGET_H
 #define SIMULATIONWIDGET_H
 
+#include "DrawDataTarget.h"
 #include "StrokeFont.h"
 #include "IntersectionHits.h"
 #include "DrawBody.h"
@@ -155,6 +156,7 @@ public:
     std::map<std::string, std::unique_ptr<DrawMuscle>> *getDrawMuscleMap();
     std::map<std::string, std::unique_ptr<DrawFluidSac>> *getDrawFluidSacMap();
     std::map<std::string, std::unique_ptr<DrawMarker>> *getDrawMarkerMap();
+    std::map<std::string, std::unique_ptr<DrawDataTarget>> *getDrawDataTargetMap();
 
 public slots:
     void SetCameraVec(float x, float y, float z);
@@ -253,6 +255,7 @@ private:
     std::map<std::string, std::unique_ptr<DrawMuscle>> m_drawMuscleMap;
     std::map<std::string, std::unique_ptr<DrawFluidSac>> m_drawFluidSacMap;
     std::map<std::string, std::unique_ptr<DrawMarker>> m_drawMarkerMap;
+    std::map<std::string, std::unique_ptr<DrawDataTarget>> m_drawDataTargetMap;
     std::vector<Drawable *> m_drawables;
     bool m_drawBodyMesh1 = true;
     bool m_drawBodyMesh2 = false;

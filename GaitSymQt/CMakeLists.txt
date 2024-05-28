@@ -108,6 +108,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DoubleValidator.cpp
     ../GaitSymQt/DrawBody.cpp
     ../GaitSymQt/DrawCustom.cpp
+    ../GaitSymQt/DrawDataTarget.cpp
     ../GaitSymQt/DrawFluidSac.cpp
     ../GaitSymQt/DrawGeom.cpp
     ../GaitSymQt/DrawJoint.cpp
@@ -1233,6 +1234,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/Drawable.h
     ../GaitSymQt/DrawBody.h
     ../GaitSymQt/DrawCustom.h
+    ../GaitSymQt/DrawDataTarget.h
     ../GaitSymQt/DrawFluidSac.h
     ../GaitSymQt/DrawGeom.h
     ../GaitSymQt/DrawJoint.h

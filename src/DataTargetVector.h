@@ -32,10 +32,12 @@ public:
     virtual double calculateError(size_t valueListIndex);
     virtual double calculateError(double time);
 
+    std::vector<pgd::Vector3> *valueList();
+
 private:
 
-    NamedObject *m_Target = nullptr;
-    std::vector<pgd::Vector3> m_ValueList;
+    NamedObject *m_target = nullptr;
+    std::vector<pgd::Vector3> m_valueList;
 
 };
 

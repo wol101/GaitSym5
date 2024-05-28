@@ -11,7 +11,6 @@
 #define ODEPHYSICSENGINE_H
 
 #include "PhysicsEngine.h"
-#include "Contact.h"
 
 #include "ode/ode.h"
 
