@@ -16,6 +16,8 @@
 #include "PGDMath.h"
 #include "SmartEnum.h"
 
+#include <limits>
+
 namespace GaitSym
 {
 

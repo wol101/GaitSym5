@@ -13,6 +13,8 @@
 #include "NamedObject.h"
 #include "SmartEnum.h"
 
+#include <limits>
+
 namespace GaitSym
 {
 

@@ -36,11 +36,14 @@
 
 using namespace std::string_literals;
 
+namespace GaitSym {
+
 #if defined(USE_ASIO_ASYNC)
 int main(int argc, const char **argv)
 {
     ObjectiveMainASIOAsync objectiveMain(argc, argv);
     objectiveMain.Run();
+    return 0;
 }
 #endif
 
@@ -50,15 +53,11 @@ ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
     std::string compileTime(__TIME__);
     m_argparse.Initialise(argc, argv, "ObjectiveMainASIOAsync command line interface to GaitSym2019 build "s + compileDate + " "s + compileTime, 0, 0);
     m_argparse.AddArgument("-sc"s, "--score"s, "Score filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-ow"s, "--outputWarehouse"s, "Output warehouse filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-iw"s, "--inputWarehouse"s, "Input warehouse filename"s, ""s, 1, false, ArgParse::String);
     m_argparse.AddArgument("-ms"s, "--modelState"s, "Model state filename"s, ""s, 1, false, ArgParse::String);
     m_argparse.AddArgument("-rt"s, "--runTimeLimit"s, "Run time limit"s, ""s, 1, false, ArgParse::Double);
     m_argparse.AddArgument("-st"s, "--simulationTimeLimit"s, "Simulation time limit"s, ""s, 1, false, ArgParse::Double);
     m_argparse.AddArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
     m_argparse.AddArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-mw"s, "--outputModelStateAtWarehouseDistance"s, "Output model state at this warehouse distance"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-wd"s, "--warehouseFailDistanceAbort"s, "Abort the simulation when the warehouse distance fails"s, "0"s, 1, false, ArgParse::Bool);
     m_argparse.AddArgument("-de"s, "--debug"s, "Turn debugging on"s);
 
     m_argparse.AddArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
@@ -76,14 +75,10 @@ ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
     m_argparse.Get("--runTimeLimit"s, &m_runTimeLimit);
     m_argparse.Get("--outputModelStateAtTime"s, &m_outputModelStateAtTime);
     m_argparse.Get("--outputModelStateAtCycle"s, &m_outputModelStateAtCycle);
-    m_argparse.Get("--outputModelStateAtWarehouseDistance"s, &m_outputModelStateAtWarehouseDistance);
     m_argparse.Get("--simulationTimeLimit"s, &m_simulationTimeLimit);
-    m_argparse.Get("--warehouseFailDistanceAbort"s, &m_warehouseFailDistanceAbort);
     m_argparse.Get("--config"s, &m_configFilename);
     m_argparse.Get("--score"s, &m_scoreFilename);
     m_argparse.Get("--modelState"s, &m_outputModelStateFilename);
-    m_argparse.Get("--inputWarehouse"s, &m_inputWarehouseFilename);
-    m_argparse.Get("--outputWarehouse"s, &m_outputWarehouseFilename);
     m_argparse.Get("--debug"s, &m_debug);
 
     std::string rawHost;
@@ -127,7 +122,8 @@ int ObjectiveMainASIOAsync::Run()
             runID = reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->runID;
             evolveIdentifier = reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->evolveIdentifier;
             if (m_debug) std::cerr <<  "Run runID = " << runID << " evolveIdentifier = " << evolveIdentifier << "\n";
-            m_XMLConverter.ApplyGenome(int(reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->genomeLength), reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->payload.genome);
+            std::vector<double> data(reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->payload.genome, reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->payload.genome + reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->genomeLength);
+            m_XMLConverter.ApplyGenome(data);
             m_XMLConverter.GetFormattedXML(&xmlCopy);
         }
         m_statusDoSimulation = __LINE__;
@@ -200,12 +196,9 @@ void ObjectiveMainASIOAsync::DoSimulation(const char *xmlPtr, size_t xmlLen, dou
 
     // create the simulation object locally so delete happens before the next one is create otherwise we get problems with ODE error tracking
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>();
-    if (m_outputWarehouseFilename.size()) simulation->SetOutputWarehouseFile(m_outputWarehouseFilename);
     if (m_outputModelStateFilename.size()) simulation->SetOutputModelStateFile(m_outputModelStateFilename);
     if (m_outputModelStateAtTime >= 0) simulation->SetOutputModelStateAtTime(m_outputModelStateAtTime);
     if (m_outputModelStateAtCycle >= 0) simulation->SetOutputModelStateAtCycle(m_outputModelStateAtCycle);
-    if (m_inputWarehouseFilename.size()) simulation->AddWarehouse(m_inputWarehouseFilename);
-    if (m_outputModelStateAtWarehouseDistance >= 0) simulation->SetOutputModelStateAtWarehouseDistance(m_outputModelStateAtWarehouseDistance);
 
     if (simulation->LoadModel(xmlPtr, xmlLen))
     {
@@ -215,7 +208,6 @@ void ObjectiveMainASIOAsync::DoSimulation(const char *xmlPtr, size_t xmlLen, dou
 
     // late initialisation options
     if (m_simulationTimeLimit >= 0) simulation->SetTimeLimit(m_simulationTimeLimit);
-    if (m_warehouseFailDistanceAbort != 0) simulation->SetWarehouseFailDistanceAbort(m_warehouseFailDistanceAbort);
     for (size_t i = 0; i < m_outputList.size(); i++)
     {
         if (simulation->GetBodyList()->find(m_outputList[i]) != simulation->GetBodyList()->end()) (*simulation->GetBodyList())[m_outputList[i]]->setDump(true);
@@ -485,3 +477,4 @@ bool ObjectiveMainASIOAsync::hashEqual(const uint32_t *hash1, const uint32_t *ha
     return true;
 }
 
+} // namespace GaitSym

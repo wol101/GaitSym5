@@ -26,6 +26,8 @@
 #include <system_error>
 #include <mutex>
 
+namespace GaitSym {
+
 class Simulation;
 
 //----------------------------------------------------------------------
@@ -245,14 +247,10 @@ private:
     double m_runTimeLimit = 0;
     double m_outputModelStateAtTime = -1;
     double m_outputModelStateAtCycle = -1;
-    double m_outputModelStateAtWarehouseDistance = -1;
     double m_simulationTimeLimit = -1;
-    double m_warehouseFailDistanceAbort = 0;
 
     std::string m_configFilename;
-    std::string m_outputWarehouseFilename;
     std::string m_outputModelStateFilename;
-    std::string m_inputWarehouseFilename;
     std::string m_scoreFilename;
 
     XMLConverter m_XMLConverter;
@@ -280,6 +278,6 @@ private:
     bool m_debug = false;
 };
 
-
+} // namespace GaitSym
 
 #endif // OBJECTIVEMAINASIOASYNC_H

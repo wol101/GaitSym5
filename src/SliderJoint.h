@@ -12,6 +12,8 @@
 
 #include "Joint.h"
 
+#include <limits>
+
 namespace GaitSym
 {
 

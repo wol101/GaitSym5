@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 namespace GaitSym {
 

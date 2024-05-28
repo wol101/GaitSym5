@@ -13,6 +13,8 @@
 #include "Joint.h"
 #include "PGDMath.h"
 
+#include <limits>
+
 namespace GaitSym
 {
 

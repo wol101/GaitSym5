@@ -12,6 +12,7 @@
 
 #include <string>
 #include <limits>
+#include <cmath>
 
 using namespace std::string_literals;
 namespace GaitSym {

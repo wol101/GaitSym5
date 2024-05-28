@@ -20,6 +20,7 @@
 #include <iostream>
 #include <string>
 #include <stdint.h>
+#include <string.h>
 
 #if defined(_WIN32) || defined(WIN32)
 #define strcasecmp(s1, s2) _stricmp(s1, s2)
