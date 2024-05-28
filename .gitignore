@@ -57,3 +57,5 @@ compile_commands.json
 */.vs
 
 GaitSymQt/build/
+build
+

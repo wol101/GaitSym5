@@ -58,7 +58,7 @@ if (MSVC)
     add_compile_definitions(HAVE_MALLOC_H)
 endif()
 
-# gle definitions
+# glextrusion definitions
 add_compile_definitions(DEBUG_OUTPUT)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -1395,6 +1395,76 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp)
 ENDIF(UNIX)
 
+set(INCLUDE_DIRECTORIES
+../fast_double_parser
+../GaitSymQt
+../glextrusion
+../libgwavi
+../PhysX
+../pocketpy
+../pystring
+../rapidxml
+../src
+../tinyply
+../PhysX/PhysX-105.1-physx-5.3.0/physx/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/fastxml/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/api/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/pipeline
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/collision
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/utils
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxgpu/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/ccd
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/File
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/core/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/physxmetadata/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/extensions/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/filebuf/include
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary
+../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src
+../MuJoCo/mujoco-3.0.1/build/_deps/marchingcubecpp-src
+../MuJoCo/mujoco-3.0.1/include
+../MuJoCo/mujoco-3.0.1/src
+../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src
+../MuJoCo/mujoco-3.0.1/build/_deps/ccd-build/src
+../MuJoCo/mujoco-3.0.1/build/_deps/lodepng-src
+../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r
+../MuJoCo/mujoco-3.0.1/build/_deps/tinyobjloader-src
+../MuJoCo/mujoco-3.0.1/build/_deps/tinyxml2-src
+../ode-0.15/OPCODE
+../ode-0.15/include
+../ode-0.15/ode/src
+../threepp/include
+../threepp/src
+../threepp/src/external/quickhull/
+../threepp/src/external/glad
+../threepp/src/external/nlohmann
+../threepp/src/external/stb
+)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(GaitSym5
@@ -1420,74 +1490,7 @@ else()
 endif()
 
 target_include_directories(GaitSym5 PRIVATE
-    ../fast_double_parser
-    ../GaitSymQt
-    ../glextrusion
-    ../libgwavi
-    ../PhysX
-    ../pocketpy
-    ../pystring
-    ../rapidxml
-    ../src
-    ../tinyply
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/fastxml/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/api/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/pipeline
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/collision
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/utils
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxgpu/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/ccd
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/File
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/core/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/physxmetadata/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/extensions/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/filebuf/include
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src
-    ../MuJoCo/mujoco-3.0.1/build/_deps/marchingcubecpp-src
-    ../MuJoCo/mujoco-3.0.1/include
-    ../MuJoCo/mujoco-3.0.1/src
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-build/src
-    ../MuJoCo/mujoco-3.0.1/build/_deps/lodepng-src
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r
-    ../MuJoCo/mujoco-3.0.1/build/_deps/tinyobjloader-src
-    ../MuJoCo/mujoco-3.0.1/build/_deps/tinyxml2-src
-    ../ode-0.15/OPCODE
-    ../ode-0.15/include
-    ../ode-0.15/ode/src
-    ../threepp/include
-    ../threepp/src
-    ../threepp/src/external/quickhull/
-    ../threepp/src/external/glad
-    ../threepp/src/external/nlohmann
-    ../threepp/src/external/stb
+    ${INCLUDE_DIRECTORIES}
 )
 
 target_link_libraries(GaitSym5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

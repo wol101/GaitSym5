@@ -23,6 +23,7 @@
 #include "GSUtil.h"
 
 #include <deque>
+#include <algorithm>
 
 using namespace std::string_literals;
 namespace GaitSym {

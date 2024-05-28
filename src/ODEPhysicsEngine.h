@@ -16,6 +16,7 @@
 #include "ode/ode.h"
 
 #include <vector>
+#include <memory>
 
 namespace GaitSym
 {
