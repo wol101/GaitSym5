@@ -1308,6 +1308,7 @@ void SimulationWidget::drawModel()
     for (auto &&it : m_drawJointMap) m_drawables.push_back(it.second.get());
     for (auto &&it : m_drawGeomMap) m_drawables.push_back(it.second.get());
     for (auto &&it : m_drawMarkerMap) m_drawables.push_back(it.second.get());
+    for (auto &&it : m_drawDataTargetMap) m_drawables.push_back(it.second.get());
     for (auto &&it : m_drawMuscleMap) m_drawables.push_back(it.second.get());
     for (auto &&it : m_drawFluidSacMap) m_drawables.push_back(it.second.get());
 }
