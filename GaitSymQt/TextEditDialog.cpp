@@ -57,10 +57,14 @@ TextEditDialog::TextEditDialog(QWidget *parent) :
 
     setEditorFonts();
     enableControls();
+
+    m_vm = new pkpy::VM();
+
 }
 
 TextEditDialog::~TextEditDialog()
 {
+    if (m_vm) { delete m_vm; }
     delete ui;
 }
 
@@ -709,14 +713,10 @@ std::string TextEditDialog::attributeMachineReplace(const std::string input, con
 std::string TextEditDialog::attributeMachineArithmetic(const std::string &original, const std::string &arithmetic)
 {
     std::string newString;
-
-    pkpy::VM *vm = new pkpy::VM();
-    std::string expression = "v="s + original + ";"s + arithmetic;
-    pkpy::PyObject *obj = vm->eval(expression);
-    double newValue = pkpy::py_cast<double>(vm, obj);
-    delete vm;
+    std::string expression = "v="s + original + ";"s + arithmetic; // this means that I can access the current value using the variable v
+    pkpy::PyObject *obj = m_vm->eval(expression);
+    double newValue = pkpy::py_cast<double>(m_vm, obj);
     newString = GaitSym::GSUtil::ToString(newValue);
-
     return newString;
 }
 

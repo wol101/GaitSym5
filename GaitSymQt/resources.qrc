@@ -36,5 +36,6 @@
         <file>preferences/default_values.xml</file>
         <file>objects/axes.tri</file>
         <file>objects/global_axes.tri</file>
+        <file>objects/datatarget.tri</file>
     </qresource>
 </RCC>

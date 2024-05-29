@@ -54,14 +54,19 @@ void DrawDataTarget::initialise(SimulationWidget *simulationWidget)
     m_dataTargetColor1.setAlphaF(qreal(m_dataTarget->colour1().alpha()));
     m_dataTargetSize1 = m_dataTarget->size1();
 
+    FacetedObject dataTargetObject;
+    dataTargetObject.ReadFromResource(":/objects/datatarget.tri");
+
     if (GaitSym::DataTargetVector *dataTargetVector = dynamic_cast<GaitSym::DataTargetVector *>(m_dataTarget))
     {
         m_facetedObjectStore.reserve(dataTargetVector->valueList()->size());
         m_facetedObjectList.reserve(dataTargetVector->valueList()->size());
         for (size_t i = 0; i < dataTargetVector->valueList()->size(); i++)
         {
-            auto facetedObject = std::make_unique<FacetedSphere>(m_dataTargetSize1, FacetedSphere::EstimateLevel(m_dataTargetSegments), m_dataTargetColor1, 1);
+            auto facetedObject = std::make_unique<FacetedObject>();
             facetedObject->setSimulationWidget(simulationWidget);
+            facetedObject->AddFacetedObject(&dataTargetObject, false, true);
+            facetedObject->SetDisplayScale(m_dataTargetSize1, m_dataTargetSize1, m_dataTargetSize1);
             m_facetedObjectList.push_back(facetedObject.get());
             m_facetedObjectStore.push_back(std::move(facetedObject));
         }
