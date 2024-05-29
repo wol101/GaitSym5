@@ -70,7 +70,8 @@ SimulationWidget::SimulationWidget()
     m_cursorRadius = Preferences::valueFloat("CursorRadius");
     m_cursor3DNudge = Preferences::valueFloat("CursorNudge");
 
-    m_cursor3D = std::make_unique<FacetedSphere>(1, m_cursorLevel, m_cursorColour, 1);
+    m_cursor3D = std::make_unique<FacetedObject>();
+    m_cursor3D->ReadFromResource(":/objects/cursor.tri");
     m_globalAxes = std::make_unique<FacetedObject>();
     m_globalAxes->ReadFromResource(":/objects/global_axes.tri");
     m_trackball = std::make_unique<Trackball>();   

@@ -37,5 +37,6 @@
         <file>objects/axes.tri</file>
         <file>objects/global_axes.tri</file>
         <file>objects/datatarget.tri</file>
+        <file>objects/cursor.tri</file>
     </qresource>
 </RCC>

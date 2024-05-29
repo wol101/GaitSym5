@@ -233,7 +233,7 @@ private:
     float m_zoomDistance = 0;
     float m_zoomStartFOV = 0;
 
-    std::unique_ptr<FacetedSphere> m_cursor3D;
+    std::unique_ptr<FacetedObject> m_cursor3D;
     float m_cursorRadius = 0.1f;
     float m_cursor3DNudge = 0.1f;
     QVector3D m_cursor3DPosition;
