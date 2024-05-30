@@ -8,13 +8,6 @@ SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
 
 project(gaitsym VERSION 0.1 LANGUAGES C CXX)
 
-cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
-message("HOST_NAME variable is set to: ${HOST_NAME}")
-if (HOST_NAME STREQUAL "submitter.itservices.manchester.ac.uk")
-message("Use: 'cmake -D CMAKE_BUILD_TYPE=Release ../terminal/ -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++'")
-# -D CMAKE_CXX_FLAGS_RELEASE='-lpthread -ldl'
-endif()
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -1203,10 +1196,19 @@ if (CMAKE_BUILD_TYPE STREQUAL Release)
     target_compile_options(gaitsym5_asio PRIVATE -static -ffast-math -O3)
 endif()
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
-target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
+cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
+message("HOST_NAME variable is set to: ${HOST_NAME}")
+if (HOST_NAME STREQUAL "submitter.itservices.manchester.ac.uk")
+    message("Use: 'cmake -D CMAKE_BUILD_TYPE=Release ../terminal/ -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++'")
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
+    target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
+else()
+    target_link_libraries(gaitsym5 PRIVATE -static)
+    target_link_libraries(gaitsym5_asio PRIVATE -static)
+endif()
+
 
 install(TARGETS gaitsym5 gaitsym5_asio
     DESTINATION ${PROJECT_SOURCE_DIR}/../bin
