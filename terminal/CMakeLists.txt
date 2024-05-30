@@ -1,3 +1,6 @@
+# run "cmake -D CMAKE_BUILD_TYPE=Release ../terminal/" for a release version
+# run "cmake -D CMAKE_BUILD_TYPE=Debug ../terminal/" for a debug version
+
 cmake_minimum_required(VERSION 3.5)
 
 # this command stops the CMAKE_BUILD_TYPE from being cached
@@ -5,9 +8,12 @@ SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
 
 project(gaitsym VERSION 0.1 LANGUAGES C CXX)
 
-cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
-message("-- _host_name variable is set to: " ${_host_name})
-cmake -D CMAKE_BUILD_TYPE=Release ../terminal/ -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -D CMAKE_CXX_FLAGS_RELEASE='-lpthread -ldl'
+cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
+message("HOST_NAME variable is set to: ${HOST_NAME}")
+if (HOST_NAME STREQUAL "submitter.itservices.manchester.ac.uk")
+message("Use: 'cmake -D CMAKE_BUILD_TYPE=Release ../terminal/ -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++'")
+# -D CMAKE_CXX_FLAGS_RELEASE='-lpthread -ldl'
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -1196,6 +1202,9 @@ if (CMAKE_BUILD_TYPE STREQUAL Release)
     target_compile_options(gaitsym5 PRIVATE -static -ffast-math -O3)
     target_compile_options(gaitsym5_asio PRIVATE -static -ffast-math -O3)
 endif()
+
+target_link_libraries(gaitsym5 -static)
+target_link_libraries(gaitsym5_asio -static)
 
 install(TARGETS gaitsym5 gaitsym5_asio
     DESTINATION ${PROJECT_SOURCE_DIR}/../bin
