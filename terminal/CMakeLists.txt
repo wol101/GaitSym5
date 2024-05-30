@@ -1203,8 +1203,10 @@ if (CMAKE_BUILD_TYPE STREQUAL Release)
     target_compile_options(gaitsym5_asio PRIVATE -static -ffast-math -O3)
 endif()
 
-target_link_libraries(gaitsym5 -static)
-target_link_libraries(gaitsym5_asio -static)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
+target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
 
 install(TARGETS gaitsym5 gaitsym5_asio
     DESTINATION ${PROJECT_SOURCE_DIR}/../bin
