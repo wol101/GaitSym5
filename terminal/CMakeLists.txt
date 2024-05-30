@@ -5,6 +5,10 @@ SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
 
 project(gaitsym VERSION 0.1 LANGUAGES C CXX)
 
+cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
+message("-- _host_name variable is set to: " ${_host_name})
+cmake -D CMAKE_BUILD_TYPE=Release ../terminal/ -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -D CMAKE_CXX_FLAGS_RELEASE='-lpthread -ldl'
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD 17)
