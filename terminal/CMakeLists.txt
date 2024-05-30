@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
+# this command stops the CMAKE_BUILD_TYPE from being cached
+SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
+
 project(gaitsym VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -942,8 +945,39 @@ set(PROJECT_SOURCES
     ../src/UniversalJoint.cpp
     ../src/XMLConverter.cpp
 
+    ../pocketpy-1.4.5/src/array2d.cpp
+    ../pocketpy-1.4.5/src/base64.cpp
+    ../pocketpy-1.4.5/src/ceval.cpp
+    ../pocketpy-1.4.5/src/cffi.cpp
+    ../pocketpy-1.4.5/src/codeobject.cpp
+    ../pocketpy-1.4.5/src/collections.cpp
+    ../pocketpy-1.4.5/src/compiler.cpp
+    ../pocketpy-1.4.5/src/csv.cpp
+    ../pocketpy-1.4.5/src/dataclasses.cpp
+    ../pocketpy-1.4.5/src/dict.cpp
+    ../pocketpy-1.4.5/src/easing.cpp
+    ../pocketpy-1.4.5/src/error.cpp
+    ../pocketpy-1.4.5/src/expr.cpp
+    ../pocketpy-1.4.5/src/frame.cpp
+    ../pocketpy-1.4.5/src/gc.cpp
+    ../pocketpy-1.4.5/src/io.cpp
+    ../pocketpy-1.4.5/src/iter.cpp
+    ../pocketpy-1.4.5/src/lexer.cpp
+    ../pocketpy-1.4.5/src/linalg.cpp
+    ../pocketpy-1.4.5/src/memory.cpp
+    ../pocketpy-1.4.5/src/modules.cpp
+    ../pocketpy-1.4.5/src/namedict.cpp
+    ../pocketpy-1.4.5/src/obj.cpp
+    ../pocketpy-1.4.5/src/pocketpy.cpp
+    ../pocketpy-1.4.5/src/pocketpy_c.cpp
+    ../pocketpy-1.4.5/src/profiler.cpp
+    ../pocketpy-1.4.5/src/random.cpp
+    ../pocketpy-1.4.5/src/repl.cpp
+    ../pocketpy-1.4.5/src/str.cpp
+    ../pocketpy-1.4.5/src/tuplelist.cpp
+    ../pocketpy-1.4.5/src/vm.cpp
+
     ../fast_double_parser/fast_double_parser/fast_double_parser.h
-    ../pocketpy/pocketpy.h
     ../pystring/pystring.h
 
     ../src/AMotorJoint.h
@@ -1021,6 +1055,7 @@ set(PROJECT_SOURCES
     ../src/XMLConverter.h
 
     ../tinyply/tinyply.h
+    ../pocketpy-1.4.5/include/pocketpy.h
 
     ../rapidxml/rapidxml.hpp
     ../rapidxml/rapidxml_iterators.hpp
@@ -1069,7 +1104,7 @@ set(INCLUDE_DIRECTORIES
 ../fast_double_parser
 ../GaitSymQt
 ../PhysX
-../pocketpy
+../pocketpy-1.4.5/include
 ../pystring
 ../rapidxml
 ../src
@@ -1153,6 +1188,15 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
     add_compile_definitions(_USE_MATH_DEFINES)
 endif ()
 
+if (CMAKE_BUILD_TYPE STREQUAL Release)
+    target_compile_options(gaitsym5 PRIVATE -static -ffast-math -O3)
+    target_compile_options(gaitsym5_asio PRIVATE -static -ffast-math -O3)
+endif()
+
+install(TARGETS gaitsym5 gaitsym5_asio
+    DESTINATION ${PROJECT_SOURCE_DIR}/../bin
+)
+
 function(dump_cmake_variables)
     get_cmake_property(_variableNames VARIABLES)
     list (SORT _variableNames)
@@ -1171,6 +1215,3 @@ endfunction()
 # handy variable dump to General Messages window on QtCreator
 dump_cmake_variables()
 
-install(TARGETS gaitsym5 gaitsym5_asio
-    DESTINATION ${PROJECT_SOURCE_DIR}/../bin
-)
