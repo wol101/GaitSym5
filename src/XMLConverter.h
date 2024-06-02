@@ -39,11 +39,11 @@ public:
 
 private:
 
-    std::string m_BaseXMLString;
-    std::vector<std::string> m_SmartSubstitutionTextComponents;
-    std::vector<std::string> m_SmartSubstitutionParserText;
-    std::vector<double> m_SmartSubstitutionValues;
-    size_t m_SmartSubstitutionTextComponentsSize = 0;
+    std::string m_baseXMLString;
+    std::vector<std::string> m_smartSubstitutionTextComponents;
+    std::vector<std::string> m_smartSubstitutionParserText;
+    std::vector<double> m_smartSubstitutionValues;
+    size_t m_smartSubstitutionTextComponentsSize = 0;
     pkpy::VM *m_pythonVM = nullptr;
 };
 

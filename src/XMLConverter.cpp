@@ -43,28 +43,28 @@ int XMLConverter::LoadBaseXMLFile(const char *filename)
 
 void XMLConverter::Clear()
 {
-    m_SmartSubstitutionTextComponents.clear();
-    m_SmartSubstitutionParserText.clear();
-    m_SmartSubstitutionValues.clear();
-    m_BaseXMLString.clear();
+    m_smartSubstitutionTextComponents.clear();
+    m_smartSubstitutionParserText.clear();
+    m_smartSubstitutionValues.clear();
+    m_baseXMLString.clear();
 }
 
 // load the base XML for smart substitution file
 int XMLConverter::LoadBaseXMLString(const char *dataPtr, size_t length)
 {
-    m_SmartSubstitutionTextComponents.clear();
-    m_SmartSubstitutionParserText.clear();
-    m_SmartSubstitutionValues.clear();
-    m_BaseXMLString.assign(dataPtr, length);
+    m_smartSubstitutionTextComponents.clear();
+    m_smartSubstitutionParserText.clear();
+    m_smartSubstitutionValues.clear();
+    m_baseXMLString.assign(dataPtr, length);
 
     const char *ptr1 = dataPtr;
     const char *ptr2 = strstr(ptr1, "{{");
-    m_SmartSubstitutionTextComponentsSize = 0;
+    m_smartSubstitutionTextComponentsSize = 0;
     while (ptr2)
     {
         std::string s(ptr1, static_cast<size_t>(ptr2 - ptr1));
-        m_SmartSubstitutionTextComponentsSize += s.size();
-        m_SmartSubstitutionTextComponents.push_back(std::move(s));
+        m_smartSubstitutionTextComponentsSize += s.size();
+        m_smartSubstitutionTextComponents.push_back(std::move(s));
 
         ptr2 += 2;
         ptr1 = strstr(ptr2, "}}");
@@ -74,14 +74,14 @@ int XMLConverter::LoadBaseXMLString(const char *dataPtr, size_t length)
             exit(1);
         }
         std::string expressionParserText(ptr2, static_cast<size_t>(ptr1 - ptr2));
-        m_SmartSubstitutionParserText.push_back(std::move(expressionParserText));
-        m_SmartSubstitutionValues.push_back(0); // dummy values
+        m_smartSubstitutionParserText.push_back(std::move(expressionParserText));
+        m_smartSubstitutionValues.push_back(0); // dummy values
         ptr1 += 2;
         ptr2 = strstr(ptr1, "{{");
     }
     std::string s(ptr1);
-    m_SmartSubstitutionTextComponentsSize += s.size();
-    m_SmartSubstitutionTextComponents.push_back(std::move(s));
+    m_smartSubstitutionTextComponentsSize += s.size();
+    m_smartSubstitutionTextComponents.push_back(std::move(s));
 
     return 0;
 }
@@ -89,15 +89,15 @@ int XMLConverter::LoadBaseXMLString(const char *dataPtr, size_t length)
 void XMLConverter::GetFormattedXML(std::string *formattedXML)
 {
     formattedXML->clear();
-    formattedXML->reserve(m_SmartSubstitutionTextComponentsSize + 32 * m_SmartSubstitutionValues.size());
+    formattedXML->reserve(m_smartSubstitutionTextComponentsSize + 32 * m_smartSubstitutionValues.size());
     char buffer[32];
-    for (size_t i = 0; i < m_SmartSubstitutionValues.size(); i++)
+    for (size_t i = 0; i < m_smartSubstitutionValues.size(); i++)
     {
-        formattedXML->append(m_SmartSubstitutionTextComponents[i]);
-        int l = snprintf(buffer, sizeof(buffer), "%.18g", m_SmartSubstitutionValues[i]);
+        formattedXML->append(m_smartSubstitutionTextComponents[i]);
+        int l = snprintf(buffer, sizeof(buffer), "%.18g", m_smartSubstitutionValues[i]);
         formattedXML->append(buffer, l);
     }
-    formattedXML->append(m_SmartSubstitutionTextComponents[m_SmartSubstitutionValues.size()]);
+    formattedXML->append(m_smartSubstitutionTextComponents[m_smartSubstitutionValues.size()]);
 }
 
 // this needs to be customised depending on how the genome interacts with
@@ -109,10 +109,19 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
     for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
     std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
     m_pythonVM->exec(pythonString);
-    for (size_t i = 0; i < m_SmartSubstitutionParserText.size(); i++)
+
+    // pkpy::List g;
+    // for (size_t i =0; i < genomeData.size(); ++i) { g.push_back(pkpy::py_var(m_pythonVM, genomeData[i])); }
+    // auto obj = py_var(m_pythonVM, std::move(g));
+    // auto ret = m_pythonVM->exec("v=[]");
+    // pkpy::PyObject* extend = m_pythonVM->getattr(ret, "extend");
+    // pkpy::PyObject* ret2 = m_pythonVM->call(extend, obj);
+    // m_pythonVM->exec("print(v)");
+
+    for (size_t i = 0; i < m_smartSubstitutionParserText.size(); i++)
     {
-        pkpy::PyObject *result = m_pythonVM->eval(m_SmartSubstitutionParserText[i]);
-        m_SmartSubstitutionValues[i] = pkpy::py_cast<double>(m_pythonVM, result);
+        pkpy::PyObject *result = m_pythonVM->eval(m_smartSubstitutionParserText[i]);
+        m_smartSubstitutionValues[i] = pkpy::py_cast<double>(m_pythonVM, result);
     }
 
     return 0;
@@ -120,7 +129,7 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
 
 const std::string &XMLConverter::BaseXMLString() const
 {
-    return m_BaseXMLString;
+    return m_baseXMLString;
 }
 
 
