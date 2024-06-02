@@ -113,7 +113,7 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
     pkpy::List g;
     for (size_t i =0; i < genomeData.size(); ++i) { g.push_back(pkpy::py_var(m_pythonVM, genomeData[i])); }
     pkpy::PyObject* obj = py_var(m_pythonVM, std::move(g));
-    m_pythonVM->_main->attr().set(pkpy::StrName("h"), obj); // based on the pkpy_setglobal code
+    m_pythonVM->_main->attr().set(pkpy::StrName("g"), obj); // based on the pkpy_setglobal code
 
     for (size_t i = 0; i < m_smartSubstitutionParserText.size(); i++)
     {
