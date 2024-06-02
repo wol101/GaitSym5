@@ -21,6 +21,8 @@
 #include <QTimer>
 #include <QColorSpace>
 
+// #include "XMLConverter.h"
+
 #if defined(GAITSYM_DEBUG_BUILD) && defined(Q_OS_WIN)
 #include <crtdbg.h>
 #endif
@@ -31,6 +33,9 @@ int main(int argc, char *argv[])
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_EVERY_1024_DF);
 #endif
+
+    // GaitSym::XMLConverter xml;
+    // xml.ApplyGenome(std::vector<double>{1.5,2,3,4.1});
 
     // read in the Preferences file
     Preferences::Read();

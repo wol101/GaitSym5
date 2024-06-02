@@ -104,19 +104,16 @@ void XMLConverter::GetFormattedXML(std::string *formattedXML)
 // the XML file specifying the simulation
 int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
 {
-    std::vector<std::string> stringList;
-    stringList.reserve(genomeData.size());
-    for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
-    std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
-    m_pythonVM->exec(pythonString);
+    // std::vector<std::string> stringList;
+    // stringList.reserve(genomeData.size());
+    // for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
+    // std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
+    // m_pythonVM->exec(pythonString);
 
-    // pkpy::List g;
-    // for (size_t i =0; i < genomeData.size(); ++i) { g.push_back(pkpy::py_var(m_pythonVM, genomeData[i])); }
-    // auto obj = py_var(m_pythonVM, std::move(g));
-    // auto ret = m_pythonVM->exec("v=[]");
-    // pkpy::PyObject* extend = m_pythonVM->getattr(ret, "extend");
-    // pkpy::PyObject* ret2 = m_pythonVM->call(extend, obj);
-    // m_pythonVM->exec("print(v)");
+    pkpy::List g;
+    for (size_t i =0; i < genomeData.size(); ++i) { g.push_back(pkpy::py_var(m_pythonVM, genomeData[i])); }
+    pkpy::PyObject* obj = py_var(m_pythonVM, std::move(g));
+    m_pythonVM->_main->attr().set(pkpy::StrName("h"), obj); // based on the pkpy_setglobal code
 
     for (size_t i = 0; i < m_smartSubstitutionParserText.size(); i++)
     {
