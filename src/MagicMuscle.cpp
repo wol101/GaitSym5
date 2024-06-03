@@ -18,7 +18,7 @@ MagicMuscle::MagicMuscle() {}
 void MagicMuscle::SetActivation()
 {
     m_activation = dataSum();
-    GetStrap()->setTension(m_activation * m_forceMultiplier);
+    GetStrap()->setTension(m_activation * m_forceMultiplier + m_forceOffset);
 }
 
 double MagicMuscle::GetActivation()
@@ -43,6 +43,8 @@ std::string *MagicMuscle::createFromAttributes()
     std::string buf;
     if (findAttribute("ForceMultiplier"s, &buf) == nullptr) return lastErrorPtr();
     m_forceMultiplier = GSUtil::Double(buf);
+    if (findAttribute("ForceOffset"s, &buf) == nullptr) return lastErrorPtr();
+    m_forceOffset = GSUtil::Double(buf);
     return nullptr;
 }
 
@@ -51,6 +53,7 @@ void MagicMuscle::appendToAttributes()
     Muscle::appendToAttributes();
     setAttribute("Type"s, "Magic"s);
     setAttribute("ForceMultiplier"s, GSUtil::ToString(m_forceMultiplier));
+    setAttribute("ForceOffset"s, GSUtil::ToString(m_forceMultiplier));
 }
 
 std::string MagicMuscle::dumpToString()
