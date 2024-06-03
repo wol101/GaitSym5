@@ -12,6 +12,8 @@
 
 #include "Strap.h"
 
+#include "SmartEnum.h"
+
 namespace GaitSym {
 
 class Marker;
@@ -21,11 +23,18 @@ class MagicStrap : public Strap
 public:
     MagicStrap();
 
+    SMART_ENUM(ForceDirection, forceDirectionStrings, forceDirectionCount, WorldRelative, BodyRelative);
+
+    virtual void Calculate();
+
+    virtual std::string dumpToString();
+
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
 private:
     std::vector<Marker *> m_markerList;
+    ForceDirection m_forceDirection = BodyRelative;
 };
 
 } // GaitSym

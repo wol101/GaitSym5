@@ -22,6 +22,8 @@ public:
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+    virtual std::string dumpToString();
+
     virtual void SetActivation();
     virtual double GetActivation();
     virtual double GetMetabolicPower();

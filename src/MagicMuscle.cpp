@@ -18,6 +18,7 @@ MagicMuscle::MagicMuscle() {}
 void MagicMuscle::SetActivation()
 {
     m_activation = dataSum();
+    GetStrap()->setTension(m_activation * m_forceMultiplier);
 }
 
 double MagicMuscle::GetActivation()
@@ -49,7 +50,20 @@ void MagicMuscle::appendToAttributes()
 {
     Muscle::appendToAttributes();
     setAttribute("Type"s, "Magic"s);
-    setAttribute("ForcePerUnitArea"s, GSUtil::ToString(m_forceMultiplier));
+    setAttribute("ForceMultiplier"s, GSUtil::ToString(m_forceMultiplier));
 }
+
+std::string MagicMuscle::dumpToString()
+{
+    std::string s;
+    if (firstDump())
+    {
+        setFirstDump(false);
+        s += dumpHelper({"time"s, "activation"s, "forceMultiplier"s, "tension"s});
+    }
+    s += dumpHelper({simulation()->GetTime(), m_activation, m_forceMultiplier, GetStrap()->Tension()});
+    return s;
+}
+
 
 } // GaitSym

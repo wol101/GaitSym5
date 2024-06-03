@@ -60,6 +60,8 @@
 #include "PhysXPhysicsEngine.h"
 #include "MuJoCoPhysicsEngine.h"
 #include "LightBase.h"
+#include "MagicMuscle.h"
+#include "MagicStrap.h"
 
 #include "pystring.h"
 
@@ -658,6 +660,13 @@ std::string *Simulation::ParseMuscle(const ParseXML::XMLElement *node)
         muscle->createAttributeMap(node->attributes);
         errorMessage = muscle->createFromAttributes();
     }
+    else if (buf == "Magic"s)
+    {
+        muscle = std::make_unique<MagicMuscle>();
+        muscle->setSimulation(this);
+        muscle->createAttributeMap(node->attributes);
+        errorMessage = muscle->createFromAttributes();
+    }
     else
     {
         setLastError("Simulation::ParseMuscle Type=\""s + buf + "\" not recognised"s);
@@ -703,6 +712,13 @@ std::string *Simulation::ParseStrap(const ParseXML::XMLElement *node)
     else if (buf == "TwoCylinderWrap"s)
     {
         strap = std::make_unique<TwoCylinderWrapStrap>();
+        strap->setSimulation(this);
+        strap->createAttributeMap(node->attributes);
+        errorMessage = strap->createFromAttributes();
+    }
+    else if (buf == "Magic"s)
+    {
+        strap = std::make_unique<MagicStrap>();
         strap->setSimulation(this);
         strap->createAttributeMap(node->attributes);
         errorMessage = strap->createFromAttributes();
