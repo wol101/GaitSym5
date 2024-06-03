@@ -684,7 +684,8 @@ void OpenSimExporter::CreatePathPointSet(std::string name, const std::vector<con
     {
         const Marker *marker = markerList[i];
         XMLInitiateTag(&m_xmlString, "PathPoint"s, {{"name"s, m_legalNameMap[name] + "-P"s + GSUtil::ToString(i + 1)}});
-        XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]);
+        if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
+        else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
         XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
         XMLTerminateTag(&m_xmlString, "PathPoint"s);
     }
@@ -698,6 +699,18 @@ void OpenSimExporter::CreateMarkerSet()
 {
     XMLInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
+
+    for (auto &&markerIter : *m_simulation->GetMarkerList())
+    {
+        Marker *marker = markerIter.second.get();
+        XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, marker->name()}});
+        if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
+        else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
+        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
+        XMLTagAndContent(&m_xmlString, "fixed"s, "true"s);
+        XMLTerminateTag(&m_xmlString, "Marker"s);
+    }
+
     XMLTerminateTag(&m_xmlString, "objects"s);
     XMLTagAndContent(&m_xmlString, "groups"s, ""s);
     XMLTerminateTag(&m_xmlString, "MarkerSet"s);

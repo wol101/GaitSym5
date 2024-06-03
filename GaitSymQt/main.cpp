@@ -21,7 +21,17 @@
 #include <QTimer>
 #include <QColorSpace>
 
-// #include "XMLConverter.h"
+// this bit of code declares some symbols that hint that the NVIDIA/AMD GPU is preferred over the integrated one
+#if defined(Q_OS_WIN)
+#ifdef __cplusplus
+extern "C" {
+#endif
+__declspec(dllexport) uint32_t NvOptimusEnablement = 1;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+#ifdef __cplusplus
+}
+#endif
+#endif
 
 #if defined(GAITSYM_DEBUG_BUILD) && defined(Q_OS_WIN)
 #include <crtdbg.h>
@@ -33,9 +43,6 @@ int main(int argc, char *argv[])
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_EVERY_1024_DF);
 #endif
-
-    // GaitSym::XMLConverter xml;
-    // xml.ApplyGenome(std::vector<double>{1.5,2,3,4.1});
 
     // read in the Preferences file
     Preferences::Read();
