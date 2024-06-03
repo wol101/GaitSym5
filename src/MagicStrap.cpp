@@ -31,8 +31,10 @@ void MagicStrap::Calculate()
         p = m_markerList[i]->GetWorldPosition();
         (*GetPointForceList())[i]->point = p;
         // and the directions depend on the ForceDirection setting
-        if (m_forceDirection == WorldRelative) { v = m_markerList[i]->GetWorldAxis(Marker::X); }
-        if (m_forceDirection == BodyRelative) { v = m_markerList[i]->GetAxis(Marker::X); }
+        // it might appear a bit strange but body relative uses the actual axis currently
+        // whereas world relative treats the specified axis as if it were world
+        if (m_forceDirection == BodyRelative) { v = m_markerList[i]->GetWorldAxis(Marker::X); }
+        if (m_forceDirection == WorldRelative) { v = m_markerList[i]->GetAxis(Marker::X); }
         (*GetPointForceList())[i]->vector = v;
     }
 }
@@ -66,8 +68,10 @@ std::string *MagicStrap::createFromAttributes()
         auto pointForce = std::make_unique<PointForce>();
         pointForce->body = marker->GetBody();
         pointForce->point = marker->GetWorldPosition();
-        if (m_forceDirection == WorldRelative) { pointForce->vector = marker->GetWorldAxis(Marker::X); }
-        if (m_forceDirection == BodyRelative) { pointForce->vector = marker->GetAxis(Marker::X); }
+        // body relative is the normal state of affairs (and requries World like the position
+        // world relative treats the relative axes as if they were world
+        if (m_forceDirection == BodyRelative) { pointForce->vector = marker->GetWorldAxis(Marker::X); }
+        if (m_forceDirection == WorldRelative) { pointForce->vector = marker->GetAxis(Marker::X); }
         GetPointForceList()->push_back(std::move(pointForce));
     }
 

@@ -138,7 +138,7 @@ std::string *NamedObject::createFromAttributes()
         setLastError("NamedObject ID not set"s);
         return lastErrorPtr();
     }
-    this->setName(buf);
+    this->setName(buf); // FIX ME - it would probably be a good idea to check for duplicate names and throw an error
     if (findAttribute("Group"s, &buf)) this->setGroup(buf);
     if (findAttribute("Size1"s, &buf)) m_size1 = GSUtil::Double(buf);
     if (findAttribute("Size2"s, &buf)) m_size2 = GSUtil::Double(buf);
