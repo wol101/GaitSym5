@@ -31,7 +31,8 @@ public:
 
 private:
     double m_activation = 0;
-    double m_forceMultiplier = 1.0;
+    double m_forceMultiplier = 2.0;  // GetStrap()->setTension(m_activation * m_forceMultiplier + m_forceOffset)
+    double m_forceOffset = -1.0;
 };
 
 } // GaitSym
