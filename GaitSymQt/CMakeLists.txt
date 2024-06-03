@@ -1174,6 +1174,8 @@ set(PROJECT_SOURCES
     ../src/LMotorJoint.cpp
     ../src/MAMuscle.cpp
     ../src/MAMuscleComplete.cpp
+    ../src/MagicMuscle.cpp
+    ../src/MagicStrap.cpp
     ../src/Marker.cpp
     ../src/MarkerEllipseDriver.cpp
     ../src/MarkerPositionDriver.cpp
@@ -1349,6 +1351,8 @@ set(PROJECT_SOURCES
     ../src/LMotorJoint.h
     ../src/MAMuscle.h
     ../src/MAMuscleComplete.h
+    ../src/MagicMuscle.h
+    ../src/MagicStrap.h
     ../src/Marker.h
     ../src/MarkerEllipseDriver.h
     ../src/MarkerPositionDriver.h
