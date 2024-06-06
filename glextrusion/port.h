@@ -1,15 +1,15 @@
 
 /*
- * port.h 
+ * port.h
  *
  * FUNCTION:
- * This file contains defines for porting the tubing toolkit 
- * from GL to OpenGL; it also allows one to define an interface 
+ * This file contains defines for porting the tubing toolkit
+ * from GL to OpenGL; it also allows one to define an interface
  * to get at the low-level GL output of this package via callbacks.
  *
  * HISTORY:
  * Created by Linas Vepstas --  February 1993
- * Added auto texture coord generation hooks, Linas April 1994 
+ * Added auto texture coord generation hooks, Linas April 1994
  */
 
 #ifndef __GLE_PORT_H__
@@ -52,32 +52,32 @@ typedef double gleVector[3];
 #endif /* FUNKY_C */
 
 /* ====================================================== */
-/* These are used to convey info about topography to the 
+/* These are used to convey info about topography to the
  * texture mapping routines */
 
-#define FRONT 		1
-#define BACK 		2
-#define FRONT_CAP 	3
-#define BACK_CAP	4
-#define FILLET		5
+#define FRONT       1
+#define BACK        2
+#define FRONT_CAP   3
+#define BACK_CAP    4
+#define FILLET      5
 
 /* ====================================================== */
 
 #ifdef __GLE_DOUBLE
-/* #define gleDouble 		double */
-#define MULTMATRIX(m)		MULTMATRIX_D(m)
-#define LOADMATRIX(m)		LOADMATRIX_D(m)
-#define V3F(x,j,id)		V3F_D(x,j,id)
-#define N3F(x)			N3F_D(x)
-#define T2F(x,y)		T2F_D(x,y)
-#else 
-#define gleDouble 		float
-#define MULTMATRIX(m)		MULTMATRIX_F(m)
-#define LOADMATRIX(m)		LOADMATRIX_F(m)
-#define V3F(x,j,id)		V3F_F(x,j,id)
-#define N3F(x)			N3F_F(x)
-#define T2F(x,y)		T2F_F(x,y)
-#endif 
+/* #define gleDouble        double */
+#define MULTMATRIX(m)       MULTMATRIX_D(m)
+#define LOADMATRIX(m)       LOADMATRIX_D(m)
+#define V3F(x,j,id)     V3F_D(x,j,id)
+#define N3F(x)          N3F_D(x)
+#define T2F(x,y)        T2F_D(x,y)
+#else
+#define gleDouble       float
+#define MULTMATRIX(m)       MULTMATRIX_F(m)
+#define LOADMATRIX(m)       LOADMATRIX_F(m)
+#define V3F(x,j,id)     V3F_F(x,j,id)
+#define N3F(x)          N3F_F(x)
+#define T2F(x,y)        T2F_F(x,y)
+#endif
 
 /* ====================================================== */
 
@@ -85,45 +85,92 @@ typedef double gleVector[3];
 #undef GL_32
 #undef OPENGL_10
 
-#define BGNTMESH(i,len)	printf ("bgntmesh() \n");
+#if 1
+#include <QDebug>
+
+#define BGNTMESH(i,len) qDebug ("bgntmesh() \n");
+#define ENDTMESH()      qDebug ("endtmesh() \n");
+#define BGNPOLYGON()    qDebug ("bgnpolygon() \n");
+#define ENDPOLYGON()    qDebug ("endpolygon() \n");
+#define V3F_F(x,j,id)   qDebug ("v3f(x)	%f %f %f \n", x[0], x[1], x[2]);
+#define V3F_D(x,j,id)   qDebug ("v3d(x) %f %f %f \n", x[0], x[1], x[2]);
+#define N3F_F(x)    qDebug ("n3f(x) %f %f %f \n", x[0], x[1], x[2]);
+#define N3F_D(x)    qDebug ("n3d(x)	%f %f %f \n", x[0], x[1], x[2]);
+#define C3F(x)      qDebug ("c3f(x) %f %f %f \n", x[0], x[1], x[2]);
+#define T2F_F(x, y) qDebug ("t2f(x) %f %f \n", x, y);
+#define T2F_D(x, y) qDebug ("t2d(x)	%f %f \n", x, y);
+
+#define POPMATRIX()     qDebug ("popmatrix () \n");
+#define PUSHMATRIX()    qDebug ("pushmatrix() \n");
+#define MULTMATRIX_F(x) MULTMATRIX_D(x)
+#define LOADMATRIX_F(x) LOADMATRIX_D(x)
+
+
+#define LOADMATRIX_D(x) {               \
+int i, j;                        \
+    qDebug ("loadmatrix (x) \n");            \
+    for (i=0; i<4; i++) {                \
+        for (j=0; j<4; j++) {             \
+            qDebug ( "%f ", (x)[i][j]);            \
+    }                         \
+        qDebug (" \n");                   \
+}                            \
+}
+
+#define MULTMATRIX_D(x) {               \
+int i, j;                        \
+    qDebug ("multmatrix (x) \n");            \
+    for (i=0; i<4; i++) {                \
+        for (j=0; j<4; j++) {             \
+            qDebug ( "%f ", (x)[i][j]);            \
+    }                         \
+        qDebug (" \n");                   \
+}                            \
+}
+
+#else
+
+#define BGNTMESH(i,len) printf ("bgntmesh() \n");
 #define ENDTMESH()      printf ("endtmesh() \n");
-#define BGNPOLYGON()	printf ("bgnpolygon() \n");
-#define ENDPOLYGON()	printf ("endpolygon() \n");
-#define V3F_F(x,j,id)	printf ("v3f(x)		%f %f %f \n", x[0], x[1], x[2]);
-#define V3F_D(x,j,id)	printf ("v3d(x) 	%f %f %f \n", x[0], x[1], x[2]);
-#define	N3F_F(x)	printf ("n3f(x) 	%f %f %f \n", x[0], x[1], x[2]);
-#define	N3F_D(x)	printf ("n3d(x)		%f %f %f \n", x[0], x[1], x[2]);
-#define	C3F(x)		printf ("c3f(x) 	%f %f %f \n", x[0], x[1], x[2]);
-#define	T2F_F(x)	printf ("t2f(x) 	%f %f \n", x[0], x[1]);
-#define	T2F_D(x)	printf ("t2d(x)		%f %f \n", x[0], x[1]);
+#define BGNPOLYGON()    printf ("bgnpolygon() \n");
+#define ENDPOLYGON()    printf ("endpolygon() \n");
+#define V3F_F(x,j,id)   printf ("v3f(x)	%f %f %f \n", x[0], x[1], x[2]);
+#define V3F_D(x,j,id)   printf ("v3d(x) %f %f %f \n", x[0], x[1], x[2]);
+#define N3F_F(x)    printf ("n3f(x) %f %f %f \n", x[0], x[1], x[2]);
+#define N3F_D(x)    printf ("n3d(x)	%f %f %f \n", x[0], x[1], x[2]);
+#define C3F(x)      printf ("c3f(x) %f %f %f \n", x[0], x[1], x[2]);
+#define T2F_F(x, y) printf ("t2f(x) %f %f \n", x, y);
+#define T2F_D(x, y) printf ("t2d(x)	%f %f \n", x, y);
 
-#define	POPMATRIX()	printf ("popmatrix () \n");
-#define	PUSHMATRIX()	printf ("pushmatrix() \n");
-#define	MULTMATRIX_F(x)	MULTMATRIX_D(x)
-#define	LOADMATRIX_F(x)	LOADMATRIX_D(x)
+#define POPMATRIX()     printf ("popmatrix () \n");
+#define PUSHMATRIX()    printf ("pushmatrix() \n");
+#define MULTMATRIX_F(x) MULTMATRIX_D(x)
+#define LOADMATRIX_F(x) LOADMATRIX_D(x)
 
 
-#define LOADMATRIX_D(x) {				\
-   int i, j; 						\
-   printf ("loadmatrix (x) \n");			\
-   for (i=0; i<4; i++) {				\
-      for (j=0; j<4; j++) {				\
-         printf ( "%f ", (x)[i][j]);			\
-      }							\
-      printf (" \n");					\
-   }							\
+#define LOADMATRIX_D(x) {               \
+   int i, j;                        \
+   printf ("loadmatrix (x) \n");            \
+   for (i=0; i<4; i++) {                \
+      for (j=0; j<4; j++) {             \
+         printf ( "%f ", (x)[i][j]);            \
+      }                         \
+      printf (" \n");                   \
+   }                            \
 }
 
-#define MULTMATRIX_D(x) {				\
-   int i, j; 						\
-   printf ("multmatrix (x) \n");			\
-   for (i=0; i<4; i++) {				\
-      for (j=0; j<4; j++) {				\
-         printf ( "%f ", (x)[i][j]);			\
-      }							\
-      printf (" \n");					\
-   }							\
+#define MULTMATRIX_D(x) {               \
+   int i, j;                        \
+   printf ("multmatrix (x) \n");            \
+   for (i=0; i<4; i++) {                \
+      for (j=0; j<4; j++) {             \
+         printf ( "%f ", (x)[i][j]);            \
+      }                         \
+      printf (" \n");                   \
+   }                            \
 }
+
+#endif
 
 #define __IS_LIGHTING_ON  (1)
 
@@ -135,50 +182,50 @@ typedef double gleVector[3];
 
 #include <gl/gl.h>
 
-#define BGNTMESH(i,len)	bgntmesh()
-#define ENDTMESH()	endtmesh()
-#define BGNPOLYGON()	bgnpolygon()
-#define ENDPOLYGON()	endpolygon()
-#define V3F_F(x,j,id)	v3f(x)
-#define V3F_D(x,j,id)	v3d(x)
-#define	N3F_F(x)	n3f(x)
-#define	T2F_F(x,y)
-#define	T2F_D(x,y)
-#define	C3F(x)		c3f(x)
+#define BGNTMESH(i,len) bgntmesh()
+#define ENDTMESH()  endtmesh()
+#define BGNPOLYGON()    bgnpolygon()
+#define ENDPOLYGON()    endpolygon()
+#define V3F_F(x,j,id)   v3f(x)
+#define V3F_D(x,j,id)   v3d(x)
+#define N3F_F(x)    n3f(x)
+#define T2F_F(x,y)
+#define T2F_D(x,y)
+#define C3F(x)      c3f(x)
 
-#define	POPMATRIX()	popmatrix ()
-#define	PUSHMATRIX()	pushmatrix()
-#define	MULTMATRIX_F(x)	multmatrix (x)
-#define	LOADMATRIX_F(x)	loadmatrix (x)
+#define POPMATRIX() popmatrix ()
+#define PUSHMATRIX()    pushmatrix()
+#define MULTMATRIX_F(x) multmatrix (x)
+#define LOADMATRIX_F(x) loadmatrix (x)
 
-#define	N3F_D(x) {					\
-   float nnn[3];					\
-   nnn[0] = (float) (x)[0]; 				\
-   nnn[1] = (float) (x)[1]; 				\
-   nnn[2] = (float) (x)[2]; 				\
-   n3f (nnn);						\
+#define N3F_D(x) {                  \
+   float nnn[3];                    \
+   nnn[0] = (float) (x)[0];                 \
+   nnn[1] = (float) (x)[1];                 \
+   nnn[2] = (float) (x)[2];                 \
+   n3f (nnn);                       \
 }
 
-#define LOADMATRIX_D(x) {				\
-   int i, j; 						\
-   float mmm[4][4];					\
-   for (i=0; i<4; i++) {				\
-      for (j=0; j<4; j++) {				\
-         mmm[i][j] = (float) (x)[i][j];			\
-      }							\
-   }							\
-   loadmatrix(mmm);					\
+#define LOADMATRIX_D(x) {               \
+   int i, j;                        \
+   float mmm[4][4];                 \
+   for (i=0; i<4; i++) {                \
+      for (j=0; j<4; j++) {             \
+         mmm[i][j] = (float) (x)[i][j];         \
+      }                         \
+   }                            \
+   loadmatrix(mmm);                 \
 }
 
-#define MULTMATRIX_D(x) {				\
-   int i, j; 						\
-   float mmm[4][4];					\
-   for (i=0; i<4; i++) {				\
-      for (j=0; j<4; j++) {				\
-         mmm[i][j] = (float) (x)[i][j];			\
-      }							\
-   }							\
-   multmatrix(mmm);					\
+#define MULTMATRIX_D(x) {               \
+   int i, j;                        \
+   float mmm[4][4];                 \
+   for (i=0; i<4; i++) {                \
+      for (j=0; j<4; j++) {             \
+         mmm[i][j] = (float) (x)[i][j];         \
+      }                         \
+   }                            \
+   multmatrix(mmm);                 \
 }
 
 /* #define __IS_LIGHTING_ON  (MSINGLE == getmmode()) */
@@ -202,93 +249,93 @@ typedef double gleVector[3];
 #endif
 
 #if FLIP_NORMAL
-#define	N3F_F(x) {					\
-   float nnn[3];					\
-   nnn[0] = - (float) (x)[0]; 				\
-   nnn[1] = - (float) (x)[1]; 				\
-   nnn[2] = - (float) (x)[2]; 				\
-   glNormal3fv (nnn);					\
+#define N3F_F(x) {                  \
+   float nnn[3];                    \
+   nnn[0] = - (float) (x)[0];               \
+   nnn[1] = - (float) (x)[1];               \
+   nnn[2] = - (float) (x)[2];               \
+   glNormal3fv (nnn);                   \
 }
-#define	N3F_D(x) {					\
-   float nnn[3];					\
-   nnn[0] = - (float) (x)[0]; 				\
-   nnn[1] = - (float) (x)[1]; 				\
-   nnn[2] = - (float) (x)[2]; 				\
-   glNormal3fv (nnn);					\
+#define N3F_D(x) {                  \
+   float nnn[3];                    \
+   nnn[0] = - (float) (x)[0];               \
+   nnn[1] = - (float) (x)[1];               \
+   nnn[2] = - (float) (x)[2];               \
+   glNormal3fv (nnn);                   \
 }
 #endif /* FLIP_NORMAL */
 
-#define	C3F(x)		glColor3fv(x)
-#define	T2F_F(x,y)	glTexCoord2f(x,y)
-#define	T2F_D(x,y)	glTexCoord2d(x,y)
+#define C3F(x)      glColor3fv(x)
+#define T2F_F(x,y)  glTexCoord2f(x,y)
+#define T2F_D(x,y)  glTexCoord2d(x,y)
 
-#define	POPMATRIX()	glPopMatrix()
-#define	PUSHMATRIX()	glPushMatrix()
+#define POPMATRIX() glPopMatrix()
+#define PUSHMATRIX()    glPushMatrix()
 
-#define	MULTMATRIX_F(x)	glMultMatrixf ((const GLfloat *)x)
-#define	LOADMATRIX_F(x)	glLoadMatrixf ((const GLfloat *)x)
+#define MULTMATRIX_F(x) glMultMatrixf ((const GLfloat *)x)
+#define LOADMATRIX_F(x) glLoadMatrixf ((const GLfloat *)x)
 
-#define	MULTMATRIX_D(x)	glMultMatrixd ((const GLdouble *)x)
-#define	LOADMATRIX_D(x)	glLoadMatrixd ((const GLdouble *)x)
+#define MULTMATRIX_D(x) glMultMatrixd ((const GLdouble *)x)
+#define LOADMATRIX_D(x) glLoadMatrixd ((const GLdouble *)x)
 
 #define __IS_LIGHTING_ON  (glIsEnabled(GL_LIGHTING))
 
 /* ====================================================== */
 #ifdef AUTO_TEXTURE
 
-#define BGNTMESH(i,len) { 					\
-	if(_gle_gc -> bgn_gen_texture) (*(_gle_gc -> bgn_gen_texture))(i,len);\
-	glBegin (GL_TRIANGLE_STRIP); 			\
+#define BGNTMESH(i,len) {                   \
+    if(_gle_gc -> bgn_gen_texture) (*(_gle_gc -> bgn_gen_texture))(i,len);\
+    glBegin (GL_TRIANGLE_STRIP);            \
 }
 
-#define BGNPOLYGON() { 					\
-	if(_gle_gc -> bgn_gen_texture) (*(_gle_gc -> bgn_gen_texture))();\
-	glBegin (GL_POLYGON);				\
+#define BGNPOLYGON() {                  \
+    if(_gle_gc -> bgn_gen_texture) (*(_gle_gc -> bgn_gen_texture))();\
+    glBegin (GL_POLYGON);               \
 }
 
-#define N3F_F(x) { 					\
-	if(_gle_gc -> n3f_gen_texture) (*(_gle_gc -> n3f_gen_texture))(x); \
-	glNormal3fv(x); 				\
+#define N3F_F(x) {                  \
+    if(_gle_gc -> n3f_gen_texture) (*(_gle_gc -> n3f_gen_texture))(x); \
+    glNormal3fv(x);                 \
 }
 
-#define N3F_D(x) { 					\
-	if(_gle_gc -> n3d_gen_texture) (*(_gle_gc -> n3d_gen_texture))(x); \
-	glNormal3dv(x); 				\
+#define N3F_D(x) {                  \
+    if(_gle_gc -> n3d_gen_texture) (*(_gle_gc -> n3d_gen_texture))(x); \
+    glNormal3dv(x);                 \
 }
 
-#define V3F_F(x,j,id) { 					\
-	if(_gle_gc -> v3f_gen_texture) (*(_gle_gc -> v3f_gen_texture))(x,j,id);\
-	glVertex3fv(x); 				\
+#define V3F_F(x,j,id) {                     \
+    if(_gle_gc -> v3f_gen_texture) (*(_gle_gc -> v3f_gen_texture))(x,j,id);\
+    glVertex3fv(x);                 \
 }
 
-#define V3F_D(x,j,id) { 					\
-	if(_gle_gc -> v3d_gen_texture) (*(_gle_gc -> v3d_gen_texture))(x,j,id); \
-	glVertex3dv(x); 				\
+#define V3F_D(x,j,id) {                     \
+    if(_gle_gc -> v3d_gen_texture) (*(_gle_gc -> v3d_gen_texture))(x,j,id); \
+    glVertex3dv(x);                 \
 }
 
-#define ENDTMESH() {					\
-	if(_gle_gc -> end_gen_texture) (*(_gle_gc -> end_gen_texture))(); \
-	glEnd ();					\
+#define ENDTMESH() {                    \
+    if(_gle_gc -> end_gen_texture) (*(_gle_gc -> end_gen_texture))(); \
+    glEnd ();                   \
 }
 
-#define ENDPOLYGON() {					\
-	if(_gle_gc -> end_gen_texture) (*(_gle_gc -> end_gen_texture))(); \
-	glEnd ();					\
+#define ENDPOLYGON() {                  \
+    if(_gle_gc -> end_gen_texture) (*(_gle_gc -> end_gen_texture))(); \
+    glEnd ();                   \
 }
 
 /* ====================================================== */
 #else /* AUTO_TEXTURE */
 
-#define BGNTMESH(i,len)	glBegin (GL_TRIANGLE_STRIP);
-#define BGNPOLYGON() 	glBegin (GL_POLYGON);
+#define BGNTMESH(i,len) glBegin (GL_TRIANGLE_STRIP);
+#define BGNPOLYGON()    glBegin (GL_POLYGON);
 
-#define	N3F_F(x)	glNormal3fv(x)
-#define	N3F_D(x)	glNormal3dv(x)
-#define V3F_F(x,j,id)	glVertex3fv(x);
-#define V3F_D(x,j,id)	glVertex3dv(x);
+#define N3F_F(x)    glNormal3fv(x)
+#define N3F_D(x)    glNormal3dv(x)
+#define V3F_F(x,j,id)   glVertex3fv(x);
+#define V3F_D(x,j,id)   glVertex3dv(x);
 
-#define ENDTMESH()	glEnd ()
-#define ENDPOLYGON()	glEnd()
+#define ENDTMESH()  glEnd ()
+#define ENDPOLYGON()    glEnd()
 
 #endif /* AUTO_TEXTURE */
 

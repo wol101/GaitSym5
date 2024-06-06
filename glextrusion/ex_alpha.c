@@ -3,23 +3,30 @@
  * ex_alpha.c
  *
  * FUNCTION:
- * Framework file to auto-generate subroutines with different 
- * signature for color argument.  The *_c4f routines take a 
+ * Framework file to auto-generate subroutines with different
+ * signature for color argument.  The *_c4f routines take a
  * 3D RGBA color so that alpha transparency can be supported.
  *
  * HISTORY:
  * Copyright (c) 2003 Linas Vepstas <linas@linas.org>
  */
 
-#include "gle.h"
+#include "gle/gle.h"
 #include "port.h"
 
-/* Autogen the missing c4f routines by redefining C3F to be 4F, 
+/* Autogen the missing c4f routines by redefining C3F to be 4F,
  * changeing the subroutine signature, and changing the function names.
  */
 
 #undef   C3F
+#if DEBUG_OUTPUT
+#define C3F(x)      printf ("c3f(x) %f %f %f %f \n", x[0], x[1], x[2], x[3]);
+#endif
+
+#if OPENGL_10
 #define  C3F(x)      glColor4fv(x)
+#endif
+
 #define  gleColor    gleColor4f
 #define  COLOR_SIGNATURE 1
 

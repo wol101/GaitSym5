@@ -1,4 +1,4 @@
-/* 
+/*
  * MODULE NAME: rotate.c
  *
  * FUNCTION:
@@ -18,7 +18,7 @@
  * --------------------------------------------------------------------
  *
  * void urot_about_axis (float m[4][4],      --- returned
- *                       float angle,        --- input 
+ *                       float angle,        --- input
  *                       float axis[3])      --- input
  * Computes a rotation matrix.
  * The rotation is around the the direction specified by the argument
@@ -26,7 +26,7 @@
  * length.  The angle of rotation is specified in degrees, and is in the
  * right-handed direction.
  *
- * void rot_about_axis (float angle,        --- input 
+ * void rot_about_axis (float angle,        --- input
  *                      float axis[3])      --- input
  * Same as above routine, except that the matrix is multiplied into the
  * GL matrix stack.
@@ -59,40 +59,40 @@
  * --------------------------------------------------------------------
  */
 
-#include "gle.h"
+#include "gle/gle.h"
 #include "port.h"
-   
+
 /* ========================================================== */
 
-void rot_axis (gleDouble omega, 		/* input */
-               gleDouble axis[3])		/* input */
+void rot_axis (gleDouble omega,         /* input */
+               gleDouble axis[3])       /* input */
 {
-   gleDouble m[4][4];
-
-   urot_axis (m, omega, axis);
-   MULTMATRIX (m);
-
+    gleDouble m[4][4];
+    
+    urot_axis (m, omega, axis);
+    MULTMATRIX (m);
+    
 }
 
 /* ========================================================== */
 
-void rot_about_axis (gleDouble angle, 		/* input */
-                     gleDouble axis[3])		/* input */
+void rot_about_axis (gleDouble angle,       /* input */
+                     gleDouble axis[3])     /* input */
 {
-   gleDouble m[4][4];
-
-   urot_about_axis (m, angle, axis);
-   MULTMATRIX (m);
+    gleDouble m[4][4];
+    
+    urot_about_axis (m, angle, axis);
+    MULTMATRIX (m);
 }
 
 /* ========================================================== */
 
-void rot_omega (gleDouble axis[3])		/* input */
+void rot_omega (gleDouble axis[3])      /* input */
 {
-   gleDouble m[4][4];
-
-   urot_omega (m, axis);
-   MULTMATRIX(m);
+    gleDouble m[4][4];
+    
+    urot_omega (m, axis);
+    MULTMATRIX(m);
 }
 
 /* ========================================================== */

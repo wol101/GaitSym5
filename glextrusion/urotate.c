@@ -1,5 +1,5 @@
 
-/* 
+/*
  * MODULE: urotate.c
  *
  * FUNCTION:
@@ -16,7 +16,7 @@
  * --------------------------------------------------------------------
  *
  * void urot_about_axis (float m[4][4],      --- returned
- *                       float angle,        --- input 
+ *                       float angle,        --- input
  *                       float axis[3])      --- input
  * Computes a rotation matrix.
  * The rotation is around the the direction specified by the argument
@@ -24,7 +24,7 @@
  * length.  The angle of rotation is specified in degrees, and is in the
  * right-handed direction.
  *
- * void rot_about_axis (float angle,        --- input 
+ * void rot_about_axis (float angle,        --- input
  *                      float axis[3])      --- input
  * Same as above routine, except that the matrix is multiplied into the
  * GL matrix stack.
@@ -59,127 +59,130 @@
 
 #include <math.h>
 
-#include "gle.h"
+#include "gle/gle.h"
 #include "port.h"
-   
+
 /* ========================================================== */
 
-void urot_axis (gleDouble m[4][4], 		/* returned */
-                gleDouble omega, 		/* input */
-                gleDouble axis[3])		/* input */
+void urot_axis (gleDouble m[4][4],      /* returned */
+                gleDouble omega,        /* input */
+                gleDouble axis[3])      /* input */
 {
-   gleDouble s, c, ssq, csq, cts;
-   gleDouble tmp;
-
-   /*
-    * The formula coded up below can be derived by using the 
-    * homomorphism between SU(2) and O(3), namely, that the
-    * 3x3 rotation matrix R is given by
-    *      t.R.v = S(-1) t.v S
-    * where
-    * t are the Pauli matrices (similar to Quaternions, easier to use)
-    * v is an arbitrary 3-vector
-    * and S is a 2x2 hermitian matrix:
-    *     S = exp ( i omega t.axis / 2 )
-    * 
-    * (Also, remember that computer graphics uses the transpose of R).
-    * 
-    * The Pauli matrices are:
-    * 
-    *  tx = (0 1)          ty = (0 -i)            tz = (1  0)
-    *       (1 0)               (i  0)                 (0 -1)
-    *
-    * Note that no error checking is done -- if the axis vector is not 
-    * of unit length, you'll get strange results.
-    */
-
-   tmp = (double) omega / 2.0;
-   s = sin (tmp);
-   c = cos (tmp);
-
-   ssq = s*s;
-   csq = c*c;
-
-   m[0][0] = m[1][1] = m[2][2] = csq - ssq;
-
-   ssq *= 2.0;
-
-   /* on-diagonal entries */
-   m[0][0] += ssq * axis[0]*axis[0];
-   m[1][1] += ssq * axis[1]*axis[1];
-   m[2][2] += ssq * axis[2]*axis[2];
-
-   /* off-diagonal entries */
-   m[0][1] = m[1][0] = axis[0] * axis[1] * ssq;
-   m[1][2] = m[2][1] = axis[1] * axis[2] * ssq;
-   m[2][0] = m[0][2] = axis[2] * axis[0] * ssq;
-
-   cts = 2.0 * c * s;
-
-   tmp = cts * axis[2];
-   m[0][1] += tmp;
-   m[1][0] -= tmp;
-
-   tmp = cts * axis[0];
-   m[1][2] += tmp;
-   m[2][1] -= tmp;
-
-   tmp = cts * axis[1];
-   m[2][0] += tmp;
-   m[0][2] -= tmp;
-
-   /* homogeneous entries */
-   m[0][3] = m[1][3] = m[2][3] = m[3][2] = m[3][1] = m[3][0] = 0.0;
-   m[3][3] = 1.0;
-
-
+    gleDouble s, c, ssq, csq, cts;
+    gleDouble tmp;
+    
+    /*
+     * The formula coded up below can be derived by using the
+     * homomorphism between SU(2) and O(3), namely, that the
+     * 3x3 rotation matrix R is given by
+     *      t.R.v = S(-1) t.v S
+     * where
+     * t are the Pauli matrices (similar to Quaternions, easier to use)
+     * v is an arbitrary 3-vector
+     * and S is a 2x2 hermitian matrix:
+     *     S = exp ( i omega t.axis / 2 )
+     *
+     * (Also, remember that computer graphics uses the transpose of R).
+     *
+     * The Pauli matrices are:
+     *
+     *  tx = (0 1)          ty = (0 -i)            tz = (1  0)
+     *       (1 0)               (i  0)                 (0 -1)
+     *
+     * Note that no error checking is done -- if the axis vector is not
+     * of unit length, you'll get strange results.
+     */
+    
+    tmp = (double) omega / 2.0;
+    s = sin (tmp);
+    c = cos (tmp);
+    
+    ssq = s * s;
+    csq = c * c;
+    
+    m[0][0] = m[1][1] = m[2][2] = csq - ssq;
+    
+    ssq *= 2.0;
+    
+    /* on-diagonal entries */
+    m[0][0] += ssq * axis[0] * axis[0];
+    m[1][1] += ssq * axis[1] * axis[1];
+    m[2][2] += ssq * axis[2] * axis[2];
+    
+    /* off-diagonal entries */
+    m[0][1] = m[1][0] = axis[0] * axis[1] * ssq;
+    m[1][2] = m[2][1] = axis[1] * axis[2] * ssq;
+    m[2][0] = m[0][2] = axis[2] * axis[0] * ssq;
+    
+    cts = 2.0 * c * s;
+    
+    tmp = cts * axis[2];
+    m[0][1] += tmp;
+    m[1][0] -= tmp;
+    
+    tmp = cts * axis[0];
+    m[1][2] += tmp;
+    m[2][1] -= tmp;
+    
+    tmp = cts * axis[1];
+    m[2][0] += tmp;
+    m[0][2] -= tmp;
+    
+    /* homogeneous entries */
+    m[0][3] = m[1][3] = m[2][3] = m[3][2] = m[3][1] = m[3][0] = 0.0;
+    m[3][3] = 1.0;
+    
+    
 }
 
 /* ========================================================== */
 
-void urot_about_axis (gleDouble m[4][4], 	/* returned */
-                      gleDouble angle, 		/* input */
-                      gleDouble axis[3])	/* input */
+void urot_about_axis (gleDouble m[4][4],    /* returned */
+                      gleDouble angle,      /* input */
+                      gleDouble axis[3])    /* input */
 {
-   gleDouble len, ax[3];
-
-   angle *= M_PI/180.0;		/* convert to radians */
-
-   /* renormalize axis vector, if needed */
-   len = axis[0]*axis[0] + axis[1]*axis[1] + axis[2]*axis[2];
-
-   /* we can save some machine instructions by normalizing only
-    * if needed.  The compiler should be able to schedule in the 
-    * if test "for free". */
-   if (len != 1.0) {
-      len = (gleDouble) (1.0 / sqrt ((double) len));
-      ax[0] = axis[0] * len;
-      ax[1] = axis[1] * len;
-      ax[2] = axis[2] * len;
-      urot_axis (m, angle, ax);
-   } else {
-      urot_axis (m, angle, axis);
-   }
+    gleDouble len, ax[3];
+    
+    angle *= M_PI / 180.0;   /* convert to radians */
+    
+    /* renormalize axis vector, if needed */
+    len = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2];
+    
+    /* we can save some machine instructions by normalizing only
+     * if needed.  The compiler should be able to schedule in the
+     * if test "for free". */
+    if (len != 1.0)
+    {
+        len = (gleDouble) (1.0 / sqrt ((double) len));
+        ax[0] = axis[0] * len;
+        ax[1] = axis[1] * len;
+        ax[2] = axis[2] * len;
+        urot_axis (m, angle, ax);
+    }
+    else
+    {
+        urot_axis (m, angle, axis);
+    }
 }
 
 /* ========================================================== */
 
-void urot_omega (gleDouble m[4][4], 	/* returned */
-                 gleDouble axis[3])	/* input */
+void urot_omega (gleDouble m[4][4],     /* returned */
+                 gleDouble axis[3]) /* input */
 {
-   gleDouble len, ax[3];
-
-   /* normalize axis vector */
-   len = axis[0]*axis[0] + axis[1]*axis[1] + axis[2]*axis[2];
-
-   len = (gleDouble) (1.0 / sqrt ((double) len));
-   ax[0] = axis[0] * len;
-   ax[1] = axis[1] * len;
-   ax[2] = axis[2] * len;
-
-   /* the amount of rotation is equal to the length, in radians */
-   urot_axis (m, len, ax);
-
+    gleDouble len, ax[3];
+    
+    /* normalize axis vector */
+    len = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2];
+    
+    len = (gleDouble) (1.0 / sqrt ((double) len));
+    ax[0] = axis[0] * len;
+    ax[1] = axis[1] * len;
+    ax[2] = axis[2] * len;
+    
+    /* the amount of rotation is equal to the length, in radians */
+    urot_axis (m, len, ax);
+    
 }
 
 /* ======================= END OF FILE ========================== */

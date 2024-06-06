@@ -1119,14 +1119,15 @@ set(PROJECT_SOURCES
     ../threepp/generated/threepp/renderers/shaders/ShaderChunk.cpp
 
     ../pystring/pystring.cpp
+    ../glextrusion/extrude.c
+    ../glextrusion/ex_alpha.c
     ../glextrusion/ex_angle.c
     ../glextrusion/ex_cut_round.c
     ../glextrusion/ex_raw.c
-    ../glextrusion/extrude.c
     ../glextrusion/intersect.c
     ../glextrusion/qmesh.c
-    ../glextrusion/rot_prince.c
     ../glextrusion/rotate.c
+    ../glextrusion/rot_prince.c
     ../glextrusion/round_cap.c
     ../glextrusion/segment.c
     ../glextrusion/texgen.c
@@ -1300,14 +1301,13 @@ set(PROJECT_SOURCES
     ../GaitSymQt/ViewControlWidget.h
     ../glextrusion/copy.h
     ../glextrusion/extrude.h
-    ../glextrusion/gle.h
+    ../glextrusion/gle/gle.h
     ../glextrusion/intersect.h
     ../glextrusion/port.h
     ../glextrusion/rot.h
     ../glextrusion/segment.h
     ../glextrusion/tube_gc.h
-    ../glextrusion/vvector.h
-    ../libgwavi/avi-utils.h
+    ../glextrusion/vvector.h    ../libgwavi/avi-utils.h
     ../libgwavi/fileio.h
     ../libgwavi/gwavi.h
     ../libgwavi/gwavi_private.h

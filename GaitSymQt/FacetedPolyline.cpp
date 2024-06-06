@@ -11,7 +11,7 @@
 
 #include "FacetedPolyline.h"
 
-#include "gle.h"
+#include "gle/gle.h"
 
 #include <cmath>
 #include <memory>
