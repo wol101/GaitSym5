@@ -95,7 +95,7 @@ typedef double gleVector[3];
 #define	N3F_D(x)	printf ("n3d(x)		%f %f %f \n", x[0], x[1], x[2]);
 #define	C3F(x)		printf ("c3f(x) 	%f %f %f \n", x[0], x[1], x[2]);
 #define	T2F_F(x)	printf ("t2f(x) 	%f %f \n", x[0], x[1]);
-#define	T2F_D(x,y)	printf ("t2d(x,y)		%f %f \n", x, y);
+#define	T2F_D(x)	printf ("t2d(x)		%f %f \n", x[0], x[1]);
 
 #define	POPMATRIX()	printf ("popmatrix () \n");
 #define	PUSHMATRIX()	printf ("pushmatrix() \n");

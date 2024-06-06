@@ -11,9 +11,8 @@
 
 #include "FacetedPolyline.h"
 
-#include "../glextrusion/gle.h"
+#include "gle.h"
 
-#include <iostream>
 #include <cmath>
 #include <memory>
 
@@ -81,7 +80,7 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
 //                        point_array.get(),      /* polyline vertces */
 //                        color_array.get(),      /* colors at polyline verts */
 //                        radius);                /* radius of polycylinder */
-        exit(1);
+        // exit(1);
     }
 
 }
