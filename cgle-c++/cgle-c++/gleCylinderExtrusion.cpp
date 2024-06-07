@@ -10,9 +10,8 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
-
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -27,7 +26,7 @@ CgleCylinderExtrusion::CgleCylinderExtrusion(int Points, int Facets) :
     try
     {
         delete[] m_ptrXforms;
-        m_ptrXforms = NULL;
+        m_ptrXforms = nullptr;
     }
     catch (...)
     {

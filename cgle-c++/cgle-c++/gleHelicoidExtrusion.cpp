@@ -10,8 +10,10 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
+
+#include <cmath>
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -23,7 +25,7 @@
 CgleHelicoidExtrusion::CgleHelicoidExtrusion(int Points, double StartXForm[2][3],
         double Sweep, int Facets) :
     CgleSpiralExtrusion(Points, StartXForm,
-                        Facets, Sweep, NULL)
+                        Facets, Sweep, 0)
 {
 
     FFacets = Facets;

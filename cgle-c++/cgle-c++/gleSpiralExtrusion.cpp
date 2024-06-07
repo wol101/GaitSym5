@@ -10,8 +10,10 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
+
+#include <cmath>
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -56,7 +58,7 @@ CgleSpiralExtrusion::CgleSpiralExtrusion(int Points, double StartXForm[2][3], in
                      | GLE_JN_ROUND);
                      
     SetTextureMode(gleTexMode::GLE_TEXTURE_NORMAL_MODEL_CYL);
-    if (StartXForm != NULL)
+    if (StartXForm != nullptr)
     {
         for (int i = 0; i < 2; i++)
         {
@@ -69,7 +71,7 @@ CgleSpiralExtrusion::CgleSpiralExtrusion(int Points, double StartXForm[2][3], in
     else
         FStartXForm[0][0] = -1E300;  // flag value
         
-    if (StartXForm == NULL)
+    if (StartXForm == nullptr)
     {
         FSpiralMem_Anchor = new char[24 * Points];
         FPts = (double *)FSpiralMem_Anchor;
@@ -88,7 +90,7 @@ CgleSpiralExtrusion::~CgleSpiralExtrusion()
 {
 
     delete[] FSpiralMem_Anchor;
-    FSpiralMem_Anchor = NULL;
+    FSpiralMem_Anchor = nullptr;
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -105,7 +107,7 @@ void  CgleSpiralExtrusion::SetTForm(double dXFormdTheta[2][3])
     // path must be generated also
     if (FStartXForm[0][0] != -1E300)
     {
-        if (dXFormdTheta == NULL)
+        if (dXFormdTheta == nullptr)
         {
             for (int i = 0; i < m_iPoints; i++)
             {

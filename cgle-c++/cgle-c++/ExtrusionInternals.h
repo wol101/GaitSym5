@@ -14,8 +14,6 @@
 #ifndef EXTRUSION_INTERNALS_H
 #define EXTRUSION_INTERNALS_H
 
-#include "ExtrusionLib.h"
-
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -45,7 +43,6 @@ void vertex_sphere_texgen_v (double *v, int jcnt, int which_end);
 void normal_sphere_texgen_v (double *v, int jcnt, int which_end);
 void vertex_sphere_model_v (double *v, int jcnt, int which_end);
 void normal_sphere_model_v (double *v, int jcnt, int which_end);
-
 
 struct gleGC
 {
@@ -97,6 +94,11 @@ struct gleGC
 #define glPopAttrib()
 #define glPolygonMode(x, y)
 #define glMaterialfv(x, y, z)
+#define gluNewTess() (0)
+#define gluDeleteTess(x)
+#define gluTessCallback(x, y, z)
+#define gluTessBeginPolygon(x, y)
+#define gluTessEndPolygon(x)
 
 #define glColor3fv(c) glEmulator.color3fv(c)
 
@@ -114,7 +116,12 @@ struct gleGC
 #define glBegin(i) glEmulator.beginTriangleStrip(i)
 #define glNormal3dv(x) glEmulator.normal3dv(x)
 #define glVertex3dv(x) glEmulator.vertex3dv(x)
-#define glEnd(x) glEmulator.end()
+#define glEnd() glEmulator.end()
+
+#define gluTessBeginContour(i) glEmulator.beginContour(i)
+#define gluTessEndContour(i) glEmulator.endContour(i)
+#define gluTessVertex(i, x, p) glEmulator.contourVertex(i, x, p)
+
 
 #else
 

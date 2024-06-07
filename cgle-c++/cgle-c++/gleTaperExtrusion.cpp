@@ -10,9 +10,10 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
 
+#include <cmath>#
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 //
@@ -39,10 +40,10 @@ CgleTaperExtrusion::CgleTaperExtrusion(int Points,
 CgleTaperExtrusion::~CgleTaperExtrusion()
 {
     delete[] m_ptrXforms;
-    m_ptrXforms = NULL;
+    m_ptrXforms = nullptr;
     
     delete[] m_ptrPath;
-    m_ptrPath = NULL;
+    m_ptrPath = nullptr;
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------

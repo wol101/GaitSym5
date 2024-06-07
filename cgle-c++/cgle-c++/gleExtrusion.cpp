@@ -10,10 +10,8 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
-
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
-#include "gleExtrusion.h"
 
 
 //----------------------------------------------------------------------------

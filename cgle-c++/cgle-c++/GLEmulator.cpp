@@ -80,6 +80,19 @@ void GLEmulator::color3fv(float c[3])
 {
 }
 
+void GLEmulator::beginContour(int i)
+{
+}
+
+void GLEmulator::endContour(int i)
+{
+}
+
+void GLEmulator::contourVertex(int i, double x[3], void *p)
+{
+}
+
+
 void GLEmulator::makeIdentity(double m[16])
 {
     m[0 + 4 * 0] = 1;

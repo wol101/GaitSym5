@@ -33,6 +33,9 @@ public:
     void vertex3dv(double x[3]);
     void color3fv(float c[3]);
 
+    void beginContour(int i);
+    void endContour(int i);
+    void contourVertex(int i, double x[3], void *p);
 
 private:
     static void makeIdentity(double m[16]);

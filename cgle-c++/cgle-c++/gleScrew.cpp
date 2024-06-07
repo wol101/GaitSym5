@@ -10,7 +10,7 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
 
 //----------------------------------------------------------------------------
@@ -38,10 +38,10 @@ CgleScrew::CgleScrew(int Points, int ContourPoints, double Radius, double Twist)
 CgleScrew::~CgleScrew()
 {
     delete[] m_ptrPath;
-    m_ptrPath = NULL;
+    m_ptrPath = nullptr;
     
     delete[] m_ptrTwarr;
-    m_ptrTwarr = NULL;
+    m_ptrTwarr = nullptr;
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------

@@ -11,9 +11,10 @@
 ************************************************************/
 
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
 
+#include <cmath>
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -40,7 +41,7 @@ CgleConeExtrusion::~CgleConeExtrusion()
 {
 
     delete[] m_ptrXforms;
-    m_ptrXforms = NULL;
+    m_ptrXforms = nullptr;
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -80,7 +81,7 @@ void  CgleConeExtrusion::Gen_PolyCone(double point_array[][3], float color_array
     
     double c, s;
     
-    if (m_ptrXforms != NULL)
+    if (m_ptrXforms != nullptr)
         radius = 1.0;
         
     s = sin(2.0 * M_PI / ((double)FFacets));

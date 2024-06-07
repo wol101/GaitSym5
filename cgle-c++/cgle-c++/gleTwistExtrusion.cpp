@@ -11,8 +11,10 @@
 ************************************************************/
 
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
+
+#include <cmath>
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -34,7 +36,7 @@ CgleTwistExtrusion::CgleTwistExtrusion(int Points, int ContourPoints, double Rad
 CgleTwistExtrusion::~CgleTwistExtrusion()
 {
     delete[] m_ptrXforms;
-    m_ptrXforms = NULL;
+    m_ptrXforms = nullptr;
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------

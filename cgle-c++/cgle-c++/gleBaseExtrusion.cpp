@@ -10,9 +10,10 @@
 *                                                                                           *
 ************************************************************/
 
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
+
 #include <cmath>
-#include "gleBaseExtrusion.h"
 
 #ifdef TRIANGLE_GENERATOR
 #include "GLEmulator.h"
@@ -65,9 +66,7 @@ CgleBaseExtrusion::CgleBaseExtrusion(int Points, int ContourPoints, double Radiu
     FXAJMemAnchor = new char[96 * m_iContourPoints];
     FROCJMemAnchor = new char[152 * m_iContourPoints];
     
-#ifndef TRIANGLE_GENERATOR
     m_objTess = gluNewTess();
-#endif
     
     FCapLoop = new double[(m_iContourPoints + 3) * 3];
     
@@ -86,9 +85,7 @@ CgleBaseExtrusion::~CgleBaseExtrusion()
     delete[] FXAJMemAnchor;
     delete[] FROCJMemAnchor;
 
-#ifndef TRIANGLE_GENERATOR
     gluDeleteTess(m_objTess);
-#endif
     
     delete[] FCapLoop;
     
@@ -1581,7 +1578,6 @@ void CgleBaseExtrusion::Draw_Cut_Style_Cap_Callback (int iloop, double cap[][3],
         int frontwards, void *clOwner)
 {
 
-#ifndef TRIANGLE_GENERATOR
     int i;
     
     gluTessCallback (((CgleBaseExtrusion *)clOwner)->m_objTess,
@@ -1640,7 +1636,6 @@ void CgleBaseExtrusion::Draw_Cut_Style_Cap_Callback (int iloop, double cap[][3],
         gluTessEndContour (((CgleBaseExtrusion *)clOwner)->m_objTess);
         gluTessEndPolygon (((CgleBaseExtrusion *)clOwner)->m_objTess);
     }
-#endif
 }
 //----------------------------------------------------------------------------
 void CgleBaseExtrusion::Draw_Angle_Style_Back_Cap ( double bi[3],
@@ -1952,8 +1947,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Facet_N ()
 
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
-
         double point[3];
         double norm[3];
         
@@ -2029,7 +2022,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Facet_N ()
             Draw_Raw_Style_End_Cap (m_ptrContours,
                                     -m_dLen, false);
         }
-#endif
     }
     else
     {
@@ -2122,8 +2114,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Edge_N ()
 {
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
-
         double point[3];
         double norm[3];
         
@@ -2196,7 +2186,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Edge_N ()
             Draw_Raw_Style_End_Cap (m_ptrContours,
                                     -m_dLen, false);
         }
-#endif
     }
     else
     {
@@ -2287,7 +2276,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Edge_N()
 {
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         double point[3];
         double norm[3];
         
@@ -2345,7 +2333,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Edge_N()
             Draw_Raw_Style_End_Cap (m_ptrContours,
                                     -m_dLen, false);
         }
-#endif
     }
     else
     {

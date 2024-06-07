@@ -10,8 +10,10 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
+
+#include <cmath>
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
@@ -22,7 +24,7 @@
 //----------------------------------------------------------------------------
 CgleToroidExtrusion::CgleToroidExtrusion(int Points, double StartXForm[2][3], double Sweep,
         int Facets) : CgleLatheExtrusion(Points, StartXForm,
-                    Facets, Sweep, NULL)
+                    Facets, Sweep, 0)
 {
     FFacets = Facets;
 }

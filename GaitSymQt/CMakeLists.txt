@@ -1123,7 +1123,6 @@ set(PROJECT_SOURCES
 
     ../cgle-c++/cgle-c++/GLEmulator.cpp
     ../cgle-c++/cgle-c++/ExtrusionInternals.cpp
-    ../cgle-c++/cgle-c++/ExtrusionLib.cpp
     ../cgle-c++/cgle-c++/gleBaseExtrusion.cpp
     ../cgle-c++/cgle-c++/gleConeExtrusion.cpp
     ../cgle-c++/cgle-c++/gleCylinderExtrusion.cpp
@@ -1611,6 +1610,7 @@ endif()
 if (MSVC)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
     add_compile_definitions(_USE_MATH_DEFINES)
+    # add_compile_options(/P)
 endif ()
 
 find_package(Qt6 REQUIRED COMPONENTS Xml)

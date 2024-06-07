@@ -10,7 +10,7 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
 
 //----------------------------------------------------------------------------
@@ -36,7 +36,7 @@ CgleSimpleTwistedBeam::CgleSimpleTwistedBeam(int Points,
 CgleSimpleTwistedBeam::~CgleSimpleTwistedBeam()
 {
     delete[] FSpinePoints;
-    FSpinePoints = NULL;
+    FSpinePoints = nullptr;
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------

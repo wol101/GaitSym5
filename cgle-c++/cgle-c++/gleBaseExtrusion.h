@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "ExtrusionLib.h"
+
 /////////////////////////////////////////////////////////////////////////////////////
 ///
 /// <summary>This is the ancestor class of all the extrusion objects. It provides the means to create any of the
@@ -137,6 +139,8 @@ private:
 
 #ifndef TRIANGLE_GENERATOR
     GLUtesselator   *m_objTess;
+#else
+    int m_objTess;
 #endif
     
     double *FDRSECPoints, *FCapLoop, *FNNormCapLoop, *FNNormLoop;
