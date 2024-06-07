@@ -11,16 +11,28 @@
 #define GLEMULATOR_H
 
 #include <vector>
+#include <array>
 
 class GLEmulator
 {
 public:
     GLEmulator();
 
-    void multMatrix(const double m[16]);
-    void loadMatrix(const double m[16]);
+    void multMatrixd(const double m[16]);
+    void loadMatrixd(const double m[16]);
     void popMatrix();
     void pushMatrix();
+
+    void addPolygon(double polygon[][3], size_t numVertices);
+    void texCoord2d(double x, double y);
+    void beginTriangleStrip(int i, int len);
+    void beginTriangleStrip(int i);
+    void end();
+    void normal3dv(double x[3]);
+    void vertex3dv(double x[3], int j, int id);
+    void vertex3dv(double x[3]);
+    void color3fv(float c[3]);
+
 
 private:
     static void makeIdentity(double m[16]);
@@ -30,7 +42,11 @@ private:
     int invertMatrix(const double m[16], double invOut[16]);
     void multMatrices(const double a[16], const double b[16], double r[16]);
 
-    std::vector<double[16]> m_matrixStack;
+    double m_matrixStack[32][16];
+    size_t m_matrixIndex = 0;
+
+    std::vector<std::array<double, 3>> m_vertexList;
+    std::vector<std::array<size_t, 3>> m_triangleList;
 };
 
 #endif // GLEMULATOR_H

@@ -93,11 +93,28 @@ struct gleGC
 
 #ifdef TRIANGLE_GENERATOR
 
-void T2F_D(double x, double y);
-void BGNTMESH(int i, double len);
-void ENDTMESH();
-void N3D(double x[3]);
-void V3D(double x[3], int j, int id);
+#define glPushAttrib(x)
+#define glPopAttrib()
+#define glPolygonMode(x, y)
+#define glMaterialfv(x, y, z)
+
+#define glColor3fv(c) glEmulator.color3fv(c)
+
+#define T2F_D(x, y) glEmulator.texCoord2d(x,y)
+#define BGNTMESH(i, len) glEmulator.beginTriangleStrip(i, len)
+#define ENDTMESH() glEmulator.end()
+#define N3D(x) glEmulator.normal3dv(x)
+#define V3D(x, j, id) glEmulator.vertex3dv(x, j, id)
+
+#define glPushMatrix() glEmulator.pushMatrix()
+#define glPopMatrix() glEmulator.popMatrix()
+#define glMultMatrixd(m) glEmulator.multMatrixd(m)
+
+#define GL_TRIANGLE_STRIP 999
+#define glBegin(i) glEmulator.beginTriangleStrip(i)
+#define glNormal3dv(x) glEmulator.normal3dv(x)
+#define glVertex3dv(x) glEmulator.vertex3dv(x)
+#define glEnd(x) glEmulator.end()
 
 #else
 

@@ -10,10 +10,14 @@
 *                                                                                           *
 ************************************************************/
 
-#include "extrusionlib.h"
+#include "ExtrusionLib.h"
 #include "ExtrusionInternals.h"
 
+#include "GLEmulator.h"
+
 #include <cmath>
+
+extern GLEmulator glEmulator;
 
 gleGC *_gle_gc = 0x0;
 float Color[3], ambmat[4], difmat[4], emismat[4];// static vars for
@@ -69,24 +73,16 @@ void SetColor(float color[3])
         difmat[0] = 0.4f * Color[0];
         difmat[1] = 0.4f * Color[1];
         difmat[2] = 0.4f * Color[2];
-
-#ifndef TRIANGLE_GENERATOR
         glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, difmat);
-#endif
         
         emismat[0] = 0.3f * Color[0];
         emismat[1] = 0.3f * Color[1];
         emismat[2] = 0.3f * Color[2];
-
-#ifndef TRIANGLE_GENERATOR
         glMaterialfv(GL_FRONT, GL_EMISSION, emismat);
-#endif
     }
     else
     {
-#ifndef TRIANGLE_GENERATOR
         glColor3fv(Color);
-#endif
     }
 }
 //----------------------------------------------------------------------------
@@ -699,9 +695,7 @@ void rot_axis_d (double omega,      // input
     double m[4][4];
     
     (void) urot_axis_d (m, omega, axis);
-#ifndef TRIANGLE_GENERATOR
     glMultMatrixd ((const double *)m);
-#endif
 }
 //----------------------------------------------------------------------------
 void rot_about_axis_d (double angle,        // input
@@ -710,9 +704,7 @@ void rot_about_axis_d (double angle,        // input
     double m[4][4];
     
     (void) urot_about_axis_d (m, angle, axis);
-#ifndef TRIANGLE_GENERATOR
     glMultMatrixd ((const double *)m);
-#endif
 }
 //----------------------------------------------------------------------------
 void rot_omega_d (double axis[3])       // input
@@ -720,9 +712,7 @@ void rot_omega_d (double axis[3])       // input
     double m[4][4];
     
     (void) urot_omega_d (m, axis);
-#ifndef TRIANGLE_GENERATOR
     glMultMatrixd ((const double *)m);
-#endif
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------

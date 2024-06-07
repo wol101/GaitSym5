@@ -9,36 +9,75 @@
 
 #include "GLEmulator.h"
 
+#include <algorithm>
+#include <cassert>
 #include <cmath>
 
 GLEmulator::GLEmulator()
 {
-    m_matrixStack.reserve(32);
-    double m[16];
-    makeIdentity(m);
-    m_matrixStack.push_back(m);
+    m_matrixIndex = 0;
+    makeIdentity(m_matrixStack[m_matrixIndex]);
 }
 
-void GLEmulator::multMatrix(const double m[16])
+void GLEmulator::multMatrixd(const double m[16])
 {
     double r[16];
-    multMatrices(m, m_matrixStack.back(), r);
-    loadMatrix(r);
+    multMatrices(m, m_matrixStack[m_matrixIndex], r);
+    loadMatrixd(r);
 }
 
-void GLEmulator::loadMatrix(const double m[16])
+void GLEmulator::loadMatrixd(const double m[16])
 {
-    std::copy_n(m, 16, m_matrixStack.back());
+    std::copy_n(m, 16, m_matrixStack[m_matrixIndex]);
 }
 
 void GLEmulator::popMatrix()
 {
-    m_matrixStack.pop_back();
+    assert(m_matrixIndex != 0);
+    m_matrixIndex--;
 }
 
 void GLEmulator::pushMatrix()
 {
-    m_matrixStack.push_back(m_matrixStack.back());
+    assert(m_matrixIndex < 31);
+    ++m_matrixIndex;
+    loadMatrixd(m_matrixStack[m_matrixIndex - 1]);
+}
+
+void GLEmulator::addPolygon(double polygon[][3], size_t numVertices)
+{
+}
+
+void GLEmulator::texCoord2d(double x, double y)
+{
+}
+
+void GLEmulator::beginTriangleStrip(int i, int len)
+{
+}
+
+void GLEmulator::beginTriangleStrip(int i)
+{
+}
+
+void GLEmulator::end()
+{
+}
+
+void GLEmulator::normal3dv(double x[3])
+{
+}
+
+void GLEmulator::vertex3dv(double x[3], int j, int id)
+{
+}
+
+void GLEmulator::vertex3dv(double x[3])
+{
+}
+
+void GLEmulator::color3fv(float c[3])
+{
 }
 
 void GLEmulator::makeIdentity(double m[16])

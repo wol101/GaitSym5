@@ -51,13 +51,9 @@ void CgleCylinderExtrusion::Draw(double Point_Array[][3],
 void CgleCylinderExtrusion::WireDraw(double Point_Array[][3],
                                      float Color_Array[][3], double Radius, bool bTextured)
 {
-#ifndef TRIANGLE_GENERATOR
     glPushAttrib(GL_POLYGON_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif
     Draw(Point_Array, Color_Array, Radius, bTextured);
-#ifndef TRIANGLE_GENERATOR
     glPopAttrib();
-#endif
 }
 //----------------------------------------------------------------------------

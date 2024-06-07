@@ -12,10 +12,6 @@
 
 #pragma once
 
-#ifdef TRIANGLE_GENERATOR
-#define GLUtesselator void*
-#endif
-
 /////////////////////////////////////////////////////////////////////////////////////
 ///
 /// <summary>This is the ancestor class of all the extrusion objects. It provides the means to create any of the
@@ -138,8 +134,10 @@ private:
 
 
     char  *FMemAnchor, *FXAJMemAnchor, *FROCJMemAnchor, *FMallocedArea;
-    
+
+#ifndef TRIANGLE_GENERATOR
     GLUtesselator   *m_objTess;
+#endif
     
     double *FDRSECPoints, *FCapLoop, *FNNormCapLoop, *FNNormLoop;
     

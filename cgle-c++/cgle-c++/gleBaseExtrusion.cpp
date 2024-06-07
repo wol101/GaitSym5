@@ -11,6 +11,7 @@
 ************************************************************/
 
 #include "ExtrusionInternals.h"
+#include <cmath>
 #include "gleBaseExtrusion.h"
 
 #ifdef TRIANGLE_GENERATOR
@@ -42,16 +43,16 @@ CgleBaseExtrusion::CgleBaseExtrusion(int Points, int ContourPoints, double Radiu
     m_iPoints = Points;
     m_iContourPoints = ContourPoints;
     
-    if (Radius == NULL)
+    if (Radius == 0)
         m_dRadius = 1.0;
     else
         m_dRadius = Radius;
         
         
-    m_ptrUp = NULL;
-    m_ptrXforms = NULL;
-    m_ptrPath = NULL;
-    m_ptrTwarr = NULL;
+    m_ptrUp = nullptr;
+    m_ptrXforms = nullptr;
+    m_ptrPath = nullptr;
+    m_ptrTwarr = nullptr;
     m_bTexEnabled = false;
     
     m_bUseLitMaterial = true;
@@ -94,10 +95,10 @@ CgleBaseExtrusion::~CgleBaseExtrusion()
     delete[] m_ptrContours;
     delete[] m_ptrCont_Norms;
     
-    if (m_ptrUp != NULL)
+    if (m_ptrUp != nullptr)
     {
         delete[] m_ptrUp;
-        m_ptrUp = NULL;
+        m_ptrUp = nullptr;
     }
 }
 //----------------------------------------------------------------------------
@@ -222,7 +223,7 @@ bool CgleBaseExtrusion::IsUsingLitMaterial()  const
 /////////////////////////////////////////////////////////////////////////////////////
 void CgleBaseExtrusion::LoadUpVector(double Up[3])
 {
-    if (m_ptrUp == NULL)
+    if (m_ptrUp == nullptr)
         m_ptrUp = new double[3];
         
     for (int i = 0; i < 3; i++)
@@ -358,13 +359,13 @@ void  CgleBaseExtrusion::PrepareGC()
     {
     
         _gle_gc->ncp = -1;
-        _gle_gc->contour = NULL;
-        _gle_gc->cont_normal = NULL;
-        _gle_gc->up = NULL;
+        _gle_gc->contour = nullptr;
+        _gle_gc->cont_normal = nullptr;
+        _gle_gc->up = nullptr;
         _gle_gc->npoints = -1;
-        _gle_gc->point_array = NULL;
-        _gle_gc->color_array = NULL;
-        _gle_gc->xform_array = NULL;
+        _gle_gc->point_array = nullptr;
+        _gle_gc->color_array = nullptr;
+        _gle_gc->xform_array = nullptr;
         
         _gle_gc->bgn_gen_texture = 0x0;
         _gle_gc->n3f_gen_texture = 0x0;
@@ -379,15 +380,15 @@ void  CgleBaseExtrusion::PrepareGC()
 void CgleBaseExtrusion::DrawExtrusion(double Point_Array[][3],
                                       float Color_Array[][3], bool bTextured)
 {
-    m_ptrPointArray = NULL;
-    m_ptrColorArray = NULL;
+    m_ptrPointArray = nullptr;
+    m_ptrColorArray = nullptr;
     
     if (bTextured == true)
         m_bTexEnabled = true;
         
     StatUseLitMat = m_bUseLitMaterial;
     
-    if (Color_Array != NULL)
+    if (Color_Array != nullptr)
         m_ptrColorArray = Color_Array;
         
     m_ptrPointArray = &Point_Array[0][0];
@@ -420,14 +421,10 @@ void CgleBaseExtrusion::DrawExtrusion(double Point_Array[][3],
 void CgleBaseExtrusion::DrawWireExtrusion(double Point_Array[][3],
         float Color_Array[][3], bool bTextured)
 {
-#ifndef TRIANGLE_GENERATOR
     glPushAttrib(GL_POLYGON_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif
     DrawExtrusion(Point_Array, Color_Array, bTextured);
-#ifndef TRIANGLE_GENERATOR
     glPopAttrib();
-#endif
 }
 //----------------------------------------------------------------------------
 
@@ -441,12 +438,11 @@ void CgleBaseExtrusion::Draw_Fillet_Triangle_N_Norms (double va[3],
         double nb[3])
 {
 
-    if (front_color != NULL)
+    if (front_color != nullptr)
         SetColor (front_color);
         
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         glBegin (GL_TRIANGLE_STRIP);
         if (m_iExtrusionMode & GLE_NORM_FACET)
         {
@@ -483,7 +479,6 @@ void CgleBaseExtrusion::Draw_Fillet_Triangle_N_Norms (double va[3],
             glVertex3dv(vc);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -537,7 +532,6 @@ void CgleBaseExtrusion::Draw_Segment_Edge_N (double front_contour[][3],
 
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin (GL_TRIANGLE_STRIP);
         
@@ -557,7 +551,6 @@ void CgleBaseExtrusion::Draw_Segment_Edge_N (double front_contour[][3],
             glVertex3dv(back_contour[0]);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -591,7 +584,6 @@ void CgleBaseExtrusion::Draw_Segment_C_And_Edge_N (double front_contour[][3],
 
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j < m_iContourPoints; j++)
@@ -618,7 +610,6 @@ void CgleBaseExtrusion::Draw_Segment_C_And_Edge_N (double front_contour[][3],
             glVertex3dv(back_contour[0]);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -658,7 +649,6 @@ void CgleBaseExtrusion::Draw_Segment_Facet_N (double front_contour[][3],
 {
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j < m_iContourPoints - 1; j++)
@@ -681,7 +671,6 @@ void CgleBaseExtrusion::Draw_Segment_Facet_N (double front_contour[][3],
         }
         
         glEnd();
-#endif
     }
     else
     {
@@ -731,7 +720,6 @@ void CgleBaseExtrusion::Draw_Segment_C_And_Facet_N(double front_contour[][3],
     
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j < m_iContourPoints - 1; j++)
@@ -775,7 +763,6 @@ void CgleBaseExtrusion::Draw_Segment_C_And_Facet_N(double front_contour[][3],
         }
         
         glEnd();
-#endif
     }
     else
     {
@@ -837,7 +824,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_Edge_N (double front_contour[][3],
 
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j < m_iContourPoints ; j++)
@@ -858,7 +844,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_Edge_N (double front_contour[][3],
             glVertex3dv(back_contour[0]);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -891,7 +876,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_C_And_Edge_N(double front_contour[][
 {
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j < m_iContourPoints; j++)
@@ -918,7 +902,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_C_And_Edge_N(double front_contour[][
             glVertex3dv(back_contour[0]);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -963,7 +946,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_Facet_N (double front_contour[][3],
 {
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j < m_iContourPoints - 1; j++)
@@ -998,7 +980,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_Facet_N (double front_contour[][3],
             glVertex3dv(back_contour[0]);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -1050,7 +1031,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_C_And_Facet_N(
 
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
         // draw the tube segment
         glBegin(GL_TRIANGLE_STRIP);
         
@@ -1094,7 +1074,6 @@ void CgleBaseExtrusion::Draw_Binorm_Segment_C_And_Facet_N(
             glVertex3dv(back_contour[0]);
         }
         glEnd();
-#endif
     }
     else
     {
@@ -1164,7 +1143,7 @@ void CgleBaseExtrusion::Draw_Fillets_And_Join_N_Norms( int ncp,
     double sect[3];
     double tmp_vec[3];
     int save_style;
-    int was_trimmed = FALSE;
+    int was_trimmed = false;
     
     
     FNNormCapLoop = new double[(ncp + 3) * 6];
@@ -1424,13 +1403,13 @@ void CgleBaseExtrusion::Draw_Round_Style_Cap_Callback (int ncp, double cap[][3],
     int i, j, k;
     double m[4][4];
     
-    if (face_color != NULL)
+    if (face_color != nullptr)
         SetColor (face_color);
         
     // ------------ start setting up rotation matrix -------------
-    // if the cut vector is NULL (this should only occur in
+    // if the cut vector is nullptr (this should only occur in
     // a degenerate case), then we can't draw anything. return.
-    if (cut == NULL)
+    if (cut == nullptr)
         return;
         
     // make sure that the cut vector points inwards
@@ -1486,7 +1465,7 @@ void CgleBaseExtrusion::Draw_Round_Style_Cap_Callback (int ncp, double cap[][3],
             last_contour[3 * j + 2] = cap_z[j] = cap[j][2];
         }
         
-        if (norms != NULL)
+        if (norms != nullptr)
         {
             for (j = 0; j < ncp; j++)
             {
@@ -1510,7 +1489,7 @@ void CgleBaseExtrusion::Draw_Round_Style_Cap_Callback (int ncp, double cap[][3],
             last_contour[3 * k + 2] = cap_z[k] = cap[j][2];
         }
         
-        if (norms != NULL)
+        if (norms != nullptr)
         {
             if (((CgleBaseExtrusion *)clOwner)->m_iExtrusionMode & GLE_NORM_FACET)
             
@@ -1545,7 +1524,7 @@ void CgleBaseExtrusion::Draw_Round_Style_Cap_Callback (int ncp, double cap[][3],
             last_contour [3 * j + 2] += cap_z[j];
         }
         
-        if (norms != NULL)
+        if (norms != nullptr)
         {
             for (j = 0; j < ncp; j++)
             {
@@ -1614,13 +1593,13 @@ void CgleBaseExtrusion::Draw_Cut_Style_Cap_Callback (int iloop, double cap[][3],
     gluTessCallback (((CgleBaseExtrusion *)clOwner)->m_objTess, GLU_TESS_END,
                      (void(__stdcall *)())glEnd);
                      
-    if (face_color != NULL)
+    if (face_color != nullptr)
         SetColor (face_color);
         
     if (frontwards)
     {
         // if lighting is on, specify the endcap normal
-        if (cut_vector != NULL)
+        if (cut_vector != nullptr)
         {
             // if normal pointing in wrong direction, flip it.
             if (cut_vector[2] < 0.0)
@@ -1628,7 +1607,7 @@ void CgleBaseExtrusion::Draw_Cut_Style_Cap_Callback (int iloop, double cap[][3],
                 
             N3D (cut_vector);
         }
-        gluTessBeginPolygon (((CgleBaseExtrusion *)clOwner)->m_objTess, NULL);
+        gluTessBeginPolygon (((CgleBaseExtrusion *)clOwner)->m_objTess, nullptr);
         gluTessBeginContour (((CgleBaseExtrusion *)clOwner)->m_objTess);
         
         for (i = 0; i < iloop; i++)
@@ -1642,7 +1621,7 @@ void CgleBaseExtrusion::Draw_Cut_Style_Cap_Callback (int iloop, double cap[][3],
     {
         // if lighting is on, specify the endcap normal
         
-        if (cut_vector != NULL)
+        if (cut_vector != nullptr)
         {
             // if normal pointing in wrong direction, flip it.
             if (cut_vector[2] > 0.0)
@@ -1652,7 +1631,7 @@ void CgleBaseExtrusion::Draw_Cut_Style_Cap_Callback (int iloop, double cap[][3],
             N3D (cut_vector);
         }
         // the sense of the loop is reversed for backfacing culling
-        gluTessBeginPolygon (((CgleBaseExtrusion *)clOwner)->m_objTess, NULL);
+        gluTessBeginPolygon (((CgleBaseExtrusion *)clOwner)->m_objTess, nullptr);
         gluTessBeginContour (((CgleBaseExtrusion *)clOwner)->m_objTess);
         for (i = iloop - 1; i > -1; i--)
         {
@@ -1684,7 +1663,7 @@ void CgleBaseExtrusion::Draw_Angle_Style_Back_Cap ( double bi[3],
                      
     gluTessCallback (m_objTess, GLU_TESS_END, (void(__stdcall *)())glEnd);
     
-    gluTessBeginPolygon (m_objTess, NULL);
+    gluTessBeginPolygon (m_objTess, nullptr);
     gluTessBeginContour (m_objTess);
     
     for (j = m_iContourPoints - 1; j >= 0; j--)
@@ -1716,7 +1695,7 @@ void CgleBaseExtrusion::Draw_Angle_Style_Front_Cap (double bi[3],// biscetor
                      
     gluTessCallback (m_objTess, GLU_TESS_END, (void(__stdcall *)())glEnd);
     
-    gluTessBeginPolygon (m_objTess, NULL);
+    gluTessBeginPolygon (m_objTess, nullptr);
     gluTessBeginContour (m_objTess);
     
     for (int j = 0; j < m_iContourPoints; j++)
@@ -1741,7 +1720,6 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Facet_N ()
 
     if (!m_bTexEnabled)
     {
-#ifndef TRIANGLE_GENERATOR
 
         double point[3];
         double norm[3];
@@ -1850,9 +1828,8 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Facet_N ()
             norm [2] = -1.0;
             glNormal3dv(norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
-#endif
     }
     else
     {
@@ -1957,7 +1934,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Facet_N ()
             norm [2] = -1.0;
             N3D (norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
     }
 }
@@ -2050,7 +2027,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Facet_N ()
             norm [2] = -1.0;
             glNormal3dv(norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
 #endif
     }
@@ -2128,7 +2105,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Facet_N ()
             norm [2] = -1.0;
             N3D (norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
     }
 }
@@ -2217,7 +2194,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Edge_N ()
             norm [2] = -1.0;
             glNormal3dv(norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
 #endif
     }
@@ -2292,7 +2269,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_C_And_Edge_N ()
             norm [2] = -1.0;
             N3D (norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
     }
 }
@@ -2366,7 +2343,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Edge_N()
             norm [2] = -1.0;
             glNormal3dv(norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
 #endif
     }
@@ -2427,7 +2404,7 @@ void CgleBaseExtrusion::Draw_Raw_Segment_Edge_N()
             norm [2] = -1.0;
             N3D (norm);
             Draw_Raw_Style_End_Cap (m_ptrContours,
-                                    -m_dLen, FALSE);
+                                    -m_dLen, false);
         }
     }
 }
@@ -2447,7 +2424,7 @@ void CgleBaseExtrusion::Draw_Back_Contour_Cap (double contour[][3])
                      
     gluTessCallback (m_objTess, GLU_TESS_END, (void(__stdcall *)())glEnd);
     
-    gluTessBeginPolygon (m_objTess, NULL);
+    gluTessBeginPolygon (m_objTess, nullptr);
     gluTessBeginContour (m_objTess);
     
     // draw the end cap
@@ -2478,7 +2455,7 @@ void CgleBaseExtrusion::Draw_Front_Contour_Cap ( double contour[][3])
                      
     gluTessCallback (m_objTess, GLU_TESS_END, (void(__stdcall *)())glEnd);
     
-    gluTessBeginPolygon (m_objTess, NULL);
+    gluTessBeginPolygon (m_objTess, nullptr);
     gluTessBeginContour (m_objTess);
     
     
@@ -2555,7 +2532,7 @@ void CgleBaseExtrusion::Draw_Raw_Style_End_Cap (double contour[][2],
                      
     gluTessCallback (m_objTess, GLU_TESS_END, (void(__stdcall *)())glEnd);
     
-    gluTessBeginPolygon (m_objTess, NULL);
+    gluTessBeginPolygon (m_objTess, nullptr);
     gluTessBeginContour (m_objTess);
     
     // draw the loop counter clockwise for the front cap
@@ -2609,14 +2586,14 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
     double origin[3], neg_z[3];
     double yup[3];      // alternate up vector
     double *front_cap, *back_cap;   // arrays containing the end caps
-    double *front_loop = NULL, *back_loop = NULL; // arrays containing the tube ends
-    double *front_norm = NULL, *back_norm = NULL; // arrays containing normal vecs
-    double *norm_loop = NULL, *tmp; // normal vectors, cast into 3d from 2d
+    double *front_loop = nullptr, *back_loop = nullptr; // arrays containing the tube ends
+    double *front_norm = nullptr, *back_norm = nullptr; // arrays containing normal vecs
+    double *norm_loop = nullptr, *tmp; // normal vectors, cast into 3d from 2d
     int *front_is_trimmed, *back_is_trimmed;   // T or F
     float *front_color, *back_color;  // pointers to segment colors
     
     CapCallBack cap_callback;
-    CapCallBack tmp_cap_callback = NULL;
+    CapCallBack tmp_cap_callback = nullptr;
     
     int join_style_is_cut;      // true if join style is cut
     double dot;                  // partial dot product
@@ -2633,13 +2610,13 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
     }
     else
     {
-        join_style_is_cut = FALSE;
+        join_style_is_cut = false;
         cap_callback =  Draw_Round_Style_Cap_Callback;
     }
     
     // By definition, the contour passed in has its up vector pointing in
     // the y direction
-    if (m_ptrUp == NULL)
+    if (m_ptrUp == nullptr)
     {
         yup[0] = 0.0;
         yup[1] = 1.0;
@@ -2685,7 +2662,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
     GLE_len = seg_len;  // store for later use
     
     // may as well get the normals set up now
-    if (m_ptrXforms == NULL)
+    if (m_ptrXforms == nullptr)
     {
         norm_loop = front_norm;
         back_norm = norm_loop;
@@ -2748,10 +2725,8 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         // and so that origen is at v1
         uviewpoint (m, ((double(*)[3])m_ptrPointArray)[i],
                     ((double(*)[3])m_ptrPointArray)[m_iINext], yup);
-#ifndef TRIANGLE_GENERATOR
         glPushMatrix ();
         glMultMatrixd ((double *)m);
-#endif
         //      MULTMATRIX (m);
         
         // rotate the cutting planes into the local coordinate system
@@ -2771,7 +2746,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         {
         
             // set up the endpoints for segment clipping
-            if (m_ptrXforms == NULL)
+            if (m_ptrXforms == nullptr)
             {
                 VEC_COPY_2 (end_point_0, m_ptrContours[j]);
                 VEC_COPY_2 (end_point_1, m_ptrContours[j]);
@@ -2794,7 +2769,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
                 // then compute local coordinate system normals.
                 // Set up the back normals. (The front normals we inherit
                 // from previous pass through the loop).
-                if (m_ptrCont_Norms != NULL)
+                if (m_ptrCont_Norms != nullptr)
                 {
                     // do up the normal vectors with the inverse transpose
                     NORM_XFORM_2X2 ( (&back_norm[3 * j]),
@@ -2862,7 +2837,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
             }
             else
             {
-                front_is_trimmed[j] = FALSE;
+                front_is_trimmed[j] = false;
             }
             
             // if intersection is behind the end of the segment,
@@ -2927,7 +2902,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
             }
             else
             {
-                back_is_trimmed[j] = FALSE;
+                back_is_trimmed[j] = false;
             }
             
             // if intersection is behind the end of the segment,
@@ -2950,9 +2925,9 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         
         m_dLen = GLE_len;
         
-        if (m_ptrXforms == NULL)
+        if (m_ptrXforms == nullptr)
         {
-            if (m_ptrColorArray == NULL)
+            if (m_ptrColorArray == nullptr)
             {
                 if (m_iExtrusionMode & GLE_NORM_FACET)
                     Draw_Segment_Facet_N (  (gleVector *) front_loop,
@@ -2978,7 +2953,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         
         else
         {
-            if ((float *)m_ptrColorArray == NULL)
+            if ((float *)m_ptrColorArray == nullptr)
             {
                 if (m_iExtrusionMode & GLE_NORM_FACET)
                     Draw_Binorm_Segment_Facet_N ( (gleVector *) front_loop,
@@ -3014,13 +2989,13 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         // but the very first and last caps
         if (first_time)
         {
-            first_time = FALSE;
+            first_time = false;
             tmp_cap_callback = cap_callback;
             cap_callback = Null_Cap_Callback;
             
             if (m_iExtrusionMode & GLE_JN_CAP)
             {
-                if (m_ptrColorArray != NULL)
+                if (m_ptrColorArray != nullptr)
                     SetColor (m_ptrColorArray[m_iINext - 1]);
                 Draw_Angle_Style_Front_Cap ( bisector_0,
                                              (double (*)[3]) front_loop);
@@ -3032,15 +3007,15 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         //
         // Now, draw the fillet triangles, and the join-caps.
         //
-        if (m_ptrColorArray != NULL)
+        if (m_ptrColorArray != nullptr)
         {
             front_color = ((float(*)[3])m_ptrColorArray)[m_iINext - 1];
             back_color = ((float(*)[3])m_ptrColorArray)[m_iINext];
         }
         else
         {
-            front_color = NULL;
-            back_color = NULL;
+            front_color = nullptr;
+            back_color = nullptr;
         }
         
         // the flag valid-cut is true if the cut vector has a valid
@@ -3049,7 +3024,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         if (valid_cut_0)
             cut_vec = lcut_0;
         else
-            cut_vec = NULL;
+            cut_vec = nullptr;
             
         Draw_Fillets_And_Join_N_Norms (m_iContourPoints, (gleVector *) front_loop,
                                        (gleVector *) front_cap,
@@ -3067,7 +3042,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         {
             if (m_iExtrusionMode & GLE_JN_CAP)
             {
-                if (m_ptrColorArray != NULL)
+                if (m_ptrColorArray != nullptr)
                     SetColor (&((float(*)[3])m_ptrColorArray)[m_iINext][0]);
                     
                 Draw_Angle_Style_Back_Cap ( bisector_1,
@@ -3088,7 +3063,7 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         if (valid_cut_1)
             cut_vec = lcut_1;
         else
-            cut_vec = NULL;
+            cut_vec = nullptr;
             
         Draw_Fillets_And_Join_N_Norms (m_iContourPoints, (gleVector *) back_loop,
                                        (gleVector *) back_cap,
@@ -3098,16 +3073,12 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
                                        (gleVector *) back_norm,
                                        back_color,
                                        cut_vec,
-                                       FALSE,
+                                       false,
                                        cap_callback);
         // $$$$$$$$$$$$$$$$ END FILLET & JOIN DRAW $$$$$$$$$$$$$$$$$
         
         // pop this matrix, do the next set
-#ifndef TRIANGLE_GENERATOR
         glPopMatrix ();
-#else
-        GLEmulator->popMatrix();
-#endif
         
         // slosh stuff over to next vertex
         tmp = front_norm;
@@ -3149,7 +3120,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
     
     // By definition, the contour passed in has its up vector pointing in
     // the y direction
-    if (m_ptrUp == NULL)
+    if (m_ptrUp == nullptr)
     {
         yup[0] = 0.0;
         yup[1] = 1.0;
@@ -3196,7 +3167,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
     norm_loop = front_norm;
     
     // may as well get the normals set up now
-    if (m_ptrXforms == NULL)
+    if (m_ptrXforms == nullptr)
     {
         for (j = 0; j < m_iContourPoints; j++)
         {
@@ -3235,10 +3206,8 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
         // and so that origen is at v1
         uviewpoint (m, ((double(*)[3])m_ptrPointArray)[i],
                     ((double(*)[3])m_ptrPointArray)[m_iINext], yup);
-#ifndef TRIANGLE_GENERATOR
         glPushMatrix ();
         glMultMatrixd ((const double *)m);
-#endif
         
         // rotate the bisecting planes into the local coordinate system
         MAT_DOT_VEC_3X3 (bisector_0, m, bi_0);
@@ -3258,7 +3227,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
             
             // set up the back normals. (The front normals we inherit
             // from previous pass through the loop)
-            if (m_ptrXforms != NULL)
+            if (m_ptrXforms != nullptr)
             {
                 // do up the normal vectors with the inverse transpose
                 NORM_XFORM_2X2 ( (&back_norm[3 * j]),
@@ -3266,7 +3235,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
                                  m_ptrCont_Norms [j]);
             }
             
-            // Note that if the xform array is NULL, then normals are
+            // Note that if the xform array is nullptr, then normals are
             // constant, and are set up outside of the loop.
             //
             
@@ -3282,7 +3251,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
             {
                 // Hmm, if no affine xforms, then we haven't yet set
                 // back vector. So do it.
-                if (m_ptrXforms == NULL)
+                if (m_ptrXforms == nullptr)
                 {
                     back_norm[3 * j] = m_ptrCont_Norms[j][0];
                     back_norm[3 * j + 1] = m_ptrCont_Norms[j][1];
@@ -3310,7 +3279,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
             // get twisted out of shape.  We do this by applying the
             // local affine transform to the entire coordinate system.
             //
-            if (m_ptrXforms == NULL)
+            if (m_ptrXforms == nullptr)
             {
                 end_point_0 [0] = m_ptrContours[j][0];
                 end_point_0 [1] = m_ptrContours[j][1];
@@ -3345,7 +3314,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
             // tube segment.
             
             // if there's an affine coordinate change, be sure to use it
-            if (m_ptrXforms != NULL)
+            if (m_ptrXforms != nullptr)
             {
                 // transform the contour points with the local xform
                 MAT_DOT_VEC_2X3 (end_point_0,
@@ -3373,17 +3342,17 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
         {
             if (first_time)
             {
-                if (m_ptrColorArray != NULL)
+                if (m_ptrColorArray != nullptr)
                     SetColor (&((float(*)[3])m_ptrColorArray)[m_iINext - 1][0]);
                     
-                first_time = FALSE;
+                first_time = false;
                 
                 Draw_Angle_Style_Front_Cap ( bisector_0,
                                              (gleVector *) front_loop);
             }
             if (m_iINext == m_iPoints - 2)
             {
-                if (m_ptrColorArray != NULL)
+                if (m_ptrColorArray != nullptr)
                     SetColor (&((float(*)[3])m_ptrColorArray)[m_iINext][0]);
                     
                 Draw_Angle_Style_Back_Cap ( bisector_1,
@@ -3400,10 +3369,10 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
         
         m_dLen = len_seg;
         
-        if ((m_ptrXforms == NULL) && (!(m_iExtrusionMode & GLE_NORM_PATH_EDGE)))
+        if ((m_ptrXforms == nullptr) && (!(m_iExtrusionMode & GLE_NORM_PATH_EDGE)))
         
         {
-            if (m_ptrColorArray == NULL)
+            if (m_ptrColorArray == nullptr)
             {
                 if (m_iExtrusionMode & GLE_NORM_FACET)
                     Draw_Segment_Facet_N ((gleVector *) front_loop,
@@ -3429,7 +3398,7 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
         }
         else
         {
-            if (m_ptrColorArray == NULL)
+            if (m_ptrColorArray == nullptr)
             {
             
                 if (m_iExtrusionMode & GLE_NORM_FACET)
@@ -3497,15 +3466,15 @@ void CgleBaseExtrusion::Extrusion_Raw_Join()
     double yup[3];      // alternate up vector
     double nrmv[3];
     short no_cols, no_xform;     //booleans
-    double *front_loop = NULL, *back_loop = NULL;  // countour loops
-    double *front_norm = NULL, *back_norm = NULL;  // countour loops
+    double *front_loop = nullptr, *back_loop = nullptr;  // countour loops
+    double *front_norm = nullptr, *back_norm = nullptr;  // countour loops
     double *tmp;
     
     nrmv[0] = nrmv[1] = 0.0;   // used for drawing end caps
     // use some local variables for needed booleans
     
-    no_cols = (m_ptrColorArray == NULL);
-    no_xform = (m_ptrXforms == NULL);
+    no_cols = (m_ptrColorArray == nullptr);
+    no_xform = (m_ptrXforms == nullptr);
     
     // alloc loop arrays if needed
     if (!no_xform)
@@ -3518,7 +3487,7 @@ void CgleBaseExtrusion::Extrusion_Raw_Join()
     
     // By definition, the contour passed in has its up vector pointing in
     // the y direction
-    if (m_ptrUp == NULL)
+    if (m_ptrUp == nullptr)
     {
         yup[0] = 0.0;
         yup[1] = 1.0;

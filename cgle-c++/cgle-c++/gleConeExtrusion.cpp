@@ -64,14 +64,10 @@ void CgleConeExtrusion::Draw(double Point_Array[][3], float Color_Array[][3],
 void  CgleConeExtrusion::WireDraw(double Point_Array[][3], float Color_Array[][3],
                                   double Radius_Array[], bool bTextured)
 {
-#ifndef TRIANGLE_GENERATOR
     glPushAttrib(GL_POLYGON_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-#endif
     Draw(Point_Array, Color_Array, Radius_Array, bTextured);
-#ifndef TRIANGLE_GENERATOR
     glPopAttrib();
-#endif
 }
 //----------------------------------------------------------------------------
 void  CgleConeExtrusion::Gen_PolyCone(double point_array[][3], float color_array[][3],
