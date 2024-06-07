@@ -17,10 +17,6 @@
 #ifndef GLE_H__
 #define GLE_H__
 
-#if defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
 /* some types */
 #define __GLE_DOUBLE  1
 #if __GLE_DOUBLE
@@ -295,10 +291,6 @@ extern void uviewpoint (gleDouble m[4][4],	/* returned */
                    gleDouble up[3]);		/* input */
 
 #endif /* _NO_PROTO */
-
-#if defined(__cplusplus) || defined(c_plusplus)
-};
-#endif
 
 #endif /* GLE_H__ */
 /* ================== END OF FILE ======================= */

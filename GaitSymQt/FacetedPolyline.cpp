@@ -11,7 +11,7 @@
 
 #include "FacetedPolyline.h"
 
-#include "cgle-c++/ExtrusionLib.h""
+#include "gle/gle.h"
 
 #include <cmath>
 #include <memory>
@@ -51,12 +51,9 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
     }
     else
     {
+        gleSetNumSides(int(n));
         size_t nPoints = polyline->size() + 2;
-        CgleConeExtrusion extrusion((int(nPoints)), (int(n)));
-        std::vector<std::array<int, 2>> container1(5);
-        auto point_array = new double [nPoints][3];
-        auto color_array = new float [nPoints][3];
-        auto radius_array = new double [nPoints];
+        auto point_array = new gleDouble[nPoints][3];
         pgd::Vector3 v0 = (*polyline)[1] - (*polyline)[0];
         pgd::Vector3 v1 = (*polyline)[0] - v0;
         point_array[0][0] = v1.x; point_array[0][1] = v1.y; point_array[0][2] = v1.z;
@@ -64,18 +61,17 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
         v0 = (*polyline)[polyline->size() - 1] - (*polyline)[polyline->size() - 2];
         v1 = (*polyline)[polyline->size() - 1] + v0;
         point_array[nPoints][0] = v1.x; point_array[nPoints][1] = v1.y; point_array[nPoints][2] = v1.z;
+        auto color_array = new gleColor[nPoints];
         float r = blendColour.redF();
         float g = blendColour.greenF();
         float b = blendColour.blueF();
-        for (size_t i = 0 ; i < nPoints; i++)
-        {
-            color_array[i][0] = r; color_array[i][1] = g; color_array[i][2] = b;
-            radius_array[i] = radius;
-        }
-        extrusion.Draw(point_array, color_array, radius_array);
+        for (size_t i = 0 ; i < nPoints; i++) { color_array[i][0] = r; color_array[i][1] = g; color_array[i][2] = b; }
+        glePolyCylinder(int(nPoints),           /* num points in polyline */
+                        point_array,            /* polyline vertces */
+                        color_array,            /* colors at polyline verts */
+                        radius);                /* radius of polycylinder */
         delete [] point_array;
         delete [] color_array;
-        delete [] radius_array;
     }
 
 }

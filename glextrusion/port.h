@@ -85,51 +85,6 @@ typedef double gleVector[3];
 #undef GL_32
 #undef OPENGL_10
 
-#if 1
-#include <QDebug>
-
-#define BGNTMESH(i,len) qDebug ("bgntmesh() \n");
-#define ENDTMESH()      qDebug ("endtmesh() \n");
-#define BGNPOLYGON()    qDebug ("bgnpolygon() \n");
-#define ENDPOLYGON()    qDebug ("endpolygon() \n");
-#define V3F_F(x,j,id)   qDebug ("v3f(x)	%f %f %f \n", x[0], x[1], x[2]);
-#define V3F_D(x,j,id)   qDebug ("v3d(x) %f %f %f \n", x[0], x[1], x[2]);
-#define N3F_F(x)    qDebug ("n3f(x) %f %f %f \n", x[0], x[1], x[2]);
-#define N3F_D(x)    qDebug ("n3d(x)	%f %f %f \n", x[0], x[1], x[2]);
-#define C3F(x)      qDebug ("c3f(x) %f %f %f \n", x[0], x[1], x[2]);
-#define T2F_F(x, y) qDebug ("t2f(x) %f %f \n", x, y);
-#define T2F_D(x, y) qDebug ("t2d(x)	%f %f \n", x, y);
-
-#define POPMATRIX()     qDebug ("popmatrix () \n");
-#define PUSHMATRIX()    qDebug ("pushmatrix() \n");
-#define MULTMATRIX_F(x) MULTMATRIX_D(x)
-#define LOADMATRIX_F(x) LOADMATRIX_D(x)
-
-
-#define LOADMATRIX_D(x) {               \
-int i, j;                        \
-    qDebug ("loadmatrix (x) \n");            \
-    for (i=0; i<4; i++) {                \
-        for (j=0; j<4; j++) {             \
-            qDebug ( "%f ", (x)[i][j]);            \
-    }                         \
-        qDebug (" \n");                   \
-}                            \
-}
-
-#define MULTMATRIX_D(x) {               \
-int i, j;                        \
-    qDebug ("multmatrix (x) \n");            \
-    for (i=0; i<4; i++) {                \
-        for (j=0; j<4; j++) {             \
-            qDebug ( "%f ", (x)[i][j]);            \
-    }                         \
-        qDebug (" \n");                   \
-}                            \
-}
-
-#else
-
 #define BGNTMESH(i,len) printf ("bgntmesh() \n");
 #define ENDTMESH()      printf ("endtmesh() \n");
 #define BGNPOLYGON()    printf ("bgnpolygon() \n");
@@ -139,6 +94,7 @@ int i, j;                        \
 #define N3F_F(x)    printf ("n3f(x) %f %f %f \n", x[0], x[1], x[2]);
 #define N3F_D(x)    printf ("n3d(x)	%f %f %f \n", x[0], x[1], x[2]);
 #define C3F(x)      printf ("c3f(x) %f %f %f \n", x[0], x[1], x[2]);
+#define C4F(x)      printf ("c4f(x) %f %f %f %f \n", x[0], x[1], x[2], x[3]);
 #define T2F_F(x, y) printf ("t2f(x) %f %f \n", x, y);
 #define T2F_D(x, y) printf ("t2d(x)	%f %f \n", x, y);
 
@@ -149,28 +105,27 @@ int i, j;                        \
 
 
 #define LOADMATRIX_D(x) {               \
-   int i, j;                        \
-   printf ("loadmatrix (x) \n");            \
-   for (i=0; i<4; i++) {                \
-      for (j=0; j<4; j++) {             \
-         printf ( "%f ", (x)[i][j]);            \
-      }                         \
-      printf (" \n");                   \
-   }                            \
+    int i, j;                        \
+        printf ("loadmatrix (x) \n");            \
+        for (i=0; i<4; i++) {                \
+            for (j=0; j<4; j++) {             \
+                printf ( "%f ", (x)[i][j]);            \
+        }                         \
+            printf (" \n");                   \
+    }                            \
 }
 
 #define MULTMATRIX_D(x) {               \
-   int i, j;                        \
-   printf ("multmatrix (x) \n");            \
-   for (i=0; i<4; i++) {                \
-      for (j=0; j<4; j++) {             \
-         printf ( "%f ", (x)[i][j]);            \
-      }                         \
-      printf (" \n");                   \
-   }                            \
+    int i, j;                        \
+        printf ("multmatrix (x) \n");            \
+        for (i=0; i<4; i++) {                \
+            for (j=0; j<4; j++) {             \
+                printf ( "%f ", (x)[i][j]);            \
+        }                         \
+            printf (" \n");                   \
+    }                            \
 }
 
-#endif
 
 #define __IS_LIGHTING_ON  (1)
 

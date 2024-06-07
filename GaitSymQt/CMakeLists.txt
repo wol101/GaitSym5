@@ -59,7 +59,7 @@ if (MSVC)
 endif()
 
 # glextrusion definitions
-add_compile_definitions(TRIANGLE_GENERATOR)
+add_compile_definitions(DEBUG_OUTPUT)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -1120,38 +1120,38 @@ set(PROJECT_SOURCES
 
     ../pystring/pystring.cpp
 
-    ../cgle-c++/cgle-c++/ExtrusionInternals.cpp
-    ../cgle-c++/cgle-c++/ExtrusionLib.cpp
-    ../cgle-c++/cgle-c++/gleBaseExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleConeExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleCylinderExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleHelicoidExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleIBeam.cpp
-    ../cgle-c++/cgle-c++/gleLatheExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleScrew.cpp
-    ../cgle-c++/cgle-c++/gleSimpleBeam.cpp
-    ../cgle-c++/cgle-c++/gleSimpleTwistedIBeam.cpp
-    ../cgle-c++/cgle-c++/gleSpiralExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleTaperExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleToroidExtrusion.cpp
-    ../cgle-c++/cgle-c++/gleTwistedIBeam.cpp
-    ../cgle-c++/cgle-c++/gleTwistExtrusion.cpp
+    # ../cgle-c++/cgle-c++/ExtrusionInternals.cpp
+    # ../cgle-c++/cgle-c++/ExtrusionLib.cpp
+    # ../cgle-c++/cgle-c++/gleBaseExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleConeExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleCylinderExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleHelicoidExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleIBeam.cpp
+    # ../cgle-c++/cgle-c++/gleLatheExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleScrew.cpp
+    # ../cgle-c++/cgle-c++/gleSimpleBeam.cpp
+    # ../cgle-c++/cgle-c++/gleSimpleTwistedIBeam.cpp
+    # ../cgle-c++/cgle-c++/gleSpiralExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleTaperExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleToroidExtrusion.cpp
+    # ../cgle-c++/cgle-c++/gleTwistedIBeam.cpp
+    # ../cgle-c++/cgle-c++/gleTwistExtrusion.cpp
 
-    # ../glextrusion/extrude.c
-    # ../glextrusion/ex_alpha.c
-    # ../glextrusion/ex_angle.c
-    # ../glextrusion/ex_cut_round.c
-    # ../glextrusion/ex_raw.c
-    # ../glextrusion/intersect.c
-    # ../glextrusion/qmesh.c
-    # ../glextrusion/rotate.c
-    # ../glextrusion/rot_prince.c
-    # ../glextrusion/round_cap.c
-    # ../glextrusion/segment.c
-    # ../glextrusion/texgen.c
-    # ../glextrusion/urotate.c
-    # ../glextrusion/view.c
+    ../glextrusion/extrude.cpp
+    ../glextrusion/ex_alpha.cpp
+    ../glextrusion/ex_angle.cpp
+    ../glextrusion/ex_cut_round.cpp
+    ../glextrusion/ex_raw.cpp
+    ../glextrusion/intersect.cpp
+    ../glextrusion/qmesh.cpp
+    ../glextrusion/rotate.cpp
+    ../glextrusion/rot_prince.cpp
+    ../glextrusion/round_cap.cpp
+    ../glextrusion/segment.cpp
+    ../glextrusion/texgen.cpp
+    ../glextrusion/urotate.cpp
+    ../glextrusion/view.cpp
 
     ../libgwavi/avi-utils.c
     ../libgwavi/fileio.c
@@ -1320,33 +1320,33 @@ set(PROJECT_SOURCES
     ../GaitSymQt/UniqueNameValidator.h
     ../GaitSymQt/ViewControlWidget.h
 
-    ../cgle-c++/cgle-c++/ExtrusionInternals.h
-    ../cgle-c++/cgle-c++/ExtrusionLib.h
-    ../cgle-c++/cgle-c++/gleBaseExtrusion.h
-    ../cgle-c++/cgle-c++/gleConeExtrusion.h
-    ../cgle-c++/cgle-c++/gleCylinderExtrusion.h
-    ../cgle-c++/cgle-c++/gleExtrusion.h
-    ../cgle-c++/cgle-c++/gleHelicoidExtrusion.h
-    ../cgle-c++/cgle-c++/gleIBeam.h
-    ../cgle-c++/cgle-c++/gleLatheExtrusion.h
-    ../cgle-c++/cgle-c++/gleScrew.h
-    ../cgle-c++/cgle-c++/gleSimpleBeam.h
-    ../cgle-c++/cgle-c++/gleSimpleTwistedIBeam.h
-    ../cgle-c++/cgle-c++/gleSpiralExtrusion.h
-    ../cgle-c++/cgle-c++/gleTaperExtrusion.h
-    ../cgle-c++/cgle-c++/gleToroidExtrusion.h
-    ../cgle-c++/cgle-c++/gleTwistedIBeam.h
-    ../cgle-c++/cgle-c++/gleTwistExtrusion.h
+    # ../cgle-c++/cgle-c++/ExtrusionInternals.h
+    # ../cgle-c++/cgle-c++/ExtrusionLib.h
+    # ../cgle-c++/cgle-c++/gleBaseExtrusion.h
+    # ../cgle-c++/cgle-c++/gleConeExtrusion.h
+    # ../cgle-c++/cgle-c++/gleCylinderExtrusion.h
+    # ../cgle-c++/cgle-c++/gleExtrusion.h
+    # ../cgle-c++/cgle-c++/gleHelicoidExtrusion.h
+    # ../cgle-c++/cgle-c++/gleIBeam.h
+    # ../cgle-c++/cgle-c++/gleLatheExtrusion.h
+    # ../cgle-c++/cgle-c++/gleScrew.h
+    # ../cgle-c++/cgle-c++/gleSimpleBeam.h
+    # ../cgle-c++/cgle-c++/gleSimpleTwistedIBeam.h
+    # ../cgle-c++/cgle-c++/gleSpiralExtrusion.h
+    # ../cgle-c++/cgle-c++/gleTaperExtrusion.h
+    # ../cgle-c++/cgle-c++/gleToroidExtrusion.h
+    # ../cgle-c++/cgle-c++/gleTwistedIBeam.h
+    # ../cgle-c++/cgle-c++/gleTwistExtrusion.h
 
-    # ../glextrusion/copy.h
-    # ../glextrusion/extrude.h
-    # ../glextrusion/gle/gle.h
-    # ../glextrusion/intersect.h
-    # ../glextrusion/port.h
-    # ../glextrusion/rot.h
-    # ../glextrusion/segment.h
-    # ../glextrusion/tube_gc.h
-    # ../glextrusion/vvector.h
+    ../glextrusion/copy.h
+    ../glextrusion/extrude.h
+    ../glextrusion/gle/gle.h
+    ../glextrusion/intersect.h
+    ../glextrusion/port.h
+    ../glextrusion/rot.h
+    ../glextrusion/segment.h
+    ../glextrusion/tube_gc.h
+    ../glextrusion/vvector.h
 
     ../libgwavi/avi-utils.h
     ../libgwavi/fileio.h
@@ -1480,8 +1480,8 @@ ENDIF(UNIX)
 set(INCLUDE_DIRECTORIES
 ../fast_double_parser
 ../GaitSymQt
-# ../glextrusion
-../cgle-c++
+../glextrusion
+# ../cgle-c++
 ../libgwavi
 ../PhysX
 ../pocketpy-1.4.5/include

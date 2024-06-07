@@ -15,11 +15,6 @@
 #ifndef __GUTIL_VECTOR_H__
 #define __GUTIL_VECTOR_H__
 
-#if defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
-
 #include <math.h>
 #include "port.h"
 
@@ -1337,9 +1332,6 @@ extern "C" {
 }
 
 /* ========================================================== */
-#if defined(__cplusplus) || defined(c_plusplus)
-};
-#endif
 
 #endif /* __GUTIL_VECTOR_H__ */
 /* ===================== END OF FILE ======================== */
