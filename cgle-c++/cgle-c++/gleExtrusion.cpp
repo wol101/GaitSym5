@@ -12,7 +12,7 @@
 
 #include "stdafx.h"
 
-#include "extrusioninternals.h"
+#include "ExtrusionInternals.h"
 #include "gleExtrusion.h"
 
 

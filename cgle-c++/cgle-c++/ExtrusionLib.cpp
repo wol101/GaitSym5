@@ -13,7 +13,7 @@
 
 #include "stdafx.h"
 #include "ExtrusionLib.h"
-#include "extrusioninternals.h"
+#include "ExtrusionInternals.h"
 
 
 //----------------------------------------------------------------------------

@@ -10,9 +10,13 @@
 *                                                                                           *
 ************************************************************/
 
-#include "stdafx.h"
-#include "extrusioninternals.h"
+#include "ExtrusionInternals.h"
 #include "gleBaseExtrusion.h"
+
+#ifdef TRIANGLE_GENERATOR
+#include "GLEmulator.h"
+GLEmulator glEmulator;
+#endif
 
 /// @cond
 extern gleGC *_gle_gc;
@@ -3099,7 +3103,11 @@ void CgleBaseExtrusion::Extrusion_Round_Or_Cut_Join()
         // $$$$$$$$$$$$$$$$ END FILLET & JOIN DRAW $$$$$$$$$$$$$$$$$
         
         // pop this matrix, do the next set
+#ifndef TRIANGLE_GENERATOR
         glPopMatrix ();
+#else
+        GLEmulator->popMatrix();
+#endif
         
         // slosh stuff over to next vertex
         tmp = front_norm;
@@ -3227,8 +3235,10 @@ void CgleBaseExtrusion::Extrusion_Angle_Join ()
         // and so that origen is at v1
         uviewpoint (m, ((double(*)[3])m_ptrPointArray)[i],
                     ((double(*)[3])m_ptrPointArray)[m_iINext], yup);
+#ifndef TRIANGLE_GENERATOR
         glPushMatrix ();
         glMultMatrixd ((const double *)m);
+#endif
         
         // rotate the bisecting planes into the local coordinate system
         MAT_DOT_VEC_3X3 (bisector_0, m, bi_0);

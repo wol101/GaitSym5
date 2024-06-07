@@ -11,7 +11,7 @@
 ************************************************************/
 
 #include "extrusionlib.h"
-#include "extrusioninternals.h"
+#include "ExtrusionInternals.h"
 
 #include <cmath>
 
