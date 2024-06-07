@@ -35,6 +35,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <regex>
+#include <array>
 
 using namespace std::literals::string_literals;
 
@@ -2121,6 +2122,30 @@ void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::
     {
         m_uvList.reserve(m_uvList.size() + uvList->size());
         m_uvList.insert(m_uvList.end(), uvList->begin(), uvList->end());
+    }
+}
+
+void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<double, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList)
+{
+    if (vertexList)
+    {
+        m_vertexList.reserve(m_vertexList.size() + vertexList->size() * 3);
+        for (auto &&i : *vertexList) { for (auto &&j : i) { m_vertexList.push_back(j); } }
+    }
+    if (normalList)
+    {
+        m_normalList.reserve(m_normalList.size() + normalList->size() * 3);
+        for (auto &&i : *normalList) { for (auto &&j : i) { m_normalList.push_back(j); } }
+    }
+    if (colourList)
+    {
+        m_colourList.reserve(m_colourList.size() + colourList->size() * 3);
+        for (auto &&i : *colourList) { for (auto &&j : i) { m_colourList.push_back(j); } }
+    }
+    if (uvList)
+    {
+        m_uvList.reserve(m_uvList.size() + uvList->size() * 2);
+        for (auto &&i : *uvList) { for (auto &&j : i) { m_uvList.push_back(j); } }
     }
 }
 

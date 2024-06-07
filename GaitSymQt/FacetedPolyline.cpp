@@ -55,9 +55,9 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
     }
     else
     {
-        // gleSetNumSides(int(n));
+        assert(glEmulator.vertexList()->size() == 0);
         size_t nPoints = polyline->size() + 2;
-        CgleCylinderExtrusion extrusion(nPoints, n);
+        CgleCylinderExtrusion extrusion((int)nPoints, (int)n);
         // auto point_array = new gleDouble[nPoints][3];
         auto point_array = new double[nPoints][3];
         pgd::Vector3 v0 = (*polyline)[1] - (*polyline)[0];
@@ -79,7 +79,8 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
         //                 radius);                /* radius of polycylinder */
         bool bTextured = true;
         extrusion.Draw(point_array, color_array, radius, bTextured);
-        GetVertexList()
+        RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
+        glEmulator.clear();
         delete [] point_array;
         delete [] color_array;
     }

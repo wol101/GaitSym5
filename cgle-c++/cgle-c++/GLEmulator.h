@@ -18,6 +18,8 @@ class GLEmulator
 public:
     GLEmulator();
 
+    void clear();
+
     void multMatrixd(const double m[16]);
     void loadMatrixd(const double m[16]);
     void popMatrix();

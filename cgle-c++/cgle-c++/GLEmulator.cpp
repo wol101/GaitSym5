@@ -22,6 +22,30 @@ GLEmulator::GLEmulator()
     makeIdentity(m_matrixStack[m_matrixIndex]);
 }
 
+void GLEmulator::clear()
+{
+    m_matrixIndex = 0;
+    makeIdentity(m_matrixStack[m_matrixIndex]);
+
+    m_currentColour = {0, 0, 0};
+    m_currentNormal = {0, 0, 0};
+
+    m_colourList.clear();
+    m_normalList.clear();
+    m_vertexList.clear();
+    m_uvList.clear();
+
+    m_triangleStripVertices.clear();
+    m_triangleStripNormals.clear();
+    m_triangleStripColours.clear();
+
+    m_polygonVertices.clear();
+    m_polygonNormals.clear();
+    m_polygonColours.clear();
+
+    m_vertexState = idle;
+}
+
 void GLEmulator::multMatrixd(const double m[16])
 {
     double r[16];
