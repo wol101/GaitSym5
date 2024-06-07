@@ -75,6 +75,8 @@ public:
     void AddPolygon(const float *floatVertices, size_t nSides, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
     void AddTriangle(const float *floatVertices, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
     void AddFacetedObject(const FacetedObject *object, bool useDisplayRotation, bool useDirectAccess);
+    void RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<double> *colourList, const std::vector<double> *uvList);
+
 
     // static utilities
     static void ComputeFaceNormal(const double *v1, const double *v2, const double *v3, double normal[3]);

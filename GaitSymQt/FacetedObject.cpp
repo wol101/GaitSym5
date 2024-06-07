@@ -1645,7 +1645,7 @@ void FacetedObject::AddTriangle(const double *vertices, const double *normals, c
     {
         for (size_t i = 0; i < 6; i++) m_uvList.push_back(0);
     }
-    double colour[3] = {m_blendColour.redF(), m_blendColour.greenF(), m_blendColour.blueF() };
+    double colour[3] = { m_blendColour.redF(), m_blendColour.greenF(), m_blendColour.blueF() };
     for (size_t i = 0; i < 9; i++) m_colourList.push_back(colour[i % 3]);
 }
 
@@ -2093,6 +2093,37 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
         }
     }
 }
+
+// does a raw append of the data stores from elsewhere
+// this can be very fragile if the sizes of the lists are not right
+// the vertexList is 9 times the number of triangles
+// the normalList is 9 times the number of triangles
+// the colourList is 9 times the number of triangles
+// the uvList is 6 times the number of triangles
+void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<double> *colourList, const std::vector<double> *uvList)
+{
+    if (vertexList)
+    {
+        m_vertexList.reserve(m_vertexList.size() + vertexList->size());
+        m_vertexList.insert(m_vertexList.end(), vertexList->begin(), vertexList->end());
+    }
+    if (normalList)
+    {
+        m_normalList.reserve(m_normalList.size() + normalList->size());
+        m_normalList.insert(m_normalList.end(), normalList->begin(), normalList->end());
+    }
+    if (colourList)
+    {
+        m_colourList.reserve(m_colourList.size() + colourList->size());
+        m_colourList.insert(m_colourList.end(), colourList->begin(), colourList->end());
+    }
+    if (uvList)
+    {
+        m_uvList.reserve(m_uvList.size() + uvList->size());
+        m_uvList.insert(m_uvList.end(), uvList->begin(), uvList->end());
+    }
+}
+
 
 // modified from
 // Möller–Trumbore intersection algorithm

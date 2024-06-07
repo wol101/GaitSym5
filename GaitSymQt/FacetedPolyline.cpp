@@ -13,9 +13,12 @@
 
 // #include "gle/gle.h"
 #include "cgle-c++/ExtrusionLib.h"
+#include "cgle-c++/GLEmulator.h"
 
 #include <cmath>
 #include <memory>
+
+extern GLEmulator glEmulator;
 
 FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double radius, size_t n, const QColor &blendColour, double blendFraction, bool internal)
 {
@@ -76,6 +79,7 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
         //                 radius);                /* radius of polycylinder */
         bool bTextured = true;
         extrusion.Draw(point_array, color_array, radius, bTextured);
+        GetVertexList()
         delete [] point_array;
         delete [] color_array;
     }

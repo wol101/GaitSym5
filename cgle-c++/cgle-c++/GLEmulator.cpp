@@ -9,6 +9,9 @@
 
 #include "GLEmulator.h"
 
+#include "ExtrusionLib.h"
+#include "ExtrusionInternals.h"
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -44,54 +47,148 @@ void GLEmulator::pushMatrix()
     loadMatrixd(m_matrixStack[m_matrixIndex - 1]);
 }
 
-void GLEmulator::addPolygon(double polygon[][3], size_t numVertices)
-{
-}
-
 void GLEmulator::texCoord2d(double x, double y)
 {
 }
 
-void GLEmulator::beginTriangleStrip(int i, int len)
+void GLEmulator::beginTriangleStrip(int i, int /*len*/)
 {
+    beginTriangleStrip(i);
 }
 
 void GLEmulator::beginTriangleStrip(int i)
 {
+    assert(i == GL_TRIANGLE_STRIP);
+    assert(m_vertexState == idle);
+    m_vertexState = triangleStrip;
 }
 
-void GLEmulator::end()
+void GLEmulator::endDraw()
 {
+    switch (m_vertexState)
+    {
+    case idle:
+        assert(m_vertexState != idle);
+        break;
+    case triangleStrip:
+        assert(m_polygonVertices.size() == 0);
+        if (m_triangleStripVertices.size()) { DecodeTriangleStrip(); }
+        m_vertexState = idle;
+        break;
+    case polygon:
+        assert(m_triangleStripVertices.size() == 0);
+        if (m_polygonVertices.size()) { DecodePolygon(); }
+        m_vertexState = idle;
+        break;
+    }
 }
 
 void GLEmulator::normal3dv(double x[3])
 {
+    m_currentNormal[0] = x[0];
+    m_currentNormal[1] = x[1];
+    m_currentNormal[2] = x[2];
 }
 
-void GLEmulator::vertex3dv(double x[3], int j, int id)
+void GLEmulator::vertex3dv(double x[3], int /*j*/, int /*id*/)
 {
+    vertex3dv(x);
 }
 
 void GLEmulator::vertex3dv(double x[3])
 {
+    switch (m_vertexState)
+    {
+    case idle:
+        assert(m_vertexState != idle);
+        break;
+    case triangleStrip:
+        m_triangleStripVertices.push_back({x[0], x[1], x[2]});
+        m_triangleStripColours.push_back(m_currentColour);
+        m_triangleStripNormals.push_back(m_currentNormal);
+        break;
+    case polygon:
+        m_polygonVertices.push_back({x[0], x[1], x[2]});
+        m_polygonColours.push_back(m_currentColour);
+        m_polygonNormals.push_back(m_currentNormal);
+        break;
+    }
 }
 
 void GLEmulator::color3fv(float c[3])
 {
+    m_currentColour[0] = c[0];
+    m_currentColour[1] = c[1];
+    m_currentColour[2] = c[2];
 }
 
 void GLEmulator::beginContour(int i)
 {
+    assert(m_vertexState == idle);
+    m_vertexState = polygon;
 }
 
-void GLEmulator::endContour(int i)
+void GLEmulator::endContour(int /*i*/)
 {
+    endDraw();
 }
 
-void GLEmulator::contourVertex(int i, double x[3], void *p)
+void GLEmulator::contourVertex(int /*i*/, double x[3], void */*p*/)
 {
+    vertex3dv(x);
 }
 
+void GLEmulator::DecodeTriangleStrip()
+{
+    size_t a = 0;
+    size_t b = 1;
+    size_t c = 2;
+    while (c < m_triangleStripVertices.size())
+    {
+        m_vertexList.push_back(m_triangleStripVertices[a]);
+        m_vertexList.push_back(m_triangleStripVertices[b]);
+        m_vertexList.push_back(m_triangleStripVertices[c]);
+        m_normalList.push_back(m_triangleStripNormals[a]);
+        m_normalList.push_back(m_triangleStripNormals[b]);
+        m_normalList.push_back(m_triangleStripNormals[c]);
+        m_colourList.push_back(m_triangleStripColours[a]);
+        m_colourList.push_back(m_triangleStripColours[b]);
+        m_colourList.push_back(m_triangleStripColours[c]);
+        m_uvList.push_back({0, 0});
+        m_uvList.push_back({0, 0});
+        m_uvList.push_back({0, 0});
+        a = b;
+        b = c;
+        ++c;
+        if (c >= m_triangleStripVertices.size()) break;
+        m_vertexList.push_back(m_triangleStripVertices[c]); // note that the winding is reversed on the secoon triangle
+        m_vertexList.push_back(m_triangleStripVertices[b]);
+        m_vertexList.push_back(m_triangleStripVertices[a]);
+        m_normalList.push_back(m_triangleStripNormals[c]); // note that the winding is reversed on the secoon triangle
+        m_normalList.push_back(m_triangleStripNormals[b]);
+        m_normalList.push_back(m_triangleStripNormals[a]);
+        m_colourList.push_back(m_triangleStripColours[c]); // note that the winding is reversed on the secoon triangle
+        m_colourList.push_back(m_triangleStripColours[b]);
+        m_colourList.push_back(m_triangleStripColours[a]);
+        m_uvList.push_back({0, 0});
+        m_uvList.push_back({0, 0});
+        m_uvList.push_back({0, 0});
+        a = b;
+        b = c;
+        ++c;
+    }
+
+    m_triangleStripColours.clear();
+    m_triangleStripNormals.clear();
+    m_triangleStripVertices.clear();
+}
+
+void GLEmulator::DecodePolygon()
+{
+    m_polygonColours.clear();
+    m_polygonNormals.clear();
+    m_polygonVertices.clear();
+}
 
 void GLEmulator::makeIdentity(double m[16])
 {
@@ -215,4 +312,24 @@ void GLEmulator::multMatrices(const double a[16], const double b[16], double r[1
                 a[i * 4 + 3] * b[3 * 4 + j];
         }
     }
+}
+
+const std::vector<std::array<double, 3> > *GLEmulator::normalList() const
+{
+    return &m_normalList;
+}
+
+const std::vector<std::array<double, 2> > *GLEmulator::uvList() const
+{
+    return &m_uvList;
+}
+
+const std::vector<std::array<double, 3> > *GLEmulator::vertexList() const
+{
+    return &m_vertexList;
+}
+
+const std::vector<std::array<double, 3> > *GLEmulator::colourList() const
+{
+    return &m_colourList;
 }

@@ -104,7 +104,7 @@ struct gleGC
 
 #define T2F_D(x, y) glEmulator.texCoord2d(x,y)
 #define BGNTMESH(i, len) glEmulator.beginTriangleStrip(i, len)
-#define ENDTMESH() glEmulator.end()
+#define ENDTMESH() glEmulator.endDraw()
 #define N3D(x) glEmulator.normal3dv(x)
 #define V3D(x, j, id) glEmulator.vertex3dv(x, j, id)
 
@@ -116,7 +116,7 @@ struct gleGC
 #define glBegin(i) glEmulator.beginTriangleStrip(i)
 #define glNormal3dv(x) glEmulator.normal3dv(x)
 #define glVertex3dv(x) glEmulator.vertex3dv(x)
-#define glEnd() glEmulator.end()
+#define glEnd() glEmulator.endDraw()
 
 #define gluTessBeginContour(i) glEmulator.beginContour(i)
 #define gluTessEndContour(i) glEmulator.endContour(i)
