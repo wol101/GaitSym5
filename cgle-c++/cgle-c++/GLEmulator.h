@@ -56,6 +56,8 @@ private:
     static void normalize(double v[3]);
     static void cross(double v1[3], double v2[3], double result[3]);
     static void multMatrixVec(const double matrix[16], const double in[4], double out[4]);
+    static void multMatrixVec3(const double matrix[16], const double in[3], double out[3]);
+    static void multMatrixVec34(const double matrix[16], const double in[3], double out[4]);
     static int invertMatrix(const double m[16], double invOut[16]);
     static void multMatrices(const double a[16], const double b[16], double r[16]);
 

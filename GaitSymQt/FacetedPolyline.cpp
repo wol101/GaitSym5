@@ -13,6 +13,7 @@
 
 // #include "gle/gle.h"
 #include "cgle-c++/ExtrusionLib.h"
+#include "cgle-c++/ExtrusionInternals.h"
 #include "cgle-c++/GLEmulator.h"
 
 #include <cmath>
@@ -56,33 +57,35 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
     else
     {
         assert(glEmulator.vertexList()->size() == 0);
+        CreateGC();
         size_t nPoints = polyline->size() + 2;
         CgleCylinderExtrusion extrusion((int)nPoints, (int)n);
         // auto point_array = new gleDouble[nPoints][3];
-        auto point_array = new double[nPoints][3];
+        auto point_array_store = std::make_unique<double>(nPoints * 3);
+        double *point_array = point_array_store.get();
         pgd::Vector3 v0 = (*polyline)[1] - (*polyline)[0];
         pgd::Vector3 v1 = (*polyline)[0] - v0;
-        point_array[0][0] = v1.x; point_array[0][1] = v1.y; point_array[0][2] = v1.z;
-        for (size_t i = 1 ; i < nPoints - 1; i++) { point_array[i][0] = (*polyline)[i - 1].x; point_array[i][1] = (*polyline)[i - 1].y; point_array[i][2] = (*polyline)[i - 1].z; }
+        point_array[0] = v1.x; point_array[1] = v1.y; point_array[2] = v1.z;
+        for (size_t i = 1 ; i < nPoints - 1; i++) { point_array[i*3+0] = (*polyline)[i - 1].x; point_array[i*3+1] = (*polyline)[i - 1].y; point_array[i*3+2] = (*polyline)[i - 1].z; }
         v0 = (*polyline)[polyline->size() - 1] - (*polyline)[polyline->size() - 2];
         v1 = (*polyline)[polyline->size() - 1] + v0;
-        point_array[nPoints][0] = v1.x; point_array[nPoints][1] = v1.y; point_array[nPoints][2] = v1.z;
+        point_array[nPoints*3+0] = v1.x; point_array[nPoints*3+1] = v1.y; point_array[nPoints*3+2] = v1.z;
         // auto color_array = new gleColor[nPoints];
-        auto color_array = new float[nPoints][3];
+        auto color_array_store = std::make_unique<float>(nPoints * 3);
+        float *color_array = color_array_store.get();
         float r = blendColour.redF();
         float g = blendColour.greenF();
         float b = blendColour.blueF();
-        for (size_t i = 0 ; i < nPoints; i++) { color_array[i][0] = r; color_array[i][1] = g; color_array[i][2] = b; }
+        for (size_t i = 0 ; i < nPoints; i++) { color_array[i*3+0] = r; color_array[i*3+1] = g; color_array[i*3+2] = b; }
         // glePolyCylinder(int(nPoints),           /* num points in polyline */
         //                 point_array,            /* polyline vertces */
         //                 color_array,            /* colors at polyline verts */
         //                 radius);                /* radius of polycylinder */
-        bool bTextured = true;
-        extrusion.Draw(point_array, color_array, radius, bTextured);
+        bool bTextured = false;
+        extrusion.Draw(reinterpret_cast<double(*)[3]>(point_array), reinterpret_cast<float(*)[3]>(color_array), radius, bTextured);
         RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
         glEmulator.clear();
-        delete [] point_array;
-        delete [] color_array;
+        DestroyGC();
     }
 
 }

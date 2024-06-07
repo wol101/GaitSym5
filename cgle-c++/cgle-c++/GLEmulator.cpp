@@ -75,9 +75,9 @@ void GLEmulator::texCoord2d(double x, double y)
 {
 }
 
-void GLEmulator::beginTriangleStrip(int i, int /*len*/)
+void GLEmulator::beginTriangleStrip(int /*i*/, int /*len*/)
 {
-    beginTriangleStrip(i);
+    beginTriangleStrip(GL_TRIANGLE_STRIP);
 }
 
 void GLEmulator::beginTriangleStrip(int i)
@@ -109,9 +109,12 @@ void GLEmulator::endDraw()
 
 void GLEmulator::normal3dv(double x[3])
 {
-    m_currentNormal[0] = x[0];
-    m_currentNormal[1] = x[1];
-    m_currentNormal[2] = x[2];
+    double r[4];
+    multMatrixVec34(m_matrixStack[m_matrixIndex], x, r);
+    normalize(r);
+    m_currentNormal[0] = r[0];
+    m_currentNormal[1] = r[1];
+    m_currentNormal[2] = r[2];
 }
 
 void GLEmulator::vertex3dv(double x[3], int /*j*/, int /*id*/)
@@ -121,18 +124,20 @@ void GLEmulator::vertex3dv(double x[3], int /*j*/, int /*id*/)
 
 void GLEmulator::vertex3dv(double x[3])
 {
+    double r[3];
+    multMatrixVec3(m_matrixStack[m_matrixIndex], x, r);
     switch (m_vertexState)
     {
     case idle:
         assert(m_vertexState != idle);
         break;
     case triangleStrip:
-        m_triangleStripVertices.push_back({x[0], x[1], x[2]});
+        m_triangleStripVertices.push_back({r[0], r[1], r[2]});
         m_triangleStripColours.push_back(m_currentColour);
         m_triangleStripNormals.push_back(m_currentNormal);
         break;
     case polygon:
-        m_polygonVertices.push_back({x[0], x[1], x[2]});
+        m_polygonVertices.push_back({r[0], r[1], r[2]});
         m_polygonColours.push_back(m_currentColour);
         m_polygonNormals.push_back(m_currentNormal);
         break;
@@ -264,6 +269,36 @@ void GLEmulator::multMatrixVec(const double matrix[16], const double in[4], doub
             in[1] * matrix[1 * 4 + i] +
             in[2] * matrix[2 * 4 + i] +
             in[3] * matrix[3 * 4 + i];
+    }
+}
+
+void GLEmulator::multMatrixVec3(const double matrix[16], const double in[3], double out[3])
+{
+    int i;
+    double r[4];
+    for (i = 0; i < 4; i++)
+    {
+        r[i] =
+            in[0] * matrix[0 * 4 + i] +
+            in[1] * matrix[1 * 4 + i] +
+            in[2] * matrix[2 * 4 + i] +
+            1.0 * matrix[3 * 4 + i];
+    }
+    out[0] = r[0] / r[3];
+    out[1] = r[1] / r[3];
+    out[2] = r[2] / r[3];
+}
+
+void GLEmulator::multMatrixVec34(const double matrix[16], const double in[3], double out[4])
+{
+    int i;
+    for (i = 0; i < 4; i++)
+    {
+        out[i] =
+            in[0] * matrix[0 * 4 + i] +
+            in[1] * matrix[1 * 4 + i] +
+            in[2] * matrix[2 * 4 + i] +
+            1.0 * matrix[3 * 4 + i];
     }
 }
 
