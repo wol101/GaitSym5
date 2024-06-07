@@ -11,10 +11,10 @@
 
 #include "FacetedPolyline.h"
 
-// #include "gle/gle.h"
-#include "cgle-c++/ExtrusionLib.h"
-#include "cgle-c++/ExtrusionInternals.h"
-#include "cgle-c++/GLEmulator.h"
+#include "gle/gle.h"
+// #include "cgle-c++/ExtrusionLib.h"
+// #include "cgle-c++/ExtrusionInternals.h"
+#include "../cgle-c++/cgle-c++/GLEmulator.h"
 
 #include <cmath>
 #include <memory>
@@ -57,9 +57,9 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
     else
     {
         assert(glEmulator.vertexList()->size() == 0);
-        CreateGC();
+        // CreateGC();
         size_t nPoints = polyline->size() + 2;
-        CgleCylinderExtrusion extrusion((int)nPoints, (int)n);
+        // CgleCylinderExtrusion extrusion((int)nPoints, (int)n);
         // auto point_array = new gleDouble[nPoints][3];
         auto point_array_store = std::make_unique<double>(nPoints * 3);
         double *point_array = point_array_store.get();
@@ -77,15 +77,15 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
         float g = blendColour.greenF();
         float b = blendColour.blueF();
         for (size_t i = 0 ; i < nPoints; i++) { color_array[i*3+0] = r; color_array[i*3+1] = g; color_array[i*3+2] = b; }
-        // glePolyCylinder(int(nPoints),           /* num points in polyline */
-        //                 point_array,            /* polyline vertces */
-        //                 color_array,            /* colors at polyline verts */
-        //                 radius);                /* radius of polycylinder */
-        bool bTextured = false;
-        extrusion.Draw(reinterpret_cast<double(*)[3]>(point_array), reinterpret_cast<float(*)[3]>(color_array), radius, bTextured);
+        glePolyCylinder(int(nPoints),           /* num points in polyline */
+                        reinterpret_cast<double(*)[3]>(point_array),            /* polyline vertces */
+                        reinterpret_cast<float(*)[3]>(color_array),            /* colors at polyline verts */
+                        radius);                /* radius of polycylinder */
+        // bool bTextured = false;
+        // extrusion.Draw(reinterpret_cast<double(*)[3]>(point_array), reinterpret_cast<float(*)[3]>(color_array), radius, bTextured);
         RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
         glEmulator.clear();
-        DestroyGC();
+        // DestroyGC();
     }
 
 }

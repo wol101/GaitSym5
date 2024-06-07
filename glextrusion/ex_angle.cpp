@@ -34,6 +34,7 @@
 #include "intersect.h"
 #include "segment.h"
 
+
 /* ============================================================ */
 /*
  * Algorithmic trivia:
@@ -496,7 +497,8 @@ void extrusion_angle_join (int ncp,     /* number of contour points */
         {
             if (first_time)
             {
-                if (color_array != NULL) C3F (color_array[inext - 1]);
+                if (color_array != NULL) C3F(color_array[inext - 1]);
+                // if (color_array != NULL) glEmulator.color3fv(color_array[inext - 1]);
                 first_time = FALSE;
                 draw_angle_style_front_cap (ncp, bisector_0, (gleVector *) front_loop);
             }

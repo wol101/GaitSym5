@@ -26,17 +26,14 @@ public:
     void pushMatrix();
 
     void texCoord2d(double x, double y);
-    void beginTriangleStrip(int i, int len);
-    void beginTriangleStrip(int i);
+    void beginTriangleStrip();
     void endDraw();
-    void normal3dv(double x[3]);
-    void vertex3dv(double x[3], int j, int id);
-    void vertex3dv(double x[3]);
-    void color3fv(float c[3]);
+    void normal3dv(const double *x);
+    void vertex3dv(const double *x);
+    void color3fv(const float *c);
 
-    void beginContour(int i);
-    void endContour(int i);
-    void contourVertex(int i, double x[3], void *p);
+    void beginContour();
+    void endContour();
 
     const std::vector<std::array<double, 3> > *colourList() const;
 
@@ -82,5 +79,6 @@ private:
 
     VertexState m_vertexState = idle;
 };
+
 
 #endif // GLEMULATOR_H

@@ -296,5 +296,40 @@ typedef double gleVector[3];
 
 #endif /* OPENGL_10 */
 
+#ifdef TRIANGLE_GENERATOR
+
+#include "../../cgle-c++/cgle-c++/GLEmulator.h"
+extern GLEmulator glEmulator;
+
+void C3F(float *x);
+
+// #define T2F_F(x,y)      glEmulator.texCoord2f(x,y)
+#define T2F_D(x,y)      glEmulator.texCoord2d(x,y)
+
+#define POPMATRIX()     glEmulator.popMatrix()
+#define PUSHMATRIX()    glEmulator.pushMatrix()
+
+// #define MULTMATRIX_F(x) glEmulator.multMatrixf(reinterpret_cast<const float *>(x))
+// #define LOADMATRIX_F(x) glEmulator.loadMatrixf(reinterpret_cast<const float *>(x))
+
+#define MULTMATRIX_D(x) glEmulator.multMatrixd(reinterpret_cast<const double *>(x))
+#define LOADMATRIX_D(x) glEmulator.loadMatrixd(reinterpret_cast<const double *>(x))
+
+#define __IS_LIGHTING_ON (true)
+
+#define BGNTMESH(i,len) glEmulator.beginTriangleStrip()
+#define BGNPOLYGON()    glEmulator.beginContour()
+
+#define N3F_F(x)        glEmulator.normal3fv(x)
+#define N3F_D(x)        glEmulator.normal3dv(x)
+#define V3F_F(x,j,id)   glEmulator.vertex3fv(x)
+#define V3F_D(x,j,id)   glEmulator.vertex3dv(x)
+
+#define ENDTMESH()      glEmulator.endDraw()
+#define ENDPOLYGON()    glEmulator.endDraw()
+
+
+#endif
+
 #endif /* __GLE_PORT_H__ */
 /* ================== END OF FILE ======================= */

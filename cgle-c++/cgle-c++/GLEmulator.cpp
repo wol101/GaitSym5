@@ -9,12 +9,11 @@
 
 #include "GLEmulator.h"
 
-#include "ExtrusionLib.h"
-#include "ExtrusionInternals.h"
-
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+
+GLEmulator glEmulator;
 
 GLEmulator::GLEmulator()
 {
@@ -75,14 +74,8 @@ void GLEmulator::texCoord2d(double x, double y)
 {
 }
 
-void GLEmulator::beginTriangleStrip(int /*i*/, int /*len*/)
+void GLEmulator::beginTriangleStrip()
 {
-    beginTriangleStrip(GL_TRIANGLE_STRIP);
-}
-
-void GLEmulator::beginTriangleStrip(int i)
-{
-    assert(i == GL_TRIANGLE_STRIP);
     assert(m_vertexState == idle);
     m_vertexState = triangleStrip;
 }
@@ -107,7 +100,7 @@ void GLEmulator::endDraw()
     }
 }
 
-void GLEmulator::normal3dv(double x[3])
+void GLEmulator::normal3dv(const double *x)
 {
     double r[4];
     multMatrixVec34(m_matrixStack[m_matrixIndex], x, r);
@@ -117,12 +110,7 @@ void GLEmulator::normal3dv(double x[3])
     m_currentNormal[2] = r[2];
 }
 
-void GLEmulator::vertex3dv(double x[3], int /*j*/, int /*id*/)
-{
-    vertex3dv(x);
-}
-
-void GLEmulator::vertex3dv(double x[3])
+void GLEmulator::vertex3dv(const double *x)
 {
     double r[3];
     multMatrixVec3(m_matrixStack[m_matrixIndex], x, r);
@@ -144,28 +132,25 @@ void GLEmulator::vertex3dv(double x[3])
     }
 }
 
-void GLEmulator::color3fv(float c[3])
+void GLEmulator::color3fv(const float *c)
 {
     m_currentColour[0] = c[0];
     m_currentColour[1] = c[1];
     m_currentColour[2] = c[2];
 }
 
-void GLEmulator::beginContour(int i)
+void GLEmulator::beginContour()
 {
     assert(m_vertexState == idle);
     m_vertexState = polygon;
 }
 
-void GLEmulator::endContour(int /*i*/)
+void GLEmulator::endContour()
 {
     endDraw();
 }
 
-void GLEmulator::contourVertex(int /*i*/, double x[3], void */*p*/)
-{
-    vertex3dv(x);
-}
+
 
 void GLEmulator::DecodeTriangleStrip()
 {
@@ -392,3 +377,5 @@ const std::vector<std::array<double, 3> > *GLEmulator::colourList() const
 {
     return &m_colourList;
 }
+
+void C3F(float *x)         { glEmulator.color3fv(x); }
