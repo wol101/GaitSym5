@@ -25,7 +25,7 @@
 #include <string.h> /* for the memcpy() subroutine */
 #include <stdio.h>      /* to get stderr defined */
 
-#include "gle/gle.h"
+#include "gle.h"
 
 #include "port.h"
 #include "vvector.h"

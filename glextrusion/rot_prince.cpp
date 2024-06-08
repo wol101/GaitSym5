@@ -1,7 +1,7 @@
 
 #include <math.h>
 
-#include "gle/gle.h"
+#include "gle.h"
 #include "rot.h"
 #include "port.h"
 

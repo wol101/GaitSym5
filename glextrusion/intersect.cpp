@@ -7,7 +7,7 @@
  * Written by Linas Vepstas, August 1991
  */
 
-#include "gle/gle.h"
+#include "gle.h"
 #include "intersect.h"
 
 /* ========================================================== */

@@ -59,7 +59,6 @@ if (MSVC)
 endif()
 
 # glextrusion definitions
-#add_compile_definitions(DEBUG_OUTPUT)
 add_compile_definitions(TRIANGLE_GENERATOR)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -1121,24 +1120,7 @@ set(PROJECT_SOURCES
 
     ../pystring/pystring.cpp
 
-    ../cgle-c++/cgle-c++/GLEmulator.cpp
-    # ../cgle-c++/cgle-c++/ExtrusionInternals.cpp
-    # ../cgle-c++/cgle-c++/gleBaseExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleConeExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleCylinderExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleHelicoidExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleIBeam.cpp
-    # ../cgle-c++/cgle-c++/gleLatheExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleScrew.cpp
-    # ../cgle-c++/cgle-c++/gleSimpleBeam.cpp
-    # ../cgle-c++/cgle-c++/gleSimpleTwistedIBeam.cpp
-    # ../cgle-c++/cgle-c++/gleSpiralExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleTaperExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleToroidExtrusion.cpp
-    # ../cgle-c++/cgle-c++/gleTwistedIBeam.cpp
-    # ../cgle-c++/cgle-c++/gleTwistExtrusion.cpp
-
+    ../glextrusion/GLEmulator.cpp
     ../glextrusion/extrude.cpp
     ../glextrusion/ex_alpha.cpp
     ../glextrusion/ex_angle.cpp
@@ -1321,28 +1303,10 @@ set(PROJECT_SOURCES
     ../GaitSymQt/UniqueNameValidator.h
     ../GaitSymQt/ViewControlWidget.h
 
-    ../cgle-c++/cgle-c++/GLEmulator.h
-    # ../cgle-c++/cgle-c++/ExtrusionInternals.h
-    # ../cgle-c++/cgle-c++/ExtrusionLib.h
-    # ../cgle-c++/cgle-c++/gleBaseExtrusion.h
-    # ../cgle-c++/cgle-c++/gleConeExtrusion.h
-    # ../cgle-c++/cgle-c++/gleCylinderExtrusion.h
-    # ../cgle-c++/cgle-c++/gleExtrusion.h
-    # ../cgle-c++/cgle-c++/gleHelicoidExtrusion.h
-    # ../cgle-c++/cgle-c++/gleIBeam.h
-    # ../cgle-c++/cgle-c++/gleLatheExtrusion.h
-    # ../cgle-c++/cgle-c++/gleScrew.h
-    # ../cgle-c++/cgle-c++/gleSimpleBeam.h
-    # ../cgle-c++/cgle-c++/gleSimpleTwistedIBeam.h
-    # ../cgle-c++/cgle-c++/gleSpiralExtrusion.h
-    # ../cgle-c++/cgle-c++/gleTaperExtrusion.h
-    # ../cgle-c++/cgle-c++/gleToroidExtrusion.h
-    # ../cgle-c++/cgle-c++/gleTwistedIBeam.h
-    # ../cgle-c++/cgle-c++/gleTwistExtrusion.h
-
+    ../glextrusion/GLEmulator.h
     ../glextrusion/copy.h
     ../glextrusion/extrude.h
-    ../glextrusion/gle/gle.h
+    ../glextrusion/gle.h
     ../glextrusion/intersect.h
     ../glextrusion/port.h
     ../glextrusion/rot.h
@@ -1483,7 +1447,6 @@ set(INCLUDE_DIRECTORIES
 ../fast_double_parser
 ../GaitSymQt
 ../glextrusion
-# ../cgle-c++
 ../libgwavi
 ../PhysX
 ../pocketpy-1.4.5/include

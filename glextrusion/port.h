@@ -298,7 +298,7 @@ typedef double gleVector[3];
 
 #ifdef TRIANGLE_GENERATOR
 
-#include "../../cgle-c++/cgle-c++/GLEmulator.h"
+#include "GLEmulator.h"
 extern GLEmulator glEmulator;
 
 void C3F(float *x);

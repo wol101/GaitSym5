@@ -19,7 +19,7 @@
 #include <math.h>
 #include <string.h> /* for the memcpy() subroutine */
 
-#include "gle/gle.h"
+#include "gle.h"
 #include "port.h"
 #include "vvector.h"
 #include "extrude.h"

@@ -11,7 +11,7 @@
  * Copyright (c) 2003 Linas Vepstas <linas@linas.org>
  */
 
-#include "gle/gle.h"
+#include "gle.h"
 #include "port.h"
 
 /* Autogen the missing c4f routines by redefining C3F to be 4F,

@@ -19,7 +19,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "gle/gle.h"
+#include "gle.h"
 #include "port.h"
 #include "tube_gc.h"
 
