@@ -85,6 +85,7 @@ def apply_genome():
         value = eval(expression, {"g": genes})
         if args.debug: print(f'{expression=} {value=}')
         new_contents_parts.append(format(value, '.17g'))
+    new_contents_parts.append(contents[insert_index:])
     if args.verbose: print('%d expressions evaluated' % (expression_count))
 
     new_contents = ''.join(new_contents_parts)
