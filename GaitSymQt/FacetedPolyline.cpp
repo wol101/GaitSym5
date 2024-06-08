@@ -58,9 +58,16 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
     {
         glEmulator.clear();
         gleSetNumSides(int(n));
+        gleSetJoinStyle(TUBE_JN_ANGLE | TUBE_JN_CAP | TUBE_NORM_PATH_EDGE | TUBE_CONTOUR_CLOSED);
+
         size_t nPoints = polyline->size() + 2;
+        assert(nPoints < 256);
         // auto point_array = std::make_unique<gleDouble[][3]>(nPoints);
-        gleDouble point_array[100][3];
+        gleDouble point_array[256][3]; // for some reason the dynamically allocated versions just do not work
+        //gleDouble (*point_array)[3] = (gleDouble (*)[3])calloc(nPoints, sizeof *point_array);
+        // auto color_array = std::make_unique<gleColor[]>(nPoints);
+        gleColor color_array[256]; // for some reason the dynamically allocated versions just do not work
+        //gleColor *color_array = (gleColor *)calloc(nPoints, sizeof *color_array);
         pgd::Vector3 v0 = (*polyline)[1] - (*polyline)[0];
         pgd::Vector3 v1 = (*polyline)[0] - v0;
         point_array[0][0] = v1.x; point_array[0][1] = v1.y; point_array[0][2] = v1.z;
@@ -68,8 +75,6 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
         v0 = (*polyline)[polyline->size() - 1] - (*polyline)[polyline->size() - 2];
         v1 = (*polyline)[polyline->size() - 1] + v0;
         point_array[nPoints][0] = v1.x; point_array[nPoints][1] = v1.y; point_array[nPoints][2] = v1.z;
-        // auto color_array = std::make_unique<gleColor[]>(nPoints);
-        gleColor color_array[100];
         float r = blendColour.redF();
         float g = blendColour.greenF();
         float b = blendColour.blueF();
@@ -78,7 +83,9 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
                         point_array,            /* polyline vertces */
                         color_array,            /* colors at polyline verts */
                         radius);                /* radius of polycylinder */
-        RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());       
+        RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
+        //free(color_array);
+        //free(point_array);
     }
 
 }

@@ -228,7 +228,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             polyline.reserve(pointForceList->size());
             polyline.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             polyline.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
-            m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyline, m_strapRadius, m_strapNumSegments, m_strapColor, 1.0, false);
+            m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyline, m_strapRadius, m_strapNumSegments, m_strapColor, 1);
             m_facetedObject1->setSimulationWidget(simulationWidget);
             m_facetedObjectList.push_back(m_facetedObject1.get());
             break;
