@@ -64,14 +64,12 @@ typedef double gleVector[3];
 /* ====================================================== */
 
 #ifdef __GLE_DOUBLE
-/* #define gleDouble        double */
 #define MULTMATRIX(m)       MULTMATRIX_D(m)
 #define LOADMATRIX(m)       LOADMATRIX_D(m)
 #define V3F(x,j,id)     V3F_D(x,j,id)
 #define N3F(x)          N3F_D(x)
 #define T2F(x,y)        T2F_D(x,y)
 #else
-#define gleDouble       float
 #define MULTMATRIX(m)       MULTMATRIX_F(m)
 #define LOADMATRIX(m)       LOADMATRIX_F(m)
 #define V3F(x,j,id)     V3F_F(x,j,id)
@@ -304,29 +302,29 @@ extern GLEmulator glEmulator;
 void C3F(float *x);
 
 // #define T2F_F(x,y)      glEmulator.texCoord2f(x,y)
-#define T2F_D(x,y)      glEmulator.texCoord2d(x,y)
+#define T2F_D(x,y)      glEmulator.glTexCoord2d(x,y)
 
-#define POPMATRIX()     glEmulator.popMatrix()
-#define PUSHMATRIX()    glEmulator.pushMatrix()
+#define POPMATRIX()     glEmulator.glPopMatrix()
+#define PUSHMATRIX()    glEmulator.glPushMatrix()
 
-// #define MULTMATRIX_F(x) glEmulator.multMatrixf(reinterpret_cast<const float *>(x))
-// #define LOADMATRIX_F(x) glEmulator.loadMatrixf(reinterpret_cast<const float *>(x))
+// #define MULTMATRIX_F(x) glEmulator.glMultMatrixf(reinterpret_cast<const float *>(x))
+// #define LOADMATRIX_F(x) glEmulator.glLoadMatrixf(reinterpret_cast<const float *>(x))
 
-#define MULTMATRIX_D(x) glEmulator.multMatrixd(reinterpret_cast<const double *>(x))
-#define LOADMATRIX_D(x) glEmulator.loadMatrixd(reinterpret_cast<const double *>(x))
+#define MULTMATRIX_D(x) glEmulator.glMultMatrixd(reinterpret_cast<const double *>(x))
+#define LOADMATRIX_D(x) glEmulator.glLoadMatrixd(reinterpret_cast<const double *>(x))
 
 #define __IS_LIGHTING_ON (true)
 
-#define BGNTMESH(i,len) glEmulator.beginTriangleStrip()
-#define BGNPOLYGON()    glEmulator.beginContour()
+#define BGNTMESH(i,len) glEmulator.glBeginTriangleStrip()
+#define BGNPOLYGON()    glEmulator.glBeginPolygon()
 
-#define N3F_F(x)        glEmulator.normal3fv(x)
-#define N3F_D(x)        glEmulator.normal3dv(x)
-#define V3F_F(x,j,id)   glEmulator.vertex3fv(x)
-#define V3F_D(x,j,id)   glEmulator.vertex3dv(x)
+// #define N3F_F(x)        glEmulator.glNormal3fv(x)
+#define N3F_D(x)        glEmulator.glNormal3dv(x)
+// #define V3F_F(x,j,id)   glEmulator.glVertex3fv(x)
+#define V3F_D(x,j,id)   glEmulator.glVertex3dv(x)
 
-#define ENDTMESH()      glEmulator.endDraw()
-#define ENDPOLYGON()    glEmulator.endDraw()
+#define ENDTMESH()      glEmulator.glEnd()
+#define ENDPOLYGON()    glEmulator.glEnd()
 
 
 #endif

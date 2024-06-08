@@ -401,7 +401,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
     m_colourList.reserve(triangleList.size() * 9);
     m_uvList.clear();
     m_uvList.reserve(triangleList.size() * 6);
-    double colour[3] = {m_blendColour.redF(), m_blendColour.greenF(), m_blendColour.blueF() };
+    float colour[3] = {m_blendColour.redF(), m_blendColour.greenF(), m_blendColour.blueF() };
     for (auto &&it : triangleList)
     {
         m_vertexList.push_back(vertexList[it.vertex[0]].x);
@@ -798,7 +798,7 @@ int FacetedObject::ReadFromMemory(const char *data, size_t len, bool binary, con
         }
         for (size_t i = 0; i < numElements; i++)
         {
-            m_colourList.push_back(*reinterpret_cast<double *>(*ptr));
+            m_colourList.push_back(*reinterpret_cast<float *>(*ptr));
             ptr += sizeof(double);
         }
         for (size_t i = 0; i < numTriangles * 6; i++)
@@ -825,7 +825,7 @@ int FacetedObject::ReadFromMemory(const char *data, size_t len, bool binary, con
         m_uvList.reserve(numTriangles * 6);
         for (size_t i = 0; i < numElements; i++) m_vertexList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
         for (size_t i = 0; i < numElements; i++) m_normalList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
-        for (size_t i = 0; i < numElements; i++) m_colourList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
+        for (size_t i = 0; i < numElements; i++) m_colourList.push_back(float(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr)));
         for (size_t i = 0; i < numTriangles * 6; i++) m_uvList.push_back(GaitSym::GSUtil::fast_a_to_double(endPtr, &endPtr));
     }
     m_meshStore.setTargetMemory(Preferences::valueDouble("MeshStoreMemoryFraction"));
@@ -840,7 +840,7 @@ void FacetedObject::SaveToMemory(std::vector<char> *data, bool binary)
         data->clear();
         data->resize(sizeof(size_t) + 6 * sizeof(double) + m_vertexList.size() * sizeof(double) +
                      m_normalList.size() * sizeof(double) +
-                     m_colourList.size() * sizeof(double) +
+                     m_colourList.size() * sizeof(float) +
                      m_uvList.size() * sizeof(double));
         size_t *ptr = reinterpret_cast<size_t *>(data->data());
         *ptr++ = m_vertexList.size() / 3;
@@ -886,7 +886,7 @@ void FacetedObject::SaveToMemory(std::vector<char> *data, bool binary)
         }
         for (size_t i = 0; i < m_colourList.size(); i++)
         {
-            l = std::sprintf(buf, "%.18g\n", m_colourList[i]);
+            l = std::sprintf(buf, "%.10g\n", m_colourList[i]);
             std::copy_n(buf, l, std::back_inserter(*data));
         }
         for (size_t i = 0; i < m_uvList.size(); i++)
@@ -942,7 +942,8 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
     m_normalList.reserve(numElements);
     m_colourList.reserve(numElements);
     m_uvList.reserve(numVertices * 2);
-    double x, y, z, nx, ny, nz, r, g, b;
+    double x, y, z, nx, ny, nz;
+    float r, g, b;
     for (size_t i = 0; i < numVertices; i++)
     {
         dataStream >> x >> y >> z >> nx >> ny >> nz >> r >> g >> b;
@@ -970,7 +971,7 @@ void FacetedObject::Draw()
         for (size_t i =0; i < m_normalList.size(); i++) { normal.push_back(float(m_normalList[i])); }
         std::vector<float> color;
         color.reserve(m_colourList.size());
-        for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(float(m_colourList[i])); }
+        for (size_t i =0; i < m_colourList.size(); i++) { color.push_back(m_colourList[i]); } //FIX ME - this copy may well not be necessary
         std::vector<float> uv;
         uv.reserve(m_uvList.size());
         for (size_t i =0; i < m_uvList.size(); i++) { uv.push_back(float(m_uvList[i])); }
@@ -1139,7 +1140,7 @@ const double *FacetedObject::GetNormalList() const
     return m_normalList.data();
 }
 
-const double *FacetedObject::GetColourList() const
+const float *FacetedObject::GetColourList() const
 {
     return m_colourList.data();
 }
@@ -2101,7 +2102,7 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
 // the normalList is 9 times the number of triangles
 // the colourList is 9 times the number of triangles
 // the uvList is 6 times the number of triangles
-void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<double> *colourList, const std::vector<double> *uvList)
+void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<float> *colourList, const std::vector<double> *uvList)
 {
     if (vertexList)
     {
@@ -2125,7 +2126,7 @@ void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::
     }
 }
 
-void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<double, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList)
+void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList)
 {
     if (vertexList)
     {
@@ -2141,6 +2142,30 @@ void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexLi
     {
         m_colourList.reserve(m_colourList.size() + colourList->size() * 3);
         for (auto &&i : *colourList) { for (auto &&j : i) { m_colourList.push_back(j); } }
+    }
+    if (uvList)
+    {
+        m_uvList.reserve(m_uvList.size() + uvList->size() * 2);
+        for (auto &&i : *uvList) { for (auto &&j : i) { m_uvList.push_back(j); } }
+    }
+}
+
+void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList)
+{
+    if (vertexList)
+    {
+        m_vertexList.reserve(m_vertexList.size() + vertexList->size() * 3);
+        for (auto &&i : *vertexList) { for (auto &&j : i) { m_vertexList.push_back(j); } }
+    }
+    if (normalList)
+    {
+        m_normalList.reserve(m_normalList.size() + normalList->size() * 3);
+        for (auto &&i : *normalList) { for (auto &&j : i) { m_normalList.push_back(j); } }
+    }
+    if (colourList)
+    {
+        m_colourList.reserve(m_colourList.size() + colourList->size() * 3);
+        for (auto &&i : *colourList) { for (size_t j = 0; j < i.size() - 1; j++) { m_colourList.push_back(i[j]); } }
     }
     if (uvList)
     {

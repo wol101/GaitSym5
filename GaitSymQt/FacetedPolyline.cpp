@@ -92,8 +92,7 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
     unsigned int i, j;
     Line3D line;
     pgd::Vector3 v1, v2, p1, p2;
-    const double epsilon = 0.000001;
-    const double epsilon2 = epsilon * epsilon;
+    const double epsilon2 = std::numeric_limits<double>::epsilon();
     auto polygon = std::make_unique<double []>(profile->size() * 3);
     auto polygonNormal = std::make_unique<double []>(profile->size() * 3);
 
@@ -244,7 +243,7 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
 bool FacetedPolyline::Intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *intersection)
 {
     double denominator = line->direction * plane->GetNormal();
-    const double epsilon = 0.000001;
+    const double epsilon = std::numeric_limits<double>::epsilon();
     double t;
 
     if (fabs(denominator) < epsilon)
@@ -253,7 +252,6 @@ bool FacetedPolyline::Intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *i
         // but perhaps the origin is in the plane
         if (fabs(line->origin.x * plane->a + line->origin.y * plane->b + line->origin.z * plane->c + plane->d) > epsilon)
         {
-            t = 0;
             *intersection = line->origin;
             return true;
         }

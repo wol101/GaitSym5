@@ -24,14 +24,14 @@ struct MeshStoreObject
     {
         return (vertexList.size() * sizeof(double) +
                 normalList.size() * sizeof(double) +
-                colourList.size() * sizeof(double) +
+                colourList.size() * sizeof(float) +
                 uvList.size() * sizeof(double) +
                 sizeof(MeshStoreObject));
     }
     std::string path;
     std::vector<double> vertexList;
     std::vector<double> normalList;
-    std::vector<double> colourList;
+    std::vector<float> colourList;
     std::vector<double> uvList;
     pgd::Vector3 lowerBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
     pgd::Vector3 upperBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
@@ -45,7 +45,7 @@ public:
     MeshStoreObject *getMesh(const std::string &path);
     void addMesh(const MeshStoreObject &meshStoreObject);
     void addMesh(const std::string &path, const std::vector<double> &vertexList, const std::vector<double> &normalList,
-                 const std::vector<double> &colourList, const std::vector<double> &uvList,
+                 const std::vector<float> &colourList, const std::vector<double> &uvList,
                  const pgd::Vector3 &lowerBound, const pgd::Vector3 &upperBound);
     void clear();
 

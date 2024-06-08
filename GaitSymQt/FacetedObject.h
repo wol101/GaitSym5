@@ -32,13 +32,13 @@ public:
 
     struct OBJMaterial
     {
-        double Ns = {0};
-        double Ka[3] = {0, 0, 0};
-        double Kd[3] = {0, 0, 0};
-        double Ks[3] = {0, 0, 0};
-        double Ke[3] = {0, 0, 0};
-        double Ni = {0};
-        double d = {0};
+        float Ns = {0};
+        float Ka[3] = {0, 0, 0};
+        float Kd[3] = {0, 0, 0};
+        float Ks[3] = {0, 0, 0};
+        float Ke[3] = {0, 0, 0};
+        float Ni = {0};
+        float d = {0};
         int illum = {0};
     };
 
@@ -63,7 +63,7 @@ public:
     const double *GetNormal(size_t i) const;
     const double *GetVertexList() const;
     const double *GetNormalList() const;
-    const double *GetColourList() const;
+    const float *GetColourList() const;
     size_t GetNumTriangles() const;
     const double *GetTriangle(size_t i) const;
     const pgd::Vector3 &GetDisplayPosition() const;
@@ -75,8 +75,9 @@ public:
     void AddPolygon(const float *floatVertices, size_t nSides, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
     void AddTriangle(const float *floatVertices, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
     void AddFacetedObject(const FacetedObject *object, bool useDisplayRotation, bool useDirectAccess);
-    void RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<double> *colourList, const std::vector<double> *uvList);
-    void RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<double, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList);
+    void RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<float> *colourList, const std::vector<double> *uvList);
+    void RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList);
+    void RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList);
 
 
     // static utilities
@@ -144,7 +145,7 @@ private:
 
     std::vector<double> m_vertexList;
     std::vector<double> m_normalList;
-    std::vector<double> m_colourList;
+    std::vector<float> m_colourList;
     std::vector<double> m_uvList;
     bool m_useRelativeOBJ = false;
     bool m_badMesh = false;
