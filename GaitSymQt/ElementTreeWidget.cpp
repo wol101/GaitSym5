@@ -143,22 +143,19 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "JOINT")
         {
             QAction *action = menu.addAction(tr("Create New Joint..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1
-                    && m_simulation->GetMarkerList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1 && m_simulation->GetMarkerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "GEOM")
         {
             QAction *action = menu.addAction(tr("Create New Geom..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 0
-                    && m_simulation->GetMarkerList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 0 && m_simulation->GetMarkerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "MUSCLE")
         {
             QAction *action = menu.addAction(tr("Create New Muscle..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1
-                    && m_simulation->GetMarkerList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1 && m_simulation->GetMarkerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "DRIVER")
@@ -214,12 +211,15 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
     }
 
     if (item->type() == ROOT_ITEM_TYPE
-            && (item->data(0, Qt::DisplayRole).toString() == "BODY" ||
-                item->data(0, Qt::DisplayRole).toString() == "MARKER" ||
-                item->data(0, Qt::DisplayRole).toString() == "JOINT" ||
-                item->data(0, Qt::DisplayRole).toString() == "GEOM" ||
-                item->data(0, Qt::DisplayRole).toString() == "MUSCLE" ||
-                item->data(0, Qt::DisplayRole).toString() == "FLUIDSAC" ))
+        && (item->data(0, Qt::DisplayRole).toString() == "BODY" ||
+            item->data(0, Qt::DisplayRole).toString() == "MARKER" ||
+            item->data(0, Qt::DisplayRole).toString() == "JOINT" ||
+            item->data(0, Qt::DisplayRole).toString() == "GEOM" ||
+            item->data(0, Qt::DisplayRole).toString() == "MUSCLE" ||
+            item->data(0, Qt::DisplayRole).toString() == "CONTROLLER" ||
+            item->data(0, Qt::DisplayRole).toString() == "DATATARGET" ||
+            item->data(0, Qt::DisplayRole).toString() == "DRIVER" ||
+            item->data(0, Qt::DisplayRole).toString() == "FLUIDSAC" ))
     {
         menu.addAction(tr("All visible"));
         menu.addAction(tr("None visible"));

@@ -227,20 +227,20 @@ void GLEmulator::DecodePolygon() // note that this version only copes with conve
     size_t a = 0;
     size_t b = 1;
     size_t c = 2;
-    while (c < m_triangleStripVertices.size())
+    while (c < m_polygonVertices.size())
     {
-        m_vertexList.push_back(m_triangleStripVertices[a]);
-        m_vertexList.push_back(m_triangleStripVertices[b]);
-        m_vertexList.push_back(m_triangleStripVertices[c]);
-        m_normalList.push_back(m_triangleStripNormals[a]);
-        m_normalList.push_back(m_triangleStripNormals[b]);
-        m_normalList.push_back(m_triangleStripNormals[c]);
-        m_colourList.push_back(m_triangleStripColours[a]);
-        m_colourList.push_back(m_triangleStripColours[b]);
-        m_colourList.push_back(m_triangleStripColours[c]);
-        m_uvList.push_back(m_triangleStripUVs[a]);
-        m_uvList.push_back(m_triangleStripUVs[b]);
-        m_uvList.push_back(m_triangleStripUVs[c]);
+        m_vertexList.push_back(m_polygonVertices[a]);
+        m_vertexList.push_back(m_polygonVertices[b]);
+        m_vertexList.push_back(m_polygonVertices[c]);
+        m_normalList.push_back(m_polygonNormals[a]);
+        m_normalList.push_back(m_polygonNormals[b]);
+        m_normalList.push_back(m_polygonNormals[c]);
+        m_colourList.push_back(m_polygonColours[a]);
+        m_colourList.push_back(m_polygonColours[b]);
+        m_colourList.push_back(m_polygonColours[c]);
+        m_uvList.push_back(m_polygonUVs[a]);
+        m_uvList.push_back(m_polygonUVs[b]);
+        m_uvList.push_back(m_polygonUVs[c]);
         ++b;
         ++c;
     }
