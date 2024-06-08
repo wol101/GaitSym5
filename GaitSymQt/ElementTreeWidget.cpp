@@ -749,6 +749,9 @@ void ElementTreeWidget::setVisibleSwitchAll(const QString &elementType, bool vis
     if (elementType == "GEOM") tree = m_geomTree;
     if (elementType == "MUSCLE") tree = m_muscleTree;
     if (elementType == "FLUIDSAC") tree = m_fluidSacTree;
+    if (elementType == "DRIVER") tree = m_driverTree;
+    if (elementType == "DATATARGET") tree = m_dataTargetTree;
+    if (elementType == "CONTROLLER") tree = m_controllerTree;
     if (!tree) return;
     for (int i = 0; i < tree->childCount (); i++)
     {
@@ -766,6 +769,9 @@ void ElementTreeWidget::setVisibleSwitch(const QString &elementType, const QStri
     if (elementType == "GEOM") tree = m_geomTree;
     if (elementType == "MUSCLE") tree = m_muscleTree;
     if (elementType == "FLUIDSAC") tree = m_fluidSacTree;
+    if (elementType == "DRIVER") tree = m_driverTree;
+    if (elementType == "DATATARGET") tree = m_dataTargetTree;
+    if (elementType == "CONTROLLER") tree = m_controllerTree;
     if (!tree) return;
     for (int i = 0; i < tree->childCount (); i++)
     {
@@ -784,6 +790,9 @@ void ElementTreeWidget::setOutputSwitchAll(const QString &elementType, bool outp
     if (elementType == "GEOM") tree = m_geomTree;
     if (elementType == "MUSCLE") tree = m_muscleTree;
     if (elementType == "FLUIDSAC") tree = m_fluidSacTree;
+    if (elementType == "DRIVER") tree = m_driverTree;
+    if (elementType == "DATATARGET") tree = m_dataTargetTree;
+    if (elementType == "CONTROLLER") tree = m_controllerTree;
     if (!tree) return;
     for (int i = 0; i < tree->childCount (); i++)
     {
