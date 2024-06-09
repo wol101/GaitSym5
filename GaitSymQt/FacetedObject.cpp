@@ -988,6 +988,7 @@ void FacetedObject::Draw()
         {
             material->color.setRGB(m_blendColour.redF(), m_blendColour.greenF(), m_blendColour.blueF());
         }
+        material->wireframe = m_wireframe;
         material->roughness = 0.5;
         material->metalness = 0.5;
         if (m_blendColour.alphaF() < 1.0)
@@ -2499,6 +2500,16 @@ bool FacetedObject::receiveShadow() const
 void FacetedObject::setReceiveShadow(bool newReceiveShadow)
 {
     m_receiveShadow = newReceiveShadow;
+}
+
+bool FacetedObject::wireframe() const
+{
+    return m_wireframe;
+}
+
+void FacetedObject::setWireframe(bool newWireframe)
+{
+    m_wireframe = newWireframe;
 }
 
 QColor FacetedObject::blendColour() const

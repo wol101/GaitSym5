@@ -27,7 +27,7 @@ QMap<QString, SettingsItem> Preferences::m_settings;
 void Preferences::Write()
 {
     qDebug() << "Writing preferences to \"" << fileName() << "\"\n";
-    Preferences::setQtValue("XML", ExportData());
+    Preferences::setQtValue("XML", ExportData(m_settings));
     Preferences::sync();
 }
 
@@ -35,14 +35,40 @@ void Preferences::Read()
 {
     qDebug() << "Reading preferences from \"" << fileName() << "\"\n";
     QByteArray xmlData = Preferences::qtValue("XML", QByteArray()).toByteArray();
-    int status = __LINE__;
-    if (xmlData.size()) { status = ImportData(xmlData); }
-    if (status) { LoadDefaults(); }
+    QMap<QString, SettingsItem> defaultSettings = ImportDefaults();
+    m_settings = ImportData(xmlData);
+    if (m_settings.size() == 0) // could use other sorts of error checking here - perhaps a unique code in the settings file that needs to match the subversion
+    {
+        qDebug() << "Error reading preferences from \"" << fileName() << "\"\n";
+        m_settings = defaultSettings;
+    }
+    // but sometimes the saved settings need to be corrected by the default settings e.g. as a result of a version change
+    for (auto defaultIt = defaultSettings.begin(); defaultIt != defaultSettings.end(); ++defaultIt)
+    {
+        auto it = m_settings.find(defaultIt.key());
+        if (it == m_settings.end())
+        {
+            m_settings[defaultIt.key()] = defaultIt.value();
+        }
+        else
+        {
+            it.value().label = defaultIt.value().label;
+            it.value().defaultValue = defaultIt.value().defaultValue;
+            it.value().minimumValue = defaultIt.value().minimumValue;
+            it.value().maximumValue = defaultIt.value().maximumValue;
+            it.value().display = defaultIt.value().display;
+            if (it.value().type != defaultIt.value().type)
+            {
+                it.value().type = defaultIt.value().type;
+                it.value().value = defaultIt.value().value;
+            }
+        }
+    }
 }
 
-void Preferences::Export(const QString &filename)
+void Preferences::Export(const QString &filename, const QMap<QString, SettingsItem> &settings)
 {
-    QByteArray xmlData = ExportData();
+    QByteArray xmlData = ExportData(settings);
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly))
     {
@@ -55,7 +81,7 @@ void Preferences::Export(const QString &filename)
     file.close();
 }
 
-QByteArray Preferences::ExportData()
+QByteArray Preferences::ExportData(const QMap<QString, SettingsItem> &settings)
 {
     QDomDocument doc("GaitSym5Preferences");
     doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
@@ -63,12 +89,12 @@ QByteArray Preferences::ExportData()
     doc.appendChild(root);
 
     // this bit of code gets the SettingsItems sorted by order
-    QStringList keys = m_settings.keys();
+    QStringList keys = settings.keys();
     keys.sort(Qt::CaseInsensitive);
 
     for (QStringList::const_iterator i = keys.constBegin(); i != keys.constEnd(); i++)
     {
-        SettingsItem item = m_settings[*i];
+        SettingsItem item = settings[*i];
         QDomElement setting = doc.createElement("SETTING");
         root.appendChild(setting);
         setting.setAttribute("key", item.key);
@@ -123,39 +149,43 @@ QByteArray Preferences::ExportData()
     return doc.toByteArray(4);
 }
 
-void Preferences::Import(const QString &filename)
+QMap<QString, SettingsItem> Preferences::Import(const QString &filename)
 {
+    QMap<QString, SettingsItem> settings;
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly))
     {
         qWarning("Unable to open settings export file: %s", qPrintable(filename));
-        return;
+        return settings;
     }
     QByteArray xmlData = file.readAll();
-    if (ImportData(xmlData))
+    settings = ImportData(xmlData);
+    if (settings.size() == 0)
     {
         qWarning("Unable to parse settings export file: %s", qPrintable(filename));
-        return;
+        return settings;
     }
+    return settings;
 }
 
-int Preferences::ImportData(const QByteArray &xmlData)
+QMap<QString, SettingsItem> Preferences::ImportData(const QByteArray &xmlData)
 {
-    m_settings.clear();
+    QMap<QString, SettingsItem> settings;
     QDomDocument doc("GaitSym5Preferences");
-    if (!doc.setContent(xmlData)) { return __LINE__; }
+    if (!doc.setContent(xmlData)) { return settings; }
     QDomElement docElem = doc.documentElement();
-    ParseQDomElement(docElem);
-    return 0;
+    settings = ParseQDomElement(docElem);
+    return settings;
 }
 
-void Preferences::ParseQDomElement(const QDomElement &docElem)
+QMap<QString, SettingsItem> Preferences::ParseQDomElement(const QDomElement &docElem)
 {
-//    qDebug() << qPrintable(docElem.tagName()) << "\n";
+    QMap<QString, SettingsItem> settings;
+ // qDebug() << qPrintable(docElem.tagName()) << "\n";
     if (docElem.tagName() != "PREFERENCES")
     {
         qWarning("Unable to find tag PREFERENCES: %s", qPrintable(docElem.tagName()));
-        return;
+        return settings;
     }
 
     SettingsItem item;
@@ -265,22 +295,18 @@ void Preferences::ParseQDomElement(const QDomElement &docElem)
                     item.value.convert(QMetaType(item.type));
                     item.defaultValue.convert(QMetaType(item.type));
                 }
-                m_settings[item.key] = item;
+                settings[item.key] = item;
             }
         }
         n = n.nextSibling();
     }
+    return settings;
 }
 
-void Preferences::LoadDefaults()
+QMap<QString, SettingsItem> Preferences::ImportDefaults()
 {
-    Import(":/preferences/default_values.xml");
-
-    for (QMap<QString, SettingsItem>::const_iterator i = m_settings.constBegin(); i != m_settings.constEnd(); i++)
-    {
-//        qDebug() << i.key() << " " << i.value().defaultValue;
-        insert(i.key(), i.value().defaultValue);
-    }
+    QMap<QString, SettingsItem> settings = Import(":/preferences/default_values.xml");
+    return settings;
 }
 
 bool Preferences::toBool(const QString &string)
@@ -671,4 +697,14 @@ void Preferences::deserialize(const QString &qString, QStringList *data)
     QByteArray bytes = QByteArray::fromBase64(qString.toUtf8(), QByteArray::Base64UrlEncoding);
     QDataStream in(&bytes, QIODevice::ReadOnly);
     in >> *data;
+}
+
+QMap<QString, SettingsItem> Preferences::settings()
+{
+    return m_settings;
+}
+
+void Preferences::setSettings(const QMap<QString, SettingsItem> &newSettings)
+{
+    m_settings = newSettings;
 }

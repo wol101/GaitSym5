@@ -141,6 +141,9 @@ public:
     bool receiveShadow() const;
     void setReceiveShadow(bool newReceiveShadow);
 
+    bool wireframe() const;
+    void setWireframe(bool newWireframe);
+
 private:
 
     std::vector<double> m_vertexList;
@@ -179,6 +182,7 @@ private:
     std::shared_ptr<threepp::Mesh> m_mesh;
     bool m_castShadow = true;
     bool m_receiveShadow = false;
+    bool m_wireframe = false;
 };
 
 #endif

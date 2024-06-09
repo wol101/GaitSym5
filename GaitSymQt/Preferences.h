@@ -44,11 +44,12 @@ class Preferences
 public:
     static void Read();
     static void Write();
-    static void Export(const QString &filename);
-    static void Import(const QString &filename);
-    static QByteArray ExportData();
-    static int ImportData(const QByteArray &xmlData);
-    static void LoadDefaults();
+
+    static void Export(const QString &filename, const QMap<QString, SettingsItem> &settings);
+    static QByteArray ExportData(const QMap<QString, SettingsItem> &settings);
+    static QMap<QString, SettingsItem> Import(const QString &filename);
+    static QMap<QString, SettingsItem> ImportData(const QByteArray &xmlData);
+    static QMap<QString, SettingsItem> ImportDefaults();
 
     static const SettingsItem settingsItem(const QString &key);
     static const QVariant valueQVariant(const QString &key);
@@ -87,6 +88,9 @@ public:
     static const QString &getApplicationName();
     static const QString &getOrganizationName();
 
+    static QMap<QString, SettingsItem> settings();
+    static void setSettings(const QMap<QString, SettingsItem> &newSettings);
+
 private:
 
     static QString serialize(const QStringList &data);
@@ -98,7 +102,7 @@ private:
     static const QString applicationName;
     static const QString organizationName;
 
-    static void ParseQDomElement(const QDomElement &docElem);
+    static QMap<QString, SettingsItem> ParseQDomElement(const QDomElement &docElem);
 
     static void setQtValue(const QString &key, const QVariant &value);
     static QVariant qtValue(const QString &key, const QVariant &defaultValue);

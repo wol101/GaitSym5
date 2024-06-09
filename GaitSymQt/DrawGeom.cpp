@@ -43,6 +43,7 @@ DrawGeom::DrawGeom()
     m_geomSegments = size_t(Preferences::valueInt("GeomSegments"));
     m_geomSize1 = Preferences::valueDouble("GeomSize1");
     m_geomSize2 = Preferences::valueDouble("GeomSize2");
+    m_geomSize3 = Preferences::valueDouble("GeomSize3");
 }
 
 DrawGeom::~DrawGeom()
@@ -82,6 +83,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
     m_geomColor2.setAlphaF(qreal(m_geom->colour2().alpha()));
     m_geomSize1 = m_geom->size1();
     m_geomSize2 = m_geom->size2();
+    m_geomSize3 = m_geom->size3();
 
     if (GaitSym::SphereGeom *sphereGeom = dynamic_cast<GaitSym::SphereGeom *>(m_geom))
     {
@@ -115,14 +117,21 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
     {
         double planeSize = m_geomSize1;
         double checkerSize = m_geomSize2;
+        double planeDepth = m_geomSize3; // can be zero, but if set to a small value then the wireframe underside will be hidden by the solid surface
         if (planeSize < 2 * checkerSize) planeSize = 2 * checkerSize;
         size_t nx = size_t(planeSize / checkerSize);
         size_t ny = nx;
         m_facetedObject = std::make_unique<FacetedCheckerboard>(nx, ny, checkerSize, checkerSize, m_geomColor1, m_geomColor2);
         m_facetedObject->setSimulationWidget(simulationWidget);
         m_facetedObject->setReceiveShadow(true);
-        // FIX ME - we need to give the floor some thickness so you can see something from the side. A thin stripy pole running along the X axis would do
         m_facetedObjectList.push_back(m_facetedObject.get());
+        // and on the back we want a wireframe version
+        m_facetedObject2 = std::make_unique<FacetedCheckerboard>(nx, ny, checkerSize, checkerSize, m_geomColor1, m_geomColor2);
+        m_facetedObject2->setSimulationWidget(simulationWidget);
+        m_facetedObject2->setWireframe(true);
+        m_facetedObject2->ReverseWinding();
+        m_facetedObject2->Move(0, 0, -planeDepth);
+        m_facetedObjectList.push_back(m_facetedObject2.get());
         return;
     }
 
@@ -170,6 +179,7 @@ void DrawGeom::updateEntityPose()
 void DrawGeom::Draw()
 {
     if (m_facetedObject) m_facetedObject->Draw();
+    if (m_facetedObject2) m_facetedObject2->Draw();
     m_geom->setRedraw(false);
 }
 

@@ -39,12 +39,14 @@ private:
     GaitSym::Geom *m_geom = nullptr;
 
     std::unique_ptr<FacetedObject> m_facetedObject;
+    std::unique_ptr<FacetedObject> m_facetedObject2;
 
     QColor m_geomColor1;
     QColor m_geomColor2;
     size_t m_geomSegments = 0;
     double m_geomSize1 = 0;
     double m_geomSize2 = 0;
+    double m_geomSize3 = 0;
 
 };
 

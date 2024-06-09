@@ -388,7 +388,7 @@ void DialogPreferences::importButtonClicked()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Import Settings File"), lastImportedFile, tr("Exported Settings Files (*.xml);;Any File (*.* *)"), nullptr);
     if (fileName.isNull() == false)
     {
-        Preferences::Import(fileName);
+        Preferences::setSettings(Preferences::Import(fileName));
         Preferences::insert("PreferencesLastExportedFile", fileName);
         for (int i = 0; i < m_SettingsWidgetList.size(); i++)
         {
@@ -428,7 +428,7 @@ void DialogPreferences::exportButtonClicked()
     if (fileName.isNull() == false)
     {
         Preferences::insert("PreferencesLastExportedFile", fileName);
-        Preferences::Export(fileName);
+        Preferences::Export(fileName, Preferences::settings());
     }
 }
 
@@ -444,7 +444,7 @@ void DialogPreferences::defaultsButtonClicked()
     {
         for (int i = 0; i < m_SettingsWidgetList.size(); i++)
         {
-            Preferences::LoadDefaults();
+            Preferences::setSettings(Preferences::ImportDefaults());
             SettingsItem item = m_SettingsWidgetList[i].item;
             QWidget *widget = m_SettingsWidgetList[i].widget;
             QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());

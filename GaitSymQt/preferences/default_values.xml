@@ -694,6 +694,15 @@
         path="0"
         type="double"
         value="1" />
+    <SETTING defaultValue="0.001"
+        display="1"
+        key="GeomSize3"
+        label="Geom size 3"
+        minimumValue="0"
+        order="4"
+        path="0"
+        type="double"
+        value="0.001" />
     <SETTING defaultValue="#ff909090"
         display="1"
         key="GeomColour1"
@@ -1455,6 +1464,8 @@
         defaultValue="false"
         display="0"
         value="false"/>
+
+    <SETTING defaultValue="32" display="1" key="ToolBarIconSize" label="Tool bar icon size" maximumValue="256" minimumValue="4" order="5" type="int" value="32" />
 
     <SETTING defaultValue="false" display="1" key="OpenSimMocoExport" label="OpenSim Moco Export" type="bool" value="false"/>
     <SETTING defaultValue="10" display="1" key="PreferencesLastExportedFile" label="PreferencesLastExportedFile" type="QString" value="exported_preferences.xml"/>

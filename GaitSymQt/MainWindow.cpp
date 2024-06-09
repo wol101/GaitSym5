@@ -263,6 +263,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     Preferences::insert("ElementTreeHeaderState", ui->treeWidgetElements->header()->saveState());
     log(QString("Window state restored from \"%1\"").arg(Preferences::fileName()));
 
+    int toolBarIconSize = Preferences::valueInt("ToolBarIconSize", 32);
+    ui->toolBar->setIconSize(QSize(toolBarIconSize, toolBarIconSize));
+
     // Full screen does not work sensibly yet so remove
     if (isFullScreen()) this->menuToggleFullScreen();
     ui->actionToggleFullscreen->setVisible(false);

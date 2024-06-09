@@ -372,6 +372,7 @@ void DialogGeoms::properties()
     SettingsItem geomColour2 = Preferences::settingsItem("GeomColour2");
     SettingsItem geomSize1 = Preferences::settingsItem("GeomSize1");
     SettingsItem geomSize2 = Preferences::settingsItem("GeomSize2");
+    SettingsItem geomSize3 = Preferences::settingsItem("GeomSize3");
 
     if (m_inputGeom)
     {
@@ -379,12 +380,14 @@ void DialogGeoms::properties()
         geomColour2.value = QColor(QString::fromStdString(m_inputGeom->colour2().GetHexARGB()));
         geomSize1.value = m_inputGeom->size1();
         geomSize2.value = m_inputGeom->size2();
+        geomSize3.value = m_inputGeom->size3();
     }
     m_properties.clear();
     m_properties = { { geomColour1.key, geomColour1 },
                      { geomColour2.key, geomColour2 },
                      { geomSize1.key, geomSize1 },
-                     { geomSize2.key, geomSize2 } };
+                     { geomSize2.key, geomSize2 },
+                     { geomSize3.key, geomSize3 } };
 
     dialogProperties.setInputSettingsItems(m_properties);
     dialogProperties.initialise();
