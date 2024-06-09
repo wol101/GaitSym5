@@ -58,6 +58,8 @@ public slots:
     void buttonCameraLeft();
     void buttonCameraRight();
     void buttonCameraTop();
+    void buttonDisplayAsWireframe();
+    void buttonDisplayShadows();
     void enterConstructionMode();
     void enterRunMode();
     void menu1280x720();

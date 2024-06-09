@@ -204,6 +204,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->treeWidgetElements, SIGNAL(elementTreeWidgetItemChanged(QTreeWidgetItem *, int)), this, SLOT(handleElementTreeWidgetItemChanged(QTreeWidgetItem *, int)));
     connect(ui->treeWidgetElements, SIGNAL(infoRequest(const QString &, const QString &)), this, SLOT(elementInfo(const QString &, const QString &)));
 
+    connect(ui->actionDisplayShadows, &QAction::triggered, this, &MainWindow::buttonDisplayShadows);
+    connect(ui->actionDisplayAsWireframe, &QAction::triggered, this, &MainWindow::buttonDisplayAsWireframe);
+
     // put SimulationWindow into existing widgetGLWidget
     QBoxLayout *boxLayout = new QBoxLayout(QBoxLayout::LeftToRight, ui->widgetSimulationPlaceholder);
     boxLayout->setContentsMargins(0, 0, 0, 0);
@@ -572,6 +575,9 @@ void MainWindow::setInterfaceValues()
     m_simulationWidget->setCursorRadius(float(Preferences::valueDouble("CursorRadius")));
     m_simulationWidget->setCursor3DNudge(float(Preferences::valueDouble("CursorNudge")));
 
+    m_simulationWidget->setWireframe(Preferences::valueBool("DisplayAsWireframe"));
+    m_simulationWidget->setShadows(Preferences::valueBool("DisplayShadows"));
+
     ui->doubleSpinBoxDistance->setValue(Preferences::valueDouble("CameraDistance"));
     ui->doubleSpinBoxFoV->setValue(Preferences::valueDouble("CameraFoV"));
     ui->doubleSpinBoxCOIX->setValue(Preferences::valueDouble("CameraCOIX"));
@@ -766,6 +772,9 @@ void MainWindow::updateEnable()
     ui->actionDeleteAssembly->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->HasAssembly());
     ui->actionConstructionMode->setEnabled(m_simulation != nullptr && m_mode == runMode && m_stepCount == 0);
     ui->actionRunMode->setEnabled(m_simulation != nullptr && m_mode == constructionMode && isWindowModified() == false && m_simulation->GetBodyList()->size() > 0);
+    ui->actionDisplayAsWireframe->setChecked(m_simulationWidget->wireframe());
+    ui->actionDisplayShadows->setChecked(m_simulationWidget->shadows());
+
 }
 
 
@@ -1856,6 +1865,25 @@ void MainWindow::buttonCameraBack()
     this->m_simulationWidget->setUpZ(1);
     this->m_simulationWidget->update();
 }
+
+void MainWindow::buttonDisplayAsWireframe()
+{
+    bool wireframe = !this->m_simulationWidget->wireframe();
+    this->m_simulationWidget->setWireframe(wireframe);
+    Preferences::insert("DisplayAsWireframe", wireframe);
+    this->updateEnable();
+    this->m_simulationWidget->update();
+}
+
+void MainWindow::buttonDisplayShadows()
+{
+    bool shadows = !this->m_simulationWidget->shadows();
+    this->m_simulationWidget->setShadows(shadows);
+    Preferences::insert("DisplayShadows", shadows);
+    this->updateEnable();
+    this->m_simulationWidget->update();
+}
+
 
 void MainWindow::menuStopAVISave()
 {

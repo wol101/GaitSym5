@@ -1194,6 +1194,8 @@
    <addaction name="separator"/>
    <addaction name="actionSnapshot"/>
    <addaction name="separator"/>
+   <addaction name="actionDisplayAsWireframe"/>
+   <addaction name="actionDisplayShadows"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -1722,6 +1724,42 @@
   <action name="actionExportMarkers">
    <property name="text">
     <string>Ex&amp;port Markers...</string>
+   </property>
+  </action>
+  <action name="actionDisplayAsWireframe">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/Wireframe Icon/Wireframe Icon.svg</normaloff>:/images/Wireframe Icon/Wireframe Icon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Dispay as Wireframe</string>
+   </property>
+   <property name="toolTip">
+    <string>Displays scene as a wireframe</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
+  </action>
+  <action name="actionDisplayShadows">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/Shadow Icon/Shadow Icon.svg</normaloff>:/images/Shadow Icon/Shadow Icon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Display Shadows</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles the shadow display</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
  </widget>

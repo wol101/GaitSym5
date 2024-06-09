@@ -41,8 +41,8 @@ public:
     GaitSym::Simulation *simulation() const;
     void setSimulation(GaitSym::Simulation *simulation);
 
-    bool wireFrame() const;
-    void setWireFrame(bool wireFrame);
+    bool wireframe() const;
+    void setWireframe(bool wireframe);
 
     bool boundingBox() const;
     void setBoundingBox(bool boundingBox);
@@ -158,6 +158,9 @@ public:
     std::map<std::string, std::unique_ptr<DrawMarker>> *getDrawMarkerMap();
     std::map<std::string, std::unique_ptr<DrawDataTarget>> *getDrawDataTargetMap();
 
+    bool shadows() const;
+    void setShadows(bool newShadows);
+
 public slots:
     void SetCameraVec(float x, float y, float z);
     void SetCameraVec(double x, double y, double z);
@@ -203,7 +206,8 @@ private:
     GaitSym::Simulation *m_simulation = nullptr;
     MainWindow *m_mainWindow = nullptr;
 
-    bool m_wireFrame = false;
+    bool m_shadows = false;
+    bool m_wireframe = false;
     bool m_boundingBox = false;
     bool m_boundingBoxBuffers = false;
     bool m_normals = false;
@@ -279,8 +283,7 @@ private:
     std::shared_ptr<threepp::OrthographicCamera> m_orthographicCamera;
     std::shared_ptr<threepp::PerspectiveCamera> m_perspectiveCamera;
     std::shared_ptr<threepp::Group> m_lightGroup;
-    std::shared_ptr<threepp::MeshBasicMaterial> m_wireFrameMaterial;
-    bool m_wireframe = false;
+    std::shared_ptr<threepp::MeshBasicMaterial> m_wireframeMaterial;
 
 };
 

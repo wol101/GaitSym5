@@ -74,7 +74,9 @@ SimulationWidget::SimulationWidget()
     m_cursor3D->ReadFromResource(":/objects/cursor.tri");
     m_globalAxes = std::make_unique<FacetedObject>();
     m_globalAxes->ReadFromResource(":/objects/global_axes.tri");
-    m_trackball = std::make_unique<Trackball>();   
+    m_trackball = std::make_unique<Trackball>();
+
+    m_shadows = Preferences::valueBool("DisplayAsWireframe");
 
     setCursor(Qt::CrossCursor);
 }
@@ -92,7 +94,7 @@ void SimulationWidget::paintGL()
     if (!m_renderer)
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
-        m_renderer->shadowMap().enabled = true;
+        m_renderer->shadowMap().enabled = m_shadows;
         m_renderer->shadowMap().type = threepp::ShadowMap::PFCSoft;
         m_renderer->physicallyCorrectLights = false;
         m_renderer->checkShaderErrors = false;
@@ -109,9 +111,9 @@ void SimulationWidget::paintGL()
         m_scene->background = color;
         m_cursor3D->setScene(m_scene);
         m_globalAxes->setScene(m_scene);
-        m_wireFrameMaterial = threepp::MeshBasicMaterial::create();
-        m_wireFrameMaterial->color.setHex(0x00ff00);
-        m_wireFrameMaterial->wireframe = true;
+        m_wireframeMaterial = threepp::MeshBasicMaterial::create();
+        m_wireframeMaterial->color.setHex(0x00ff00);
+        m_wireframeMaterial->wireframe = true;
     }
     if (!m_orthographicCamera) { m_orthographicCamera = threepp::OrthographicCamera::create(); }
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
@@ -186,11 +188,17 @@ void SimulationWidget::paintGL()
 
     if (m_wireframe)
     {
-        m_scene->overrideMaterial = m_wireFrameMaterial;
+        m_scene->overrideMaterial = m_wireframeMaterial;
     }
     else
     {
         m_scene->overrideMaterial = nullptr;
+    }
+
+    if (m_shadows != m_renderer->shadowMap().enabled)
+    {
+        m_renderer->shadowMap().enabled = m_shadows; // the materials now need a manual update
+        m_scene->traverseType<threepp::Material>( [](threepp::Material& m) { m.needsUpdate(); } );
     }
 
     // and render
@@ -1570,6 +1578,16 @@ bool SimulationWidget::intersectModel(float winX, float winY)
     return (m_hits.size() != 0);
 }
 
+bool SimulationWidget::shadows() const
+{
+    return m_shadows;
+}
+
+void SimulationWidget::setShadows(bool newShadows)
+{
+    m_shadows = newShadows;
+}
+
 std::map<std::string, std::unique_ptr<DrawDataTarget>> *SimulationWidget::getDrawDataTargetMap()
 {
     return &m_drawDataTargetMap;
@@ -1716,14 +1734,14 @@ void SimulationWidget::setSimulation(GaitSym::Simulation *simulation)
     m_simulation = simulation;
 }
 
-bool SimulationWidget::wireFrame() const
+bool SimulationWidget::wireframe() const
 {
-    return m_wireFrame;
+    return m_wireframe;
 }
 
-void SimulationWidget::setWireFrame(bool wireFrame)
+void SimulationWidget::setWireframe(bool wireframe)
 {
-    m_wireFrame = wireFrame;
+    m_wireframe = wireframe;
 }
 
 bool SimulationWidget::boundingBox() const
