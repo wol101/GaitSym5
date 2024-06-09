@@ -102,7 +102,7 @@ void DialogCreateMirrorElements::savePreferences()
     Preferences::insert("DialogCreateMirrorElementsCaseSensitiveSearch", ui->checkBoxCaseSensitive->isChecked());
     Preferences::insert("DialogCreateMirrorElementsRegularExpressionSearch", ui->checkBoxRegularExpression->isChecked());
     Preferences::insert("DialogCreateMirrorElementsDeleteTo", ui->checkBoxDeleteTo->isChecked());
-    Preferences::insert("DialogCreateMirrorElementsEditorFont", m_editorFont);
+    Preferences::insert("DialogCreateMirrorElementsEditorFont", QVariant::fromValue(m_editorFont));
     Preferences::insert("DialogCreateMirrorElementsFrom", ui->lineEditFrom->text());
     Preferences::insert("DialogCreateMirrorElementsTo", ui->lineEditTo->text());
     if (ui->radioButtonX->isChecked()) Preferences::insert("DialogCreateMirrorElementsAxis", 0);

@@ -101,7 +101,7 @@ void DialogCreateTestingDrivers::loadPreferences()
 
 void DialogCreateTestingDrivers::savePreferences()
 {
-    Preferences::insert("DialogCreateTestingDriversEditorFont", m_editorFont);
+    Preferences::insert("DialogCreateTestingDriversEditorFont", QVariant::fromValue(m_editorFont));
     Preferences::insert("DialogCreateTestingDriversSuffix", ui->lineEditSuffix->text());
     Preferences::insert("DialogCreateTestingDriversActivationTime", ui->lineEditActivationTime->value());
     Preferences::insert("DialogCreateTestingDriversActivationValue", ui->lineEditActivationValue->value());

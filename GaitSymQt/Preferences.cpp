@@ -39,7 +39,7 @@ void Preferences::Read()
     m_settings = ImportData(xmlData);
     if (m_settings.size() == 0) // could use other sorts of error checking here - perhaps a unique code in the settings file that needs to match the subversion
     {
-        qDebug() << "Error reading preferences from \"" << fileName() << "\"\n";
+        qDebug() << "Error reading preferences from" << fileName();
         m_settings = defaultSettings;
     }
     // but sometimes the saved settings need to be corrected by the default settings e.g. as a result of a version change
@@ -48,6 +48,7 @@ void Preferences::Read()
         auto it = m_settings.find(defaultIt.key());
         if (it == m_settings.end())
         {
+            qDebug() << "Error reading preferences from" << fileName() << "key" << defaultIt.key() << "missing so set to" << defaultIt.value().value;
             m_settings[defaultIt.key()] = defaultIt.value();
         }
         else
@@ -59,6 +60,7 @@ void Preferences::Read()
             it.value().display = defaultIt.value().display;
             if (it.value().type != defaultIt.value().type)
             {
+                qDebug() << "Error reading preferences from" << fileName() << "key" << defaultIt.key() << "type mismatch so set to" << defaultIt.value().value;
                 it.value().type = defaultIt.value().type;
                 it.value().value = defaultIt.value().value;
             }
@@ -188,6 +190,7 @@ QMap<QString, SettingsItem> Preferences::ParseQDomElement(const QDomElement &doc
         return settings;
     }
 
+    QFont font;
     SettingsItem item;
     QDomNode n = docElem.firstChild();
     while (!n.isNull())
@@ -220,8 +223,10 @@ QMap<QString, SettingsItem> Preferences::ParseQDomElement(const QDomElement &doc
                     item.defaultValue = QColor(e.attribute("defaultValue"));
                     break;
                 case QMetaType::QFont:
-                    item.value = QFont().fromString(e.attribute("value"));
-                    item.defaultValue = QFont().fromString(e.attribute("defaultValue"));
+                    font.fromString(e.attribute("value"));
+                    item.value = QVariant::fromValue(font);
+                    font.fromString(e.attribute("defaultValue"));
+                    item.defaultValue = QVariant::fromValue(font);
                     break;
                 case QMetaType::QVector2D:
                     {

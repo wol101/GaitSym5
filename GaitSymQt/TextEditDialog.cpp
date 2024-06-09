@@ -126,7 +126,7 @@ void TextEditDialog::savePreferences()
 {
     Preferences::insert("TextEditDialogCaseSensitiveSearch", ui->checkBoxCaseSensitive->isChecked());
     Preferences::insert("TextEditDialogRegularExpressionSearch", ui->checkBoxRegularExpression->isChecked());
-    Preferences::insert("TextEditDialogEditorFont", m_editorFont);
+    Preferences::insert("TextEditDialogEditorFont", QVariant::fromValue(m_editorFont));
     Preferences::insert("TextEditDialogFind", ui->lineEditFind->text());
     Preferences::insert("TextEditDialogReplace", ui->lineEditReplace->text());
     Preferences::insert("TextEditDialogAttributeMachineCode", attributeMachineSaveToString());

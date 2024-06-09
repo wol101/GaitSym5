@@ -55,7 +55,7 @@ void DialogInfo::loadPreferences()
 
 void DialogInfo::savePreferences()
 {
-    Preferences::insert("DialogInfoEditorFont", m_editorFont);
+    Preferences::insert("DialogInfoEditorFont", QVariant::fromValue(m_editorFont));
     Preferences::insert("DialogInfoGeometry", saveGeometry());
 }
 

@@ -607,6 +607,10 @@ void MainWindow::setInterfaceValues()
 
 void MainWindow::writeSettings()
 {
+    Preferences::insert("CameraVecX", double(m_simulationWidget->cameraVecX()));
+    Preferences::insert("CameraVecY", double(m_simulationWidget->cameraVecY()));
+    Preferences::insert("CameraVecZ", double(m_simulationWidget->cameraVecZ()));
+
     Preferences::insert("MainWindowGeometry", saveGeometry());
     Preferences::insert("MainWindowState", saveState());
     Preferences::insert("MainWindowSplitter1State", ui->splitter1->saveState());

@@ -100,7 +100,7 @@ void DialogRename::savePreferences()
     Preferences::insert("DialogRenameCaseSensitiveSearch", ui->checkBoxCaseSensitive->isChecked());
     Preferences::insert("DialogRenameRegularExpressionSearch", ui->checkBoxRegularExpression->isChecked());
     Preferences::insert("DialogRenameWholeWordSearch", ui->checkBoxWholeWord->isChecked());
-    Preferences::insert("DialogRenameEditorFont", m_editorFont);
+    Preferences::insert("DialogRenameEditorFont", QVariant::fromValue(m_editorFont));
     Preferences::insert("DialogRenameFrom", ui->lineEditFrom->text());
     Preferences::insert("DialogRenameTo", ui->lineEditTo->text());
     Preferences::insert("DialogRenameGeometry", saveGeometry());

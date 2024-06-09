@@ -1077,6 +1077,7 @@ void SimulationWidget::SetCameraVec(double x, double y, double z)
 
 void SimulationWidget::SetCameraVec(float x, float y, float z)
 {
+    qDebug() << "SimulationWidget::SetCameraVec(float x, float y, float z)" << x << y << z;
     m_cameraVecX = x;
     m_cameraVecY = y;
     m_cameraVecZ = z;
@@ -1780,11 +1781,13 @@ void SimulationWidget::setFOV(float FOV)
 
 float SimulationWidget::cameraVecX() const
 {
+     qDebug() << "SimulationWidget::cameraVecX() " << m_cameraVecX;
     return m_cameraVecX;
 }
 
 void SimulationWidget::setCameraVecX(float cameraVecX)
 {
+    qDebug() << "SimulationWidget::setCameraVecX(float cameraVecX) " << cameraVecX;
     m_cameraVecX = cameraVecX;
 }
 
