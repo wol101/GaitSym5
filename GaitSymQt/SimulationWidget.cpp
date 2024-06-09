@@ -91,7 +91,7 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-    if (!m_renderer)
+    if (!m_renderer || m_renderer->shadowMap().enabled != m_shadows)
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
         m_renderer->shadowMap().enabled = m_shadows;
@@ -193,12 +193,6 @@ void SimulationWidget::paintGL()
     else
     {
         m_scene->overrideMaterial = nullptr;
-    }
-
-    if (m_shadows != m_renderer->shadowMap().enabled)
-    {
-        m_renderer->shadowMap().enabled = m_shadows; // the materials now need a manual update
-        m_scene->traverseType<threepp::Material>( [](threepp::Material& m) { m.needsUpdate(); } );
     }
 
     // and render
