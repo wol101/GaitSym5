@@ -219,13 +219,13 @@ void Simulation::UpdateSimulation()
         bool matchScoreValid = it.second->calculateMatchValue(m_SimulationTime, &matchScore);
         if (matchScoreValid)
         {
-            m_KinematicMatchFitness += matchScore;
+            m_TargetMatchFitness += matchScore;
             if (matchScore < minScore) minScore = matchScore;
             if (matchScore > maxScore) maxScore = matchScore;
         }
     }
-    if (minScore < std::numeric_limits<double>::infinity()) m_KinematicMatchMaxiMinFitness += minScore;
-    if (maxScore > -std::numeric_limits<double>::infinity()) m_KinematicMatchMiniMaxFitness += maxScore;
+    if (minScore < std::numeric_limits<double>::infinity()) m_TargetMatchMaxiMinFitness += minScore;
+    if (maxScore > -std::numeric_limits<double>::infinity()) m_TargetMatchMiniMaxFitness += maxScore;
 
     // now start the actual simulation
 
@@ -445,14 +445,14 @@ double Simulation::CalculateInstantaneousFitness()
 {
     switch (m_global->fitnessType())
     {
-    case Global::KinematicMatch:
-        return m_KinematicMatchFitness;
+    case Global::TargetMatch:
+        return m_TargetMatchFitness;
 
-    case Global::KinematicMatchMiniMax:
-        return m_KinematicMatchMiniMaxFitness;
+    case Global::TargetMatchMiniMax:
+        return m_TargetMatchMiniMaxFitness;
 
-    case Global::KinematicMatchMaxiMin:
-        return m_KinematicMatchMaxiMinFitness;
+    case Global::TargetMatchMaxiMin:
+        return m_TargetMatchMaxiMinFitness;
     }
     return 0;
 }

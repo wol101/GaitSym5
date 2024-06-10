@@ -177,8 +177,8 @@ private:
     double m_MetabolicEnergy = 0;
 
     // FitnessType
-    double m_KinematicMatchMiniMaxFitness = 0;
-    double m_KinematicMatchMaxiMinFitness = 0;
+    double m_TargetMatchMiniMaxFitness = 0;
+    double m_TargetMatchMaxiMinFitness = 0;
 
     // some control values
     bool m_OutputModelStateOccured = false;
@@ -195,7 +195,7 @@ private:
     int m_numericalErrorCount = 0;
 
     // for fitness calculations
-    double m_KinematicMatchFitness = 0;
+    double m_TargetMatchFitness = 0;
 
     // values for energy partition
     double m_PositiveMechanicalWork = 0;

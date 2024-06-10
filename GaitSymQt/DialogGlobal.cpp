@@ -168,11 +168,11 @@ void DialogGlobal::updateUI(const GaitSym::Global *globalPtr)
     if (m_existingBodies == nullptr || m_existingBodies->size() == 0)
     {
         // disable incompatible items
-        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(ui->comboBoxFitnessType->model());
-        Q_ASSERT_X(model != nullptr, "DialogGlobal::lateInitialise", "qobject_cast<QStandardItemModel *> failed");
-        bool disabled = true;
-        QStandardItem *item = model->item(int(GaitSym::Global::KinematicMatch));
-        item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled : item->flags() | Qt::ItemIsEnabled);
+        // QStandardItemModel *model = qobject_cast<QStandardItemModel *>(ui->comboBoxFitnessType->model());
+        // Q_ASSERT_X(model != nullptr, "DialogGlobal::lateInitialise", "qobject_cast<QStandardItemModel *> failed");
+        // bool disabled = true;
+        // QStandardItem *item = model->item(int(GaitSym::Global::KinematicMatch));
+        // item->setFlags(disabled ? item->flags() & ~Qt::ItemIsEnabled : item->flags() | Qt::ItemIsEnabled);
     }
 
     {

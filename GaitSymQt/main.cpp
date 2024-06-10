@@ -80,9 +80,9 @@ int main(int argc, char *argv[])
             application.setStyle(QStyleFactory::create("Fusion"));
             break;
         }
-        if (styleCode == 1 && styles.contains("Windows", Qt::CaseInsensitive))
+        if (styleCode == 1 && styles.contains("windows11", Qt::CaseInsensitive))
         {
-            application.setStyle(QStyleFactory::create("Windows"));
+            application.setStyle(QStyleFactory::create("macOS"));
             break;
         }
         if (styleCode == 2 && styles.contains("windowsvista", Qt::CaseInsensitive))
@@ -90,14 +90,20 @@ int main(int argc, char *argv[])
             application.setStyle(QStyleFactory::create("windowsvista"));
             break;
         }
-        if (styleCode == 2 && styles.contains("gtk", Qt::CaseInsensitive))
+        if (styleCode == 3 && styles.contains("Windows", Qt::CaseInsensitive))
+        {
+            application.setStyle(QStyleFactory::create("Windows"));
+            break;
+        }
+        if (styleCode == 4 && styles.contains("gtk", Qt::CaseInsensitive))
         {
             application.setStyle(QStyleFactory::create("gtk"));
-
+            break;
         }
-        if (styleCode == 2 && styles.contains("macOS", Qt::CaseInsensitive))
+        if (styleCode == 5 && styles.contains("macOS", Qt::CaseInsensitive))
         {
             application.setStyle(QStyleFactory::create("macOS"));
+            break;
         }
         break;
     }

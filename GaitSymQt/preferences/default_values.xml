@@ -28,7 +28,7 @@
         display="1"
         key="StyleCode"
         label="Style Code"
-        maximumValue="2"
+        maximumValue="5"
         minimumValue="0"
         order="0"
         path="0"
