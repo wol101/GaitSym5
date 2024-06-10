@@ -172,46 +172,47 @@ void Simulation::UpdateSimulation()
         switch (m_global->physicsEngine())
         {
         case Global::PhysicsEngine::ODE:
-        {
-            m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
-            err = m_physicsEngine->Initialise(this);
-            if (err)
             {
-                std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << *err << "\n";
-                m_SimulationError = true;
-                return;
+                m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
+                err = m_physicsEngine->Initialise(this);
+                if (err)
+                {
+                    std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << *err << "\n";
+                    m_SimulationError = true;
+                    return;
+                }
+                break;
             }
-            break;
-        }
         case Global::PhysicsEngine::PhysX:
-        {
-            m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
-            err = m_physicsEngine->Initialise(this);
-            if (err)
             {
-                std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << *err << "\n";
-                m_SimulationError = true;
-                return;
+                m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
+                err = m_physicsEngine->Initialise(this);
+                if (err)
+                {
+                    std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << *err << "\n";
+                    m_SimulationError = true;
+                    return;
+                }
+                break;
             }
-            break;
-        }
         case Global::PhysicsEngine::MuJoCo:
-        {
-            m_physicsEngine = std::make_unique<MuJoCoPhysicsEngine>();
-            err = m_physicsEngine->Initialise(this);
-            if (err)
             {
-                std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << *err << "\n";
-                m_SimulationError = true;
-                return;
+                m_physicsEngine = std::make_unique<MuJoCoPhysicsEngine>();
+                err = m_physicsEngine->Initialise(this);
+                if (err)
+                {
+                    std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << *err << "\n";
+                    m_SimulationError = true;
+                    return;
+                }
+                break;
             }
-            break;
-        }
         }
     }
 
     // start by updating the scores
     double minScore = std::numeric_limits<double>::infinity();
+    double maxScore = -std::numeric_limits<double>::infinity();
     for (auto &&it : m_DataTargetList)
     {
         double matchScore;
@@ -219,12 +220,12 @@ void Simulation::UpdateSimulation()
         if (matchScoreValid)
         {
             m_KinematicMatchFitness += matchScore;
-            if (matchScore < minScore)
-                minScore = matchScore;
+            if (matchScore < minScore) minScore = matchScore;
+            if (matchScore > maxScore) maxScore = matchScore;
         }
     }
-    if (minScore < std::numeric_limits<double>::infinity())
-        m_KinematicMatchMiniMaxFitness += minScore;
+    if (minScore < std::numeric_limits<double>::infinity()) m_KinematicMatchMaxiMinFitness += minScore;
+    if (maxScore > -std::numeric_limits<double>::infinity()) m_KinematicMatchMiniMaxFitness += maxScore;
 
     // now start the actual simulation
 
@@ -449,6 +450,9 @@ double Simulation::CalculateInstantaneousFitness()
 
     case Global::KinematicMatchMiniMax:
         return m_KinematicMatchMiniMaxFitness;
+
+    case Global::KinematicMatchMaxiMin:
+        return m_KinematicMatchMaxiMinFitness;
     }
     return 0;
 }

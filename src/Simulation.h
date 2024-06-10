@@ -178,6 +178,7 @@ private:
 
     // FitnessType
     double m_KinematicMatchMiniMaxFitness = 0;
+    double m_KinematicMatchMaxiMinFitness = 0;
 
     // some control values
     bool m_OutputModelStateOccured = false;
