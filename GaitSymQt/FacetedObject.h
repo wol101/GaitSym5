@@ -97,6 +97,7 @@ public:
     void ApplyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
     void ApplyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
     void CalculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor);
+    void UpdateBoundingBox();
 
     pgd::Vector3 lowerBound() const;
     pgd::Vector3 upperBound() const;

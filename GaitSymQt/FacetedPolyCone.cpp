@@ -21,7 +21,7 @@ FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, co
     glEmulator.clear();
     glEmulator.reserve(nSides * (vertexList.size() * 2 + 2));
     gleSetNumSides(int(nSides));
-    gleSetJoinStyle(TUBE_JN_ROUND | TUBE_JN_CAP | TUBE_NORM_PATH_EDGE | TUBE_CONTOUR_CLOSED); // TUBE_JN_ROUND is pretty but TUBE_JN_ANGLE is probably quicker
+    gleSetJoinStyle(TUBE_JN_ANGLE | TUBE_JN_CAP | TUBE_NORM_PATH_EDGE | TUBE_CONTOUR_CLOSED); // TUBE_JN_ROUND is pretty but TUBE_JN_ANGLE is probably quicker
     size_t nPoints = vertexList.size() + 2;
     auto pointArray = std::make_unique<gleDouble[][3]>(nPoints);
     auto colourArray = std::make_unique<gleColor[]>(nPoints);
@@ -44,6 +44,6 @@ FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, co
     pointArray[index][0] = suffix.x; pointArray[index][1] = suffix.y; pointArray[index][2] = suffix.z;
     colourArray[index][0] = vertexColours.back()[0]; colourArray[index][1] = vertexColours.back()[1]; colourArray[index][2] = vertexColours.back()[2];
     radiusArray[index] = radiusList.back();
-    glePolyCone(nPoints, pointArray.get(), colourArray.get(), radiusArray.get());
+    glePolyCone(int(nPoints), pointArray.get(), colourArray.get(), radiusArray.get());
     RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
 }

@@ -2125,6 +2125,7 @@ void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::
         m_uvList.reserve(m_uvList.size() + uvList->size());
         m_uvList.insert(m_uvList.end(), uvList->begin(), uvList->end());
     }
+    UpdateBoundingBox();
 }
 
 void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList)
@@ -2149,6 +2150,7 @@ void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexLi
         m_uvList.reserve(m_uvList.size() + uvList->size() * 2);
         for (auto &&i : *uvList) { for (auto &&j : i) { m_uvList.push_back(j); } }
     }
+    UpdateBoundingBox();
 }
 
 void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList)
@@ -2173,8 +2175,27 @@ void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexLi
         m_uvList.reserve(m_uvList.size() + uvList->size() * 2);
         for (auto &&i : *uvList) { for (auto &&j : i) { m_uvList.push_back(j); } }
     }
+    UpdateBoundingBox();
 }
 
+void FacetedObject::UpdateBoundingBox()
+{
+    m_lowerBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
+    m_upperBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
+    double *ptr = m_vertexList.data();
+    for (size_t i = 0; i < m_vertexList.size(); i += 3)
+    {
+        if (*ptr < m_lowerBound.x) m_lowerBound.x = *ptr;
+        if (*ptr > m_upperBound.x) m_upperBound.x = *ptr;
+        ++ptr;
+        if (*ptr < m_lowerBound.y) m_lowerBound.y = *ptr;
+        if (*ptr > m_upperBound.y) m_upperBound.y = *ptr;
+        ++ptr;
+        if (*ptr < m_lowerBound.z) m_lowerBound.z = *ptr;
+        if (*ptr > m_upperBound.z) m_upperBound.z = *ptr;
+        ++ptr;
+    }
+}
 
 // modified from
 // Möller–Trumbore intersection algorithm
