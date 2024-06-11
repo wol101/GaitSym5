@@ -48,6 +48,7 @@ private:
 
     void DecodeTriangleStrip();
     void DecodePolygon();
+    bool TestConvex();
 
     static void makeIdentity(double m[16]);
     static void normalize(double v[3]);

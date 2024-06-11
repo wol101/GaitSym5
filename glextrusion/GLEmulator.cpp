@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <iostream>
 
 GLEmulator glEmulator;
 
@@ -244,9 +245,44 @@ void GLEmulator::DecodePolygon() // note that this version only copes with conve
         ++b;
         ++c;
     }
+#ifndef NDEBUG
+    if (TestConvex())
+    {
+        std::cerr << "Warning: polygon is not convex\n";
+    }
+#endif
     m_polygonColours.clear();
     m_polygonNormals.clear();
     m_polygonVertices.clear();
+}
+
+bool GLEmulator::TestConvex() // this version does not work if the polygon is self intersection (e.g. a pentagram)
+{
+    double dx1, dy1, dx2, dy2, zcrossproduct1, zcrossproduct2;
+    dx1 = m_polygonVertices[m_polygonVertices.size()-1][0] - m_polygonVertices[m_polygonVertices.size()-2][0];
+    dy1 = m_polygonVertices[m_polygonVertices.size()-1][1] - m_polygonVertices[m_polygonVertices.size()-2][1];
+    dx2 = m_polygonVertices[0][0] - m_polygonVertices[m_polygonVertices.size()-1][0];
+    dy2 = m_polygonVertices[0][1] - m_polygonVertices[m_polygonVertices.size()-1][1];
+    zcrossproduct1 = dx1*dy2 - dy1*dx2;
+    dx1 = m_polygonVertices[0][0] - m_polygonVertices[m_polygonVertices.size()-1][0];
+    dy1 = m_polygonVertices[0][1] - m_polygonVertices[m_polygonVertices.size()-1][1];
+    dx2 = m_polygonVertices[1][0] - m_polygonVertices[0][0];
+    dy2 = m_polygonVertices[1][1] - m_polygonVertices[0][1];
+    zcrossproduct2 = dx1*dy2 - dy1*dx2;
+    if (zcrossproduct1 * zcrossproduct2 < 0 )
+        return false; // this means the sign is different and therefore the polygon is convex
+    for (size_t i = 0; i < m_polygonVertices.size() - 2; i++)
+    {
+        zcrossproduct1 = zcrossproduct2;
+        dx1 = m_polygonVertices[i+1][0] - m_polygonVertices[i][0];
+        dy1 = m_polygonVertices[i+1][1] - m_polygonVertices[i][1];
+        dx2 = m_polygonVertices[i+2][0] - m_polygonVertices[i+1][0];
+        dy2 = m_polygonVertices[i+2][1] - m_polygonVertices[i+1][1];
+        zcrossproduct2 = dx1*dy2 - dy1*dx2;
+        if (zcrossproduct1 * zcrossproduct2 < 0 )
+            return false;
+    }
+    return true;
 }
 
 void GLEmulator::makeIdentity(double m[16])

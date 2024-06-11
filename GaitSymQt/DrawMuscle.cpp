@@ -331,15 +331,15 @@ void DrawMuscle::Fusiform()
             double volume, a;
             switch (m_muscleDrawStyle)
             {
-            case VolumeCylinder:
+            case VolumeFusiform:
                 volume = 2 * M_PI * maMuscle->pca() * maMuscle->fibreLength() /  maMuscle->GetLength();
                 a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
                 break;
-            case AreaCylinder:
+            case AreaFusiform:
                 volume = 2 * M_PI * maMuscle->pca();
                 a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
                 break;
-            case FixedCylinder:
+            case FixedFusiform:
                 a = m_strapRadius;
                 break;
             default:
