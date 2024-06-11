@@ -12,10 +12,15 @@
 
 #include "FacetedObject.h"
 
+#include "PGDMath.h"
+
+#include <vector>
+#include <array>
+
 class FacetedPolyCone : public FacetedObject
 {
 public:
-    FacetedPolyCone();
+    FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, const std::vector<std::array<float, 3>> &vertexColours, const std::vector<double> &radiusList, size_t nSides, const QColor &blendColour, double blendFraction);
 };
 
 #endif // FACETEDPOLYCONE_H

@@ -14,37 +14,36 @@
 
 extern GLEmulator glEmulator;
 
-FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, const vector<std::array<float, 3>> &vertexColours, const std::vector<double> &radiusList, size_t nFacets, const QColor &blendColour, double blendFraction)
+FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, const std::vector<std::array<float, 3>> &vertexColours, const std::vector<double> &radiusList, size_t nSides, const QColor &blendColour, double blendFraction)
 {
     setBlendColour(blendColour, blendFraction);
 
     glEmulator.clear();
-    glEmulator.reserve(n * (polyline->size() * 2 + 2));
-    gleSetNumSides(int(n));
+    glEmulator.reserve(nSides * (vertexList.size() * 2 + 2));
+    gleSetNumSides(int(nSides));
     gleSetJoinStyle(TUBE_JN_ROUND | TUBE_JN_CAP | TUBE_NORM_PATH_EDGE | TUBE_CONTOUR_CLOSED); // TUBE_JN_ROUND is pretty but TUBE_JN_ANGLE is probably quicker
-
-    size_t nPoints = polyline->size() + 2;
-    auto point_array = std::make_unique<gleDouble[][3]>(nPoints);
-    auto color_array = std::make_unique<gleColor[]>(nPoints);
-    pgd::Vector3 v0 = (*polyline)[1] - (*polyline)[0];
-    pgd::Vector3 v1 = (*polyline)[0] - v0;
-    point_array[0][0] = v1.x; point_array[0][1] = v1.y; point_array[0][2] = v1.z;
-    for (size_t i = 1 ; i < nPoints - 1; i++) { point_array[i][0] = (*polyline)[i - 1].x; point_array[i][1] = (*polyline)[i - 1].y; point_array[i][2] = (*polyline)[i - 1].z; }
-    v0 = (*polyline)[polyline->size() - 1] - (*polyline)[polyline->size() - 2];
-    v1 = (*polyline)[polyline->size() - 1] + v0;
-    point_array[nPoints - 1][0] = v1.x; point_array[nPoints - 1][1] = v1.y; point_array[nPoints - 1][2] = v1.z;
-    float r = blendColour.redF();
-    float g = blendColour.greenF();
-    float b = blendColour.blueF();
-    for (size_t i = 0 ; i < nPoints; i++) { color_array[i][0] = r; color_array[i][1] = g; color_array[i][2] = b; }
-    glePolyCylinder(int(nPoints),           /* num points in polyline */
-                                  point_array.get(),      /* polyline vertces */
-                    color_array.get(),      /* colors at polyline verts */
-                    radius);                /* radius of polycylinder */
+    size_t nPoints = vertexList.size() + 2;
+    auto pointArray = std::make_unique<gleDouble[][3]>(nPoints);
+    auto colourArray = std::make_unique<gleColor[]>(nPoints);
+    auto radiusArray = std::make_unique<gleDouble[]>(nPoints);
+    size_t index = 0;
+    // need to create an extra vertex at the begining and end because it is used to define the normal to the end cap
+    pgd::Vector3 prefix = vertexList[0] - (vertexList[1] - vertexList[0]);
+    pgd::Vector3 suffix = vertexList[nPoints - 1] + (vertexList[nPoints - 1] - vertexList[nPoints - 2]);
+    pointArray[index][0] = prefix.x; pointArray[index][1] = prefix.y; pointArray[index][2] = prefix.z;
+    colourArray[index][0] = vertexColours[0][0]; colourArray[index][1] = vertexColours[0][1]; colourArray[index][2] = vertexColours[0][2];
+    radiusArray[index] = radiusList[0];
+    ++index;
+    for (size_t i = 0 ; i < vertexList.size(); i++)
+    {
+        pointArray[index][0] = vertexList[i].x; pointArray[index][1] = vertexList[i].y; pointArray[index][2] = vertexList[i].z;
+        colourArray[index][0] = vertexColours[i][0]; colourArray[index][1] = vertexColours[i][1]; colourArray[index][2] = vertexColours[i][2];
+        radiusArray[index] = radiusList[i];
+        ++index;
+    }
+    pointArray[index][0] = suffix.x; pointArray[index][1] = suffix.y; pointArray[index][2] = suffix.z;
+    colourArray[index][0] = vertexColours.back()[0]; colourArray[index][1] = vertexColours.back()[1]; colourArray[index][2] = vertexColours.back()[2];
+    radiusArray[index] = radiusList.back();
+    glePolyCone(nPoints, pointArray.get(), colourArray.get(), radiusArray.get());
     RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
-
-    void glePolyCone (int npoints,	 /* numpoints in poly-line */
-                     gleDouble point_array[][3],	/* polyline vertices */
-                     float color_array[][3],	/* colors at polyline verts */
-                     gleDouble radius_array[]); /* cone radii at polyline verts */
 }

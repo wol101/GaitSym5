@@ -622,7 +622,9 @@ void MainWindow::writeSettings()
 
 void MainWindow::setStatusString(const QString &s, int logLevel)
 {
-    statusBar()->showMessage(s);
+    QStringList lines = s.split("\n", Qt::SkipEmptyParts);
+    if (lines.size() == 0) { statusBar()->showMessage(s); }
+    else { statusBar()->showMessage(lines[0]); }
     statusBar()->repaint();
     if (logLevel <= m_logLevel) log(s);
 }

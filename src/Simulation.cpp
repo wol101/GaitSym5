@@ -445,13 +445,13 @@ double Simulation::CalculateInstantaneousFitness()
 {
     switch (m_global->fitnessType())
     {
-    case Global::TargetMatch:
+    case Global::TargetSum:
         return m_TargetMatchFitness;
 
-    case Global::TargetMatchMiniMax:
+    case Global::TargetMiniMax:
         return m_TargetMatchMiniMaxFitness;
 
-    case Global::TargetMatchMaxiMin:
+    case Global::TargetMaxiMin:
         return m_TargetMatchMaxiMinFitness;
     }
     return 0;

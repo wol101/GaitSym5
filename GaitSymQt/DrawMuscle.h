@@ -63,7 +63,6 @@ public:
     QColor strapCylinderColor() const;
     void setStrapCylinderColor(const QColor &strapCylinderColor);
 
-
     GaitSym::Colour::ColourMap strapColourMap() const;
     void setStrapColourMap(const GaitSym::Colour::ColourMap &strapColourMap);
 
@@ -87,6 +86,9 @@ private:
     QColor m_strapColor;
     QColor m_strapCylinderColor;
     GaitSym::Colour::ColourMap m_strapColourMap = GaitSym::Colour::ColourMap::JetColourMap;
+    size_t m_strapNumSections = 0;
+    std::vector<pgd::Vector3> m_polyline;
+
 };
 
 #endif // DRAWMUSCLE_H

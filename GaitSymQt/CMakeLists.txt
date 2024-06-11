@@ -122,6 +122,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/FacetedCheckerboard.cpp
     ../GaitSymQt/FacetedConicSegment.cpp
     ../GaitSymQt/FacetedObject.cpp
+    ../GaitSymQt/FacetedPolyCone.cpp
     ../GaitSymQt/FacetedPolyline.cpp
     ../GaitSymQt/FacetedRect.cpp
     ../GaitSymQt/FacetedSphere.cpp
@@ -1285,6 +1286,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/FacetedCheckerboard.h
     ../GaitSymQt/FacetedConicSegment.h
     ../GaitSymQt/FacetedObject.h
+    ../GaitSymQt/FacetedPolyCone.h
     ../GaitSymQt/FacetedPolyline.h
     ../GaitSymQt/FacetedRect.h
     ../GaitSymQt/FacetedSphere.h

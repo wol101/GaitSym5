@@ -60,22 +60,22 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
         gleSetJoinStyle(TUBE_JN_ROUND | TUBE_JN_CAP | TUBE_NORM_PATH_EDGE | TUBE_CONTOUR_CLOSED); // TUBE_JN_ROUND is pretty but TUBE_JN_ANGLE is probably quicker
 
         size_t nPoints = polyline->size() + 2;
-        auto point_array = std::make_unique<gleDouble[][3]>(nPoints);
-        auto color_array = std::make_unique<gleColor[]>(nPoints);
+        auto pointArray = std::make_unique<gleDouble[][3]>(nPoints);
+        auto colourArray = std::make_unique<gleColor[]>(nPoints);
         pgd::Vector3 v0 = (*polyline)[1] - (*polyline)[0];
         pgd::Vector3 v1 = (*polyline)[0] - v0;
-        point_array[0][0] = v1.x; point_array[0][1] = v1.y; point_array[0][2] = v1.z;
-        for (size_t i = 1 ; i < nPoints - 1; i++) { point_array[i][0] = (*polyline)[i - 1].x; point_array[i][1] = (*polyline)[i - 1].y; point_array[i][2] = (*polyline)[i - 1].z; }
+        pointArray[0][0] = v1.x; pointArray[0][1] = v1.y; pointArray[0][2] = v1.z;
+        for (size_t i = 1 ; i < nPoints - 1; i++) { pointArray[i][0] = (*polyline)[i - 1].x; pointArray[i][1] = (*polyline)[i - 1].y; pointArray[i][2] = (*polyline)[i - 1].z; }
         v0 = (*polyline)[polyline->size() - 1] - (*polyline)[polyline->size() - 2];
         v1 = (*polyline)[polyline->size() - 1] + v0;
-        point_array[nPoints - 1][0] = v1.x; point_array[nPoints - 1][1] = v1.y; point_array[nPoints - 1][2] = v1.z;
+        pointArray[nPoints - 1][0] = v1.x; pointArray[nPoints - 1][1] = v1.y; pointArray[nPoints - 1][2] = v1.z;
         float r = blendColour.redF();
         float g = blendColour.greenF();
         float b = blendColour.blueF();
-        for (size_t i = 0 ; i < nPoints; i++) { color_array[i][0] = r; color_array[i][1] = g; color_array[i][2] = b; }
+        for (size_t i = 0 ; i < nPoints; i++) { colourArray[i][0] = r; colourArray[i][1] = g; colourArray[i][2] = b; }
         glePolyCylinder(int(nPoints),           /* num points in polyline */
-                        point_array.get(),      /* polyline vertces */
-                        color_array.get(),      /* colors at polyline verts */
+                        pointArray.get(),      /* polyline vertces */
+                        colourArray.get(),      /* colors at polyline verts */
                         radius);                /* radius of polycylinder */
         RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
     }

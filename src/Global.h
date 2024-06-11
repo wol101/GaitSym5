@@ -28,7 +28,7 @@ public:
     Global();
 
     SMART_ENUM(StepType, stepTypeStrings, stepTypeCount, World, Quick);
-    SMART_ENUM(FitnessType, fitnessTypeStrings, fitnessTypeCount, TargetMatch, TargetMatchMiniMax, TargetMatchMaxiMin);
+    SMART_ENUM(FitnessType, fitnessTypeStrings, fitnessTypeCount, TargetSum, TargetMiniMax, TargetMaxiMin);
     SMART_ENUM(PhysicsEngine, physicsEngineTypeStrings, physicsEngineTypeCount, ODE, PhysX, MuJoCo);
 
     virtual std::string *createFromAttributes() override;
@@ -109,7 +109,7 @@ public:
     void setNumericalErrorsScore(double NumericalErrorsScore);
 
 private:
-    FitnessType m_FitnessType = TargetMatch;
+    FitnessType m_FitnessType = TargetSum;
     StepType m_StepType = World;
     PhysicsEngine m_PhysicsEngine = ODE;
     bool m_AllowConnectedCollisions = false;

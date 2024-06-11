@@ -939,6 +939,16 @@
         path="0"
         type="int"
         value="16" />
+    <SETTING defaultValue="16"
+        display="1"
+        key="StrapSections"
+        label="Muscle strap section count"
+        maximumValue="1000"
+        minimumValue="3"
+        order="4"
+        path="0"
+        type="int"
+        value="16" />
     <SETTING defaultValue="4"
         display="1"
         key="StrapColourMap"

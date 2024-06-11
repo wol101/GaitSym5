@@ -80,7 +80,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
         polyLine.reserve(2);
         polyLine.push_back(pgd::Vector3(-halfLen, 0, 0));
         polyLine.push_back(pgd::Vector3(+halfLen, 0, 0));
-        m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1);
+        m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1, true);
         m_facetedObject1->setSimulationWidget(simulationWidget);
         m_facetedObjectList.push_back(m_facetedObject1.get());
         return;
@@ -93,10 +93,10 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
         polyLine.reserve(2);
         polyLine.push_back(pgd::Vector3(-halfLen, 0, 0));
         polyLine.push_back(pgd::Vector3(+halfLen, 0, 0));
-        m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1);
+        m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1, true);
         polyLine[0] = pgd::Vector3(0, -halfLen, 0);
         polyLine[1] = pgd::Vector3(0, +halfLen, 0);
-        m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1);
+        m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1, true);
         m_facetedObject1->setSimulationWidget(simulationWidget);
         m_facetedObject2->setSimulationWidget(simulationWidget);
         m_facetedObjectList.push_back(m_facetedObject1.get());
@@ -111,13 +111,13 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
         polyLine.reserve(2);
         polyLine.push_back(pgd::Vector3(-halfLen, 0, 0));
         polyLine.push_back(pgd::Vector3(+halfLen, 0, 0));
-        m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1);
+        m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1, true);
         polyLine[0] = pgd::Vector3(0, -halfLen, 0);
         polyLine[1] = pgd::Vector3(0, +halfLen, 0);
-        m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1);
+        m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1, true);
         polyLine[0] = pgd::Vector3(0, 0, -halfLen);
         polyLine[1] = pgd::Vector3(0, 0, +halfLen);
-        m_facetedObject3 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1);
+        m_facetedObject3 = std::make_unique<FacetedPolyline>(&polyLine, halfLen / 10, m_jointSegments, m_jointColor, 1, true);
         m_facetedObject1->setSimulationWidget(simulationWidget);
         m_facetedObject2->setSimulationWidget(simulationWidget);
         m_facetedObject3->setSimulationWidget(simulationWidget);
