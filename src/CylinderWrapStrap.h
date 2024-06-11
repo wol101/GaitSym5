@@ -64,14 +64,6 @@ private:
                      pgd::Vector3 &originForce, pgd::Vector3 &insertionForce, pgd::Vector3 &cylinderForce, pgd::Vector3 &cylinderForcePosition,
                      double *pathLength, std::vector<pgd::Vector3> *pathCoordinates);
 
-//    Body *m_originBody;
-//    pgd::Vector3 m_originPosition;
-//    Body *m_insertionBody;
-//    pgd::Vector3 m_insertionPosition;
-
-//    Body *m_cylinderBody;
-//    pgd::Vector3 m_cylinderPosition;
-//    pgd::Quaternion m_cylinderQuaternion;
     double m_cylinderRadius = 1;
     int m_numWrapSegments = 0;
 

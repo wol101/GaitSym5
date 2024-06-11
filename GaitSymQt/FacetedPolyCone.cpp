@@ -29,7 +29,7 @@ FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, co
     size_t index = 0;
     // need to create an extra vertex at the begining and end because it is used to define the normal to the end cap
     pgd::Vector3 prefix = vertexList[0] - (vertexList[1] - vertexList[0]);
-    pgd::Vector3 suffix = vertexList[nPoints - 1] + (vertexList[nPoints - 1] - vertexList[nPoints - 2]);
+    pgd::Vector3 suffix = vertexList[vertexList.size() - 1] + (vertexList[vertexList.size() - 1] - vertexList[vertexList.size() - 2]);
     pointArray[index][0] = prefix.x; pointArray[index][1] = prefix.y; pointArray[index][2] = prefix.z;
     colourArray[index][0] = vertexColours[0][0]; colourArray[index][1] = vertexColours[0][1]; colourArray[index][2] = vertexColours[0][2];
     radiusArray[index] = radiusList[0];

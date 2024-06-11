@@ -15,6 +15,7 @@
 #include "NPointStrap.h"
 #include "CylinderWrapStrap.h"
 #include "FacetedPolyline.h"
+#include "FacetedPolyCone.h"
 #include "PGDMath.h"
 #include "Preferences.h"
 #include "DampedSpringMuscle.h"
@@ -210,7 +211,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             // shape is a volume of rotation about the x axis of y=(a/2)(cos(x)+1) from -pi to +pi
             // volume is integral(pi*(a/2)(cos(x)+1)^2) which is (3*pi^2*a^2)/4
             // so a = (2*sqrt(volume))/(sqrt(3)*pi)
-            double volume = maMuscle->fibreLength() * maMuscle->pca();
+            double volume = 2 * M_PI * maMuscle->pca(); // this is normalised assuming the length is 2 pi
             double a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
             double delta = maMuscle->GetLength() / m_strapNumSections;
             double distance = 0;
@@ -230,9 +231,10 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
                 }
                 size_t subdivisions = int(std::ceil(vecLen / delta));
                 double newDelta = vecLen / subdivisions;
+                pgd::Vector3 newVec = vec / subdivisions;
                 for (size_t j = 0; j < subdivisions; j++)
                 {
-                    vertexList.push_back(m_polyline[i] + j * vec);
+                    vertexList.push_back(m_polyline[i] + j * newVec);
                     vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
                     double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
                     double radius = (a/2) * (std::cos(x)+1);
@@ -245,6 +247,9 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
             double radius = (a/2) * (std::cos(x)+1);
             radiusList.push_back(radius);
+            m_facetedObject1 = std::make_unique<FacetedPolyCone>(vertexList, vertexColours, radiusList, m_strapNumSegments, m_strapColor, 1.0);
+            m_facetedObject1->setSimulationWidget(simulationWidget);
+            m_facetedObjectList.push_back(m_facetedObject1.get());
         }
 
         qDebug() << "Error in DrawMuscle::initialise: Unsupported MUSCLE type";
