@@ -56,9 +56,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>-391</y>
               <width>194</width>
-              <height>854</height>
+              <height>884</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
@@ -417,28 +417,6 @@
                 <string>Display</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_2">
-                <item row="2" column="0">
-                 <widget class="QRadioButton" name="radioButtonTrackingY">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font/>
-                  </property>
-                  <property name="toolTip">
-                   <string>Display contact forces on the simulation</string>
-                  </property>
-                  <property name="statusTip">
-                   <string>Display contact forces</string>
-                  </property>
-                  <property name="text">
-                   <string>Tracking Y</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="5" column="0">
                  <widget class="QComboBox" name="comboBoxMeshDisplay">
                   <item>
@@ -478,8 +456,52 @@
                   </item>
                  </widget>
                 </item>
+                <item row="1" column="0">
+                 <widget class="QRadioButton" name="radioButtonTrackingX">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="font">
+                   <font/>
+                  </property>
+                  <property name="toolTip">
+                   <string>Move the centre of interest and camera with simulation</string>
+                  </property>
+                  <property name="statusTip">
+                   <string>Track the simulation</string>
+                  </property>
+                  <property name="text">
+                   <string>Tracking X</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="4" column="0">
                  <widget class="QComboBox" name="comboBoxTrackingMarker"/>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QRadioButton" name="radioButtonTrackingY">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="font">
+                   <font/>
+                  </property>
+                  <property name="toolTip">
+                   <string>Display contact forces on the simulation</string>
+                  </property>
+                  <property name="statusTip">
+                   <string>Display contact forces</string>
+                  </property>
+                  <property name="text">
+                   <string>Tracking Y</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="3" column="0">
                  <widget class="QRadioButton" name="radioButtonTrackingZ">
@@ -503,25 +525,13 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QRadioButton" name="radioButtonTrackingX">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font/>
-                  </property>
-                  <property name="toolTip">
-                   <string>Move the centre of interest and camera with simulation</string>
-                  </property>
-                  <property name="statusTip">
-                   <string>Track the simulation</string>
-                  </property>
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="radioButtonTrackingNone">
                   <property name="text">
-                   <string>Tracking X</string>
+                   <string>No Tracking</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -549,15 +559,8 @@
                   </item>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QRadioButton" name="radioButtonTrackingNone">
-                  <property name="text">
-                   <string>No Tracking</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
+                <item row="7" column="0">
+                 <widget class="QComboBox" name="comboBoxMuscleDraw"/>
                 </item>
                </layout>
               </widget>

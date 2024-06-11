@@ -47,6 +47,7 @@ DrawMuscle::DrawMuscle()
     m_strapCylinderColor = Preferences::valueQColor("StrapCylinderColour");
     m_strapColourMap = GaitSym::Colour::ColourMap(Preferences::valueInt("StrapColourMap"));
     m_strapNumSections = size_t(Preferences::valueInt("StrapSections"));
+    m_muscleDrawStyle = MuscleDrawStyle(Preferences::valueInt("MuscleDrawStyle"));
 }
 
 DrawMuscle::~DrawMuscle()
@@ -60,6 +61,7 @@ DrawMuscle::~DrawMuscle()
 void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 {
     if (!m_muscle) return;
+    m_simulationWidget = simulationWidget;
 
     GaitSym::Colour colour(m_muscle->GetStrap()->colour1());
     switch (m_muscle->strapColourControl())
@@ -101,8 +103,6 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     m_strapCylinderLength  = m_muscle->GetStrap()->size2();
     m_strapForceRadius  = m_muscle->size1();
     m_strapForceScale  = m_muscle->size2();
-
-
 
 
     while (true)
@@ -201,58 +201,17 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     }
 
     // the muscle visualisation depends on the type
-    std::vector<pgd::Vector3> vertexList;
-    std::vector<std::array<float, 3>> vertexColours;
-    std::vector<double> radiusList;
-    while (true)
+    switch (m_muscleDrawStyle)
     {
-        if (GaitSym::MAMuscle *maMuscle = dynamic_cast<GaitSym::MAMuscle *>(m_muscle))
-        {
-            // shape is a volume of rotation about the x axis of y=(a/2)(cos(x)+1) from -pi to +pi
-            // volume is integral(pi*(a/2)(cos(x)+1)^2) which is (3*pi^2*a^2)/4
-            // so a = (2*sqrt(volume))/(sqrt(3)*pi)
-            double volume = 2 * M_PI * maMuscle->pca(); // this is normalised assuming the length is 2 pi
-            double a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
-            double delta = maMuscle->GetLength() / m_strapNumSections;
-            double distance = 0;
-            for (size_t i = 0; i < m_polyline.size() - 1; i++)
-            {
-                pgd::Vector3 vec = m_polyline[i + 1] - m_polyline[i];
-                double vecLen = vec.Magnitude();
-                if (vecLen <= delta)
-                {
-                    vertexList.push_back(m_polyline[i]);
-                    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-                    double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
-                    double radius = (a/2) * (std::cos(x)+1);
-                    radiusList.push_back(radius);
-                    distance += vecLen;
-                    continue;
-                }
-                size_t subdivisions = int(std::ceil(vecLen / delta));
-                double newDelta = vecLen / subdivisions;
-                pgd::Vector3 newVec = vec / subdivisions;
-                for (size_t j = 0; j < subdivisions; j++)
-                {
-                    vertexList.push_back(m_polyline[i] + j * newVec);
-                    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-                    double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
-                    double radius = (a/2) * (std::cos(x)+1);
-                    radiusList.push_back(radius);
-                    distance += newDelta;
-                }
-            }
-            vertexList.push_back(m_polyline.back());
-            vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-            double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
-            double radius = (a/2) * (std::cos(x)+1);
-            radiusList.push_back(radius);
-            m_facetedObject1 = std::make_unique<FacetedPolyCone>(vertexList, vertexColours, radiusList, m_strapNumSegments, m_strapColor, 1.0);
-            m_facetedObject1->setSimulationWidget(simulationWidget);
-            m_facetedObjectList.push_back(m_facetedObject1.get());
-        }
-
-        qDebug() << "Error in DrawMuscle::initialise: Unsupported MUSCLE type";
+    case FixedCylinder:
+    case AreaCylinder:
+    case VolumeCylinder:
+        Cylinder();
+        break;
+    case FixedFusiform:
+    case AreaFusiform:
+    case VolumeFusiform:
+        Fusiform();
         break;
     }
 
@@ -290,6 +249,147 @@ void DrawMuscle::Draw()
     }
     m_muscle->setRedraw(false);
     m_muscle->GetStrap()->setRedraw(false);
+}
+
+void DrawMuscle::Cylinder()
+{
+    if (m_polyline.size() < 2) return;
+    double radius;
+    while (true)
+    {
+        if (m_muscleDrawStyle == FixedCylinder)
+        {
+            radius = m_strapRadius;
+            break;
+        }
+        if (GaitSym::MAMuscle *maMuscle = dynamic_cast<GaitSym::MAMuscle *>(m_muscle))
+        {
+            switch (m_muscleDrawStyle)
+            {
+            case VolumeCylinder:
+                radius = std::sqrt((maMuscle->pca() * maMuscle->fibreLength())/ (M_PI * maMuscle->GetLength()));
+                break;
+            case AreaCylinder:
+                radius = std::sqrt(maMuscle->pca()/ M_PI);
+                break;
+            default:
+                assert(false);
+                break;
+            }
+            break;
+        }
+        if (GaitSym::MAMuscleComplete *maMuscleComplete = dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle))
+        {
+            switch (m_muscleDrawStyle)
+            {
+            case VolumeCylinder:
+                radius = std::sqrt((maMuscleComplete->pca() * maMuscleComplete->fibreLength())/ (M_PI * maMuscleComplete->GetLength()));
+                break;
+            case AreaCylinder:
+                radius = std::sqrt(maMuscleComplete->pca()/ M_PI);
+                break;
+            default:
+                assert(false);
+            }
+            break;
+        }
+        if (GaitSym::DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle))
+        {
+            switch (m_muscleDrawStyle)
+            {
+            case VolumeCylinder:
+                radius = std::sqrt((dampedSpringMuscle->GetArea() * dampedSpringMuscle->GetUnloadedLength())/ (M_PI * dampedSpringMuscle->GetLength()));
+                break;
+            case AreaCylinder:
+                radius = std::sqrt(dampedSpringMuscle->GetArea()/ M_PI);
+                break;
+            default:
+                assert(false);
+            }
+            break;
+        }
+        break;
+    }
+    m_facetedObject1 = std::make_unique<FacetedPolyline>(&m_polyline, radius, m_strapNumSegments, m_strapColor, 1, false);
+    m_facetedObject1->setSimulationWidget(m_simulationWidget);
+    m_facetedObjectList.push_back(m_facetedObject1.get());
+}
+
+
+void DrawMuscle::Fusiform()
+{
+    std::vector<pgd::Vector3> vertexList;
+    std::vector<std::array<float, 3>> vertexColours;
+    std::vector<double> radiusList;
+    while (true)
+    {
+        if (GaitSym::MAMuscle *maMuscle = dynamic_cast<GaitSym::MAMuscle *>(m_muscle))
+        {
+            // shape is a volume of rotation about the x axis of y=(a/2)(cos(x)+1) from -pi to +pi
+            // volume is integral(pi*(a/2)(cos(x)+1)^2) which is (3*pi^2*a^2)/4
+            // so a = (2*sqrt(volume))/(sqrt(3)*pi)
+            double volume, a;
+            switch (m_muscleDrawStyle)
+            {
+            case VolumeCylinder:
+                volume = 2 * M_PI * maMuscle->pca() * maMuscle->fibreLength() /  maMuscle->GetLength();
+                a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
+                break;
+            case AreaCylinder:
+                volume = 2 * M_PI * maMuscle->pca();
+                a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
+                break;
+            case FixedCylinder:
+                a = m_strapRadius;
+                break;
+            default:
+                assert(false);
+                break;
+            }
+
+            double delta = maMuscle->GetLength() / m_strapNumSections;
+            double distance = 0;
+            for (size_t i = 0; i < m_polyline.size() - 1; i++)
+            {
+                pgd::Vector3 vec = m_polyline[i + 1] - m_polyline[i];
+                double vecLen = vec.Magnitude();
+                if (vecLen <= delta)
+                {
+                    vertexList.push_back(m_polyline[i]);
+                    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
+                    double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
+                    double radius = (a/2) * (std::cos(x)+1);
+                    radiusList.push_back(radius);
+                    distance += vecLen;
+                    continue;
+                }
+                size_t subdivisions = int(std::ceil(vecLen / delta));
+                double newDelta = vecLen / subdivisions;
+                pgd::Vector3 newVec = vec / subdivisions;
+                for (size_t j = 0; j < subdivisions; j++)
+                {
+                    vertexList.push_back(m_polyline[i] + j * newVec);
+                    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
+                    double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
+                    double radius = (a/2) * (std::cos(x)+1);
+                    radiusList.push_back(radius);
+                    distance += newDelta;
+                }
+            }
+            vertexList.push_back(m_polyline.back());
+            vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
+            double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
+            double radius = (a/2) * (std::cos(x)+1);
+            radiusList.push_back(radius);
+            m_facetedObject1 = std::make_unique<FacetedPolyCone>(vertexList, vertexColours, radiusList, m_strapNumSegments, m_strapColor, 1.0);
+            m_facetedObject1->setSimulationWidget(m_simulationWidget);
+            m_facetedObjectList.push_back(m_facetedObject1.get());
+            break;
+        }
+
+        qDebug() << "Error in DrawMuscle::initialise: Unsupported MUSCLE type";
+        break;
+    }
 }
 
 std::string DrawMuscle::name()

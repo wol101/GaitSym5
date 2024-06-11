@@ -47,6 +47,7 @@
 #include "ThreeHingeJointDriver.h"
 #include "TwoHingeJointDriver.h"
 #include "OpenSimExporter.h"
+#include "DrawMuscle.h"
 
 #include "pystring.h"
 
@@ -241,6 +242,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // the treeWidgetElements needs to know about this window
     ui->treeWidgetElements->setMainWindow(this);
+
+    // add the muscle drawing options to the toolbar
+    for (size_t i = 0; i < DrawMuscle::muscleDrawStyleCount; i++) { ui->comboBoxMuscleDraw->addItem(DrawMuscle::muscleDrawStyleStrings(i)); }
+    connect(ui->comboBoxMuscleDraw, &QComboBox::currentIndexChanged, this, &MainWindow::comboBoxMuscleDraw);
 
     // set up the timer
     m_timer = new QTimer(this);
@@ -541,6 +546,15 @@ void MainWindow::comboBoxMuscleColourMapCurrentTextChanged(const QString &text)
     m_simulationWidget->update();
 }
 
+void MainWindow::comboBoxMuscleDraw(int index)
+{
+    Preferences::insert("MuscleDrawStyle", index);
+    if (m_simulation)
+    {
+        for (auto &&iter : *m_simulation->GetMuscleList()) iter.second->setRedraw(true);
+    }
+    m_simulationWidget->update();}
+
 void MainWindow::spinboxSkip(int v)
 {
     Preferences::insert("MovieSkip", v);
@@ -596,6 +610,7 @@ void MainWindow::setInterfaceValues()
     ui->radioButtonTrackingZ->setChecked(Preferences::valueBool("TrackingFlagZ"));
 
     ui->comboBoxMuscleColourMap->setCurrentIndex(Preferences::valueInt("StrapColourControl"));
+    ui->comboBoxMuscleDraw->setCurrentIndex(Preferences::valueInt("MuscleDrawStyle"));
 
     ui->spinBoxSkip->setValue(Preferences::valueInt("MovieSkip"));
     ui->doubleSpinBoxFPS->setValue(Preferences::valueDouble("MovieFramerate"));

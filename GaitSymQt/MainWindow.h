@@ -60,6 +60,7 @@ public slots:
     void buttonCameraTop();
     void buttonDisplayAsWireframe();
     void buttonDisplayShadows();
+    void comboBoxMuscleDraw(int index);
     void enterConstructionMode();
     void enterRunMode();
     void menu1280x720();

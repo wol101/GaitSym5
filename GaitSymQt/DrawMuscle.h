@@ -13,6 +13,7 @@
 #include "Drawable.h"
 
 #include "Colour.h"
+#include "SmartEnum.h"
 
 #include <QColor>
 
@@ -28,6 +29,8 @@ class DrawMuscle : public Drawable
 public:
     DrawMuscle();
     virtual ~DrawMuscle();
+
+    SMART_ENUM(MuscleDrawStyle, muscleDrawStyleStrings, muscleDrawStyleCount, FixedCylinder, VolumeCylinder, AreaCylinder, FixedFusiform, VolumeFusiform, AreaFusiform);
 
     virtual void initialise(SimulationWidget *simulationWidget);
     virtual void Draw();
@@ -74,6 +77,7 @@ private:
     std::unique_ptr<FacetedObject> m_facetedObject3;
     std::vector<std::unique_ptr<FacetedObject>> m_facetedObjectForceList;
 
+    SimulationWidget *m_simulationWidget = nullptr;;
     double m_strapRadius = 0;
     size_t m_strapNumSegments = 0;
     double m_strapCylinderLength = 0;
@@ -89,6 +93,9 @@ private:
     size_t m_strapNumSections = 0;
     std::vector<pgd::Vector3> m_polyline;
 
+    MuscleDrawStyle m_muscleDrawStyle = AreaFusiform;
+    void Cylinder();
+    void Fusiform();
 };
 
 #endif // DRAWMUSCLE_H
