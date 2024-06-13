@@ -86,7 +86,7 @@ private:
     Marker *m_positionMarker = nullptr;
     Marker *m_targetMarker = nullptr;
 
-    float m_minDistanceMultiplier = 10000.0f; // means that with a distance of 100, shadows are created from 0.01 to 100
+    float m_minDistanceMultiplier = 1000.0f; // means that with a distance of 100, shadows are created from 0.1 to 100 // FIX ME - this needs to be user settable
 };
 
 class SpotLight : public Light

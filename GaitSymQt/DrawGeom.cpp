@@ -129,6 +129,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         m_facetedObject2 = std::make_unique<FacetedCheckerboard>(nx, ny, checkerSize, checkerSize, m_geomColor1, m_geomColor2);
         m_facetedObject2->setSimulationWidget(simulationWidget);
         m_facetedObject2->setWireframe(true);
+        m_facetedObject->setCastShadow(false);
         m_facetedObject2->ReverseWinding();
         m_facetedObject2->Move(0, 0, -planeDepth);
         m_facetedObjectList.push_back(m_facetedObject2.get());
