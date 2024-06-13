@@ -14,6 +14,10 @@
 
 extern GLEmulator glEmulator;
 
+// this draws a fat polyline with varying radius. It mostly works very well but large radii and sharp turns will casue holes
+// this might be fixable by shifting the circle so that the polyline is at an edge for steep turns rather than in the centre
+// the problem is that the cut line can interfere with previous line segments and this is difficult to fix
+
 FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, const std::vector<std::array<float, 3>> &vertexColours, const std::vector<double> &radiusList, size_t nSides, const QColor &blendColour, double blendFraction)
 {
     setBlendColour(blendColour, blendFraction);
