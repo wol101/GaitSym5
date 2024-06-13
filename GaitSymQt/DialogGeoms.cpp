@@ -134,6 +134,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
         m_outputGeom->setColour2(m_inputGeom->colour2());
         m_outputGeom->setSize1(m_inputGeom->size1());
         m_outputGeom->setSize2(m_inputGeom->size2());
+        m_outputGeom->setSize3(m_inputGeom->size3());
     }
     else
     {
@@ -141,6 +142,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
         m_outputGeom->setColour2(Preferences::valueQColor("GeomColour2").name(QColor::HexArgb).toStdString());
         m_outputGeom->setSize1(Preferences::valueDouble("GeomSize1"));
         m_outputGeom->setSize2(Preferences::valueDouble("GeomSize2"));
+        m_outputGeom->setSize3(Preferences::valueDouble("GeomSize3"));
     }
 
     if (m_properties.size() > 0)
@@ -153,6 +155,8 @@ void DialogGeoms::accept() // this catches OK and return/enter
             m_outputGeom->setSize1(m_properties["GeomSize1"].value.toDouble());
         if (m_properties.count("GeomSize2"))
             m_outputGeom->setSize2(m_properties["GeomSize2"].value.toDouble());
+        if (m_properties.count("GeomSize3"))
+            m_outputGeom->setSize3(m_properties["GeomSize3"].value.toDouble());
     }
 
     m_outputGeom->saveToAttributes();
