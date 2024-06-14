@@ -1905,7 +1905,9 @@ void MainWindow::buttonDisplayShadows()
     this->m_simulationWidget->setShadows(shadows);
     Preferences::insert("DisplayShadows", shadows);
     this->updateEnable();
+    // QThread::sleep(1); // I am hoping the pause will prevent some of the instability
     this->m_simulationWidget->update();
+    // QThread::sleep(1); // at the very least it will discourage switching back and forth between shadows and not
 }
 
 
