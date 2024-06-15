@@ -17,8 +17,13 @@
 #include "Geom.h"
 #include "HingeJoint.h"
 #include "FixedJoint.h"
+#include "BallJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
+#include "Marker.h"
+#include "GSUtil.h"
+
+#include "collision_util.h"
 
 using namespace std::string_literals;
 namespace GaitSym {
@@ -131,7 +136,7 @@ std::string *ODEPhysicsEngine::CreateJoints()
                 dJointSetHingeAxis(jointID, axis.x, axis.y, axis.z);
                 double loStop = (stops[0] < -M_PI) ? -dInfinity : stops[0];
                 double hiStop = (stops[1] > M_PI) ? dInfinity : stops[1];
-                dJointSetHingeParam(jointID, dParamLoStop, loStop); // needs to be done twice to guarantee to see the stops properly
+                dJointSetHingeParam(jointID, dParamLoStop, loStop); // needs to be done twice to guarantee to set the stops properly
                 dJointSetHingeParam(jointID, dParamHiStop, hiStop);
                 dJointSetHingeParam(jointID, dParamLoStop, loStop);
                 dJointSetHingeParam(jointID, dParamHiStop, hiStop);
@@ -146,6 +151,50 @@ std::string *ODEPhysicsEngine::CreateJoints()
                     dJointSetHingeParam (jointID, dParamStopERP, ERP);
                 }
                 if (hingeJoint->stopBounce() >= 0) { dJointSetHingeParam (jointID, dParamBounce, hingeJoint->stopBounce()); }
+                m_jointFeedback[iter.first] = std::move(jointFeedback);
+                break;
+            }
+            if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
+            {
+                pgd::Vector3 anchor = ballJoint->anchor();
+                jointID = dJointCreateBall(m_worldID, nullptr);
+                dJointSetData(jointID, ballJoint);
+                iter.second->setData(jointID);
+                dBodyID body1 = (ballJoint->body1()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(ballJoint->body1()->data());
+                dBodyID body2 = (ballJoint->body2()->name() == "World"s) ? nullptr : reinterpret_cast<dBodyID>(ballJoint->body2()->data());
+                dJointAttach(jointID, body1, body2);
+                dJointSetFeedback(jointID, jointFeedback.get());
+                dJointSetBallAnchor(jointID, anchor.x, anchor.y, anchor.z);
+                // ODE stops on ball joints are implemented as AMotors
+                if (auto stops = ballJoint->stops())
+                {
+                    dJointID motorJointID = dJointCreateAMotor (m_worldID, nullptr);
+                    dJointAttach(motorJointID, body1, body2);
+                    // auto motorJointFeedback = std::make_unique<dJointFeedback>(); // at some point I might want to think about how this could work
+                    // dJointSetFeedback(motorJointID, motorJointFeedback.get());
+                    dJointSetAMotorMode(motorJointID, dAMotorUser);
+                    dJointSetAMotorNumAxes(motorJointID, 3);
+                    int axisMode = 1; // axisMode: 0 global, 1 relative to body 1, 2 relative to body
+                    pgd::Vector3 x, y, z;
+                    ballJoint->body1Marker()->GetBasis(&x, &y, &z);
+                    dJointSetAMotorAxis(motorJointID, 0, axisMode, x.x, x.y, x.z);
+                    dJointSetAMotorAxis(motorJointID, 1, axisMode, y.x, y.y, y.z);
+                    dJointSetAMotorAxis(motorJointID, 2, axisMode, z.x, z.y, z.z);
+                    // needs to be done twice to guarantee to set the stops properly
+                    dJointSetAMotorParam(motorJointID, dParamLoStop1, (*stops)[0].x);
+                    dJointSetAMotorParam(motorJointID, dParamHiStop1, (*stops)[0].y);
+                    dJointSetAMotorParam(motorJointID, dParamLoStop2, (*stops)[1].x);
+                    dJointSetAMotorParam(motorJointID, dParamHiStop2, (*stops)[1].y);
+                    dJointSetAMotorParam(motorJointID, dParamLoStop3, (*stops)[2].x);
+                    dJointSetAMotorParam(motorJointID, dParamHiStop3, (*stops)[2].y);
+                    dJointSetAMotorParam(motorJointID, dParamLoStop1, (*stops)[0].x);
+                    dJointSetAMotorParam(motorJointID, dParamHiStop1, (*stops)[0].y);
+                    dJointSetAMotorParam(motorJointID, dParamLoStop2, (*stops)[1].x);
+                    dJointSetAMotorParam(motorJointID, dParamHiStop2, (*stops)[1].y);
+                    dJointSetAMotorParam(motorJointID, dParamLoStop3, (*stops)[2].x);
+                    dJointSetAMotorParam(motorJointID, dParamHiStop3, (*stops)[2].y);
+                    m_amotorList.push_back(motorJointID);
+                }
                 m_jointFeedback[iter.first] = std::move(jointFeedback);
                 break;
             }
@@ -274,6 +323,38 @@ std::string *ODEPhysicsEngine::Step()
         iter.second->ComputeDrag();
         dBodyAddRelForce(reinterpret_cast<dBodyID>(iter.second->data()), dragForce.x, dragForce.y, dragForce.z);
         dBodyAddRelTorque(reinterpret_cast<dBodyID>(iter.second->data()), dragTorque.x, dragTorque.y, dragTorque.z);
+    }
+
+    // update the user angles if necessary [FIX ME - this need checking]
+    for (auto &&iter : m_amotorList)
+    {
+        dBodyID body1 = dJointGetBody(iter, 0);
+        dBodyID body2 = dJointGetBody(iter, 1);
+        double thetaX, thetaY, thetaZ;
+
+        if (body1 == 0) // body 2 is connected to the world so it is already in the correct coodinates
+        {
+            const double *R2 = dBodyGetRotation(body2);
+            dMatrix3 rotMat;
+            for (int i = 0; i < dM3E__MAX; i++) rotMat[i] = R2[i];
+            dGetEulerAngleFromRot(rotMat, thetaX, thetaY, thetaZ);
+        }
+        else
+        {
+            // find orientation of Body 2 wrt Body 1
+            dMatrix3 rotMat;
+            const double *R1 = dBodyGetRotation(body1);
+            const double *R2 = dBodyGetRotation(body2);
+            dMULTIPLY2_333(rotMat, R2, R1);
+
+            // now find the X,Y,Z angles (use the Euler formulae for convenience not efficiency)
+            dGetEulerAngleFromRot(rotMat, thetaX, thetaY, thetaZ);
+        }
+
+        dJointSetAMotorAngle(iter, 0, -thetaX);
+        dJointSetAMotorAngle(iter, 1, -thetaY);
+        dJointSetAMotorAngle(iter, 2, -thetaZ);
+
     }
 
     // run the simulation

@@ -22,166 +22,6 @@ BallJoint::BallJoint() : Joint()
 {
 }
 
-/*
-void BallJoint::GetBallAnchor2(pgd::Vector3 result)
-{
-    dJointGetBallAnchor2(JointID(), result);
-}
-
-// this routine sets up the axes for the joints
-// only axis0 and axis2 are used for m_Mode == dAMotorEuler
-// axisMode: 0 global, 1 relative to body 1, 2 relative to body 2 (only used in dAMotorUser)
-// axes are intially specified globally but move depending on the mode selected
-// for dAMotorEuler axis 0 is relative to body 1, and axis 2 is relative to body 2
-void BallJoint::SetAxes(double x0, double y0, double z0, double x1, double y1, double z1, double x2, double y2, double z2, int axisMode)
-{
-    if (m_Mode == static_cast<BallJoint::Mode>(dAMotorEuler))
-    {
-        dJointSetAMotorMode(m_MotorJointID, dAMotorEuler);
-        dJointSetAMotorAxis(m_MotorJointID, 0, 1, x0, y0, z0);
-        dJointSetAMotorAxis(m_MotorJointID, 2, 2, x2, y2, z2);
-    }
-    else if (m_Mode == static_cast<BallJoint::Mode>(dAMotorUser))
-    {
-        dJointSetAMotorMode(m_MotorJointID, dAMotorUser);
-        dJointSetAMotorNumAxes(m_MotorJointID, 3);
-        dJointSetAMotorAxis(m_MotorJointID, 0, axisMode, x0, y0, z0);
-        dJointSetAMotorAxis(m_MotorJointID, 1, axisMode, x1, y1, z1);
-        dJointSetAMotorAxis(m_MotorJointID, 2, axisMode, x2, y2, z2);
-    }
-
-//    pgd::Vector3 r;
-
-//    if (m_Mode == dAMotorEuler)
-//    {
-//        dJointSetAMotorMode(m_MotorJointID, dAMotorEuler);
-//        dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 0), x0, y0, z0, r);
-//        dJointSetAMotorAxis(m_MotorJointID, 0, 1, r[0], r[1], r[2]);
-//        dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 1), x2, y2, z2, r);
-//        dJointSetAMotorAxis(m_MotorJointID, 2, 2, r[0], r[1], r[2]);
-//    }
-//    else if (m_Mode == dAMotorUser)
-//    {
-//        dJointSetAMotorMode(m_MotorJointID, dAMotorUser);
-//        dJointSetAMotorNumAxes(m_MotorJointID, 3);
-//        if (axisMode == 0)
-//        {
-//            dJointSetAMotorAxis(m_MotorJointID, 0, axisMode, x0, y0, z0);
-//            dJointSetAMotorAxis(m_MotorJointID, 1, axisMode, x1, y1, z1);
-//            dJointSetAMotorAxis(m_MotorJointID, 2, axisMode, x2, y2, z2);
-//        }
-//        else
-//        {
-//            if (axisMode == 1) // relative to body1
-//            {
-//                dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 0), x0, y0, z0, r);
-//                dJointSetAMotorAxis(m_MotorJointID, 0, 1, r[0], r[1], r[2]);
-//                dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 0), x1, y1, z1, r);
-//                dJointSetAMotorAxis(m_MotorJointID, 0, 1, r[0], r[1], r[2]);
-//                dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 0), x2, y2, z2, r);
-//                dJointSetAMotorAxis(m_MotorJointID, 2, 2, r[0], r[1], r[2]);
-//            }
-//            else // relative to body1
-//            {
-//                dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 1), x0, y0, z0, r);
-//                dJointSetAMotorAxis(m_MotorJointID, 0, 1, r[0], r[1], r[2]);
-//                dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 1), x1, y1, z1, r);
-//                dJointSetAMotorAxis(m_MotorJointID, 0, 1, r[0], r[1], r[2]);
-//                dBodyVectorToWorld(dJointGetBody(m_MotorJointID, 1), x2, y2, z2, r);
-//                dJointSetAMotorAxis(m_MotorJointID, 2, 2, r[0], r[1], r[2]);
-//            }
-//        }
-//        // and now can set the angles based on the relative pose of the two bodies
-//        SetAngles();
-//    }
-
-}
-
-// this routine sets the stops for the joint
-// these are relative to the axes specified in SetAxes
-void BallJoint::SetStops(double a0Low, double a0High, double a1Low, double a1High, double a2Low, double a2High)
-{
-    if (m_Mode == static_cast<BallJoint::Mode>(dAMotorEuler) || m_Mode == static_cast<BallJoint::Mode>(dAMotorUser))
-    {
-        // note there is safety feature that stops setting incompatible low and high
-        // stops which can cause difficulties. The safe option is to set them twice.
-
-        dJointSetAMotorParam(m_MotorJointID, dParamLoStop1, a0Low);
-        dJointSetAMotorParam(m_MotorJointID, dParamHiStop1, a0High);
-        dJointSetAMotorParam(m_MotorJointID, dParamLoStop2, a1Low);
-        dJointSetAMotorParam(m_MotorJointID, dParamHiStop2, a1High);
-        dJointSetAMotorParam(m_MotorJointID, dParamLoStop3, a2Low);
-        dJointSetAMotorParam(m_MotorJointID, dParamHiStop3, a2High);
-
-        dJointSetAMotorParam(m_MotorJointID, dParamLoStop1, a0Low);
-        dJointSetAMotorParam(m_MotorJointID, dParamHiStop1, a0High);
-        dJointSetAMotorParam(m_MotorJointID, dParamLoStop2, a1Low);
-        dJointSetAMotorParam(m_MotorJointID, dParamHiStop2, a1High);
-        dJointSetAMotorParam(m_MotorJointID, dParamLoStop3, a2Low);
-        dJointSetAMotorParam(m_MotorJointID, dParamHiStop3, a2High);
-    }
-
-}
-
-// calculate the angle transformation from body 1 to body 2
-//void BallJoint::SetAngles()
-//{
-//    if (m_Mode == dAMotorUser)
-//    {
-//        dBodyID body1 = dJointGetBody(m_MotorJointID, 0);
-//        dBodyID body2 = dJointGetBody(m_MotorJointID, 1);
-//        double thetaX, thetaY, thetaZ;
-
-//        if (body1 == 0) // body 2 is connected to the world so it is already in the correct coodinates
-//        {
-//            const double *R2 = dBodyGetRotation(body2);
-//            GSUtil::EulerDecompositionXYZ(R2, thetaX, thetaY, thetaZ);
-//        }
-//        else
-//        {
-//            // find orientation of Body 2 wrt Body 1
-//            pgd::Matrix3x3 rotMat;
-//            const double *R1 = dBodyGetRotation(body1);
-//            const double *R2 = dBodyGetRotation(body2);
-//            dMULTIPLY2_333(rotMat, R2, R1);
-
-//            // now find the X,Y,Z angles (use the Euler formulae for convenience not efficiency)
-//            GSUtil::EulerDecompositionXYZ(rotMat, thetaX, thetaY, thetaZ);
-
-//        }
-
-//        dJointSetAMotorAngle(m_MotorJointID, 0, -thetaX);
-//        dJointSetAMotorAngle(m_MotorJointID, 1, -thetaY);
-//        dJointSetAMotorAngle(m_MotorJointID, 2, -thetaZ);
-//    }
-//}
-
-// Get the Euler angle reference vectors
-// use with care - these values are not generally altered by the user
-// and are only used for state save and restore
-void BallJoint::GetEulerReferenceVectors(pgd::Vector3 reference1, pgd::Vector3 reference2)
-{
-    dJointGetAMotorEulerReferenceVectors( m_MotorJointID , reference1 , reference2 );
-}
-
-// Set the Euler angle reference vectors
-// use with care - these values are not generally altered by the user
-// and are only used for state save and restore
-void BallJoint::SetEulerReferenceVectors(pgd::Vector3 reference1, pgd::Vector3 reference2)
-{
-    dJointSetAMotorEulerReferenceVectors( m_MotorJointID , reference1 , reference2 );
-}
-
-//void BallJoint::Update()
-//{
-//    if (m_Mode == dAMotorUser)
-//    {
-//        // this gets called every simulation step so it's a good place to set the angles
-//        SetAngles();
-//    }
-//}
-*/
-
 // get the quaternion that rotates from body1 to body2
 pgd::Quaternion BallJoint::CalculateQuaternion()
 {
@@ -195,67 +35,50 @@ std::string *BallJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
-    // if (findAttribute("Mode"s, &buf) == nullptr) return lastErrorPtr();
-    // else if (buf == "NoStops") m_Mode = BallJoint::NoStops;
-    // else if (buf == "AMotorUser") m_Mode = BallJoint::AMotorUser;
-    // else if (buf == "AMotorEuler") m_Mode = BallJoint::AMotorEuler;
-    // else { setLastError("Joint ID=\""s + name() +"\" unrecognised Mode"s); return lastErrorPtr(); }
 
     pgd::Vector3 position = body1Marker()->GetWorldPosition();
     this->setAnchor(position);
     pgd::Vector3 x, y, z;
-    // body1Marker()->GetWorldBasis(&x, &y, &z);
-    // int axisMode = 1; // 1 relative to body 1
-    // this->SetAxes(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z, axisMode);
-    // if (CFM() >= 0) dJointSetBallParam (JointID(), dParamCFM, CFM());
-    // if (ERP() >= 0) dJointSetBallParam (JointID(), dParamERP, ERP());
-/*
-    switch (m_Mode)
+
+    if (!(findAttribute("LowStops"s, &buf) == nullptr && findAttribute("HighStops"s, &buf) == nullptr)) // if one of these is undefined, they both need to be undefined
     {
-    case BallJoint::NoStops:
-        break;
-    case BallJoint::AMotorUser:
+        if (findAttribute("LowStops"s, &buf) == nullptr)
         {
-            if (findAttribute("LowStop0"s, &buf) == nullptr) return lastErrorPtr();
-            double a0Low = GSUtil::GetAngle(buf);
-            if (findAttribute("HighStop0"s, &buf) == nullptr) return lastErrorPtr();
-            double a0High = GSUtil::GetAngle(buf);
-            if (findAttribute("LowStop1"s, &buf) == nullptr) return lastErrorPtr();
-            double a1Low = GSUtil::GetAngle(buf);
-            if (findAttribute("HighStop1"s, &buf) == nullptr) return lastErrorPtr();
-            double a1High = GSUtil::GetAngle(buf);
-            if (findAttribute("LowStop2"s, &buf) == nullptr) return lastErrorPtr();
-            double a2Low = GSUtil::GetAngle(buf);
-            if (findAttribute("HighStop2"s, &buf) == nullptr) return lastErrorPtr();
-            double a2High = GSUtil::GetAngle(buf);
-            if (a0Low >= a0High) { setLastError("Joint ID=\""s + name() +"\" LowStop0 >= HighStop0"s); return lastErrorPtr(); }
-            if (a1Low >= a1High) { setLastError("Joint ID=\""s + name() +"\" LowStop1 >= HighStop1"s); return lastErrorPtr(); }
-            if (a2Low >= a2High) { setLastError("Joint ID=\""s + name() +"\" LowStop2 >= HighStop2"s); return lastErrorPtr(); }
-            this->SetStops(a0Low, a0High, a1Low, a1High, a2Low, a2High);
-            break;
+            setLastError("Ball ID=\""s + name() +"\" LowStops missing"s);
+            return lastErrorPtr();
         }
-    case BallJoint::AMotorEuler:
+        std::vector<double> d1;
+        GSUtil::Double(buf, &d1);
+        if (d1.size() != 3)
         {
-            if (findAttribute("LowStop0"s, &buf) == nullptr) return lastErrorPtr();
-            double a0Low = GSUtil::GetAngle(buf);
-            if (findAttribute("HighStop0"s, &buf) == nullptr) return lastErrorPtr();
-            double a0High = GSUtil::GetAngle(buf);
-            if (findAttribute("LowStop1"s, &buf) == nullptr) return lastErrorPtr();
-            double a1Low = GSUtil::GetAngle(buf);
-            if (findAttribute("HighStop1"s, &buf) == nullptr) return lastErrorPtr();
-            double a1High = GSUtil::GetAngle(buf);
-            if (findAttribute("LowStop2"s, &buf) == nullptr) return lastErrorPtr();
-            double a2Low = GSUtil::GetAngle(buf);
-            if (findAttribute("HighStop2"s, &buf) == nullptr) return lastErrorPtr();
-            double a2High = GSUtil::GetAngle(buf);
-            if (a0Low >= a0High) { setLastError("Joint ID=\""s + name() +"\" LowStop0 >= HighStop0"s); return lastErrorPtr(); }
-            if (a1Low >= a1High) { setLastError("Joint ID=\""s + name() +"\" LowStop1 >= HighStop1"s); return lastErrorPtr(); }
-            if (a2Low >= a2High) { setLastError("Joint ID=\""s + name() +"\" LowStop2 >= HighStop2"s); return lastErrorPtr(); }
-            this->SetStops(a0Low, a0High, a1Low, a1High, a2Low, a2High);
-            break;
+            setLastError("Ball ID=\""s + name() +"\" LowStops needs 3 values"s);
+            return lastErrorPtr();
         }
+        if (findAttribute("HighStops"s, &buf) == nullptr)
+        {
+            setLastError("Ball ID=\""s + name() +"\" HighStops missing"s);
+            return lastErrorPtr();
+        }
+        std::vector<double> d2;
+        GSUtil::Double(buf, &d2);
+        if (d2.size() != 3)
+        {
+            setLastError("Ball ID=\""s + name() +"\" HighStops needs 3 values"s);
+            return lastErrorPtr();
+        }
+        std::array<pgd::Vector2, 3> stops;
+        for (size_t i = 0; i < 3; i++)
+        {
+            stops[i].x = d1[i];
+            stops[i].y = d2[i];
+            if (stops[i].y <= stops[i].x)
+            {
+                setLastError("Ball ID=\""s + name() +"\" HighStops must be larger than LowStops"s);
+                return lastErrorPtr();
+            }
+        }
+        m_stops.emplace(std::move(stops));
     }
-*/
     return nullptr;
 }
 
@@ -266,32 +89,11 @@ void BallJoint::appendToAttributes()
     setAttribute("Type"s, "Ball"s);
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
-/*
-    switch (m_Mode)
+    if (m_stops)
     {
-    case BallJoint::NoStops:
-        setAttribute("Mode"s, "NoStops"s);
-        break;
-    case BallJoint::AMotorUser:
-        setAttribute("Mode"s, "AMotorUser"s);
-        setAttribute("LowStop0"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamLoStop1), &buf));
-        setAttribute("HighStop0"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop1), &buf));
-        setAttribute("LowStop1"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamLoStop2), &buf));
-        setAttribute("HighStop1"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop2), &buf));
-        setAttribute("LowStop2"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamLoStop3), &buf));
-        setAttribute("HighStop2"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop3), &buf));
-        break;
-    case BallJoint::AMotorEuler:
-        setAttribute("Mode"s, "AMotorEuler"s);
-        setAttribute("LowStop0"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamLoStop1), &buf));
-        setAttribute("HighStop0"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop1), &buf));
-        setAttribute("LowStop1"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamLoStop2), &buf));
-        setAttribute("HighStop1"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop2), &buf));
-        setAttribute("LowStop2"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamLoStop3), &buf));
-        setAttribute("HighStop2"s, *GSUtil::ToString(dJointGetAMotorParam(m_MotorJointID, dParamHiStop3), &buf));
-        break;
+        setAttribute("LowStops"s, GSUtil::ToString("%.17g %.17g %.17g", (*m_stops)[0].x, (*m_stops)[1].x, (*m_stops)[2].x));
+        setAttribute("HighStops"s, GSUtil::ToString("%.17g %.17g %.17g", (*m_stops)[0].y, (*m_stops)[1].y, (*m_stops)[2].y));
     }
-*/
 }
 
 pgd::Vector3 BallJoint::anchor() const
@@ -304,10 +106,15 @@ void BallJoint::setAnchor(const pgd::Vector3 &newAnchor)
     m_anchor = newAnchor;
 }
 
-// BallJoint::Mode BallJoint::GetMode() const
-// {
-//     return m_Mode;
-// }
+std::optional<std::array<pgd::Vector2, 3> > BallJoint::stops() const
+{
+    return m_stops;
+}
+
+void BallJoint::setStops(std::optional<std::array<pgd::Vector2, 3> > newStops)
+{
+    m_stops = newStops;
+}
 
 std::string BallJoint::dumpToString()
 {

@@ -63,6 +63,8 @@ private:
     std::map<std::string, std::unique_ptr<dJointFeedback>> m_jointFeedback;
     std::vector<std::unique_ptr<dJointFeedback>> m_contactFeedbackList;
 
+    // ball joints need special treatment if there are stops on the amotors
+    std::vector<dJointID> m_amotorList;
 };
 
 }

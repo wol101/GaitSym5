@@ -113,7 +113,6 @@ public:
     static std::string dumpHelper(std::initializer_list<double> values);
 
     void *data() const;
-
     void setData(void *newData);
 
 protected:
