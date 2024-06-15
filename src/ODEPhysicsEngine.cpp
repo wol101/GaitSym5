@@ -243,7 +243,6 @@ std::string *ODEPhysicsEngine::CreateGeoms()
             {
                 double a, b, c, d;
                 planeGeom->GetPlane(&a, &b, &c, &d);
-                double length = std::sqrt(a * a + b * b + c * c);
                 geomID = dCreatePlane(m_spaceID, a, b, c, d);
                 dGeomSetData(geomID, planeGeom);
                 iter.second->setData(geomID);

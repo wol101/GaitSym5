@@ -15,6 +15,7 @@
 #include "Body.h"
 #include "Joint.h"
 #include "HingeJoint.h"
+#include "BallJoint.h"
 #include "FixedJoint.h"
 #include "Marker.h"
 #include "MAMuscle.h"
@@ -285,6 +286,102 @@ void OpenSimExporter::CreateJointSet()
 
             XMLTerminateTag(&m_xmlString, "WeldJoint"s);
         }
+
+        if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(jointIter.second.get()))
+        {
+            XMLInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, m_legalNameMap[jointIter.second->name()]}});
+
+            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[ballJoint->body1()->name()] + "_offset"s);
+            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[ballJoint->body2()->name()] + "_offset"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_0"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, 0);
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_1"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, 0);
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_2"s}});
+            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            XMLTagAndContent(&m_xmlString, "default_value"s, 0);
+            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
+            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+
+            XMLInitiateTag(&m_xmlString, "frames"s);
+
+            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[ballJoint->body1()->name()] + "_offset"s}});
+            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body1()->name()]);
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(ballJoint->body1Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[ballJoint->body2()->name()] + "_offset"s}});
+            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body2()->name()]);
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(ballJoint->body2Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+
+            XMLTerminateTag(&m_xmlString, "frames"s);
+
+            XMLInitiateTag(&m_xmlString, "SpatialTransform"s);
+
+            pgd::Vector3 x, y, z;
+            ballJoint->body1Marker()->GetBasis(&x, &y, &z);
+
+            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
+            XMLTagAndContent(&m_xmlString, "coordinates"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_0"s);
+            XMLTagAndContent(&m_xmlString, "axis"s, GSUtil::ToString(x));
+            XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+            XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+            XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation2"s}});
+            XMLTagAndContent(&m_xmlString, "coordinates"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_1"s);
+            XMLTagAndContent(&m_xmlString, "axis"s, GSUtil::ToString(y));
+            XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+            XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+            XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation3"s}});
+            XMLTagAndContent(&m_xmlString, "coordinates"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_2"s);
+            XMLTagAndContent(&m_xmlString, "axis"s, GSUtil::ToString(z));
+            XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+            XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+            XMLTerminateTag(&m_xmlString, "LinearFunction"s);
+            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+            XMLTerminateTag(&m_xmlString, "SpatialTransform"s);
+
+            XMLTerminateTag(&m_xmlString, "CustomJoint"s);
+        }
+
     }
 
     // now handle any free joints for parentless bodies
