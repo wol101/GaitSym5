@@ -377,6 +377,45 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "LinearFunction"s);
             XMLTerminateTag(&m_xmlString, "TransformAxis"s);
 
+            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
+            XMLTagAndContent(&m_xmlString, "coordinates"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_3"s);
+            XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
+            XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
+            XMLInitiateTag(&m_xmlString, "function"s);
+            XMLInitiateTag(&m_xmlString, "Constant"s);
+            XMLTagAndContent(&m_xmlString, "value"s, "0"s);
+            XMLTerminateTag(&m_xmlString, "Constant"s);
+            XMLTerminateTag(&m_xmlString, "function"s);
+            XMLTagAndContent(&m_xmlString, "scale"s, "1.0"s);
+            XMLTerminateTag(&m_xmlString, "MultiplierFunction"s);
+            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
+            XMLTagAndContent(&m_xmlString, "coordinates"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_4"s);
+            XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
+            XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
+            XMLInitiateTag(&m_xmlString, "function"s);
+            XMLInitiateTag(&m_xmlString, "Constant"s);
+            XMLTagAndContent(&m_xmlString, "value"s, "0"s);
+            XMLTerminateTag(&m_xmlString, "Constant"s);
+            XMLTerminateTag(&m_xmlString, "function"s);
+            XMLTagAndContent(&m_xmlString, "scale"s, "1.0"s);
+            XMLTerminateTag(&m_xmlString, "MultiplierFunction"s);
+            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
+            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
+            XMLTagAndContent(&m_xmlString, "coordinates"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_5"s);
+            XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
+            XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
+            XMLInitiateTag(&m_xmlString, "function"s);
+            XMLInitiateTag(&m_xmlString, "Constant"s);
+            XMLTagAndContent(&m_xmlString, "value"s, "0"s);
+            XMLTerminateTag(&m_xmlString, "Constant"s);
+            XMLTerminateTag(&m_xmlString, "function"s);
+            XMLTagAndContent(&m_xmlString, "scale"s, "1.0"s);
+            XMLTerminateTag(&m_xmlString, "MultiplierFunction"s);
+            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+
             XMLTerminateTag(&m_xmlString, "SpatialTransform"s);
 
             XMLTerminateTag(&m_xmlString, "CustomJoint"s);
@@ -797,15 +836,19 @@ void OpenSimExporter::CreateMarkerSet()
     XMLInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
 
+    int markerCount = 0;
     for (auto &&markerIter : *m_simulation->GetMarkerList())
     {
         Marker *marker = markerIter.second.get();
-        XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, marker->name()}});
+        // XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, marker->name()}});
+        XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, GSUtil::ToString("m%d", markerCount)}});
         if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
         else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
         XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
         XMLTagAndContent(&m_xmlString, "fixed"s, "true"s);
         XMLTerminateTag(&m_xmlString, "Marker"s);
+        ++markerCount;
+        if (markerCount > 50) break;
     }
 
     XMLTerminateTag(&m_xmlString, "objects"s);
