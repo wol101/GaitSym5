@@ -296,7 +296,7 @@ void OpenSimExporter::CreateJointSet()
 
             XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_0"s}});
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, 0);
+            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
@@ -306,7 +306,7 @@ void OpenSimExporter::CreateJointSet()
 
             XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_1"s}});
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, 0);
+            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
@@ -316,7 +316,7 @@ void OpenSimExporter::CreateJointSet()
 
             XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_2"s}});
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, 0);
+            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
