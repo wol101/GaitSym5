@@ -298,7 +298,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -308,7 +308,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -318,7 +318,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
@@ -742,6 +742,60 @@ void OpenSimExporter::CreateForceSet()
                 XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
                 break;
             }
+            if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(jointIter.second.get()))
+            {
+                if (ballJoint->stops())
+                {
+                    auto stops = ballJoint->stops();
+                    pgd::Vector2 degStops;
+                    XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_0"s}});
+                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    XMLTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_0"s);
+                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    double stopSpring = 1000000;
+                    double stopDamp = 1000000;
+                    XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                    XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                    XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
+                    degStops.Set(pgd::RadToDeg(-(*stops)[0].x), pgd::RadToDeg(-(*stops)[0].y));
+                    XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(degStops[0]));
+                    XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(degStops[1]));
+                    XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((degStops[1] - degStops[0]) / 1000));
+                    XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+
+                    XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_1"s}});
+                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    XMLTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[jointIter.second->name()] + "_coord_1"s);
+                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    stopSpring = 1000000;
+                    stopDamp = 1000000;
+                    XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                    XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                    XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
+                    degStops.Set(pgd::RadToDeg(-(*stops)[1].x), pgd::RadToDeg(-(*stops)[1].y));
+                    XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(degStops[0]));
+                    XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(degStops[1]));
+                    XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((degStops[1] - degStops[0]) / 1000));
+                    XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+
+                    XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_2"s}});
+                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    XMLTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[jointIter.second->name()] + "_coord_2"s);
+                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    stopSpring = 1000000;
+                    stopDamp = 1000000;
+                    XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                    XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
+                    XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
+                    degStops.Set(pgd::RadToDeg(-(*stops)[2].x), pgd::RadToDeg(-(*stops)[2].y));
+                    XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(degStops[0]));
+                    XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(degStops[1]));
+                    XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((degStops[1] - degStops[0]) / 1000));
+                    XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+                }
+
+                break;
+            }
             break;
         }
     }
@@ -836,19 +890,15 @@ void OpenSimExporter::CreateMarkerSet()
     XMLInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
     XMLInitiateTag(&m_xmlString, "objects"s);
 
-    int markerCount = 0;
     for (auto &&markerIter : *m_simulation->GetMarkerList())
     {
         Marker *marker = markerIter.second.get();
-        // XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, marker->name()}});
-        XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, GSUtil::ToString("m%d", markerCount)}});
+        XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s, marker->name()}});
         if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
         else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
         XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
         XMLTagAndContent(&m_xmlString, "fixed"s, "true"s);
         XMLTerminateTag(&m_xmlString, "Marker"s);
-        ++markerCount;
-        if (markerCount > 50) break;
     }
 
     XMLTerminateTag(&m_xmlString, "objects"s);
