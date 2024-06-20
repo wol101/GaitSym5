@@ -60,8 +60,8 @@ private:
     std::map<std::string, std::string> m_legalNameReverseMap;
 
     bool m_mocoExport = false;
-
     int m_currentIndent = 0;
+    size_t m_nameLengthHint = 0;
 };
 
 } // namespace GaitSym
