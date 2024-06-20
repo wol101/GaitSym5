@@ -329,39 +329,6 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
             XMLTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_3"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -1.0, 1.0));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
-
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_4"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -1.0, 1.0));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
-
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_5"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -1.0, 1.0));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
-
             XMLTerminateTag(&m_xmlString, "coordinates"s);
 
             XMLInitiateTag(&m_xmlString, "frames"s);
@@ -418,7 +385,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "TransformAxis"s);
 
             XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_3"s);
+            XMLTagAndContent(&m_xmlString, "coordinates"s, ""s);
             XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
             XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
             XMLInitiateTag(&m_xmlString, "function"s);
@@ -431,7 +398,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "TransformAxis"s);
 
             XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_4"s);
+            XMLTagAndContent(&m_xmlString, "coordinates"s, ""s);
             XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
             XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
             XMLInitiateTag(&m_xmlString, "function"s);
@@ -444,7 +411,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTerminateTag(&m_xmlString, "TransformAxis"s);
 
             XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_5"s);
+            XMLTagAndContent(&m_xmlString, "coordinates"s, ""s);
             XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
             XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
             XMLInitiateTag(&m_xmlString, "function"s);
