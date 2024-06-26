@@ -9,6 +9,7 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QMessageBox>
 
 #include <limits>
 #include <cmath>
@@ -170,7 +171,7 @@ void LineEditDouble::menuRequestPath(const QPoint &pos)
             QGridLayout *gridLayout = new QGridLayout(&dialog);
             QLineEdit *lineEdit = new QLineEdit();
             lineEdit->setText(this->text());
-            lineEdit->setToolTip("Enter a valid Python expression e.g. 2+math.sin(15)*math.log(3)");
+            lineEdit->setToolTip("Enter a valid python eval expression e.g. 2+math.sin(15)*math.log(3)");
             gridLayout->addWidget(lineEdit, 0, 0, 1, 2);
             QPushButton *cancelButtom = new QPushButton("Cancel");
             gridLayout->addWidget(cancelButtom, 1, 0);
@@ -183,10 +184,18 @@ void LineEditDouble::menuRequestPath(const QPoint &pos)
             if (ret == QDialog::Accepted)
             {
                 pkpy::VM vm;
+                pkpy::PyObject *result = nullptr;
                 vm.exec("import math");
-                pkpy::PyObject *result = vm.eval(lineEdit->text().toStdString());
-                double v = pkpy::py_cast<double>(&vm, result);
-                this->setValue(v);
+                result = vm.eval(lineEdit->text().toStdString()); // eval (unlike exec) does not throw an exception and the error message is sent to the terminal
+                if (!result)
+                {
+                    QMessageBox::critical(this, "Python Parse Error", QString("\"%1\" not a valid python expression").arg(lineEdit->text()));
+                }
+                else
+                {
+                    double v = pkpy::py_cast<double>(&vm, result);
+                    this->setValue(v);
+                }
             }
         }
         break;
