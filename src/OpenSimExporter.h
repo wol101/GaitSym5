@@ -49,9 +49,10 @@ private:
     void CreatePathPointSet(std::string name, const std::vector<const Marker *> &markerList);
 
     // utility functions
-    void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
+    void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>());
     void XMLTerminateTag(std::string *xmlString, const std::string &tag);
     void XMLTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content);
+    void XMLTagAndAttributes(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes);
 
     Simulation *m_simulation = nullptr;
     std::string m_xmlString;

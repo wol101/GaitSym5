@@ -973,7 +973,7 @@ void OpenSimExporter::CreateContactGeometrySet()
 }
 
 
-void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
+void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes)
 {
     for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
     xmlString->append("<"s + tag + " "s);
@@ -982,8 +982,7 @@ void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &
         xmlString->append(iter.first + "=\""s + iter.second + "\" "s);
     }
     xmlString->pop_back();
-    if (terminate) { xmlString->append("/>\n"s); }
-    else { xmlString->append(">\n"s); }
+    xmlString->append(">\n"s);
     m_currentIndent += 2;
 }
 
@@ -1015,6 +1014,18 @@ void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string
     {
         xmlString->append("<"s + tag + "/>\n"s);
     }
+}
+
+void OpenSimExporter::XMLTagAndAttributes(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes)
+{
+    for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
+    xmlString->append("<"s + tag + " "s);
+    for (auto &&iter : attributes)
+    {
+        xmlString->append(iter.first + "=\""s + iter.second + "\" "s);
+    }
+    xmlString->pop_back();
+    xmlString->append("/>\n"s);
 }
 
 bool OpenSimExporter::mocoExport() const
