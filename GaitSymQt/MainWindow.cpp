@@ -2347,10 +2347,12 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
     dialogMarkers.lateInitialise();
     if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit Marker..."))
     {
-        if (this->m_simulationWidget->getClosestHit())
+        auto closestHit = this->m_simulationWidget->getClosestHit();
+        if (closestHit)
         {
-            pgd::Vector3 location = this->m_simulationWidget->getClosestHit()->worldLocation();
+            pgd::Vector3 location = closestHit->worldLocation();
             dialogMarkers.overrideStartPosition(location);
+            if (closestHit->drawable()) dialogMarkers.overrideStartBody(closestHit->drawable()->name());
         }
     }
     int status = dialogMarkers.exec();

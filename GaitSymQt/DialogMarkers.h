@@ -28,6 +28,7 @@ public:
 
     void lateInitialise();
     void overrideStartPosition(const pgd::Vector3 &position);
+    void overrideStartBody(const std::string &name);
 
     void setCursor3DPosition(const QVector3D &cursor3DPosition);
 

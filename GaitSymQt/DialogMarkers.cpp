@@ -728,6 +728,13 @@ void DialogMarkers::overrideStartPosition(const pgd::Vector3 &position)
     ui->lineEditPositionZ->setValue(position.z);
 }
 
+void DialogMarkers::overrideStartBody(const std::string &name)
+{
+    if (ui->comboBoxBodyID->findText(QString::fromStdString(name)) != -1)
+    {
+       ui->comboBoxBodyID->setCurrentText(QString::fromStdString(name));
+    }
+}
 
 GaitSym::Simulation *DialogMarkers::simulation() const
 {
