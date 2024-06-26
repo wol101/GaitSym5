@@ -1410,6 +1410,38 @@ const double *pgd::Matrix3x3::constData() const
     return &e11;
 }
 
+pgd::Vector3 pgd::Matrix3x3::col1() { return pgd::Vector3(e11, e21, e31); }
+pgd::Vector3 pgd::Matrix3x3::col2() { return pgd::Vector3(e12, e22, e32); }
+pgd::Vector3 pgd::Matrix3x3::col3() { return pgd::Vector3(e13, e23, e33); }
+pgd::Vector3 pgd::Matrix3x3::row1() { return pgd::Vector3(e11, e12, e13); }
+pgd::Vector3 pgd::Matrix3x3::row2() { return pgd::Vector3(e21, e22, e23); }
+pgd::Vector3 pgd::Matrix3x3::row3() { return pgd::Vector3(e31, e32, e33); }
+
+void pgd::Matrix3x3::SetCols(const pgd::Vector3 &x, const pgd::Vector3 &y, const pgd::Vector3 &z)
+{
+    e11 = x.x;
+    e21 = x.y;
+    e31 = x.z;
+    e12 = y.x;
+    e22 = y.y;
+    e32 = y.z;
+    e13 = z.x;
+    e23 = z.y;
+    e33 = z.z;
+}
+void pgd::Matrix3x3::SetRows(const pgd::Vector3 &x, const pgd::Vector3 &y, const pgd::Vector3 &z)
+{
+    e11 = x.x;
+    e12 = x.y;
+    e13 = x.z;
+    e21 = y.x;
+    e22 = y.y;
+    e23 = y.z;
+    e31 = z.x;
+    e32 = z.y;
+    e33 = z.z;
+}
+
 // initialise a matrix from a quaternion
 // based on code from
 // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm

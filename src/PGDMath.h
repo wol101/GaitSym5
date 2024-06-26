@@ -267,6 +267,8 @@ public:
              double r3c1, double r3c2, double r3c3 );
     void Set(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3);
     void SetIdentity();
+    void SetCols(const Vector3 &x, const Vector3 &y, const Vector3 &z);
+    void SetRows(const Vector3 &x, const Vector3 &y, const Vector3 &z);
 
     double   det(void) const;
     Matrix3x3   Transpose(void) const;
@@ -285,6 +287,13 @@ public:
 
     void SetInertia(double ixx, double iyy, double izz, double ixy, double izx, double iyz);
     void GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const;
+
+    Vector3 col1();
+    Vector3 col2();
+    Vector3 col3();
+    Vector3 row1();
+    Vector3 row2();
+    Vector3 row3();
 };
 
 Matrix3x3 operator+(const Matrix3x3 &m1, const Matrix3x3 &m2);

@@ -366,9 +366,16 @@ void DialogMarkers::calculateMirrorMarker()
     ui->lineEditPositionY->setValue(p.y);
     ui->lineEditPositionZ->setValue(p.z);
 
-    pgd::Quaternion q = marker->GetWorldQuaternion();
-    pgd::Vector3 v = m * q.GetVector();
-    q.x = v.x; q.y = v.y; q.z = v.z;
+    // you cannot mirror a marker orientation ('cos chirality)
+    // so I can only mirror 2 axes and I have to recalculate the 3rd
+    pgd::Vector3 x, y, z;
+    marker->GetWorldBasis(&x, &y, &z);
+    x = m * x;
+    y = m * y;
+    z = x ^ y;
+    z.Normalize();
+    m.SetCols(x, y, z);
+    pgd::Quaternion q = pgd::MakeQfromM(m);
     pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
