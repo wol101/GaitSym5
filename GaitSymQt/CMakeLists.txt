@@ -1442,7 +1442,8 @@ set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/windows/PhysXIndicatorWindows.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/windows/NpWindowsDelayLoadHook.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcooking/src/windows/WindowsCookingDelayLoadHook.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp)
+    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp
+)
 ENDIF(UNIX)
 
 set(INCLUDE_DIRECTORIES
