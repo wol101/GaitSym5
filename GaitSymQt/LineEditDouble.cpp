@@ -1,9 +1,14 @@
 #include "LineEditDouble.h"
 #include "DoubleValidator.h"
 
+#include "pocketpy/pocketpy.h"
+
 #include <QDebug>
 #include <QLocale>
 #include <QMenu>
+#include <QDialog>
+#include <QGridLayout>
+#include <QPushButton>
 
 #include <limits>
 #include <cmath>
@@ -142,20 +147,48 @@ void LineEditDouble::menuRequestPath(const QPoint &pos)
     menu->addSeparator();
     menu->addAction(tr("Insert Minimum"));
     menu->addAction(tr("Insert Maximum"));
-//    menu->addAction(tr("Scientific Notation"));
-//    menu->addAction(tr("Standard Notation"));
+    menu->addAction(tr("Scientific Notation"));
+    menu->addAction(tr("Standard Notation"));
     menu->addAction(tr("Float Precision"));
     menu->addAction(tr("Double Precision"));
+    menu->addSeparator();
+    menu->addAction(tr("Calculator..."));
     QPoint gp = this->mapToGlobal(pos);
     QAction *action = menu->exec(gp);
     while (action)
     {
         if (action->text() == tr("Insert Minimum")) { const DoubleValidator *v = dynamic_cast<const DoubleValidator *>(this->validator()); if (v) setValue(v->bottom()); break; }
         if (action->text() == tr("Insert Maximum")) { const DoubleValidator *v = dynamic_cast<const DoubleValidator *>(this->validator()); if (v) setValue(v->top()); break; }
-//        if (action->text() == tr("Scientific Notation")) { setNotation(QDoubleValidator::ScientificNotation); setValue(value()); break; }
-//        if (action->text() == tr("Standard Notation")) { setNotation(QDoubleValidator::StandardNotation); setValue(value()); break; }
+        if (action->text() == tr("Scientific Notation")) { setNotation(QDoubleValidator::ScientificNotation); setValue(value()); break; }
+        if (action->text() == tr("Standard Notation")) { setNotation(QDoubleValidator::StandardNotation); setValue(value()); break; }
         if (action->text() == tr("Float Precision")) { setDecimals(std::numeric_limits<float>::max_digits10); setValue(value()); break; }
         if (action->text() == tr("Double Precision")) { setDecimals(std::numeric_limits<double>::max_digits10); setValue(value()); break; }
+        if (action->text() == tr("Calculator..."))
+        {
+            QDialog dialog(this);
+            dialog.setWindowTitle("Python-style Calculator");
+            QGridLayout *gridLayout = new QGridLayout(&dialog);
+            QLineEdit *lineEdit = new QLineEdit();
+            lineEdit->setText(this->text());
+            lineEdit->setToolTip("Enter a valid Python expression e.g. 2+math.sin(15)*math.log(3)");
+            gridLayout->addWidget(lineEdit, 0, 0, 1, 2);
+            QPushButton *cancelButtom = new QPushButton("Cancel");
+            gridLayout->addWidget(cancelButtom, 1, 0);
+            QPushButton *okButtom = new QPushButton("OK");
+            okButtom->setDefault(true);
+            gridLayout->addWidget(okButtom, 1, 1);
+            connect(okButtom, SIGNAL(clicked()), &dialog, SLOT(accept()));
+            connect(cancelButtom, SIGNAL(clicked()), &dialog, SLOT(reject()));
+            int ret = dialog.exec();
+            if (ret == QDialog::Accepted)
+            {
+                pkpy::VM vm;
+                vm.exec("import math");
+                pkpy::PyObject *result = vm.eval(lineEdit->text().toStdString());
+                double v = pkpy::py_cast<double>(&vm, result);
+                this->setValue(v);
+            }
+        }
         break;
     }
     delete menu;
