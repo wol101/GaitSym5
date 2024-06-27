@@ -797,7 +797,7 @@ void MainWindow::updateEnable()
     ui->actionConstructionMode->setEnabled(m_simulation != nullptr && m_mode == runMode && m_stepCount == 0);
     ui->actionRunMode->setEnabled(m_simulation != nullptr && m_mode == constructionMode && isWindowModified() == false && m_simulation->GetBodyList()->size() > 0);
     ui->actionDisplayAsWireframe->setChecked(m_simulationWidget->wireframe());
-    ui->actionDisplayShadows->setChecked(m_simulationWidget->shadows());
+    ui->actionDisplayShadows->setChecked(Preferences::valueBool("DisplayShadows")); // m_simulationWidget->shadows() is never updated so this is the value after restart
 
 }
 
@@ -1901,13 +1901,22 @@ void MainWindow::buttonDisplayAsWireframe()
 
 void MainWindow::buttonDisplayShadows()
 {
-    bool shadows = !this->m_simulationWidget->shadows();
-    this->m_simulationWidget->setShadows(shadows);
+    bool shadows = !Preferences::valueBool("DisplayShadows", "false"); // current version does not alter the value until restart !this->m_simulationWidget->shadows();
     Preferences::insert("DisplayShadows", shadows);
     this->updateEnable();
-    // QThread::sleep(1); // I am hoping the pause will prevent some of the instability
-    this->m_simulationWidget->update();
-    // QThread::sleep(1); // at the very least it will discourage switching back and forth between shadows and not
+    // because turning shadows on and off causes instability, do not do anything other than tell the user
+    // this->m_simulationWidget->setShadows(shadows);
+    // this->m_simulationWidget->update();
+    if (shadows != this->m_simulationWidget->shadows())
+    {
+        if (shadows) QMessageBox::information(this, "Shadow Display", "Shadows enabled. Restart to see effect.");
+        else QMessageBox::information(this, "Shadow Display", "Shadows disabled. Restart to see effect.");
+    }
+    else
+    {
+        if (shadows) QMessageBox::information(this, "Shadow Display", "Reverting back to shadows enabled.");
+        else QMessageBox::information(this, "Shadow Display", "Reverting back to shadows disabled.");
+    }
 }
 
 

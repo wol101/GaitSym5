@@ -91,7 +91,8 @@ void SimulationWidget::initializeGL()
 void SimulationWidget::paintGL()
 {
     threepp::WindowSize windowSize(width() * devicePixelRatio(), float(height() * devicePixelRatio()));
-    if (!m_renderer || m_renderer->shadowMap().enabled != m_shadows)
+    // if (!m_renderer || m_renderer->shadowMap().enabled != m_shadows) // turning shadows on and off causes instability so I have disabled it for the time being
+    if (!m_renderer)
     {
         m_renderer = std::make_unique<threepp::GLRenderer>(windowSize);
         m_renderer->shadowMap().enabled = m_shadows;
