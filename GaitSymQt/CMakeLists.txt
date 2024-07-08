@@ -12,7 +12,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -1199,6 +1199,7 @@ set(PROJECT_SOURCES
     ../src/PIDErrorInController.cpp
     ../src/PIDMuscleLengthController.cpp
     ../src/PlaneGeom.cpp
+    ../src/PlaybackPhysicsEngine.cpp
     ../src/Reporter.cpp
     ../src/Simulation.cpp
     ../src/SliderJoint.cpp
@@ -1383,6 +1384,7 @@ set(PROJECT_SOURCES
     ../src/PIDErrorInController.h
     ../src/PIDMuscleLengthController.h
     ../src/PlaneGeom.h
+    ../src/PlaybackPhysicsEngine.h
     ../src/Reporter.h
     ../src/Simulation.h
     ../src/SliderJoint.h
