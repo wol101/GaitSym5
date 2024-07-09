@@ -1348,6 +1348,7 @@ set(PROJECT_SOURCES
     ../src/DataTargetVector.h
     ../src/Drivable.h
     ../src/Driver.h
+    ../src/Euler.h
     ../src/Filter.h
     ../src/FixedDriver.h
     ../src/FixedJoint.h

@@ -10,6 +10,7 @@
 #include "PlaybackPhysicsEngine.h"
 #include "Simulation.h"
 #include "Body.h"
+#include "Euler.h"
 
 #include "pystring.h"
 
@@ -134,8 +135,14 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
         {
             Pose p;
             p.p.Set(x[i], y[i], z[i]);
-            if (inDegrees) p.q = pgd::MakeQFromEulerAngles(ox[i], oy[i], oz[i]);
-            else p.q = pgd::MakeQFromEulerAnglesRadian(ox[i], oy[i], oz[i]);
+            // if (inDegrees) { p.q = pgd::MakeQFromEulerAngles(ox[i], oy[i], oz[i]); }
+            // else { p.q = pgd::MakeQFromEulerAnglesRadian(ox[i], oy[i], oz[i]); }
+            Euler::EulerAngles ea;
+            if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
+            else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
+            ea.w = EulOrdXYZr;
+            Euler::Quat quat = Eul_ToQuat(ea);
+            p.q.Set(quat.w, quat.x, quat.y, quat.z);
             poses.push_back(std::move(p));
         }
         m_poses[body.first] = std::move(poses);

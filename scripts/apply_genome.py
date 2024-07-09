@@ -8,20 +8,17 @@ import glob
 import re
 import math
 
-
-# doing this makes args a global which is not the worst thing in the world
-parser = argparse.ArgumentParser(description='Apply a genome to a GaitSym5 XML config file')
-parser.add_argument('-g', '--genome_file', default='', help='the genome file to use (defaults to last BestGenome*.txt)')
-parser.add_argument('-i', '--input_xml_file', default='workingConfig.xml', help='the input GaitSym XML config file (defaults to workingConfig.xml)')
-parser.add_argument('-o', '--output_xml_file', default='', help='the output GaitSym XML config file (defaults to genome_file name with .xml)')
-parser.add_argument('-l', '--recursion_limit', type=int, default=10000, help='set the python recursion limit (defaults to 10000)')
-parser.add_argument('-r', '--regex_insert', default='{{(.*?)}}', help='the regex to match for the genome replacements (defaults to "{{(.*?)}}")')
-parser.add_argument('-f', '--force', action='store_true', help='force overwrite of destination file')
-parser.add_argument('-v', '--verbose', action='store_true', help='write out more information whilst processing')
-parser.add_argument("-d", "--debug", action="store_true", help="write out more information whilst processing")
-args = parser.parse_args()
-
 def apply_genome():
+    parser = argparse.ArgumentParser(description='Apply a genome to a GaitSym5 XML config file')
+    parser.add_argument('-g', '--genome_file', default='', help='the genome file to use (defaults to last BestGenome*.txt)')
+    parser.add_argument('-i', '--input_xml_file', default='workingConfig.xml', help='the input GaitSym XML config file (defaults to workingConfig.xml)')
+    parser.add_argument('-o', '--output_xml_file', default='', help='the output GaitSym XML config file (defaults to genome_file name with .xml)')
+    parser.add_argument('-l', '--recursion_limit', type=int, default=10000, help='set the python recursion limit (defaults to 10000)')
+    parser.add_argument('-r', '--regex_insert', default='{{(.*?)}}', help='the regex to match for the genome replacements (defaults to "{{(.*?)}}")')
+    parser.add_argument('-f', '--force', action='store_true', help='force overwrite of destination file')
+    parser.add_argument('-v', '--verbose', action='store_true', help='write out more information whilst processing')
+    parser.add_argument("-d", "--debug", action="store_true", help="write out more information whilst processing")
+    args = parser.parse_args()
 
     if args.debug:
         args.verbose = True

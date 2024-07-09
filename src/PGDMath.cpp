@@ -937,7 +937,7 @@ pgd::Vector3 pgd::QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // s
 #endif
 }
 
-// these are intrinsic Euler XYZ angles (or fixed axis ZYX)
+// these are extrinsic/global/static Euler XYZ angles (or intrinsic axis ZYX)
 pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
 {
     pgd::Quaternion  q;
@@ -968,7 +968,7 @@ pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
     return q;
 }
 
-// these are intrinsic Euler XYZ angles (or fixed axis ZYX)
+// these are intrinsic/local/dynamic Euler XYZ angles (or extrinsic axis ZYX)
 pgd::Vector3 pgd::MakeEulerAnglesFromQ(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
