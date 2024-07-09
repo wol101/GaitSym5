@@ -1841,6 +1841,21 @@ pgd::Quaternion pgd::slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, boo
     return v0*std::cos(theta) + v2*std::sin(theta);
 }
 
+void pgd::QGetBasis(const pgd::Quaternion &q, pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
+{
+    pgd::Matrix3x3 m(q);
+    x->x = m.e11;
+    x->y = m.e21;
+    x->z = m.e31;
+    y->x = m.e12;
+    y->y = m.e22;
+    y->z = m.e32;
+    z->x = m.e13;
+    z->y = m.e23;
+    z->z = m.e33;
+}
+
+
 std::ostream& pgd::operator<<(std::ostream &out, const pgd::Vector2 &v)
 {
     out << v.x << " " << v.y;

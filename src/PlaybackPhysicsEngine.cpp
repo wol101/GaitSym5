@@ -11,6 +11,7 @@
 #include "Simulation.h"
 #include "Body.h"
 #include "Euler.h"
+#include "Marker.h"
 
 #include "pystring.h"
 
@@ -40,16 +41,16 @@ std::string *PlaybackPhysicsEngine::Initialise(Simulation *theSimulation)
 
 std::string *PlaybackPhysicsEngine::ReadSourceFile()
 {
-    if (simulation()->kinematicsFile().size() == 0)
+    if (simulation()->kinematicsFiles().size() == 0 || simulation()->kinematicsFiles()[0].size() == 0)
     {
         setLastError("PlaybackPhysicsEngine::ReadSourceFile filename not set"s);
         return lastErrorPtr();
     }
 
     std::error_code ec;
-    if (!std::filesystem::is_regular_file(simulation()->kinematicsFile(), ec ))
+    if (!std::filesystem::is_regular_file(simulation()->kinematicsFiles()[0], ec ))
     {
-        setLastError("PlaybackPhysicsEngine::ReadSourceFile \""s + simulation()->kinematicsFile() + "\" is not a file"s);
+        setLastError("PlaybackPhysicsEngine::ReadSourceFile \""s + simulation()->kinematicsFiles()[0] + "\" is not a file"s);
         return lastErrorPtr();
     }
 
@@ -61,24 +62,29 @@ std::string *PlaybackPhysicsEngine::ReadSourceFile()
 
 std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
 {
+    std::string dependencyFile = simulation()->kinematicsFiles()[1];
+    std::vector<std::string> lines;
+    readLineStructuredFile(dependencyFile, &lines, &m_dependencies);
+
     std::vector<std::string> columnHeadings;
     std::vector<std::vector<std::string>> data;
     std::vector<std::string> header = {"endheader"s};
-    readTabDelimitedFile(simulation()->kinematicsFile(), &columnHeadings, &data, &header);
+    std::string kinematicsFile = simulation()->kinematicsFiles()[0];
+    readTabDelimitedFile(kinematicsFile, &columnHeadings, &data, &header);
     if (data.size() == 0 || data[0].size() == 0)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" contains no recognisable data"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + kinematicsFile + "\" contains no recognisable data"s);
         return lastErrorPtr();
     }
     if (columnHeadings.size() < 2)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" has no body data"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + kinematicsFile + "\" has no body data"s);
         return lastErrorPtr();
     }
     // check the header
     if (header[0] != "Positions"s)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" unrecognised header"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + kinematicsFile + "\" unrecognised header"s);
         return lastErrorPtr();
     }
     bool inDegrees = true;
@@ -91,7 +97,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     // read the times
     if (columnHeadings[0] != "time"s)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" missing time"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + kinematicsFile + "\" missing time"s);
         return lastErrorPtr();
     }
     size_t nTimes = data[0].size();
@@ -112,42 +118,68 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     }
     // now get the pose data
     m_poses.clear();
-    for (auto &&body : *simulation()->GetBodyList())
+    // this needs to be done in dependency order
+    for (auto &&dependencies : m_dependencies)
     {
-        std::vector<std::string> names = {body.first + "_X"s, body.first + "_Y"s, body.first + "_Z"s, body.first + "_Ox"s, body.first + "_Oy"s, body.first + "_Oz"s};
+        if (dependencies.size() == 0) { continue; }
+        std::string body = dependencies.back();
+        // check the names are OK
+        std::vector<std::string> names = {body + "_X"s, body + "_Y"s, body + "_Z"s, body + "_Ox"s, body + "_Oy"s, body + "_Oz"s};
         for (auto &&name : names)
         {
             if (dataMap.find(name) == dataMap.end())
             {
-                setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" missing body label \""s + name + "\"");
+                setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + kinematicsFile + "\" missing body label \""s + name + "\"");
                 return lastErrorPtr();
             }
         }
+        // get the data from the dataMap
         std::vector<double> &x = dataMap[names[0]];
         std::vector<double> &y = dataMap[names[1]];
         std::vector<double> &z = dataMap[names[2]];
         std::vector<double> &ox = dataMap[names[3]];
         std::vector<double> &oy = dataMap[names[4]];
         std::vector<double> &oz = dataMap[names[5]];
+        if (dependencies.size() == 1) // no dependencies
+        {
+            std::vector<Pose> poses;
+            poses.reserve(nTimes);
+            for (size_t i =0; i < nTimes; i++)
+            {
+                Pose p;
+                p.p.Set(x[i], y[i], z[i]);
+                Euler::EulerAngles ea;
+                if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
+                else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
+                ea.w = EulOrdXYZs;
+                Euler::Quat quat = Eul_ToQuat(ea);
+                p.q.Set(quat.w, quat.x, quat.y, quat.z);
+                poses.push_back(std::move(p));
+            }
+            m_poses[body] = std::move(poses);
+            continue;
+        }
+        // there must be a parent that has already been calculated
+        std::string parent = dependencies[dependencies.size() - 2];
+        std::vector<Pose> &parentPoses = m_poses[parent];
         std::vector<Pose> poses;
         poses.reserve(nTimes);
         for (size_t i =0; i < nTimes; i++)
         {
             Pose p;
             p.p.Set(x[i], y[i], z[i]);
-            // if (inDegrees) { p.q = pgd::MakeQFromEulerAngles(ox[i], oy[i], oz[i]); }
-            // else { p.q = pgd::MakeQFromEulerAnglesRadian(ox[i], oy[i], oz[i]); }
-            Euler::EulerAngles ea;
+            pgd::Quaternion parentQ = parentPoses[i].q;
+            pgd::Vector3 x, y, z;
+            pgd::QGetBasis(parentQ, &x, &y, &z);
+            pgd::Vector3 ea;
             if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
             else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
-            ea.w = EulOrdXYZs;
-            Euler::Quat quat = Eul_ToQuat(ea);
-            p.q.Set(quat.w, quat.x, quat.y, quat.z);
+            pgd::Quaternion childQ = pgd::MakeQFromAxisAngle(z, ea.z) * (pgd::MakeQFromAxisAngle(y, ea.y) * (pgd::MakeQFromAxisAngle(x, ea.x) * parentQ));
+            p.q = childQ;
             poses.push_back(std::move(p));
         }
-        m_poses[body.first] = std::move(poses);
+        m_poses[body] = std::move(poses);
     }
-
     return nullptr;
 }
 
@@ -172,6 +204,31 @@ std::string *PlaybackPhysicsEngine::Step()
     }
 
     return nullptr;
+}
+
+void PlaybackPhysicsEngine::readLineStructuredFile(const std::string &filename, std::vector<std::string> *lines, std::vector<std::vector<std::string>> *tokensByLine)
+{
+    lines->clear();
+    std::ostringstream buffer;
+    try {
+        std::ifstream file(filename, std::ios::binary);
+        if (!file) return;
+        buffer << file.rdbuf();
+        file.close();
+    }
+    catch (...)
+    {
+        return;
+    }
+    *lines = pystring::splitlines(buffer.str());
+    if (lines->size() == 0) return;
+    if (!tokensByLine) return;
+    tokensByLine->clear();
+    tokensByLine->reserve(lines->size());
+    for (auto &&line : *lines)
+    {
+        tokensByLine->push_back(pystring::split(line));
+    }
 }
 
 void PlaybackPhysicsEngine::readTabDelimitedFile(const std::string &filename, std::vector<std::string> *columnHeadings, std::vector<std::vector<std::string>> *data, std::vector<std::string> *header)

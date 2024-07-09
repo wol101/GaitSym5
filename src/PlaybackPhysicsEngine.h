@@ -31,6 +31,7 @@ private:
     std::string *ReadSourceFile();
     std::string *ReadOSIMBodyKinematicsFile();
 
+    static void readLineStructuredFile(const std::string &filename, std::vector<std::string> *lines, std::vector<std::vector<std::string>> *tokensByLine = nullptr);
     static void readTabDelimitedFile(const std::string &filename, std::vector<std::string> *columnHeadings, std::vector<std::vector<std::string>> *data, std::vector<std::string> *header = nullptr);
 
     struct Pose
@@ -41,6 +42,7 @@ private:
 
     std::vector<double> m_times;
     std::map<std::string, std::vector<Pose>> m_poses;
+    std::vector<std::vector<std::string>> m_dependencies;
 };
 
 }

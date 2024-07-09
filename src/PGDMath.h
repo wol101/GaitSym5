@@ -242,6 +242,7 @@ double FindAngle(const Quaternion &qa, const Quaternion &qb);
 Vector3 FindAxis(const Quaternion &qa, const Quaternion &qb);
 Quaternion FindRotation(const Vector3 &v1, const Vector3 &v2);
 void SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist);
+void QGetBasis(const pgd::Quaternion &q, pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z);
 
 //------------------------------------------------------------------------//
 // Matrix Class and matrix functions

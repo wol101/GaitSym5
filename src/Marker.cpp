@@ -437,34 +437,34 @@ pgd::Quaternion Marker::GetQuaternion(const pgd::Quaternion &worldQuaternion) co
     return (~GetWorldQuaternion()) * worldQuaternion;
 }
 
-pgd::Vector3 GetPosition(const Body &body, const pgd::Vector3 &worldCoordinates)
+pgd::Vector3 Marker::GetPosition(const Body &body, const pgd::Vector3 &worldCoordinates)
 {
     pgd::Vector3 worldDelta = worldCoordinates - body.GetPosition();
     return pgd::QVRotate(~body.GetQuaternion(), worldDelta);
 }
 
-pgd::Vector3 GetWorldPosition(const Body &body, const pgd::Vector3 &localCoordinates)
+pgd::Vector3 Marker::GetWorldPosition(const Body &body, const pgd::Vector3 &localCoordinates)
 {
     pgd::Vector3 worldDelta = pgd::QVRotate(body.GetQuaternion(), localCoordinates);
     return body.GetPosition() + worldDelta;
 }
 
-pgd::Vector3 GetVector(const Body &body, const pgd::Vector3 &worldVector)
+pgd::Vector3 Marker::GetVector(const Body &body, const pgd::Vector3 &worldVector)
 {
     return pgd::QVRotate(~body.GetQuaternion(), worldVector);
 }
 
-pgd::Vector3 GetWorldVector(const Body &body, const pgd::Vector3 &localVector)
+pgd::Vector3 Marker::GetWorldVector(const Body &body, const pgd::Vector3 &localVector)
 {
     return pgd::QVRotate(body.GetQuaternion(), localVector);
 }
 
-pgd::Quaternion GetWorldQuaternion(const Body &body, const pgd::Quaternion &localQuaternion)
+pgd::Quaternion Marker::GetWorldQuaternion(const Body &body, const pgd::Quaternion &localQuaternion)
 {
     return body.GetQuaternion() * localQuaternion;
 }
 
-pgd::Quaternion GetQuaternion(const Body &body, const pgd::Quaternion &worldQuaternion)
+pgd::Quaternion Marker::GetQuaternion(const Body &body, const pgd::Quaternion &worldQuaternion)
 {
     return (~body.GetQuaternion()) * worldQuaternion;
 }
