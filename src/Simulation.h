@@ -127,6 +127,10 @@ public:
     void SetGlobal(std::unique_ptr<Global> &&global);
 
     PhysicsEngine *physicsEngine() const;
+    void resetPhysicsEngine();
+
+    std::string kinematicsFile() const;
+    void setKinematicsFile(const std::string &newKinematicsFile);
 
 private:
 
@@ -213,6 +217,7 @@ private:
 
     // physics engine
     std::unique_ptr<PhysicsEngine> m_physicsEngine;
+    std::string m_kinematicsFile;
 };
 
 }

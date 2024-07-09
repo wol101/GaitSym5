@@ -56,7 +56,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-391</y>
+              <y>0</y>
               <width>194</width>
               <height>884</height>
              </rect>
@@ -1056,6 +1056,14 @@
      </property>
      <addaction name="actionExportOpenSim"/>
     </widget>
+    <widget class="QMenu" name="menuImport_Playback">
+     <property name="title">
+      <string>Import Kinematics</string>
+     </property>
+     <addaction name="actionPlaybackOpenSimBodyKinematics"/>
+     <addaction name="separator"/>
+     <addaction name="actionClearKinematics"/>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
@@ -1068,6 +1076,7 @@
     <addaction name="actionImportMarkers"/>
     <addaction name="actionExportMarkers"/>
     <addaction name="actionImportMeshesAsBodies"/>
+    <addaction name="menuImport_Playback"/>
     <addaction name="separator"/>
     <addaction name="menuExport"/>
     <addaction name="separator"/>
@@ -1723,6 +1732,9 @@
    <property name="text">
     <string>OpenSim...</string>
    </property>
+   <property name="toolTip">
+    <string>Export simulation as an OpenSim compatible file</string>
+   </property>
   </action>
   <action name="actionExportMarkers">
    <property name="text">
@@ -1763,6 +1775,22 @@
    </property>
    <property name="menuRole">
     <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
+  </action>
+  <action name="actionPlaybackOpenSimBodyKinematics">
+   <property name="text">
+    <string>OpenSim BodyKinematics...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import OpenSim BodyKinematics .sto file for playback</string>
+   </property>
+  </action>
+  <action name="actionClearKinematics">
+   <property name="text">
+    <string>Clear Kinematics...</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear kinematics data and revert to normal simulation</string>
    </property>
   </action>
  </widget>

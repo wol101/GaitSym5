@@ -112,6 +112,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->action800x600, SIGNAL(triggered()), this, SLOT(menu800x600()));
     connect(ui->actionAboutGaitSymQt, SIGNAL(triggered()), this, SLOT(menuAbout()));
     connect(ui->actionClearMeshCache, SIGNAL(triggered()), this, SLOT(menuClearMeshCache()));
+    connect(ui->actionClearKinematics, SIGNAL(triggered()), this, SLOT(menuClearKinematics()));
     connect(ui->actionConstructionMode, SIGNAL(triggered()), this, SLOT(enterConstructionMode()));
     connect(ui->actionCopy, SIGNAL(triggered()), this, SLOT(copy()));
     connect(ui->actionCreateAssembly, SIGNAL(triggered()), this, SLOT(menuCreateAssembly()));
@@ -131,6 +132,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionExportOpenSim, SIGNAL(triggered()), this, SLOT(menuExportOpenSim()));
     connect(ui->actionImportMarkers, SIGNAL(triggered()), this, SLOT(menuImportMarkers()));
     connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), this, SLOT(menuImportMeshes()));
+    connect(ui->actionPlaybackOpenSimBodyKinematics, SIGNAL(triggered()), this, SLOT(menuImportOpenSimBodyKinematics()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(menuNew()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(menuOpen()));
     connect(ui->actionOutput, SIGNAL(triggered()), this, SLOT(menuOutputs()));
@@ -785,6 +787,8 @@ void MainWindow::updateEnable()
     ui->actionStopUSDSequence->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false && m_saveOBJFileSequenceFlag == true && m_objFileFormat == usda);
     ui->actionImportMarkers->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionImportMeshesAsBodies->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
+    ui->actionPlaybackOpenSimBodyKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
+    ui->actionClearKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && m_simulation->kinematicsFile().size() > 0);
     ui->actionCreateBody->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateMarker->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
     ui->actionCreateJoint->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 1 && m_simulation->GetMarkerList()->size() > 0);
@@ -798,7 +802,6 @@ void MainWindow::updateEnable()
     ui->actionRunMode->setEnabled(m_simulation != nullptr && m_mode == constructionMode && isWindowModified() == false && m_simulation->GetBodyList()->size() > 0);
     ui->actionDisplayAsWireframe->setChecked(m_simulationWidget->wireframe());
     ui->actionDisplayShadows->setChecked(Preferences::valueBool("DisplayShadows")); // m_simulationWidget->shadows() is never updated so this is the value after restart
-
 }
 
 
@@ -1257,8 +1260,10 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     if (this->m_movieFlag) { menuStopAVISave(); }
     this->m_saveOBJFileSequenceFlag = false;
     if (this->m_simulationWidget->aviWriter()) menuStopAVISave();
+    std::string kinematicsFile;
     if (this->m_simulation)
     {
+        kinematicsFile = m_simulation->kinematicsFile();
         delete this->m_simulation;
         this->m_simulation = nullptr;
         this->m_simulationWidget->setSimulation(this->m_simulation);
@@ -1414,6 +1419,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
         this->setWindowModified(false);
         enterRunMode();
     }
+    if (kinematicsFile.size() > 0) { m_simulation->setKinematicsFile(kinematicsFile); }
     this->updateEnable();
     Preferences::Write();
 }
@@ -2152,6 +2158,33 @@ void MainWindow::menuImportMeshes()
     this->updateComboBoxTrackingMarker();
     this->ui->treeWidgetElements->fillVisibitilityLists(this->m_simulation);
     this->m_simulationWidget->update();
+}
+
+void MainWindow::menuImportOpenSimBodyKinematics()
+{
+    QFileInfo info(Preferences::valueQString("LastmportOpenSimBodyKinematics"));
+    QString fileName;
+    fileName = QFileDialog::getOpenFileName(this, tr("Import OpenSim BodyKinematics"), info.absoluteFilePath(), tr("STO File (*.sto);;Any File (*.* *)"), nullptr);
+    if (fileName.isNull() == false)
+    {
+        Preferences::insert("LastmportOpenSimBodyKinematics", fileName);
+        m_simulation->setKinematicsFile(fileName.toStdString());
+        updateEnable();
+    }
+}
+
+void MainWindow::menuClearKinematics()
+{
+    QMessageBox msgBox;
+    msgBox.setText(QString::fromStdString("Kinematics currently loaded from \""s + m_simulation->kinematicsFile() + "\""s));
+    msgBox.setInformativeText("Click OK to clear kinematics and revert to normal function, or Cancel to keep in playback mode");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    if (msgBox.exec() == QMessageBox::Ok)
+    {
+        m_simulation->setKinematicsFile(""s);
+        updateEnable();
+    }
 }
 
 void MainWindow::menuToggleFullScreen()

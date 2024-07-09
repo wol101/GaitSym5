@@ -59,6 +59,7 @@
 #include "ODEPhysicsEngine.h"
 #include "PhysXPhysicsEngine.h"
 #include "MuJoCoPhysicsEngine.h"
+#include "PlaybackPhysicsEngine.h"
 #include "LightBase.h"
 #include "MagicMuscle.h"
 #include "MagicStrap.h"
@@ -169,9 +170,22 @@ void Simulation::UpdateSimulation()
     std::string *err = nullptr;
     if (!m_physicsEngine)
     {
-        switch (m_global->physicsEngine())
+        if (m_kinematicsFile.size())
         {
-        case Global::PhysicsEngine::ODE:
+            m_physicsEngine = std::make_unique<PlaybackPhysicsEngine>();
+            err = m_physicsEngine->Initialise(this);
+            if (err)
+            {
+                std::cerr << "Error: unable to initialise PlaybackPhysicsEngine\n" << *err << "\n";
+                m_SimulationError = true;
+                return;
+            }
+        }
+        else
+        {
+            switch (m_global->physicsEngine())
+            {
+            case Global::PhysicsEngine::ODE:
             {
                 m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
                 err = m_physicsEngine->Initialise(this);
@@ -183,7 +197,7 @@ void Simulation::UpdateSimulation()
                 }
                 break;
             }
-        case Global::PhysicsEngine::PhysX:
+            case Global::PhysicsEngine::PhysX:
             {
                 m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
                 err = m_physicsEngine->Initialise(this);
@@ -195,7 +209,7 @@ void Simulation::UpdateSimulation()
                 }
                 break;
             }
-        case Global::PhysicsEngine::MuJoCo:
+            case Global::PhysicsEngine::MuJoCo:
             {
                 m_physicsEngine = std::make_unique<MuJoCoPhysicsEngine>();
                 err = m_physicsEngine->Initialise(this);
@@ -206,6 +220,7 @@ void Simulation::UpdateSimulation()
                     return;
                 }
                 break;
+            }
             }
         }
     }
@@ -1171,9 +1186,25 @@ void Simulation::DumpObject(NamedObject *namedObject)
     }
 }
 
-PhysicsEngine*Simulation::physicsEngine() const
+std::string Simulation::kinematicsFile() const
+{
+    return m_kinematicsFile;
+}
+
+void Simulation::setKinematicsFile(const std::string &newKinematicsFile)
+{
+    m_kinematicsFile = newKinematicsFile;
+}
+
+PhysicsEngine* Simulation::physicsEngine() const
 {
     return m_physicsEngine.get();
+}
+
+void Simulation::resetPhysicsEngine()
+{
+    m_physicsEngine.reset();
+    m_SimulationTime = 0;
 }
 
 std::vector<std::string> Simulation::GetNameList() const

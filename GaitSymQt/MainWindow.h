@@ -69,6 +69,7 @@ public slots:
     void menu800x600();
     void menuAbout();
     void menuClearMeshCache();
+    void menuClearKinematics();
     void menuCreateAssembly();
     void menuCreateBody();
     void menuCreateDriver();
@@ -85,6 +86,7 @@ public slots:
     void menuExportOpenSim();
     void menuImportMarkers();
     void menuImportMeshes();
+    void menuImportOpenSimBodyKinematics();
     void menuNew();
     void menuOpen();
     void menuOutputs();

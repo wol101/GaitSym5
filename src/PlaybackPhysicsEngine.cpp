@@ -9,6 +9,7 @@
 
 #include "PlaybackPhysicsEngine.h"
 #include "Simulation.h"
+#include "Body.h"
 
 #include "pystring.h"
 
@@ -38,16 +39,16 @@ std::string *PlaybackPhysicsEngine::Initialise(Simulation *theSimulation)
 
 std::string *PlaybackPhysicsEngine::ReadSourceFile()
 {
-    if (m_sourceFile.size() == 0)
+    if (simulation()->kinematicsFile().size() == 0)
     {
         setLastError("PlaybackPhysicsEngine::ReadSourceFile filename not set"s);
         return lastErrorPtr();
     }
 
     std::error_code ec;
-    if (!std::filesystem::is_regular_file(m_sourceFile, ec ))
+    if (!std::filesystem::is_regular_file(simulation()->kinematicsFile(), ec ))
     {
-        setLastError("PlaybackPhysicsEngine::ReadSourceFile \""s + m_sourceFile + "\" is not a file"s);
+        setLastError("PlaybackPhysicsEngine::ReadSourceFile \""s + simulation()->kinematicsFile() + "\" is not a file"s);
         return lastErrorPtr();
     }
 
@@ -62,21 +63,21 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     std::vector<std::string> columnHeadings;
     std::vector<std::vector<std::string>> data;
     std::vector<std::string> header = {"endheader"s};
-    readTabDelimitedFile(m_sourceFile, &columnHeadings, &data, &header);
+    readTabDelimitedFile(simulation()->kinematicsFile(), &columnHeadings, &data, &header);
     if (data.size() == 0 || data[0].size() == 0)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + m_sourceFile + "\" contains no recognisable data"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" contains no recognisable data"s);
         return lastErrorPtr();
     }
     if (columnHeadings.size() < 2)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + m_sourceFile + "\" has no body data"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" has no body data"s);
         return lastErrorPtr();
     }
     // check the header
     if (header[0] != "Positions"s)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + m_sourceFile + "\" unrecognised header"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" unrecognised header"s);
         return lastErrorPtr();
     }
     bool inDegrees = true;
@@ -89,7 +90,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     // read the times
     if (columnHeadings[0] != "time"s)
     {
-        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + m_sourceFile + "\" missing time"s);
+        setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" missing time"s);
         return lastErrorPtr();
     }
     size_t nTimes = data[0].size();
@@ -121,7 +122,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
             {
                 if (dataMap.find(name) == dataMap.end())
                 {
-                    setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + m_sourceFile + "\" missing body label \""s + name + "\"");
+                    setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" missing body label \""s + name + "\"");
                     return lastErrorPtr();
                 }
             }
@@ -139,10 +140,22 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
 
 std::string *PlaybackPhysicsEngine::Step()
 {
+    // start by sorting out the time
+    double time = simulation()->GetTime();
+    // gaitsym always starts from zero but recorded kinematic data might not
+    double playbackTime = m_times[0] + time;
+    // now get the index
+    size_t index = std::lower_bound(m_times.begin(), m_times.end(), playbackTime) - m_times.begin(); // this is an index for the time >= playbackTime
+    // size_t index = std::upper_bound(m_times.begin(), m_times.end(), playbackTime) - m_times.begin(); // this is an index for the time > than playbackTime
+    if (index >= m_times.size()) { index = m_times.size() - 1; }
 
     // update the objects with the new data
-    for (auto &&body : *simulation()->GetBodyList())
+    for (auto &&bodyIter : *simulation()->GetBodyList())
     {
+        // currently only setting positions
+        Pose *pose = &m_poses[bodyIter.first][index];
+        bodyIter.second->SetPosition(pose->p);
+        bodyIter.second->SetQuaternion(pose->q);
     }
 
     return nullptr;
@@ -195,16 +208,6 @@ void PlaybackPhysicsEngine::readTabDelimitedFile(const std::string &filename, st
             else { (*data)[j].push_back(""); } // pad any lines that are incomplete
         }
     }
-}
-
-std::string PlaybackPhysicsEngine::sourceFile() const
-{
-    return m_sourceFile;
-}
-
-void PlaybackPhysicsEngine::setSourceFile(const std::string &newSourceFile)
-{
-    m_sourceFile = newSourceFile;
 }
 
 

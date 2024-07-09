@@ -27,10 +27,6 @@ public:
     virtual std::string *Initialise(Simulation *simulation);
     virtual std::string *Step();
 
-
-    std::string sourceFile() const;
-    void setSourceFile(const std::string &newSourceFile);
-
 private:
     std::string *ReadSourceFile();
     std::string *ReadOSIMBodyKinematicsFile();
@@ -42,8 +38,6 @@ private:
         pgd::Vector3 p;
         pgd::Quaternion q;
     };
-
-    std::string m_sourceFile;
 
     std::vector<double> m_times;
     std::map<std::string, std::vector<Pose>> m_poses;
