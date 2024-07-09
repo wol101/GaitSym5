@@ -1403,7 +1403,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     // put the filename as a title
     //if (canonicalFilePath.size() <= 256) this->setWindowTitle(canonicalFilePath + "[*]");
     //else this->setWindowTitle(QString("...") + canonicalFilePath.right(256) + "[*]");
-    this->setWindowTitle(canonicalFilePath);
+    this->setWindowTitle(canonicalFilePath + "[*]");
 
     updateRecentFiles(canonicalFilePath);
 

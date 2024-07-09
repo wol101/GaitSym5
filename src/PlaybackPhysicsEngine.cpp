@@ -85,7 +85,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     for (auto &&line : header)
     {
         auto tokens = pystring::split(line, "="s);
-        if (tokens.size() == 2 && tokens[0] == "inDegrees"s && std::find(falseWords.begin(), falseWords.end(), pystring::lower(line)) != falseWords.end()) inDegrees = false;
+        if (tokens.size() == 2 && tokens[0] == "inDegrees"s && std::find(falseWords.begin(), falseWords.end(), pystring::lower(tokens[1])) != falseWords.end()) inDegrees = false;
     }
     // read the times
     if (columnHeadings[0] != "time"s)
@@ -113,23 +113,29 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     m_poses.clear();
     for (auto &&body : *simulation()->GetBodyList())
     {
+        std::vector<std::string> names = {body.first + "_X"s, body.first + "_Y"s, body.first + "_Z"s, body.first + "_Ox"s, body.first + "_Oy"s, body.first + "_Oz"s};
+        for (auto &&name : names)
+        {
+            if (dataMap.find(name) == dataMap.end())
+            {
+                setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" missing body label \""s + name + "\"");
+                return lastErrorPtr();
+            }
+        }
+        std::vector<double> &x = dataMap[names[0]];
+        std::vector<double> &y = dataMap[names[1]];
+        std::vector<double> &z = dataMap[names[2]];
+        std::vector<double> &ox = dataMap[names[3]];
+        std::vector<double> &oy = dataMap[names[4]];
+        std::vector<double> &oz = dataMap[names[5]];
         std::vector<Pose> poses;
         poses.reserve(nTimes);
         for (size_t i =0; i < nTimes; i++)
         {
-            std::vector<std::string> names = {body.first + "_X"s, body.first + "_Y"s, body.first + "_Z"s, body.first + "_Ox"s, body.first + "_Oy"s, body.first + "_Oz"s};
-            for (auto &&name : names)
-            {
-                if (dataMap.find(name) == dataMap.end())
-                {
-                    setLastError("PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile \""s + simulation()->kinematicsFile() + "\" missing body label \""s + name + "\"");
-                    return lastErrorPtr();
-                }
-            }
             Pose p;
-            p.p.Set(dataMap[names[0]][i], dataMap[names[1]][i], dataMap[names[2]][i]);
-            if (inDegrees) p.q = pgd::MakeQFromEulerAngles(dataMap[names[3]][i], dataMap[names[4]][i], dataMap[names[5]][i]);
-            else p.q = pgd::MakeQFromEulerAnglesRadian(dataMap[names[3]][i], dataMap[names[4]][i], dataMap[names[5]][i]);
+            p.p.Set(x[i], y[i], z[i]);
+            if (inDegrees) p.q = pgd::MakeQFromEulerAngles(ox[i], oy[i], oz[i]);
+            else p.q = pgd::MakeQFromEulerAnglesRadian(ox[i], oy[i], oz[i]);
             poses.push_back(std::move(p));
         }
         m_poses[body.first] = std::move(poses);
