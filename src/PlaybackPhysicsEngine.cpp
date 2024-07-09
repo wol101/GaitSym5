@@ -140,7 +140,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
         std::vector<double> &ox = dataMap[names[3]];
         std::vector<double> &oy = dataMap[names[4]];
         std::vector<double> &oz = dataMap[names[5]];
-        if (dependencies.size() == 1) // no dependencies
+        if (dependencies.size() < 10) // no dependencies
         {
             std::vector<Pose> poses;
             poses.reserve(nTimes);
@@ -169,12 +169,12 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
             Pose p;
             p.p.Set(x[i], y[i], z[i]);
             pgd::Quaternion parentQ = parentPoses[i].q;
-            pgd::Vector3 x, y, z;
-            pgd::QGetBasis(parentQ, &x, &y, &z);
+            pgd::Vector3 xa, ya, za;
+            pgd::QGetBasis(parentQ, &xa, &ya, &za);
             pgd::Vector3 ea;
             if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
             else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
-            pgd::Quaternion childQ = pgd::MakeQFromAxisAngle(z, ea.z) * (pgd::MakeQFromAxisAngle(y, ea.y) * (pgd::MakeQFromAxisAngle(x, ea.x) * parentQ));
+            pgd::Quaternion childQ = pgd::MakeQFromAxisAngle(za, ea.z) * (pgd::MakeQFromAxisAngle(ya, ea.y) * (pgd::MakeQFromAxisAngle(xa, ea.x)));
             p.q = childQ;
             poses.push_back(std::move(p));
         }
