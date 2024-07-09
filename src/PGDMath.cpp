@@ -691,12 +691,12 @@ pgd::Quaternion::Quaternion(void)
     z = 0;
 }
 
-pgd::Quaternion::Quaternion(double nn, double x, double y, double z)
+pgd::Quaternion::Quaternion(double nn, double xx, double yy, double zz)
 {
     this->n = nn;
-    this->x = x;
-    this->y = y;
-    this->z = z;
+    this->x = xx;
+    this->y = yy;
+    this->z = zz;
 }
 
 pgd::Quaternion::Quaternion(const double *q_nxyz)
@@ -718,12 +718,12 @@ pgd::Quaternion::Quaternion(bool identity)
     }
 }
 
-void pgd::Quaternion::Set(double nn, double x, double y, double z)
+void pgd::Quaternion::Set(double nn, double xx, double yy, double zz)
 {
     this->n = nn;
-    this->x = x;
-    this->y = y;
-    this->z = z;
+    this->x = xx;
+    this->y = yy;
+    this->z = zz;
 }
 
 void pgd::Quaternion::Set(const double *q_nxyz)

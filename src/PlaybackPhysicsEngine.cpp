@@ -64,7 +64,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
 {
     std::string dependencyFile = simulation()->kinematicsFiles()[1];
     std::vector<std::string> lines;
-    readLineStructuredFile(dependencyFile, &lines, &m_dependencies);
+    // readLineStructuredFile(dependencyFile, &lines, &m_dependencies);
 
     std::vector<std::string> columnHeadings;
     std::vector<std::vector<std::string>> data;
@@ -119,10 +119,14 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     // now get the pose data
     m_poses.clear();
     // this needs to be done in dependency order
-    for (auto &&dependencies : m_dependencies)
+    // for (auto &&dependencies : m_dependencies)
+    // {
+    //     if (dependencies.size() == 0) { continue; }
+    //     std::string body = dependencies.back();
+    pgd::Quaternion rotation = pgd::MakeQFromAxisAngle(1, 0, 0, pgd::DegToRad(90));
+    for (auto &&bodyIter : *simulation()->GetBodyList())
     {
-        if (dependencies.size() == 0) { continue; }
-        std::string body = dependencies.back();
+        const std::string &body = bodyIter.first;
         // check the names are OK
         std::vector<std::string> names = {body + "_X"s, body + "_Y"s, body + "_Z"s, body + "_Ox"s, body + "_Oy"s, body + "_Oz"s};
         for (auto &&name : names)
@@ -140,45 +144,50 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
         std::vector<double> &ox = dataMap[names[3]];
         std::vector<double> &oy = dataMap[names[4]];
         std::vector<double> &oz = dataMap[names[5]];
-        if (dependencies.size() < 10) // no dependencies
-        {
-            std::vector<Pose> poses;
-            poses.reserve(nTimes);
-            for (size_t i =0; i < nTimes; i++)
-            {
-                Pose p;
-                p.p.Set(x[i], y[i], z[i]);
-                Euler::EulerAngles ea;
-                if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
-                else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
-                ea.w = EulOrdXYZs;
-                Euler::Quat quat = Eul_ToQuat(ea);
-                p.q.Set(quat.w, quat.x, quat.y, quat.z);
-                poses.push_back(std::move(p));
-            }
-            m_poses[body] = std::move(poses);
-            continue;
-        }
-        // there must be a parent that has already been calculated
-        std::string parent = dependencies[dependencies.size() - 2];
-        std::vector<Pose> &parentPoses = m_poses[parent];
+        // if (dependencies.size() < 10) // no dependencies
+        // {
         std::vector<Pose> poses;
         poses.reserve(nTimes);
         for (size_t i =0; i < nTimes; i++)
         {
             Pose p;
             p.p.Set(x[i], y[i], z[i]);
-            pgd::Quaternion parentQ = parentPoses[i].q;
-            pgd::Vector3 xa, ya, za;
-            pgd::QGetBasis(parentQ, &xa, &ya, &za);
-            pgd::Vector3 ea;
+            Euler::EulerAngles ea;
             if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
             else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
-            pgd::Quaternion childQ = pgd::MakeQFromAxisAngle(za, ea.z) * (pgd::MakeQFromAxisAngle(ya, ea.y) * (pgd::MakeQFromAxisAngle(xa, ea.x)));
-            p.q = childQ;
+            // ea.w = EulOrdXYZs;
+            ea.w = EulOrdXYZs;
+            Euler::Quat quat = Eul_ToQuat(ea);
+            p.q.Set(quat.w, quat.x, quat.y, quat.z);
+            pgd::Quaternion q = pgd::MakeQFromEulerAngles(ox[i], oy[i], oz[i]);
+            p.q = q;
+            p.p = pgd::QVRotate(rotation, p.p); // correct for Z up
+            p.q = rotation * p.q; // correct for Z up
             poses.push_back(std::move(p));
         }
         m_poses[body] = std::move(poses);
+        // continue;
+        // }
+        // // there must be a parent that has already been calculated
+        // std::string parent = dependencies[dependencies.size() - 2];
+        // std::vector<Pose> &parentPoses = m_poses[parent];
+        // std::vector<Pose> poses;
+        // poses.reserve(nTimes);
+        // for (size_t i =0; i < nTimes; i++)
+        // {
+        //     Pose p;
+        //     p.p.Set(x[i], y[i], z[i]);
+        //     pgd::Quaternion parentQ = parentPoses[i].q;
+        //     pgd::Vector3 xa, ya, za;
+        //     pgd::QGetBasis(parentQ, &xa, &ya, &za);
+        //     pgd::Vector3 ea;
+        //     if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
+        //     else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
+        //     pgd::Quaternion childQ = pgd::MakeQFromAxisAngle(za, ea.z) * (pgd::MakeQFromAxisAngle(ya, ea.y) * (pgd::MakeQFromAxisAngle(xa, ea.x)));
+        //     p.q = childQ;
+        //     poses.push_back(std::move(p));
+        // }
+        // m_poses[body] = std::move(poses);
     }
     return nullptr;
 }

@@ -42,7 +42,7 @@ private:
 
     std::vector<double> m_times;
     std::map<std::string, std::vector<Pose>> m_poses;
-    std::vector<std::vector<std::string>> m_dependencies;
+    // std::vector<std::vector<std::string>> m_dependencies;
 };
 
 }
