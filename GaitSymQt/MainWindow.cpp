@@ -788,7 +788,7 @@ void MainWindow::updateEnable()
     ui->actionImportMarkers->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionImportMeshesAsBodies->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionPlaybackOpenSimBodyKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
-    ui->actionClearKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && m_simulation->kinematicsFile().size() > 0);
+    ui->actionClearKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && m_simulation->kinematicsFiles().size() > 0);
     ui->actionCreateBody->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateMarker->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
     ui->actionCreateJoint->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 1 && m_simulation->GetMarkerList()->size() > 0);
@@ -1260,10 +1260,10 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     if (this->m_movieFlag) { menuStopAVISave(); }
     this->m_saveOBJFileSequenceFlag = false;
     if (this->m_simulationWidget->aviWriter()) menuStopAVISave();
-    std::string kinematicsFile;
+    std::vector<std::string> kinematicsFiles;
     if (this->m_simulation)
     {
-        kinematicsFile = m_simulation->kinematicsFile();
+        kinematicsFiles = m_simulation->kinematicsFiles();
         delete this->m_simulation;
         this->m_simulation = nullptr;
         this->m_simulationWidget->setSimulation(this->m_simulation);
@@ -1419,7 +1419,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
         this->setWindowModified(false);
         enterRunMode();
     }
-    if (kinematicsFile.size() > 0) { m_simulation->setKinematicsFile(kinematicsFile); }
+    if (kinematicsFiles.size() > 0) { m_simulation->setKinematicsFiles(kinematicsFiles); }
     this->updateEnable();
     Preferences::Write();
 }
@@ -2168,7 +2168,9 @@ void MainWindow::menuImportOpenSimBodyKinematics()
     if (fileName.isNull() == false)
     {
         Preferences::insert("LastmportOpenSimBodyKinematics", fileName);
-        m_simulation->setKinematicsFile(fileName.toStdString());
+        std::vector<std::string> kinematicsFiles = { fileName.toStdString() };
+        kinematicsFiles.push_back("C:/Users/wis/Desktop/Synchronised/Research/Japanese Macaque Gait/Macaque Model V2/osim/macaque_hands_and_feet_osim_dependency_tree.txt"s);
+        m_simulation->setKinematicsFiles(kinematicsFiles);
         updateEnable();
     }
 }
@@ -2176,13 +2178,13 @@ void MainWindow::menuImportOpenSimBodyKinematics()
 void MainWindow::menuClearKinematics()
 {
     QMessageBox msgBox;
-    msgBox.setText(QString::fromStdString("Kinematics currently loaded from \""s + m_simulation->kinematicsFile() + "\""s));
+    msgBox.setText(QString::fromStdString("Kinematics currently loaded from \""s + m_simulation->kinematicsFiles()[0] + "\""s));
     msgBox.setInformativeText("Click OK to clear kinematics and revert to normal function, or Cancel to keep in playback mode");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
     if (msgBox.exec() == QMessageBox::Ok)
     {
-        m_simulation->setKinematicsFile(""s);
+        m_simulation->setKinematicsFiles(std::vector<std::string>());
         updateEnable();
     }
 }

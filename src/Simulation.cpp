@@ -170,7 +170,7 @@ void Simulation::UpdateSimulation()
     std::string *err = nullptr;
     if (!m_physicsEngine)
     {
-        if (m_kinematicsFile.size())
+        if (m_kinematicsFiles.size())
         {
             m_physicsEngine = std::make_unique<PlaybackPhysicsEngine>();
             err = m_physicsEngine->Initialise(this);
@@ -1186,14 +1186,14 @@ void Simulation::DumpObject(NamedObject *namedObject)
     }
 }
 
-std::string Simulation::kinematicsFile() const
+std::vector<std::string> Simulation::kinematicsFiles() const
 {
-    return m_kinematicsFile;
+    return m_kinematicsFiles;
 }
 
-void Simulation::setKinematicsFile(const std::string &newKinematicsFile)
+void Simulation::setKinematicsFiles(const std::vector<std::string> &newKinematicsFiles)
 {
-    m_kinematicsFile = newKinematicsFile;
+    m_kinematicsFiles = newKinematicsFiles;
 }
 
 PhysicsEngine* Simulation::physicsEngine() const

@@ -129,8 +129,8 @@ public:
     PhysicsEngine *physicsEngine() const;
     void resetPhysicsEngine();
 
-    std::string kinematicsFile() const;
-    void setKinematicsFile(const std::string &newKinematicsFile);
+    std::vector<std::string> kinematicsFiles() const;
+    void setKinematicsFiles(const std::vector<std::string> &newKinematicsFiles);
 
 private:
 
@@ -217,7 +217,7 @@ private:
 
     // physics engine
     std::unique_ptr<PhysicsEngine> m_physicsEngine;
-    std::string m_kinematicsFile;
+    std::vector<std::string> m_kinematicsFiles;
 };
 
 }

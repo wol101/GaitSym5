@@ -140,7 +140,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
             Euler::EulerAngles ea;
             if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
             else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
-            ea.w = EulOrdXYZr;
+            ea.w = EulOrdXYZs;
             Euler::Quat quat = Eul_ToQuat(ea);
             p.q.Set(quat.w, quat.x, quat.y, quat.z);
             poses.push_back(std::move(p));
