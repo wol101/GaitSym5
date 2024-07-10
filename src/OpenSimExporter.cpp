@@ -174,7 +174,7 @@ void OpenSimExporter::CreateBodySet()
         XMLTagAndContent(&m_xmlString, "objects"s, ""s);
         XMLTagAndContent(&m_xmlString, "groups"s, ""s);
         XMLTerminateTag(&m_xmlString, "WrapObjectSet"s);
-        // mas sproperties
+        // mass properties
         double mass, ixx, iyy, izz, ixy, izx, iyz;
         bodyIter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         XMLTagAndContent(&m_xmlString, "mass"s, GSUtil::ToString(mass));
