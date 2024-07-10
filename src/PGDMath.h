@@ -230,6 +230,7 @@ Quaternion QRotate(const Quaternion &q1, const Quaternion &q2);
 Vector3  QVRotate(const Quaternion &q, const Vector3 &v);
 Quaternion  MakeQFromEulerAngles(double x, double y, double z); // these are extrinsic/global/static/fixed axis Euler XYZ angles
 Quaternion  MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw); // these are extrinsic/global/static/fixed axis Euler XYZ angles
+pgd::Quaternion MakeQFromEulerAnglesRadian(const pgd::Vector3 &eulerAngles, const std::string &order); // these are intrinsic/local/dynamic/moving axis Euler angles
 pgd::Vector3 MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis);
 Vector3 MakeEulerAnglesFromQ(const Quaternion &q); // these are extrinsic/global/static/fixed axis Euler XYZ angles
 Vector3  MakeEulerAnglesFromQRadian(const Quaternion &q); // these are extrinsic/global/static/fixed axis Euler XYZ angles

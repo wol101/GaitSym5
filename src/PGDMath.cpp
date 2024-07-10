@@ -1102,6 +1102,7 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd
     }
 }
 
+// these are intrinsic/local/dynamic/moving axis Euler angles
 pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(const pgd::Vector3 &eulerAngles, const std::string &order)
 {
     double w, x, y, z;

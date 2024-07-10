@@ -10,7 +10,6 @@
 #include "PlaybackPhysicsEngine.h"
 #include "Simulation.h"
 #include "Body.h"
-#include "Euler.h"
 #include "Marker.h"
 #include "Joint.h"
 
@@ -131,10 +130,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
 
     pgd::Vector3 euler(1.5707963267948966, 0, 0); // rotating +90 degrees about the X axis converts from Y up to Z up
     pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-    std::vector<double> encodings{EulOrdXYZs,EulOrdXYXs,EulOrdXZYs,EulOrdXZXs,EulOrdYZXs,EulOrdYZYs,EulOrdYXZs,EulOrdYXYs,EulOrdZXYs,EulOrdZXZs,EulOrdZYXs,EulOrdZYZs,
-                                  EulOrdZYXr,EulOrdXYXr,EulOrdYZXr,EulOrdXZXr,EulOrdXZYr,EulOrdYZYr,EulOrdZXYr,EulOrdYXYr,EulOrdYXZr,EulOrdZXZr,EulOrdXYZr,EulOrdZYZr};
-    std::vector<std::string> encodingNames{"EulOrdXYZs","EulOrdXYXs","EulOrdXZYs","EulOrdXZXs","EulOrdYZXs","EulOrdYZYs","EulOrdYXZs","EulOrdYXYs","EulOrdZXYs","EulOrdZXZs","EulOrdZYXs","EulOrdZYZs",
-                                           "EulOrdZYXr","EulOrdXYXr","EulOrdYZXr","EulOrdXZXr","EulOrdXZYr","EulOrdYZYr","EulOrdZXYr","EulOrdYXYr","EulOrdYXZr","EulOrdZXZr","EulOrdXYZr","EulOrdZYZr"};
+    std::vector<std::string> encodings{"XYZ","YXZ","ZXY","ZYX","YZX","XZY"};
     for (auto &&bodyIt : *simulation()->GetBodyList())
     {
         // check the names are OK
@@ -161,21 +157,21 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
         {
             Pose p;
             p.p.Set(x[i], y[i], z[i]);
-            Euler::EulerAngles ea;
+            pgd::Vector3 ea;
             if (inDegrees) { ea.x = pgd::DegToRad(ox[i]); ea.y = pgd::DegToRad(oy[i]); ea.z = pgd::DegToRad(oz[i]); }
             else { ea.x = ox[i]; ea.y = oy[i]; ea.z = oz[i]; }
-            Euler::Quat quat;
-            std::ofstream log("c:/Scratch/output.txt");
-            for (size_t j = 0; j < encodings.size(); j++)
-            {
-                ea.w = encodings[j];
-                quat = Eul_ToQuat(ea);
-                log << encodingNames[j] << " ea.w " << ea.w << " ea.x " << ea.x << " ea.y " << ea.y << " ea.z " << ea.z << " quat " << quat.w << " " << quat.x << " " << quat.y << " " << quat.z << "\n";
-            }
-            exit(1);
-            p.q.Set(quat.w, quat.x, quat.y, quat.z);
+            pgd::Quaternion quat;
+            // std::ofstream log("c:/Scratch/output.txt");
+            // for (size_t j = 0; j < encodings.size(); j++)
+            // {
+            //     quat = pgd::MakeQFromEulerAnglesRadian(ea, encodings[j]);
+            //     log << encodings[j] << " ea.x " << ea.x << " ea.y " << ea.y << " ea.z " << ea.z << " quat " << quat.n << " " << quat.x << " " << quat.y << " " << quat.z << "\n";
+            // }
+            // exit(1);
+            p.q.Set(quat.n, quat.x, quat.y, quat.z);
             pgd::Quaternion q = pgd::MakeQFromEulerAngles(ox[i], oy[i], oz[i]);
             p.q = q;
+            p.q = pgd::MakeQFromEulerAnglesRadian(ea, "XYZ");
             // p.p = pgd::QVRotate(rotation, p.p); // correct for Z up
             // p.q = rotation * p.q; // correct for Z up
             poses.push_back(std::move(p));
