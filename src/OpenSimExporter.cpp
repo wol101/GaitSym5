@@ -178,12 +178,13 @@ void OpenSimExporter::CreateBodySet()
         double mass, ixx, iyy, izz, ixy, izx, iyz;
         bodyIter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         XMLTagAndContent(&m_xmlString, "mass"s, GSUtil::ToString(mass));
-        pgd::Vector3 referencePosition;
-        for (auto &&jointIter : *m_simulation->GetJointList())
-        {
-            if (jointIter.second->body2() == bodyIter.second.get()) { referencePosition = jointIter.second->body2Marker()->GetPosition(); } // if a body is connected to a parent, then its reference is that joint
-        }
-        XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
+        // pgd::Vector3 referencePosition;
+        // for (auto &&jointIter : *m_simulation->GetJointList())
+        // {
+        //     if (jointIter.second->body2() == bodyIter.second.get()) { referencePosition = jointIter.second->body2Marker()->GetPosition(); } // if a body is connected to a parent, then its reference is that joint
+        // }
+        // XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
+        XMLTagAndContent(&m_xmlString, "mass_center"s, "0 0 0"s); // Maybe the centre of mass is always at the local origin given the way I have defined the joints
         XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
         XMLTerminateTag(&m_xmlString, "Body"s);
     }
