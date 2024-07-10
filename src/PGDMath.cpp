@@ -937,7 +937,7 @@ pgd::Vector3 pgd::QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // s
 #endif
 }
 
-// these are extrinsic/global/static Euler XYZ angles (or intrinsic axis ZYX)
+// these are extrinsic/global/static Euler XYZ angles
 pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
 {
     pgd::Quaternion  q;
@@ -968,7 +968,7 @@ pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
     return q;
 }
 
-// these are intrinsic/local/dynamic Euler XYZ angles (or extrinsic axis ZYX)
+// these are extrinsic/global/static Euler XYZ angles
 pgd::Vector3 pgd::MakeEulerAnglesFromQ(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
@@ -1006,7 +1006,7 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQ(const pgd::Quaternion &q)
 
 }
 
-// these are intrinsic Euler XYZ angles (or fixed axis ZYX)
+// these are extrinsic/global/static Euler XYZ angles
 pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw)
 {
     pgd::Quaternion  q;
@@ -1035,7 +1035,7 @@ pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(double roll, double pitch, doubl
 }
 
 
-// these are intrinsic Euler XYZ angles (or fixed axis ZYX)
+// these are extrinsic/global/static Euler XYZ angles
 pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
@@ -1100,6 +1100,75 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd
 
         return euler;
     }
+}
+
+pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(const pgd::Vector3 &eulerAngles, const std::string &order)
+{
+    double w, x, y, z;
+    double c = std::cos(eulerAngles.x / 2);
+    double d = std::cos(eulerAngles.y/ 2);
+    double e = std::cos(eulerAngles.z / 2);
+    double f = std::sin(eulerAngles.x / 2);
+    double g = std::sin(eulerAngles.y/ 2);
+    double h = std::sin(eulerAngles.z/ 2);
+    while (true)
+    {
+        if (order == "XYZ")
+        {
+            x = f * d * e + c * g * h;
+            y = c * g * e - f * d * h;
+            z = c * d * h + f * g * e;
+            w = c * d * e - f * g * h;
+            break;
+        }
+        if (order == "YXZ")
+        {
+            x = f * d * e + c * g * h;
+            y = c * g * e - f * d * h;
+            z = c * d * h - f * g * e;
+            w = c * d * e + f * g * h;
+            break;
+        }
+        if (order == "ZXY")
+        {
+            x = f * d * e - c * g * h;
+            y = c * g * e + f * d * h;
+            z = c * d * h + f * g * e;
+            w = c * d * e - f * g * h;
+            break;
+        }
+        if (order == "ZYX")
+        {
+            x = f * d * e - c * g * h;
+            y = c * g * e + f * d * h;
+            z = c * d * h - f * g * e;
+            w = c * d * e + f * g * h;
+            break;
+        }
+        if (order == "YZX")
+        {
+            x = f * d * e + c * g * h;
+            y = c * g * e + f * d * h;
+            z = c * d * h - f * g * e;
+            w = c * d * e - f * g * h;
+            break;
+        }
+        if (order == "XZY")
+        {
+            x = f * d * e - c * g * h;
+            y = c * g * e - f * d * h;
+            z = c * d * h + f * g * e;
+            w = c * d * e + f * g * h;
+            break;
+        }
+        // order not recognsed so use "XYZ"
+        x = f * d * e + c * g * h;
+        y = c * g * e - f * d * h;
+        z = c * d * h + f * g * e;
+        w = c * d * e - f * g * h;
+        break;
+    }
+    return pgd::Quaternion(w,x,y,z);
 }
 
 // wis  - added routine to make a pgd::Quaternion from an axis and a rotation angle in radians

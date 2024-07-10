@@ -228,11 +228,11 @@ double QGetAngle(const Quaternion &q);
 Vector3 QGetAxis(const Quaternion &q);
 Quaternion QRotate(const Quaternion &q1, const Quaternion &q2);
 Vector3  QVRotate(const Quaternion &q, const Vector3 &v);
-Quaternion  MakeQFromEulerAngles(double x, double y, double z);
-Quaternion  MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw);
+Quaternion  MakeQFromEulerAngles(double x, double y, double z); // these are extrinsic/global/static/fixed axis Euler XYZ angles
+Quaternion  MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw); // these are extrinsic/global/static/fixed axis Euler XYZ angles
 pgd::Vector3 MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis);
-Vector3 MakeEulerAnglesFromQ(const Quaternion &q);
-Vector3  MakeEulerAnglesFromQRadian(const Quaternion &q);
+Vector3 MakeEulerAnglesFromQ(const Quaternion &q); // these are extrinsic/global/static/fixed axis Euler XYZ angles
+Vector3  MakeEulerAnglesFromQRadian(const Quaternion &q); // these are extrinsic/global/static/fixed axis Euler XYZ angles
 Quaternion MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast = false);
 Quaternion MakeQFromAxisAngle(const Vector3 &axis, double angle, bool fast = false);
 void MakeAxisAngleFromQ(Quaternion q1, double *xa, double *ya, double *za, double *angle);
