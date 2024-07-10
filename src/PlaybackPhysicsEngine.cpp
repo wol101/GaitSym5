@@ -129,11 +129,11 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
         }
     }
 
+    pgd::Vector3 euler(1.5707963267948966, 0, 0); // rotating +90 degrees about the X axis converts from Y up to Z up
+    pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+
     for (auto &&body : dependencyOrder)
     {
-        pgd::Vector3 euler(1.5707963267948966, 0, 0); // rotating +90 degrees about the X axis converts from Y up to Z up
-        pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-
         // check the names are OK
         std::vector<std::string> names = {body + "_X"s, body + "_Y"s, body + "_Z"s, body + "_Ox"s, body + "_Oy"s, body + "_Oz"s};
         for (auto &&name : names)
