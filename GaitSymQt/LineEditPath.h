@@ -2,6 +2,7 @@
 #define LINEEDITPATH_H
 
 #include <QLineEdit>
+#include <QValidator>>
 
 class QFocusEvent;
 
@@ -17,6 +18,11 @@ public:
     void setPathType(const PathType &pathType);
 
     void setHighlighted(bool highlight);
+
+    void setText(const QString &text); // we are overloading the setText function
+    QString text() const; // we are overloading the setText function
+
+    QValidator::State state() const;
 
 public slots:
     void menuRequestPath(const QPoint &pos);
@@ -35,6 +41,7 @@ private:
     PathType m_pathType;
     QString m_backgroundStyle;
     QString m_foregroundStyle;
+    QValidator::State m_state = QValidator::Invalid;
 };
 
 #endif // LINEEDITPATH_H

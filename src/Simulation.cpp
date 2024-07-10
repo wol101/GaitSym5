@@ -90,7 +90,8 @@ Simulation::~Simulation()
 //----------------------------------------------------------------------------
 std::string *Simulation::LoadModel(const char *buffer, size_t length) // note this requires buffer to be a 0 terminated string of size length + 1
 {
-    std::string *ptr = m_parseXML.LoadModel(buffer, length, "GAITSYM2019"s);
+    std::string rootTag = "GAITSYM5"s;
+    std::string *ptr = m_parseXML.LoadModel(buffer, length, &rootTag);
     if (ptr) return ptr;
 
     // this logic allows forward references at the expense of slightly less obvious error messages
@@ -1003,7 +1004,7 @@ std::string Simulation::SaveToXML()
                " Score: " << CalculateInstantaneousFitness() <<
                " Mechanical Energy: " << m_MechanicalEnergy <<
                " Metabolic Energy: " << m_MetabolicEnergy;
-    return m_parseXML.SaveModel("GAITSYM2019"s, comment.str());
+    return m_parseXML.SaveModel("GAITSYM5"s, comment.str());
 }
 
 // output the simulation state in an XML format that can be re-read

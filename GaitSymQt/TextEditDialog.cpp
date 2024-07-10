@@ -474,8 +474,8 @@ void TextEditDialog::attributeMachineApply()
     bool localModified = ui->plainTextEdit->document()->isModified();
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
-    std::string rootNodeTag = "GAITSYM2019"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), rootNodeTag);
+    std::string rootNodeTag = "GAITSYM5"s;
+    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -498,7 +498,7 @@ void TextEditDialog::attributeMachineApply()
                 tokens[5].toStdString(), tokens[6].toStdString(), tokens[7].toStdString(), tokens[8].toStdString());
     }
 
-    std::string newXML = m_parseXML.SaveModel("GAITSYM2019"s, "Created from TextEditDialog::attributeMachineApply"s);
+    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from TextEditDialog::attributeMachineApply"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }
@@ -725,8 +725,8 @@ void TextEditDialog::resetPositions()
     bool localModified = ui->plainTextEdit->document()->isModified();
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
-    std::string rootNodeTag = "GAITSYM2019"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), rootNodeTag);
+    std::string rootNodeTag = "GAITSYM5"s;
+    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -754,7 +754,7 @@ void TextEditDialog::resetPositions()
             quaternion->second = "1 0 0 0"s;
         }
     }
-    std::string newXML = m_parseXML.SaveModel("GAITSYM2019"s, "Created from TextEditDialog::resetPositions"s);
+    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from TextEditDialog::resetPositions"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }

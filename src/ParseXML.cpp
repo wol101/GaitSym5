@@ -21,7 +21,7 @@ ParseXML::ParseXML()
 {
 }
 
-std::string *ParseXML::LoadModel(const char *buffer, size_t length, const std::string &rootNodeTag) // note buffer must be a null terminated string (total length length + 1)
+std::string *ParseXML::LoadModel(const char *buffer, size_t length, std::string *rootNodeTag) // note buffer must be a null terminated string (total length length + 1)
 {
     m_inputConfigDoc.clear();
     m_elementList.clear();
@@ -62,11 +62,12 @@ std::string *ParseXML::LoadModel(const char *buffer, size_t length, const std::s
     }
 
 
-    if (rootNodeTag != std::string(cur->name(), cur->name_size()))
+    if (rootNodeTag->size() && *rootNodeTag != std::string(cur->name(), cur->name_size()))
     {
-        setLastError("Error: Simulation::LoadModel - Document of the wrong type, root node != \""s + rootNodeTag + "\""s);
+        setLastError("Error: Simulation::LoadModel - Document of the wrong type, root node != \""s + *rootNodeTag + "\""s);
         return lastErrorPtr();
     }
+    *rootNodeTag = std::string(cur->name(), cur->name_size());
 
     // now parse the elements in the file
     cur = cur->first_node();

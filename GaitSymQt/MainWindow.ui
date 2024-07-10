@@ -1074,11 +1074,12 @@
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
     <addaction name="actionImportMarkers"/>
-    <addaction name="actionExportMarkers"/>
     <addaction name="actionImportMeshesAsBodies"/>
     <addaction name="menuImport_Playback"/>
     <addaction name="separator"/>
+    <addaction name="actionExportMarkers"/>
     <addaction name="menuExport"/>
+    <addaction name="actionConvertFile"/>
     <addaction name="separator"/>
     <addaction name="actionClearMeshCache"/>
     <addaction name="separator"/>
@@ -1791,6 +1792,11 @@
    </property>
    <property name="toolTip">
     <string>Clear kinematics data and revert to normal simulation</string>
+   </property>
+  </action>
+  <action name="actionConvertFile">
+   <property name="text">
+    <string>Convert File...</string>
    </property>
   </action>
  </widget>

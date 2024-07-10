@@ -57,13 +57,13 @@ void LineEditPath::menuRequestPath(const QPoint &pos)
 void LineEditPath::focusInEvent(QFocusEvent *e)
 {
     QLineEdit::focusInEvent(e);
-    emit(focussed(true));
+    emit focussed(true);
 }
 
 void LineEditPath::focusOutEvent(QFocusEvent *e)
 {
     QLineEdit::focusOutEvent(e);
-    emit(focussed(false));
+    emit focussed(false);
 }
 
 LineEditPath::PathType LineEditPath::pathType() const
@@ -92,15 +92,15 @@ void LineEditPath::setHighlighted(bool highlight)
 void LineEditPath::textChangedSlot(const QString &text)
 {
     QFileInfo fileInfo(text);
-    QValidator::State state = QValidator::Invalid;
-    if (m_pathType == FileForOpen && fileInfo.isFile()) state = QValidator::Acceptable;
+    m_state = QValidator::Invalid;
+    if (m_pathType == FileForOpen && fileInfo.isFile()) m_state = QValidator::Acceptable;
     if (m_pathType == FileForSave)
     {
-        if (!fileInfo.exists()) state = QValidator::Acceptable;
-        else if (fileInfo.isFile()) state = QValidator::Acceptable;
+        if (!fileInfo.exists()) m_state = QValidator::Acceptable;
+        else if (fileInfo.isFile()) m_state = QValidator::Acceptable;
     }
-    if (m_pathType == Folder && fileInfo.isDir()) state = QValidator::Acceptable;
-    switch (state)
+    if (m_pathType == Folder && fileInfo.isDir()) m_state = QValidator::Acceptable;
+    switch (m_state)
     {
     case QValidator::Acceptable:
         m_foregroundStyle = QString();
@@ -126,4 +126,32 @@ void LineEditPath::generateLocalStyleSheet()
     if (!m_foregroundStyle.size() && !m_backgroundStyle.size())
         this->setStyleSheet(QString());
 }
+
+QValidator::State LineEditPath::state() const
+{
+    return m_state;
+}
+
+void LineEditPath::setText(const QString &text)
+{
+#ifdef _WIN32
+    QString newText(text);
+    newText.replace('\\', '/');
+    QLineEdit::setText(newText);
+#else
+    QLineEdit::setText(text);
+#endif
+}
+
+QString LineEditPath::text() const
+{
+#ifdef _WIN32
+    QString newText = QLineEdit::text();
+    newText.replace('\\', '/');
+    return newText;
+#else
+    return QLineEdit::text();
+#endif
+}
+
 

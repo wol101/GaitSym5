@@ -70,6 +70,7 @@ public slots:
     void menuAbout();
     void menuClearMeshCache();
     void menuClearKinematics();
+    void menuConvertFile();
     void menuCreateAssembly();
     void menuCreateBody();
     void menuCreateDriver();

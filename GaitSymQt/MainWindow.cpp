@@ -16,6 +16,7 @@
 #include "DataFile.h"
 #include "DialogAssembly.h"
 #include "DialogBodyBuilder.h"
+#include "DialogConvertFile.h"
 #include "DialogCreateMirrorElements.h"
 #include "DialogCreateTestingDrivers.h"
 #include "DialogDrivers.h"
@@ -2969,6 +2970,17 @@ void MainWindow::menuClearMeshCache()
     FacetedObject::ClearMeshStore();
     this->log("Mesh cache cleared");
     this->ui->statusBar->showMessage("Mesh cache cleared");
+}
+
+void MainWindow::menuConvertFile()
+{
+    DialogConvertFile dialogConvertFile(this);
+
+    int status = dialogConvertFile.exec();
+
+    if (status == QDialog::Accepted)
+    {
+    }
 }
 
 void MainWindow::copy()

@@ -33,7 +33,7 @@ public:
 
     void AddElement(const std::string &tag, const std::map<std::string, std::string> &attributeList);
 
-    std::string *LoadModel(const char *buffer, size_t length, const std::string &rootNodeTag);
+    std::string *LoadModel(const char *buffer, size_t length, std::string *rootNodeTag);
     std::string SaveModel(const std::string &rootNodeTag, const std::string &comment);
 
     std::vector<std::unique_ptr<XMLElement>> *elementList();

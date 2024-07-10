@@ -75,6 +75,8 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DialogAssembly.ui
     ../GaitSymQt/DialogBodyBuilder.cpp
     ../GaitSymQt/DialogBodyBuilder.ui
+    ../GaitSymQt/DialogConvertFile.cpp
+    ../GaitSymQt/DialogConvertFile.ui
     ../GaitSymQt/DialogCreateMirrorElements.cpp
     ../GaitSymQt/DialogCreateMirrorElements.ui
     ../GaitSymQt/DialogCreateTestingDrivers.cpp
@@ -143,6 +145,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/UniqueNameValidator.cpp
     ../GaitSymQt/ViewControlWidget.cpp
     ../GaitSymQt/main.cpp
+
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmCollection.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmPtrTable.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmRadixSort.cpp
@@ -1255,6 +1258,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/BasicXMLSyntaxHighlighter.h
     ../GaitSymQt/DialogAssembly.h
     ../GaitSymQt/DialogBodyBuilder.h
+    ../GaitSymQt/DialogConvertFile.h
     ../GaitSymQt/DialogCreateMirrorElements.h
     ../GaitSymQt/DialogCreateTestingDrivers.h
     ../GaitSymQt/DialogDrivers.h
