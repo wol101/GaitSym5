@@ -2164,6 +2164,7 @@ void MainWindow::menuImportOpenSimBodyKinematics()
         Preferences::insert("LastImportOpenSimBodyKinematics", fileName);
         m_simulation->setKinematicsFile(fileName.toStdString());
         for (auto &&muscleIt : *m_simulation->GetMuscleList()) { muscleIt.second->setRedraw(true); }
+        this->handleTracking();
         this->updateEnable();
         this->m_simulationWidget->update();
     }
