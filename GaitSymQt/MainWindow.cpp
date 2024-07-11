@@ -1399,9 +1399,6 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     this->comboBoxMuscleColourMapCurrentTextChanged(this->ui->comboBoxMuscleColourMap->currentText());
     this->comboBoxMeshDisplayMapCurrentTextChanged(this->ui->comboBoxMeshDisplay->currentText());
 
-    this->updateComboBoxTrackingMarker();
-    this->handleTracking();
-
     // put the filename as a title
     //if (canonicalFilePath.size() <= 256) this->setWindowTitle(canonicalFilePath + "[*]");
     //else this->setWindowTitle(QString("...") + canonicalFilePath.right(256) + "[*]");
@@ -1421,7 +1418,11 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
         this->setWindowModified(false);
         enterRunMode();
     }
+
     if (kinematicsFile.size() > 0) { m_simulation->setKinematicsFile(kinematicsFile); }
+    this->updateComboBoxTrackingMarker();
+    this->handleTracking();
+
     this->updateEnable();
     Preferences::Write();
 }
