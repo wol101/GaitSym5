@@ -17,6 +17,7 @@
 
 #include <filesystem>
 #include <sstream>
+#include <algorithm>
 
 namespace GaitSym {
 
