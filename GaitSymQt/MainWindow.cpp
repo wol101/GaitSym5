@@ -2155,14 +2155,16 @@ void MainWindow::menuImportMeshes()
 
 void MainWindow::menuImportOpenSimBodyKinematics()
 {
-    QFileInfo info(Preferences::valueQString("LastmportOpenSimBodyKinematics"));
+    QFileInfo info(Preferences::valueQString("LastImportOpenSimBodyKinematics"));
     QString fileName;
     fileName = QFileDialog::getOpenFileName(this, tr("Import OpenSim BodyKinematics"), info.absoluteFilePath(), tr("STO File (*.sto);;Any File (*.* *)"), nullptr);
     if (fileName.isNull() == false)
     {
-        Preferences::insert("LastmportOpenSimBodyKinematics", fileName);
+        Preferences::insert("LastImportOpenSimBodyKinematics", fileName);
         m_simulation->setKinematicsFile(fileName.toStdString());
-        updateEnable();
+        for (auto &&muscleIt : *m_simulation->GetMuscleList()) { muscleIt.second->setRedraw(true); }
+        this->updateEnable();
+        this->m_simulationWidget->update();
     }
 }
 
@@ -2335,11 +2337,6 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
                 if (cmMarker) this->setStatusString(QString("Unable to move: %1. Marker attached to a different body.").arg(QString::fromStdString(cmMarkerName)), 0);
                 else this->setStatusString(QString("Unable to move: %1. Marker does not exists.").arg(QString::fromStdString(cmMarkerName)), 0);
             }
-            //            // completely reloading everything will work but is rather slow
-            //            QByteArray xmlData = QByteArray::fromStdString(this->m_simulation->SaveToXML());
-            //            menuOpen(this->m_configFile.absoluteFilePath(), &xmlData);
-            //            this->setWindowModified(true);
-            //            enterConstructionMode();
 
             body->setRedraw(true);
             std::vector<GaitSym::NamedObject *> objectList = this->m_simulation->GetObjectList();
@@ -2351,7 +2348,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
                     it->saveToAttributes();
                     it->createFromAttributes();
                     it->setRedraw(true);
-                    // everything needs a redraw but somethings also need extra work
+                    // everything needs a redraw but some things also need extra work
                     if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
                 }
             }

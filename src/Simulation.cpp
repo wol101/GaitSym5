@@ -171,22 +171,9 @@ void Simulation::UpdateSimulation()
     std::string *err = nullptr;
     if (!m_physicsEngine)
     {
-        if (m_kinematicsFile.size())
+        switch (m_global->physicsEngine())
         {
-            m_physicsEngine = std::make_unique<PlaybackPhysicsEngine>();
-            err = m_physicsEngine->Initialise(this);
-            if (err)
-            {
-                std::cerr << "Error: unable to initialise PlaybackPhysicsEngine\n" << *err << "\n";
-                m_SimulationError = true;
-                return;
-            }
-        }
-        else
-        {
-            switch (m_global->physicsEngine())
-            {
-            case Global::PhysicsEngine::ODE:
+        case Global::PhysicsEngine::ODE:
             {
                 m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
                 err = m_physicsEngine->Initialise(this);
@@ -198,7 +185,7 @@ void Simulation::UpdateSimulation()
                 }
                 break;
             }
-            case Global::PhysicsEngine::PhysX:
+        case Global::PhysicsEngine::PhysX:
             {
                 m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
                 err = m_physicsEngine->Initialise(this);
@@ -210,7 +197,7 @@ void Simulation::UpdateSimulation()
                 }
                 break;
             }
-            case Global::PhysicsEngine::MuJoCo:
+        case Global::PhysicsEngine::MuJoCo:
             {
                 m_physicsEngine = std::make_unique<MuJoCoPhysicsEngine>();
                 err = m_physicsEngine->Initialise(this);
@@ -221,7 +208,6 @@ void Simulation::UpdateSimulation()
                     return;
                 }
                 break;
-            }
             }
         }
     }
@@ -1195,6 +1181,20 @@ std::string Simulation::kinematicsFile() const
 void Simulation::setKinematicsFile(const std::string &newKinematicsFile)
 {
     m_kinematicsFile = newKinematicsFile;
+
+    if (m_kinematicsFile.size())
+    {
+        m_physicsEngine = std::make_unique<PlaybackPhysicsEngine>();
+        std::string *err = m_physicsEngine->Initialise(this);
+        if (err)
+        {
+            std::cerr << "Error: unable to initialise PlaybackPhysicsEngine\n" << *err << "\n";
+            m_SimulationError = true;
+            return;
+        }
+        m_physicsEngine->Step();
+        for (auto &&muscleIt : m_MuscleList) { muscleIt.second->CalculateStrap(); }
+    }
 }
 
 PhysicsEngine* Simulation::physicsEngine() const
