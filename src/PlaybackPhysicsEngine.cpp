@@ -147,8 +147,8 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
             if (inDegrees) { eulerAngles.x = pgd::DegToRad(ox[i]); eulerAngles.y = pgd::DegToRad(oy[i]); eulerAngles.z = pgd::DegToRad(oz[i]); }
             else { eulerAngles.x = ox[i]; eulerAngles.y = oy[i]; eulerAngles.z = oz[i]; }
             pose.q = pgd::MakeQFromEulerAnglesRadian(eulerAngles, "XYZ");
-            // pose.p = pgd::QVRotate(rotation, pose.p); // correct for Z up
-            // pose.q = rotation * p.q; // correct for Z up
+            pose.p = pgd::QVRotate(rotation, pose.p); // correct for Z up
+            pose.q = rotation * pose.q; // correct for Z up
             poses.push_back(std::move(pose));
         }
         m_poses[body] = std::move(poses);
