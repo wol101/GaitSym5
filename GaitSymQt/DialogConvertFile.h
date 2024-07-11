@@ -16,9 +16,6 @@ public:
     ~DialogConvertFile();
 
 public slots:
-    virtual void accept() Q_DECL_OVERRIDE;
-    virtual void reject() Q_DECL_OVERRIDE;
-
     void pushButtonInputFileClicked();
     void pushButtonOutputFileClicked();
     void pushButtonConvertClicked();

@@ -3,6 +3,7 @@
 
 #include "Preferences.h"
 #include "ParseXML.h"
+#include "Simulation.h"
 
 #include <QPushButton>
 #include <QValidator>
@@ -24,7 +25,7 @@ DialogConvertFile::DialogConvertFile(QWidget *parent)
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
-    connect(ui->pushButtonClose, &QPushButton::clicked, this, &DialogConvertFile::accept);
+    connect(ui->pushButtonClose, &QPushButton::clicked, this, &DialogConvertFile::close);
     connect(ui->pushButtonInputFile, &QPushButton::clicked, this, &DialogConvertFile::pushButtonInputFileClicked);
     connect(ui->pushButtonOutputFile, &QPushButton::clicked, this, &DialogConvertFile::pushButtonOutputFileClicked);
     connect(ui->pushButtonConvert, &QPushButton::clicked, this, &DialogConvertFile::pushButtonConvertClicked);
@@ -50,19 +51,6 @@ void DialogConvertFile::closeEvent(QCloseEvent *event)
 {
     writeSettings();
     QDialog::closeEvent(event);
-}
-
-void DialogConvertFile::accept() // this catches OK button
-{
-    doConversion();
-    writeSettings();
-    QDialog::accept();
-}
-
-void DialogConvertFile::reject() // this catches cancel, close and escape key
-{
-    writeSettings();
-    QDialog::reject();
 }
 
 void DialogConvertFile::enableWidgets()
@@ -158,11 +146,23 @@ void DialogConvertFile::doConversion()
                 if (tagElementIt->tag == "GLOBAL"s)
                 {
                     tagElementIt->attributes["PhysicsEngine"s] = "ODE"s;
+                    log(QString("Adding PhysicsEngine=\"ODE\""));
+                    std::string fitnessType("TargetSum"s);
+                    if (tagElementIt->attributes["FitnessType"] == "KinematicMatchMiniMax"s) { fitnessType = "TargetMaxiMin"s; }
+                    tagElementIt->attributes["FitnessType"] = fitnessType;
+                    log(QString("Adding FitnessType=\"%1\"").arg(QString::fromStdString(fitnessType)));
                 }
             }
+            log(QString("Adding default lights"));
+            QFile lightsFile(":/templates/LightsTemplate.xml");
+            if (!lightsFile.open(QIODevice::ReadOnly)) { QMessageBox::warning(this, "Internal XML parse error", QString("Unable to open resource file: \"%1\"").arg(lightsFile.fileName())); return; } // this should never happen
+            QByteArray lightsData = lightsFile.readAll();
+            GaitSym::ParseXML lightsXML;
+            err = lightsXML.LoadModel(lightsData.data(), lightsData.size(), nullptr);
+            if (err) { QMessageBox::warning(this, "LightsTemplate.xml: Internal XML parse error", QString("'%1'").arg(QString::fromStdString(*err))); return; } // this should never happen
+            for (auto &&elementIt : *lightsXML.elementList()) { elementList->push_back(std::move(elementIt)); }
             xml = newParseXML.SaveModel(newRootNodeTag, "File generated using DialogConvertFile"s);
             log(QString("Writing \"%1\"").arg(ui->lineEditOutputFile->text()));
-            std::ostringstream buffer;
             try {
                 std::ofstream file(ui->lineEditOutputFile->text().toStdString(), std::ios::binary);
                 if (!file) return;
@@ -173,6 +173,12 @@ void DialogConvertFile::doConversion()
             {
                 log(QString("Error writing \"%1\"").arg(ui->lineEditOutputFile->text()));
                 return;
+            }
+            GaitSym::Simulation simulation;
+            err = simulation.LoadModel(xml.data(), xml.size());
+            if (err)
+            {
+                log(QString("WARNING\nWARNING: \"%1\" converted but fails validation.\nWARNING%s").arg(ui->lineEditOutputFile->text()).arg(QString::fromStdString(*err)));
             }
             break;
         }

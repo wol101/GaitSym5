@@ -35,6 +35,7 @@
         <file>ViewControlWidget Images/TopViewPoints.png</file>
         <file>templates/NewConfigFileTemplate.xml</file>
         <file>templates/BodyTemplate.xml</file>
+        <file>templates/LightsTemplate.xml</file>
         <file>preferences/default_values.xml</file>
         <file>objects/axes.tri</file>
         <file>objects/global_axes.tri</file>

@@ -35,39 +35,39 @@ std::string *ParseXML::LoadModel(const char *buffer, size_t length, std::string 
         cur = m_inputConfigDoc.first_node();
         if (cur == nullptr)
         {
-            setLastError("Error: Simulation::LoadModel - document empty"s);
+            setLastError("Error: ParseXML::LoadModel - document empty"s);
             return lastErrorPtr();
         }
     }
     catch (const std::runtime_error& e)
     {
-        setLastError("Error: Simulation::LoadModel runtime error: "s + std::string(e.what()));
+        setLastError("Error: ParseXML::LoadModel runtime error: "s + std::string(e.what()));
         return lastErrorPtr();
     }
     catch (const rapidxml::parse_error& e)
     {
         std::string whereString(e.where<char>());
-        setLastError("Error: Simulation::LoadModel parse error: "s + std::string(e.what()) + "\n"s + whereString.substr(0, 256));
+        setLastError("Error: ParseXML::LoadModel parse error: "s + std::string(e.what()) + "\n"s + whereString.substr(0, 256));
         return lastErrorPtr();
     }
     catch (const std::exception& e)
     {
-        setLastError("Error: Simulation::LoadModel exception: "s + std::string(e.what()));
+        setLastError("Error: ParseXML::LoadModel exception: "s + std::string(e.what()));
         return lastErrorPtr();
     }
     catch (...)
     {
-        setLastError("Error: Simulation::LoadModel undefined exception"s);
+        setLastError("Error: ParseXML::LoadModel undefined exception"s);
         return lastErrorPtr();
     }
 
 
-    if (rootNodeTag->size() && *rootNodeTag != std::string(cur->name(), cur->name_size()))
+    if (rootNodeTag && rootNodeTag->size() && *rootNodeTag != std::string(cur->name(), cur->name_size()))
     {
-        setLastError("Error: Simulation::LoadModel - Document of the wrong type, root node != \""s + *rootNodeTag + "\""s);
+        setLastError("Error: ParseXML::LoadModel - Document of the wrong type, root node != \""s + *rootNodeTag + "\""s);
         return lastErrorPtr();
     }
-    *rootNodeTag = std::string(cur->name(), cur->name_size());
+    if (rootNodeTag) { *rootNodeTag = std::string(cur->name(), cur->name_size()); }
 
     // now parse the elements in the file
     cur = cur->first_node();

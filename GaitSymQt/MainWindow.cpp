@@ -133,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionExportOpenSim, SIGNAL(triggered()), this, SLOT(menuExportOpenSim()));
     connect(ui->actionImportMarkers, SIGNAL(triggered()), this, SLOT(menuImportMarkers()));
     connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), this, SLOT(menuImportMeshes()));
+    connect(ui->actionConvertFile, SIGNAL(triggered()), this, SLOT(menuConvertFile()));
     connect(ui->actionPlaybackOpenSimBodyKinematics, SIGNAL(triggered()), this, SLOT(menuImportOpenSimBodyKinematics()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(menuNew()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(menuOpen()));
@@ -2975,12 +2976,7 @@ void MainWindow::menuClearMeshCache()
 void MainWindow::menuConvertFile()
 {
     DialogConvertFile dialogConvertFile(this);
-
-    int status = dialogConvertFile.exec();
-
-    if (status == QDialog::Accepted)
-    {
-    }
+    dialogConvertFile.exec();
 }
 
 void MainWindow::copy()
