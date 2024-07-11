@@ -789,7 +789,7 @@ void MainWindow::updateEnable()
     ui->actionStopUSDSequence->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false && m_saveOBJFileSequenceFlag == true && m_objFileFormat == usda);
     ui->actionImportMarkers->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionImportMeshesAsBodies->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
-    ui->actionPlaybackOpenSimBodyKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
+    ui->actionPlaybackOpenSimBodyKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && m_noName == false && isWindowModified() == false && m_stepCount == 0);
     ui->actionClearKinematics->setEnabled(m_simulation != nullptr && m_mode == runMode && m_simulation->kinematicsFile().size() > 0);
     ui->actionCreateBody->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateMarker->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
@@ -2172,11 +2172,11 @@ void MainWindow::menuClearKinematics()
     msgBox.setText(QString::fromStdString("Kinematics currently loaded from \""s + m_simulation->kinematicsFile() + "\""s));
     msgBox.setInformativeText("Click OK to clear kinematics and revert to normal function, or Cancel to keep in playback mode");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
     if (msgBox.exec() == QMessageBox::Ok)
     {
         m_simulation->setKinematicsFile(std::string());
-        updateEnable();
+        menuRestart();
     }
 }
 
