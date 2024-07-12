@@ -255,9 +255,9 @@ void Simulation::UpdateSimulation()
     }
 
     // update the muscles
-    for (auto iter1 = m_MuscleList.begin(); iter1 != m_MuscleList.end(); /* no increment */)
+    for (auto iter1 = m_MuscleList.begin(); iter1 != m_MuscleList.end(); /* no increment */ )
     {
-        iter1->second->CalculateStrap();
+        // muscle straps are valid at this point so they do not need recaulculating
         iter1->second->SetActivation();
 
         // check for breaking strain
@@ -303,6 +303,12 @@ void Simulation::UpdateSimulation()
 
     // run the simulation
     m_physicsEngine->Step();
+
+    // now the muscle straps are invalid because the bodies have moved so they need recaulculating
+    for (auto &&iter1 : m_MuscleList)
+    {
+        iter1.second->CalculateStrap();
+    }
 
     // calculate the energies
     for (auto &&iter1 : m_MuscleList)
