@@ -21,8 +21,6 @@ public slots:
     void pushButtonConvertClicked();
     void lineEditTextChanged(const QString &text);
 
-    static void layoutSpacing(QWidget *container);
-
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 

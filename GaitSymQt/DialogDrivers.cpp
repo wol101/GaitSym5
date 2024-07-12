@@ -11,6 +11,7 @@
 #include "GSUtil.h"
 #include "Muscle.h"
 #include "Controller.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -27,6 +28,7 @@ DialogDrivers::DialogDrivers(QWidget *parent) :
     ui(new Ui::DialogDrivers)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Driver Builder"));
 #ifdef Q_OS_MACOS
@@ -73,6 +75,7 @@ DialogDrivers::DialogDrivers(QWidget *parent) :
     scrollArea->setWidget(scrollAreaWidgetContents);
     verticalLayout->addWidget(scrollArea);
     ui->widgetBoxcarPlaceholder->setLayout(verticalLayout);
+
 
     connect(ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));

@@ -6,6 +6,7 @@
 #include "Simulation.h"
 #include "GSUtil.h"
 #include "PGDMath.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -17,7 +18,6 @@
 
 #include <string>
 #include <vector>
-#include <set>
 
 using namespace std::literals::string_literals;
 
@@ -26,6 +26,8 @@ DialogRename::DialogRename(QWidget *parent) :
     ui(new Ui::DialogRename)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
+
     setWindowTitle(tr("Create Mirror Elements"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs

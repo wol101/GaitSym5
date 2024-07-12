@@ -7,6 +7,13 @@
  *
  */
 
+#include "DialogPreferences.h"
+#include "ui_DialogPreferences.h"
+
+#include "Preferences.h"
+#include "LineEditDouble.h"
+#include "MainWindow.h"
+
 #include <QColorDialog>
 #include <QLabel>
 #include <QGridLayout>
@@ -28,17 +35,13 @@
 #include <QFont>
 #include <QFontDialog>
 
-#include "Preferences.h"
-#include "LineEditDouble.h"
-
-#include "DialogPreferences.h"
-#include "ui_DialogPreferences.h"
 
 DialogPreferences::DialogPreferences(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogPreferences)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Preferences"));
 #ifdef Q_OS_MACOS

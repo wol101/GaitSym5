@@ -8,6 +8,7 @@
 #include "LineEditUniqueName.h"
 #include "Body.h"
 #include "DialogProperties.h"
+#include "MainWindow.h"
 
 #include <QDebug>
 #include <QSignalBlocker>
@@ -22,6 +23,7 @@ DialogMarkers::DialogMarkers(QWidget *parent) :
     ui(new Ui::DialogMarkers)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Marker Builder"));
 #ifdef Q_OS_MACOS

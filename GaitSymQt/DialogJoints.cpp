@@ -14,6 +14,7 @@
 #include "GSUtil.h"
 #include "DialogProperties.h"
 #include "Filter.h"
+#include "MainWindow.h"
 
 #include <QDebug>
 #include <QComboBox>
@@ -28,6 +29,7 @@ DialogJoints::DialogJoints(QWidget *parent) :
     ui(new Ui::DialogJoints)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Joint Builder"));
 #ifdef Q_OS_MACOS

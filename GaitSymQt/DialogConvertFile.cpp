@@ -4,6 +4,7 @@
 #include "Preferences.h"
 #include "ParseXML.h"
 #include "Simulation.h"
+#include "MainWindow.h"
 
 #include <QPushButton>
 #include <QValidator>
@@ -35,7 +36,7 @@ DialogConvertFile::DialogConvertFile(QWidget *parent)
     ui->lineEditInputFile->setPathType(LineEditPath::FileForOpen);
     ui->lineEditOutputFile->setPathType(LineEditPath::FileForSave);
 
-    layoutSpacing(this);
+    MainWindow::layoutSpacing(this);
 
     readSettings();
 }
@@ -195,14 +196,3 @@ void DialogConvertFile::log(const QString &text)
     ui->plainTextEdit->repaint();
 }
 
-void DialogConvertFile::layoutSpacing(QWidget *container)
-{
-    QList<QLayout *> list = container->findChildren<QLayout *>(Qt::FindChildrenRecursively);
-    int left = 4, top = 4, right = 4, bottom = 4;
-    int spacing = 4;
-    for (auto &&item : list)
-    {
-        item->setContentsMargins(left, top, right, bottom);
-        item->setSpacing(spacing);
-    }
-}

@@ -48,6 +48,8 @@ public:
 
     const QFileInfo &configFile() const;
 
+    static void layoutSpacing(QWidget *container);
+
 public slots:
     void processOneThing();
     void handleCommandLineArguments();

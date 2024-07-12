@@ -6,6 +6,7 @@
 #include "Simulation.h"
 #include "GSUtil.h"
 #include "PGDMath.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -25,6 +26,8 @@ DialogInfo::DialogInfo(QWidget *parent) :
     ui(new Ui::DialogInfo)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
+
     setWindowTitle(tr("Element Information"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs

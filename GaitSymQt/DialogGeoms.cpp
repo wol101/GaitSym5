@@ -11,6 +11,7 @@
 #include "GSUtil.h"
 #include "Marker.h"
 #include "DialogProperties.h"
+#include "MainWindow.h"
 
 #include <QDebug>
 #include <QComboBox>
@@ -27,6 +28,7 @@ DialogGeoms::DialogGeoms(QWidget *parent) :
     ui(new Ui::DialogGeoms)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Geom Builder"));
 #ifdef Q_OS_MACOS

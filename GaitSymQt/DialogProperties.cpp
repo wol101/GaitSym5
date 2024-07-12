@@ -7,23 +7,25 @@
  *
  */
 
+#include "DialogProperties.h"
+#include "ui_DialogProperties.h"
+
+#include "Preferences.h"
+#include "LineEditDouble.h"
+#include "MainWindow.h"
+
 #include <QScrollArea>
 #include <QLabel>
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QColorDialog>
 
-#include "Preferences.h"
-#include "LineEditDouble.h"
-
-#include "DialogProperties.h"
-#include "ui_DialogProperties.h"
-
 DialogProperties::DialogProperties(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogProperties)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Object Parameters"));
 #ifdef Q_OS_MACOS

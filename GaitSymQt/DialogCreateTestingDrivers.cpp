@@ -4,6 +4,7 @@
 #include "Preferences.h"
 #include "BasicXMLSyntaxHighlighter.h"
 #include "Simulation.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -25,6 +26,8 @@ DialogCreateTestingDrivers::DialogCreateTestingDrivers(QWidget *parent) :
     ui(new Ui::DialogCreateTestingDrivers)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
+
     setWindowTitle(tr("Create Testing Drivers"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs

@@ -22,6 +22,7 @@
 #include "Controller.h"
 #include "MainWindow.h"
 #include "Preferences.h"
+#include "MainWindow.h"
 
 #include <QMenu>
 #include <QListWidget>
@@ -35,6 +36,8 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
     m_ui(new Ui::DialogOutputSelect)
 {
     m_ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
+
     setWindowTitle(tr("Output Select"));
 #ifdef Q_OS_MACOS
     // on MacOS High Sierra (and possibly others), the Qt::Dialog flag disables resizing

@@ -221,6 +221,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     boxLayout->addWidget(container);
     m_simulationWidget->setMainWindow(this);
 
+    layoutSpacing(this);
+
     // connect the ViewControlWidget to the GLWidget
     connect(ui->widgetViewFrame, SIGNAL(EmitCameraVec(double, double, double)), m_simulationWidget, SLOT(SetCameraVec(double, double, double)));
 
@@ -3063,4 +3065,31 @@ void MainWindow::menuOpenRecent(QAction *action)
         return;
     }
     menuOpen(action->text(), nullptr);
+}
+
+void MainWindow::layoutSpacing(QWidget *container)
+{
+    QList<QLayout *> list = container->findChildren<QLayout *>(Qt::FindChildrenRecursively);
+    int left = 4, top = 4, right = 4, bottom = 4;
+    int spacing = 4;
+    for (auto &&item : list)
+    {
+        QMargins margins = item->contentsMargins();
+        margins.setLeft(std::min(left, margins.left()));
+        margins.setRight(std::min(right, margins.right()));
+        margins.setTop(std::min(top, margins.top()));
+        margins.setBottom(std::min(bottom, margins.bottom()));
+        item->setContentsMargins(margins);
+        if (auto w = dynamic_cast<QGridLayout *>(item))
+        {
+            int hSpacing = w->horizontalSpacing();
+            int vSpacing = w->verticalSpacing();
+            w->setHorizontalSpacing(std::min(spacing, hSpacing));
+            w->setVerticalSpacing(std::min(spacing, vSpacing));
+        }
+        else
+        {
+            item->setSpacing(std::min(item->spacing(), spacing));
+        }
+    }
 }

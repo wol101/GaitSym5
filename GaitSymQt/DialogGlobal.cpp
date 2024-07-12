@@ -7,6 +7,7 @@
 #include "LineEditDouble.h"
 #include "LineEditPath.h"
 #include "DialogProperties.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -21,6 +22,8 @@ DialogGlobal::DialogGlobal(QWidget *parent) :
     ui(new Ui::DialogGlobal)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
+
     setWindowTitle(tr("Global Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs

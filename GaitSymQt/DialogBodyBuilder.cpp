@@ -8,6 +8,7 @@
 #include "Body.h"
 #include "LineEditUniqueName.h"
 #include "DialogProperties.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -23,6 +24,7 @@ DialogBodyBuilder::DialogBodyBuilder(QWidget *parent) :
     ui(new Ui::DialogBodyBuilder)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Body Builder"));
 #ifdef Q_OS_MACOS

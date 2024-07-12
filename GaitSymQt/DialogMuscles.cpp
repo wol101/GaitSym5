@@ -14,6 +14,7 @@
 #include "GSUtil.h"
 #include "DialogProperties.h"
 #include "Marker.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -31,6 +32,7 @@ DialogMuscles::DialogMuscles(QWidget *parent) :
     ui(new Ui::DialogMuscles)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Muscle Builder"));
 #ifdef Q_OS_MACOS

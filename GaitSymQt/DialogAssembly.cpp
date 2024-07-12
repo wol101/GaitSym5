@@ -21,6 +21,7 @@
 #include "Body.h"
 #include "PGDMath.h"
 #include "Marker.h"
+#include "MainWindow.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
@@ -34,6 +35,7 @@ DialogAssembly::DialogAssembly(QWidget *parent) :
     ui(new Ui::DialogAssembly)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
     setWindowTitle(tr("Assembly Builder"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs

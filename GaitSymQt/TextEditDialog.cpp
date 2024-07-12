@@ -5,6 +5,7 @@
 #include "Preferences.h"
 #include "Simulation.h"
 #include "GSUtil.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 #include "pocketpy.h"
@@ -31,6 +32,8 @@ TextEditDialog::TextEditDialog(QWidget *parent) :
     ui(new Ui::TextEditDialog)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
+
     setWindowTitle(tr("Raw XML Editor"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs

@@ -8,6 +8,7 @@
 #include "Simulation.h"
 #include "Body.h"
 #include "LineEditPath.h"
+#include "MainWindow.h"
 
 #include "pystring.h"
 
@@ -22,6 +23,7 @@ DialogMarkerExport::DialogMarkerExport(QWidget *parent) :
     ui(new Ui::DialogMarkerExport)
 {
     ui->setupUi(this);
+    MainWindow::layoutSpacing(this);
 
     setWindowTitle(tr("Marker Import/Export"));
 #ifdef Q_OS_MACOS
