@@ -729,8 +729,16 @@
         path="0"
         type="int"
         value="128" />
+    <SETTING defaultValue="true"
+        display="1"
+        key="PlaneGeomWireframeBack"
+        label="Draw a wireframe on the back of a plane Geom"
+        order="4"
+        path="0"
+        type="bool"
+        value="true" />
 
-    <SETTING defaultValue="500"
+    <SETTING defaultValue="0.005"
         display="1"
         key="DataTargetRadius"
         label="DataTarget radius"
@@ -738,7 +746,7 @@
         order="4"
         path="0"
         type="double"
-        value="500" />
+        value="0.005" />
     <SETTING defaultValue="#ffF5FFFA"
         display="1"
         key="DataTargetColour"
