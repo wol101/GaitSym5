@@ -19,7 +19,7 @@ public:
 private:
     std::vector<Marker *> m_markerList;
     std::vector<double> m_reportTimes;
-    size_t m_lastReportIndex;
+    int64_t m_lastReportIndex = -1;
     bool m_reportPosition;
     bool m_reportQuaternion;
 };

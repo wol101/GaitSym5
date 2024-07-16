@@ -71,7 +71,61 @@ void MarkerReporter::appendToAttributes()
 
 std::string MarkerReporter::dumpToString()
 {
-    return std::string();
+    std::string s;
+    if (firstDump())
+    {
+        setFirstDump(false);
+        std::vector<std::string> sList;
+        sList.push_back("time"s);
+        for (auto && marker : m_markerList)
+        {
+            if (m_reportPosition)
+            {
+                sList.push_back(marker->name() + "_x"s);
+                sList.push_back(marker->name() + "_y"s);
+                sList.push_back(marker->name() + "_z"s);
+            }
+            if (m_reportQuaternion)
+            {
+                sList.push_back(marker->name() + "_n"s);
+                sList.push_back(marker->name() + "_x"s);
+                sList.push_back(marker->name() + "_y"s);
+                sList.push_back(marker->name() + "_z"s);
+            }
+        }
+        s = pystring::join("\t"s, sList) + "\n"s;
+    }
+    double time = simulation()->GetTime();
+    int64_t index = std::lower_bound(m_reportTimes.begin(), m_reportTimes.end(), time) - m_reportTimes.begin(); // this is an index for the time >= playbackTime
+    if (index > m_lastReportIndex)
+    {
+        std::vector<double> vList;
+        m_lastReportIndex = index;
+        vList.push_back(time);
+        pgd::Vector3 v;
+        pgd::Quaternion q;
+        for (auto && marker : m_markerList)
+        {
+            if (m_reportPosition)
+            {
+                v = marker->GetWorldPosition();
+                vList.push_back(v.x);
+                vList.push_back(v.y);
+                vList.push_back(v.z);
+            }
+            if (m_reportQuaternion)
+            {
+                q = marker->GetWorldQuaternion();
+                vList.push_back(q.n);
+                vList.push_back(q.x);
+                vList.push_back(q.y);
+                vList.push_back(q.z);
+            }
+        }
+        s.append(GSUtil::ToString(vList));
+    }
+
+    return s;
 }
 
 } // namespace GaitSym
