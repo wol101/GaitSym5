@@ -42,6 +42,7 @@
 #include "FixedJoint.h"
 #include "Marker.h"
 #include "Reporter.h"
+#include "MarkerReporter.h"
 #include "UniversalJoint.h"
 #include "PIDMuscleLengthController.h"
 #include "Controller.h"
@@ -888,9 +889,31 @@ std::string *Simulation::ParseDataTarget(const ParseXML::XMLElement *node)
 
 }
 
-std::string * Simulation::ParseReporter(const ParseXML::XMLElement * /*node*/)
+std::string *Simulation::ParseReporter(const ParseXML::XMLElement *node)
 {
-    // unimplemented
+    std::unique_ptr<Reporter> reporter;
+    std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
+    std::string *errorMessage = nullptr;
+    if (buf == "MarkerReporter"s)
+    {
+        reporter = std::make_unique<MarkerReporter>();
+    }
+    else
+    {
+        setLastError("Simulation::ParseReporter Type=\""s + buf + "\" not recognised"s);
+        return lastErrorPtr();
+    }
+
+    reporter->setSimulation(this);
+    reporter->createAttributeMap(node->attributes);
+    errorMessage = reporter->createFromAttributes();
+    if (errorMessage)
+    {
+        setLastError(*errorMessage);
+        return lastErrorPtr();
+    }
+
+    m_ReporterList[reporter->name()] = std::move(reporter);
     return nullptr;
 }
 
