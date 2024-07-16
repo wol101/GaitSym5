@@ -1187,6 +1187,7 @@ set(PROJECT_SOURCES
     ../src/Marker.cpp
     ../src/MarkerEllipseDriver.cpp
     ../src/MarkerPositionDriver.cpp
+    ../src/MarkerReporter.cpp
     ../src/MovingAverage.cpp
     ../src/MuJoCoPhysicsEngine.cpp
     ../src/Muscle.cpp
@@ -1373,6 +1374,7 @@ set(PROJECT_SOURCES
     ../src/Marker.h
     ../src/MarkerEllipseDriver.h
     ../src/MarkerPositionDriver.h
+    ../src/MarkerReporter.h
     ../src/MovingAverage.h
     ../src/Muscle.h
     ../src/MuJoCoPhysicsEngine.h

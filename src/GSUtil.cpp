@@ -695,12 +695,6 @@ std::string *GSUtil::ToString(const pgd::Vector4 &v, std::string *output)
     return output;
 }
 
-template<typename T> static std::string ToString(T v)
-{
-    std::string output;
-    return *ToString(v, &output);
-}
-
 std::string *GSUtil::ToString(uint32_t address, uint16_t port, std::string *output)
 {
     *output = (std::to_string(address & 0xff) + "."s +
@@ -710,6 +704,13 @@ std::string *GSUtil::ToString(uint32_t address, uint16_t port, std::string *outp
                std::to_string(port));
     return output;
 }
+
+std::string *GSUtil::ToString(const std::string &s, std::string *output)
+{
+    *output = s;
+    return output;
+}
+
 
 std::string GSUtil::ToString(double v)
 {

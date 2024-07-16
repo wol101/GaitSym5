@@ -24,6 +24,10 @@ public:
 
     virtual bool ShouldAbort() { return false; }
 
+    virtual std::string *createFromAttributes();
+    virtual void saveToAttributes();
+    virtual void appendToAttributes();
+
 };
 
 }

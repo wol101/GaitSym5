@@ -519,6 +519,7 @@ static std::string *ToString(const pgd::Quaternion &v, std::string *output);
 static std::string *ToString(const pgd::Vector2 &v, std::string *output);
 static std::string *ToString(const pgd::Vector3 &v, std::string *output);
 static std::string *ToString(const pgd::Vector4 &v, std::string *output);
+static std::string *ToString(const std::string &s, std::string *output);
 
 static std::string ToString(double v);
 static std::string ToString(float v);
@@ -540,13 +541,14 @@ static std::string ToString(const pgd::Vector2 &v);
 static std::string ToString(const pgd::Vector3 &v);
 static std::string ToString(const pgd::Vector4 &v);
 
-template<typename T> static std::string ToString(const std::vector<T> &vector);
-
 static std::string *ToString(uint32_t address, uint16_t port, std::string *output);
 static std::string ToString(uint32_t address, uint16_t port);
 
 static std::string ToString(const char * const printfFormatString, ...);
 static std::string ConvertIPAddressToString(uint32_t address, bool networkOrder);
+
+template<typename T> static std::string ToString(T v);
+template<typename T> static std::string ToString(const std::vector<T> &vector);
 
 #if defined(__APPLE__)
 static std::string *ToString(size_t v, std::string *output);
@@ -595,6 +597,12 @@ static void nelmin ( double fn ( double x[] , void *data ), void *data, int n, d
 static double zeroin(double ax, double bx, double (*f)(double x, void *info), void *info, double tol);
 
 };
+
+template<typename T> std::string GSUtil::ToString(T v)
+{
+    std::string output;
+    return *ToString(v, &output);
+}
 
 template<typename T> std::string GSUtil::ToString(const std::vector<T> &vector) // template function definitions seem to behave better in the header
 {
