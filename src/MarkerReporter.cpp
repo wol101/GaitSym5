@@ -89,10 +89,10 @@ std::string MarkerReporter::dumpToString()
             }
             if (m_reportQuaternion)
             {
-                sList.push_back(marker->name() + "_n"s);
-                sList.push_back(marker->name() + "_x"s);
-                sList.push_back(marker->name() + "_y"s);
-                sList.push_back(marker->name() + "_z"s);
+                sList.push_back(marker->name() + "_qn"s);
+                sList.push_back(marker->name() + "_qx"s);
+                sList.push_back(marker->name() + "_qy"s);
+                sList.push_back(marker->name() + "_qz"s);
             }
         }
         s = pystring::join("\t"s, sList) + "\n"s;
