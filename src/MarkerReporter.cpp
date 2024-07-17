@@ -72,10 +72,12 @@ void MarkerReporter::appendToAttributes()
 std::string MarkerReporter::dumpToString()
 {
     std::string s;
+    s.reserve(m_markerList.size() * 32);
+    std::vector<std::string> sList;
+    sList.reserve(m_markerList.size());
     if (firstDump())
     {
         setFirstDump(false);
-        std::vector<std::string> sList;
         sList.push_back("time"s);
         for (auto && marker : m_markerList)
         {
@@ -94,14 +96,14 @@ std::string MarkerReporter::dumpToString()
             }
         }
         s = pystring::join("\t"s, sList) + "\n"s;
+        sList.clear();
     }
     double time = simulation()->GetTime();
     int64_t index = std::lower_bound(m_reportTimes.begin(), m_reportTimes.end(), time) - m_reportTimes.begin(); // this is an index for the time >= playbackTime
     if (index > m_lastReportIndex)
     {
-        std::vector<double> vList;
         m_lastReportIndex = index;
-        vList.push_back(time);
+        sList.push_back(GSUtil::ToString(time));
         pgd::Vector3 v;
         pgd::Quaternion q;
         for (auto && marker : m_markerList)
@@ -109,22 +111,22 @@ std::string MarkerReporter::dumpToString()
             if (m_reportPosition)
             {
                 v = marker->GetWorldPosition();
-                vList.push_back(v.x);
-                vList.push_back(v.y);
-                vList.push_back(v.z);
+                sList.push_back(GSUtil::ToString(v.x));
+                sList.push_back(GSUtil::ToString(v.y));
+                sList.push_back(GSUtil::ToString(v.z));
             }
             if (m_reportQuaternion)
             {
                 q = marker->GetWorldQuaternion();
-                vList.push_back(q.n);
-                vList.push_back(q.x);
-                vList.push_back(q.y);
-                vList.push_back(q.z);
+                sList.push_back(GSUtil::ToString(q.n));
+                sList.push_back(GSUtil::ToString(q.x));
+                sList.push_back(GSUtil::ToString(q.y));
+                sList.push_back(GSUtil::ToString(q.z));
             }
         }
-        s.append(GSUtil::ToString(vList));
+        s.append(pystring::join("\t"s, sList) + "\n"s);
+        sList.clear();
     }
-
     return s;
 }
 
