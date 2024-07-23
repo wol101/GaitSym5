@@ -194,6 +194,10 @@ void ObjectiveMainASIOAsync::DoSimulation(const char *xmlPtr, size_t xmlLen, dou
 
     double startTime = GSUtil::GetTime();
 
+    // std::ofstream of("c:/scratch/output.log");
+    // of << xmlPtr;
+    // exit(1);
+
     // create the simulation object locally so delete happens before the next one is create otherwise we get problems with ODE error tracking
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>();
     if (m_outputModelStateFilename.size()) simulation->SetOutputModelStateFile(m_outputModelStateFilename);
