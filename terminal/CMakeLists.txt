@@ -59,6 +59,13 @@ endif()
 # gle definitions
 add_compile_definitions(DEBUG_OUTPUT)
 
+# extra MSVC options required
+if (MSVC)
+    add_compile_definitions(_USE_MATH_DEFINES)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+    add_compile_options(-utf-8)
+endif()
+
 set(PROJECT_SOURCES
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmCollection.cpp
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmPtrTable.cpp
@@ -918,6 +925,7 @@ set(PROJECT_SOURCES
     ../src/Marker.cpp
     ../src/MarkerEllipseDriver.cpp
     ../src/MarkerPositionDriver.cpp
+    ../src/MarkerReporter.cpp
     ../src/MovingAverage.cpp
     ../src/MuJoCoPhysicsEngine.cpp
     ../src/Muscle.cpp
@@ -1029,6 +1037,7 @@ set(PROJECT_SOURCES
     ../src/Marker.h
     ../src/MarkerEllipseDriver.h
     ../src/MarkerPositionDriver.h
+    ../src/MarkerReporter.h
     ../src/MovingAverage.h
     ../src/Muscle.h
     ../src/MuJoCoPhysicsEngine.h
@@ -1191,11 +1200,6 @@ target_include_directories(gaitsym5_asio PRIVATE
 
 target_compile_definitions(gaitsym5 PRIVATE USE_CL)
 target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
-    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-    add_compile_definitions(_USE_MATH_DEFINES)
-endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL Release)
     target_compile_options(gaitsym5 PRIVATE -static -ffast-math -O3)
