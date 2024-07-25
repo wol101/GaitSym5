@@ -53,7 +53,7 @@ void MagicMuscle::appendToAttributes()
     Muscle::appendToAttributes();
     setAttribute("Type"s, "Magic"s);
     setAttribute("ForceMultiplier"s, GSUtil::ToString(m_forceMultiplier));
-    setAttribute("ForceOffset"s, GSUtil::ToString(m_forceMultiplier));
+    setAttribute("ForceOffset"s, GSUtil::ToString(m_forceOffset));
 }
 
 std::string MagicMuscle::dumpToString()
@@ -62,9 +62,9 @@ std::string MagicMuscle::dumpToString()
     if (firstDump())
     {
         setFirstDump(false);
-        s += dumpHelper({"time"s, "activation"s, "forceMultiplier"s, "tension"s});
+        s += dumpHelper({"time"s, "activation"s, "forceMultiplier"s, "forceOffset"s, "tension"s});
     }
-    s += dumpHelper({simulation()->GetTime(), m_activation, m_forceMultiplier, GetStrap()->Tension()});
+    s += dumpHelper({simulation()->GetTime(), m_activation, m_forceMultiplier, m_forceOffset, GetStrap()->Tension()});
     return s;
 }
 

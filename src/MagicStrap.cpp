@@ -129,9 +129,9 @@ std::string MagicStrap::dumpToString()
             items.push_back(GSUtil::ToString("vx%zu", i));
             items.push_back(GSUtil::ToString("vy%zu", i));
             items.push_back(GSUtil::ToString("vz%zu", i));
-            s += pystring::join("\t"s, items);
-            s += "\n"s;
         }
+        s += pystring::join("\t"s, items);
+        s += "\n"s;
     }
     items.clear();
     items.push_back(GSUtil::ToString(simulation()->GetTime()));
