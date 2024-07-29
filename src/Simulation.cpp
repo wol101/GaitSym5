@@ -305,7 +305,7 @@ void Simulation::UpdateSimulation()
     // run the simulation
     m_physicsEngine->Step();
 
-    // now the muscle straps are invalid because the bodies have moved so they need recaulculating
+    // now the muscle straps are invalid because the bodies have moved so they need recalculating
     for (auto &&iter1 : m_MuscleList)
     {
         iter1.second->CalculateStrap();

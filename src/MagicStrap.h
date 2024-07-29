@@ -24,6 +24,7 @@ public:
     MagicStrap();
 
     SMART_ENUM(ForceDirection, forceDirectionStrings, forceDirectionCount, WorldRelative, BodyRelative);
+    SMART_ENUM(ForceType, forceTypeStrings, forceTypeCount, SimpleForce, TorqueCouple);
 
     virtual void Calculate();
 
@@ -35,6 +36,7 @@ public:
 private:
     std::vector<Marker *> m_markerList;
     ForceDirection m_forceDirection = BodyRelative;
+    ForceType m_forceType = SimpleForce;
 };
 
 } // GaitSym

@@ -21,6 +21,7 @@
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
+#include "MagicMuscle.h"
 #include "GSUtil.h"
 
 #include "collision_util.h"
@@ -290,6 +291,11 @@ std::string *ODEPhysicsEngine::Step()
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
             const PointForce *pf = pointForceList->at(i).get();
+            // if (auto muscle = dynamic_cast<MagicMuscle *>(iter.second.get()))
+            // {
+            //     std::ofstream log("c:/scratch/debug.log", std::ios_base::app);
+            //     log << simulation()->GetTime() << "\t" << pf->body->name() << GSUtil::ToString(pf->point) << "\t" << GSUtil::ToString(pf->vector) << "\n";
+            // }
             if (pf->body)
             {
                 dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),
