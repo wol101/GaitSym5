@@ -22,7 +22,7 @@ class Marker;
 
 struct PointForce
 {
-    Body *body;         // this is the body the force is applied to
+    Body *body = nullptr;   // this is the body the force is applied to
     pgd::Vector3 point;     // this is the position of action in world coordinates
     pgd::Vector3 vector;    // this is the direction of action (magnitude acts as a scaling factor)
 };
