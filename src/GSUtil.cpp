@@ -493,7 +493,7 @@ double GSUtil::QuickPow(double base, int exp)
 std::string *GSUtil::ToString(double v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%.18g", v); // 17 digits is enough to round trip but 18 is safe
+    int l = snprintf(buf, sizeof(buf), "%.17g", v); // 17 digits is enough to round trip but 18 is safe
     output->assign(buf, size_t(l));
     return output;
 }
@@ -552,8 +552,8 @@ std::string *GSUtil::ToString(const double *v, size_t n, std::string *output)
     int l;
     for (size_t i = 0; i < n; i++)
     {
-        if (i < n - 1) l = snprintf(&buf[count], 32, "%.18g ", v[i]);
-        else l = snprintf(&buf[count], 32, "%.18g", v[i]);
+        if (i < n - 1) l = snprintf(&buf[count], 32, "%.17g ", v[i]);
+        else l = snprintf(&buf[count], 32, "%.17g", v[i]);
         count += size_t(l);
     }
     output->assign(buf.get(), count);
@@ -654,7 +654,7 @@ std::string *GSUtil::ToString(const pgd::Quaternion &v, std::string *output)
 {
     char buf[32 * 4];
     // note quaternion is (qs,qx,qy,qz)
-    int l = snprintf(buf, sizeof(buf), "%.18g %.18g %.18g %.18g", v.n, v.x, v.y, v.z); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g %.17g", v.n, v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
@@ -663,7 +663,7 @@ std::string *GSUtil::ToString(const pgd::Matrix3x3 &m, std::string *output)
 {
     char buf[32 * 9];
     // note quaternion is (qs,qx,qy,qz)
-    int l = snprintf(buf, sizeof(buf), "%.18g %.18g %.18g\n%.18g %.18g %.18g\n%.18g %.18g %.18g",
+    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g\n%.17g %.17g %.17g\n%.17g %.17g %.17g",
                      m.e11, m.e12, m.e13,
                      m.e21, m.e22, m.e23,
                      m.e31, m.e32, m.e33); // 17 digits is enough to round trip
@@ -674,7 +674,7 @@ std::string *GSUtil::ToString(const pgd::Matrix3x3 &m, std::string *output)
 std::string *GSUtil::ToString(const pgd::Vector2 &v, std::string *output)
 {
     char buf[32 * 2];
-    int l = snprintf(buf, sizeof(buf), "%.18g %.18g", v.x, v.y); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17g %.17g", v.x, v.y); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
@@ -682,7 +682,7 @@ std::string *GSUtil::ToString(const pgd::Vector2 &v, std::string *output)
 std::string *GSUtil::ToString(const pgd::Vector3 &v, std::string *output)
 {
     char buf[32 * 3];
-    int l = snprintf(buf, sizeof(buf), "%.18g %.18g %.18g", v.x, v.y, v.z); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g", v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
@@ -690,7 +690,7 @@ std::string *GSUtil::ToString(const pgd::Vector3 &v, std::string *output)
 std::string *GSUtil::ToString(const pgd::Vector4 &v, std::string *output)
 {
     char buf[32 * 4];
-    int l = snprintf(buf, sizeof(buf), "%.18g %.18g %.18g", v.x, v.y, v.z); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g", v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }

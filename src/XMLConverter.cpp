@@ -94,7 +94,7 @@ void XMLConverter::GetFormattedXML(std::string *formattedXML)
     for (size_t i = 0; i < m_smartSubstitutionValues.size(); i++)
     {
         formattedXML->append(m_smartSubstitutionTextComponents[i]);
-        int l = snprintf(buffer, sizeof(buffer), "%.18g", m_smartSubstitutionValues[i]);
+        int l = snprintf(buffer, sizeof(buffer), "%.17g", m_smartSubstitutionValues[i]);
         formattedXML->append(buffer, l);
     }
     formattedXML->append(m_smartSubstitutionTextComponents[m_smartSubstitutionValues.size()]);

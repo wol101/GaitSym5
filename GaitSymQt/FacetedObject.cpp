@@ -862,26 +862,26 @@ void FacetedObject::SaveToMemory(std::vector<char> *data, bool binary)
         char buf[32];
         int l = std::sprintf(buf, "%zud\n", m_vertexList.size() / 3);
         std::copy_n(buf, l, std::back_inserter(*data));
-        l = std::sprintf(buf, "%.18g\n", m_lowerBound[0]);
+        l = std::sprintf(buf, "%.17g\n", m_lowerBound[0]);
         std::copy_n(buf, l, std::back_inserter(*data));
-        l = std::sprintf(buf, "%.18g\n", m_lowerBound[1]);
+        l = std::sprintf(buf, "%.17g\n", m_lowerBound[1]);
         std::copy_n(buf, l, std::back_inserter(*data));
-        l = std::sprintf(buf, "%.18g\n", m_lowerBound[2]);
+        l = std::sprintf(buf, "%.17g\n", m_lowerBound[2]);
         std::copy_n(buf, l, std::back_inserter(*data));
-        l = std::sprintf(buf, "%.18g\n", m_upperBound[0]);
+        l = std::sprintf(buf, "%.17g\n", m_upperBound[0]);
         std::copy_n(buf, l, std::back_inserter(*data));
-        l = std::sprintf(buf, "%.18g\n", m_upperBound[1]);
+        l = std::sprintf(buf, "%.17g\n", m_upperBound[1]);
         std::copy_n(buf, l, std::back_inserter(*data));
-        l = std::sprintf(buf, "%.18g\n", m_upperBound[2]);
+        l = std::sprintf(buf, "%.17g\n", m_upperBound[2]);
         std::copy_n(buf, l, std::back_inserter(*data));
         for (size_t i = 0; i < m_vertexList.size(); i++)
         {
-            l = std::sprintf(buf, "%.18g\n", m_vertexList[i]);
+            l = std::sprintf(buf, "%.17g\n", m_vertexList[i]);
             std::copy_n(buf, l, std::back_inserter(*data));
         }
         for (size_t i = 0; i < m_normalList.size(); i++)
         {
-            l = std::sprintf(buf, "%.18g\n", m_normalList[i]);
+            l = std::sprintf(buf, "%.17g\n", m_normalList[i]);
             std::copy_n(buf, l, std::back_inserter(*data));
         }
         for (size_t i = 0; i < m_colourList.size(); i++)
@@ -891,7 +891,7 @@ void FacetedObject::SaveToMemory(std::vector<char> *data, bool binary)
         }
         for (size_t i = 0; i < m_uvList.size(); i++)
         {
-            l = std::sprintf(buf, "%.18g\n", m_uvList[i]);
+            l = std::sprintf(buf, "%.17g\n", m_uvList[i]);
             std::copy_n(buf, l, std::back_inserter(*data));
         }
         data->push_back('\0');

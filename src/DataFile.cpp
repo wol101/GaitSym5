@@ -1294,7 +1294,7 @@ bool DataFile::WriteParameter(const char * const param, double val)
 {
     char buffer[64];
 
-    sprintf(buffer, "%.18g", val);
+    sprintf(buffer, "%.17g", val);
     if (WriteParameter(param, buffer)) return true;
 
     return false;
@@ -1400,7 +1400,7 @@ bool DataFile::WriteNext(double val, char after)
 {
     char buffer[64];
 
-    sprintf(buffer, "%.18g", val);
+    sprintf(buffer, "%.17g", val);
     if (WriteNext(buffer, after)) return true;
 
     return false;
