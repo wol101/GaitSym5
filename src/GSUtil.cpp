@@ -493,7 +493,7 @@ double GSUtil::QuickPow(double base, int exp)
 std::string *GSUtil::ToString(double v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%.17g", v); // 17 digits is enough to round trip but 18 is safe
+    int l = snprintf(buf, sizeof(buf), "%.17g", v); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
@@ -501,7 +501,7 @@ std::string *GSUtil::ToString(double v, std::string *output)
 std::string *GSUtil::ToString(float v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%.10g", double(v)); // 9 is enough to round trip but 10 is safe, the double() is to silence warnings
+    int l = snprintf(buf, sizeof(buf), "%.9g", double(v)); // 9 is enough to round trip, the double() is to silence warnings
     output->assign(buf, size_t(l));
     return output;
 }
