@@ -53,7 +53,7 @@ private:
     double m_abortBelow = -std::numeric_limits<double>::infinity();
     double m_abortAbove = std::numeric_limits<double>::infinity();
     std::vector<double> m_targetTimeList;
-    size_t m_lastIndex = SIZE_MAX;
+    size_t m_lastIndex = std::numeric_limits<size_t>::max();
     double m_lastValue = 0;
     double m_abortBonus = 0;
 };
