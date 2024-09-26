@@ -2,7 +2,7 @@
 #define LINEEDITPATH_H
 
 #include <QLineEdit>
-#include <QValidator>>
+#include <QValidator>
 
 class QFocusEvent;
 

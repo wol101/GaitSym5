@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <map>
 #include <memory>
+#include <limits>
 
 struct MeshStoreObject
 {
