@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <array>
+#include <cstddef>
 
 class GLEmulator
 {

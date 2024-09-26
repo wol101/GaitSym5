@@ -332,13 +332,13 @@ void gleSpiral (int ncp,               /* number of contour points */
     
     if (startXform == NULL)
     {
-        mem_anchor = reinterpret_cast<CHAR *>(malloc (3 * (size_t)npoints * sizeof (gleDouble)));
+        mem_anchor = reinterpret_cast<char *>(malloc (3 * (size_t)npoints * sizeof (gleDouble)));
         pts = (gleDouble *) mem_anchor;
         xforms = NULL;
     }
     else
     {
-        mem_anchor = reinterpret_cast<CHAR *>(malloc ((1 + 2) * 3 * (size_t)npoints * sizeof (gleDouble)));
+        mem_anchor = reinterpret_cast<char *>(malloc ((1 + 2) * 3 * (size_t)npoints * sizeof (gleDouble)));
         pts = (gleDouble *) mem_anchor;
         xforms = (gleAffine *) (pts + 3 * npoints);
     }
