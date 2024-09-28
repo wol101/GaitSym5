@@ -12,6 +12,8 @@
 
 #include "PGDMath.h"
 
+#include <limits>
+
 class Drawable;
 class FacetedObject;
 
@@ -41,7 +43,7 @@ public:
 private:
     Drawable *m_drawable = nullptr;
     FacetedObject *m_facetedObject = nullptr;
-    size_t m_triangleIndex = SIZE_MAX;
+    size_t m_triangleIndex = std::numeric_limits<size_t>::max();
     pgd::Vector3 m_modelLocation;
     pgd::Vector3 m_worldLocation;
     pgd::Vector3 m_screenLocation;
