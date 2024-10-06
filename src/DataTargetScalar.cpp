@@ -368,6 +368,18 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
+        if (Driver *driver = dynamic_cast<Driver *>(GetTarget()))
+        {
+            switch (m_DataType)
+            {
+            case DriverValue:
+                m_errorScore = driver->value() - value;
+                break;
+            default:
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+            }
+            break;
+        }
         if (GetTarget() == nullptr)
         {
             switch(m_DataType)
@@ -500,6 +512,7 @@ std::string DataTargetScalar::dumpToString()
  *   - DeltaTime - simulation change of time
  *   - XF, YF, ZF - individual force components
  *   - Force - magnitude of force
+ *   - DriverValue - value of driver
  * - TargetID="_ID name_"
  *   - Where _ID name_ is the ID of the target which can be a body, driver, geom, joint, marker or empty depending on the DataType
  *   - Not all data types make sense for all targets and will generate a warning when the simulation is running

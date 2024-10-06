@@ -29,7 +29,7 @@ public:
 
     SMART_ENUM(DataType, dataTypeStrings, dataTypeCount, XP, YP, ZP, Q0, Q1, Q2, Q3, XV, YV, ZV,
                XRV, YRV, ZRV, Angle, MetabolicEnergy, MechanicalEnergy, DriverError, Time, DeltaTime,
-               XF, YF, ZF, Force);
+               XF, YF, ZF, Force, DriverValue);
 
 
     void SetTarget(NamedObject *target);
