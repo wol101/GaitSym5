@@ -13,6 +13,7 @@
 #include <QMessageBox>
 
 #include <fstream>
+#include <sstream>
 
 using namespace std::string_literals;
 
