@@ -131,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionEditGlobal, SIGNAL(triggered()), this, SLOT(menuEditGlobal()));
     connect(ui->actionExportMarkers, SIGNAL(triggered()), this, SLOT(menuExportMarkers()));
     connect(ui->actionExportOpenSim, SIGNAL(triggered()), this, SLOT(menuExportOpenSim()));
+    connect(ui->actionExportMuJoCo, SIGNAL(triggered()), this, SLOT(menuExportMuJoCo()));
     connect(ui->actionImportMarkers, SIGNAL(triggered()), this, SLOT(menuImportMarkers()));
     connect(ui->actionImportMeshesAsBodies, SIGNAL(triggered()), this, SLOT(menuImportMeshes()));
     connect(ui->actionConvertFile, SIGNAL(triggered()), this, SLOT(menuConvertFile()));
@@ -779,6 +780,7 @@ void MainWindow::updateEnable()
     ui->actionCreateTestingDrivers->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetMuscleList()->size() > 0);
     ui->actionExportMarkers->setEnabled(m_simulation != nullptr);
     ui->actionExportOpenSim->setEnabled(m_simulation != nullptr);
+    ui->actionExportMuJoCo->setEnabled(m_simulation != nullptr);
     ui->actionRecordMovie->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
     ui->actionRun->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
     ui->actionStep->setEnabled(m_simulation != nullptr && m_mode == runMode && isWindowModified() == false);
@@ -1548,7 +1550,7 @@ void MainWindow::menuExportOpenSim()
     }
     else
     {
-        fileName = QFileDialog::getSaveFileName(this, tr("Save Model State File"), QDir(this->m_configFile.absolutePath()).filePath(this->m_configFile.completeBaseName()), tr("Config Files (*.osim)"), nullptr);
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Model as OpenSim File"), QDir(this->m_configFile.absolutePath()).filePath(this->m_configFile.completeBaseName()), tr("Config Files (*.osim)"), nullptr);
     }
 
     if (fileName.isNull() == false)
@@ -1582,6 +1584,43 @@ void MainWindow::menuExportOpenSim()
         if (c != openSimExporter.xmlString()->size())
         {
             setStatusString(QString("Error writing \"%1\" for OpenSim export").arg(fileName), 0);
+            return;
+        }
+        setStatusString(QString("Exported \"%1\"").arg(fileName), 1);
+    }
+    else
+    {
+        setStatusString(QString("OpenSim export cancelled"), 1);
+    }
+}
+
+void MainWindow::menuExportMuJoCo()
+{
+    QString fileName;
+    if (this->m_configFile.absoluteFilePath().isEmpty())
+    {
+        QFileInfo info(Preferences::valueQString("LastFileOpened"));
+        fileName = QFileDialog::getSaveFileName(this, tr("Export Model as MuJoCo File"), QDir(info.absolutePath()).filePath(info.completeBaseName()), tr("MuJoCo Files (*.xml)"), nullptr);
+    }
+    else
+    {
+        fileName = QFileDialog::getSaveFileName(this, tr("Save MuJoCo File"), QDir(this->m_configFile.absolutePath()).filePath(this->m_configFile.completeBaseName()), tr("Config Files (*.xml)"), nullptr);
+    }
+
+    if (fileName.isNull() == false)
+    {
+        setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            setStatusString(QString("Error opening \"%1\" for MuJoCo export").arg(fileName), 0);
+            return;
+        }
+        std::string xmlString;
+        qint64 c = file.write(xmlString.data(), xmlString.size());
+        if (c != xmlString.size())
+        {
+            setStatusString(QString("Error writing \"%1\" for MuJoCo export").arg(fileName), 0);
             return;
         }
         setStatusString(QString("Exported \"%1\"").arg(fileName), 1);

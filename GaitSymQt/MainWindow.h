@@ -87,6 +87,7 @@ public slots:
     void menuEditGlobal();
     void menuExportMarkers();
     void menuExportOpenSim();
+    void menuExportMuJoCo();
     void menuImportMarkers();
     void menuImportMeshes();
     void menuImportOpenSimBodyKinematics();
