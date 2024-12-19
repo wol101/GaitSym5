@@ -58,6 +58,11 @@ bool DataTarget::calculateMatchValue(double time, double *matchScore)
     case Punctuated:
         {
             auto lowerBound = std::lower_bound(m_targetTimeList.begin(), m_targetTimeList.end(), time);
+            // if a searching element exists: std::lower_bound() returns iterator to the element itself
+            // if a searching element doesn't exist:
+            //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
+            //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
+            //    otherwise, lower_bound() returns an iterator to the next greater element to the search elementof the range
             size_t index = std::distance(m_targetTimeList.begin(), lowerBound);
             if (index == 0) { *matchScore = m_lastValue; return false; } // this means that time is less than the lowest value in the list
             if (index == m_lastIndex) { *matchScore = m_lastValue; return false; }

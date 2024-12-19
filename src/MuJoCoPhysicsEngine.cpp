@@ -16,14 +16,17 @@
 #include "FluidSac.h"
 #include "Geom.h"
 #include "HingeJoint.h"
+#include "BallJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
 #include "Contact.h"
 #include "GSUtil.h"
 
-#include <deque>
 #include <algorithm>
+#ifdef DEBUG_MUJOCO_CREATE_TREE
+#include <deque>
+#endif
 
 using namespace std::string_literals;
 namespace GaitSym {
@@ -370,6 +373,7 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             // double springConstant = hingeJoint->stopSpring();
             // double dampingConstant = hingeJoint->stopDamp();
             attributes["name"s] = hingeJoint->name();
+            attributes["type"s] = "hinge"s;
             attributes["axis"s] = GSUtil::ToString(axis2);
             attributes["pos"s] = GSUtil::ToString(p2);
             attributes["limited"s] = GSUtil::ToString(true);
@@ -387,7 +391,6 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             attributes["joint"s] = hingeJoint->name();
             XMLInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_jointvel"s;
-            attributes["joint"s] = hingeJoint->name();
             XMLInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_force"s;
@@ -395,6 +398,29 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             XMLInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_torque"s;
             XMLInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+            break;
+        }
+        if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(joint))
+        {
+            Marker *marker2 = ballJoint->body2Marker();
+            pgd::Vector3 p2 = marker2->GetPosition();
+            attributes["name"s] = ballJoint->name();
+            attributes["type"s] = "ball"s;
+            attributes["pos"s] = GSUtil::ToString(p2);
+            XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            // put a site on the joint
+            attributes.clear();
+            attributes["name"s] = ballJoint->name() + "_site"s;
+            attributes["pos"s] = GSUtil::ToString(p2);
+            XMLInitiateTag(&m_mjXML, "site"s, attributes, true);
+            // we also need sensors to get reaction forces and torques
+            attributes.clear();
+            attributes["name"s] = ballJoint->name() + "_ballquat"s;
+            attributes["joint"s] = ballJoint->name();
+            XMLInitiateTag(&m_mjXMLSensors, "ballquat"s, attributes, true);
+            attributes["name"s] = ballJoint->name() + "_ballangvel"s;
+            XMLInitiateTag(&m_mjXMLSensors, "ballangvel"s, attributes, true);
+            attributes.clear();
             break;
         }
         break;
@@ -454,8 +480,9 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
     // mjtNum* qpos;              // position                                         (nq x 1)
     // mjtNum* qvel;              // velocity                                         (nv x 1)
     // the number of values in qpos and qvel varies with the joint type
-    // mjtJoint = mjJNT_FREE has 7 values in qpos and 3 in qvel
+    // mjtJoint = mjJNT_FREE has 7 values in qpos and 6 in qvel
     // mjtJoint = mjJNT_HINGE has 1 in qpos and 1 in qvel
+    // mjtJoint = mjJNT_BALL has 4 in qpos and 3 in qvel
     // note: these state values are sticky unless something like mj_resetData is called
 
     for (size_t jointID = 0; jointID < m_mjModel->njnt; jointID++)
@@ -532,7 +559,28 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             m_mjData->qvel[jnt_dofadr] = angularVelocity.x;
             break;
         }
-        default:
+        case mjJNT_BALL:
+        {
+#ifdef DEBUG_MUJOCO_MOVE_BODIES
+            pgd::Quaternion q(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2], m_mjData->qpos[jnt_qposadr + 3]);
+            pgd::Vector3 av(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
+            std::cerr << "Joint Name = " << jointName << "\n";
+            std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
+#endif
+            Joint *joint = simulation()->GetJoint(jointName);
+            if (!joint)
+            {
+                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
+                return lastErrorPtr();
+            }
+            pgd::Quaternion q = joint->GetWorldRotation();
+            pgd::Vector3 av = joint->GetWorldAngularVelocity();
+            // now set the values in the MuJoCo data structure
+            m_mjData->qpos[jnt_qposadr + 0] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
+            m_mjData->qvel[jnt_dofadr + 0] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
+            break;
+        }        default:
             setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", jointName.c_str()));
             return lastErrorPtr();
         }
@@ -677,6 +725,39 @@ std::string *MuJoCoPhysicsEngine::Step()
                 Marker marker(iter.second.get()->body1());
                 hingeJoint->setForce(marker.GetWorldVector(jointforce));
                 hingeJoint->setTorque(marker.GetWorldVector(jointtorque));
+                break;
+            }
+            if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
+            {
+                int jointID = mj_name2id(m_mjModel, mjOBJ_JOINT, ballJoint->name().c_str());
+                int jnt_type = m_mjModel->jnt_type[jointID];
+                assert(jnt_type == mjJNT_HINGE);
+                // int jnt_qposadr = m_mjModel->jnt_qposadr[jointID]; // not used
+                // int jnt_dofadr = m_mjModel->jnt_dofadr[jointID]; // not used
+                pgd::Vector3 anchor(m_mjData->xanchor[jointID * 3 + 0], m_mjData->xanchor[jointID * 3 + 1], m_mjData->xanchor[jointID * 3 + 2]);
+                int jointposSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (ballJoint->name() + "_jointpos"s).c_str());
+                int jointposSensorDim = m_mjModel->sensor_dim[jointposSensorID];
+                assert(jointposSensorDim == 3);
+                mjtNum *jointposSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointposSensorID];
+                pgd::Vector3 angle(jointposSensorPtr[0], jointposSensorPtr[1], jointposSensorPtr[2]);
+                int jointvelSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (ballJoint->name() + "_jointvel"s).c_str());
+                int jointvelSensorDim = m_mjModel->sensor_dim[jointvelSensorID];
+                assert(jointvelSensorDim == 3);
+                mjtNum *jointvelSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointvelSensorID];
+                pgd::Vector3 angleRate(jointvelSensorPtr[0], jointvelSensorPtr[1], jointvelSensorPtr[2]);
+                // FIX ME - joint force sensors do not work on ball joints
+                // int jointforceSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (ballJoint->name() + "_force"s).c_str());
+                // int jointforceSensorDim = m_mjModel->sensor_dim[jointforceSensorID];
+                // assert(jointforceSensorDim == 3);
+                // mjtNum *jointforceSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointforceSensorID];
+                // pgd::Vector3 jointforce(jointforceSensorPtr[0], jointforceSensorPtr[1], jointforceSensorPtr[2]);
+                // int jointtorqueSensorID = mj_name2id(m_mjModel, mjOBJ_SENSOR, (ballJoint->name() + "_torque"s).c_str());
+                // int jointtorqueSensorDim = m_mjModel->sensor_dim[jointtorqueSensorID];
+                // assert(jointtorqueSensorDim == 3);
+                // mjtNum *jointtorqueSensorPtr = m_mjData->sensordata + m_mjModel->sensor_adr[jointtorqueSensorID];
+                // pgd::Vector3 jointtorque(jointtorqueSensorPtr[0], jointtorqueSensorPtr[1], jointtorqueSensorPtr[2]);
+                // FIX ME
+                // ballJoint->setAnchor(anchor); // this probably doesn't change
                 break;
             }
             break;
