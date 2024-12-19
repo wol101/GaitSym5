@@ -818,6 +818,11 @@ mjModel *MuJoCoPhysicsEngine::LoadModelFromString(const std::string &xml, char* 
     std::string str = "LoadModelFromString:" +  xml;
     return mj_loadXML(str.c_str(), vfs, error, error_size);
 }
+
+std::string MuJoCoPhysicsEngine::mjXML() const
+{
+    return m_mjXML;
+}
 } // namespace GaitSym
 
 

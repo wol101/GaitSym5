@@ -33,6 +33,8 @@ public:
     virtual std::string *Initialise(Simulation *theSimulation);
     virtual std::string *Step();
 
+    std::string mjXML() const;
+
 private:
     struct TreeBody
     {

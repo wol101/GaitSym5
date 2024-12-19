@@ -49,6 +49,7 @@
 #include "TwoHingeJointDriver.h"
 #include "OpenSimExporter.h"
 #include "DrawMuscle.h"
+#include "MuJoCoPhysicsEngine.h"
 
 #include "pystring.h"
 
@@ -1610,13 +1611,21 @@ void MainWindow::menuExportMuJoCo()
     if (fileName.isNull() == false)
     {
         setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
+        GaitSym::MuJoCoPhysicsEngine muJoCoPhysicsEngine;
+        std::string *err = muJoCoPhysicsEngine.Initialise(simulation());
+        if (err)
+        {
+            setStatusString(QString("Error parsing \"%1\" for MuJoCo export").arg(fileName), 0);
+            return;
+        }
+
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly))
         {
             setStatusString(QString("Error opening \"%1\" for MuJoCo export").arg(fileName), 0);
             return;
         }
-        std::string xmlString;
+        std::string xmlString = muJoCoPhysicsEngine.mjXML();
         qint64 c = file.write(xmlString.data(), xmlString.size());
         if (c != xmlString.size())
         {
@@ -1627,7 +1636,7 @@ void MainWindow::menuExportMuJoCo()
     }
     else
     {
-        setStatusString(QString("OpenSim export cancelled"), 1);
+        setStatusString(QString("MuJoCo export cancelled"), 1);
     }
 }
 
