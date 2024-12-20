@@ -67,22 +67,32 @@ double DataTargetQuaternion::calculateError(double time)
     double angle = 0;
 
     size_t index, indexNext;
+    // lower_bound
+    // if a searching element exists: std::lower_bound() returns iterator to the element itself
+    // if a searching element doesn't exist:
+    //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
+    //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
+    //    otherwise, lower_bound() returns an iterator to the next greater element to the search elementof the range
     auto lowerBound = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), time);
-    auto upperBound = std::upper_bound(targetTimeList()->begin(), targetTimeList()->end(), time);
-    if (lowerBound == targetTimeList()->begin()) // time <= lowest value in the list
-    {
-        index = 0;
-        indexNext = index;
-    }
-    else if (upperBound == targetTimeList()->end()) // time > highest value in the list
+    if (lowerBound == targetTimeList()->end()) // time > highest value in the list
     {
         index = targetTimeList()->size() - 1;
         indexNext = index;
     }
-    else
+    else if (*lowerBound == time) // time == a value in the list
     {
-        index = std::distance(targetTimeList()->begin(), lowerBound) - 1; // subtracting 1 because lower bound gives an index 1 higher than expected (IMO)
-        indexNext = std::min(index + 1, targetTimeList()->size() - 1);
+        index = std::distance(targetTimeList()->begin(), lowerBound);
+        indexNext = index;
+    }
+    else if (lowerBound == targetTimeList()->end()) // time < lowest value in the list
+    {
+        index = 0;
+        indexNext = index;
+    }
+    else // time < value pointed to by the iterator
+    {
+        indexNext = std::distance(targetTimeList()->begin(), lowerBound);
+        index = indexNext - 1;
     }
 
     // do a slerp interpolation between the target quaternions

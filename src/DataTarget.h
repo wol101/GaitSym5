@@ -21,6 +21,7 @@ namespace GaitSym
 class Body;
 class SimulationWindow;
 
+
 class DataTarget: public NamedObject
 {
 public:
@@ -40,10 +41,12 @@ public:
     virtual double calculateError(double time) = 0;
     virtual double calculateError(size_t index) = 0;
 
-    double lastValue() const;
+    double value() const;
+
+    static int monotonicTest(const std::vector<double> &data);
 
 protected:
-    std::vector<double> *targetTimeList();
+   std::vector<double> *targetTimeList();
 
 private:
     double m_intercept = 0;
@@ -53,8 +56,9 @@ private:
     double m_abortBelow = -std::numeric_limits<double>::infinity();
     double m_abortAbove = std::numeric_limits<double>::infinity();
     std::vector<double> m_targetTimeList;
-    size_t m_lastIndex = std::numeric_limits<size_t>::max();
-    double m_lastValue = 0;
+    std::vector<size_t> m_targetTimeIndexList;
+    size_t m_index = std::numeric_limits<size_t>::max();
+    double m_value = std::numeric_limits<double>::quiet_NaN();
     double m_abortBonus = 0;
 };
 

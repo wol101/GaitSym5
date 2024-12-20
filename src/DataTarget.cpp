@@ -29,9 +29,9 @@ std::vector<double> *DataTarget::targetTimeList()
     return &m_targetTimeList;
 }
 
-double DataTarget::lastValue() const
+double DataTarget::value() const
 {
-    return m_lastValue;
+    return m_value;
 }
 
 double DataTarget::positiveFunction(double v)
@@ -53,36 +53,69 @@ double DataTarget::positiveFunction(double v)
 // returns true when matchScore value is valid
 bool DataTarget::calculateMatchValue(double time, double *matchScore)
 {
+    m_index = size_t(0.5 + time / simulation()->GetTimeIncrement());
     switch (m_interpolationType)
     {
     case Punctuated:
         {
-            auto lowerBound = std::lower_bound(m_targetTimeList.begin(), m_targetTimeList.end(), time);
+            auto iter = std::lower_bound(m_targetTimeIndexList.begin(), m_targetTimeIndexList.end(), m_index);
             // if a searching element exists: std::lower_bound() returns iterator to the element itself
-            // if a searching element doesn't exist:
-            //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
-            //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
-            //    otherwise, lower_bound() returns an iterator to the next greater element to the search elementof the range
-            size_t index = std::distance(m_targetTimeList.begin(), lowerBound);
-            if (index == 0) { *matchScore = m_lastValue; return false; } // this means that time is less than the lowest value in the list
-            if (index == m_lastIndex) { *matchScore = m_lastValue; return false; }
-            m_lastIndex = index;
-            m_lastValue = m_intercept + m_slope * positiveFunction(calculateError(index - 1));
-            break;
+            if (iter != m_targetTimeIndexList.end() && *iter == m_index)
+            {
+                m_value = m_intercept + m_slope * positiveFunction(calculateError(m_index));
+                break;
+            }
+            return false;
         }
     case Continuous:
         {
-            m_lastValue = m_intercept + m_slope * positiveFunction(calculateError(time));
+            m_value = m_intercept + m_slope * positiveFunction(calculateError(time));
             break;
         }
     }
-    if (m_lastValue < m_abortBelow || m_lastValue > m_abortAbove)
+    if (m_value < m_abortBelow || m_value > m_abortAbove)
     {
         simulation()->SetDataTargetAbort(name());
-        m_lastValue += m_abortBonus;
+        m_value += m_abortBonus;
     }
-    *matchScore = m_lastValue;
+    *matchScore = m_value;
     return true;
+}
+
+// test for monotonicity
+// returns 0 if not monotonic
+// returns +1 if increasing monotonically
+// returns -1 if decreasing monotonically
+// returns +2 if does not vary at all
+int DataTarget::monotonicTest(const std::vector<double> &data)
+{
+    if (data.size() < 2) return +2;
+    double del = data[1] - data[0];
+    if (del < 0) // test for decreasing monotonically
+    {
+        for (size_t i = 2; i < data.size(); ++i)
+        {
+            del = data[i] - data[i - 1];
+            if (del >= 0) { return 0; }
+        }
+        return -1;
+    }
+    if (del > 0) // test for increasing monotonically
+    {
+        for (size_t i = 2; i < data.size(); ++i)
+        {
+            del = data[i] - data[i - 1];
+            if (del <= 0) { return 0; }
+        }
+        return +1;
+    }
+    // test for unchanging
+    for (size_t i = 2; i < data.size(); ++i)
+    {
+        del = data[i] - data[i - 1];
+        if (del != 0) { return 0; }
+    }
+    return +2;
 }
 
 std::string DataTarget::dumpToString()
@@ -133,11 +166,14 @@ std::string *DataTarget::createFromAttributes()
     m_targetTimeList.clear();
     m_targetTimeList.reserve(targetTimesTokens.size());
     for (auto &&token : targetTimesTokens) m_targetTimeList.push_back(GSUtil::Double(token));
-    if (std::is_sorted(m_targetTimeList.begin(), m_targetTimeList.end()) == false)
+    if (monotonicTest(m_targetTimeList) != 1)
     {
         setLastError("DataTarget ID=\""s + name() +"\" TargetTimes are not in ascending order"s);
         return lastErrorPtr();
     }
+    m_targetTimeIndexList.clear();
+    m_targetTimeIndexList.reserve(m_targetTimeList.size());
+    for (auto &&iter : m_targetTimeList) m_targetTimeIndexList.push_back(size_t(0.5 + iter / simulation()->GetTimeIncrement()));
 
     if (findAttribute("MatchType"s, &buf) == nullptr) return lastErrorPtr();
     size_t matchTypeIndex;
