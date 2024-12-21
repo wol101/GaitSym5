@@ -469,36 +469,6 @@ double DataTargetScalar::calculateError(double time)
 }
 
 /**
- * @brief DataTargetScalar::dumpToString
- * @return string containing the data for this time point
- *
- * This function returns useful data to the user about values contained in this object during the simulation
- *
- * Column Headings:
- *
- * - time
- *   - the simulation time
- * - error
- *   - the raw error generated
- * - score
- *   - the score value generated using the positive function, intersect and slope
- */
-
-std::string DataTargetScalar::dumpToString()
-{
-    std::string s;
-    if (firstDump())
-    {
-        setFirstDump(false);
-        s += dumpHelper({"time"s, "error"s, "score"s});
-    }
-    s += dumpHelper({simulation()->GetTime(), m_errorScore, value()});
-    return s;
-}
-
-
-
-/**
  * @brief DataTargetScalar::createFromAttributes
  * @return nullptr on success and a pointer to lastError() on failure
  *

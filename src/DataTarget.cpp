@@ -29,6 +29,21 @@ std::vector<double> *DataTarget::targetTimeList()
     return &m_targetTimeList;
 }
 
+double DataTarget::positiveError() const
+{
+    return m_positiveError;
+}
+
+double DataTarget::rawError() const
+{
+    return m_rawError;
+}
+
+size_t DataTarget::index() const
+{
+    return m_index;
+}
+
 double DataTarget::value() const
 {
     return m_value;
@@ -62,14 +77,21 @@ bool DataTarget::calculateMatchValue(double time, double *matchScore)
             // if a searching element exists: std::lower_bound() returns iterator to the element itself
             if (iter != m_targetTimeIndexList.end() && *iter == m_index)
             {
-                m_value = m_intercept + m_slope * positiveFunction(calculateError(m_index));
+                m_rawError = calculateError(size_t(std::distance(m_targetTimeIndexList.begin(), iter)));
+                m_positiveError = positiveFunction(m_rawError);
+                m_value = m_intercept + m_slope * m_positiveError;
                 break;
             }
+            m_value = std::numeric_limits<double>::quiet_NaN();
+            m_rawError = std::numeric_limits<double>::quiet_NaN();
+            m_positiveError = std::numeric_limits<double>::quiet_NaN();
             return false;
         }
     case Continuous:
         {
-            m_value = m_intercept + m_slope * positiveFunction(calculateError(time));
+            m_rawError = calculateError(time);
+            m_positiveError = positiveFunction(m_rawError);
+            m_value = m_intercept + m_slope * m_positiveError;
             break;
         }
     }
@@ -120,19 +142,14 @@ int DataTarget::monotonicTest(const std::vector<double> &data)
 
 std::string DataTarget::dumpToString()
 {
-    std::stringstream ss;
-    ss.precision(17);
-    ss.setf(std::ios::scientific);
+    std::string s;
     if (firstDump())
     {
         setFirstDump(false);
-        ss << "Time\tMatchValue\tValid\n";
+        s += dumpHelper({"time"s, "index"s, "raw_error", "positive_error", "score"s});
     }
-    double value;
-    bool valid = calculateMatchValue(simulation()->GetTime(), &value);
-    ss << simulation()->GetTime() << "\t" << value << "\t" << valid << "\n";
-//    ss << simulation()->GetTime() << "\t" << std::get<0>(GetMatchValue(simulation()->GetTime())) << "\n";
-    return ss.str();
+    s += dumpHelper({simulation()->GetTime(), double(m_index), m_rawError, m_positiveError, m_value});
+    return s;
 }
 
 // this function initialises the data in the object based on the contents

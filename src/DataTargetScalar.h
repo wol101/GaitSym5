@@ -38,8 +38,6 @@ public:
     void SetDataType(DataType dataType) { m_DataType = dataType; }
     DataType GetDataType() { return m_DataType; }
 
-    virtual std::string dumpToString() override;
-
     virtual std::string *createFromAttributes() override;
     virtual void appendToAttributes() override;
 

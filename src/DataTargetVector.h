@@ -38,7 +38,9 @@ private:
 
     NamedObject *m_target = nullptr;
     std::vector<pgd::Vector3> m_valueList;
-
+    pgd::Vector3 m_vectorValue;
+    pgd::Vector3 m_vectorTarget;
+    pgd::Vector3 m_vectorError;
 };
 
 }

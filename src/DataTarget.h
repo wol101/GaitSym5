@@ -41,9 +41,12 @@ public:
     virtual double calculateError(double time) = 0;
     virtual double calculateError(size_t index) = 0;
 
-    double value() const;
-
     static int monotonicTest(const std::vector<double> &data);
+
+    double value() const;
+    size_t index() const;
+    double rawError() const;
+    double positiveError() const;
 
 protected:
    std::vector<double> *targetTimeList();
@@ -59,6 +62,8 @@ private:
     std::vector<size_t> m_targetTimeIndexList;
     size_t m_index = std::numeric_limits<size_t>::max();
     double m_value = std::numeric_limits<double>::quiet_NaN();
+    double m_rawError = std::numeric_limits<double>::quiet_NaN();
+    double m_positiveError = std::numeric_limits<double>::quiet_NaN();
     double m_abortBonus = 0;
 };
 
