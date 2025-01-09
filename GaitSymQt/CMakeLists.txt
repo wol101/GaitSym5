@@ -1221,37 +1221,7 @@ set(PROJECT_SOURCES
     ../src/UniversalJoint.cpp
     ../src/XMLConverter.cpp
 
-    ../pocketpy-1.4.5/src/array2d.cpp
-    ../pocketpy-1.4.5/src/base64.cpp
-    ../pocketpy-1.4.5/src/ceval.cpp
-    ../pocketpy-1.4.5/src/cffi.cpp
-    ../pocketpy-1.4.5/src/codeobject.cpp
-    ../pocketpy-1.4.5/src/collections.cpp
-    ../pocketpy-1.4.5/src/compiler.cpp
-    ../pocketpy-1.4.5/src/csv.cpp
-    ../pocketpy-1.4.5/src/dataclasses.cpp
-    ../pocketpy-1.4.5/src/dict.cpp
-    ../pocketpy-1.4.5/src/easing.cpp
-    ../pocketpy-1.4.5/src/error.cpp
-    ../pocketpy-1.4.5/src/expr.cpp
-    ../pocketpy-1.4.5/src/frame.cpp
-    ../pocketpy-1.4.5/src/gc.cpp
-    ../pocketpy-1.4.5/src/io.cpp
-    ../pocketpy-1.4.5/src/iter.cpp
-    ../pocketpy-1.4.5/src/lexer.cpp
-    ../pocketpy-1.4.5/src/linalg.cpp
-    ../pocketpy-1.4.5/src/memory.cpp
-    ../pocketpy-1.4.5/src/modules.cpp
-    ../pocketpy-1.4.5/src/namedict.cpp
-    ../pocketpy-1.4.5/src/obj.cpp
-    ../pocketpy-1.4.5/src/pocketpy.cpp
-    ../pocketpy-1.4.5/src/pocketpy_c.cpp
-    ../pocketpy-1.4.5/src/profiler.cpp
-    ../pocketpy-1.4.5/src/random.cpp
-    ../pocketpy-1.4.5/src/repl.cpp
-    ../pocketpy-1.4.5/src/str.cpp
-    ../pocketpy-1.4.5/src/tuplelist.cpp
-    ../pocketpy-1.4.5/src/vm.cpp
+    ../pocketpy-2.0.4/pocketpy.c
 
     ../fast_double_parser/fast_double_parser/fast_double_parser.h
     ../GaitSymQt/AboutDialog.h
@@ -1327,7 +1297,7 @@ set(PROJECT_SOURCES
     ../libgwavi/gwavi.h
     ../libgwavi/gwavi_private.h
 
-    ../pocketpy-1.4.5/include/pocketpy.h
+    ../pocketpy-2.0.4/pocketpy.h
 
     ../pystring/pystring.h
 
@@ -1460,7 +1430,7 @@ set(INCLUDE_DIRECTORIES
 ../glextrusion
 ../libgwavi
 ../PhysX
-../pocketpy-1.4.5/include
+../pocketpy-2.0.4
 ../pystring
 ../rapidxml
 ../src

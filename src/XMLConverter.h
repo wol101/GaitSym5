@@ -13,8 +13,6 @@
 #include <vector>
 #include <string>
 
-namespace pkpy { class VM; }
-
 namespace GaitSym
 {
 
@@ -44,7 +42,6 @@ private:
     std::vector<std::string> m_smartSubstitutionParserText;
     std::vector<double> m_smartSubstitutionValues;
     size_t m_smartSubstitutionTextComponentsSize = 0;
-    pkpy::VM *m_pythonVM = nullptr;
 };
 
 }

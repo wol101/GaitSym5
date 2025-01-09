@@ -1,7 +1,7 @@
 #include "LineEditDouble.h"
 #include "DoubleValidator.h"
 
-#include "pocketpy/pocketpy.h"
+#include "pocketpy.h"
 
 #include <QDebug>
 #include <QLocale>
@@ -183,19 +183,30 @@ void LineEditDouble::menuRequestPath(const QPoint &pos)
             int ret = dialog.exec();
             if (ret == QDialog::Accepted)
             {
-                pkpy::VM vm;
-                pkpy::PyObject *result = nullptr;
-                vm.exec("import math");
-                result = vm.eval(lineEdit->text().toStdString()); // eval (unlike exec) does not throw an exception and the error message is sent to the terminal
-                if (!result)
+                // reset the current VM.
+                py_resetvm();
+                // import the python math module.
+                bool ok = py_exec("import math", "<string>", EXEC_MODE, NULL);
+                double v = 0;
+                if (ok)
+                {
+                    std::string line = lineEdit->text().toStdString();
+                    ok = py_eval(line.c_str(), NULL);
+                    if (ok)
+                    {
+                        ok = py_castfloat(py_retval(), &v); // py_castfloat copes with int and float types
+                        if (ok)
+                        {
+                            this->setValue(v);
+                        }
+                    }
+                }
+                if (!ok)
                 {
                     QMessageBox::critical(this, "Python Parse Error", QString("\"%1\" not a valid python expression").arg(lineEdit->text()));
                 }
-                else
-                {
-                    double v = pkpy::py_cast<double>(&vm, result);
-                    this->setValue(v);
-                }
+                // reset the current VM.
+                py_resetvm();
             }
         }
         break;

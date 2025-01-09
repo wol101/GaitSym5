@@ -61,13 +61,18 @@ TextEditDialog::TextEditDialog(QWidget *parent) :
     setEditorFonts();
     enableControls();
 
-    m_vm = new pkpy::VM();
-
+    // reset the current VM.
+    py_resetvm();
+    // import the python math module.
+    bool ok = py_exec("import math", "<string>", EXEC_MODE, NULL);
+    if (!ok) { QMessageBox::warning(this, "Internal pocketpy parse error", QString("TextEditDialog.cpp Line %1").arg(__LINE__)); return; } // this should never happen
 }
 
 TextEditDialog::~TextEditDialog()
 {
-    if (m_vm) { delete m_vm; }
+    // reset the current VM.
+    py_resetvm();
+
     delete ui;
 }
 
@@ -717,9 +722,20 @@ std::string TextEditDialog::attributeMachineArithmetic(const std::string &origin
 {
     std::string newString;
     std::string expression = "v="s + original + ";"s + arithmetic; // this means that I can access the current value using the variable v
-    pkpy::PyObject *obj = m_vm->eval(expression);
-    double newValue = pkpy::py_cast<double>(m_vm, obj);
-    newString = GaitSym::GSUtil::ToString(newValue);
+    bool ok = py_eval(expression.c_str(), NULL);
+    if (ok)
+    {
+        double newValue = 0;
+        ok = py_castfloat(py_retval(), &newValue); // py_castfloat copes with int and float types
+        if (ok)
+        {
+            newString = GaitSym::GSUtil::ToString(newValue);
+        }
+    }
+    if (!ok)
+    {
+        newString = original;
+    }
     return newString;
 }
 

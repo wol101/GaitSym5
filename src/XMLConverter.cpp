@@ -24,12 +24,13 @@ namespace GaitSym {
 
 XMLConverter::XMLConverter()
 {
-    m_pythonVM =  new pkpy::VM();
+    py_resetvm();
+    bool ok = py_exec("import math", "<string>", EXEC_MODE, NULL);
 }
 
 XMLConverter::~XMLConverter()
 {
-    if (m_pythonVM) delete m_pythonVM;
+    py_resetvm();
 }
 
 // load the base file for smart substitution file
@@ -104,21 +105,38 @@ void XMLConverter::GetFormattedXML(std::string *formattedXML)
 // the XML file specifying the simulation
 int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
 {
-    // std::vector<std::string> stringList;
-    // stringList.reserve(genomeData.size());
-    // for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
-    // std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
-    // m_pythonVM->exec(pythonString);
+    std::vector<std::string> stringList;
+    stringList.reserve(genomeData.size());
+    for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
+    std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
+    bool ok = py_exec(pythonString.c_str(), "<string>", EXEC_MODE, NULL);
+    if (!ok) return __LINE__;
 
-    pkpy::List g;
-    for (size_t i =0; i < genomeData.size(); ++i) { g.push_back(pkpy::py_var(m_pythonVM, genomeData[i])); }
-    pkpy::PyObject* obj = py_var(m_pythonVM, std::move(g));
-    m_pythonVM->_main->attr().set(pkpy::StrName("g"), obj); // based on the pkpy_setglobal code
+    // Create a list: [1, 2, 3]
+    py_Ref r0 = py_getreg(0);
+    py_newlistn(r0, int(genomeData.size()));
+    for (size_t i = 0; i < genomeData.size(); ++i) { py_newfloat(py_list_getitem(r0, int(i)), genomeData[i]); }
+    py_setglobal(py_name("gg"), r0);
 
+    // test
+    for (size_t i = 0; i < genomeData.size(); ++i)
+    {
+        std::string testString = "g["s + GSUtil::ToString(i) + "]==gg["s  + GSUtil::ToString(i) + "]"s;
+        ok = py_eval(m_smartSubstitutionParserText[i].c_str(), NULL);
+        if (!py_tobool(py_retval()))
+        {
+            return __LINE__;
+        }
+    }
+
+    double v = 0;
     for (size_t i = 0; i < m_smartSubstitutionParserText.size(); i++)
     {
-        pkpy::PyObject *result = m_pythonVM->eval(m_smartSubstitutionParserText[i]);
-        m_smartSubstitutionValues[i] = pkpy::py_cast<double>(m_pythonVM, result);
+        ok = py_eval(m_smartSubstitutionParserText[i].c_str(), NULL);
+        if (!ok) return __LINE__;
+        ok = py_castfloat(py_retval(), &v); // py_castfloat copes with int and float types
+        if (!ok) return __LINE__;
+        m_smartSubstitutionValues[i] = v;
     }
 
     return 0;

@@ -52,6 +52,7 @@
 #include "MuJoCoPhysicsEngine.h"
 
 #include "pystring.h"
+#include "pocketpy.h"
 
 #include <QAction>
 #include <QApplication>
@@ -99,6 +100,9 @@ private:
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    // Initialize pocketpy and the default VM.
+    py_initialize();
+
     // create the window elements
     ui->setupUi(this);
 
@@ -286,6 +290,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
+    // Finalize pocketpy and free all VMs.
+    PK_API void py_finalize();
+
     m_timer->stop();
 
     if (m_simulation) delete m_simulation;

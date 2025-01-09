@@ -10,7 +10,6 @@ class MainWindow;
 class QTableWidget;
 class QTableWidgetItem;
 
-namespace pkpy { class VM; }
 namespace Ui { class TextEditDialog; }
 
 class TextEditDialog : public QDialog
@@ -82,8 +81,6 @@ private:
     GaitSym::ParseXML m_parseXML;
     std::string m_lastError;
     QString m_fileName;
-
-    pkpy::VM *m_vm = nullptr;
 };
 
 #endif // TEXTEDITDIALOG_H
