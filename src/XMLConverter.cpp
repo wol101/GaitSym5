@@ -26,6 +26,7 @@ XMLConverter::XMLConverter()
 {
     py_resetvm();
     bool ok = py_exec("import math", "<string>", EXEC_MODE, NULL);
+    if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
 }
 
 XMLConverter::~XMLConverter()
@@ -110,6 +111,7 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
     for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
     std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
     bool ok = py_exec(pythonString.c_str(), "<string>", EXEC_MODE, NULL);
+    if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
     if (!ok) return __LINE__;
 
     // Create a list: [1, 2, 3]
@@ -125,6 +127,7 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
         ok = py_eval(m_smartSubstitutionParserText[i].c_str(), NULL);
         if (!py_tobool(py_retval()))
         {
+            if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
             return __LINE__;
         }
     }
@@ -133,8 +136,10 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
     for (size_t i = 0; i < m_smartSubstitutionParserText.size(); i++)
     {
         ok = py_eval(m_smartSubstitutionParserText[i].c_str(), NULL);
+        if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
         if (!ok) return __LINE__;
         ok = py_castfloat(py_retval(), &v); // py_castfloat copes with int and float types
+        if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
         if (!ok) return __LINE__;
         m_smartSubstitutionValues[i] = v;
     }
