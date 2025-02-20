@@ -89,7 +89,41 @@ bool DataTarget::calculateMatchValue(double time, double *matchScore)
         }
     case Continuous:
         {
-            m_rawError = calculateError(time);
+            size_t index1, index2;
+            auto iter = std::lower_bound(m_targetTimeIndexList.begin(), m_targetTimeIndexList.end(), m_index);
+            // lower_bound
+            // if a searching element exists: std::lower_bound() returns iterator to the element itself
+            // if a searching element doesn't exist:
+            //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
+            //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
+            //    otherwise, lower_bound() returns an iterator to the next greater element to the search element of the range
+            while (true)
+            {
+                if (iter == m_targetTimeIndexList.begin())
+                {
+                    index1 = 0;
+                    index2 = index1;
+                    break;
+                }
+                if (iter == m_targetTimeIndexList.end())
+                {
+                    index1 = m_targetTimeList.size() - 1;
+                    index2 = index1;
+                    break;
+                }
+                if (*iter == m_index)
+                {
+                    index1 = size_t(std::distance(m_targetTimeIndexList.begin(), iter));
+                    index2 = index1;
+                    break;
+                }
+                // at this point there is no match
+                index2 = size_t(std::distance(m_targetTimeIndexList.begin(), iter));
+                if (index2 > 0) { index1 = index2 - 1; }
+                else { index1 = index2; }
+                break;
+            }
+            m_rawError = calculateError(index1, index2, time);
             m_positiveError = positiveFunction(m_rawError);
             m_value = m_intercept + m_slope * m_positiveError;
             break;

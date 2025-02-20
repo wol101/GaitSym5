@@ -34,11 +34,7 @@ DataTargetVector::DataTargetVector()
 // in this case this is the euclidean distance between the two vectors
 double DataTargetVector::calculateError(size_t valueListIndex)
 {
-    if (valueListIndex >= m_valueList.size())
-    {
-        std::cerr << "Warning: DataTargetVector::GetMatchValue valueListIndex out of range\n";
-        return 0;
-    }
+    if (valueListIndex >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError valueListIndex out of range\n"; return 0; }
 
     m_vectorTarget = m_valueList[size_t(valueListIndex)];
     while (true)
@@ -82,36 +78,10 @@ double DataTargetVector::calculateError(size_t valueListIndex)
 
 // returns the degree of match to the stored values
 // in this case this is the euclidean distance between the two vectors
-double DataTargetVector::calculateError(double time)
+double DataTargetVector::calculateError(size_t index, size_t indexNext, double time)
 {
-    size_t index, indexNext;
-    // lower_bound
-    // if a searching element exists: std::lower_bound() returns iterator to the element itself
-    // if a searching element doesn't exist:
-    //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
-    //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
-    //    otherwise, lower_bound() returns an iterator to the next greater element to the search elementof the range
-    auto lowerBound = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), time);
-    if (lowerBound == targetTimeList()->end()) // time > highest value in the list
-    {
-        index = targetTimeList()->size() - 1;
-        indexNext = index;
-    }
-    else if (*lowerBound == time) // time == a value in the list
-    {
-        index = std::distance(targetTimeList()->begin(), lowerBound);
-        indexNext = index;
-    }
-    else if (lowerBound == targetTimeList()->end()) // time < lowest value in the list
-    {
-        index = 0;
-        indexNext = index;
-    }
-    else // time < value pointed to by the iterator
-    {
-        indexNext = std::distance(targetTimeList()->begin(), lowerBound);
-        index = indexNext - 1;
-    }
+    if (index >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
+    if (indexNext >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
 
     double interpX = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].x, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].x, time);
     double interpY = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].y, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].y, time);

@@ -38,7 +38,7 @@ public:
     virtual void saveToAttributes();
     virtual void appendToAttributes();
 
-    virtual double calculateError(double time) = 0;
+    virtual double calculateError(size_t index, size_t indexNext, double time) = 0;
     virtual double calculateError(size_t index) = 0;
 
     static int monotonicTest(const std::vector<double> &data);

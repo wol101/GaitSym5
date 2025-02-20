@@ -25,11 +25,11 @@ public:
 
     SMART_ENUM(Comparison, comparisonStrings, comparisonCount, XWP, YWP, ZWP, XAD, YAD, ZAD, Distance, Angle, LinearVelocity, AngularVelocity);
 
-    virtual std::string *createFromAttributes();
-    virtual void appendToAttributes();
+    virtual std::string *createFromAttributes() override;
+    virtual void appendToAttributes() override;
 
-    virtual double calculateError(double time);
-    virtual double calculateError(size_t index);
+    virtual double calculateError(size_t index, size_t indexNext, double time) override;
+    virtual double calculateError(size_t index) override;
 
 private:
     Marker *m_marker1 = nullptr;
@@ -37,7 +37,7 @@ private:
     Comparison m_marker1Comparison = XWP;
     Comparison m_marker2Comparison = XWP;
 
-    std::vector<double> m_ValueList;
+    std::vector<double> m_valueList;
     double m_errorScore = 0;
 };
 

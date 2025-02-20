@@ -39,13 +39,13 @@ DataTargetScalar::~DataTargetScalar()
 // returns the difference between the target actual value and the desired value (actual - desired)
 double DataTargetScalar::calculateError(size_t index)
 {
-    if (index >= m_ValueList.size())
+    if (index >= m_valueList.size())
     {
         std::cerr << "Warning: DataTargetScalar::GetMatchValue index out of range\n";
         return 0;
     }
 
-    double value = m_ValueList[size_t(index)];
+    double value = m_valueList[size_t(index)];
     return calculateErrorScore(value);
 }
 
@@ -66,7 +66,7 @@ double DataTargetScalar::calculateErrorScore(double value)
     {
         if (Body *body = dynamic_cast<Body *>(GetTarget()))
         {
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case Q0:
                 rq = body->GetQuaternion();
@@ -121,13 +121,13 @@ double DataTargetScalar::calculateErrorScore(double value)
                 m_errorScore = (r[2] - value);
                 break;
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
         {
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case Q0:
                 pq = marker->GetWorldQuaternion();
@@ -170,14 +170,14 @@ double DataTargetScalar::calculateErrorScore(double value)
                 m_errorScore = (pv.z - value);
                 break;
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
         {
             result = hingeJoint->anchor();
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case XP:
                 m_errorScore = (result[0] - value);
@@ -211,14 +211,14 @@ double DataTargetScalar::calculateErrorScore(double value)
                 break;
 #endif
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
         {
             result = ballJoint->anchor();
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case XP:
                 m_errorScore = (result[0] - value);
@@ -249,14 +249,14 @@ double DataTargetScalar::calculateErrorScore(double value)
                 break;
 #endif
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
         {
             result = universalJoint->anchor();
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case XP:
                 m_errorScore = (result[0] - value);
@@ -287,13 +287,13 @@ double DataTargetScalar::calculateErrorScore(double value)
                 break;
 #endif
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
         {
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case Q0:
                 q = geom->GetWorldQuaternion();
@@ -350,39 +350,39 @@ double DataTargetScalar::calculateErrorScore(double value)
                 break;
 #endif
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(GetTarget()))
         {
             pgd::Vector3 errorVector;
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case DriverError:
                 errorVector = tegotaeDriver->localErrorVector();
                 m_errorScore = errorVector.Magnitude() - value;
                 break;
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (Driver *driver = dynamic_cast<Driver *>(GetTarget()))
         {
-            switch (m_DataType)
+            switch (m_dataType)
             {
             case DriverValue:
                 m_errorScore = driver->value() - value;
                 break;
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
         if (GetTarget() == nullptr)
         {
-            switch(m_DataType)
+            switch(m_dataType)
             {
             case MetabolicEnergy:
                 m_errorScore = (simulation()->GetMetabolicEnergy() - value);
@@ -397,11 +397,11 @@ double DataTargetScalar::calculateErrorScore(double value)
                 m_errorScore = (simulation()->GetTimeIncrement() - value);
                 break;
             default:
-                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_DataType << "\n";
+                std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
-        std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataTarget " << m_DataType << "\n";
+        std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataTarget " << m_dataType << "\n";
         break;
     }
 
@@ -433,38 +433,12 @@ double DataTargetScalar::calculateErrorScore(double value)
 
 
 // returns the difference between the target actual value and the desired value (actual - desired)
-double DataTargetScalar::calculateError(double time)
+double DataTargetScalar::calculateError(size_t index, size_t indexNext, double time)
 {
-    size_t index, indexNext;
-    // lower_bound
-    // if a searching element exists: std::lower_bound() returns iterator to the element itself
-    // if a searching element doesn't exist:
-    //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
-    //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
-    //    otherwise, lower_bound() returns an iterator to the next greater element to the search elementof the range
-    auto lowerBound = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), time);
-    if (lowerBound == targetTimeList()->end()) // time > highest value in the list
-    {
-        index = targetTimeList()->size() - 1;
-        indexNext = index;
-    }
-    else if (*lowerBound == time) // time == a value in the list
-    {
-        index = std::distance(targetTimeList()->begin(), lowerBound);
-        indexNext = index;
-    }
-    else if (lowerBound == targetTimeList()->end()) // time < lowest value in the list
-    {
-        index = 0;
-        indexNext = index;
-    }
-    else // time < value pointed to by the iterator
-    {
-        indexNext = std::distance(targetTimeList()->begin(), lowerBound);
-        index = indexNext - 1;
-    }
+    if (index >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
+    if (indexNext >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
 
-    double value = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_ValueList[size_t(index)], (*targetTimeList())[indexNext], m_ValueList[indexNext], time);
+    double value = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time);
     return calculateErrorScore(value);
 }
 
@@ -511,7 +485,7 @@ std::string *DataTargetScalar::createFromAttributes()
     {
         if (buf == dataTypeStrings(dataTypeIndex))
         {
-            m_DataType = static_cast<DataType>(dataTypeIndex);
+            m_dataType = static_cast<DataType>(dataTypeIndex);
             break;
         }
     }
@@ -520,24 +494,24 @@ std::string *DataTargetScalar::createFromAttributes()
         setLastError("DataTargetScalar ID=\""s + name() +"\" Unrecognised MatchType "s + buf);
         return lastErrorPtr();
     }
-    m_Target = nullptr;
-    if (m_noTargetList.count(m_DataType) == 0)
+    m_target = nullptr;
+    if (m_noTargetList.count(m_dataType) == 0)
     {
         if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
         for (bool once = true; once; once = false)
         {
             auto iterBody = simulation()->GetBodyList()->find(buf);
-            if (iterBody != simulation()->GetBodyList()->end()) { m_Target = iterBody->second.get(); break; }
+            if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
             auto iterJoint = simulation()->GetJointList()->find(buf);
-            if (iterJoint != simulation()->GetJointList()->end()) { m_Target = iterJoint->second.get(); break; }
+            if (iterJoint != simulation()->GetJointList()->end()) { m_target = iterJoint->second.get(); break; }
             auto iterGeom = simulation()->GetGeomList()->find(buf);
-            if (iterGeom != simulation()->GetGeomList()->end()) { m_Target = iterGeom->second.get(); break; }
+            if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
             auto iterMarker = simulation()->GetMarkerList()->find(buf);
-            if (iterMarker != simulation()->GetMarkerList()->end()) { m_Target = iterMarker->second.get(); break; }
+            if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
             auto iterDriver = simulation()->GetDriverList()->find(buf);
-            if (iterDriver != simulation()->GetDriverList()->end()) { m_Target = iterDriver->second.get(); break; }
+            if (iterDriver != simulation()->GetDriverList()->end()) { m_target = iterDriver->second.get(); break; }
         }
-        if (!m_Target)
+        if (!m_target)
         {
             setLastError("DataTargetScalar ID=\""s + name() +"\" TargetID not found "s + buf);
             return lastErrorPtr();
@@ -557,11 +531,11 @@ std::string *DataTargetScalar::createFromAttributes()
         setLastError("DataTargetScalar ID=\""s + name() +"\" Number of values in TargetValues does not match TargetTimes"s);
         return lastErrorPtr();
     }
-    m_ValueList.clear();
-    m_ValueList.reserve(targetValuesTokens.size());
-    for (auto &&token : targetValuesTokens) m_ValueList.push_back(GSUtil::Double(token));
+    m_valueList.clear();
+    m_valueList.reserve(targetValuesTokens.size());
+    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::Double(token));
 
-    if (m_Target) setUpstreamObjects({m_Target});
+    if (m_target) setUpstreamObjects({m_target});
     return nullptr;
 }
 
@@ -571,19 +545,19 @@ void DataTargetScalar::appendToAttributes()
     DataTarget::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Scalar"s);
-    setAttribute("TargetValues"s, *GSUtil::ToString(m_ValueList.data(), m_ValueList.size(), &buf));
-    setAttribute("DataType", dataTypeStrings(m_DataType));
-    if (m_noTargetList.count(m_DataType) == 0) setAttribute("TargetID"s, m_Target->name());
+    setAttribute("TargetValues"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("DataType", dataTypeStrings(m_dataType));
+    if (m_noTargetList.count(m_dataType) == 0) setAttribute("TargetID"s, m_target->name());
 }
 
 void DataTargetScalar::SetTarget(NamedObject *target)
 {
-    m_Target = target;
+    m_target = target;
 }
 
 NamedObject *DataTargetScalar::GetTarget()
 {
-    return m_Target;
+    return m_target;
 }
 
 

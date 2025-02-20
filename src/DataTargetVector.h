@@ -24,13 +24,13 @@ public:
     void SetTarget(NamedObject *target);
     NamedObject *GetTarget();
 
-    virtual std::string dumpToString();
+    virtual std::string dumpToString() override;
 
-    virtual std::string *createFromAttributes();
-    virtual void appendToAttributes();
+    virtual std::string *createFromAttributes() override;
+    virtual void appendToAttributes() override;
 
-    virtual double calculateError(size_t valueListIndex);
-    virtual double calculateError(double time);
+    virtual double calculateError(size_t valueListIndex) override;
+    virtual double calculateError(size_t index, size_t indexNext, double time) override;
 
     std::vector<pgd::Vector3> *valueList();
 

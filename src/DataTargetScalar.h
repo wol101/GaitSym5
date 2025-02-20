@@ -35,23 +35,23 @@ public:
     void SetTarget(NamedObject *target);
     NamedObject *GetTarget();
 
-    void SetDataType(DataType dataType) { m_DataType = dataType; }
-    DataType GetDataType() { return m_DataType; }
+    void SetDataType(DataType dataType) { m_dataType = dataType; }
+    DataType GetDataType() { return m_dataType; }
 
     virtual std::string *createFromAttributes() override;
     virtual void appendToAttributes() override;
 
-    virtual double calculateError(double time) override;
+    virtual double calculateError(size_t index, size_t indexNext, double time) override;
     virtual double calculateError(size_t index) override;
 
 private:
     double calculateErrorScore(double value);
 
-    NamedObject *m_Target = nullptr;
-    DataType m_DataType = XP;
+    NamedObject *m_target = nullptr;
+    DataType m_dataType = XP;
     std::set<DataType> m_noTargetList = {MetabolicEnergy, MechanicalEnergy, Time, DeltaTime};
 
-    std::vector<double> m_ValueList;
+    std::vector<double> m_valueList;
     double m_errorScore = 0;
 };
 
