@@ -20,6 +20,8 @@
 #include "Geom.h"
 #include "ArgParse.h"
 
+#include "pocketpy.h"
+
 #define MAX_ARGS 4096
 
 using namespace std::string_literals;
@@ -27,8 +29,10 @@ using namespace std::string_literals;
 #if defined(USE_CL)
 int main(int argc, const char **argv)
 {
+    py_initialize();
     GaitSym::ObjectiveMain objectiveMain(argc, argv);
     objectiveMain.Run();
+    py_finalize();
 }
 #endif
 

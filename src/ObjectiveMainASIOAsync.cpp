@@ -20,6 +20,7 @@
 #include "ArgParse.h"
 
 #include "pystring.h"
+#include "pocketpy.h"
 
 #include <chrono>
 #include <thread>
@@ -39,8 +40,10 @@ using namespace std::string_literals;
 #if defined(USE_ASIO_ASYNC)
 int main(int argc, const char **argv)
 {
+    py_initialize();
     GaitSym::ObjectiveMainASIOAsync objectiveMain(argc, argv);
     objectiveMain.Run();
+    py_finalize();
     return 0;
 }
 #endif
