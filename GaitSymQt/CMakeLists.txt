@@ -1560,6 +1560,20 @@ endif ()
 find_package(Qt6 REQUIRED COMPONENTS Xml)
 target_link_libraries(GaitSym5 PRIVATE Qt6::Xml)
 
+if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release) # for release builds make sure all the dlls are in place
+
+add_custom_command(TARGET GaitSym5 POST_BUILD
+
+    # COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_PREFIX_PATH}/bin/Qt6Widgets.dll" ${CMAKE_CURRENT_BINARY_DIR}
+    # COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_PREFIX_PATH}/bin/Qt6Gui.dll" ${CMAKE_CURRENT_BINARY_DIR}
+    # COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_PREFIX_PATH}/bin/Qt6Core.dll" ${CMAKE_CURRENT_BINARY_DIR}
+    # COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_PREFIX_PATH}/plugins" "${CMAKE_CURRENT_BINARY_DIR}/plugins"
+
+    COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_CURRENT_BINARY_DIR}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
+)
+
+endif()
+
 function(dump_cmake_variables)
     get_cmake_property(_variableNames VARIABLES)
     list (SORT _variableNames)

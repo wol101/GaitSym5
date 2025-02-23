@@ -1,5 +1,6 @@
-var inputFile = File("dino_cpu (5300x5300).png");
-var outputFolder = Folder("resized_icons");
+// mac version seems to work with relative paths but the windows version wants absolute paths
+var inputFile = File("D:\\wis\\Unix\\git\\GaitSym5\\GaitSymQt\\images\\Desktop Icon\\dino_cpu (5300x5300).png");
+var outputFolder = Folder("D:\\wis\\Unix\\git\\GaitSym5\\GaitSymQt\\images\\Desktop Icon\\resized_icons");
 var base_name = "icon";
 
 app.preferences.interpolation = ResampleMethod.NEARESTNEIGHBOR;
