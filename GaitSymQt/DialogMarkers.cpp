@@ -615,7 +615,6 @@ void DialogMarkers::positionMarkerChanged(const QString & /* text */)
 void DialogMarkers::orientation2MarkerChanged(const QString & /* text */)
 {
     auto markerList = m_simulation->GetMarkerList();
-    auto markerList = m_simulation->GetMarkerList();
     if (markerList->size() < 2) return;
     GaitSym::Marker *marker1, *marker2;
     pgd::Vector3 v2;
