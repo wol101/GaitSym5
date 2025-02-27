@@ -59,4 +59,5 @@ compile_commands.json
 GaitSymQt/build/
 build
 *.bak
+inno_setup/inno_setup
 
