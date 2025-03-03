@@ -62,5 +62,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 Root: HKCR; SubKey: ".gaitsym"; ValueType: string; ValueData: "GaitSym configuration file"; Flags: uninsdeletekey
 Root: HKCR; SubKey: "GaitSym configuration file"; ValueType: string; ValueData: "Defines the model and links to the meshes"; Flags: uninsdeletekey
 Root: HKCR; SubKey: "GaitSym configuration file\Shell\Open\Command"; ValueType: string; ValueData: """{app}\GaitSym5.exe"" ""%1"""; Flags: uninsdeletekey
-Root: HKCR; Subkey: "GaitSym configuration file\Default
-Icon"; ValueType: string; ValueData: "{app}\GaitSym5.exe,0"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "GaitSym configuration file\Default Icon"; ValueType: string; ValueData: "{app}\GaitSym5.exe,0"; Flags: uninsdeletevalue
+
+
