@@ -1,5 +1,5 @@
 #define MyAppName "GaitSym5"
-#define MyAppVersion "v1"
+#define MyAppVersion "v0.0.2-alpha"
 #define MyAppPublisher "WIS"
 #define MyAppURL "http://www.animalsimulation.org"
 #define MyAppExeName "GaitSym5.exe"
@@ -58,3 +58,9 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 Filename: {tmp}\vc_redist.x64.exe; Parameters: "/q /passive /Q:a /c:""msiexec /q /i vcredist.msi"""; StatusMsg: "Installing VC++ 20xx Redistributables..."
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Registry]
+Root: HKCR; SubKey: ".gaitsym"; ValueType: string; ValueData: "GaitSym configuration file"; Flags: uninsdeletekey
+Root: HKCR; SubKey: "GaitSym configuration file"; ValueType: string; ValueData: "Defines the model and links to the meshes"; Flags: uninsdeletekey
+Root: HKCR; SubKey: "GaitSym configuration file\Shell\Open\Command"; ValueType: string; ValueData: """{app}\GaitSym5.exe"" ""%1"""; Flags: uninsdeletekey
+Root: HKCR; Subkey: "GaitSym configuration file\Default
+Icon"; ValueType: string; ValueData: "{app}\GaitSym5.exe,0"; Flags: uninsdeletevalue
