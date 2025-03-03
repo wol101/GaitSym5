@@ -21,3 +21,5 @@ cp resized_icons/icon64x64.png Icon.iconset/icon_32x32@2x.png
 cp resized_icons/icon32x32.png Icon.iconset/icon_32x32.png
 cp resized_icons/icon512x512.png Icon.iconset/icon_512x512@2x.png
 cp resized_icons/icon1024x1024.png Icon.iconset/icon_512x512.png
+
+cp icon_256x256.ico ../../Icon.ico
