@@ -7,7 +7,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
-AppId={{2e375e10-899f-4cc9-a6b8-0a984da17989}
+AppId={2e375e10-899f-4cc9-a6b8-0a984da17989}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -34,21 +34,21 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\GaitSym5.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\networkinformation\*"; DestDir: "{app}\networkinformation"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\tls\*"; DestDir: "{app}\tls"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\GaitSym5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\networkinformation\*"; DestDir: "{app}\networkinformation"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\tls\*"; DestDir: "{app}\tls"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_1_MSVC2022_64bit-Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
