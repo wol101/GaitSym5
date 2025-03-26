@@ -1,0 +1,53 @@
+Notes on PhysX compilation
+
+Needs vswhere.exe copied from "C:\Program Files (x86)\Microsoft Visual Studio\Installer" to "D:\"
+[vswhere is quite useful for finding out what version of VS is installed]
+
+Needs a reasonably up to date version of CUDA and this needs to set the right CUDA_PATH (so a reboot probably required)
+
+Run generate_projects.bat and select the required options from:
+
+(0) vc15win64 <--- VC15 Win64 PhysX general settings
+(1) vc16win64-cpu-only <--- VC16 Win64 PhysX general settings (cpu only)
+(2) vc16win64 <--- VC16 Win64 PhysX general settings
+(3) vc17win64-cpu-only <--- VC17 Win64 PhysX general settings (cpu only)
+(4) vc17win64 <--- VC17 Win64 PhysX general settings
+
+For Visual Studio 2022 this is 3 and 4.
+
+These create the folders:
+
+physx\compiler\vc17win64
+physx\compiler\vc17win64-cpu-only
+
+cd to the required folder and compile the required configuration with:
+
+msbuild PhysXSDK.sln /p:Configuration=debug
+msbuild PhysXSDK.sln /p:Configuration=checked
+msbuild PhysXSDK.sln /p:Configuration=profile
+msbuild PhysXSDK.sln /p:Configuration=release
+
+The output files are put in "physx\bin\win.x86_64.vc143.mt" 
+
+
+Notes on MuJoCo compilation
+
+mkdir build
+cd build
+
+cmake ..
+
+Note that cmake downloads quitea few dependencies
+
+msbuild mujoco.sln /p:Configuration=Debug
+msbuild mujoco.sln /p:Configuration=MinSizeRel
+msbuild mujoco.sln /p:Configuration=Release
+msbuild mujoco.sln /p:Configuration=RelWithDebInfo
+
+These create folders in bin and lib.
+
+devenv may be better than msbuild
+
+devenv mujoco.sln /Clean "Release|x64"
+devenv mujoco.sln /Build "Release|x64"
+

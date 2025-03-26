@@ -1174,7 +1174,7 @@ target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release)
     target_compile_options(gaitsym5 PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
-    target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math --fno-finite-math-only)
+    target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
 endif()
 
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
