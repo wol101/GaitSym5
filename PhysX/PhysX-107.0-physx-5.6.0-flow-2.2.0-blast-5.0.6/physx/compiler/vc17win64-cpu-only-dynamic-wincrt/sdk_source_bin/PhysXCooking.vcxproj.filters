@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\physxcooking\src\Cooking.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\physxcooking\src\windows\WindowsCookingDelayLoadHook.cpp">
+      <Filter>src\windows</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxBVH33MidphaseDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxBVH34MidphaseDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\Pxc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxConvexMeshDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxCooking.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxCookingInternal.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxMidphaseDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxTriangleMeshDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxTetrahedronMeshDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxBVHDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\cooking\PxSDFDesc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\physxcooking\src\Cooking.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\windows\resource\resource.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\cmake\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\windows\resource\PhysXCooking.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{251265A2-B953-3F42-ACB8-3D4421F992D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{05ACE090-25D8-3335-9E6F-F96B2EEB4038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{EEDA8D1F-D657-3989-866B-4ABDD397D084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\windows">
+      <UniqueIdentifier>{06854A3A-5C34-3E55-B622-A72BFECDED90}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

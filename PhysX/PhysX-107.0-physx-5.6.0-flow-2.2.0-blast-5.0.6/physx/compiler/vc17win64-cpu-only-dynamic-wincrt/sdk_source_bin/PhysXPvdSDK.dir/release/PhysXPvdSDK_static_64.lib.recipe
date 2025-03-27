@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\compiler\vc17win64-cpu-only-dynamic-wincrt\x64\release\ZERO_CHECK</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\bin\win.x86_64.vc143.md\release\PhysXFoundation_64.dll</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles />
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

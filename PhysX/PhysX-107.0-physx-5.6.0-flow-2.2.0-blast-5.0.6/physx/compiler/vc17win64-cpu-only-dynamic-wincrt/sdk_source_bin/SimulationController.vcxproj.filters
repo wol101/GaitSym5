@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScActorCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScActorSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScGpuActorSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationJointCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationTendonCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationJointSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationTendonJointCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationTendonSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationMimicJointSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScBroadphase.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScDeformableSurfaceCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScDeformableSurfaceSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScDeformableVolumeCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScDeformableVolumeSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScFiltering.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScParticleSystemCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScParticleSystemSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScParticleSystemShapeCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScBodyCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScBodySim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScConstraintBreakage.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScConstraintCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScConstraintInteraction.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScConstraintSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScElementInteractionMarker.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScElementSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScInteraction.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScIterators.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScKinematics.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScNPhaseCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScPhysics.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScRigidCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScRigidSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScCCD.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeInteraction.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeSim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeSimBase.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSimStats.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSimulationController.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSqBoundsManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScStaticCore.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScTriggerInteraction.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScVisualize.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSleep.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScPipeline.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScActorCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScArticulationCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScArticulationJointCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScArticulationMimicJointCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScBodyCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScBroadphase.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScConstraintCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScDeformableSurfaceCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScDeformableVolumeCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScIterators.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScPhysics.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScRigidCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScScene.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScShapeCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScSqBoundsSync.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScStaticCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScParticleSystemCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScArticulationTendonCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScArticulationAttachmentCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\include\ScArticulationTendonJointCore.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScActorPair.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScActorSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScGpuActorSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationJointSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationTendonSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScArticulationMimicJointSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScDeformableSurfaceSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScDeformableVolumeSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScFiltering.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScParticleSystemSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScParticleSystemShapeCore.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScBodySim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScConstraintInteraction.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScConstraintSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScContactReportBuffer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScContactStream.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScElementInteractionMarker.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScElementSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScElementSimInteraction.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScInteraction.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScInteractionFlags.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScNPhaseCore.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScObjectIDTracker.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScRigidSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeInteraction.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScShapeSimBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSimStateData.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSimStats.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSimulationController.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScSqBoundsManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScStaticSim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScTriggerInteraction.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\simulationcontroller\src\ScTriggerPairs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\cmake\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{251265A2-B953-3F42-ACB8-3D4421F992D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{EEDA8D1F-D657-3989-866B-4ABDD397D084}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,1478 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmPtrTable.cpp">
+      <Filter>common\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmCollection.cpp">
+      <Filter>common\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmRadixSort.cpp">
+      <Filter>common\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmSerialize.cpp">
+      <Filter>common\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmVisualization.cpp">
+      <Filter>common\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\windows\CmWindowsModuleUpdateLoader.cpp">
+      <Filter>common\src\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\windows\CmWindowsDelayLoadHook.cpp">
+      <Filter>common\src\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBox.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuCapsule.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuCCTSweepTests.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuGeometryQuery.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuInternal.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuMeshFactory.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuMTD.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuOverlapTests.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuRaycastTests.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSweepMTD.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSweepSharedTests.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSweepTests.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSDF.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuGjkQuery.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuWindingNumber.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuConvexGeometry.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuConvexSupport.cpp">
+      <Filter>geomutils\src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\ccd\GuCCDSweepConvexMesh.cpp">
+      <Filter>geomutils\src\ccd</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\ccd\GuCCDSweepPrimitives.cpp">
+      <Filter>geomutils\src\ccd</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuBarycentricCoordinates.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuAdjacencies.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuEdgeList.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuSeparatingAxes.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuQuantizer.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuMeshCleaner.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuVertexReducer.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuMeshAnalysis.cpp">
+      <Filter>geomutils\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactBoxBox.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactCapsuleBox.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactCapsuleCapsule.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactCapsuleConvex.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactCapsuleMesh.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactConvexConvex.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactConvexMesh.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactConvexCoreMesh.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactConvexCoreConvex.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPlaneConvexCore.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPlaneBox.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPlaneCapsule.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPlaneConvex.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPlaneMesh.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPolygonPolygon.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactMeshMesh.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactSphereBox.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactSphereCapsule.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactSphereMesh.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactSpherePlane.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactSphereSphere.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactCustomGeometry.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuFeatureCode.cpp">
+      <Filter>geomutils\src\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuBigConvexData.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexHelper.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexMesh.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexSupportTable.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexUtilsInternal.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuHillClimbing.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuShapeConvex.cpp">
+      <Filter>geomutils\src\convex</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistancePointBox.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistancePointTriangle.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistanceSegmentBox.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistanceSegmentSegment.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistanceSegmentTriangle.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistanceTriangleTriangle.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistancePointTetrahedron.cpp">
+      <Filter>geomutils\src\distance</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuEPA.cpp">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKSimplex.cpp">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKTest.cpp">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuHeightField.cpp">
+      <Filter>geomutils\src\hf</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuHeightFieldUtil.cpp">
+      <Filter>geomutils\src\hf</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuOverlapTestsHF.cpp">
+      <Filter>geomutils\src\hf</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuSweepsHF.cpp">
+      <Filter>geomutils\src\hf</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionBoxBox.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionCapsuleTriangle.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionEdgeEdge.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRayBox.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRayCapsule.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRaySphere.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionSphereBox.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionTetrahedronBox.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionTriangleBox.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionTriangleTriangle.cpp">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4Build.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_AABBSweep.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_BoxOverlap.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_CapsuleSweep.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_CapsuleSweepAA.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_MeshMeshOverlap.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_OBBSweep.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Raycast.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_SphereOverlap.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_SphereSweep.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuMidphaseBV4.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuMeshQuery.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuMidphaseRTree.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuOverlapTestsMesh.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuRTree.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuRTreeQueries.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuSweepsMesh.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleMesh.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleMeshBV4.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleMeshRTree.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV32.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV32Build.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTetrahedronMesh.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTetrahedronMeshUtils.cpp">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactBoxBox.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactBoxConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactCapsuleBox.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactCapsuleCapsule.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactCapsuleConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactCapsuleHeightField.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactCapsuleMesh.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactConvexCommon.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactConvexConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactConvexHeightField.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactConvexMesh.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactGenBoxConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactGenSphereCapsule.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactPlaneBox.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactPlaneCapsule.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactPlaneConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSphereBox.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSphereCapsule.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSphereConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSphereHeightField.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSphereMesh.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSpherePlane.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactSphereSphere.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactCustomGeometry.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMShapeConvex.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMTriangleContactGen.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPersistentContactManifold.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactGenUtil.cpp">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxBox.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxSphere.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxTriangle_FeatureBased.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxTriangle_SAT.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepCapsuleBox.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepCapsuleCapsule.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepCapsuleTriangle.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepSphereCapsule.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepSphereSphere.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepSphereTriangle.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepTriangleUtils.cpp">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBounds.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTree.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTreeUpdateMap.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSqInternal.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuIncrementalAABBTree.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSAH.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBVH.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuIncrementalAABBPrunerCore.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuIncrementalAABBPruner.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuPruningPool.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBucketPruner.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuMaverickNode.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuExtendedBucketPruner.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSecondaryPruner.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBPruner.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuActorShapeMap.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuQuerySystem.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuFactory.cpp">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuRTreeCooking.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingBVH.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingHF.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexMesh.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingTriangleMesh.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingTetrahedronMesh.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingVolumeIntegration.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingQuickHullConvexHullLib.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexPolygonsBuilder.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexMeshBuilder.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexHullUtils.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexHullLib.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexHullBuilder.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingBigConvexDataBuilder.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingSDF.cpp">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmRenderBuffer.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmBlockArray.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmCollection.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmConeLimitHelper.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmFlushPool.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmIDPool.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmMatrix34.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmPool.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmPreallocatingPool.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmPriorityQueue.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmPtrTable.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmRadixSort.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmRandom.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmRefCountable.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmScaling.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmSerialize.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmSpatialVector.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmTask.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmTransformUtils.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmUtils.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\src\CmVisualization.h">
+      <Filter>common\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\include\omnipvd\CmOmniPvdAutoGenClearDefines.h">
+      <Filter>common\include\omnipvd</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\include\omnipvd\CmOmniPvdAutoGenCreateRegistrationStruct.h">
+      <Filter>common\include\omnipvd</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\include\omnipvd\CmOmniPvdAutoGenRegisterData.h">
+      <Filter>common\include\omnipvd</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\include\omnipvd\CmOmniPvdAutoGenSetData.h">
+      <Filter>common\include\omnipvd</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxBase.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxCollection.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxCoreUtilityTypes.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxInsertionCallback.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxPhysXCommonConfig.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxRenderBuffer.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxRenderOutput.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxSerialFramework.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxSerializer.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxStringTable.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxTolerancesScale.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxTypeInfo.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\common\PxProfileZone.h">
+      <Filter>include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxBoxGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxCapsuleGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxConvexMesh.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxConvexMeshGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxCustomGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxConvexCoreGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometryInternal.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometryHelpers.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometryHit.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometryQuery.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometryQueryFlags.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGeometryQueryContext.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxHeightField.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxHeightFieldDesc.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxHeightFieldFlag.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxHeightFieldGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxHeightFieldSample.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxMeshQuery.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxMeshScale.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxPlaneGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxReportCallback.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxSimpleTriangleMesh.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxSphereGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxTriangle.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxTriangleMesh.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxTriangleMeshGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxBVH.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxBVHBuildStrategy.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxTetrahedron.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxTetrahedronMesh.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxTetrahedronMeshGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxParticleSystemGeometry.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geometry\PxGjkQuery.h">
+      <Filter>include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geomutils\PxContactBuffer.h">
+      <Filter>include\geomutils</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\geomutils\PxContactPoint.h">
+      <Filter>include\geomutils</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\include\collision\PxCollisionDefs.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\include\windows\CmWindowsLoadLibrary.h">
+      <Filter>common\include\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\common\include\windows\CmWindowsModuleUpdateLoader.h">
+      <Filter>common\include\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\windows\resource\resource.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuBox.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuSphere.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuSegment.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuCapsule.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuCenterExtents.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuBounds.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuDistanceSegmentBox.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuDistanceSegmentSegment.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuIntersectionBoxBox.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuIntersectionTetrahedronBox.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuIntersectionTriangleBoxRef.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuIntersectionTriangleTriangle.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuRaycastTests.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuOverlapTests.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuSweepTests.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuCachedFuncs.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuPruner.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuPrunerTypedef.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuPrunerPayload.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuPrunerMergeData.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuSqInternal.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuActorShapeMap.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuQuerySystem.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuFactory.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuDistancePointTetrahedron.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuDistancePointTriangle.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuIntersectionTriangleBox.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuIntersectionTetrahedronTetrahedron.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuCooking.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuConvexSupport.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuConvexGeometry.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\include\GuRefGjkEpa.h">
+      <Filter>geomutils\include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuGeometryChecks.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuInternal.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuMeshFactory.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuMTD.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSweepMTD.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSweepSharedTests.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSDF.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuWindingNumber.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuWindingNumberCluster.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuWindingNumberT.h">
+      <Filter>geomutils\src</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\ccd\GuCCDSweepConvexMesh.h">
+      <Filter>geomutils\src\ccd</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuBarycentricCoordinates.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuBoxConversion.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuEdgeCache.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuAdjacencies.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuEdgeList.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuSeparatingAxes.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuQuantizer.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuMeshCleaner.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuVertexReducer.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\common\GuMeshAnalysis.h">
+      <Filter>geomutils\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactMeshMesh.h">
+      <Filter>geomutils\src\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactReduction.h">
+      <Filter>geomutils\src\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuCollisionSDF.h">
+      <Filter>geomutils\src\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactMethodImpl.h">
+      <Filter>geomutils\src\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuContactPolygonPolygon.h">
+      <Filter>geomutils\src\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\contact\GuFeatureCode.h">
+      <Filter>geomutils\src\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuBigConvexData.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuBigConvexData2.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexEdgeFlags.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexHelper.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexMesh.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexMeshData.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexSupportTable.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuConvexUtilsInternal.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuCubeIndex.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuHillClimbing.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\convex\GuShapeConvex.h">
+      <Filter>geomutils\src\convex</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistancePointBox.h">
+      <Filter>geomutils\src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistancePointSegment.h">
+      <Filter>geomutils\src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistanceSegmentTriangle.h">
+      <Filter>geomutils\src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\distance\GuDistanceTriangleTriangle.h">
+      <Filter>geomutils\src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuEPA.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuEPAFacet.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJK.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKPenetration.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKRaycast.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKSimplex.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKTest.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKType.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuGJKUtil.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecBox.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecCapsule.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecConvex.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecConvexHull.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecConvexHullNoScale.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecPlane.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecSphere.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecTriangle.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\gjk\GuVecTetrahedron.h">
+      <Filter>geomutils\src\gjk</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuEntityReport.h">
+      <Filter>geomutils\src\hf</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuHeightField.h">
+      <Filter>geomutils\src\hf</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuHeightFieldData.h">
+      <Filter>geomutils\src\hf</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\hf\GuHeightFieldUtil.h">
+      <Filter>geomutils\src\hf</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionCapsuleTriangle.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionEdgeEdge.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRay.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRayBox.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRayCapsule.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRayPlane.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRaySphere.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionRayTriangle.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\intersection\GuIntersectionSphereBox.h">
+      <Filter>geomutils\src\intersection</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV32.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV32Build.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4Build.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4Settings.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_AABBAABBSweepTest.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_BoxBoxOverlapTest.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_BoxOverlap_Internal.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_BoxSweep_Internal.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_BoxSweep_Params.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_CapsuleSweep_Internal.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Common.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Internal.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamNoOrder_OBBOBB.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamNoOrder_SegmentAABB.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamNoOrder_SegmentAABB_Inflated.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamNoOrder_SphereAABB.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamOrdered_OBBOBB.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamOrdered_SegmentAABB.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_ProcessStreamOrdered_SegmentAABB_Inflated.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Slabs.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Slabs_KajiyaNoOrder.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Slabs_KajiyaOrdered.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Slabs_SwizzledNoOrder.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBV4_Slabs_SwizzledOrdered.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuBVConstants.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuMeshData.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuMidphaseInterface.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuRTree.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuSweepConvexTri.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuSweepMesh.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangle.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleCache.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleMesh.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleMeshBV4.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleMeshRTree.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTetrahedron.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTetrahedronMesh.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTetrahedronMeshUtils.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\mesh\GuTriangleRefinement.h">
+      <Filter>geomutils\src\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactConvexCommon.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactGen.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactGenUtil.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMContactMeshCallback.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMShapeConvex.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPCMTriangleContactGen.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\pcm\GuPersistentContactManifold.h">
+      <Filter>geomutils\src\pcm</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxBox.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxSphere.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxTriangle_FeatureBased.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepBoxTriangle_SAT.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepCapsuleBox.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepCapsuleCapsule.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepCapsuleTriangle.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepSphereCapsule.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepSphereSphere.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepSphereTriangle.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\sweep\GuSweepTriangleUtils.h">
+      <Filter>geomutils\src\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuQuery.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTree.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTreeUpdateMap.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTreeBounds.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTreeNode.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTreeBuildStats.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBTreeQuery.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuIncrementalAABBTree.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSAH.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBVH.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBVHTestsSIMD.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuIncrementalAABBPrunerCore.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuIncrementalAABBPruner.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuPruningPool.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuBucketPruner.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuMaverickNode.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuExtendedBucketPruner.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuSecondaryPruner.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuAABBPruner.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\GuCallbackAdapter.h">
+      <Filter>geomutils\src\pruners</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuRTreeCooking.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingGrbTriangleMesh.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingTriangleMesh.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingTetrahedronMesh.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingVolumeIntegration.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingQuickHullConvexHullLib.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexPolygonsBuilder.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexMeshBuilder.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexHullUtils.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexHullLib.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingConvexHullBuilder.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingBigConvexDataBuilder.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\geomutils\src\cooking\GuCookingSDF.h">
+      <Filter>geomutils\src\cooking</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\cmake\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="D:\wis\Unix\git\GaitSym5\PhysX\PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6\physx\source\compiler\windows\resource\PhysXCommon.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{FE1FF2E8-B0C6-3778-9E7D-19EFADDA4EA5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\include">
+      <UniqueIdentifier>{B3D05AD8-6836-3F4A-B77C-D1971655D9BB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\include\omnipvd">
+      <UniqueIdentifier>{4F4BE07D-C600-35FD-A937-EB2FCF90D404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\include\windows">
+      <UniqueIdentifier>{9AE67038-A086-343C-B42D-C9D3F519F9D2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\src">
+      <UniqueIdentifier>{48D10FFA-729D-3601-B1E1-C6DD6602593D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\src\windows">
+      <UniqueIdentifier>{832E2A98-9681-3C7B-BA7F-4BCEB5AA0788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils">
+      <UniqueIdentifier>{DD5A9A3B-A684-34F8-90B5-25F20FB6E68A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\include">
+      <UniqueIdentifier>{19E13E23-916E-3862-B8CC-C2838691294E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src">
+      <UniqueIdentifier>{A08336F8-B866-383F-A1B6-EA3DA1BE8A14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\ccd">
+      <UniqueIdentifier>{E8F1EB5D-8427-3CDC-96AE-80EB933CEBE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\common">
+      <UniqueIdentifier>{EFC74378-6D00-3DCE-AAAD-C2EF519C952F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\contact">
+      <UniqueIdentifier>{9450EE6A-1248-32D6-B579-309F9ED0AFE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\convex">
+      <UniqueIdentifier>{02DC51CA-95C8-3F11-B31A-E8917B052856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\cooking">
+      <UniqueIdentifier>{0EC847FD-6D90-3DED-9ED7-16EFDB40E517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\distance">
+      <UniqueIdentifier>{446A7330-8CAC-3BB0-85E5-C13E1252425A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\gjk">
+      <UniqueIdentifier>{E3A43EA6-7CCB-308B-9A95-EC7857065671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\hf">
+      <UniqueIdentifier>{8208A9C8-51D9-36CE-AC88-15F8259615B8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\intersection">
+      <UniqueIdentifier>{894AD5CC-ECE5-3B71-833E-635D717A8F76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\mesh">
+      <UniqueIdentifier>{BD589C2C-702A-316F-80C1-7569A25220F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\pcm">
+      <UniqueIdentifier>{5DBA6390-3622-3FD9-9B3B-6F84E3A3190F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\pruners">
+      <UniqueIdentifier>{8D19267A-5A89-3CB5-BFD9-4175272FE09B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geomutils\src\sweep">
+      <UniqueIdentifier>{F3F6FE8E-2650-3D3C-874C-958DA5C76633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{251265A2-B953-3F42-ACB8-3D4421F992D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\collision">
+      <UniqueIdentifier>{9A7E98E4-C820-359D-BD8B-53F518F9A3F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\common">
+      <UniqueIdentifier>{0DBAC3AA-693E-391B-B008-48E21062DF2B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\geometry">
+      <UniqueIdentifier>{8A24025A-ECEA-33A8-9F96-026DB444F68D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\geomutils">
+      <UniqueIdentifier>{ADCA8C25-7FB0-30AE-9775-F50B65C9494E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{05ACE090-25D8-3335-9E6F-F96B2EEB4038}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+^D:\WIS\UNIX\GIT\GAITSYM5\PHYSX\PHYSX-107.0-PHYSX-5.6.0-FLOW-2.2.0-BLAST-5.0.6\PHYSX\COMPILER\VC17WIN64-CPU-ONLY-DYNAMIC-WINCRT\CMAKEFILES\3F6B373E3FB8686DA9996ADB2F1478CF\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/compiler/public -BD:/wis/Unix/git/GaitSym5/PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/compiler/vc17win64-cpu-only-dynamic-wincrt --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/wis/Unix/git/GaitSym5/PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/compiler/vc17win64-cpu-only-dynamic-wincrt/PhysXSDK.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -1,0 +1,70 @@
+On branch development
+Your branch is up to date with 'origin/development'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	MuJoCo/mujoco-3.3.0/
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/
+	status.txt
+	threepp/data/textures/rubber_texture.jpg
+	threepp/doc/screenshots/Optimization.PNG
+	threepp/examples/controls/drag.cpp
+	threepp/examples/external/
+	threepp/examples/extras/physics/
+	threepp/examples/libs/optimization/
+	threepp/examples/loaders/urdf_loader.cpp
+	threepp/examples/misc/lut.cpp
+	threepp/examples/misc/multiple_scenes.cpp
+	threepp/examples/projects/Optimization/
+	threepp/examples/projects/Pathfinding/
+	threepp/examples/projects/SpheroControl/
+	threepp/examples/projects/Youbot/KeyController.hpp
+	threepp/include/threepp/canvas/Monitor.hpp
+	threepp/include/threepp/controls/DragControls.hpp
+	threepp/include/threepp/loaders/Loader.hpp
+	threepp/include/threepp/loaders/URDFLoader.hpp
+	threepp/include/threepp/math/Lut.hpp
+	threepp/include/threepp/objects/Robot.hpp
+	threepp/include/threepp/utils/ImageUtils.hpp
+	threepp/include/threepp/utils/TaskManager.hpp
+	threepp/src/external/stb/stb_image_write.h
+	threepp/src/threepp/controls/DragControls.cpp
+	threepp/src/threepp/loaders/URDFLoader.cpp
+	threepp/src/threepp/utils/TaskManager.cpp
+	threepp/tests/core/Raycaster_test.cpp
+	threepp/tests/math/MathUtils_test.cpp
+	threepp/tests/math/Triangle_test.cpp
+	threepp/tests/math/Vector4_test.cpp
+	threepp/tests/utils/TaskManager_test.cpp
+
+Ignored files:
+  (use "git add -f <file>..." to include in what will be committed)
+	GaitSymQt/CMakeLists.txt.user
+	GaitSymQt/build/
+	GaitSymQt/out/
+	MuJoCo/mujoco-3.3.0/build/
+	MuJoCo/mujoco-3.3.0/doc/Makefile
+	MuJoCo/mujoco-3.3.0/sample/Makefile
+	MuJoCo/mujoco-3.3.0/sample/Makefile.macos
+	MuJoCo/mujoco-3.3.0/sample/Makefile.windows
+	MuJoCo/mujoco-3.3.0/simulate/Makefile
+	MuJoCo/mujoco-3.3.0/simulate/Makefile.macos
+	MuJoCo/mujoco-3.3.0/simulate/Makefile.windows
+	MuJoCo/mujoco-3.3.0/src/ui/ui_main.h
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/flow/external/glfw/linux/
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/flow/external/glfw/win64/glfw3.dll
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/checked/
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/profile/
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/freeglut.dll
+	PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.mt/
+	build/
+	inno_setup/inno_setup/
+	terminal/CMakeLists.txt.bak
+	threepp/build/
+
+nothing added to commit but untracked files present (use "git add" to track)
