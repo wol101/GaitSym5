@@ -1,0 +1,10 @@
+prefix=/usr/local
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: qhullcpp
+Description: Qhull C++ library
+Version: 8.1-alpha1
+Libs: -L${libdir} -lqhullcpp
+Cflags: -I${includedir}
+

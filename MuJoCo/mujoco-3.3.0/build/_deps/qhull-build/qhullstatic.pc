@@ -1,0 +1,10 @@
+prefix=/usr/local
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: qhullstatic
+Description: Qhull static library
+Version: 8.1-alpha1
+Libs: -L${libdir} -lqhullstatic
+Cflags: -I${includedir}
+

@@ -1,0 +1,10 @@
+prefix=/usr/local
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: qhull_r
+Description: Qhull reentrant shared library
+Version: 8.1-alpha1
+Libs: -L${libdir} -lqhull_r
+Cflags: -I${includedir}
+
