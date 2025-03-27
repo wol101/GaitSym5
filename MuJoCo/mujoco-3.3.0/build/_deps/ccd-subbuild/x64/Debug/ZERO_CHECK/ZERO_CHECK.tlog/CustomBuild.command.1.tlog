@@ -1,0 +1,10 @@
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CCD-SUBBUILD\CMAKEFILES\0474A5EF1F82B5DCEA60F01921365A33\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/ccd-subbuild -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/ccd-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/ccd-subbuild/ccd-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

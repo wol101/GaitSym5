@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\qhull-subbuild\CMakeFiles\d245a91240707caae6a6887c24f2e520\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{265BA06E-C0F6-3C31-9AB7-B36A4ADAA0F6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

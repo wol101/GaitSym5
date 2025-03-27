@@ -1,0 +1,1399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E8A12F3F-6269-3A5D-B551-26A25317C07D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>copyShaders</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\basic.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating basic.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/basic.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating basic.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/basic.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating basic.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/basic.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating basic.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/basic.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\basic.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating basic.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/basic.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating basic.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/basic.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating basic.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/basic.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating basic.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/basic.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/basic.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\basic.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\colors.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating colors.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/colors.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating colors.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/colors.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating colors.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/colors.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating colors.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/colors.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\colors.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating colors.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/colors.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating colors.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/colors.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating colors.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/colors.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating colors.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/colors.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/colors.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\colors.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\grid.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating grid.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/grid.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating grid.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/grid.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating grid.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/grid.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating grid.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/grid.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\grid.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating grid.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/grid.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating grid.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/grid.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating grid.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/grid.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating grid.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/grid.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/grid.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\grid.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normals.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating normals.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/normals.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating normals.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/normals.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating normals.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/normals.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating normals.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/normals.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normals.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating normals.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/normals.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating normals.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/normals.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating normals.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/normals.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating normals.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normals.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/normals.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normals.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normalsSplitPlane.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating normalsSplitPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/normalsSplitPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating normalsSplitPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/normalsSplitPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating normalsSplitPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/normalsSplitPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating normalsSplitPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/normalsSplitPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normalsSplitPlane.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating normalsSplitPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/normalsSplitPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating normalsSplitPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/normalsSplitPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating normalsSplitPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/normalsSplitPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating normalsSplitPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/normalsSplitPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/normalsSplitPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\normalsSplitPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\screenPlane.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating screenPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/screenPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating screenPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/screenPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating screenPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/screenPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating screenPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/screenPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\screenPlane.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating screenPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/screenPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating screenPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/screenPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating screenPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/screenPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating screenPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/screenPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/screenPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\screenPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeLight.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreeLight.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreeLight.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreeLight.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreeLight.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreeLight.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreeLight.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreeLight.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreeLight.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeLight.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreeLight.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreeLight.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreeLight.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreeLight.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreeLight.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreeLight.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreeLight.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeLight.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreeLight.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeLight.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeMeanTrianglesPlane.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreeMeanTrianglesPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreeMeanTrianglesPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreeMeanTrianglesPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreeMeanTrianglesPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreeMeanTrianglesPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreeMeanTrianglesPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreeMeanTrianglesPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreeMeanTrianglesPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeMeanTrianglesPlane.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreeMeanTrianglesPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreeMeanTrianglesPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreeMeanTrianglesPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreeMeanTrianglesPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreeMeanTrianglesPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreeMeanTrianglesPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreeMeanTrianglesPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeMeanTrianglesPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreeMeanTrianglesPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeMeanTrianglesPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreePlane.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreePlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreePlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreePlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreePlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreePlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreePlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreePlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreePlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreePlane.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreePlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreePlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreePlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreePlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreePlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreePlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreePlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreePlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreePlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreePlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeRender.comp.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfOctreeRender.comp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeRender.comp D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfOctreeRender.comp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeRender.comp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeRender.comp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfOctreeRender.comp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeRender.comp D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfOctreeRender.comp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeRender.comp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeRender.comp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfOctreeRender.comp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeRender.comp D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfOctreeRender.comp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeRender.comp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeRender.comp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfOctreeRender.comp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfOctreeRender.comp D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfOctreeRender.comp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfOctreeRender.comp;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeRender.comp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfPlane.frag.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfPlane.frag</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.frag D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfPlane.frag
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.frag;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.frag</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfPlane.vert.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating sdfPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Debug/shaders/sdfPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating sdfPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/Release/shaders/sdfPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating sdfPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/MinSizeRel/shaders/sdfPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating sdfPlane.vert</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cmake -E copy_if_different D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/src/render_engine/shaders/sdfPlane.vert D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/lib/RelWithDebInfo/shaders/sdfPlane.vert
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\src\render_engine\shaders\sdfPlane.vert;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.vert</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0 -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build --check-stamp-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\cmake.verify_globs;D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\CMakeConfig.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0 -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build --check-stamp-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\cmake.verify_globs;D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\CMakeConfig.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0 -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build --check-stamp-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\cmake.verify_globs;D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\CMakeConfig.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0 -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build --check-stamp-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/sdflib-build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\cmake.verify_globs;D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\CMakeConfig.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.vert">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeRender.comp">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.frag">
+    </None>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.vert">
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\ZERO_CHECK.vcxproj">
+      <Project>{1BF9AC3D-A03E-3B5A-B5AE-670643FC29CA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\SdfLib.vcxproj">
+      <Project>{0A67FBD4-630E-3526-B3B9-2CF210AD5546}</Project>
+      <Name>SdfLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

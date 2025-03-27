@@ -4,8 +4,8 @@ events:
   -
     kind: "message-v1"
     backtrace:
-      - "/usr/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:233 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineSystem.cmake:211 (message)"
       - "CMakeLists.txt:16 (project)"
     message: |
-      The system is: Linux - 4.4.0-26100-Microsoft - x86_64
+      The system is: Windows - 10.0.26100 - AMD64
 ...

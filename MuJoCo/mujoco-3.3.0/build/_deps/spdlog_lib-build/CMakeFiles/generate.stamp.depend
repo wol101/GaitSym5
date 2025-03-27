@@ -1,0 +1,12 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckLibraryExists.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/FindThreads.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/GNUInstallDirs.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/CMakeFiles/cmake.verify_globs
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/spdlog_lib-src/CMakeLists.txt
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/spdlog_lib-src/cmake/ide.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/spdlog_lib-src/cmake/utils.cmake

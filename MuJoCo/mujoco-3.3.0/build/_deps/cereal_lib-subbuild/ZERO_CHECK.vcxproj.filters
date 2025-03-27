@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\cereal_lib-subbuild\CMakeFiles\f77761017ef438d9bf6bd38f764a8c47\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{5DF1BCD9-0B1F-312F-AF57-6EEFC8F31DF8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

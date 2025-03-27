@@ -6,16 +6,16 @@ cmake_minimum_required(VERSION 3.5)
 function(do_fetch)
   message(VERBOSE "Fetching latest from the remote origin")
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git fetch --tags --force "origin"
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git fetch --tags --force "origin"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     COMMAND_ERROR_IS_FATAL LAST
   )
 endfunction()
 
 function(get_hash_for_ref ref out_var err_var)
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git rev-parse "${ref}^0"
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git rev-parse "${ref}^0"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     RESULT_VARIABLE error_code
     OUTPUT_VARIABLE ref_hash
     ERROR_VARIABLE error_msg
@@ -36,8 +36,8 @@ endif()
 
 
 execute_process(
-  COMMAND "/usr/bin/git" --git-dir=.git show-ref "7482de6071d21db77a7236155da44c172a7f6c9e"
-  WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+  COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git show-ref "7482de6071d21db77a7236155da44c172a7f6c9e"
+  WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
   OUTPUT_VARIABLE show_ref_output
 )
 if(show_ref_output MATCHES "^[a-z0-9]+[ \\t]+refs/remotes/")
@@ -125,8 +125,8 @@ if(git_update_strategy MATCHES "^REBASE(_CHECKOUT)?$")
   # We can't if we aren't already on a branch and we shouldn't if that local
   # branch isn't tracking the one we want to checkout.
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git symbolic-ref -q HEAD
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git symbolic-ref -q HEAD
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     OUTPUT_VARIABLE current_branch
     OUTPUT_STRIP_TRAILING_WHITESPACE
     # Don't test for an error. If this isn't a branch, we get a non-zero error
@@ -141,8 +141,8 @@ if(git_update_strategy MATCHES "^REBASE(_CHECKOUT)?$")
 
   else()
     execute_process(
-      COMMAND "/usr/bin/git" --git-dir=.git for-each-ref "--format=%(upstream:short)" "${current_branch}"
-      WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+      COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git for-each-ref "--format=%(upstream:short)" "${current_branch}"
+      WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
       OUTPUT_VARIABLE upstream_branch
       OUTPUT_STRIP_TRAILING_WHITESPACE
       COMMAND_ERROR_IS_FATAL ANY  # There is no error if no upstream is set
@@ -164,8 +164,8 @@ endif()
 
 # Check if stash is needed
 execute_process(
-  COMMAND "/usr/bin/git" --git-dir=.git status --porcelain
-  WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+  COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git status --porcelain
+  WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
   RESULT_VARIABLE error_code
   OUTPUT_VARIABLE repo_status
 )
@@ -178,22 +178,22 @@ string(LENGTH "${repo_status}" need_stash)
 # rebase or checkout without losing those changes permanently
 if(need_stash)
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git stash save --quiet;--include-untracked
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git stash save --quiet;--include-untracked
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     COMMAND_ERROR_IS_FATAL ANY
   )
 endif()
 
 if(git_update_strategy STREQUAL "CHECKOUT")
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git checkout "${checkout_name}"
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git checkout "${checkout_name}"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     COMMAND_ERROR_IS_FATAL ANY
   )
 else()
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git rebase "${checkout_name}"
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git rebase "${checkout_name}"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     RESULT_VARIABLE error_code
     OUTPUT_VARIABLE rebase_output
     ERROR_VARIABLE  rebase_output
@@ -201,19 +201,19 @@ else()
   if(error_code)
     # Rebase failed, undo the rebase attempt before continuing
     execute_process(
-      COMMAND "/usr/bin/git" --git-dir=.git rebase --abort
-      WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+      COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git rebase --abort
+      WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     )
 
     if(NOT git_update_strategy STREQUAL "REBASE_CHECKOUT")
       # Not allowed to do a checkout as a fallback, so cannot proceed
       if(need_stash)
         execute_process(
-          COMMAND "/usr/bin/git" --git-dir=.git stash pop --index --quiet
-          WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+          COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git stash pop --index --quiet
+          WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
           )
       endif()
-      message(FATAL_ERROR "\nFailed to rebase in: '/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src'."
+      message(FATAL_ERROR "\nFailed to rebase in: 'D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src'."
                           "\nOutput from the attempted rebase follows:"
                           "\n${rebase_output}"
                           "\n\nYou will have to resolve the conflicts manually")
@@ -231,16 +231,16 @@ else()
     message(WARNING "Rebase failed, output has been saved to ${error_log_file}"
                     "\nFalling back to checkout, previous commit tagged as ${tag_name}")
     execute_process(
-      COMMAND "/usr/bin/git" --git-dir=.git tag -a
+      COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git tag -a
               -m "ExternalProject attempting to move from here to ${checkout_name}"
               ${tag_name}
-      WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+      WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
       COMMAND_ERROR_IS_FATAL ANY
     )
 
     execute_process(
-      COMMAND "/usr/bin/git" --git-dir=.git checkout "${checkout_name}"
-      WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+      COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git checkout "${checkout_name}"
+      WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
       COMMAND_ERROR_IS_FATAL ANY
     )
   endif()
@@ -249,32 +249,32 @@ endif()
 if(need_stash)
   # Put back the stashed changes
   execute_process(
-    COMMAND "/usr/bin/git" --git-dir=.git stash pop --index --quiet
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git stash pop --index --quiet
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     RESULT_VARIABLE error_code
     )
   if(error_code)
     # Stash pop --index failed: Try again dropping the index
     execute_process(
-      COMMAND "/usr/bin/git" --git-dir=.git reset --hard --quiet
-      WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+      COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git reset --hard --quiet
+      WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     )
     execute_process(
-      COMMAND "/usr/bin/git" --git-dir=.git stash pop --quiet
-      WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+      COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git stash pop --quiet
+      WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
       RESULT_VARIABLE error_code
     )
     if(error_code)
       # Stash pop failed: Restore previous state.
       execute_process(
-        COMMAND "/usr/bin/git" --git-dir=.git reset --hard --quiet ${head_sha}
-        WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+        COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git reset --hard --quiet ${head_sha}
+        WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
       )
       execute_process(
-        COMMAND "/usr/bin/git" --git-dir=.git stash pop --index --quiet
-        WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+        COMMAND "C:/Program Files/Git/cmd/git.exe" --git-dir=.git stash pop --index --quiet
+        WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
       )
-      message(FATAL_ERROR "\nFailed to unstash changes in: '/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src'."
+      message(FATAL_ERROR "\nFailed to unstash changes in: 'D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src'."
                           "\nYou will have to resolve the conflicts manually")
     endif()
   endif()
@@ -283,10 +283,10 @@ endif()
 set(init_submodules "TRUE")
 if(init_submodules)
   execute_process(
-    COMMAND "/usr/bin/git"
+    COMMAND "C:/Program Files/Git/cmd/git.exe"
             --git-dir=.git 
             submodule update --recursive --init 
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glfw3-src"
     COMMAND_ERROR_IS_FATAL ANY
   )
 endif()

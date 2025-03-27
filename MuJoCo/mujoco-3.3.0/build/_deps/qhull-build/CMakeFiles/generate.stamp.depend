@@ -1,0 +1,14 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.27/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in
+C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDependentOption.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckSymbolExists.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/CheckTypeSize.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/WriteBasicConfigVersionFile.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/CMakeFiles/cmake.verify_globs
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-src/CMakeLists.txt
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-src/build/CMakeModules/CheckLFS.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-src/build/config.cmake.in
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-src/build/qhull.pc.in

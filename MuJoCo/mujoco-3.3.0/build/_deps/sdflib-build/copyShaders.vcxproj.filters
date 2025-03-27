@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\basic.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\basic.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\colors.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\colors.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\grid.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\grid.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normals.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normals.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normalsSplitPlane.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\normalsSplitPlane.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\screenPlane.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\screenPlane.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeLight.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeLight.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeMeanTrianglesPlane.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeMeanTrianglesPlane.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreePlane.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreePlane.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfOctreeRender.comp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfPlane.frag.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\CMakeFiles\5883af31305eb3b61a439d72663d9e8d\sdfPlane.vert.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\basic.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\colors.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\grid.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normals.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\normalsSplitPlane.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\screenPlane.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeLight.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeMeanTrianglesPlane.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreePlane.vert" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfOctreeRender.comp" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.frag" />
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\sdflib-build\sdfPlane.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{ADD1FE55-A0BD-386A-AF91-833C54B7A8E3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

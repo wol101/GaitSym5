@@ -1,4 +1,4 @@
-libdir=/usr/local/lib
+libdir=C:/Program Files (x86)/mujoco/lib
 
 Name: benchmark
 Description: Google microbenchmark framework (with main() function)

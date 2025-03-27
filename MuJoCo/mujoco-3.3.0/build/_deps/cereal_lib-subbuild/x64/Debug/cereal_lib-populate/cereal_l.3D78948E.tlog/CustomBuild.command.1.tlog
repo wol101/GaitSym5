@@ -1,0 +1,150 @@
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-MKDIR.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -Dcfgdir=/Debug -P D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/tmp/cereal_lib-populate-mkdirs.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-DOWNLOAD.RULE
+setlocal
+cd D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -P D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/tmp/cereal_lib-populate-gitclone.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-UPDATE.RULE
+setlocal
+cd D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\cereal_lib-src
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -Dcan_fetch=YES -P D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/tmp/cereal_lib-populate-gitupdate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-PATCH.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-CONFIGURE.RULE
+setlocal
+cd D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\cereal_lib-build
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-BUILD.RULE
+setlocal
+cd D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\cereal_lib-build
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-INSTALL.RULE
+setlocal
+cd D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\cereal_lib-build
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F61FD8358D1268DD1A8EB2CD6B38EE6A\CEREAL_LIB-POPULATE-TEST.RULE
+setlocal
+cd D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\cereal_lib-build
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\676DDE6A7EA3F19F5A299EF0A08A7754\CEREAL_LIB-POPULATE-COMPLETE.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/CMakeFiles/Debug/cereal_lib-populate-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/cereal_lib-populate-prefix/src/cereal_lib-populate-stamp/Debug/cereal_lib-populate-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKEFILES\F77761017EF438D9BF6BD38F764A8C47\CEREAL_LIB-POPULATE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\CEREAL_LIB-SUBBUILD\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild --check-stamp-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/cereal_lib-subbuild/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

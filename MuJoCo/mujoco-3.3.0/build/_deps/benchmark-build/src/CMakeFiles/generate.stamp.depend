@@ -1,0 +1,10 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.27/Modules/BasicConfigVersion-SameMajorVersion.cmake.in
+C:/Program Files/CMake/share/cmake-3.27/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/GNUInstallDirs.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/WriteBasicConfigVersionFile.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/CMakeFiles/cmake.verify_globs
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/benchmark-src/cmake/Config.cmake.in
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/benchmark-src/cmake/benchmark.pc.in
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/benchmark-src/cmake/benchmark_main.pc.in
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/benchmark-src/src/CMakeLists.txt

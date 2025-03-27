@@ -1,0 +1,10 @@
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\QHULL-SUBBUILD\CMAKEFILES\D245A91240707CAAE6A6887C24F2E520\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-subbuild -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/qhull-subbuild/qhull-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

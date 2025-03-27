@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-update_disconnected.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-patch_disconnected.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\60828f7ddec66a586ef716ee566fb933\tinyxml2-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\daf9d4d0c929d47e49ff50d056307b2b\tinyxml2-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\0d2d9fbdc8ccf1c65a7efabf115a1d88\tinyxml2-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\tinyxml2-subbuild\CMakeFiles\tinyxml2-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{62E1B1A3-6936-384E-AB19-B8EA070C4FC8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

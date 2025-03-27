@@ -1,0 +1,10 @@
+^D:\WIS\UNIX\GIT\GAITSYM5\MUJOCO\MUJOCO-3.3.0\BUILD\_DEPS\LODEPNG-SUBBUILD\CMAKEFILES\54C4C316AC60C2B17037BAE7094E4D1B\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/lodepng-subbuild -BD:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/lodepng-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/lodepng-subbuild/lodepng-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

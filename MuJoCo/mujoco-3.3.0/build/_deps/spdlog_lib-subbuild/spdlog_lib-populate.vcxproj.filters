@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\c6306548745e83759ede25cc94a5aa82\spdlog_lib-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\51dde2f2a6f9a99f2e4781c70e6455f0\spdlog_lib-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\51f708e1799eabc9062bdf3b48d12e9c\spdlog_lib-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\spdlog_lib-subbuild\CMakeFiles\spdlog_lib-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{42F8B4D4-B87C-36C1-83B4-67058BC1DCAC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -3,21 +3,21 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-if(EXISTS "/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt" AND EXISTS "/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt" AND
-  "/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt" IS_NEWER_THAN "/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt")
+if(EXISTS "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt" AND EXISTS "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt" AND
+  "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt" IS_NEWER_THAN "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt")
   message(STATUS
     "Avoiding repeated git clone, stamp file is up to date: "
-    "'/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt'"
+    "'D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt'"
   )
   return()
 endif()
 
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E rm -rf "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src"
+  COMMAND ${CMAKE_COMMAND} -E rm -rf "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src"
   RESULT_VARIABLE error_code
 )
 if(error_code)
-  message(FATAL_ERROR "Failed to remove directory: '/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src'")
+  message(FATAL_ERROR "Failed to remove directory: 'D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src'")
 endif()
 
 # try the clone 3 times in case there is an odd git clone issue
@@ -25,9 +25,9 @@ set(error_code 1)
 set(number_of_tries 0)
 while(error_code AND number_of_tries LESS 3)
   execute_process(
-    COMMAND "/usr/bin/git"
+    COMMAND "C:/Program Files/Git/cmd/git.exe"
             clone --no-checkout --config "advice.detachedHead=false" "https://github.com/leethomason/tinyxml2.git" "tinyxml2-src"
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps"
     RESULT_VARIABLE error_code
   )
   math(EXPR number_of_tries "${number_of_tries} + 1")
@@ -40,9 +40,9 @@ if(error_code)
 endif()
 
 execute_process(
-  COMMAND "/usr/bin/git"
+  COMMAND "C:/Program Files/Git/cmd/git.exe"
           checkout "9a89766acc42ddfa9e7133c7d81a5bda108a0ade" --
-  WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src"
+  WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src"
   RESULT_VARIABLE error_code
 )
 if(error_code)
@@ -52,22 +52,22 @@ endif()
 set(init_submodules TRUE)
 if(init_submodules)
   execute_process(
-    COMMAND "/usr/bin/git" 
+    COMMAND "C:/Program Files/Git/cmd/git.exe" 
             submodule update --recursive --init 
-    WORKING_DIRECTORY "/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src"
+    WORKING_DIRECTORY "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src"
     RESULT_VARIABLE error_code
   )
 endif()
 if(error_code)
-  message(FATAL_ERROR "Failed to update submodules in: '/home/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src'")
+  message(FATAL_ERROR "Failed to update submodules in: 'D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src'")
 endif()
 
 # Complete success, update the script-last-run stamp file:
 #
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -E copy "/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt" "/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt"
+  COMMAND ${CMAKE_COMMAND} -E copy "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt" "D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt"
   RESULT_VARIABLE error_code
 )
 if(error_code)
-  message(FATAL_ERROR "Failed to copy script-last-run stamp file: '/mnt/d/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt'")
+  message(FATAL_ERROR "Failed to copy script-last-run stamp file: 'D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitclone-lastrun.txt'")
 endif()

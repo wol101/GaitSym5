@@ -1,0 +1,11 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.27/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in
+C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeParseArguments.cmake
+C:/Program Files/CMake/share/cmake-3.27/Modules/WriteBasicConfigVersionFile.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/CMakeFiles/cmake.verify_globs
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glm_lib-src/CMakeLists.txt
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glm_lib-src/cmake/CMakePackageConfigHelpers.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glm_lib-src/cmake/GNUInstallDirs.cmake
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glm_lib-src/cmake/glm.pc.in
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glm_lib-src/cmake/glmBuildConfig.cmake.in
+D:/wis/Unix/git/GaitSym5/MuJoCo/mujoco-3.3.0/build/_deps/glm_lib-src/cmake/glmConfig.cmake.in

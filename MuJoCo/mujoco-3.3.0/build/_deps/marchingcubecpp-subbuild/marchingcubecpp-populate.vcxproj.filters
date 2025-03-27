@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f186affff2d24a077900f4b06e8b12b8\marchingcubecpp-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\f918af8c34bfd861c7a06c895fbce3f8\marchingcubecpp-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\6de30c58e6df09b077c7579689cdced2\marchingcubecpp-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\wis\Unix\git\GaitSym5\MuJoCo\mujoco-3.3.0\build\_deps\marchingcubecpp-subbuild\CMakeFiles\marchingcubecpp-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{90277B1F-2001-3B96-9B79-5BCAE9E17B84}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
