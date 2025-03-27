@@ -13,6 +13,16 @@ Run generate_projects.bat and select the required options from:
 (3) vc17win64-cpu-only <--- VC17 Win64 PhysX general settings (cpu only)
 (4) vc17win64 <--- VC17 Win64 PhysX general settings
 
+However there are important options that might need to be changed. Look at the presets in buildtools\presets\public. I had to change various cmake switches:
+
+    <cmakeSwitch name="PX_BUILDSNIPPETS" value="False" comment="Generate the snippets" />
+    <cmakeSwitch name="PX_BUILDPVDRUNTIME" value="False" comment="Generate the OmniPVD project" />
+    <cmakeSwitch name="PX_GENERATE_STATIC_LIBRARIES" value="False" comment="Generate static libraries" />
+    <cmakeSwitch name="NV_USE_STATIC_WINCRT" value="False" comment="Use the statically linked windows CRT" />
+    <cmakeSwitch name="NV_USE_DEBUG_WINCRT" value="True" comment="Use the debug version of the CRT" />
+    <cmakeSwitch name="PX_FLOAT_POINT_PRECISE_MATH" value="True" comment="Float point precise math" />
+
+
 For Visual Studio 2022 this is 3 and 4.
 
 These create the folders:
