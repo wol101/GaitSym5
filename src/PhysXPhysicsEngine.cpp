@@ -207,7 +207,6 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
                     physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
                     physx::PxReal damping = sphereGeom->GetContactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
                     material->setDamping(damping);
                 }
                 bool isExclusive = true;
@@ -238,7 +237,6 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
                     physx::PxReal restitution = -1 * planeGeom->GetContactSpringConstant();
                     physx::PxReal damping = planeGeom->GetContactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
                     material->setDamping(damping);
                 }
                 bool isExclusive = true;

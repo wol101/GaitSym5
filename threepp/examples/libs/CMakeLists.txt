@@ -14,17 +14,10 @@ add_library(kine INTERFACE
 )
 target_include_directories(kine INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_library(pathfinding INTERFACE
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/Coordinate.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/Heuristic.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/Path.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/PathFinder.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/TileBasedMap.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/algorithm/AStar.hpp"
-
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/heuristics/ClosestHeuristic.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/heuristics/ClosestSquaredHeuristic.hpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/pathfinding/heuristics/ManhattanHeuristic.hpp"
+add_library(optimization INTERFACE
+        "${CMAKE_CURRENT_SOURCE_DIR}/optimization/DifferentialEvolution.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/optimization/ParticleSwarmOptimization.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/optimization/Problem.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/optimization/Optimizer.hpp"
 )
-target_include_directories(pathfinding INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(optimization INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")

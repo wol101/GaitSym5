@@ -2,7 +2,6 @@
 #ifndef THREEPP_COLOR_HPP
 #define THREEPP_COLOR_HPP
 
-#include <cstdint>
 #include <ostream>
 
 namespace threepp {
@@ -57,6 +56,8 @@ namespace threepp {
         Color& lerp(const Color& color, float alpha);
 
         Color& lerpColors(const Color& color1, const Color& color2, float alpha);
+
+        Color& lerpHSL(const Color& color, float alpha);
 
         HSL& getHSL(HSL& target) const;
 

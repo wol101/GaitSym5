@@ -1,5 +1,4 @@
 #include "threepp/helpers/SkeletonHelper.hpp"
-#include "threepp/lights/LightShadow.hpp"
 #include "threepp/loaders/AssimpLoader.hpp"
 #include "threepp/materials/LineBasicMaterial.hpp"
 #include "threepp/threepp.hpp"
@@ -11,7 +10,7 @@ int main() {
     Canvas canvas("Simple skinning", {{"aa", 8}});
     GLRenderer renderer(canvas.size());
     renderer.shadowMap().enabled = true;
-    renderer.shadowMap().type = threepp::ShadowMap::PFCSoft;
+    renderer.shadowMap().type = ShadowMap::PFCSoft;
 
     PerspectiveCamera camera(45, canvas.aspect(), 0.1, 10000);
     camera.position.set(0, 6, -10);

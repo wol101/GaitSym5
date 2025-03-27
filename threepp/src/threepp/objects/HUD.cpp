@@ -1,4 +1,6 @@
 
+#include <utility>
+
 #include "threepp/objects/HUD.hpp"
 
 #include "threepp/cameras/OrthographicCamera.hpp"
@@ -10,7 +12,7 @@
 using namespace threepp;
 
 
-void HUD::Options::updateElement(Object3D& o, WindowSize windowSize) {
+void HUD::Options::updateElement(Object3D& o, std::pair<int, int> windowSize) {
 
     static Box3 bb;
     bb.setFromObject(o);
@@ -18,9 +20,9 @@ void HUD::Options::updateElement(Object3D& o, WindowSize windowSize) {
 
     Vector2 offset;
     if (verticalAlignment_ == VerticalAlignment::CENTER) {
-        offset.y = (float(size.y) / 2);
+        offset.y = (static_cast<float>(size.y) / 2);
     } else if (verticalAlignment_ == VerticalAlignment::TOP) {
-        offset.y = float(size.y);
+        offset.y = static_cast<float>(size.y);
     } else {
         offset.y = 0;
     }
@@ -36,19 +38,19 @@ void HUD::Options::updateElement(Object3D& o, WindowSize windowSize) {
         offset.x = 0;
     }
 
-    o.position.x = pos.x * float(windowSize.width) - offset.x - (margin_.x * ((0.5 > pos.x) ? -1.f : 1.f));
-    o.position.y = pos.y * float(windowSize.height) - (offset.y) - (margin_.y * ((0.5 > pos.y) ? -1.f : 1.f));
+    o.position.x = pos.x * static_cast<float>(windowSize.first) - offset.x - margin_.x * (0.5 > pos.x ? -1.f : 1.f);
+    o.position.y = pos.y * static_cast<float>(windowSize.second) - offset.y - margin_.y * (0.5 > pos.y ? -1.f : 1.f);
 }
 
 
 struct HUD::Impl: Scene, MouseListener {
 
-    Impl(PeripheralsEventSource* eventSource)
+    Impl(PeripheralsEventSource* eventSource, const std::pair<int, int>& size)
         : eventSource_(eventSource),
-          size_(eventSource->size()),
-          camera_(0, size_.width, size_.height, 0, 0.1, 10) {
+          size_(size),
+          camera_(0, size_.first, size_.second, 0, 0.1, 10) {
 
-        eventSource->addMouseListener(*this);
+        if (eventSource) eventSource->addMouseListener(*this);
 
         camera_.position.z = 1;
     }
@@ -64,9 +66,9 @@ struct HUD::Impl: Scene, MouseListener {
         map_.erase(&object);
     }
 
-    void setSize(WindowSize size) {
-        camera_.right = size.width;
-        camera_.top = size.height;
+    void setSize(std::pair<int, int> size) {
+        camera_.right = static_cast<float>(size.first);
+        camera_.top = static_cast<float>(size.second);
 
         for (auto [obj, opts] : map_) {
             opts.updateElement(*obj, size);
@@ -77,7 +79,7 @@ struct HUD::Impl: Scene, MouseListener {
         size_ = size;
     }
 
-    void add(Object3D& object, HUD::Options opts) {
+    void add(Object3D& object, Options opts) {
         Object3D::add(object);
 
         opts.updateElement(object, size_);
@@ -85,7 +87,7 @@ struct HUD::Impl: Scene, MouseListener {
         map_[&object] = opts;
     }
 
-    void add(const std::shared_ptr<Object3D>& object, HUD::Options opts) {
+    void add(const std::shared_ptr<Object3D>& object, Options opts) {
         Object3D::add(object);
 
         opts.updateElement(*object, size_);
@@ -95,51 +97,51 @@ struct HUD::Impl: Scene, MouseListener {
 
     void needsUpdate(Object3D& o) {
 
-        if (map_.count(&o)) {
+        if (map_.contains(&o)) {
             map_.at(&o).updateElement(o, size_);
         }
     }
 
-    void onMouseDown(int button, const Vector2& pos) override {
-
+    void handleMouseEvent(int button, const std::function<void(Options&, int)>& handler) {
         raycaster_.setFromCamera(mouse_, camera_);
 
-        auto intersects = raycaster_.intersectObjects(children, false);
+        const auto intersects = raycaster_.intersectObjects(children, false);
         if (!intersects.empty()) {
-            auto front = intersects.front();
-            if (map_.count(front.object)) {
-                map_.at(front.object).onMouseDown_(button);
+            const auto front = intersects.front();
+            if (map_.contains(front.object)) {
+                handler(map_.at(front.object), button);
             }
         }
     }
 
-    void onMouseUp(int button, const Vector2& pos) override {
+    void onMouseDown(int button, const Vector2&) override {
 
-        raycaster_.setFromCamera(mouse_, camera_);
+        handleMouseEvent(button, [](Options& handler, int button) {
+            handler.onMouseDown_(button);
+        });
+    }
 
-        auto intersects = raycaster_.intersectObjects(children, false);
-        if (!intersects.empty()) {
-            auto front = intersects.front();
-            if (map_.count(front.object)) {
-                map_.at(front.object).onMouseUp_(button);
-            }
-        }
+    void onMouseUp(int button, const Vector2&) override {
+
+        handleMouseEvent(button, [](Options& handler, int button) {
+            handler.onMouseUp_(button);
+        });
     }
 
     void onMouseMove(const Vector2& pos) override {
 
-        mouse_.x = (pos.x / static_cast<float>(size_.width)) * 2 - 1;
-        mouse_.y = -(pos.y / static_cast<float>(size_.height)) * 2 + 1;
+        mouse_.x = (pos.x / static_cast<float>(size_.first)) * 2 - 1;
+        mouse_.y = -(pos.y / static_cast<float>(size_.second)) * 2 + 1;
     }
 
     ~Impl() override {
-        eventSource_->removeMouseListener(*this);
+        if (eventSource_) eventSource_->removeMouseListener(*this);
     }
 
 private:
     PeripheralsEventSource* eventSource_;
 
-    WindowSize size_;
+    std::pair<int, int> size_;
     OrthographicCamera camera_;
 
     Raycaster raycaster_;
@@ -148,27 +150,30 @@ private:
     std::unordered_map<Object3D*, Options> map_;
 };
 
+HUD::HUD(std::pair<int, int> size)
+    : pimpl_(std::make_unique<Impl>(nullptr, size)) {}
 
-HUD::HUD(PeripheralsEventSource& eventSource)
-    : pimpl_(std::make_unique<Impl>(&eventSource)) {}
+
+HUD::HUD(PeripheralsEventSource* eventSource)
+    : pimpl_(std::make_unique<Impl>(eventSource, eventSource->size())) {}
 
 void HUD::apply(GLRenderer& renderer) {
     pimpl_->apply(renderer);
 }
 
-void HUD::add(Object3D& object, HUD::Options opts) {
-    pimpl_->add(object, opts);
+void HUD::add(Object3D& object, Options opts) {
+    pimpl_->add(object, std::move(opts));
 }
 
-void HUD::add(const std::shared_ptr<Object3D>& object, HUD::Options opts) {
-    pimpl_->add(object, opts);
+void HUD::add(const std::shared_ptr<Object3D>& object, Options opts) {
+    pimpl_->add(object, std::move(opts));
 }
 
 void HUD::remove(Object3D& object) {
     pimpl_->remove(object);
 }
 
-void HUD::setSize(WindowSize size) {
+void HUD::setSize(std::pair<int, int> size) {
     pimpl_->setSize(size);
 }
 

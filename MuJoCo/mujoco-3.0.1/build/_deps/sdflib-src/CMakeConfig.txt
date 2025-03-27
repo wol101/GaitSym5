@@ -1,2 +1,0 @@
-# Set your VulkanSDK directory
-set(VULKAN_PATH "C:/VulkanSDK/1.2.198.1")

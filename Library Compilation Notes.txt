@@ -3,7 +3,7 @@ Notes on PhysX compilation
 Needs vswhere.exe copied from "C:\Program Files (x86)\Microsoft Visual Studio\Installer" to "D:\"
 [vswhere is quite useful for finding out what version of VS is installed]
 
-Needs a reasonably up to date version of CUDA and this needs to set the right CUDA_PATH (so a reboot probably required)
+Needs a reasonably up to date version of CUDA and this needs to be set to the right CUDA_PATH (so a reboot probably required)
 
 Run generate_projects.bat and select the required options from:
 
@@ -37,7 +37,7 @@ cd build
 
 cmake ..
 
-Note that cmake downloads quitea few dependencies
+Note that cmake downloads quite a few dependencies
 
 msbuild mujoco.sln /p:Configuration=Debug
 msbuild mujoco.sln /p:Configuration=MinSizeRel
@@ -50,4 +50,19 @@ devenv may be better than msbuild
 
 devenv mujoco.sln /Clean "Release|x64"
 devenv mujoco.sln /Build "Release|x64"
+
+
+Notes on threecpp
+
+This needs to be build because the build process generates quite a lot of source code that is needed. This ends up in build\generated so I have copied that out to allow it to be included on gitbub. If using the librabry then all the various cmake flavours will be needed (Debug, MinSizeRel, Release, RelWithDebInfo)
+
+Windows
+
+cmake . -A x64 -B build -DCMAKE_BUILD_TYPE="Release"
+cmake --build build --config "Release"
+
+Unix
+
+cmake . -B build -DCMAKE_BUILD_TYPE="Release"
+cmake --build build
 
