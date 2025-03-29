@@ -41,6 +41,32 @@ if (use_mucojo_src)
     add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC CCD_STATIC_DEFINE)
 endif()
 
+# physx definitions
+if (use_physx_src)
+    # options
+    # PX_SUPPORT_GPU_PHYSX
+    # PX_SUPPORT_PVD
+    # PX_ENABLE_FEATURES_UNDER_CONSTRUCTION
+    # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
+    # DISABLE_CUDA_PHYSX
+    add_compile_definitions(PX_PHYSX_STATIC_LIB)
+
+    # build style (do not define any for release code)
+    # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
+    # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
+    # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        add_compile_definitions(PX_CHECKED)
+        message(STATUS "PX_CHECKED defined")
+        add_compile_definitions(PX_SUPPORT_PVD)
+        message(STATUS "PX_SUPPORT_PVD defined")
+    endif()
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
+        add_compile_definitions(PX_SIMD_DISABLED)
+        message(STATUS "PX_SIMD_DISABLED defined")
+    endif()
+endif()
+
 # glextrusion definitions
 add_compile_definitions(TRIANGLE_GENERATOR __GLE_DOUBLE)
 
@@ -822,6 +848,31 @@ set(PROJECT_SOURCES
     ../GaitSymQt/resources.qrc
 )
 
+set(INCLUDE_DIRECTORIES
+    ../fast_double_parser
+    ../GaitSymQt
+    ../glextrusion
+    ../libgwavi
+    ../PhysX
+    ../pocketpy-2.0.4
+    ../pystring
+    ../rapidxml
+    ../src
+    ../tinyply
+    ../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/include
+    ../MuJoCo/mujoco-3.3.0/include
+    ../ode-0.15/OPCODE
+    ../ode-0.15/include
+    ../ode-0.15/libccd/src/
+    ../ode-0.15/ode/src
+    ../threepp/include
+    ../threepp/src
+    ../threepp/src/external/quickhull/
+    ../threepp/src/external/glad
+    ../threepp/src/external/nlohmann
+    ../threepp/src/external/stb
+)
+
 if (use_mucojo_src)
     set(PROJECT_SOURCES ${PROJECT_SOURCES}
         ../MuJoCo/mujoco-3.3.0/src/engine/engine_array_safety.h
@@ -975,43 +1026,1362 @@ if (use_mucojo_src)
         ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src/lodepng.cpp
         ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src/lodepng.h
     )
+
+    set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
+        ../MuJoCo/mujoco-3.3.0/src
+        ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src
+        ../MuJoCo/mujoco-3.3.0/dependencies/marchingcubecpp-src
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyobjloader-src
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyxml2-src
+    )
+
 endif()
 
-set(INCLUDE_DIRECTORIES
-    ../fast_double_parser
-    ../GaitSymQt
-    ../glextrusion
-    ../libgwavi
-    ../PhysX
-    ../pocketpy-2.0.4
-    ../pystring
-    ../rapidxml
-    ../src
-    ../tinyply
-    ../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/include
-    ../MuJoCo/mujoco-3.3.0/include
-    ../ode-0.15/OPCODE
-    ../ode-0.15/include
-    ../ode-0.15/libccd/src/
-    ../ode-0.15/ode/src
-    ../threepp/include
-    ../threepp/src
-    ../threepp/src/external/quickhull/
-    ../threepp/src/external/glad
-    ../threepp/src/external/nlohmann
-    ../threepp/src/external/stb
-)
+if (use_physx_src)
+    SET(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx)
+    SET(PHYSX_SOURCE_DIR ${PHYSX_ROOT_DIR}/source)
+    SET(PX_SOURCE_DIR ${PHYSX_SOURCE_DIR}/physx/src)
+    SET(MD_SOURCE_DIR ${PHYSX_SOURCE_DIR}/physxmetadata)
 
-if (use_mucojo_src)
+    if (UNIX)
+        SET(PHYSX_GPU_HEADERS
+            ${PHYSX_ROOT_DIR}/include/gpu/PxGpu.h
+            ${PHYSX_ROOT_DIR}/include/gpu/PxPhysicsGpu.h
+        )
+
+        SET(PHYSX_CUDACONTEXT_MANAGER_GPU_HEADERS
+                ${PHYSX_ROOT_DIR}/include/cudamanager/PxCudaContextManager.h
+                ${PHYSX_ROOT_DIR}/include/cudamanager/PxCudaContext.h
+                ${PHYSX_ROOT_DIR}/include/cudamanager/PxCudaTypes.h
+        )
+
+        SET(PHYSX_PLATFORM_INCLUDES
+        )
+
+        SET(PHYSX_PLATFORM_OBJECT_FILES
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixAtomic.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixFPU.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixMutex.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixPrintString.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixSList.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixSocket.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixSync.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixThread.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/unix/FdUnixTime.cpp
+        )
+
+        SET(PHYSX_PLATFORM_SRC_FILES
+            ${PHYSX_GPU_HEADERS}
+            ${PHYSX_CUDACONTEXT_MANAGER_GPU_HEADERS}
+            ${PX_SOURCE_DIR}/gpu/PxGpu.cpp
+            ${PX_SOURCE_DIR}/gpu/PxPhysXGpuModuleLoader.cpp
+
+            ${PHYSX_PLATFORM_OBJECT_FILES}
+        )
+    endif()
+
+    if (WIN32)
+        SET(PHYSX_PLATFORM_INCLUDES
+        )
+
+        SET(PHYSX_GPU_HEADERS
+            ${PHYSX_ROOT_DIR}/include/gpu/PxGpu.h
+            ${PHYSX_ROOT_DIR}/include/gpu/PxPhysicsGpu.h
+        )
+
+        SET(PHYSX_CUDACONTEXT_MANAGER_GPU_HEADERS
+            ${PHYSX_ROOT_DIR}/include/cudamanager/PxCudaContextManager.h
+            ${PHYSX_ROOT_DIR}/include/cudamanager/PxCudaContext.h
+            ${PHYSX_ROOT_DIR}/include/cudamanager/PxCudaTypes.h
+        )
+
+        SET(PHYSX_COMMON_WINDOWS_HEADERS
+            ${PHYSX_ROOT_DIR}/include/common/windows/PxWindowsDelayLoadHook.h
+        )
+
+        SET(PHYSX_GPU_SOURCE
+            ${PX_SOURCE_DIR}/gpu/PxGpu.cpp
+            ${PX_SOURCE_DIR}/gpu/PxPhysXGpuModuleLoader.cpp
+        )
+
+        SET(PHYSX_WINDOWS_SOURCE
+            ${PX_SOURCE_DIR}/windows/NpWindowsDelayLoadHook.cpp
+        )
+
+        SET(PHYSX_PLATFORM_OBJECT_FILES
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsAtomic.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsFPU.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsMutex.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsPrintString.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsSList.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsSocket.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsSync.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsThread.cpp
+            ${PHYSX_SOURCE_DIR}/foundation/windows/FdWindowsTime.cpp
+        )
+
+        SET(PHYSX_PLATFORM_SRC_FILES
+            ${PHYSX_GPU_HEADERS}
+            ${PHYSX_CUDACONTEXT_MANAGER_GPU_HEADERS}
+            ${PHYSX_COMMON_WINDOWS_HEADERS}
+            ${PHYSX_GPU_SOURCE}
+            ${PHYSX_WINDOWS_SOURCE}
+            ${PHYSX_PLATFORM_OBJECT_FILES}
+        )
+    endif()
+
+    SET(PHYSX_HEADERS
+        ${PHYSX_ROOT_DIR}/include/PxActor.h
+        ${PHYSX_ROOT_DIR}/include/PxAggregate.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationFlag.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationJointReducedCoordinate.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationLink.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationReducedCoordinate.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationTendon.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationTendonData.h
+        ${PHYSX_ROOT_DIR}/include/PxArticulationMimicJoint.h
+        ${PHYSX_ROOT_DIR}/include/PxBroadPhase.h
+        ${PHYSX_ROOT_DIR}/include/PxClient.h
+        ${PHYSX_ROOT_DIR}/include/PxConeLimitedConstraint.h
+        ${PHYSX_ROOT_DIR}/include/PxConstraint.h
+        ${PHYSX_ROOT_DIR}/include/PxConstraintDesc.h
+        ${PHYSX_ROOT_DIR}/include/PxContact.h
+        ${PHYSX_ROOT_DIR}/include/PxContactModifyCallback.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableAttachment.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableElementFilter.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableBody.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableBodyFlag.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableSurface.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableSurfaceFlag.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableVolume.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableVolumeFlag.h
+        ${PHYSX_ROOT_DIR}/include/PxDeletionListener.h
+        ${PHYSX_ROOT_DIR}/include/PxFEMParameter.h #deprecated
+        ${PHYSX_ROOT_DIR}/include/PxFiltering.h
+        ${PHYSX_ROOT_DIR}/include/PxForceMode.h
+        ${PHYSX_ROOT_DIR}/include/PxImmediateMode.h
+        ${PHYSX_ROOT_DIR}/include/PxLockedData.h
+        ${PHYSX_ROOT_DIR}/include/PxNodeIndex.h
+        ${PHYSX_ROOT_DIR}/include/PxParticleBuffer.h
+        ${PHYSX_ROOT_DIR}/include/PxParticleGpu.h
+        ${PHYSX_ROOT_DIR}/include/PxParticleSolverType.h
+        ${PHYSX_ROOT_DIR}/include/PxParticleSystem.h
+        ${PHYSX_ROOT_DIR}/include/PxParticleSystemFlag.h
+        ${PHYSX_ROOT_DIR}/include/PxPBDParticleSystem.h
+        ${PHYSX_ROOT_DIR}/include/PxPhysics.h
+        ${PHYSX_ROOT_DIR}/include/PxPhysicsAPI.h
+        ${PHYSX_ROOT_DIR}/include/PxPhysicsSerialization.h
+        ${PHYSX_ROOT_DIR}/include/PxPhysXConfig.h
+        ${PHYSX_ROOT_DIR}/include/PxPruningStructure.h
+        ${PHYSX_ROOT_DIR}/include/PxQueryFiltering.h
+        ${PHYSX_ROOT_DIR}/include/PxQueryReport.h
+        ${PHYSX_ROOT_DIR}/include/PxRigidActor.h
+        ${PHYSX_ROOT_DIR}/include/PxRigidBody.h
+        ${PHYSX_ROOT_DIR}/include/PxRigidDynamic.h
+        ${PHYSX_ROOT_DIR}/include/PxRigidStatic.h
+        ${PHYSX_ROOT_DIR}/include/PxScene.h
+        ${PHYSX_ROOT_DIR}/include/PxSceneDesc.h
+        ${PHYSX_ROOT_DIR}/include/PxSceneLock.h
+        ${PHYSX_ROOT_DIR}/include/PxSceneQueryDesc.h
+        ${PHYSX_ROOT_DIR}/include/PxSceneQuerySystem.h
+        ${PHYSX_ROOT_DIR}/include/PxShape.h
+        ${PHYSX_ROOT_DIR}/include/PxSimulationEventCallback.h
+        ${PHYSX_ROOT_DIR}/include/PxSimulationStatistics.h
+        ${PHYSX_ROOT_DIR}/include/PxSoftBody.h #deprecated
+        ${PHYSX_ROOT_DIR}/include/PxSoftBodyFlag.h #deprecated
+        ${PHYSX_ROOT_DIR}/include/PxSparseGridParams.h
+        ${PHYSX_ROOT_DIR}/include/PxVisualizationParameter.h
+        ${PHYSX_ROOT_DIR}/include/PxIsosurfaceExtraction.h
+        ${PHYSX_ROOT_DIR}/include/PxSmoothing.h
+        ${PHYSX_ROOT_DIR}/include/PxAnisotropy.h
+        ${PHYSX_ROOT_DIR}/include/PxParticleNeighborhoodProvider.h
+        ${PHYSX_ROOT_DIR}/include/PxArrayConverter.h
+        ${PHYSX_ROOT_DIR}/include/PxSDFBuilder.h
+        ${PHYSX_ROOT_DIR}/include/PxResidual.h
+        ${PHYSX_ROOT_DIR}/include/PxDirectGPUAPI.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableSkinning.h
+    )
+
+    SET(PHYSX_MATERIAL_HEADERS
+        ${PHYSX_ROOT_DIR}/include/PxBaseMaterial.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableMaterial.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableSurfaceMaterial.h
+        ${PHYSX_ROOT_DIR}/include/PxDeformableVolumeMaterial.h
+        ${PHYSX_ROOT_DIR}/include/PxFEMMaterial.h #deprecated
+        ${PHYSX_ROOT_DIR}/include/PxFEMSoftBodyMaterial.h #deprecated
+        ${PHYSX_ROOT_DIR}/include/PxParticleMaterial.h
+        ${PHYSX_ROOT_DIR}/include/PxPBDMaterial.h
+        ${PHYSX_ROOT_DIR}/include/PxMaterial.h
+    )
+
+    SET(PHYSX_COMMON_HEADERS
+        ${PHYSX_ROOT_DIR}/include/common/PxBase.h
+        ${PHYSX_ROOT_DIR}/include/common/PxCollection.h
+        ${PHYSX_ROOT_DIR}/include/common/PxCoreUtilityTypes.h
+        ${PHYSX_ROOT_DIR}/include/common/PxInsertionCallback.h
+        ${PHYSX_ROOT_DIR}/include/common/PxPhysXCommonConfig.h
+        ${PHYSX_ROOT_DIR}/include/common/PxProfileZone.h
+        ${PHYSX_ROOT_DIR}/include/common/PxRenderBuffer.h
+        ${PHYSX_ROOT_DIR}/include/common/PxRenderOutput.h
+        ${PHYSX_ROOT_DIR}/include/common/PxSerialFramework.h
+        ${PHYSX_ROOT_DIR}/include/common/PxSerializer.h
+        ${PHYSX_ROOT_DIR}/include/common/PxStringTable.h
+        ${PHYSX_ROOT_DIR}/include/common/PxTolerancesScale.h
+        ${PHYSX_ROOT_DIR}/include/common/PxTypeInfo.h
+    )
+
+    SET(PHYSX_OMNIPVD_HEADERS
+        ${PHYSX_ROOT_DIR}/include/omnipvd/PxOmniPvd.h
+    )
+
+    SET(PHYSX_PVD_HEADERS
+        ${PHYSX_ROOT_DIR}/include/pvd/PxPvdSceneClient.h
+        ${PHYSX_ROOT_DIR}/include/pvd/PxPvd.h
+        ${PHYSX_ROOT_DIR}/include/pvd/PxPvdTransport.h
+    )
+
+    SET(PHYSX_COLLISION_HEADERS
+        ${PHYSX_ROOT_DIR}/include/collision/PxCollisionDefs.h
+    )
+
+    SET(PHYSX_SOLVER_HEADERS
+        ${PHYSX_ROOT_DIR}/include/solver/PxSolverDefs.h
+    )
+    SOURCE_GROUP(include\\solver FILES ${PHYSX_SOLVER_HEADERS})
+
+    SET(PHYSX_METADATA_HEADERS
+        ${MD_SOURCE_DIR}/core/include/PvdMetaDataDefineProperties.h
+        ${MD_SOURCE_DIR}/core/include/PvdMetaDataExtensions.h
+        ${MD_SOURCE_DIR}/core/include/PvdMetaDataPropertyVisitor.h
+        ${MD_SOURCE_DIR}/core/include/PxAutoGeneratedMetaDataObjectNames.h
+        ${MD_SOURCE_DIR}/core/include/PxAutoGeneratedMetaDataObjects.h
+        ${MD_SOURCE_DIR}/core/include/PxMetaDataCompare.h
+        ${MD_SOURCE_DIR}/core/include/PxMetaDataCppPrefix.h
+        ${MD_SOURCE_DIR}/core/include/PxMetaDataObjects.h
+        ${MD_SOURCE_DIR}/core/include/RepXMetaDataPropertyVisitor.h
+    )
+
+    SET(PHYSX_METADATA_SOURCE
+        ${MD_SOURCE_DIR}/core/src/PxAutoGeneratedMetaDataObjects.cpp
+        ${MD_SOURCE_DIR}/core/src/PxMetaDataObjects.cpp
+    )
+
+    SET(PHYSX_OMNIPVD_SOURCE
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvd.h
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvd.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdRegistrationData.h
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdRegistrationData.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdSetData.h
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdMetaData.h
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdMetaData.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdSimulationControllerCallbacks.h
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdSimulationControllerCallbacks.cpp
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.cpp
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.h
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdChunkAlloc.cpp
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdChunkAlloc.h
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdTypes.h
+    )
+
+    SET(PHYSX_PVD_SOURCE
+        ${PX_SOURCE_DIR}/NpPvdSceneClient.cpp
+        ${PX_SOURCE_DIR}/NpPvdSceneClient.h
+        ${PX_SOURCE_DIR}/NpPvdSceneQueryCollector.cpp
+        ${PX_SOURCE_DIR}/NpPvdSceneQueryCollector.h
+        ${PX_SOURCE_DIR}/PvdMetaDataPvdBinding.cpp
+        ${PX_SOURCE_DIR}/PvdPhysicsClient.cpp
+        ${PX_SOURCE_DIR}/PvdMetaDataBindingData.h
+        ${PX_SOURCE_DIR}/PvdMetaDataPvdBinding.h
+        ${PX_SOURCE_DIR}/PvdPhysicsClient.h
+        ${PX_SOURCE_DIR}/PvdTypeNames.h
+    )
+
+    SET(PHYSX_IMMEDIATEMODE_SOURCE
+        ${PHYSX_ROOT_DIR}/source/immediatemode/src/NpImmediateMode.cpp
+    )
+
+    SET(PHYSX_MATERIALS_SOURCE
+        ${PX_SOURCE_DIR}/NpMaterial.cpp
+        ${PX_SOURCE_DIR}/NpDeformableSurfaceMaterial.cpp
+        ${PX_SOURCE_DIR}/NpDeformableVolumeMaterial.cpp
+        ${PX_SOURCE_DIR}/NpPBDMaterial.cpp
+        ${PX_SOURCE_DIR}/NpMaterial.h
+        ${PX_SOURCE_DIR}/NpDeformableSurfaceMaterial.h
+        ${PX_SOURCE_DIR}/NpDeformableVolumeMaterial.h
+        ${PX_SOURCE_DIR}/NpPBDMaterial.h
+    )
+
+    SET(PHYSX_ARTICULATIONS_SOURCE
+        ${PX_SOURCE_DIR}/NpArticulationReducedCoordinate.cpp
+        ${PX_SOURCE_DIR}/NpArticulationJointReducedCoordinate.cpp
+        ${PX_SOURCE_DIR}/NpArticulationLink.cpp
+        ${PX_SOURCE_DIR}/NpArticulationTendon.cpp
+        ${PX_SOURCE_DIR}/NpArticulationMimicJoint.cpp
+        ${PX_SOURCE_DIR}/NpArticulationReducedCoordinate.h
+        ${PX_SOURCE_DIR}/NpArticulationJointReducedCoordinate.h
+        ${PX_SOURCE_DIR}/NpArticulationLink.h
+        ${PX_SOURCE_DIR}/NpArticulationTendon.h
+        ${PX_SOURCE_DIR}/NpArticulationMimicJoint.h
+    )
+
+    SET(PHYSX_CORE_SOURCE
+        ${PX_SOURCE_DIR}/NpActor.cpp
+        ${PX_SOURCE_DIR}/NpAggregate.cpp
+        ${PX_SOURCE_DIR}/NpDeformableAttachment.cpp
+        ${PX_SOURCE_DIR}/NpDeformableElementFilter.cpp
+        ${PX_SOURCE_DIR}/NpDeformableSurface.cpp
+        ${PX_SOURCE_DIR}/NpDeformableVolume.cpp
+        ${PX_SOURCE_DIR}/NpPBDParticleSystem.cpp
+        ${PX_SOURCE_DIR}/NpParticleBuffer.cpp
+        ${PX_SOURCE_DIR}/NpConstraint.cpp
+        ${PX_SOURCE_DIR}/NpFactory.cpp
+        ${PX_SOURCE_DIR}/NpPhysics.cpp
+        ${PX_SOURCE_DIR}/NpBounds.h
+        ${PX_SOURCE_DIR}/NpBounds.cpp
+        ${PX_SOURCE_DIR}/NpPruningStructure.h
+        ${PX_SOURCE_DIR}/NpPruningStructure.cpp
+        ${PX_SOURCE_DIR}/NpCheck.cpp
+        ${PX_SOURCE_DIR}/NpRigidDynamic.cpp
+        ${PX_SOURCE_DIR}/NpRigidStatic.cpp
+        ${PX_SOURCE_DIR}/NpScene.cpp
+        ${PX_SOURCE_DIR}/NpSceneFetchResults.cpp
+        ${PX_SOURCE_DIR}/NpSceneQueries.cpp
+        ${PX_SOURCE_DIR}/NpSerializerAdapter.cpp
+        ${PX_SOURCE_DIR}/NpShape.cpp
+        ${PX_SOURCE_DIR}/NpShapeManager.cpp
+        ${PX_SOURCE_DIR}/NpBase.h
+        ${PX_SOURCE_DIR}/NpActor.h
+        ${PX_SOURCE_DIR}/NpActorTemplate.h
+        ${PX_SOURCE_DIR}/NpAggregate.h
+        ${PX_SOURCE_DIR}/NpDeformableSurface.h
+        ${PX_SOURCE_DIR}/NpDeformableVolume.h
+        ${PX_SOURCE_DIR}/NpDeformableAttachment.h
+        ${PX_SOURCE_DIR}/NpDeformableElementFilter.h
+        ${PX_SOURCE_DIR}/NpPBDParticleSystem.h
+        ${PX_SOURCE_DIR}/NpParticleBuffer.h
+        ${PX_SOURCE_DIR}/NpConnector.h
+        ${PX_SOURCE_DIR}/NpConstraint.h
+        ${PX_SOURCE_DIR}/NpFactory.h
+        ${PX_SOURCE_DIR}/NpMaterialManager.h
+        ${PX_SOURCE_DIR}/NpPhysics.h
+        ${PX_SOURCE_DIR}/NpPhysicsInsertionCallback.h
+        ${PX_SOURCE_DIR}/NpPtrTableStorageManager.h
+        ${PX_SOURCE_DIR}/NpCheck.h
+        ${PX_SOURCE_DIR}/NpRigidActorTemplate.h
+        ${PX_SOURCE_DIR}/NpRigidActorTemplateInternal.h
+        ${PX_SOURCE_DIR}/NpRigidBodyTemplate.h
+        ${PX_SOURCE_DIR}/NpRigidDynamic.h
+        ${PX_SOURCE_DIR}/NpRigidStatic.h
+        ${PX_SOURCE_DIR}/NpScene.h
+        ${PX_SOURCE_DIR}/NpSceneQueries.h
+        ${PX_SOURCE_DIR}/NpSceneAccessor.h
+        ${PX_SOURCE_DIR}/NpShape.h
+        ${PX_SOURCE_DIR}/NpShapeManager.h
+        ${PX_SOURCE_DIR}/NpDebugViz.h
+        ${PX_SOURCE_DIR}/NpDebugViz.cpp
+        ${PX_SOURCE_DIR}/NpDirectGPUAPI.h
+        ${PX_SOURCE_DIR}/NpDirectGPUAPI.cpp
+    )
+
+    SET(GPUDEPENDENCIES_INCLUDES
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline/PxcNpMemBlockPool.h
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline/PxcNpCacheStreamPair.h
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline/PxcNpThreadContext.h
+        ${PHYSX_SOURCE_DIR}/lowlevelaabb/include/BpFiltering.h
+        ${PHYSX_ROOT_DIR}/include/common/PxRenderOutput.h
+        ${PHYSX_SOURCE_DIR}/geomutils/include/GuBounds.h
+        ${PHYSX_SOURCE_DIR}/geomutils/include/GuConvexSupport.h
+        ${PHYSX_SOURCE_DIR}/geomutils/include/GuRefGjkEpa.h
+    )
+
+    SET(GPUDEPENDENCIES_SOURCE
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/src/pipeline/PxcNpMemBlockPool.cpp
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/src/pipeline/PxcNpThreadContext.cpp
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/src/pipeline/PxcNpCacheStreamPair.cpp
+        ${PHYSX_SOURCE_DIR}/lowlevelaabb/src/BpFiltering.cpp
+        ${PHYSX_SOURCE_DIR}/lowlevelaabb/src/BpBroadPhaseUpdate.cpp
+        ${PHYSX_SOURCE_DIR}/lowlevelaabb/src/BpAABBManagerBase.cpp
+        ${PHYSX_SOURCE_DIR}/geomutils/src/GuBounds.cpp
+        ${PHYSX_SOURCE_DIR}/geomutils/src/convex/GuConvexUtilsInternal.cpp
+        ${PHYSX_SOURCE_DIR}/geomutils/src/mesh/GuTetrahedronMeshUtils.cpp
+        ${PHYSX_SOURCE_DIR}/geomutils/src/GuConvexGeometry.cpp
+    )
+
+    SET(PHYSXFOUNDATION_SOURCE
+        ${PHYSX_SOURCE_DIR}/foundation/FdAllocator.cpp
+        ${PHYSX_SOURCE_DIR}/foundation/FdString.cpp
+        ${PHYSX_SOURCE_DIR}/foundation/FdTempAllocator.cpp
+        ${PHYSX_SOURCE_DIR}/foundation/FdAssert.cpp
+        ${PHYSX_SOURCE_DIR}/foundation/FdMathUtils.cpp
+        ${PHYSX_SOURCE_DIR}/foundation/FdFoundation.cpp
+    )
+
+    SET(PHYSX_SOURCE_DIR ${PHYSX_ROOT_DIR}/source)
+    SET(COMMON_SRC_DIR ${PHYSX_SOURCE_DIR}/common/src)
+    SET(COMMON_INCLUDE_DIR ${PHYSX_SOURCE_DIR}/common/include)
+    SET(GU_SOURCE_DIR ${PHYSX_SOURCE_DIR}/geomutils)
+
+    SET(PHYSX_COMMON_SOURCE
+        ${COMMON_SRC_DIR}/CmPtrTable.cpp
+        ${COMMON_SRC_DIR}/CmRenderBuffer.h
+        ${COMMON_SRC_DIR}/CmBlockArray.h
+        ${COMMON_SRC_DIR}/CmCollection.h
+        ${COMMON_SRC_DIR}/CmCollection.cpp
+        ${COMMON_SRC_DIR}/CmConeLimitHelper.h
+        ${COMMON_SRC_DIR}/CmFlushPool.h
+        ${COMMON_SRC_DIR}/CmIDPool.h
+        ${COMMON_SRC_DIR}/CmMatrix34.h
+        ${COMMON_SRC_DIR}/CmPool.h
+        ${COMMON_SRC_DIR}/CmPreallocatingPool.h
+        ${COMMON_SRC_DIR}/CmPriorityQueue.h
+        ${COMMON_SRC_DIR}/CmPtrTable.h
+        ${COMMON_SRC_DIR}/CmRadixSort.h
+        ${COMMON_SRC_DIR}/CmRadixSort.cpp
+        ${COMMON_SRC_DIR}/CmRandom.h
+        ${COMMON_SRC_DIR}/CmRefCountable.h
+        ${COMMON_SRC_DIR}/CmScaling.h
+        ${COMMON_SRC_DIR}/CmSerialize.h
+        ${COMMON_SRC_DIR}/CmSerialize.cpp
+        ${COMMON_SRC_DIR}/CmSpatialVector.h
+        ${COMMON_SRC_DIR}/CmTask.h
+        ${COMMON_SRC_DIR}/CmTransformUtils.h
+        ${COMMON_SRC_DIR}/CmUtils.h
+        ${COMMON_SRC_DIR}/CmVisualization.h
+        ${COMMON_SRC_DIR}/CmVisualization.cpp
+    )
+
+    SET(PHYSXCOMMON_COMMON_INTERNAL_HEADERS
+        ${COMMON_INCLUDE_DIR}/omnipvd/CmOmniPvdAutoGenClearDefines.h
+        ${COMMON_INCLUDE_DIR}/omnipvd/CmOmniPvdAutoGenCreateRegistrationStruct.h
+        ${COMMON_INCLUDE_DIR}/omnipvd/CmOmniPvdAutoGenRegisterData.h
+        ${COMMON_INCLUDE_DIR}/omnipvd/CmOmniPvdAutoGenSetData.h
+    )
+
+    SET(PHYSXCOMMON_COMMON_HEADERS
+        ${PHYSX_ROOT_DIR}/include/common/PxBase.h
+        ${PHYSX_ROOT_DIR}/include/common/PxCollection.h
+        ${PHYSX_ROOT_DIR}/include/common/PxCoreUtilityTypes.h
+        ${PHYSX_ROOT_DIR}/include/common/PxInsertionCallback.h
+        ${PHYSX_ROOT_DIR}/include/common/PxPhysXCommonConfig.h
+        ${PHYSX_ROOT_DIR}/include/common/PxRenderBuffer.h
+        ${PHYSX_ROOT_DIR}/include/common/PxRenderOutput.h
+        ${PHYSX_ROOT_DIR}/include/common/PxSerialFramework.h
+        ${PHYSX_ROOT_DIR}/include/common/PxSerializer.h
+        ${PHYSX_ROOT_DIR}/include/common/PxStringTable.h
+        ${PHYSX_ROOT_DIR}/include/common/PxTolerancesScale.h
+        ${PHYSX_ROOT_DIR}/include/common/PxTypeInfo.h
+        ${PHYSX_ROOT_DIR}/include/common/PxProfileZone.h
+    )
+
+    SET(PHYSXCOMMON_GEOMETRY_HEADERS
+        ${PHYSX_ROOT_DIR}/include/geometry/PxBoxGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxCapsuleGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxConvexMesh.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxConvexMeshGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxCustomGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxConvexCoreGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometryInternal.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometryHelpers.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometryHit.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometryQuery.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometryQueryFlags.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGeometryQueryContext.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxHeightField.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxHeightFieldDesc.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxHeightFieldFlag.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxHeightFieldGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxHeightFieldSample.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxMeshQuery.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxMeshScale.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxPlaneGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxReportCallback.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxSimpleTriangleMesh.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxSphereGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxTriangle.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxTriangleMesh.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxTriangleMeshGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxBVH.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxBVHBuildStrategy.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxTetrahedron.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxTetrahedronMesh.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxTetrahedronMeshGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxParticleSystemGeometry.h
+        ${PHYSX_ROOT_DIR}/include/geometry/PxGjkQuery.h
+    )
+
+    SET(PHYSXCOMMON_GEOMUTILS_HEADERS
+        ${PHYSX_ROOT_DIR}/include/geomutils/PxContactBuffer.h
+        ${PHYSX_ROOT_DIR}/include/geomutils/PxContactPoint.h
+    )
+
+    SET(PHYSXCOMMON_COLLISION_HEADERS
+        ${PHYSX_ROOT_DIR}/include/collision/PxCollisionDefs.h
+    )
+
+    SET(PHYSXCOMMON_GU_HEADERS
+        ${GU_SOURCE_DIR}/include/GuBox.h
+        ${GU_SOURCE_DIR}/include/GuSphere.h
+        ${GU_SOURCE_DIR}/include/GuSegment.h
+        ${GU_SOURCE_DIR}/include/GuCapsule.h
+        ${GU_SOURCE_DIR}/include/GuCenterExtents.h
+        ${GU_SOURCE_DIR}/include/GuBounds.h
+        ${GU_SOURCE_DIR}/include/GuDistanceSegmentBox.h
+        ${GU_SOURCE_DIR}/include/GuDistanceSegmentSegment.h
+        ${GU_SOURCE_DIR}/include/GuIntersectionBoxBox.h
+        ${GU_SOURCE_DIR}/include/GuIntersectionTetrahedronBox.h
+        ${GU_SOURCE_DIR}/include/GuIntersectionTriangleBoxRef.h
+        ${GU_SOURCE_DIR}/include/GuIntersectionTriangleTriangle.h
+        ${GU_SOURCE_DIR}/include/GuRaycastTests.h
+        ${GU_SOURCE_DIR}/include/GuOverlapTests.h
+        ${GU_SOURCE_DIR}/include/GuSweepTests.h
+        ${GU_SOURCE_DIR}/include/GuCachedFuncs.h
+        ${GU_SOURCE_DIR}/include/GuPruner.h
+        ${GU_SOURCE_DIR}/include/GuPrunerTypedef.h
+        ${GU_SOURCE_DIR}/include/GuPrunerPayload.h
+        ${GU_SOURCE_DIR}/include/GuPrunerMergeData.h
+        ${GU_SOURCE_DIR}/include/GuSqInternal.h
+        ${GU_SOURCE_DIR}/include/GuActorShapeMap.h
+        ${GU_SOURCE_DIR}/include/GuQuerySystem.h
+        ${GU_SOURCE_DIR}/include/GuFactory.h
+        ${GU_SOURCE_DIR}/include/GuDistancePointTetrahedron.h
+        ${GU_SOURCE_DIR}/include/GuDistancePointTriangle.h
+        ${GU_SOURCE_DIR}/include/GuIntersectionTriangleBox.h
+        ${GU_SOURCE_DIR}/include/GuIntersectionTetrahedronTetrahedron.h
+        ${GU_SOURCE_DIR}/include/GuCooking.h
+        ${GU_SOURCE_DIR}/include/GuConvexSupport.h
+        ${GU_SOURCE_DIR}/include/GuConvexGeometry.h
+        ${GU_SOURCE_DIR}/include/GuRefGjkEpa.h
+    )
+
+    #SET(PHYSXCOMMON_GU_PXHEADERS
+    #	${PHYSX_ROOT_DIR}/include/geomutils/GuContactBuffer.h
+    #	${PHYSX_ROOT_DIR}/include/geomutils/GuContactPoint.h
+    #)
+
+    SET(PHYSXCOMMON_GU_SOURCE
+        ${GU_SOURCE_DIR}/src/GuBox.cpp
+        ${GU_SOURCE_DIR}/src/GuCapsule.cpp
+        ${GU_SOURCE_DIR}/src/GuCCTSweepTests.cpp
+        ${GU_SOURCE_DIR}/src/GuGeometryQuery.cpp
+        ${GU_SOURCE_DIR}/src/GuInternal.cpp
+        ${GU_SOURCE_DIR}/src/GuMeshFactory.cpp
+        ${GU_SOURCE_DIR}/src/GuMTD.cpp
+        ${GU_SOURCE_DIR}/src/GuOverlapTests.cpp
+        ${GU_SOURCE_DIR}/src/GuRaycastTests.cpp
+        ${GU_SOURCE_DIR}/src/GuSweepMTD.cpp
+        ${GU_SOURCE_DIR}/src/GuSweepSharedTests.cpp
+        ${GU_SOURCE_DIR}/src/GuSweepTests.cpp
+        ${GU_SOURCE_DIR}/src/GuGeometryChecks.h
+        ${GU_SOURCE_DIR}/src/GuInternal.h
+        ${GU_SOURCE_DIR}/src/GuMeshFactory.h
+        ${GU_SOURCE_DIR}/src/GuMTD.h
+        ${GU_SOURCE_DIR}/src/GuSweepMTD.h
+        ${GU_SOURCE_DIR}/src/GuSweepSharedTests.h
+        ${GU_SOURCE_DIR}/src/GuSDF.h
+        ${GU_SOURCE_DIR}/src/GuSDF.cpp
+        ${GU_SOURCE_DIR}/src/GuGjkQuery.cpp
+        ${GU_SOURCE_DIR}/src/GuWindingNumber.cpp
+        ${GU_SOURCE_DIR}/src/GuWindingNumber.h
+        ${GU_SOURCE_DIR}/src/GuWindingNumberCluster.h
+        ${GU_SOURCE_DIR}/src/GuWindingNumberT.h
+        ${GU_SOURCE_DIR}/src/GuConvexGeometry.cpp
+        ${GU_SOURCE_DIR}/src/GuConvexSupport.cpp
+    )
+
+    SET(PHYSXCOMMON_GU_CCD_SOURCE
+            ${GU_SOURCE_DIR}/src/ccd/GuCCDSweepConvexMesh.cpp
+            ${GU_SOURCE_DIR}/src/ccd/GuCCDSweepPrimitives.cpp
+            ${GU_SOURCE_DIR}/src/ccd/GuCCDSweepConvexMesh.h
+    )
+
+    SET(PHYSXCOMMON_GU_COMMON_SOURCE
+        ${GU_SOURCE_DIR}/src/common/GuBarycentricCoordinates.cpp
+        ${GU_SOURCE_DIR}/src/common/GuBarycentricCoordinates.h
+        ${GU_SOURCE_DIR}/src/common/GuBoxConversion.h
+        ${GU_SOURCE_DIR}/src/common/GuEdgeCache.h
+        ${GU_SOURCE_DIR}/src/common/GuAdjacencies.h
+        ${GU_SOURCE_DIR}/src/common/GuAdjacencies.cpp
+        ${GU_SOURCE_DIR}/src/common/GuEdgeList.h
+        ${GU_SOURCE_DIR}/src/common/GuEdgeList.cpp
+        ${GU_SOURCE_DIR}/src/common/GuSeparatingAxes.h
+        ${GU_SOURCE_DIR}/src/common/GuSeparatingAxes.cpp
+        ${GU_SOURCE_DIR}/src/common/GuQuantizer.h
+        ${GU_SOURCE_DIR}/src/common/GuQuantizer.cpp
+        ${GU_SOURCE_DIR}/src/common/GuMeshCleaner.h
+        ${GU_SOURCE_DIR}/src/common/GuMeshCleaner.cpp
+        ${GU_SOURCE_DIR}/src/common/GuVertexReducer.h
+        ${GU_SOURCE_DIR}/src/common/GuVertexReducer.cpp
+        ${GU_SOURCE_DIR}/src/common/GuMeshAnalysis.h
+        ${GU_SOURCE_DIR}/src/common/GuMeshAnalysis.cpp
+    )
+
+    SET(PHYSXCOMMON_GU_CONTACT_SOURCE
+        ${GU_SOURCE_DIR}/src/contact/GuContactBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleCapsule.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexCoreMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexCoreConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneConvexCore.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneCapsule.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPolygonPolygon.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactMeshMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactMeshMesh.h
+        ${GU_SOURCE_DIR}/src/contact/GuContactReduction.h
+        ${GU_SOURCE_DIR}/src/contact/GuCollisionSDF.h
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSpherePlane.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereSphere.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCustomGeometry.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuFeatureCode.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactMethodImpl.h
+        ${GU_SOURCE_DIR}/src/contact/GuContactPolygonPolygon.h
+        ${GU_SOURCE_DIR}/src/contact/GuFeatureCode.h
+    )
+
+    SET(PHYSXCOMMON_GU_CONVEX_SOURCE
+        ${GU_SOURCE_DIR}/src/convex/GuBigConvexData.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexHelper.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexSupportTable.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexUtilsInternal.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuHillClimbing.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuShapeConvex.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuBigConvexData.h
+        ${GU_SOURCE_DIR}/src/convex/GuBigConvexData2.h
+        ${GU_SOURCE_DIR}/src/convex/GuConvexEdgeFlags.h
+        ${GU_SOURCE_DIR}/src/convex/GuConvexHelper.h
+        ${GU_SOURCE_DIR}/src/convex/GuConvexMesh.h
+        ${GU_SOURCE_DIR}/src/convex/GuConvexMeshData.h
+        ${GU_SOURCE_DIR}/src/convex/GuConvexSupportTable.h
+        ${GU_SOURCE_DIR}/src/convex/GuConvexUtilsInternal.h
+        ${GU_SOURCE_DIR}/src/convex/GuCubeIndex.h
+        ${GU_SOURCE_DIR}/src/convex/GuHillClimbing.h
+        ${GU_SOURCE_DIR}/src/convex/GuShapeConvex.h
+    )
+
+    SET(PHYSXCOMMON_GU_DISTANCE_SOURCE
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointBox.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointTriangle.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentBox.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentSegment.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentTriangle.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceTriangleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointTetrahedron.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointBox.h
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointSegment.h
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentTriangle.h
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceTriangleTriangle.h
+    )
+
+    SET(PHYSXCOMMON_GU_GJK_SOURCE
+        ${GU_SOURCE_DIR}/src/gjk/GuEPA.cpp
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKSimplex.cpp
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKTest.cpp
+        ${GU_SOURCE_DIR}/src/gjk/GuEPA.h
+        ${GU_SOURCE_DIR}/src/gjk/GuEPAFacet.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJK.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKPenetration.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKRaycast.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKSimplex.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKTest.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKType.h
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKUtil.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecBox.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecCapsule.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecConvex.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecConvexHull.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecConvexHullNoScale.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecPlane.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecSphere.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecTriangle.h
+        ${GU_SOURCE_DIR}/src/gjk/GuVecTetrahedron.h
+    )
+
+    SET(PHYSXCOMMON_GU_HF_SOURCE
+        ${GU_SOURCE_DIR}/src/hf/GuHeightField.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuHeightFieldUtil.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuOverlapTestsHF.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuSweepsHF.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuEntityReport.h
+        ${GU_SOURCE_DIR}/src/hf/GuHeightField.h
+        ${GU_SOURCE_DIR}/src/hf/GuHeightFieldData.h
+        ${GU_SOURCE_DIR}/src/hf/GuHeightFieldUtil.h
+    )
+
+    SET(PHYSXCOMMON_GU_INTERSECTION_SOURCE
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionCapsuleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionEdgeEdge.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayCapsule.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRaySphere.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionSphereBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionTetrahedronBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionTriangleBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionTriangleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionCapsuleTriangle.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionEdgeEdge.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRay.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayBox.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayCapsule.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayPlane.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRaySphere.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayTriangle.h
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionSphereBox.h
+    )
+    SOURCE_GROUP(geomutils\\src\\intersection FILES ${PHYSXCOMMON_GU_INTERSECTION_SOURCE})
+
+    SET(PXCOMMON_BVH4_FILES
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_AABBSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_BoxOverlap.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_CapsuleSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_CapsuleSweepAA.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_MeshMeshOverlap.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_OBBSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Raycast.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_SphereOverlap.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_SphereSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuMidphaseBV4.cpp
+    )
+
+    SET(PHYSXCOMMON_GU_MESH_SOURCE
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4Build.cpp
+
+        ${PXCOMMON_BVH4_FILES}
+
+        ${GU_SOURCE_DIR}/src/mesh/GuMeshQuery.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuMidphaseRTree.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuOverlapTestsMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuRTree.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuRTreeQueries.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuSweepsMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMeshBV4.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMeshRTree.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV32.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV32Build.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedronMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedronMeshUtils.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV32.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV32Build.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4Build.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4Settings.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_AABBAABBSweepTest.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_BoxBoxOverlapTest.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_BoxOverlap_Internal.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_BoxSweep_Internal.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_BoxSweep_Params.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_CapsuleSweep_Internal.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Common.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Internal.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamNoOrder_OBBOBB.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamNoOrder_SegmentAABB.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamNoOrder_SegmentAABB_Inflated.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamNoOrder_SphereAABB.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamOrdered_OBBOBB.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamOrdered_SegmentAABB.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_ProcessStreamOrdered_SegmentAABB_Inflated.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Slabs.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Slabs_KajiyaNoOrder.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Slabs_KajiyaOrdered.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Slabs_SwizzledNoOrder.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Slabs_SwizzledOrdered.h
+        ${GU_SOURCE_DIR}/src/mesh/GuBVConstants.h
+        ${GU_SOURCE_DIR}/src/mesh/GuMeshData.h
+        ${GU_SOURCE_DIR}/src/mesh/GuMidphaseInterface.h
+        ${GU_SOURCE_DIR}/src/mesh/GuRTree.h
+        ${GU_SOURCE_DIR}/src/mesh/GuSweepConvexTri.h
+        ${GU_SOURCE_DIR}/src/mesh/GuSweepMesh.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangle.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleCache.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMesh.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMeshBV4.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMeshRTree.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedron.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedronMesh.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedronMeshUtils.h
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleRefinement.h
+    )
+
+    SET(PHYSXCOMMON_GU_PCM_SOURCE
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactBoxConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleHeightField.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleMesh.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexCommon.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexHeightField.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenBoxConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactPlaneBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactPlaneCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactPlaneConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereHeightField.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereMesh.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSpherePlane.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereSphere.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCustomGeometry.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMShapeConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMTriangleContactGen.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPersistentContactManifold.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexCommon.h
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGen.h
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenUtil.h
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenUtil.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactMeshCallback.h
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMShapeConvex.h
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMTriangleContactGen.h
+        ${GU_SOURCE_DIR}/src/pcm/GuPersistentContactManifold.h
+    )
+
+    SET(PHYSXCOMMON_GU_SWEEP_SOURCE
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxSphere.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxTriangle_FeatureBased.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxTriangle_SAT.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleBox.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleCapsule.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereSphere.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereTriangle.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepTriangleUtils.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxBox.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxSphere.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxTriangle_FeatureBased.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxTriangle_SAT.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleBox.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleCapsule.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleTriangle.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereCapsule.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereSphere.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereTriangle.h
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepTriangleUtils.h
+    )
+
+    SET(PHYSXCOMMON_GU_PRUNERS_SOURCE
+        ${GU_SOURCE_DIR}/src/GuBounds.cpp
+        ${GU_SOURCE_DIR}/src/GuQuery.h
+        ${GU_SOURCE_DIR}/src/GuAABBTree.cpp
+        ${GU_SOURCE_DIR}/src/GuAABBTree.h
+        ${GU_SOURCE_DIR}/src/GuAABBTreeUpdateMap.h
+        ${GU_SOURCE_DIR}/src/GuAABBTreeUpdateMap.cpp
+        ${GU_SOURCE_DIR}/src/GuAABBTreeBounds.h
+        ${GU_SOURCE_DIR}/src/GuAABBTreeNode.h
+        ${GU_SOURCE_DIR}/src/GuAABBTreeBuildStats.h
+        ${GU_SOURCE_DIR}/src/GuAABBTreeQuery.h
+        ${GU_SOURCE_DIR}/src/GuSqInternal.cpp
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBTree.h
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBTree.cpp
+        ${GU_SOURCE_DIR}/src/GuSAH.cpp
+        ${GU_SOURCE_DIR}/src/GuSAH.h
+        ${GU_SOURCE_DIR}/src/GuBVH.cpp
+        ${GU_SOURCE_DIR}/src/GuBVH.h
+        ${GU_SOURCE_DIR}/src/GuBVHTestsSIMD.h
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBPrunerCore.h
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBPrunerCore.cpp
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBPruner.h
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuPruningPool.h
+        ${GU_SOURCE_DIR}/src/GuPruningPool.cpp
+        ${GU_SOURCE_DIR}/src/GuBucketPruner.h
+        ${GU_SOURCE_DIR}/src/GuBucketPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuMaverickNode.h
+        ${GU_SOURCE_DIR}/src/GuMaverickNode.cpp
+        ${GU_SOURCE_DIR}/src/GuExtendedBucketPruner.h
+        ${GU_SOURCE_DIR}/src/GuExtendedBucketPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuSecondaryPruner.h
+        ${GU_SOURCE_DIR}/src/GuSecondaryPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuAABBPruner.h
+        ${GU_SOURCE_DIR}/src/GuAABBPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuActorShapeMap.cpp
+        ${GU_SOURCE_DIR}/src/GuCallbackAdapter.h
+        ${GU_SOURCE_DIR}/src/GuQuerySystem.cpp
+        ${GU_SOURCE_DIR}/src/GuFactory.cpp
+    )
+
+    SET(PHYSXCOMMON_GU_COOKING_SOURCE
+        ${GU_SOURCE_DIR}/src/cooking/GuRTreeCooking.h
+        ${GU_SOURCE_DIR}/src/cooking/GuRTreeCooking.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingBVH.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingHF.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingGrbTriangleMesh.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingTriangleMesh.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingTriangleMesh.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingTetrahedronMesh.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingTetrahedronMesh.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingVolumeIntegration.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingVolumeIntegration.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingQuickHullConvexHullLib.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingQuickHullConvexHullLib.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexPolygonsBuilder.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexPolygonsBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexMeshBuilder.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexMeshBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullUtils.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullUtils.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullLib.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullLib.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullBuilder.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingBigConvexDataBuilder.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingBigConvexDataBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingSDF.h
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingSDF.cpp
+    )
+
+    SET(PROJECT_SOURCES ${PROJECT_SOURCES}
+        ${PHYSX_COMMON_SOURCE}
+        ${PHYSXCOMMON_COMMON_INTERNAL_HEADERS}
+
+        ${PHYSXCOMMON_COMMON_HEADERS}
+        ${PHYSXCOMMON_GEOMETRY_HEADERS}
+        ${PHYSXCOMMON_GEOMUTILS_HEADERS}
+        ${PHYSXCOMMON_COLLISION_HEADERS}
+
+        ${PXCOMMON_PLATFORM_SRC_FILES}
+
+        ${PHYSXCOMMON_GU_HEADERS}
+    #	${PHYSXCOMMON_GU_PXHEADERS}
+
+        ${PHYSXCOMMON_GU_SOURCE}
+        ${PHYSXCOMMON_GU_CCD_SOURCE}
+        ${PHYSXCOMMON_GU_COMMON_SOURCE}
+        ${PHYSXCOMMON_GU_CONTACT_SOURCE}
+        ${PHYSXCOMMON_GU_CONVEX_SOURCE}
+        ${PHYSXCOMMON_GU_DISTANCE_SOURCE}
+        ${PHYSXCOMMON_GU_GJK_SOURCE}
+        ${PHYSXCOMMON_GU_HF_SOURCE}
+        ${PHYSXCOMMON_GU_INTERSECTION_SOURCE}
+        ${PHYSXCOMMON_GU_MESH_SOURCE}
+        ${PHYSXCOMMON_GU_PCM_SOURCE}
+        ${PHYSXCOMMON_GU_SWEEP_SOURCE}
+        ${PHYSXCOMMON_GU_PRUNERS_SOURCE}
+        ${PHYSXCOMMON_GU_COOKING_SOURCE}
+    )
+
     set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
-        ../MuJoCo/mujoco-3.3.0/build/_deps/marchingcubecpp-src
-        ../MuJoCo/mujoco-3.3.0/src
-        ../MuJoCo/mujoco-3.3.0/build/_deps/ccd-src/src
-        ../MuJoCo/mujoco-3.3.0/build/_deps/ccd-build/src
-        ../MuJoCo/mujoco-3.3.0/build/_deps/lodepng-src
-        ../MuJoCo/mujoco-3.3.0/build/_deps/qhull-src/src/libqhull_r
-        ../MuJoCo/mujoco-3.3.0/build/_deps/tinyobjloader-src
-        ../MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src
+        ${PXCOMMON_PLATFORM_INCLUDES}
+
+        ${PHYSX_ROOT_DIR}/include
+
+        ${PHYSX_SOURCE_DIR}/common/include
+        ${PHYSX_SOURCE_DIR}/common/src
+
+        ${PHYSX_SOURCE_DIR}/geomutils/include
+        ${PHYSX_SOURCE_DIR}/geomutils/src
+        ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+        ${PHYSX_SOURCE_DIR}/geomutils/src/common
+        ${PHYSX_SOURCE_DIR}/geomutils/src/convex
+        ${PHYSX_SOURCE_DIR}/geomutils/src/distance
+        ${PHYSX_SOURCE_DIR}/geomutils/src/sweep
+        ${PHYSX_SOURCE_DIR}/geomutils/src/gjk
+        ${PHYSX_SOURCE_DIR}/geomutils/src/intersection
+        ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
+        ${PHYSX_SOURCE_DIR}/geomutils/src/hf
+        ${PHYSX_SOURCE_DIR}/geomutils/src/pcm
+        ${PHYSX_SOURCE_DIR}/geomutils/src/ccd
+
+        ${PHYSX_SOURCE_DIR}/physxgpu/include
+    )
+
+    SET(LL_SOURCE_DIR ${PHYSX_SOURCE_DIR}/physxextensions/src)
+
+    SET(PHYSX_EXTENSIONS_SOURCE
+        ${LL_SOURCE_DIR}/ExtBroadPhase.cpp
+        ${LL_SOURCE_DIR}/ExtCollection.cpp
+        ${LL_SOURCE_DIR}/ExtConvexMeshExt.cpp
+        ${LL_SOURCE_DIR}/ExtCpuWorkerThread.cpp
+        ${LL_SOURCE_DIR}/ExtDefaultCpuDispatcher.cpp
+        ${LL_SOURCE_DIR}/ExtDefaultErrorCallback.cpp
+        ${LL_SOURCE_DIR}/ExtDefaultProfiler.cpp
+        ${LL_SOURCE_DIR}/ExtDefaultSimulationFilterShader.cpp
+        ${LL_SOURCE_DIR}/ExtDefaultStreams.cpp
+        ${LL_SOURCE_DIR}/ExtExtensions.cpp
+        ${LL_SOURCE_DIR}/ExtPvd.cpp
+        ${LL_SOURCE_DIR}/ExtPxStringTable.cpp
+        ${LL_SOURCE_DIR}/ExtRaycastCCD.cpp
+        ${LL_SOURCE_DIR}/ExtRigidBodyExt.cpp
+        ${LL_SOURCE_DIR}/ExtRigidActorExt.cpp
+        ${LL_SOURCE_DIR}/ExtSceneQueryExt.cpp
+        ${LL_SOURCE_DIR}/ExtSceneQuerySystem.cpp
+        ${LL_SOURCE_DIR}/ExtCustomSceneQuerySystem.cpp
+        ${LL_SOURCE_DIR}/ExtSqQuery.cpp
+        ${LL_SOURCE_DIR}/ExtSqQuery.h
+        ${LL_SOURCE_DIR}/ExtSqManager.cpp
+        ${LL_SOURCE_DIR}/ExtSqManager.h
+        ${LL_SOURCE_DIR}/ExtSimpleFactory.cpp
+        ${LL_SOURCE_DIR}/ExtSmoothNormals.cpp
+        ${LL_SOURCE_DIR}/ExtDeformableSurfaceExt.cpp
+        ${LL_SOURCE_DIR}/ExtDeformableVolumeExt.cpp
+        ${LL_SOURCE_DIR}/ExtTriangleMeshExt.cpp
+        ${LL_SOURCE_DIR}/ExtTetrahedronMeshExt.cpp
+        ${LL_SOURCE_DIR}/ExtRemeshingExt.cpp
+        ${LL_SOURCE_DIR}/ExtCpuWorkerThread.h
+        ${LL_SOURCE_DIR}/ExtDefaultCpuDispatcher.h
+        ${LL_SOURCE_DIR}/ExtDefaultProfiler.h
+        ${LL_SOURCE_DIR}/ExtInertiaTensor.h
+        ${LL_SOURCE_DIR}/ExtPlatform.h
+        ${LL_SOURCE_DIR}/ExtPvd.h
+        ${LL_SOURCE_DIR}/ExtSerialization.h
+        ${LL_SOURCE_DIR}/ExtSharedQueueEntryPool.h
+        ${LL_SOURCE_DIR}/ExtTaskQueueHelper.h
+        ${LL_SOURCE_DIR}/ExtSampling.cpp
+        ${LL_SOURCE_DIR}/ExtTetMakerExt.cpp
+        ${LL_SOURCE_DIR}/ExtGjkQueryExt.cpp
+        ${LL_SOURCE_DIR}/ExtCustomGeometryExt.cpp
+        ${LL_SOURCE_DIR}/ExtConvexCoreExt.cpp
+    )
+
+    #TODO, create a propper define for whether GPU features are enabled or not!
+    if (PX_GENERATE_GPU_PROJECTS AND (NOT (CMAKE_CROSSCOMPILING OR CMAKE_GENERATOR_PLATFORM STREQUAL "NX64")))
+        LIST(APPEND PHYSX_EXTENSIONS_SOURCE "${LL_SOURCE_DIR}/ExtDeformableSkinning.cpp")
+        LIST(APPEND PHYSX_EXTENSIONS_SOURCE "${LL_SOURCE_DIR}/ExtParticleExt.cpp")
+        LIST(APPEND PHYSX_EXTENSIONS_SOURCE "${LL_SOURCE_DIR}/ExtParticleClothCooker.cpp")
+    ENDIF()
+
+    SET(PHYSX_EXTENSIONS_JOINTS_SOURCE
+        ${LL_SOURCE_DIR}/ExtGearJoint.cpp
+        ${LL_SOURCE_DIR}/ExtGearJoint.h
+        ${LL_SOURCE_DIR}/ExtRackAndPinionJoint.cpp
+        ${LL_SOURCE_DIR}/ExtRackAndPinionJoint.h
+        ${LL_SOURCE_DIR}/ExtD6Joint.cpp
+        ${LL_SOURCE_DIR}/ExtD6JointCreate.cpp
+        ${LL_SOURCE_DIR}/ExtDistanceJoint.cpp
+        ${LL_SOURCE_DIR}/ExtFixedJoint.cpp
+        ${LL_SOURCE_DIR}/ExtJoint.cpp
+        ${LL_SOURCE_DIR}/ExtPrismaticJoint.cpp
+        ${LL_SOURCE_DIR}/ExtRevoluteJoint.cpp
+        ${LL_SOURCE_DIR}/ExtSphericalJoint.cpp
+        ${LL_SOURCE_DIR}/ExtConstraintHelper.h
+        ${LL_SOURCE_DIR}/ExtD6Joint.h
+        ${LL_SOURCE_DIR}/ExtDistanceJoint.h
+        ${LL_SOURCE_DIR}/ExtFixedJoint.h
+        ${LL_SOURCE_DIR}/ExtJoint.h
+        ${LL_SOURCE_DIR}/ExtJointData.h
+        ${LL_SOURCE_DIR}/ExtJointMetaDataExtensions.h
+        ${LL_SOURCE_DIR}/ExtPrismaticJoint.h
+        ${LL_SOURCE_DIR}/ExtRevoluteJoint.h
+        ${LL_SOURCE_DIR}/ExtSphericalJoint.h
+    )
+
+    SET(PHYSX_EXTENSIONS_TET_SOURCE
+        ${LL_SOURCE_DIR}/tet/ExtUtilities.h
+        ${LL_SOURCE_DIR}/tet/ExtUtilities.cpp
+        ${LL_SOURCE_DIR}/tet/ExtTetUnionFind.h
+        ${LL_SOURCE_DIR}/tet/ExtTetUnionFind.cpp
+        ${LL_SOURCE_DIR}/tet/ExtDelaunayBoundaryInserter.cpp
+        ${LL_SOURCE_DIR}/tet/ExtDelaunayBoundaryInserter.h
+        ${LL_SOURCE_DIR}/tet/ExtDelaunayTetrahedralizer.cpp
+        ${LL_SOURCE_DIR}/tet/ExtDelaunayTetrahedralizer.h
+        ${LL_SOURCE_DIR}/tet/ExtVec3.h
+        ${LL_SOURCE_DIR}/tet/ExtTetSplitting.cpp
+        ${LL_SOURCE_DIR}/tet/ExtTetSplitting.h
+        ${LL_SOURCE_DIR}/tet/ExtTetTetraMesh.h
+        ${LL_SOURCE_DIR}/tet/ExtFastWindingNumber.cpp
+        ${LL_SOURCE_DIR}/tet/ExtFastWindingNumber.h
+        ${LL_SOURCE_DIR}/tet/ExtRandomAccessHeap.h
+        ${LL_SOURCE_DIR}/tet/ExtQuadric.h
+        ${LL_SOURCE_DIR}/tet/ExtMeshSimplificator.h
+        ${LL_SOURCE_DIR}/tet/ExtMeshSimplificator.cpp
+        ${LL_SOURCE_DIR}/tet/ExtBVH.cpp
+        ${LL_SOURCE_DIR}/tet/ExtBVH.h
+        ${LL_SOURCE_DIR}/tet/ExtRemesher.cpp
+        ${LL_SOURCE_DIR}/tet/ExtRemesher.h
+        ${LL_SOURCE_DIR}/tet/ExtMarchingCubesTable.h
+        ${LL_SOURCE_DIR}/tet/ExtMultiList.h
+        ${LL_SOURCE_DIR}/tet/ExtInsideTester.cpp
+        ${LL_SOURCE_DIR}/tet/ExtInsideTester.h
+        ${LL_SOURCE_DIR}/tet/ExtOctreeTetrahedralizer.cpp
+        ${LL_SOURCE_DIR}/tet/ExtOctreeTetrahedralizer.h
+        ${LL_SOURCE_DIR}/tet/ExtVoxelTetrahedralizer.cpp
+        ${LL_SOURCE_DIR}/tet/ExtVoxelTetrahedralizer.h
+    )
+
+    SET(PHYSX_EXTENSIONS_METADATA_SOURCE
+        ${PHYSX_SOURCE_DIR}/physxmetadata/extensions/src/PxExtensionAutoGeneratedMetaDataObjects.cpp
+        ${PHYSX_SOURCE_DIR}/physxmetadata/extensions/include/PxExtensionAutoGeneratedMetaDataObjectNames.h
+        ${PHYSX_SOURCE_DIR}/physxmetadata/extensions/include/PxExtensionAutoGeneratedMetaDataObjects.h
+        ${PHYSX_SOURCE_DIR}/physxmetadata/extensions/include/PxExtensionMetaDataObjects.h
+    )
+
+    SET(PHYSX_EXTENSIONS_OMNIPVD_SOURCE
+        ${LL_SOURCE_DIR}/omnipvd/ExtOmniPvdRegistrationData.cpp
+        ${LL_SOURCE_DIR}/omnipvd/ExtOmniPvdRegistrationData.h
+        ${LL_SOURCE_DIR}/omnipvd/ExtOmniPvdSetData.h
+        ${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsTypes.h
+        ${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsSampler.h
+        ${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp
+    )
+
+    SET(PHYSX_EXTENSIONS_HEADERS
+        ${PHYSX_ROOT_DIR}/include/extensions/PxBroadPhaseExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxCollectionExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxConvexMeshExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxCudaHelpersExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDefaultAllocator.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDefaultCpuDispatcher.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDefaultErrorCallback.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDefaultProfiler.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDefaultSimulationFilterShader.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDefaultStreams.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDeformableSurfaceExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDeformableVolumeExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxExtensionsAPI.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxMassProperties.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRaycastCCD.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRepXSerializer.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRepXSimpleType.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRigidActorExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRigidBodyExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSceneQueryExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSceneQuerySystemExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxCustomSceneQuerySystem.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSerialization.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxShapeExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSimpleFactory.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSmoothNormals.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSoftBodyExt.h #deprecated
+        ${PHYSX_ROOT_DIR}/include/extensions/PxStringTableExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxTriangleMeshExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxTetrahedronMeshExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRemeshingExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxTriangleMeshAnalysisResult.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxTetrahedronMeshAnalysisResult.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxTetMakerExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxGjkQueryExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxCustomGeometryExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSamplingExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxConvexCoreExt.h
+    )
+
+    #TODO, create a propper define for whether GPU features are enabled or not!
+    if (PX_GENERATE_GPU_PROJECTS AND (NOT (CMAKE_CROSSCOMPILING OR CMAKE_GENERATOR_PLATFORM STREQUAL "NX64")))
+        LIST(APPEND PHYSX_EXTENSIONS_HEADERS "${PHYSX_ROOT_DIR}/include/extensions/PxDeformableSkinningExt.h")
+        LIST(APPEND PHYSX_EXTENSIONS_HEADERS "${PHYSX_ROOT_DIR}/include/extensions/PxParticleClothCooker.h")
+        LIST(APPEND PHYSX_EXTENSIONS_HEADERS "${PHYSX_ROOT_DIR}/include/extensions/PxParticleExt.h")
+    ENDIF()
+
+    SET(PHYSX_JOINT_HEADERS
+        ${PHYSX_ROOT_DIR}/include/extensions/PxConstraintExt.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxD6Joint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxD6JointCreate.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxDistanceJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxFixedJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxGearJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRackAndPinionJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxJointLimit.h
+    #	${PHYSX_ROOT_DIR}/include/extensions/PxJointRepXSerializer.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxPrismaticJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxRevoluteJoint.h
+        ${PHYSX_ROOT_DIR}/include/extensions/PxSphericalJoint.h
+    )
+
+    SET(PHYSX_FILEBUF_HEADERS
+        ${PHYSX_ROOT_DIR}/include/filebuf/PxFileBuf.h
+    )
+
+    SET(PHYSX_EXTENSIONS_SERIALIZATION_SOURCE
+        ${LL_SOURCE_DIR}/serialization/SnSerialization.cpp
+        ${LL_SOURCE_DIR}/serialization/SnSerializationRegistry.cpp
+        ${LL_SOURCE_DIR}/serialization/SnSerializationRegistry.h
+        ${LL_SOURCE_DIR}/serialization/SnSerialUtils.cpp
+        ${LL_SOURCE_DIR}/serialization/SnSerialUtils.h
+    )
+
+    SET(PHYSX_EXTENSIONS_SERIALIZATION_XML_SOURCE
+        ${LL_SOURCE_DIR}/serialization/Xml/SnJointRepXSerializer.cpp
+        ${LL_SOURCE_DIR}/serialization/Xml/SnJointRepXSerializer.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepXCoreSerializer.cpp
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepXUpgrader.cpp
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlSerialization.cpp
+        ${LL_SOURCE_DIR}/serialization/Xml/SnPxStreamOperators.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepX1_0Defaults.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepX3_1Defaults.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepX3_2Defaults.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepXCollection.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepXCoreSerializer.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepXSerializerImpl.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnRepXUpgrader.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnSimpleXmlWriter.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlDeserializer.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlImpl.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlMemoryAllocator.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlMemoryPool.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlMemoryPoolStreams.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlReader.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlSerializer.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlSimpleXmlWriter.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlStringToType.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlVisitorReader.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlVisitorWriter.h
+        ${LL_SOURCE_DIR}/serialization/Xml/SnXmlWriter.h
+        ${LL_SOURCE_DIR}/serialization/Xml/PsFastXml.h
+        ${LL_SOURCE_DIR}/serialization/Xml/PsFastXml.cpp
+    )
+
+    SET(PHYSX_EXTENSIONS_SERIALIZATION_FILE_SOURCE
+        ${LL_SOURCE_DIR}/serialization/File/SnFile.h
+    )
+
+    SET(PHYSX_EXTENSIONS_SERIALIZATION_BINARY_SOURCE
+        ${LL_SOURCE_DIR}/serialization/Binary/SnBinaryDeserialization.cpp
+        ${LL_SOURCE_DIR}/serialization/Binary/SnBinarySerialization.cpp
+        ${LL_SOURCE_DIR}/serialization/Binary/SnSerializationContext.cpp
+        ${LL_SOURCE_DIR}/serialization/Binary/SnSerializationContext.h
+    )
+
+    SET(PROJECT_SOURCES ${PROJECT_SOURCES}
+        ${PHYSXEXTENSIONS_PLATFORM_SRC_FILES}
+
+        ${PHYSX_EXTENSIONS_SOURCE}
+        ${PHYSX_EXTENSIONS_TET_SOURCE}
+        ${PHYSX_EXTENSIONS_JOINTS_SOURCE}
+        ${PHYSX_EXTENSIONS_METADATA_SOURCE}
+        ${PHYSX_EXTENSIONS_OMNIPVD_SOURCE}
+
+        ${PHYSX_EXTENSIONS_HEADERS}
+        ${PHYSX_JOINT_HEADERS}
+        ${PHYSX_FILEBUF_HEADERS}
+
+        ${PHYSX_EXTENSIONS_SERIALIZATION_SOURCE}
+        ${PHYSX_EXTENSIONS_SERIALIZATION_XML_SOURCE}
+        ${PHYSX_EXTENSIONS_SERIALIZATION_FILE_SOURCE}
+        ${PHYSX_EXTENSIONS_SERIALIZATION_BINARY_SOURCE}
+    )
+
+    set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
+        PRIVATE ${PHYSXEXTENSIONS_PLATFORM_INCLUDES}
+
+        PRIVATE ${PHYSX_ROOT_DIR}/include
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/common/include
+        PRIVATE ${PHYSX_SOURCE_DIR}/common/src
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/include
+        PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src
+        PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/intersection
+        PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/physxmetadata/core/include
+        PRIVATE ${PHYSX_SOURCE_DIR}/physxmetadata/extensions/include
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/physxextensions/src
+        PRIVATE ${PHYSX_SOURCE_DIR}/physxextensions/src/serialization/Xml
+        PRIVATE ${PHYSX_SOURCE_DIR}/physxextensions/src/serialization/Binary
+        PRIVATE ${PHYSX_SOURCE_DIR}/physxextensions/src/serialization/File
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/physx/src
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/pvd/include
+
+        PRIVATE ${PHYSX_SOURCE_DIR}/scenequery/include
+    )
+
+
+    SET(PROJECT_SOURCES ${PROJECT_SOURCES}
+        ${PHYSX_HEADERS}
+        ${PHYSX_COMMON_HEADERS}
+        ${PHYSX_MATERIAL_HEADERS}
+        ${PHYSX_PVD_HEADERS}
+        ${PHYSX_OMNIPVD_HEADERS}
+        ${PHYSX_OMNIPVD_SOURCE}
+        ${PHYSX_PVD_SOURCE}
+        ${PHYSX_SOLVER_HEADERS}
+        ${PHYSX_COLLISION_HEADERS}
+
+        ${PHYSX_METADATA_HEADERS}
+        ${PHYSX_METADATA_SOURCE}
+
+        ${PHYSX_CORE_SOURCE}
+        ${PHYSX_BUFFERING_SOURCE}
+        ${PHYSX_IMMEDIATEMODE_SOURCE}
+        ${PHYSX_MATERIALS_SOURCE}
+        ${PHYSX_ARTICULATIONS_SOURCE}
+
+        ${PHYSX_PLATFORM_SRC_FILES}
+
+        ${GPUDEPENDENCIES_INCLUDES}
+        ${GPUDEPENDENCIES_SOURCE}
+        ${GPUDEPENDENCIES_PLATFORM_SOURCE}
+        ${PHYSXFOUNDATION_SOURCE}
+    )
+
+    set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
+        ${PHYSX_PLATFORM_INCLUDES}
+
+        ${PHYSX_ROOT_DIR}/include
+
+        ${PHYSX_SOURCE_DIR}/common/include
+        ${PHYSX_SOURCE_DIR}/common/src
+
+        ${PHYSX_SOURCE_DIR}/physx/src
+        ${PHYSX_SOURCE_DIR}/physx/src/device
+        ${PHYSX_SOURCE_DIR}/physxgpu/include
+
+
+        ${PHYSX_SOURCE_DIR}/geomutils/include
+        ${PHYSX_SOURCE_DIR}/geomutils/src
+        ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+        ${PHYSX_SOURCE_DIR}/geomutils/src/common
+        ${PHYSX_SOURCE_DIR}/geomutils/src/convex
+        ${PHYSX_SOURCE_DIR}/geomutils/src/distance
+        ${PHYSX_SOURCE_DIR}/geomutils/src/sweep
+        ${PHYSX_SOURCE_DIR}/geomutils/src/gjk
+        ${PHYSX_SOURCE_DIR}/geomutils/src/intersection
+        ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
+        ${PHYSX_SOURCE_DIR}/geomutils/src/hf
+        ${PHYSX_SOURCE_DIR}/geomutils/src/pcm
+        ${PHYSX_SOURCE_DIR}/geomutils/src/ccd
+
+        ${PHYSX_SOURCE_DIR}/lowlevel/api/include
+        ${PHYSX_SOURCE_DIR}/lowlevel/software/include
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/utils
+
+        ${PHYSX_SOURCE_DIR}/lowlevelaabb/include
+
+        ${PHYSX_SOURCE_DIR}/lowleveldynamics/include
+        ${PHYSX_SOURCE_DIR}/lowleveldynamics/shared
+
+        ${PHYSX_SOURCE_DIR}/simulationcontroller/include
+        ${PHYSX_SOURCE_DIR}/simulationcontroller/src
+
+        ${PHYSX_SOURCE_DIR}/scenequery/include
+
+        ${PHYSX_SOURCE_DIR}/physxmetadata/core/include
+
+        ${PHYSX_SOURCE_DIR}/immediatemode/include
+
+        ${PHYSX_SOURCE_DIR}/pvd/include
+
+        ${PHYSX_SOURCE_DIR}/gpucommon/include
+        ${PHYSX_SOURCE_DIR}/gpucommon/src/CUDA
+
+        ${PHYSX_SOURCE_DIR}/omnipvd
+        ${PHYSX_ROOT_DIR}/pvdruntime/include
     )
 endif()
 
@@ -1039,7 +2409,7 @@ if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Debug)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Debug/mujoco.lib")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL Release)
+if(NOT use_physx_src AND CMAKE_BUILD_TYPE STREQUAL Release)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.lib")
@@ -1048,7 +2418,7 @@ if(CMAKE_BUILD_TYPE STREQUAL Release)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXPvdSDK_static_64.lib")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL Debug)
+if(NOT use_physx_src AND MAKE_BUILD_TYPE STREQUAL Debug)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.lib")
@@ -1084,27 +2454,43 @@ find_package(Qt6 REQUIRED COMPONENTS Xml)
 target_link_libraries(GaitSym5 PRIVATE Qt6::Xml)
 
 if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release) # for release builds make sure all the dlls are in place
+    if (NOT use_mucojo_src)
+        add_custom_command(TARGET GaitSym5 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Release/mujoco.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        )
+    endif()
+    if (NOT use_physx_src)
+        add_custom_command(TARGET GaitSym5 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        )
+    endif()
     add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Release/mujoco.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_CURRENT_BINARY_DIR}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
-)
-
-endif()
-
-if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Debug) # for release builds make sure all the dlls are in place
-    add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Debug/mujoco.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
         COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_CURRENT_BINARY_DIR}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
     )
 endif()
+
+if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Debug) # for release builds make sure all the dlls are in place
+    if (NOT use_mucojo_src)
+        add_custom_command(TARGET GaitSym5 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Debug/mujoco.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        )
+    endif()
+    if (NOT use_physx_src)
+        add_custom_command(TARGET GaitSym5 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        )
+    endif()
+    add_custom_command(TARGET GaitSym5 POST_BUILD
+        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_CURRENT_BINARY_DIR}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
+    )
+endif()
+
 
 function(dump_cmake_variables)
     get_cmake_property(_variableNames VARIABLES)
