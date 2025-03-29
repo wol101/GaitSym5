@@ -39,6 +39,7 @@ msbuild PhysXSDK.sln /p:Configuration=release
 
 The output files are put in "physx\bin\win.x86_64.vc143.mt" 
 
+Note, the build process generates nclude/PxConfig.h from buildtools/templates/PxIncludeTemplate.h
 
 Notes on MuJoCo compilation
 
