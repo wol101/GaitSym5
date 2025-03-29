@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
+# decide whether to use libraries or source code
+set(use_mucojo_src 1)
+set(use_physx_src 1)
+
 # set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 set(CMAKE_OSX_ARCHITECTURES x86_64) # this works better set in the project options
 # set(_CMAKE_APPLE_ARCHS_DEFAULT x86_64)
@@ -30,6 +34,11 @@ add_compile_definitions(dIDEDOUBLE dTRIMESH_ENABLED=1 dTRIMESH_OPCODE=1 dTRIMESH
     ICE_NO_DLL dTLS_ENABLED=0 USE_UNIX_ERRORS)
 if (MSVC)
     add_compile_definitions(HAVE_MALLOC_H)
+endif()
+
+# MuJoCo definitions
+if (use_mucojo_src)
+    add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC CCD_STATIC_DEFINE)
 endif()
 
 # glextrusion definitions
@@ -813,30 +822,198 @@ set(PROJECT_SOURCES
     ../GaitSymQt/resources.qrc
 )
 
+if (use_mucojo_src)
+    set(PROJECT_SOURCES ${PROJECT_SOURCES}
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_array_safety.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_callback.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_callback.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_box.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_convex.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_convex.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_driver.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_driver.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_gjk.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_gjk.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_primitive.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_primitive.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_sdf.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_sdf.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_constraint.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_constraint.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_smooth.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_smooth.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_crossplatform.cc
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_crossplatform.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative_fd.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative_fd.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_forward.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_forward.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_global_table.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_inverse.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_inverse.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_island.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_island.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_io.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_io.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_macro.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_name.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_name.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_passive.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_passive.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_plugin.cc
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_plugin.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_print.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_print.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_ray.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_ray.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_sensor.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_sensor.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_setconst.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_setconst.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_solver.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_solver.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_sort.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_support.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_support.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_blas.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_blas.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_errmem.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_errmem.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_misc.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_misc.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_solve.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_solve.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_sparse.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_sparse.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_sparse_avx.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_spatial.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_spatial.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_init.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_init.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_interact.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_interact.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_state.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_state.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_visualize.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_visualize.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_api.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_api.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_base.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_base.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_reader.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_reader.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_numeric_format.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_numeric_format.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_writer.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_writer.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_urdf.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_urdf.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_util.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_util.h
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_pool.cc
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_pool.h
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_queue.h
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_task.cc
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_task.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_api.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_api.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_cache.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_cache.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_composite.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_composite.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_flexcomp.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_flexcomp.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_init.c
+        ../MuJoCo/mujoco-3.3.0/src/user/user_mesh.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_model.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_model.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_objects.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_objects.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_resource.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_resource.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_util.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_util.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_vfs.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_vfs.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyxml2-src/tinyxml2.cpp
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyxml2-src/tinyxml2.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyobjloader-src/tiny_obj_loader.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyobjloader-src/tiny_obj_loader.cc
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/libqhull_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/geom_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/io_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/mem_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/merge_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/poly_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/qhull_ra.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/qset_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/random_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/stat_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/user_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/global_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/stat_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/geom2_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/poly2_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/merge_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/libqhull_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/geom_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/poly_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/qset_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/mem_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/random_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/usermem_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/userprintf_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/io_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/user_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/accessors_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/rboxlib_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/userprintf_rbox_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src/lodepng.cpp
+        ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src/lodepng.h
+    )
+endif()
+
 set(INCLUDE_DIRECTORIES
-../fast_double_parser
-../GaitSymQt
-../glextrusion
-../libgwavi
-../PhysX
-../pocketpy-2.0.4
-../pystring
-../rapidxml
-../src
-../tinyply
-../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/include
-../MuJoCo/mujoco-3.3.0/include
-../ode-0.15/OPCODE
-../ode-0.15/include
-../ode-0.15/libccd/src/
-../ode-0.15/ode/src
-../threepp/include
-../threepp/src
-../threepp/src/external/quickhull/
-../threepp/src/external/glad
-../threepp/src/external/nlohmann
-../threepp/src/external/stb
+    ../fast_double_parser
+    ../GaitSymQt
+    ../glextrusion
+    ../libgwavi
+    ../PhysX
+    ../pocketpy-2.0.4
+    ../pystring
+    ../rapidxml
+    ../src
+    ../tinyply
+    ../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/include
+    ../MuJoCo/mujoco-3.3.0/include
+    ../ode-0.15/OPCODE
+    ../ode-0.15/include
+    ../ode-0.15/libccd/src/
+    ../ode-0.15/ode/src
+    ../threepp/include
+    ../threepp/src
+    ../threepp/src/external/quickhull/
+    ../threepp/src/external/glad
+    ../threepp/src/external/nlohmann
+    ../threepp/src/external/stb
 )
+
+if (use_mucojo_src)
+    set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
+        ../MuJoCo/mujoco-3.3.0/build/_deps/marchingcubecpp-src
+        ../MuJoCo/mujoco-3.3.0/src
+        ../MuJoCo/mujoco-3.3.0/build/_deps/ccd-src/src
+        ../MuJoCo/mujoco-3.3.0/build/_deps/ccd-build/src
+        ../MuJoCo/mujoco-3.3.0/build/_deps/lodepng-src
+        ../MuJoCo/mujoco-3.3.0/build/_deps/qhull-src/src/libqhull_r
+        ../MuJoCo/mujoco-3.3.0/build/_deps/tinyobjloader-src
+        ../MuJoCo/mujoco-3.3.0/build/_deps/tinyxml2-src
+    )
+endif()
 
 qt_add_executable(GaitSym5
     MANUAL_FINALIZATION
@@ -855,8 +1032,14 @@ if(WIN32)
   target_link_libraries(GaitSym5 PRIVATE wsock32 ws2_32)
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL Release)
+if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Release)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Release/mujoco.lib")
+endif()
+if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Debug)
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Debug/mujoco.lib")
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL Release)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.lib")
@@ -866,7 +1049,6 @@ if(CMAKE_BUILD_TYPE STREQUAL Release)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Debug/mujoco.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.lib")
