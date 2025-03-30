@@ -1040,7 +1040,8 @@ if (use_mucojo_src)
 endif()
 
 if (use_physx_src)
-    SET(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx)
+    #SET(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx)
+    SET(PHYSX_ROOT_DIR ../PhysX/PhysX-107.0/physx)
     if (UNIX)
         SET(TARGET_BUILD_PLATFORM unix)
     endif()
@@ -1065,6 +1066,9 @@ if (use_physx_src)
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SimulationController.cmake)
 
 endif()
+
+list(REMOVE_DUPLICATES PROJECT_SOURCES)
+list(REMOVE_DUPLICATES INCLUDE_DIRECTORIES)
 
 qt_add_executable(GaitSym5
     MANUAL_FINALIZATION
