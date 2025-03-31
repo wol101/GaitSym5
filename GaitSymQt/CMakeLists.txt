@@ -50,7 +50,7 @@ if (use_physx_src)
     # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
     # PX_SCALAR_MATH [Disable SIMD math]
     # DISABLE_CUDA_PHYSX
-    add_compile_definitions(PX_PHYSX_STATIC_LIB)
+    add_compile_definitions(PX_PHYSX_STATIC_LIB PX_FLOAT_POINT_PRECISE_MATH)
 
     # build style (do not define any for release code)
     # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
@@ -235,7 +235,7 @@ set(PROJECT_SOURCES
     ../ode-0.15/ode/src/fastltsolve.cpp
     ../ode-0.15/ode/src/heightfield.cpp
     ../ode-0.15/ode/src/joints/amotor.cpp
-    ../ode-0.15/ode/src/joints/ball.cpp
+    ../ode-0.15/ode/src/joints/ball.cppPX_GENERATE_STATIC_LIBRARIES
     ../ode-0.15/ode/src/joints/contact.cpp
     ../ode-0.15/ode/src/joints/dball.cpp
     ../ode-0.15/ode/src/joints/dhinge.cpp
@@ -1046,13 +1046,14 @@ if (use_physx_src)
     set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx)
     #set(PHYSX_ROOT_DIR ../PhysX/PhysX-107.0/physx)
     if (UNIX)
-        set(TARGET_BUILD_PLATFORM unix)
+        set(TARGET_BUILD_PLATFORM linux)
     endif()
     if (WIN32)
         set(TARGET_BUILD_PLATFORM windows)
     endif()
     set(PROJECT_CMAKE_FILES_DIR ../../custom_cmake) # these have been copied from physx/source/compiler/cmake
     set(PX_GENERATE_STATIC_LIBRARIES 1)
+    set(PX_FLOAT_POINT_PRECISE_MATH 1)
 
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXFoundation.cmake)
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevel.cmake)
