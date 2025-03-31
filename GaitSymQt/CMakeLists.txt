@@ -862,7 +862,7 @@ set(INCLUDE_DIRECTORIES
     ../rapidxml
     ../src
     ../tinyply
-    ../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/include
+    ../PhysX/PhysX-107.0/physx/include
     ../MuJoCo/mujoco-3.3.0/include
     ../ode-0.15/OPCODE
     ../ode-0.15/include
@@ -1043,7 +1043,7 @@ endif()
 
 if (use_physx_src)
 
-    set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx)
+    set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
     #set(PHYSX_ROOT_DIR ../PhysX/PhysX-107.0/physx)
     if (UNIX)
         set(TARGET_BUILD_PLATFORM linux)
@@ -1113,21 +1113,21 @@ if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Debug)
 endif()
 
 if(NOT use_physx_src AND CMAKE_BUILD_TYPE STREQUAL Release)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXExtensions_static_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXPvdSDK_static_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysX_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXExtensions_static_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXPvdSDK_static_64.lib")
 endif()
 
 if(NOT use_physx_src AND MAKE_BUILD_TYPE STREQUAL Debug)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXCooking_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXExtensions_static_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/debug/PhysXPvdSDK_static_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCooking_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXExtensions_static_64.lib")
+    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXPvdSDK_static_64.lib")
 endif()
 
 set_target_properties(GaitSym5 PROPERTIES
@@ -1164,10 +1164,10 @@ if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release) # for release builds make sure a
     endif()
     if (NOT use_physx_src)
         add_custom_command(TARGET GaitSym5 POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
         )
     endif()
     add_custom_command(TARGET GaitSym5 POST_BUILD
@@ -1182,10 +1182,10 @@ if (WIN32 AND NOT use_mucojo_src)
 endif()
 if (WIN32 AND NOT use_physx_src)
     add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/debug/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
     )
 endif()
 
