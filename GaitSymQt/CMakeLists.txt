@@ -50,7 +50,7 @@ if (use_physx_src)
     # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
     # PX_SCALAR_MATH [Disable SIMD math]
     # DISABLE_CUDA_PHYSX
-    add_compile_definitions(PX_PHYSX_STATIC_LIB PX_FLOAT_POINT_PRECISE_MATH)
+    add_compile_definitions(DISABLE_CUDA_PHYSX PX_CHECKED PX_DEBUG=1 PX_NVTX=0 PX_PHYSX_STATIC_LIB PX_PUBLIC_RELEASE=1 PX_SUPPORT_OMNI_PVD=0 PX_SUPPORT_PVD=0)
 
     # build style (do not define any for release code)
     # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
@@ -235,7 +235,7 @@ set(PROJECT_SOURCES
     ../ode-0.15/ode/src/fastltsolve.cpp
     ../ode-0.15/ode/src/heightfield.cpp
     ../ode-0.15/ode/src/joints/amotor.cpp
-    ../ode-0.15/ode/src/joints/ball.cppPX_GENERATE_STATIC_LIBRARIES
+    ../ode-0.15/ode/src/joints/ball.cpp
     ../ode-0.15/ode/src/joints/contact.cpp
     ../ode-0.15/ode/src/joints/dball.cpp
     ../ode-0.15/ode/src/joints/dhinge.cpp
