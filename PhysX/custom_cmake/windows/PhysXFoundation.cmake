@@ -29,46 +29,83 @@
 #
 
 SET(PHYSXFOUNDATION_PLATFORM_INCLUDES
-    # $ENV{PM_winsdk_PATH}/include/ucrt
-    # $ENV{PM_winsdk_PATH}/include/um
-    # $ENV{PM_winsdk_PATH}/include/shared
+	# $ENV{PM_winsdk_PATH}/include/ucrt
+	# $ENV{PM_winsdk_PATH}/include/um
+	# $ENV{PM_winsdk_PATH}/include/shared
 )
 
+IF(PX_GENERATE_STATIC_LIBRARIES)
+	SET(PHYSXFOUNDATION_LIBTYPE STATIC)
+ELSE()
+	SET(PHYSXFOUNDATION_LIBTYPE SHARED)
+	SET(PXFOUNDATION_LIBTYPE_DEFS	PX_PHYSX_FOUNDATION_EXPORTS)
+ENDIF()
 
 SET(PHYSXFOUNDATION_PLATFORM_HEADERS
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsMathIntrinsics.h
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsIntrinsics.h
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsAoS.h
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsInlineAoS.h
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsTrigConstants.h
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsInclude.h
-    ${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsFPU.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsMathIntrinsics.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsIntrinsics.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsAoS.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsInlineAoS.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsTrigConstants.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsInclude.h
+	${PHYSX_ROOT_DIR}/include/foundation/windows/PxWindowsFPU.h
 )
 SOURCE_GROUP(include\\windows FILES ${PHYSXFOUNDATION_PLATFORM_HEADERS})
 
 
 SET(PHYSXFOUNDATION_RESOURCE_FILE
-    ${PHYSX_SOURCE_DIR}/compiler/windows/resource/PhysXFoundation.rc
-    ${PHYSX_SOURCE_DIR}/compiler/windows/resource/resource.h
+	${PHYSX_SOURCE_DIR}/compiler/windows/resource/PhysXFoundation.rc
+	${PHYSX_SOURCE_DIR}/compiler/windows/resource/resource.h
 )
 SOURCE_GROUP(resource FILES ${PHYSXFOUNDATION_RESOURCE_FILE})
 
 SET(PHYSXFOUNDATION_PLATFORM_SOURCE
-    ${LL_SOURCE_DIR}/windows/FdWindowsAtomic.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsMutex.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsSync.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsThread.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsPrintString.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsSList.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsSocket.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsTime.cpp
-    ${LL_SOURCE_DIR}/windows/FdWindowsFPU.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsAtomic.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsMutex.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsSync.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsThread.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsPrintString.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsSList.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsSocket.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsTime.cpp
+	${LL_SOURCE_DIR}/windows/FdWindowsFPU.cpp
 )
 SOURCE_GROUP(src\\windows FILES ${PHYSXFOUNDATION_PLATFORM_SOURCE})
 
+INSTALL(FILES ${PHYSXFOUNDATION_PLATFORM_HEADERS} DESTINATION include/foundation/windows)
+
 SET(PHYSXFOUNDATION_PLATFORM_FILES
-    ${PHYSXFOUNDATION_PLATFORM_HEADERS}
-    ${PHYSXFOUNDATION_PLATFORM_SOURCE}
-    ${PHYSXFOUNDATION_RESOURCE_FILE}
+	${PHYSXFOUNDATION_PLATFORM_HEADERS}
+	${PHYSXFOUNDATION_PLATFORM_SOURCE}
+	${PHYSXFOUNDATION_RESOURCE_FILE}
 )
 
+SET(PHYSXFOUNDATION_COMPILE_DEFS
+	# Common to all configurations
+	${PHYSX_WINDOWS_COMPILE_DEFS};_WINSOCK_DEPRECATED_NO_WARNINGS;${PXFOUNDATION_LIBTYPE_DEFS};${PHYSX_LIBTYPE_DEFS};
+
+	$<$<CONFIG:debug>:${PHYSX_WINDOWS_DEBUG_COMPILE_DEFS};>
+	$<$<CONFIG:checked>:${PHYSX_WINDOWS_CHECKED_COMPILE_DEFS};>
+	$<$<CONFIG:profile>:${PHYSX_WINDOWS_PROFILE_COMPILE_DEFS};>
+	$<$<CONFIG:release>:${PHYSX_WINDOWS_RELEASE_COMPILE_DEFS};>
+)
+
+IF(PHYSXFOUNDATION_LIBTYPE STREQUAL "STATIC")	
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_DEBUG "PhysXFoundation_static${CMAKE_DEBUG_POSTFIX}")
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_CHECKED "PhysXFoundation_static${CMAKE_CHECKED_POSTFIX}")
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_PROFILE "PhysXFoundation_static${CMAKE_PROFILE_POSTFIX}")
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_RELEASE "PhysXFoundation_static${CMAKE_RELEASE_POSTFIX}")
+ELSE()
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_DEBUG "PhysXFoundation${CMAKE_DEBUG_POSTFIX}")
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_CHECKED "PhysXFoundation${CMAKE_CHECKED_POSTFIX}")
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_PROFILE "PhysXFoundation${CMAKE_PROFILE_POSTFIX}")
+	SET(PHYSXFOUNDATION_COMPILE_PDB_NAME_RELEASE "PhysXFoundation${CMAKE_RELEASE_POSTFIX}")
+ENDIF()
+
+IF(PHYSXFOUNDATION_LIBTYPE STREQUAL "SHARED")
+	INSTALL(FILES $<TARGET_PDB_FILE:PhysXFoundation> 
+		DESTINATION $<$<CONFIG:debug>:${PX_ROOT_LIB_DIR}/debug>$<$<CONFIG:release>:${PX_ROOT_LIB_DIR}/release>$<$<CONFIG:checked>:${PX_ROOT_LIB_DIR}/checked>$<$<CONFIG:profile>:${PX_ROOT_LIB_DIR}/profile> OPTIONAL)
+ELSE()
+	INSTALL(FILES ${PHYSX_ROOT_DIR}/$<$<CONFIG:debug>:${PX_ROOT_LIB_DIR}/debug>$<$<CONFIG:release>:${PX_ROOT_LIB_DIR}/release>$<$<CONFIG:checked>:${PX_ROOT_LIB_DIR}/checked>$<$<CONFIG:profile>:${PX_ROOT_LIB_DIR}/profile>/$<$<CONFIG:debug>:${PHYSXFOUNDATION_COMPILE_PDB_NAME_DEBUG}>$<$<CONFIG:checked>:${PHYSXFOUNDATION_COMPILE_PDB_NAME_CHECKED}>$<$<CONFIG:profile>:${PHYSXFOUNDATION_COMPILE_PDB_NAME_PROFILE}>$<$<CONFIG:release>:${PHYSXFOUNDATION_COMPILE_PDB_NAME_RELEASE}>.pdb
+		DESTINATION $<$<CONFIG:debug>:${PX_ROOT_LIB_DIR}/debug>$<$<CONFIG:release>:${PX_ROOT_LIB_DIR}/release>$<$<CONFIG:checked>:${PX_ROOT_LIB_DIR}/checked>$<$<CONFIG:profile>:${PX_ROOT_LIB_DIR}/profile> OPTIONAL)	
+ENDIF()

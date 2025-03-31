@@ -36,58 +36,103 @@ include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/${TARGET_BUILD_PLATFORM}/Sc
 
 
 SET(SCENEQUERY_BASE_DIR ${PHYSX_ROOT_DIR}/source/scenequery)
-SET(SCENEQUERY_HEADERS
-    ${SCENEQUERY_BASE_DIR}/include/SqFactory.h
-    ${SCENEQUERY_BASE_DIR}/include/SqPruner.h
-    ${SCENEQUERY_BASE_DIR}/include/SqPrunerData.h
-    ${SCENEQUERY_BASE_DIR}/include/SqManager.h
-    ${SCENEQUERY_BASE_DIR}/include/SqQuery.h
-    ${SCENEQUERY_BASE_DIR}/include/SqTypedef.h
+SET(SCENEQUERY_HEADERS		
+	${SCENEQUERY_BASE_DIR}/include/SqFactory.h
+	${SCENEQUERY_BASE_DIR}/include/SqPruner.h
+	${SCENEQUERY_BASE_DIR}/include/SqPrunerData.h
+	${SCENEQUERY_BASE_DIR}/include/SqManager.h
+	${SCENEQUERY_BASE_DIR}/include/SqQuery.h
+	${SCENEQUERY_BASE_DIR}/include/SqTypedef.h
 )
 SOURCE_GROUP(include FILES ${SCENEQUERY_HEADERS})
 
-SET(SCENEQUERY_SOURCE
-    ${SCENEQUERY_BASE_DIR}/src/SqFactory.cpp
-    ${SCENEQUERY_BASE_DIR}/src/SqCompoundPruner.cpp
-    ${SCENEQUERY_BASE_DIR}/src/SqCompoundPruner.h
-    ${SCENEQUERY_BASE_DIR}/src/SqCompoundPruningPool.cpp
-    ${SCENEQUERY_BASE_DIR}/src/SqCompoundPruningPool.h
-    ${SCENEQUERY_BASE_DIR}/src/SqManager.cpp
-    ${SCENEQUERY_BASE_DIR}/src/SqQuery.cpp
+SET(SCENEQUERY_SOURCE			
+	${SCENEQUERY_BASE_DIR}/src/SqFactory.cpp
+	${SCENEQUERY_BASE_DIR}/src/SqCompoundPruner.cpp
+	${SCENEQUERY_BASE_DIR}/src/SqCompoundPruner.h	
+	${SCENEQUERY_BASE_DIR}/src/SqCompoundPruningPool.cpp
+	${SCENEQUERY_BASE_DIR}/src/SqCompoundPruningPool.h	
+	${SCENEQUERY_BASE_DIR}/src/SqManager.cpp
+	${SCENEQUERY_BASE_DIR}/src/SqQuery.cpp
 )
 SOURCE_GROUP(src FILES ${SCENEQUERY_SOURCE})
 
-set(PROJECT_SOURCES ${PROJECT_SOURCES}
-    ${SCENEQUERY_HEADERS}
-    ${SCENEQUERY_SOURCE}
+ADD_LIBRARY(SceneQuery ${SCENEQUERY_LIBTYPE}
+	${SCENEQUERY_HEADERS}
+	${SCENEQUERY_SOURCE}
 )
 
-set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
-    ${SCENEQUERY_PLATFORM_INCLUDES}
+# Target specific compile options
 
-    ${PHYSXFOUNDATION_INCLUDES}
+GET_TARGET_PROPERTY(PHYSXFOUNDATION_INCLUDES PhysXFoundation INTERFACE_INCLUDE_DIRECTORIES)
 
-    ${PHYSX_ROOT_DIR}/include
+TARGET_INCLUDE_DIRECTORIES(SceneQuery 
+	PRIVATE ${SCENEQUERY_PLATFORM_INCLUDES}
 
-    ${PHYSX_SOURCE_DIR}/common/include
-    ${PHYSX_SOURCE_DIR}/common/src
+	PRIVATE ${PHYSXFOUNDATION_INCLUDES}
 
-    ${PHYSX_SOURCE_DIR}/geomutils/include
-    ${PHYSX_SOURCE_DIR}/geomutils/src
-    ${PHYSX_SOURCE_DIR}/geomutils/src/contact
-    ${PHYSX_SOURCE_DIR}/geomutils/src/common
-    ${PHYSX_SOURCE_DIR}/geomutils/src/convex
-    ${PHYSX_SOURCE_DIR}/geomutils/src/distance
-    ${PHYSX_SOURCE_DIR}/geomutils/src/sweep
-    ${PHYSX_SOURCE_DIR}/geomutils/src/gjk
-    ${PHYSX_SOURCE_DIR}/geomutils/src/intersection
-    ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
-    ${PHYSX_SOURCE_DIR}/geomutils/src/hf
-    ${PHYSX_SOURCE_DIR}/geomutils/src/pcm
-    ${PHYSX_SOURCE_DIR}/geomutils/src/ccd
+	PRIVATE ${PHYSX_ROOT_DIR}/include
 
-    ${PHYSX_SOURCE_DIR}/scenequery/include
+	PRIVATE ${PHYSX_SOURCE_DIR}/common/include
+	PRIVATE ${PHYSX_SOURCE_DIR}/common/src
+	
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/include
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/common
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/convex
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/distance
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/sweep
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/gjk
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/intersection
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/hf
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/pcm
+	PRIVATE ${PHYSX_SOURCE_DIR}/geomutils/src/ccd
 
-    ${PHYSX_SOURCE_DIR}/pvd/include
+	PRIVATE ${PHYSX_SOURCE_DIR}/scenequery/include
+
+	PRIVATE ${PHYSX_SOURCE_DIR}/pvd/include
 )
 
+# Use generator expressions to set config specific preprocessor definitions
+TARGET_COMPILE_DEFINITIONS(SceneQuery 
+
+	# Common to all configurations
+	PRIVATE ${SCENEQUERY_COMPILE_DEFS}
+)
+
+IF(SCENEQUERY_LIBTYPE STREQUAL "STATIC")	
+	SET_TARGET_PROPERTIES(SceneQuery PROPERTIES 
+		ARCHIVE_OUTPUT_NAME_DEBUG "SceneQuery_static"
+		ARCHIVE_OUTPUT_NAME_CHECKED "SceneQuery_static"
+		ARCHIVE_OUTPUT_NAME_PROFILE "SceneQuery_static"
+		ARCHIVE_OUTPUT_NAME_RELEASE "SceneQuery_static"
+	)
+ENDIF()
+
+IF(SQ_COMPILE_PDB_NAME_DEBUG)	
+	SET_TARGET_PROPERTIES(SceneQuery PROPERTIES 
+		COMPILE_PDB_NAME_DEBUG "${SQ_COMPILE_PDB_NAME_DEBUG}"
+		COMPILE_PDB_NAME_CHECKED "${SQ_COMPILE_PDB_NAME_CHECKED}"
+		COMPILE_PDB_NAME_PROFILE "${SQ_COMPILE_PDB_NAME_PROFILE}"
+		COMPILE_PDB_NAME_RELEASE "${SQ_COMPILE_PDB_NAME_RELEASE}"
+	)
+ENDIF()
+
+IF(PX_EXPORT_LOWLEVEL_PDB)
+	SET_TARGET_PROPERTIES(SceneQuery PROPERTIES 
+		COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${PHYSX_ROOT_DIR}/${PX_ROOT_LIB_DIR}/debug/"
+		COMPILE_PDB_OUTPUT_DIRECTORY_CHECKED "${PHYSX_ROOT_DIR}/${PX_ROOT_LIB_DIR}/checked/"
+		COMPILE_PDB_OUTPUT_DIRECTORY_PROFILE "${PHYSX_ROOT_DIR}/${PX_ROOT_LIB_DIR}/profile/"
+		COMPILE_PDB_OUTPUT_DIRECTORY_RELEASE "${PHYSX_ROOT_DIR}/${PX_ROOT_LIB_DIR}/release/"
+	)
+ENDIF()
+
+IF(PX_GENERATE_SOURCE_DISTRO)			
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${SCENEQUERY_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${SCENEQUERY_SOURCE})
+ENDIF()
+
+# enable -fPIC so we can link static libs with the editor
+SET_TARGET_PROPERTIES(SceneQuery PROPERTIES POSITION_INDEPENDENT_CODE TRUE)

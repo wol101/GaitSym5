@@ -35,88 +35,88 @@ SET(LL_SOURCE_DIR ${PHYSX_SOURCE_DIR}/physxvehicle/src)
 include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/${TARGET_BUILD_PLATFORM}/PhysXVehicle.cmake)
 
 SET(PHYSX_VEHICLE_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleAPI.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleComponent.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleComponentSequence.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleLimits.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleMaths.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleAPI.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleComponent.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleComponentSequence.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleLimits.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/PxVehicleMaths.h
 )
 SET(PHYSX_VEHICLE_BRAKING_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/braking/PxVehicleBrakingFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/braking/PxVehicleBrakingParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/braking/PxVehicleBrakingFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/braking/PxVehicleBrakingParams.h
 )
 SET(PHYSX_VEHICLE_COMMAND_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/commands/PxVehicleCommandHelpers.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/commands/PxVehicleCommandParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/commands/PxVehicleCommandStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/commands/PxVehicleCommandHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/commands/PxVehicleCommandParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/commands/PxVehicleCommandStates.h
 )
 SET(PHYSX_VEHICLE_DRIVETRAIN_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainHelpers.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/drivetrain/PxVehicleDrivetrainStates.h
 )
 SET(PHYSX_VEHICLE_PHYSXACTOR_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorHelpers.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxActor/PxVehiclePhysXActorStates.h
 )
 SET(PHYSX_VEHICLE_PHYSXCONSTRAINT_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintHelpers.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxConstraints/PxVehiclePhysXConstraintStates.h
 )
 SET(PHYSX_VEHICLE_PHYSXROADGEOMETRY_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryHelpers.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryParams.h
     ${PHYSX_ROOT_DIR}/include/vehicle2/physxRoadGeometry/PxVehiclePhysXRoadGeometryState.h
 )
 SET(PHYSX_VEHICLE_RIGIDBODY_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/rigidBody/PxVehicleRigidBodyStates.h
 )
 SET(PHYSX_VEHICLE_ROADGEOMETRY_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/roadGeometry/PxVehicleRoadGeometryState.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/roadGeometry/PxVehicleRoadGeometryState.h
 )
 SET(PHYSX_VEHICLE_STEERING_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/steering/PxVehicleSteeringFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/steering/PxVehicleSteeringParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/steering/PxVehicleSteeringFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/steering/PxVehicleSteeringParams.h
 )
 SET(PHYSX_VEHICLE_SUSPENSION_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionStates.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/suspension/PxVehicleSuspensionHelpers.h
 )
 SET(PHYSX_VEHICLE_TIRE_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireHelpers.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/tire/PxVehicleTireStates.h
 )
 SET(PHYSX_VEHICLE_WHEEL_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelParams.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelStates.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelParams.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelStates.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/wheel/PxVehicleWheelHelpers.h
 )
 SET(PHYSX_VEHICLE_PVD_HEADERS
-    ${PHYSX_ROOT_DIR}/include/vehicle2/pvd/PxVehiclePvdComponents.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/pvd/PxVehiclePvdFunctions.h
-    ${PHYSX_ROOT_DIR}/include/vehicle2/pvd/PxVehiclePvdHelpers.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/pvd/PxVehiclePvdComponents.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/pvd/PxVehiclePvdFunctions.h
+	${PHYSX_ROOT_DIR}/include/vehicle2/pvd/PxVehiclePvdHelpers.h
 )
 
 SOURCE_GROUP(include FILES ${PHYSX_VEHICLE_HEADERS})
@@ -138,48 +138,48 @@ SOURCE_GROUP(include\\pvd FILES ${PHYSX_VEHICLE_PVD_HEADERS})
 SET(PHYSX_VEHICLE_BRAKING_SOURCE
 )
 SET(PHYSX_VEHICLE_COMMANDS_SOURCE
-    ${LL_SOURCE_DIR}/commands/VhCommandHelpers.cpp
+	${LL_SOURCE_DIR}/commands/VhCommandHelpers.cpp
 )
 SET(PHYSX_VEHICLE_DRIVETRAIN_SOURCE
-    ${LL_SOURCE_DIR}/drivetrain/VhDrivetrainFunctions.cpp
-    ${LL_SOURCE_DIR}/drivetrain/VhDrivetrainHelpers.cpp
+	${LL_SOURCE_DIR}/drivetrain/VhDrivetrainFunctions.cpp
+	${LL_SOURCE_DIR}/drivetrain/VhDrivetrainHelpers.cpp
 )
 SET(PHYSX_VEHICLE_PHYSXACTOR_SOURCE
-    ${LL_SOURCE_DIR}/physxActor/VhPhysXActorFunctions.cpp
-    ${LL_SOURCE_DIR}/physxActor/VhPhysXActorHelpers.cpp
+	${LL_SOURCE_DIR}/physxActor/VhPhysXActorFunctions.cpp
+	${LL_SOURCE_DIR}/physxActor/VhPhysXActorHelpers.cpp
 )
 SET(PHYSX_VEHICLE_PHYSXCONSTRAINT_SOURCE
-    ${LL_SOURCE_DIR}/physxConstraints/VhPhysXConstraintFunctions.cpp
-    ${LL_SOURCE_DIR}/physxConstraints/VhPhysXConstraintHelpers.cpp
+	${LL_SOURCE_DIR}/physxConstraints/VhPhysXConstraintFunctions.cpp
+	${LL_SOURCE_DIR}/physxConstraints/VhPhysXConstraintHelpers.cpp
 )
 SET(PHYSX_VEHICLE_PHYSXROADGEOMETRY_SOURCE
-    ${LL_SOURCE_DIR}/physxRoadGeometry/VhPhysXRoadGeometryFunctions.cpp
-    ${LL_SOURCE_DIR}/physxRoadGeometry/VhPhysXRoadGeometryHelpers.cpp
+	${LL_SOURCE_DIR}/physxRoadGeometry/VhPhysXRoadGeometryFunctions.cpp
+	${LL_SOURCE_DIR}/physxRoadGeometry/VhPhysXRoadGeometryHelpers.cpp
 )
 SET(PHYSX_VEHICLE_RIGIDBODY_SOURCE
-    ${LL_SOURCE_DIR}/rigidBody/VhRigidBodyFunctions.cpp
+	${LL_SOURCE_DIR}/rigidBody/VhRigidBodyFunctions.cpp
 )
 SET(PHYSX_VEHICLE_STEERING_SOURCE
-    ${LL_SOURCE_DIR}/steering/VhSteeringFunctions.cpp
+	${LL_SOURCE_DIR}/steering/VhSteeringFunctions.cpp
 )
 SET(PHYSX_VEHICLE_SUSPENSION_SOURCE
-    ${LL_SOURCE_DIR}/suspension/VhSuspensionFunctions.cpp
+	${LL_SOURCE_DIR}/suspension/VhSuspensionFunctions.cpp
     ${LL_SOURCE_DIR}/suspension/VhSuspensionHelpers.cpp
 )
 SET(PHYSX_VEHICLE_TIRE_SOURCE
-    ${LL_SOURCE_DIR}/tire/VhTireFunctions.cpp
-    ${LL_SOURCE_DIR}/tire/VhTireHelpers.cpp
+	${LL_SOURCE_DIR}/tire/VhTireFunctions.cpp
+	${LL_SOURCE_DIR}/tire/VhTireHelpers.cpp
 )
 SET(PHYSX_VEHICLE_WHEEL_SOURCE
-    ${LL_SOURCE_DIR}/wheel/VhWheelFunctions.cpp
+	${LL_SOURCE_DIR}/wheel/VhWheelFunctions.cpp
 )
 SET(PHYSX_VEHICLE_PVD_SOURCE
-    ${LL_SOURCE_DIR}/pvd/VhPvdAttributeHandles.h
-    ${LL_SOURCE_DIR}/pvd/VhPvdObjectHandles.h
-    ${LL_SOURCE_DIR}/pvd/VhPvdHelpers.cpp
-    ${LL_SOURCE_DIR}/pvd/VhPvdFunctions.cpp
-    ${LL_SOURCE_DIR}/pvd/VhPvdWriter.cpp
-    ${LL_SOURCE_DIR}/pvd/VhPvdWriter.h
+	${LL_SOURCE_DIR}/pvd/VhPvdAttributeHandles.h
+	${LL_SOURCE_DIR}/pvd/VhPvdObjectHandles.h
+	${LL_SOURCE_DIR}/pvd/VhPvdHelpers.cpp
+	${LL_SOURCE_DIR}/pvd/VhPvdFunctions.cpp
+	${LL_SOURCE_DIR}/pvd/VhPvdWriter.cpp
+	${LL_SOURCE_DIR}/pvd/VhPvdWriter.h
 )
 
 SOURCE_GROUP(src\\braking FILES ${PHYSX_VEHICLE_BRAKING_SOURCE})
@@ -195,38 +195,118 @@ SOURCE_GROUP(src\\tire FILES ${PHYSX_VEHICLE_TIRE_SOURCE})
 SOURCE_GROUP(src\\wheel FILES ${PHYSX_VEHICLE_WHEEL_SOURCE})
 SOURCE_GROUP(src\\pvd FILES ${PHYSX_VEHICLE_PVD_SOURCE})
 
-set(PROJECT_SOURCES ${PROJECT_SOURCES}
-    ${PHYSX_VEHICLE_BRAKING_SOURCE}
-    ${PHYSX_VEHICLE_COMMANDS_SOURCE}
-    ${PHYSX_VEHICLE_DRIVETRAIN_SOURCE}
-    ${PHYSX_VEHICLE_PHYSXACTOR_SOURCE}
-    ${PHYSX_VEHICLE_PHYSXCONSTRAINT_SOURCE}
-    ${PHYSX_VEHICLE_PHYSXROADGEOMETRY_SOURCE}
-    ${PHYSX_VEHICLE_RIGIDBODY_SOURCE}
-    ${PHYSX_VEHICLE_STEERING_SOURCE}
-    ${PHYSX_VEHICLE_SUSPENSION_SOURCE}
-    ${PHYSX_VEHICLE_TIRE_SOURCE}
-    ${PHYSX_VEHICLE_WHEEL_SOURCE}
-    ${PHYSX_VEHICLE_PVD_SOURCE}
-    ${PHYSX_VEHICLE_HEADERS}
-    ${PHYSX_VEHICLE_BRAKING_HEADERS}
-    ${PHYSX_VEHICLE_COMMAND_HEADERS}
-    ${PHYSX_VEHICLE_DRIVETRAIN_HEADERS}
-    ${PHYSX_VEHICLE_PHYSXACTOR_HEADERS}
-    ${PHYSX_VEHICLE_PHYSXCONSTRAINT_HEADERS}
-    ${PHYSX_VEHICLE_PHYSXROADGEOMETRY_HEADERS}
-    ${PHYSX_VEHICLE_RIGIDBODY_HEADERS}
-    ${PHYSX_VEHICLE_ROADGEOMETRY_HEADERS}
-    ${PHYSX_VEHICLE_STEERING_HEADERS}
-    ${PHYSX_VEHICLE_SUSPENSION_HEADERS}
-    ${PHYSX_VEHICLE_TIRE_HEADERS}
-    ${PHYSX_VEHICLE_WHEEL_HEADERS}
-    ${PHYSX_VEHICLE_PVD_HEADERS}
+ADD_LIBRARY(PhysXVehicle2 ${PHYSXVEHICLE_LIBTYPE}
+	${PHYSX_VEHICLE_BRAKING_SOURCE}
+	${PHYSX_VEHICLE_COMMANDS_SOURCE}
+	${PHYSX_VEHICLE_DRIVETRAIN_SOURCE}
+	${PHYSX_VEHICLE_PHYSXACTOR_SOURCE}
+	${PHYSX_VEHICLE_PHYSXCONSTRAINT_SOURCE}
+	${PHYSX_VEHICLE_PHYSXROADGEOMETRY_SOURCE}
+	${PHYSX_VEHICLE_RIGIDBODY_SOURCE}
+	${PHYSX_VEHICLE_STEERING_SOURCE}
+	${PHYSX_VEHICLE_SUSPENSION_SOURCE}
+	${PHYSX_VEHICLE_TIRE_SOURCE}
+	${PHYSX_VEHICLE_WHEEL_SOURCE}
+	${PHYSX_VEHICLE_PVD_SOURCE}
+	${PHYSX_VEHICLE_HEADERS}
+	${PHYSX_VEHICLE_BRAKING_HEADERS}
+	${PHYSX_VEHICLE_COMMAND_HEADERS}
+	${PHYSX_VEHICLE_DRIVETRAIN_HEADERS}
+	${PHYSX_VEHICLE_PHYSXACTOR_HEADERS}
+	${PHYSX_VEHICLE_PHYSXCONSTRAINT_HEADERS}
+	${PHYSX_VEHICLE_PHYSXROADGEOMETRY_HEADERS}
+	${PHYSX_VEHICLE_RIGIDBODY_HEADERS}
+	${PHYSX_VEHICLE_ROADGEOMETRY_HEADERS}
+	${PHYSX_VEHICLE_STEERING_HEADERS}
+	${PHYSX_VEHICLE_SUSPENSION_HEADERS}
+	${PHYSX_VEHICLE_TIRE_HEADERS}
+	${PHYSX_VEHICLE_WHEEL_HEADERS}
+	${PHYSX_VEHICLE_PVD_HEADERS}
 )
 
-set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
-    ${PHYSXVEHICLE_PLATFORM_INCLUDES}
-    ${PHYSX_ROOT_DIR}/include
-    ${PHYSX_ROOT_DIR}/pvdruntime/include
+INSTALL(FILES ${PHYSX_VEHICLE_HEADERS} DESTINATION include/vehicle2)
+INSTALL(FILES ${PHYSX_VEHICLE_BRAKING_HEADERS} DESTINATION include/vehicle2/braking)
+INSTALL(FILES ${PHYSX_VEHICLE_COMMAND_HEADERS} DESTINATION include/vehicle2/commands)
+INSTALL(FILES ${PHYSX_VEHICLE_DRIVETRAIN_HEADERS} DESTINATION include/vehicle2/drivetrain)
+INSTALL(FILES ${PHYSX_VEHICLE_PHYSXACTOR_HEADERS} DESTINATION include/vehicle2/physxActor)
+INSTALL(FILES ${PHYSX_VEHICLE_PHYSXCONSTRAINT_HEADERS} DESTINATION include/vehicle2/physxConstraints)
+INSTALL(FILES ${PHYSX_VEHICLE_PHYSXROADGEOMETRY_HEADERS} DESTINATION include/vehicle2/physxRoadGeometry)
+INSTALL(FILES ${PHYSX_VEHICLE_RIGIDBODY_HEADERS} DESTINATION include/vehicle2/rigidBody)
+INSTALL(FILES ${PHYSX_VEHICLE_ROADGEOMETRY_HEADERS} DESTINATION include/vehicle2/roadGeometry)
+INSTALL(FILES ${PHYSX_VEHICLE_STEERING_HEADERS} DESTINATION include/vehicle2/steering)
+INSTALL(FILES ${PHYSX_VEHICLE_SUSPENSION_HEADERS} DESTINATION include/vehicle2/suspension)
+INSTALL(FILES ${PHYSX_VEHICLE_TIRE_HEADERS} DESTINATION include/vehicle2/tire)
+INSTALL(FILES ${PHYSX_VEHICLE_WHEEL_HEADERS} DESTINATION include/vehicle2/wheel)
+INSTALL(FILES ${PHYSX_VEHICLE_PVD_HEADERS} DESTINATION include/vehicle2/pvd)
+
+TARGET_INCLUDE_DIRECTORIES(PhysXVehicle2
+	PRIVATE ${PHYSXVEHICLE_PLATFORM_INCLUDES}
+	PRIVATE ${PHYSX_ROOT_DIR}/include
+	PRIVATE ${PHYSX_ROOT_DIR}/pvdruntime/include
 )
 
+# No linked libraries
+
+# Use generator expressions to set config specific preprocessor definitions
+TARGET_COMPILE_DEFINITIONS(PhysXVehicle2
+	PRIVATE ${PHYSXVEHICLE_COMPILE_DEFS}
+)
+
+SET_TARGET_PROPERTIES(PhysXVehicle2 PROPERTIES
+	OUTPUT_NAME PhysXVehicle2
+)
+
+
+IF(PHYSXVEHICLE_LIBTYPE STREQUAL "STATIC")
+	SET_TARGET_PROPERTIES(PhysXVehicle2 PROPERTIES
+		ARCHIVE_OUTPUT_NAME_DEBUG "PhysXVehicle2_static"
+		ARCHIVE_OUTPUT_NAME_CHECKED "PhysXVehicle2_static"
+		ARCHIVE_OUTPUT_NAME_PROFILE "PhysXVehicle2_static"
+		ARCHIVE_OUTPUT_NAME_RELEASE "PhysXVehicle2_static"
+	)
+ENDIF()
+
+IF(PHYSXVEHICLE_COMPILE_PDB_NAME_DEBUG)
+	SET_TARGET_PROPERTIES(PhysXVehicle2 PROPERTIES
+		COMPILE_PDB_NAME_DEBUG ${PHYSXVEHICLE_COMPILE_PDB_NAME_DEBUG}
+		COMPILE_PDB_NAME_CHECKED ${PHYSXVEHICLE_COMPILE_PDB_NAME_CHECKED}
+		COMPILE_PDB_NAME_PROFILE ${PHYSXVEHICLE_COMPILE_PDB_NAME_PROFILE}
+		COMPILE_PDB_NAME_RELEASE ${PHYSXVEHICLE_COMPILE_PDB_NAME_RELEASE}
+	)
+ENDIF()
+
+TARGET_LINK_LIBRARIES(PhysXVehicle2
+	PUBLIC ${PHYSXVEHICLE_PLATFORM_LINKED_LIBS} PhysXFoundation PhysXCommon PhysXCooking PhysX PhysXExtensions
+)
+
+IF(PX_GENERATE_SOURCE_DISTRO)
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_BRAKING_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_COMMAND_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_DRIVETRAIN_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PHYSXACTOR_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PHYSXCONSTRAINT_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PHYSXROADGEOMETRY_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_RIGIDBODY_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_ROADGEOMETRY_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_STEERING_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_SUSPENSION_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_TIRE_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_WHEEL_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PVD_HEADERS})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_BRAKING_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_COMMANDS_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_DRIVETRAIN_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PHYSXACTOR_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PHYSXCONSTRAINT_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PHYSXROADGEOMETRY_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_RIGIDBODY_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_STEERING_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_SUSPENSION_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_TIRE_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_WHEEL_SOURCE})
+	LIST(APPEND SOURCE_DISTRO_FILE_LIST ${PHYSX_VEHICLE_PVD_SOURCE})
+ENDIF()
+
+# enable -fPIC so we can link static libs with the editor
+SET_TARGET_PROPERTIES(PhysXVehicle2 PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
