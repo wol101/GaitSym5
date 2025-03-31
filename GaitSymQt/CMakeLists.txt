@@ -1088,7 +1088,20 @@ target_link_libraries(GaitSym5 PRIVATE Qt6::OpenGL)
 target_link_libraries(GaitSym5 PRIVATE Qt6::OpenGLWidgets)
 
 if(WIN32)
-  target_link_libraries(GaitSym5 PRIVATE wsock32 ws2_32)
+    target_link_libraries(GaitSym5 PRIVATE wsock32 ws2_32)
+endif()
+
+if(use_physx_src)
+    target_link_libraries(GaitSym5 PRIVATE
+        PhysXCharacterKinematic_static.lib
+        PhysXCommon_static.lib
+        PhysXCooking_static.lib
+        PhysXExtensions_static.lib
+        PhysXFoundation_static.lib
+        PhysXPvdSDK_static.lib
+        PhysXVehicle2_static.lib
+        PhysX_static.lib
+    )
 endif()
 
 if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Release)
