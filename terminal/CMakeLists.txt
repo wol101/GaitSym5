@@ -3,6 +3,10 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+# decide whether to use libraries or source code
+set(use_mucojo_src 1)
+set(use_physx_src 1)
+
 # this command stops the CMAKE_BUILD_TYPE from being cached
 SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
 
@@ -20,29 +24,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # generates detailed compile_commands.json
 if(CMAKE_BUILD_TYPE STREQUAL Release)
     add_compile_definitions(QT_NO_DEBUG_OUTPUT) # stops qDebug from generating any output
     message(STATUS "QT_NO_DEBUG_OUTPUT defined")
-endif()
-
-add_compile_definitions(PX_PHYSX_STATIC_LIB)
-# options
-# PX_SUPPORT_GPU_PHYSX
-# PX_SUPPORT_PVD
-# PX_ENABLE_FEATURES_UNDER_CONSTRUCTION
-# PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
-# DISABLE_CUDA_PHYSX
-
-# build style (do not define any for release code)
-# PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
-# PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
-# PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
-if(CMAKE_BUILD_TYPE STREQUAL Debug)
-    add_compile_definitions(PX_CHECKED)
-    message(STATUS "PX_CHECKED defined")
-    #add_compile_definitions(PX_SUPPORT_PVD)
-    #message(STATUS "PX_SUPPORT_PVD defined")
-endif()
-if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
-    add_compile_definitions(PX_SIMD_DISABLED)
-    message(STATUS "PX_SIMD_DISABLED defined")
 endif()
 
 # MuJoCo definitions
@@ -68,563 +49,12 @@ if (MSVC)
 endif()
 
 set(PROJECT_SOURCES
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmCollection.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmPtrTable.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmRadixSort.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmSerialize.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/CmVisualization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/fastxml/src/PsFastXml.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdAllocator.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdAssert.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdFoundation.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdMathUtils.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdString.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/FdTempAllocator.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/ccd/GuCCDSweepConvexMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/ccd/GuCCDSweepPrimitives.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuAdjacencies.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuBarycentricCoordinates.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuEdgeList.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuMeshAnalysis.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuMeshCleaner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuQuantizer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuSeparatingAxes.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common/GuVertexReducer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactBoxBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactCapsuleBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactCapsuleCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactCapsuleConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactCapsuleMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactConvexConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactConvexMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactCustomGeometry.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactPlaneBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactPlaneCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactPlaneConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactPolygonPolygon.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactSphereBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactSphereCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactSphereMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactSpherePlane.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuContactSphereSphere.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact/GuFeatureCode.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuBigConvexData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuConvexHelper.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuConvexMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuConvexSupportTable.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuConvexUtilsInternal.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuHillClimbing.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex/GuShapeConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingBigConvexDataBuilder.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingBVH.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingConvexHullBuilder.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingConvexHullLib.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingConvexHullUtils.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingConvexMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingConvexMeshBuilder.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingConvexPolygonsBuilder.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingHF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingQuickHullConvexHullLib.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingTetrahedronMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingTriangleMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuCookingVolumeIntegration.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/cooking/GuRTreeCooking.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistancePointBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistancePointTetrahedron.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistancePointTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistanceSegmentBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistanceSegmentSegment.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistanceSegmentTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance/GuDistanceTriangleTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk/GuEPA.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk/GuGJKSimplex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk/GuGJKTest.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuAABBPruner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuAABBTree.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuAABBTreeUpdateMap.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuActorShapeMap.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuBounds.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuBucketPruner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuBVH.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuCCTSweepTests.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuCookingSDF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuExtendedBucketPruner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuFactory.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuGeometryQuery.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuGjkQuery.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuIncrementalAABBPruner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuIncrementalAABBPrunerCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuIncrementalAABBTree.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuInternal.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuMaverickNode.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuMeshFactory.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuMetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuMTD.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuOverlapTests.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuPruningPool.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuQuerySystem.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuRaycastTests.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSAH.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSDF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSecondaryPruner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSqInternal.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSweepMTD.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSweepSharedTests.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuSweepTests.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/GuWindingNumber.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf/GuHeightField.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf/GuHeightFieldUtil.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf/GuOverlapTestsHF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf/GuSweepsHF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionBoxBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionCapsuleTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionEdgeEdge.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionRayBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionRayCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionRaySphere.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionSphereBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionTetrahedronBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionTriangleBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection/GuIntersectionTriangleTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV32.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV32Build.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4Build.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_AABBSweep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_BoxOverlap.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_CapsuleSweep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_CapsuleSweepAA.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_MeshMeshOverlap.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_OBBSweep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_Raycast.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_SphereOverlap.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuBV4_SphereSweep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuMeshQuery.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuMidphaseBV4.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuMidphaseRTree.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuOverlapTestsMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuRTree.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuRTreeQueries.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuSweepsMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuTetrahedronMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuTetrahedronMeshUtils.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuTriangleMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuTriangleMeshBV4.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh/GuTriangleMeshRTree.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactBoxBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactBoxConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactCapsuleBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactCapsuleCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactCapsuleConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactCapsuleHeightField.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactCapsuleMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactConvexCommon.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactConvexConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactConvexHeightField.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactConvexMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactCustomGeometry.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactGenBoxConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactGenSphereCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactGenUtil.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactPlaneBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactPlaneCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactPlaneConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSphereBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSphereCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSphereConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSphereHeightField.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSphereMesh.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSpherePlane.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMContactSphereSphere.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMShapeConvex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPCMTriangleContactGen.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm/GuPersistentContactManifold.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepBoxBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepBoxSphere.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepBoxTriangle_FeatureBased.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepBoxTriangle_SAT.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepCapsuleBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepCapsuleCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepCapsuleTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepSphereCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepSphereSphere.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepSphereTriangle.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep/GuSweepTriangleUtils.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/immediatemode/src/NpImmediateMode.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/api/src/px_globals.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcContactCache.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcContactMethodImpl.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcMaterialMethodImpl.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcNpBatch.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcNpCacheStreamPair.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcNpContactPrepShared.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcNpMemBlockPool.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/src/pipeline/PxcNpThreadContext.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsCCD.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsContactManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsContext.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsDefaultMemoryManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsIslandSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsNphaseImplementationContext.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/src/PxsSimpleIslandManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpAABBManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpAABBManagerBase.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhase.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhaseABP.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhaseMBP.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhaseSap.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhaseSapAux.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhaseShared.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpBroadPhaseUpdate.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/src/BpFiltering.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyArticulationContactPrep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyArticulationContactPrepPF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyConstraintPartition.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyConstraintSetup.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyConstraintSetupBlock.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyContactPrep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyContactPrep4.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyContactPrep4PF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyContactPrepPF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyDynamics.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyFeatherstoneArticulation.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyFeatherstoneForwardDynamic.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyFeatherstoneInverseDynamic.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyFrictionCorrelation.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyRigidBodyToSolverBody.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySleep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySolverConstraints.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySolverConstraintsBlock.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySolverControl.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySolverControlPF.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySolverPFConstraints.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DySolverPFConstraintsBlock.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyTGSContactPrep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyTGSContactPrepBlock.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyTGSDynamics.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyThreadContext.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/src/DyThresholdTable.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/gpu/PxGpu.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/gpu/PxPhysXGpuModuleLoader.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpActor.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpAggregate.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpArticulationJointReducedCoordinate.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpArticulationLink.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpArticulationReducedCoordinate.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpArticulationSensor.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpArticulationTendon.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpBounds.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpCheck.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpConstraint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpDebugViz.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpFactory.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpFEMCloth.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpFEMClothMaterial.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpFEMSoftBodyMaterial.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpFLIPMaterial.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpHairSystem.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpMaterial.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpMetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpMPMMaterial.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpParticleSystem.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpPBDMaterial.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpPhysics.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpPruningStructure.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpPvdSceneClient.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpPvdSceneQueryCollector.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpRigidDynamic.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpRigidStatic.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpScene.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpSceneFetchResults.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpSceneQueries.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpSerializerAdapter.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpShape.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpShapeManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/NpSoftBody.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/omnipvd/NpOmniPvd.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/omnipvd/NpOmniPvdRegistrationData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/omnipvd/OmniPvdChunkAlloc.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/omnipvd/OmniPvdPxSampler.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/PvdMetaDataPvdBinding.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/PvdPhysicsClient.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctBoxController.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctCapsuleController.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctCharacterController.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctCharacterControllerCallbacks.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctCharacterControllerManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctController.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctObstacleContext.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctSweptBox.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctSweptCapsule.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcharacterkinematic/src/CctSweptVolume.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcooking/src/Cooking.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtBroadPhase.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtCollection.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtContactJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtConvexMeshExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtCpuWorkerThread.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtCustomGeometryExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtCustomSceneQuerySystem.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtD6Joint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtD6JointCreate.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtDefaultCpuDispatcher.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtDefaultErrorCallback.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtDefaultSimulationFilterShader.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtDefaultStreams.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtDistanceJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtExtensions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtFixedJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtGearJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtGjkQueryExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtMetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleClothCooker.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtPrismaticJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtPvd.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtPxStringTable.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtRackAndPinionJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtRaycastCCD.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtRemeshingExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtRevoluteJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtRigidActorExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtRigidBodyExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSampling.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSceneQueryExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSceneQuerySystem.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSimpleFactory.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSmoothNormals.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSoftBodyExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSphericalJoint.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSqManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtSqQuery.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtTetMakerExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtTetrahedronMeshExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtTriangleMeshExt.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/omnipvd/ExtOmniPvdRegistrationData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/omnipvd/OmniPvdPxExtensionsSampler.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnBinaryDeserialization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnBinarySerialization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX_Align.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX_Convert.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX_Error.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX_MetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX_Output.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnConvX_Union.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary/SnSerializationContext.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/SnSerialization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/SnSerializationRegistry.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/SnSerialUtils.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml/SnJointRepXSerializer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml/SnRepXCoreSerializer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml/SnRepXUpgrader.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml/SnXmlSerialization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtBVH.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtDelaunayBoundaryInserter.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtDelaunayTetrahedralizer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtFastWindingNumber.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtInsideTester.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtMeshSimplificator.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtOctreeTetrahedralizer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtRemesher.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtTetSplitting.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtTetUnionFind.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtUtilities.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/tet/ExtVoxelTetrahedralizer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/core/src/PxAutoGeneratedMetaDataObjects.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/core/src/PxMetaDataObjects.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/extensions/src/PxExtensionAutoGeneratedMetaDataObjects.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/physxmetadata/src/PxVehicleAutoGeneratedMetaDataObjects.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/physxmetadata/src/PxVehicleMetaDataObjects.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleComponents.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleDrive.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleDrive4W.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleDriveNW.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleDriveTank.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleMetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleNoDrive.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleSDK.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleSerialization.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleSuspWheelTire4.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleTireFriction.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleUpdate.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/PxVehicleWheels.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/VehicleUtilControl.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/VehicleUtilSetup.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/VehicleUtilTelemetry.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/commands/VhCommandHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/drivetrain/VhDrivetrainFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/drivetrain/VhDrivetrainHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/physxActor/VhPhysXActorFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/physxActor/VhPhysXActorHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/physxConstraints/VhPhysXConstraintFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/physxConstraints/VhPhysXConstraintHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/physxRoadGeometry/VhPhysXRoadGeometryFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/physxRoadGeometry/VhPhysXRoadGeometryHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/pvd/VhPvdFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/pvd/VhPvdHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/pvd/VhPvdWriter.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/rigidBody/VhRigidBodyFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/steering/VhSteeringFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/suspension/VhSuspensionFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/suspension/VhSuspensionHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/tire/VhTireFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/tire/VhTireHelpers.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle2/src/wheel/VhWheelFunctions.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxProfileEventImpl.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvd.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdDataStream.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdDefaultFileTransport.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdDefaultSocketTransport.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdImpl.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdMemClient.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdObjectModelMetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdObjectRegistrar.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdProfileZoneClient.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/src/PxPvdUserRenderer.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/src/SqCompoundPruner.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/src/SqCompoundPruningPool.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/src/SqFactory.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/src/SqManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/src/SqQuery.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScActorCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScActorSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationJointCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationJointSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationSensorSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationTendonCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationTendonJointCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScArticulationTendonSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScBodyCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScBodySim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScBroadphase.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScCCD.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScConstraintBreakage.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScConstraintCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScConstraintInteraction.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScConstraintSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScElementInteractionMarker.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScElementSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScFEMClothCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScFEMClothShapeSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScFEMClothSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScFiltering.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScHairSystemCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScHairSystemShapeCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScHairSystemShapeSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScHairSystemSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScInteraction.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScIterators.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScKinematics.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScMetaData.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScNPhaseCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScParticleSystemCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScParticleSystemShapeCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScParticleSystemShapeSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScParticleSystemSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScPhysics.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScPipeline.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScRigidCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScRigidSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScScene.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScShapeCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScShapeInteraction.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScShapeSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScShapeSimBase.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSimStats.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSimulationController.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSleep.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSoftBodyCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSoftBodyShapeSim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSoftBodySim.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScSqBoundsManager.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScStaticCore.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScTriggerInteraction.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src/ScVisualize.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/task/src/TaskManager.cpp
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_callback.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_collision_box.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_collision_convex.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_collision_driver.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_collision_primitive.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_collision_sdf.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_core_constraint.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_core_smooth.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_crossplatform.cc
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_derivative.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_derivative_fd.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_forward.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_inverse.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_island.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_io.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_passive.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_plugin.cc
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_print.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_ray.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_resource.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_sensor.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_setconst.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_solver.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_support.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_util_blas.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_util_errmem.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_util_misc.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_util_solve.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_util_sparse.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_util_spatial.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_vfs.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_vis_init.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_vis_interact.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_vis_state.c
-    ../MuJoCo/mujoco-3.0.1/src/engine/engine_vis_visualize.c
-    ../MuJoCo/mujoco-3.0.1/src/thread/thread_pool.cc
-    ../MuJoCo/mujoco-3.0.1/src/thread/thread_task.cc
-    ../MuJoCo/mujoco-3.0.1/src/user/user_composite.cc
-    ../MuJoCo/mujoco-3.0.1/src/user/user_flexcomp.cc
-    ../MuJoCo/mujoco-3.0.1/src/user/user_mesh.cc
-    ../MuJoCo/mujoco-3.0.1/src/user/user_model.cc
-    ../MuJoCo/mujoco-3.0.1/src/user/user_objects.cc
-    ../MuJoCo/mujoco-3.0.1/src/user/user_util.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_api.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_base.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_native_reader.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_numeric_format.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_native_writer.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_urdf.cc
-    ../MuJoCo/mujoco-3.0.1/src/xml/xml_util.cc
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src/ccd.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src/support.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src/mpr.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src/vec3.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src/polytope.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/accessors_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/geom2_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/geom_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/global_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/io_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/libqhull_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/mem_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/merge_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/poly2_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/poly_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/qset_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/random_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/rboxlib_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/stat_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/user_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/usermem_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/userprintf_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r/userprintf_rbox_r.c
-    ../MuJoCo/mujoco-3.0.1/build/_deps/lodepng-src/lodepng.cpp
-    ../MuJoCo/mujoco-3.0.1/build/_deps/tinyxml2-src/tinyxml2.cpp
-    ../MuJoCo/mujoco-3.0.1/build/_deps/tinyobjloader-src/tiny_obj_loader.cc
-
-    ../ode-0.15/OPCODE/Ice/IceAABB.cpp
+    ../ode-0.15/libccd/src/alloc.c
+    ../ode-0.15/libccd/src/ccd.c
+    ../ode-0.15/libccd/src/mpr.c
+    ../ode-0.15/libccd/src/polytope.c
+    ../ode-0.15/libccd/src/support.c
+    ../ode-0.15/libccd/src/vec3.c    ../ode-0.15/OPCODE/Ice/IceAABB.cpp
     ../ode-0.15/OPCODE/Ice/IceContainer.cpp
     ../ode-0.15/OPCODE/Ice/IceHPoint.cpp
     ../ode-0.15/OPCODE/Ice/IceIndexedTriangle.cpp
@@ -1055,103 +485,254 @@ set(PROJECT_SOURCES
     ../src/ObjectiveMainASIOAsync.h
 )
 
-IF(CMAKE_HOST_UNIX)
-set(PROJECT_SOURCES
-   ${PROJECT_SOURCES}
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixAtomic.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixFPU.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixMutex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixPrintString.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixSList.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixSocket.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixSync.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixThread.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/unix/FdUnixTime.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/linux/PhysXIndicatorLinux.cpp
-)
-ELSEIF(CMAKE_HOST_WIN32)
-set(PROJECT_SOURCES
-   ${PROJECT_SOURCES}
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsAtomic.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsFPU.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsMutex.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsPrintString.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsSList.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsSocket.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsSync.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsThread.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/foundation/windows/FdWindowsTime.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsDelayLoadHook.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src/windows/CmWindowsModuleUpdateLoader.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device/windows/PhysXIndicatorWindows.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/windows/NpWindowsDelayLoadHook.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxcooking/src/windows/WindowsCookingDelayLoadHook.cpp
-    ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp)
-ENDIF(CMAKE_HOST_UNIX)
-
 set(INCLUDE_DIRECTORIES
-../fast_double_parser
-../GaitSymQt
-../PhysX
-../pocketpy-2.0.4
-../pystring
-../rapidxml
-../src
-../tinyply
-../asio-1.18.2/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/gjk
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/fastxml/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/convex
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/distance
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/common
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/intersection
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/mesh
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/common/src
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/hf
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/sweep
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/contact
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/pcm
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/api/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/pipeline
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/software/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/collision
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevelaabb/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowleveldynamics/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/lowlevel/common/include/utils
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxgpu/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src/device
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/scenequery/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physx/src
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/simulationcontroller/src
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/geomutils/src/ccd
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/pvd/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/File
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/core/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src/physxmetadata/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxmetadata/extensions/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Xml
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/filebuf/include
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/serialization/Binary
-../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxvehicle/src
-../MuJoCo/mujoco-3.0.1/build/_deps/marchingcubecpp-src
-../MuJoCo/mujoco-3.0.1/include
-../MuJoCo/mujoco-3.0.1/src
-../MuJoCo/mujoco-3.0.1/build/_deps/ccd-src/src
-../MuJoCo/mujoco-3.0.1/build/_deps/ccd-build/src
-../MuJoCo/mujoco-3.0.1/build/_deps/lodepng-src
-../MuJoCo/mujoco-3.0.1/build/_deps/qhull-src/src/libqhull_r
-../MuJoCo/mujoco-3.0.1/build/_deps/tinyobjloader-src
-../MuJoCo/mujoco-3.0.1/build/_deps/tinyxml2-src
-../ode-0.15/OPCODE
-../ode-0.15/include
-../ode-0.15/ode/src
+    ../fast_double_parser
+    ../GaitSymQt
+    ../PhysX
+    ../pocketpy-2.0.4
+    ../pystring
+    ../rapidxml
+    ../src
+    ../tinyply
+    ../PhysX/PhysX-107.0/physx/include
+    ../MuJoCo/mujoco-3.3.0/include
+    ../asio-1.18.2/include
+    ../ode-0.15/OPCODE
+    ../ode-0.15/include
+    ../ode-0.15/libccd/src/
+    ../ode-0.15/ode/src
 )
+
+if (use_mucojo_src)
+    set(PROJECT_SOURCES ${PROJECT_SOURCES}
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_array_safety.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_callback.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_callback.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_box.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_convex.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_convex.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_driver.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_driver.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_gjk.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_gjk.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_primitive.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_primitive.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_sdf.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_collision_sdf.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_constraint.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_constraint.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_smooth.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_core_smooth.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_crossplatform.cc
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_crossplatform.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative_fd.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_derivative_fd.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_forward.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_forward.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_global_table.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_inverse.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_inverse.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_island.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_island.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_io.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_io.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_macro.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_name.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_name.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_passive.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_passive.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_plugin.cc
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_plugin.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_print.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_print.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_ray.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_ray.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_sensor.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_sensor.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_setconst.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_setconst.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_solver.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_solver.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_sort.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_support.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_support.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_blas.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_blas.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_errmem.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_errmem.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_misc.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_misc.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_solve.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_solve.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_sparse.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_sparse.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_sparse_avx.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_spatial.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_util_spatial.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_init.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_init.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_interact.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_interact.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_state.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_state.h
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_visualize.c
+        ../MuJoCo/mujoco-3.3.0/src/engine/engine_vis_visualize.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_api.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_api.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_base.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_base.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_reader.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_reader.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_numeric_format.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_numeric_format.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_writer.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_native_writer.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_urdf.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_urdf.h
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_util.cc
+        ../MuJoCo/mujoco-3.3.0/src/xml/xml_util.h
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_pool.cc
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_pool.h
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_queue.h
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_task.cc
+        ../MuJoCo/mujoco-3.3.0/src/thread/thread_task.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_api.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_api.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_cache.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_cache.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_composite.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_composite.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_flexcomp.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_flexcomp.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_init.c
+        ../MuJoCo/mujoco-3.3.0/src/user/user_mesh.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_model.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_model.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_objects.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_objects.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_resource.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_resource.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_util.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_util.h
+        ../MuJoCo/mujoco-3.3.0/src/user/user_vfs.cc
+        ../MuJoCo/mujoco-3.3.0/src/user/user_vfs.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyxml2-src/tinyxml2.cpp
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyxml2-src/tinyxml2.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyobjloader-src/tiny_obj_loader.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyobjloader-src/tiny_obj_loader.cc
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/libqhull_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/geom_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/io_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/mem_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/merge_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/poly_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/qhull_ra.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/qset_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/random_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/stat_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/user_r.h
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/global_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/stat_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/geom2_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/poly2_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/merge_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/libqhull_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/geom_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/poly_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/qset_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/mem_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/random_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/usermem_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/userprintf_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/io_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/user_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/accessors_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/rboxlib_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r/userprintf_rbox_r.c
+        ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src/lodepng.cpp
+        ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src/lodepng.h
+    )
+
+    set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
+        ../MuJoCo/mujoco-3.3.0/src
+        ../MuJoCo/mujoco-3.3.0/dependencies/lodepng-src
+        ../MuJoCo/mujoco-3.3.0/dependencies/marchingcubecpp-src
+        ../MuJoCo/mujoco-3.3.0/dependencies/qhull-src/src/libqhull_r
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyobjloader-src
+        ../MuJoCo/mujoco-3.3.0/dependencies/tinyxml2-src
+    )
+
+endif()
+
+if (use_physx_src)
+
+    # compiler define options (get set to zero if undefined)
+    # PX_SUPPORT_GPU_PHYSX
+    # PX_SUPPORT_PVD
+    # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
+    # DISABLE_CUDA_PHYSX
+    # PX_SUPPORT_OMNI_PVD
+    # PX_SUPPORT_PVD
+    # PX_NVTX
+
+    # build style compiler definitions (do not define any for release code)
+    # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive, must be used with PX_CHECKED]
+    # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
+    # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
+
+    # cmake variables used to control build
+    # PX_SCALAR_MATH [Disable SIMD math]
+    # PX_PUBLIC_RELEASE
+
+    add_compile_definitions(DISABLE_CUDA_PHYSX PX_PHYSX_STATIC_LIB)
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        add_compile_definitions(PX_DEBUG PX_CHECKED)
+    endif()
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
+        add_compile_definitions(PX_SIMD_DISABLED)
+    endif()
+
+    # cmake variables used to control build
+    # PX_SCALAR_MATH [Disable SIMD math]
+    # PX_PUBLIC_RELEASE
+    # PX_GENERATE_STATIC_LIBRARIES
+    # PX_FLOAT_POINT_PRECISE_MATH [Visual C++ only]
+
+    set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
+    #set(PHYSX_ROOT_DIR ../PhysX/PhysX-107.0/physx)
+    if (UNIX)
+        set(TARGET_BUILD_PLATFORM linux)
+    endif()
+    if (WIN32)
+        set(TARGET_BUILD_PLATFORM windows)
+    endif()
+    set(PROJECT_CMAKE_FILES_DIR ../../custom_cmake) # these have been copied from physx/source/compiler/cmake
+    set(PX_GENERATE_STATIC_LIBRARIES 1)
+    set(PX_FLOAT_POINT_PRECISE_MATH 1)
+
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXFoundation.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevel.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevelAABB.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevelDynamics.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysX.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXCharacterKinematic.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXCommon.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXCooking.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXExtensions.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXPvdSDK.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXTask.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXVehicle.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SceneQuery.cmake)
+    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SimulationController.cmake)
+
+endif()
+
+list(REMOVE_DUPLICATES PROJECT_SOURCES)
+list(REMOVE_DUPLICATES INCLUDE_DIRECTORIES)
 
 add_executable(gaitsym5
     ${PROJECT_SOURCES}
@@ -1175,6 +756,21 @@ target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
 if (CMAKE_BUILD_TYPE STREQUAL Release)
     target_compile_options(gaitsym5 PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
     target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
+endif()
+
+if(use_physx_src)
+    set(LINK_LIBS
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXCharacterKinematic_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXCommon_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXCooking_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXExtensions_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXFoundation_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXPvdSDK_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXVehicle2_static.a
+        ${CMAKE_CURRENT_BINARY_DIR}/libPhysX_static.a
+    )
+    target_link_libraries(gaitsym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
+    target_link_libraries(gaitsym5_asio PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
 endif()
 
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
