@@ -41,35 +41,6 @@ if (use_mucojo_src)
     add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC CCD_STATIC_DEFINE)
 endif()
 
-# physx definitions
-if (use_physx_src)
-    # options
-    # PX_SUPPORT_GPU_PHYSX
-    # PX_SUPPORT_PVD
-    # PX_ENABLE_FEATURES_UNDER_CONSTRUCTION
-    # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
-    # PX_SCALAR_MATH [Disable SIMD math]
-    # DISABLE_CUDA_PHYSX
-    add_compile_definitions(DISABLE_CUDA_PHYSX PX_CHECKED PX_DEBUG=1 PX_NVTX=0 PX_PHYSX_STATIC_LIB PX_PUBLIC_RELEASE=1 PX_SUPPORT_OMNI_PVD=0 PX_SUPPORT_PVD=0)
-
-    # build style (do not define any for release code)
-    # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive]
-    # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
-    # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
-    if(CMAKE_BUILD_TYPE STREQUAL Debug)
-        add_compile_definitions(PX_DEBUG)
-        message(STATUS "PX_DEBUG defined")
-        add_compile_definitions(PX_CHECKED)
-        message(STATUS "PX_CHECKED defined")
-        # add_compile_definitions(PX_SUPPORT_PVD)
-        # message(STATUS "PX_SUPPORT_PVD defined")
-    endif()
-    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
-        add_compile_definitions(PX_SIMD_DISABLED)
-        message(STATUS "PX_SIMD_DISABLED defined")
-    endif()
-endif()
-
 # glextrusion definitions
 add_compile_definitions(TRIANGLE_GENERATOR __GLE_DOUBLE)
 
@@ -1042,6 +1013,38 @@ if (use_mucojo_src)
 endif()
 
 if (use_physx_src)
+
+    # compiler define options (get set to zero if undefined)
+    # PX_SUPPORT_GPU_PHYSX
+    # PX_SUPPORT_PVD
+    # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
+    # DISABLE_CUDA_PHYSX
+    # PX_SUPPORT_OMNI_PVD
+    # PX_SUPPORT_PVD
+    # PX_NVTX
+
+    # build style compiler definitions (do not define any for release code)
+    # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive, must be used with PX_CHECKED]
+    # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
+    # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
+
+    # cmake variables used to control build
+    # PX_SCALAR_MATH [Disable SIMD math]
+    # PX_PUBLIC_RELEASE
+
+    add_compile_definitions(DISABLE_CUDA_PHYSX PX_PHYSX_STATIC_LIB)
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        add_compile_definitions(PX_DEBUG PX_CHECKED)
+    endif()
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
+        add_compile_definitions(PX_SIMD_DISABLED)
+    endif()
+
+    # cmake variables used to control build
+    # PX_SCALAR_MATH [Disable SIMD math]
+    # PX_PUBLIC_RELEASE
+    # PX_GENERATE_STATIC_LIBRARIES
+    # PX_FLOAT_POINT_PRECISE_MATH [Visual C++ only]
 
     set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
     #set(PHYSX_ROOT_DIR ../PhysX/PhysX-107.0/physx)
