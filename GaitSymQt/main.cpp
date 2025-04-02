@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setRenderableType(QSurfaceFormat::OpenGL);
-    fmt.setVersion(3, 3); // OpenGL 3.3
+    // fmt.setVersion(3, 3); // OpenGL 3.3 [if not specified then it seems to use the highest available]
     fmt.setProfile(QSurfaceFormat::CoreProfile); // only use the core functions
     fmt.setDepthBufferSize(24);
 #ifndef Q_OS_MACOS // these do nothing on MacOS anyway and cause OpenGL to fail on M1

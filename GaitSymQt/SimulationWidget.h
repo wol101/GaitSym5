@@ -18,11 +18,7 @@
 
 #include <QOpenGLWindow>
 #include <QElapsedTimer>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLFunctions_3_3_Core>
 #include <QMatrix4x4>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
 #include <QMouseEvent>
 
 #include <memory>
@@ -31,7 +27,7 @@
 namespace GaitSym { class Simulation; }
 class MainWindow;
 
-class SimulationWidget : public QOpenGLWindow, protected QOpenGLFunctions_3_3_Core
+class SimulationWidget : public QOpenGLWindow
 {
     Q_OBJECT
 
