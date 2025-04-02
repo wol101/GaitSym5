@@ -754,8 +754,10 @@ target_compile_definitions(gaitsym5 PRIVATE USE_CL)
 target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release)
-    target_compile_options(gaitsym5 PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
-    target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
+#    target_compile_options(gaitsym5 PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
+#    target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
+    target_compile_options(gaitsym5 PRIVATE -static -O3)
+    target_compile_options(gaitsym5_asio PRIVATE -static -O3)
 endif()
 
 if(use_physx_src)
