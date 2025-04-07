@@ -56,11 +56,10 @@ compile_commands.json
 # Visual Studio
 */.vs
 
-GaitSymQt/build/
 build
 *.bak
 inno_setup/inno_setup
 PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/bin
 PhysX/PhysX-107.0-physx-5.6.0-flow-2.2.0-blast-5.0.6/physx/compiler
-
+sync.ffs_db
 
