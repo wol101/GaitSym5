@@ -20,9 +20,9 @@
 #include "BallJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
+#include "ConvexGeom.h"
+#include "TrimeshGeom.h"
 #include "Marker.h"
-#include "MagicMuscle.h"
-#include "GSUtil.h"
 
 #include "collision_util.h"
 
@@ -212,6 +212,7 @@ std::string *ODEPhysicsEngine::CreateJoints()
                 dJointSetFixed(jointID);
                 break;
             }
+            std::cerr << "Unsupported JOINT type \"" << iter.second.get()->type();
             break;
         }
     }
@@ -250,6 +251,105 @@ std::string *ODEPhysicsEngine::CreateGeoms()
                 dGeomSetBody(geomID, nullptr); // planes have to be attached to the world
                 break;
             }
+            if (ConvexGeom *convexGeom = dynamic_cast<ConvexGeom *>(iter.second.get()))
+            {
+                // these are the data as required by the setConvex routine
+                std::vector<double> m_planes;
+                std::vector <double> m_points;
+                std::vector<unsigned int> m_polygons;
+                // set the limits
+                size_t pointcount = static_cast<unsigned int>(convexGeom->vertices()->size() / 3);
+                size_t planecount = static_cast<unsigned int>(convexGeom->triangles()->size() / 3);
+                // copy the vertices into m_points
+                m_points.reserve(pointcount * 3);
+                for (size_t i = 0; i < convexGeom->vertices()->size(); i++) m_points.push_back(convexGeom->vertices()->at(i));
+                // copy the triangles into m_polygons with the correct vertex count
+                m_polygons.reserve(planecount * 4);
+                for (size_t i = 0; i < convexGeom->triangles()->size();)
+                {
+                    m_polygons.push_back(3);
+                    m_polygons.push_back(convexGeom->triangles()->at(i++));
+                    m_polygons.push_back(convexGeom->triangles()->at(i++));
+                    m_polygons.push_back(convexGeom->triangles()->at(i++));
+                }
+                // calculate and write the planes
+                // Transform a parametric plane form to the cartesian form
+                //
+                // We are given a plane in the parametric form x = p + ru + sv and
+                // want to transform it to the cartesian form ax+ by + cz = d.
+                // First we need to calculate the normal vector equation of the plane by using the cross product:
+                //
+                //    n = cross(u, v)
+                //
+                // n may need normalising depending on how u and v are calculated
+                // We calculate d as dot(n, p) and a, b, and c are the components of the n vector:
+                //
+                // dot(n, x) = dot(n, p)
+                // n1x + n2y + n3z = dot(n, p)
+                // ax + by + cz = d
+                m_planes.clear();
+                m_planes.reserve((convexGeom->triangles()->size() / 3) * 4);
+                pgd::Vector3 v1, v2, v3;
+                pgd::Vector3 p, u, v;
+                pgd::Vector3 n;
+                double d;
+                for (size_t i = 0; i < convexGeom->triangles()->size();)
+                {
+                    v1.Set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
+                           convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 1),
+                           convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 2));
+                    i++;
+                    v2.Set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
+                           convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 1),
+                           convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 2));
+                    i++;
+                    v3.Set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
+                           convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 1),
+                           convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 2));
+                    i++;
+                    // for a triangle v1, v2, v3, if the vector U = v2 - v1 and the vector V = v3 - v1
+                    // then the normal N = U x V
+                    // Note: the normal is the same if V = v3 - v2
+                    p = v1;
+                    u = v2 - v1;
+                    v = v3 - v1;
+                    n = pgd::Cross(u, v);
+                    n.Normalize();
+                    d = pgd::Dot(n, p);
+                    m_planes.push_back(n.x);
+                    m_planes.push_back(n.y);
+                    m_planes.push_back(n.z);
+                    m_planes.push_back(d);
+                    // std::cerr << n.x << " " << n.y << " " << n.z << " " << d << "\n";
+                }
+                geomID = dCreateConvex(m_spaceID, m_planes.data(), planecount, m_points.data(), pointcount, m_polygons.data());
+                dGeomSetData(geomID, convexGeom);
+                iter.second->setData(geomID);
+                dBodyID bodyID = reinterpret_cast<dBodyID>(convexGeom->GetBody()->data());
+                dGeomSetBody(geomID, bodyID);
+                break;
+            }
+            if (TrimeshGeom *trimeshGeom = dynamic_cast<TrimeshGeom *>(iter.second.get()))
+            {
+                ;
+                double *m_Vertices = trimeshGeom->vertices()->data();
+                int *m_TriIndexes = trimeshGeom->triangles()->data();
+                int m_NumVertices = trimeshGeom->vertices()->size();
+                int m_NumTriIndexes = m_NumVertices;
+
+                dTriMeshDataID m_TriMeshDataID = dGeomTriMeshDataCreate();
+                dGeomTriMeshDataBuildDouble(m_TriMeshDataID,
+                                            m_Vertices, 3 * sizeof(double), m_NumVertices,
+                                            m_TriIndexes, m_NumTriIndexes, 3 * sizeof(int));
+
+                geomID =  dCreateTriMesh (m_spaceID, m_TriMeshDataID, 0, 0, 0);
+                dGeomSetData(geomID, trimeshGeom);
+                iter.second->setData(geomID);
+                dBodyID bodyID = reinterpret_cast<dBodyID>(trimeshGeom->GetBody()->data());
+                dGeomSetBody(geomID, bodyID);
+                break;
+            }
+            std::cerr << "Unsupported GEOM type \"" << iter.second.get()->type();
             break;
         }
     }
@@ -291,11 +391,6 @@ std::string *ODEPhysicsEngine::Step()
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
             const PointForce *pf = pointForceList->at(i).get();
-            // if (auto muscle = dynamic_cast<MagicMuscle *>(iter.second.get()))
-            // {
-            //     std::ofstream log("c:/scratch/debug.log", std::ios_base::app);
-            //     log << simulation()->GetTime() << "\t" << pf->body->name() << GSUtil::ToString(pf->point) << "\t" << GSUtil::ToString(pf->vector) << "\n";
-            // }
             if (pf->body)
             {
                 dBodyAddForceAtPos(reinterpret_cast<dBodyID>(pf->body->data()),

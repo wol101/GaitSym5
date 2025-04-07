@@ -28,6 +28,7 @@
 #include "CappedCylinderGeom.h"
 #include "SphereGeom.h"
 #include "ConvexGeom.h"
+#include "TrimeshGeom.h"
 #include "Muscle.h"
 #include "MAMuscle.h"
 #include "MAMuscleComplete.h"
@@ -630,6 +631,14 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
         convexGeom->createAttributeMap(node->attributes);
         errorMessage = convexGeom->createFromAttributes();
         geom = std::move(convexGeom);
+    }
+    else if (buf == "Trimesh"s)
+    {
+        std::unique_ptr<TrimeshGeom> trimeshGeom = std::make_unique<TrimeshGeom>();
+        trimeshGeom->setSimulation(this);
+        trimeshGeom->createAttributeMap(node->attributes);
+        errorMessage = trimeshGeom->createFromAttributes();
+        geom = std::move(trimeshGeom);
     }
     else
     {

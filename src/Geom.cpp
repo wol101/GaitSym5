@@ -201,6 +201,11 @@ Marker *Geom::geomMarker() const
     return m_geomMarker;
 }
 
+std::string Geom::type() const
+{
+    return m_type;
+}
+
 // this function initialises the data in the object based on the contents
 // of an xml_node node. It uses information from the simulation as required
 // to satisfy dependencies
@@ -209,6 +214,10 @@ std::string *Geom::createFromAttributes()
 {
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf, buf2;
+
+    if (findAttribute("Type"s, &buf) == nullptr) return lastErrorPtr();
+    m_type = buf;
+
     if (findAttribute("MarkerID"s, &buf) == nullptr) return lastErrorPtr();
     auto it = simulation()->GetMarkerList()->find(buf);
     if (it == simulation()->GetMarkerList()->end())
@@ -326,6 +335,7 @@ void Geom::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     std::string buf;
+    setAttribute("Type", type());
     setAttribute("MarkerID"s, m_geomMarker->name());
     setAttribute("SpringConstant"s, *GSUtil::ToString(m_SpringConstant, &buf));
     setAttribute("DampingConstant"s, *GSUtil::ToString(m_DampingConstant, &buf));

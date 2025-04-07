@@ -90,6 +90,8 @@ public:
     void setGeomMarker(Marker *geomMarker); // virtual because this is specialised for some geoms e.g. plane
     Marker *geomMarker() const;
 
+    std::string type() const;
+
 private:
 
     Body *m_body = nullptr;
@@ -115,6 +117,8 @@ private:
     // used for XMLSave
     double m_SpringConstant = 0;
     double m_DampingConstant = 0;
+
+    std::string m_type;
 };
 
 }

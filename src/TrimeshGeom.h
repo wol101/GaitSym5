@@ -1,9 +1,9 @@
 /*
  *  TrimeshGeom.h
- *  GaitSymODE
+ *  GaitSym2019
  *
- *  Created by Bill Sellers on 11/08/2009.
- *  Copyright 2009 Bill Sellers. All rights reserved.
+ *  Created by Bill Sellers on 27/02/2021.
+ *  Copyright 2021 Bill Sellers. All rights reserved.
  *
  */
 
@@ -15,19 +15,25 @@
 namespace GaitSym
 {
 
-class TrimeshGeom : public Geom
+class TrimeshGeom: public Geom
 {
 public:
-    TrimeshGeom(const std::vector<double> &vertexList);
+    TrimeshGeom();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+    std::vector<double> *vertices();
+
+    std::vector<int> *triangles();
+
 private:
-    std::vector<double> m_vertexList;
+    std::vector<double> m_vertices;
+    std::vector<int> m_triangles;
+    bool m_reverseWinding = false;
+    int m_indexStart = 0; // allows both 1 indexed and 0 indexed triangle to make pasting in OBJ data easier
 };
 
 }
 
 #endif // TRIMESHGEOM_H
-

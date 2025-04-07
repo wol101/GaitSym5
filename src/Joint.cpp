@@ -59,6 +59,9 @@ std::string *Joint::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
+    if (findAttribute("Type"s, &buf) == nullptr) return lastErrorPtr();
+    m_type = buf;
+
     if (findAttribute("Body1MarkerID"s, &buf) == nullptr) return lastErrorPtr();
     auto marker1Iterator = simulation()->GetMarkerList()->find(buf);
     if (marker1Iterator == simulation()->GetMarkerList()->end())
@@ -118,6 +121,7 @@ void Joint::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     std::string buf;
+    setAttribute("Type", type());
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
     if (m_CFM >= 0) setAttribute("CFM"s, *GSUtil::ToString(m_CFM, &buf));
@@ -189,6 +193,11 @@ pgd::Vector3 Joint::torque() const
 void Joint::setTorque(const pgd::Vector3 &newTorque)
 {
     m_torque = newTorque;
+}
+
+std::string Joint::type() const
+{
+    return m_type;
 }
 
 

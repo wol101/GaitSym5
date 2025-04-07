@@ -64,6 +64,8 @@ public:
     pgd::Vector3 torque() const;
     void setTorque(const pgd::Vector3 &newTorque);
 
+    std::string type() const;
+
 private:
 
     Marker *m_body1Marker = nullptr;
@@ -73,6 +75,8 @@ private:
 
     pgd::Vector3 m_force;
     pgd::Vector3 m_torque;
+
+    std::string m_type;
 };
 
 }
