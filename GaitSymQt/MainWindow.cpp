@@ -674,13 +674,14 @@ void MainWindow::setUIFoV(float v)
 void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
 {
     showNormal();
-   QScreen *screen = this->screen();
+    QScreen *screen = this->screen();
     if (!screen)
     {
         setStatusString("Error: Unable to access screen for resize", 0);
         return;
     }
     qreal openGLScale = devicePixelRatio();
+
     QRect available = screen->availableGeometry();
     if (available.width() * openGLScale < openGLWidth || available.height() * openGLScale < openGLHeight)
     {
@@ -689,8 +690,8 @@ void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
     }
     move(available.left(), available.top());
 
-    int targetWidth = std::round(openGLWidth / openGLScale);
-    int targetHeight = std::round(openGLHeight / openGLScale);
+    int targetWidth = std::ceil(openGLWidth / openGLScale);
+    int targetHeight = std::ceil(openGLHeight / openGLScale);
     int repeatCount = 0;
     const int maxRepeat = 16;
     while ((m_simulationWidget->width() * openGLScale != openGLWidth || m_simulationWidget->height() * openGLScale != openGLHeight))
@@ -710,7 +711,7 @@ void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
     m_simulationWidget->update();
     if (m_simulationWidget->width() * openGLScale != openGLWidth || m_simulationWidget->height() * openGLScale != openGLHeight)
     {
-        setStatusString(QString("Error: unable to achieve requested size: width = %1 height = %2").arg(m_simulationWidget->width() * openGLScale).arg(m_simulationWidget->height() * openGLScale), 0);
+        setStatusString(QString("Error: unable to achieve requested size: width = %1 height = %2 magnification = %3").arg(m_simulationWidget->width() * openGLScale).arg(m_simulationWidget->height() * openGLScale).arg(openGLScale), 0);
         return;
     }
     setStatusString(QString("Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * openGLScale).arg(m_simulationWidget->height() * openGLScale), 1);
