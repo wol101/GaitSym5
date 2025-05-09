@@ -680,30 +680,40 @@ void MainWindow::resizeSimulationWindow(int openGLWidth, int openGLHeight)
         setStatusString("Error: Unable to access screen for resize", 0);
         return;
     }
+    qreal openGLScale = devicePixelRatio();
     QRect available = screen->availableGeometry();
-    if (available.width() * devicePixelRatio() < openGLWidth || available.height() * devicePixelRatio() < openGLHeight)
+    if (available.width() * openGLScale < openGLWidth || available.height() * openGLScale < openGLHeight)
     {
-        setStatusString(QString("Error: max screen for resize width = %1 height = %2").arg(available.width() * devicePixelRatio()).arg(available.height() * devicePixelRatio()), 0);
+        setStatusString(QString("Error: max screen for resize width = %1 height = %2").arg(available.width() * openGLScale).arg(available.height() * openGLScale), 0);
         return;
     }
     move(available.left(), available.top());
 
-    int scaledWidth = openGLWidth / devicePixelRatio();
-    int scaledHeight = openGLHeight / devicePixelRatio();
+    int targetWidth = std::round(openGLWidth / openGLScale);
+    int targetHeight = std::round(openGLHeight / openGLScale);
     int repeatCount = 0;
-    while ((m_simulationWidget->width() * devicePixelRatio() != openGLWidth || m_simulationWidget->height() * devicePixelRatio() != openGLHeight) && repeatCount < 16)
+    const int maxRepeat = 16;
+    while ((m_simulationWidget->width() * openGLScale != openGLWidth || m_simulationWidget->height() * openGLScale != openGLHeight))
     {
-        int deltaW = scaledWidth - m_simulationWidget->width();
-        int deltaH = scaledHeight - m_simulationWidget->height();
+        qreal deltaOpenGLWidth = openGLWidth - m_simulationWidget->width() * openGLScale;
+        qreal deltaOpenGLHeight = openGLHeight - m_simulationWidget->height() * openGLScale;
+        int deltaW = deltaOpenGLWidth == 0 ? deltaOpenGLWidth : (deltaOpenGLWidth < 0 ? std::floor(deltaOpenGLWidth / openGLScale) : std::ceil(deltaOpenGLWidth / openGLScale));
+        int deltaH = deltaOpenGLHeight == 0 ? deltaOpenGLHeight : (deltaOpenGLHeight < 0 ? std::floor(deltaOpenGLHeight / openGLScale) : std::ceil(deltaOpenGLHeight / openGLScale));
         resize(width() + deltaW, height() + deltaH);
+        ++repeatCount;
+        if (repeatCount >= maxRepeat)
+        {
+            m_simulationWidget->resize(targetWidth, targetHeight);
+            break;
+        }
     }
     m_simulationWidget->update();
-    if (m_simulationWidget->width() * devicePixelRatio() != openGLWidth || m_simulationWidget->height() * devicePixelRatio() != openGLHeight)
+    if (m_simulationWidget->width() * openGLScale != openGLWidth || m_simulationWidget->height() * openGLScale != openGLHeight)
     {
-        setStatusString(QString("Error: unable to achieve requested size: width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 0);
+        setStatusString(QString("Error: unable to achieve requested size: width = %1 height = %2").arg(m_simulationWidget->width() * openGLScale).arg(m_simulationWidget->height() * openGLScale), 0);
         return;
     }
-    setStatusString(QString("Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * devicePixelRatio()).arg(m_simulationWidget->height() * devicePixelRatio()), 1);
+    setStatusString(QString("Simulation widget width = %1 height = %2").arg(m_simulationWidget->width() * openGLScale).arg(m_simulationWidget->height() * openGLScale), 1);
 }
 
 SimulationWidget *MainWindow::simulationWidget() const
