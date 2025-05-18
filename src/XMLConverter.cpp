@@ -106,35 +106,24 @@ void XMLConverter::GetFormattedXML(std::string *formattedXML)
 // the XML file specifying the simulation
 int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
 {
+    bool ok = false;
+#ifdef USE_SLOW_AND_RELIABLE_PYTHON_ASSIGN
     // slow but reliable version by creating a python command to assign the list
     std::vector<std::string> stringList;
     stringList.reserve(genomeData.size());
     for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
     std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
-    bool ok = py_exec(pythonString.c_str(), "<string>", EXEC_MODE, NULL);
+    ok = py_exec(pythonString.c_str(), "<string>", EXEC_MODE, NULL);
     if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
     if (!ok) return __LINE__;
-
-    // faster but I am not sure this actually works
-    // Create a list: [1, 2, 3]
-    // py_Ref r0 = py_getreg(0); // create on register
-    // py_push(r0); // save on stack because I don't know what might effect the registers
-    // py_Ref s0 = py_peek(-1); // get stack value
-    // py_newlistn(r0, int(genomeData.size()));
-    // for (size_t i = 0; i < genomeData.size(); ++i) { py_newfloat(py_list_getitem(s0, int(i)), genomeData[i]); }
-    // py_setglobal(py_name("gg"), s0);
-
-    // // test
-    // for (size_t i = 0; i < genomeData.size(); ++i)
-    // {
-    //     std::string testString = "g["s + GSUtil::ToString(i) + "]==gg["s  + GSUtil::ToString(i) + "]"s;
-    //     ok = py_eval(m_smartSubstitutionParserText[i].c_str(), NULL);
-    //     if (!py_tobool(py_retval()))
-    //     {
-    //         if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
-    //         return __LINE__;
-    //     }
-    // }
+#else
+    // Create a list of doubles called g[]
+    py_Ref r0 = py_getreg(0);
+    py_newlistn(r0, genomeData.size()); // could use py_newlist and py_list_append but this should be quicker since I know the length of the list
+    for (size_t i = 0; i < genomeData.size(); ++i) { py_newfloat(py_list_getitem(r0, int(i)), genomeData[i]); }
+    py_setglobal(py_name("g"), r0); // set the name to g
+    // I could store r0 on the stack via py_push but I am hoping this is not needed once it is named
+#endif
 
     double v = 0;
     for (size_t i = 0; i < m_smartSubstitutionParserText.size(); i++)
