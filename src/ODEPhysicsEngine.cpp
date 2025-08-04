@@ -244,7 +244,7 @@ std::string *ODEPhysicsEngine::CreateGeoms()
             }
             if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(iter.second.get()))
             {
-                double radius, length;
+                double length, radius;
                 cappedCylinderGeom->getLengthRadius(&length, &radius);
                 pgd::Vector3 position = cappedCylinderGeom->GetPosition();
                 pgd::Quaternion quaternion = cappedCylinderGeom->GetQuaternion();
