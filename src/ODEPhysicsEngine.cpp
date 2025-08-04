@@ -348,7 +348,6 @@ std::string *ODEPhysicsEngine::CreateGeoms()
             }
             if (TrimeshGeom *trimeshGeom = dynamic_cast<TrimeshGeom *>(iter.second.get()))
             {
-                ;
                 double *m_Vertices = trimeshGeom->vertices()->data();
                 int *m_TriIndexes = trimeshGeom->triangles()->data();
                 int m_NumVertices = trimeshGeom->vertices()->size();
