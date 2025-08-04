@@ -41,7 +41,7 @@ void CappedCylinderGeom::appendToAttributes()
 
     setAttribute("Type"s, "CappedCylinder"s);
     double radius, length;
-    getLengthRadius(&radius, &length);
+    getLengthRadius(&length, &radius);
     setAttribute("Radius"s, *GSUtil::ToString(radius, &buf));
     setAttribute("Length"s, *GSUtil::ToString(length, &buf));
     return;

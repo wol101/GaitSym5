@@ -22,6 +22,7 @@
 #include "PlaneGeom.h"
 #include "ConvexGeom.h"
 #include "TrimeshGeom.h"
+#include "CappedCylinderGeom.h"
 #include "Marker.h"
 
 #include "collision_util.h"
@@ -236,6 +237,22 @@ std::string *ODEPhysicsEngine::CreateGeoms()
                 iter.second->setData(geomID);
                 dGeomSphereSetRadius(geomID, radius);
                 dBodyID bodyID = reinterpret_cast<dBodyID>(sphereGeom->GetBody()->data());
+                dGeomSetBody(geomID, bodyID);
+                dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
+                dGeomSetOffsetQuaternion(geomID, quaternion.constData());
+                break;
+            }
+            if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(iter.second.get()))
+            {
+                double radius, length;
+                cappedCylinderGeom->getLengthRadius(&length, &radius);
+                pgd::Vector3 position = cappedCylinderGeom->GetPosition();
+                pgd::Quaternion quaternion = cappedCylinderGeom->GetQuaternion();
+                geomID = dCreateCapsule(m_spaceID, radius, length);
+                dGeomSetData(geomID, cappedCylinderGeom);
+                iter.second->setData(geomID);
+                dGeomCapsuleSetParams(geomID, radius, length);
+                dBodyID bodyID = reinterpret_cast<dBodyID>(cappedCylinderGeom->GetBody()->data());
                 dGeomSetBody(geomID, bodyID);
                 dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
                 dGeomSetOffsetQuaternion(geomID, quaternion.constData());
