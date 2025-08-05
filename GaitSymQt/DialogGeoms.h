@@ -42,7 +42,7 @@ public slots:
     void comboBoxChanged(int index);
     void lineEditChanged(const QString &text);
     void spinBoxChanged(const QString &text);
-    void checkBoxChanged(int index);
+    void checkBoxStateChanged(Qt::CheckState state);
 
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;

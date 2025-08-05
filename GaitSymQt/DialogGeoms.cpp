@@ -8,6 +8,8 @@
 #include "CappedCylinderGeom.h"
 #include "BoxGeom.h"
 #include "PlaneGeom.h"
+#include "ConvexGeom.h"
+#include "TrimeshGeom.h"
 #include "GSUtil.h"
 #include "Marker.h"
 #include "DialogProperties.h"
@@ -68,7 +70,7 @@ DialogGeoms::DialogGeoms(QWidget *parent) :
         if (QComboBox *comboBox = dynamic_cast<QComboBox *>(*it)) connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DialogGeoms::comboBoxChanged); // QOverload<int> selects the (int) rather than the (QString) version of currentIndexChanged
         if (QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(*it)) connect(lineEdit, &QLineEdit::textChanged, this, &DialogGeoms::lineEditChanged);
         if (QSpinBox *spinBox = dynamic_cast<QSpinBox *>(*it)) connect(spinBox, &QSpinBox::textChanged, this, &DialogGeoms::spinBoxChanged);
-        if (QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it)) connect(checkBox, &QCheckBox::stateChanged, this, &DialogGeoms::checkBoxChanged);
+        if (QCheckBox *checkBox = dynamic_cast<QCheckBox *>(*it)) connect(checkBox, &QCheckBox::checkStateChanged, this, &DialogGeoms::checkBoxStateChanged);
     }
 
 }
@@ -300,6 +302,25 @@ void DialogGeoms::lateInitialise()
     {
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Plane"));
     }
+
+    if (GaitSym::TrimeshGeom *trimeshGeom = dynamic_cast<GaitSym::TrimeshGeom *>(m_inputGeom))
+    {
+        if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::Int(s));
+        if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = trimeshGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(s));
+        if ((s = trimeshGeom->findAttribute("Indices"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(s));
+        ui->tabWidget->setCurrentIndex(tabNames.indexOf("Trimesh"));
+    }
+
+    if (GaitSym::ConvexGeom *convexGeom = dynamic_cast<GaitSym::ConvexGeom *>(m_inputGeom))
+    {
+        if ((s = convexGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartConvex->setValue(GaitSym::GSUtil::Int(s));
+        if ((s = convexGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingConvex->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = convexGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesConvex->setPlainText(QString::fromStdString(s));
+        if ((s = convexGeom->findAttribute("Indices"s)).size()) ui->plainTextEditTriangleIndicesConvex->setPlainText(QString::fromStdString(s));
+        ui->tabWidget->setCurrentIndex(tabNames.indexOf("Convex"));
+    }
+
 }
 
 void DialogGeoms::comboBoxChanged(int /*index*/)
@@ -355,7 +376,7 @@ void DialogGeoms::spinBoxChanged(const QString &/*text*/)
     updateActivation();
 }
 
-void DialogGeoms::checkBoxChanged(int /*index*/)
+void DialogGeoms::checkBoxStateChanged(Qt::CheckState /*state*/)
 {
     updateActivation();
 }
