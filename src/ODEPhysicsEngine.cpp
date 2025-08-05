@@ -22,6 +22,7 @@
 #include "PlaneGeom.h"
 #include "ConvexGeom.h"
 #include "TrimeshGeom.h"
+#include "CappedCylinderGeom.h"
 #include "Marker.h"
 
 #include "collision_util.h"
@@ -241,6 +242,22 @@ std::string *ODEPhysicsEngine::CreateGeoms()
                 dGeomSetOffsetQuaternion(geomID, quaternion.constData());
                 break;
             }
+            if (CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<CappedCylinderGeom *>(iter.second.get()))
+            {
+                double length, radius;
+                cappedCylinderGeom->getLengthRadius(&length, &radius);
+                pgd::Vector3 position = cappedCylinderGeom->GetPosition();
+                pgd::Quaternion quaternion = cappedCylinderGeom->GetQuaternion();
+                geomID = dCreateCapsule(m_spaceID, radius, length);
+                dGeomSetData(geomID, cappedCylinderGeom);
+                iter.second->setData(geomID);
+                dGeomCapsuleSetParams(geomID, radius, length);
+                dBodyID bodyID = reinterpret_cast<dBodyID>(cappedCylinderGeom->GetBody()->data());
+                dGeomSetBody(geomID, bodyID);
+                dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
+                dGeomSetOffsetQuaternion(geomID, quaternion.constData());
+                break;
+            }
             if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get()))
             {
                 double a, b, c, d;
@@ -331,7 +348,6 @@ std::string *ODEPhysicsEngine::CreateGeoms()
             }
             if (TrimeshGeom *trimeshGeom = dynamic_cast<TrimeshGeom *>(iter.second.get()))
             {
-                ;
                 double *m_Vertices = trimeshGeom->vertices()->data();
                 int *m_TriIndexes = trimeshGeom->triangles()->data();
                 int m_NumVertices = trimeshGeom->vertices()->size();
