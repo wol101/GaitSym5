@@ -183,7 +183,7 @@
        <enum>QTabWidget::TabPosition::North</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -381,14 +381,14 @@
             <number>0</number>
            </property>
            <item row="0" column="3">
-            <widget class="QCheckBox" name="checkBoxReverseWinding">
+            <widget class="QCheckBox" name="checkBoxReverseWindingTrimesh">
              <property name="text">
               <string>Reverse Winding</string>
              </property>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QSpinBox" name="spinBoxIndexStart">
+            <widget class="QSpinBox" name="spinBoxIndexStartTrimesh">
              <property name="minimum">
               <number>-999999</number>
              </property>
@@ -436,9 +436,9 @@
             <number>0</number>
            </property>
            <item row="0" column="1">
-            <widget class="QPushButton" name="pushButtonImportOBJ">
+            <widget class="QPushButton" name="pushButtonImportOBJTrimesh">
              <property name="text">
-              <string>Import OBJ</string>
+              <string>Import OBJ...</string>
              </property>
             </widget>
            </item>
@@ -465,7 +465,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_8">
            <item row="0" column="0">
-            <widget class="QPlainTextEdit" name="plainTextEditTriangleIndices"/>
+            <widget class="QPlainTextEdit" name="plainTextEditTriangleIndicesTrimesh"/>
            </item>
           </layout>
          </widget>
@@ -477,7 +477,131 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
            <item row="0" column="0">
-            <widget class="QPlainTextEdit" name="plainTextEditVertices"/>
+            <widget class="QPlainTextEdit" name="plainTextEditVerticesTrimesh"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>Convex</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_16">
+        <item row="0" column="0">
+         <widget class="QWidget" name="widget_5" native="true">
+          <layout class="QGridLayout" name="gridLayout_13">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="checkBoxReverseWindingConvex">
+             <property name="text">
+              <string>Reverse Winding</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spinBoxIndexStartConvex">
+             <property name="minimum">
+              <number>-999999</number>
+             </property>
+             <property name="maximum">
+              <number>999999</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>Index Start</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QWidget" name="widget_4" native="true">
+          <layout class="QGridLayout" name="gridLayout_12">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item row="0" column="1">
+            <widget class="QPushButton" name="pushButtonImportOBJConvex">
+             <property name="text">
+              <string>Import OBJ...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>394</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="groupBox_6">
+          <property name="title">
+           <string>Triangle Indices</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_15">
+           <item row="0" column="0">
+            <widget class="QPlainTextEdit" name="plainTextEditTriangleIndicesConvex"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="groupBox_5">
+          <property name="title">
+           <string>Vertices</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_14">
+           <item row="0" column="0">
+            <widget class="QPlainTextEdit" name="plainTextEditVerticesConvex"/>
            </item>
           </layout>
          </widget>
