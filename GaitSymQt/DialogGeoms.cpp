@@ -316,8 +316,8 @@ void DialogGeoms::lateInitialise()
     {
         if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::Int(s));
         if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::Bool(s));
-        if ((s = trimeshGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(s));
-        if ((s = trimeshGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(s));
+        if ((s = trimeshGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(listToLines(pystring::split(s), 3)));
+        if ((s = trimeshGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(listToLines(pystring::split(s), 3)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Trimesh"));
     }
 
@@ -440,7 +440,7 @@ void DialogGeoms::importOBJConvex()
 {
     QFileInfo info(Preferences::valueQString("DialogGeomsLastImportOBJConvex"));
     QString fileName;
-    fileName = QFileDialog::getOpenFileName(this, tr("Import OBJ File"), info.absoluteFilePath(), tr("OBJ Files (*.obj *.ply);;Any File (*.* *)"), nullptr);
+    fileName = QFileDialog::getOpenFileName(this, tr("Import OBJ File"), info.absoluteFilePath(), tr("OBJ Files (*.obj);;Any File (*.* *)"), nullptr);
     if (fileName.isNull() == false)
     {
         Preferences::insert("DialogGeomsLastImportOBJConvex", fileName);
@@ -448,11 +448,11 @@ void DialogGeoms::importOBJConvex()
         int status = simplifiedOBJFileReader(fileName.toStdString(), &vertexCoordinates, &triangleIndices);
         if (status)
         {
-            QMessageBox::warning(this, "Error parsing mesh file", QString("'%1'").arg(fileName));
+            QMessageBox::warning(this, "Error parsing OBJ file", QString("'%1'").arg(fileName));
             return;
         }
-        std::string vertices = pystring::join(","s, vertexCoordinates);
-        std::string triangleIndexes = pystring::join(","s, triangleIndices);
+        std::string vertices = listToLines(vertexCoordinates, 3);
+        std::string triangleIndexes = listToLines(triangleIndices, 3);
         ui->spinBoxIndexStartConvex->setValue(1);
         ui->checkBoxReverseWindingConvex->setChecked(false);
         ui->plainTextEditVerticesConvex->setPlainText(QString::fromStdString(vertices));
@@ -464,7 +464,7 @@ void DialogGeoms::importOBJTrimesh()
 {
     QFileInfo info(Preferences::valueQString("DialogGeomsLastImportOBJTrimesh"));
     QString fileName;
-    fileName = QFileDialog::getOpenFileName(this, tr("Import OBJ File"), info.absoluteFilePath(), tr("OBJ Files (*.obj *.ply);;Any File (*.* *)"), nullptr);
+    fileName = QFileDialog::getOpenFileName(this, tr("Import OBJ File"), info.absoluteFilePath(), tr("OBJ Files (*.obj);;Any File (*.* *)"), nullptr);
     if (fileName.isNull() == false)
     {
         Preferences::insert("DialogGeomsLastImportOBJTrimesh", fileName);
@@ -472,11 +472,11 @@ void DialogGeoms::importOBJTrimesh()
         int status = simplifiedOBJFileReader(fileName.toStdString(), &vertexCoordinates, &triangleIndices);
         if (status)
         {
-            QMessageBox::warning(this, "Error parsing mesh file", QString("'%1'").arg(fileName));
+            QMessageBox::warning(this, "Error parsing OBJ file", QString("'%1'").arg(fileName));
             return;
         }
-        std::string vertices = pystring::join(","s, vertexCoordinates);
-        std::string triangleIndexes = pystring::join(","s, triangleIndices);
+        std::string vertices = listToLines(vertexCoordinates, 3);
+        std::string triangleIndexes = listToLines(triangleIndices, 3);
         ui->spinBoxIndexStartTrimesh->setValue(1);
         ui->checkBoxReverseWindingTrimesh->setChecked(false);
         ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(vertices));
@@ -517,6 +517,19 @@ int DialogGeoms::simplifiedOBJFileReader(std::string filename, std::vector<std::
         }
     }
     return 0;
+}
+
+std::string DialogGeoms::listToLines(const std::vector<std::string> &list, size_t elementsPerLine)
+{
+    std::string output;
+    for (size_t i = 0; i < list.size() - 1; ++i)
+    {
+        size_t column = i % elementsPerLine;
+        if (column != elementsPerLine - 1) { output.append(list[i] + " "s); }
+        else { output.append(list[i] + "\n"s); }
+    }
+    output.append(list.back() + "\n"s);
+    return output;
 }
 
 GaitSym::Simulation *DialogGeoms::simulation() const

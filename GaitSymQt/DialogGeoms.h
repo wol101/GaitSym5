@@ -65,6 +65,8 @@ private:
 
     void updateActivation();
     int simplifiedOBJFileReader(std::string filename, std::vector<std::string> *vertexCoordinates, std::vector<std::string> *triangleIndices);
+    static std::string listToLines(const std::vector<std::string> &list, size_t elementsPerLine);
+
 
 };
 
