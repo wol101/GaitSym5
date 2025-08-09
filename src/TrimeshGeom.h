@@ -27,6 +27,12 @@ public:
 
     std::vector<int> *triangles();
 
+    bool reverseWinding() const;
+    void setReverseWinding(bool newReverseWinding);
+
+    int indexStart() const;
+    void setIndexStart(int newIndexStart);
+
 private:
     std::vector<double> m_vertices;
     std::vector<int> m_triangles;

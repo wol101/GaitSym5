@@ -62,6 +62,26 @@ std::vector<int> *TrimeshGeom::triangles()
     return &m_triangles;
 }
 
+bool TrimeshGeom::reverseWinding() const
+{
+    return m_reverseWinding;
+}
+
+void TrimeshGeom::setReverseWinding(bool newReverseWinding)
+{
+    m_reverseWinding = newReverseWinding;
+}
+
+int TrimeshGeom::indexStart() const
+{
+    return m_indexStart;
+}
+
+void TrimeshGeom::setIndexStart(int newIndexStart)
+{
+    m_indexStart = newIndexStart;
+}
+
 std::vector<double> *TrimeshGeom::vertices()
 {
     return &m_vertices;

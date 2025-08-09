@@ -183,7 +183,7 @@
        <enum>QTabWidget::TabPosition::North</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -390,10 +390,10 @@
            <item row="0" column="1">
             <widget class="QSpinBox" name="spinBoxIndexStartTrimesh">
              <property name="minimum">
-              <number>-999999</number>
+              <number>0</number>
              </property>
              <property name="maximum">
-              <number>999999</number>
+              <number>1</number>
              </property>
             </widget>
            </item>
@@ -514,10 +514,10 @@
            <item row="0" column="1">
             <widget class="QSpinBox" name="spinBoxIndexStartConvex">
              <property name="minimum">
-              <number>-999999</number>
+              <number>0</number>
              </property>
              <property name="maximum">
-              <number>999999</number>
+              <number>1</number>
              </property>
             </widget>
            </item>

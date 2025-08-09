@@ -93,28 +93,65 @@ void DialogGeoms::accept() // this catches OK and return/enter
 
     std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
     QString strapTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if (strapTab == "Sphere")
+    while (true)
     {
-        m_outputGeom = std::make_unique<GaitSym::SphereGeom>(ui->lineEditSphereRadius->value());
-    }
-    else if (strapTab == "Capsule")
-    {
-        m_outputGeom = std::make_unique<GaitSym::CappedCylinderGeom>(ui->lineEditCapsuleRadius->value(), ui->lineEditCapsuleLength->value());
-    }
-    else if (strapTab == "Box")
-    {
-        m_outputGeom = std::make_unique<GaitSym::BoxGeom>(ui->lineEditBoxLengthX->value(), ui->lineEditBoxLengthY->value(), ui->lineEditBoxLengthZ->value());
-    }
-    else if (strapTab == "Plane")
-    {
-        GaitSym::Marker *geomMarker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
-        pgd::Vector3 normal = geomMarker->GetWorldAxis(GaitSym::Marker::Axis::Z);
-        pgd::Vector3 point = geomMarker->GetWorldPosition();
-        double a = normal.x;
-        double b = normal.y;
-        double c = normal.z;
-        double d = normal.Dot(point);
-        m_outputGeom = std::make_unique<GaitSym::PlaneGeom>(a, b, c, d);
+        if (strapTab == "Sphere")
+        {
+            m_outputGeom = std::make_unique<GaitSym::SphereGeom>(ui->lineEditSphereRadius->value());
+            break;
+        }
+        if (strapTab == "Capsule")
+        {
+            m_outputGeom = std::make_unique<GaitSym::CappedCylinderGeom>(ui->lineEditCapsuleRadius->value(), ui->lineEditCapsuleLength->value());
+            break;
+        }
+        if (strapTab == "Box")
+        {
+            m_outputGeom = std::make_unique<GaitSym::BoxGeom>(ui->lineEditBoxLengthX->value(), ui->lineEditBoxLengthY->value(), ui->lineEditBoxLengthZ->value());
+            break;
+        }
+        if (strapTab == "Plane")
+        {
+            GaitSym::Marker *geomMarker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
+            pgd::Vector3 normal = geomMarker->GetWorldAxis(GaitSym::Marker::Axis::Z);
+            pgd::Vector3 point = geomMarker->GetWorldPosition();
+            double a = normal.x;
+            double b = normal.y;
+            double c = normal.z;
+            double d = normal.Dot(point);
+            m_outputGeom = std::make_unique<GaitSym::PlaneGeom>(a, b, c, d);
+            break;
+        }
+        if (strapTab == "Convex")
+        {
+            auto convexGeom = std::make_unique<GaitSym::ConvexGeom>();
+            convexGeom->setReverseWinding(ui->checkBoxReverseWindingConvex->isChecked());
+            convexGeom->setIndexStart(ui->spinBoxIndexStartConvex->value());
+            std::string triangleIndicesString = ui->plainTextEditTriangleIndicesConvex->toPlainText().toStdString();
+            std::vector<int> *triangles = convexGeom->triangles();
+            GaitSym::GSUtil::Int(triangleIndicesString, triangles);
+            std::string verticesString = ui->plainTextEditVerticesConvex->toPlainText().toStdString();
+            std::vector<double> *vertices = convexGeom->vertices();
+            GaitSym::GSUtil::Double(verticesString, vertices);
+            m_outputGeom = std::move(convexGeom);
+            break;
+        }
+        if (strapTab == "Trimesh")
+        {
+            auto trimeshGeom = std::make_unique<GaitSym::TrimeshGeom>();
+            trimeshGeom->setReverseWinding(ui->checkBoxReverseWindingTrimesh->isChecked());
+            trimeshGeom->setIndexStart(ui->spinBoxIndexStartTrimesh->value());
+            std::string triangleIndicesString = ui->plainTextEditTriangleIndicesTrimesh->toPlainText().toStdString();
+            std::vector<int> *triangles = trimeshGeom->triangles();
+            GaitSym::GSUtil::Int(triangleIndicesString, triangles);
+            std::string verticesString = ui->plainTextEditVerticesTrimesh->toPlainText().toStdString();
+            std::vector<double> *vertices = trimeshGeom->vertices();
+            GaitSym::GSUtil::Double(verticesString, vertices);
+            m_outputGeom = std::move(trimeshGeom);
+            break;
+        }
+
+        qDebug() << "DialogGeoms::accept() strap type error";
     }
 
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());

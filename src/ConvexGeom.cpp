@@ -62,6 +62,26 @@ std::vector<int> *ConvexGeom::triangles()
     return &m_triangles;
 }
 
+bool ConvexGeom::reverseWinding() const
+{
+    return m_reverseWinding;
+}
+
+void ConvexGeom::setReverseWinding(bool newReverseWinding)
+{
+    m_reverseWinding = newReverseWinding;
+}
+
+int ConvexGeom::indexStart() const
+{
+    return m_indexStart;
+}
+
+void ConvexGeom::setIndexStart(int newIndexStart)
+{
+    m_indexStart = newIndexStart;
+}
+
 std::vector<double> *ConvexGeom::vertices()
 {
     return &m_vertices;
