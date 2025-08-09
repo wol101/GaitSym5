@@ -151,7 +151,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
             break;
         }
 
-        qDebug() << "DialogGeoms::accept() strap type error";
+        qDebug() << "DialogGeoms::accept() geom type error";
     }
 
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());
