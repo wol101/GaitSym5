@@ -43,7 +43,7 @@ DialogBodyBuilder::DialogBodyBuilder(QWidget *parent) :
     connect(ui->lineEditMesh1, SIGNAL(editingFinished()), this, SLOT(lineEditMeshClicked()));
     connect(ui->lineEditMesh2, SIGNAL(editingFinished()), this, SLOT(lineEditMeshClicked()));
     connect(ui->lineEditMesh3, SIGNAL(editingFinished()), this, SLOT(lineEditMeshClicked()));
-    connect(ui->lineEditID, SIGNAL(textChanged(const QString &)), this, SLOT(lineEditIDTextChanged(const QString &)));
+    connect(ui->lineEditID, SIGNAL(textChanged(QString)), this, SLOT(lineEditIDTextChanged(QString)));
 
     ui->pushButtonCalculate->setEnabled(false);
     ui->pushButtonOK->setEnabled(false);

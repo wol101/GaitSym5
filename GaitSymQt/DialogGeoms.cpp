@@ -14,6 +14,9 @@
 #include "Marker.h"
 #include "DialogProperties.h"
 #include "MainWindow.h"
+#include "PGDMath.h"
+
+#include "pystring.h"
 
 #include <QDebug>
 #include <QComboBox>
@@ -21,6 +24,8 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QScrollArea>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include <algorithm>
 
@@ -62,6 +67,8 @@ DialogGeoms::DialogGeoms(QWidget *parent) :
     connect(ui->pushButtonOK, &QPushButton::clicked, this, &DialogGeoms::accept);
     connect(ui->pushButtonCancel, &QPushButton::clicked, this, &DialogGeoms::reject);
     connect(ui->pushButtonProperties, &QPushButton::clicked, this, &DialogGeoms::properties);
+    connect(ui->pushButtonImportOBJConvex, &QPushButton::clicked, this, &DialogGeoms::importOBJConvex);
+    connect(ui->pushButtonImportOBJTrimesh, &QPushButton::clicked, this, &DialogGeoms::importOBJTrimesh);
 
     // this logic monitors for changing values
     QList<QWidget *> widgets = this->findChildren<QWidget *>();
@@ -234,6 +241,7 @@ void DialogGeoms::lateInitialise()
             if (initialNameCount >= 999) break; // only do this for the first 999 markers
         }
         ui->lineEditGeomID->setText(initialName);
+        ui->tabWidget->setCurrentIndex(0);
         return;
     }
 
@@ -300,6 +308,7 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::PlaneGeom *planeGeom = dynamic_cast<GaitSym::PlaneGeom *>(m_inputGeom))
     {
+        (void)planeGeom; // Silences unused warning
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Plane"));
     }
 
@@ -308,7 +317,7 @@ void DialogGeoms::lateInitialise()
         if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::Int(s));
         if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::Bool(s));
         if ((s = trimeshGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(s));
-        if ((s = trimeshGeom->findAttribute("Indices"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(s));
+        if ((s = trimeshGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Trimesh"));
     }
 
@@ -317,7 +326,7 @@ void DialogGeoms::lateInitialise()
         if ((s = convexGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartConvex->setValue(GaitSym::GSUtil::Int(s));
         if ((s = convexGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingConvex->setChecked(GaitSym::GSUtil::Bool(s));
         if ((s = convexGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesConvex->setPlainText(QString::fromStdString(s));
-        if ((s = convexGeom->findAttribute("Indices"s)).size()) ui->plainTextEditTriangleIndicesConvex->setPlainText(QString::fromStdString(s));
+        if ((s = convexGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesConvex->setPlainText(QString::fromStdString(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Convex"));
     }
 
@@ -425,6 +434,89 @@ void DialogGeoms::properties()
         dialogProperties.update();
         m_properties = dialogProperties.getOutputSettingsItems();
     }
+}
+
+void DialogGeoms::importOBJConvex()
+{
+    QFileInfo info(Preferences::valueQString("DialogGeomsLastImportOBJConvex"));
+    QString fileName;
+    fileName = QFileDialog::getOpenFileName(this, tr("Import OBJ File"), info.absoluteFilePath(), tr("OBJ Files (*.obj *.ply);;Any File (*.* *)"), nullptr);
+    if (fileName.isNull() == false)
+    {
+        Preferences::insert("DialogGeomsLastImportOBJConvex", fileName);
+        std::vector<std::string> vertexCoordinates, triangleIndices;
+        int status = simplifiedOBJFileReader(fileName.toStdString(), &vertexCoordinates, &triangleIndices);
+        if (status)
+        {
+            QMessageBox::warning(this, "Error parsing mesh file", QString("'%1'").arg(fileName));
+            return;
+        }
+        std::string vertices = pystring::join(","s, vertexCoordinates);
+        std::string triangleIndexes = pystring::join(","s, triangleIndices);
+        ui->spinBoxIndexStartConvex->setValue(1);
+        ui->checkBoxReverseWindingConvex->setChecked(false);
+        ui->plainTextEditVerticesConvex->setPlainText(QString::fromStdString(vertices));
+        ui->plainTextEditTriangleIndicesConvex->setPlainText(QString::fromStdString(triangleIndexes));
+    }
+}
+
+void DialogGeoms::importOBJTrimesh()
+{
+    QFileInfo info(Preferences::valueQString("DialogGeomsLastImportOBJTrimesh"));
+    QString fileName;
+    fileName = QFileDialog::getOpenFileName(this, tr("Import OBJ File"), info.absoluteFilePath(), tr("OBJ Files (*.obj *.ply);;Any File (*.* *)"), nullptr);
+    if (fileName.isNull() == false)
+    {
+        Preferences::insert("DialogGeomsLastImportOBJTrimesh", fileName);
+        std::vector<std::string> vertexCoordinates, triangleIndices;
+        int status = simplifiedOBJFileReader(fileName.toStdString(), &vertexCoordinates, &triangleIndices);
+        if (status)
+        {
+            QMessageBox::warning(this, "Error parsing mesh file", QString("'%1'").arg(fileName));
+            return;
+        }
+        std::string vertices = pystring::join(","s, vertexCoordinates);
+        std::string triangleIndexes = pystring::join(","s, triangleIndices);
+        ui->spinBoxIndexStartTrimesh->setValue(1);
+        ui->checkBoxReverseWindingTrimesh->setChecked(false);
+        ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(vertices));
+        ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(triangleIndexes));
+    }
+}
+
+int DialogGeoms::simplifiedOBJFileReader(std::string filename, std::vector<std::string> *vertexCoordinates, std::vector<std::string> *triangleIndices)
+{
+    // this block of code reads athe file into a std::string
+    std::ifstream file(filename, std::ios::binary);  // Open file in binary mode
+    if (!file) { return __LINE__; }
+    file.seekg(0, std::ios::end); // Move to the end to determine file size
+    std::size_t size = file.tellg();
+    std::string content(size, '\0');  // Allocate string with exact size
+    file.seekg(0); // Move back to the beginning and read the content
+    file.read(&content[0], size);
+
+    std::vector<std::string> lines = pystring::splitlines(content);
+    std::vector<std::string> tokens;
+    for (auto &&line : lines)
+    {
+        if (pystring::startswith(line, "v "))
+        {
+            tokens = pystring::split(line);
+            if (tokens.size() != 4) { return __LINE__; }
+            vertexCoordinates->push_back(tokens[1]);
+            vertexCoordinates->push_back(tokens[2]);
+            vertexCoordinates->push_back(tokens[3]);
+        }
+        if (pystring::startswith(line, "f "))
+        {
+            tokens = pystring::split(line);
+            if (tokens.size() != 4) { return __LINE__; }
+            triangleIndices->push_back(pystring::split(tokens[1], "/"s)[0]);
+            triangleIndices->push_back(pystring::split(tokens[2], "/"s)[0]);
+            triangleIndices->push_back(pystring::split(tokens[3], "/"s)[0]);
+        }
+    }
+    return 0;
 }
 
 GaitSym::Simulation *DialogGeoms::simulation() const

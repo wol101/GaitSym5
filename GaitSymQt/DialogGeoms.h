@@ -39,6 +39,8 @@ public slots:
     virtual void accept() Q_DECL_OVERRIDE;
     virtual void reject() Q_DECL_OVERRIDE;
     void properties();
+    void importOBJConvex();
+    void importOBJTrimesh();
     void comboBoxChanged(int index);
     void lineEditChanged(const QString &text);
     void spinBoxChanged(const QString &text);
@@ -62,6 +64,7 @@ private:
     QMap<QString, SettingsItem> m_properties;
 
     void updateActivation();
+    int simplifiedOBJFileReader(std::string filename, std::vector<std::string> *vertexCoordinates, std::vector<std::string> *triangleIndices);
 
 };
 

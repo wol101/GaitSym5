@@ -58,12 +58,15 @@ public:
     virtual void WriteOBJFile(std::string filename);
     virtual void WriteUSDFile(std::ostringstream &out, const std::string &name);
 
-    size_t GetNumVertices() const;
     const double *GetVertex(size_t i) const;
     const double *GetNormal(size_t i) const;
-    const double *GetVertexList() const;
-    const double *GetNormalList() const;
-    const float *GetColourList() const;
+    const float *GetColour(size_t i) const;
+    const double *GetUV(size_t i) const;
+    const std::vector<double> &GetVertexList() const;
+    const std::vector<double> &GetNormalList() const;
+    const std::vector<float> &GetColourList() const;
+    const std::vector<double> &GetUVList() const;
+
     size_t GetNumTriangles() const;
     const double *GetTriangle(size_t i) const;
     const pgd::Vector3 &GetDisplayPosition() const;

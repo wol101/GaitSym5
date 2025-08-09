@@ -787,7 +787,7 @@ int SimulationWidget::WriteCADFrame(const QString &pathname)
     {
         for (auto &&facetedObjectIter : drawableIter->facetedObjectList())
         {
-            if (facetedObjectIter->GetNumVertices())
+            if (facetedObjectIter->GetVertexList().size())
             {
                 QString numberedFilename = QString("mesh%1.obj").arg(meshCount, 6, 10, QChar('0'));
                 facetedObjectIter->WriteOBJFile(numberedFilename.toStdString());
@@ -956,7 +956,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     {
         for (auto &&facetedObjectIter : drawableIter->facetedObjectList())
         {
-            if (facetedObjectIter->GetNumVertices() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().Magnitude2() != 0)
+            if (facetedObjectIter->GetVertexList().size() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().Magnitude2() != 0)
             {
                 facetedObjectIter->WriteUSDFile(usdStream, GaitSym::GSUtil::ToString("mesh%05d", meshCount));
                 meshCount++;

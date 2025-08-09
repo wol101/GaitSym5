@@ -1116,11 +1116,6 @@ const pgd::Vector3 &FacetedObject::GetDisplayScale() const
     return m_displayScale;
 }
 
-size_t FacetedObject::GetNumVertices() const
-{
-    return m_vertexList.size() / 3;
-}
-
 const double *FacetedObject::GetVertex(size_t i) const
 {
     return &m_vertexList.at(3 * i);
@@ -1131,19 +1126,24 @@ const double *FacetedObject::GetNormal(size_t i) const
     return &m_normalList.at(3 * i);
 }
 
-const double *FacetedObject::GetVertexList() const
+const std::vector<double> &FacetedObject::GetVertexList() const
 {
-    return m_vertexList.data();
+    return m_vertexList;
 }
 
-const double *FacetedObject::GetNormalList() const
+const std::vector<double> &FacetedObject::GetNormalList() const
 {
-    return m_normalList.data();
+    return m_normalList;
 }
 
-const float *FacetedObject::GetColourList() const
+const std::vector<float> &FacetedObject::GetColourList() const
 {
-    return m_colourList.data();
+    return m_colourList;
+}
+
+const std::vector<double> &FacetedObject::GetUVList() const
+{
+    return m_uvList;
 }
 
 size_t FacetedObject::GetNumTriangles() const
