@@ -1,5 +1,5 @@
 #define MyAppName "GaitSym5"
-#define MyAppVersion "v0.0.2-alpha"
+#define MyAppVersion "v0.0.3-alpha"
 #define MyAppPublisher "WIS"
 #define MyAppURL "http://www.animalsimulation.org"
 #define MyAppExeName "GaitSym5.exe"
@@ -19,7 +19,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 LicenseFile=..\LICENSE
 OutputDir=inno_setup
-OutputBaseFilename=GaitSym5_v0.0.2-alpha_Setup
+OutputBaseFilename=GaitSym5_v0.0.3-alpha_Setup
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequiredOverridesAllowed=commandline dialog
@@ -34,21 +34,21 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\GaitSym5.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\networkinformation\*"; DestDir: "{app}\networkinformation"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\tls\*"; DestDir: "{app}\tls"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\GaitSym5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\networkinformation\*"; DestDir: "{app}\networkinformation"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\tls\*"; DestDir: "{app}\tls"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "..\GaitSymQt\build\Desktop_Qt_6_8_2_MSVC2022_64bit-Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
