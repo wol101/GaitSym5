@@ -90,6 +90,8 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DialogProperties.ui
     ../GaitSymQt/DialogRename.cpp
     ../GaitSymQt/DialogRename.ui
+    ../GaitSymQt/DialogStringOfPearlsBuilder.cpp
+    ../GaitSymQt/DialogStringOfPearlsBuilder.ui
     ../GaitSymQt/DoubleValidator.cpp
     ../GaitSymQt/DrawBody.cpp
     ../GaitSymQt/DrawCustom.cpp
@@ -678,6 +680,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DialogPreferences.h
     ../GaitSymQt/DialogProperties.h
     ../GaitSymQt/DialogRename.h
+    ../GaitSymQt/DialogStringOfPearlsBuilder.h
     ../GaitSymQt/DoubleValidator.h
     ../GaitSymQt/Drawable.h
     ../GaitSymQt/DrawBody.h
