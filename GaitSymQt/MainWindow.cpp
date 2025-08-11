@@ -44,7 +44,7 @@
 #include "Simulation.h"
 #include "SimulationWidget.h"
 #include "TegotaeDriver.h"
-#include "TextEditDialog.h"
+#include "DialogRawXMLEdit.h"
 #include "ThreeHingeJointDriver.h"
 #include "TwoHingeJointDriver.h"
 #include "OpenSimExporter.h"
@@ -2886,16 +2886,16 @@ void MainWindow::menuResetView()
 
 void MainWindow::menuRawXMLEditor()
 {
-    TextEditDialog textEditDialog(this);
-    textEditDialog.useXMLSyntaxHighlighter();
-    textEditDialog.setEditorText(QString::fromStdString(this->m_simulation->SaveToXML()));
-    textEditDialog.setModified(false);
-    int status = textEditDialog.exec();
+    DialogRawXMLEdit dialogRawXMLEdit(this);
+    dialogRawXMLEdit.useXMLSyntaxHighlighter();
+    dialogRawXMLEdit.setEditorText(QString::fromStdString(this->m_simulation->SaveToXML()));
+    dialogRawXMLEdit.setModified(false);
+    int status = dialogRawXMLEdit.exec();
     if (status == QDialog::Accepted) // write the new settings
     {
-        if (textEditDialog.isModified())
+        if (dialogRawXMLEdit.isModified())
         {
-            QByteArray editFileData = textEditDialog.editorText().toUtf8();
+            QByteArray editFileData = dialogRawXMLEdit.editorText().toUtf8();
             menuOpen(this->m_configFile.absoluteFilePath(), &editFileData);
             this->setWindowModified(true);
             enterConstructionMode();

@@ -1,5 +1,5 @@
-#include "TextEditDialog.h"
-#include "ui_TextEditDialog.h"
+#include "DialogRawXMLEdit.h"
+#include "ui_DialogRawXMLEdit.h"
 
 #include "BasicXMLSyntaxHighlighter.h"
 #include "Preferences.h"
@@ -27,9 +27,9 @@
 
 using namespace std::literals::string_literals;
 
-TextEditDialog::TextEditDialog(QWidget *parent) :
+DialogRawXMLEdit::DialogRawXMLEdit(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::TextEditDialog)
+    ui(new Ui::DialogRawXMLEdit)
 {
     ui->setupUi(this);
     MainWindow::layoutSpacing(this);
@@ -65,10 +65,10 @@ TextEditDialog::TextEditDialog(QWidget *parent) :
     py_resetvm();
     // import the python math module.
     bool ok = py_exec("import math", "<string>", EXEC_MODE, NULL);
-    if (!ok) { QMessageBox::warning(this, "Internal pocketpy parse error", QString("TextEditDialog.cpp Line %1").arg(__LINE__)); return; } // this should never happen
+    if (!ok) { QMessageBox::warning(this, "Internal pocketpy parse error", QString("DialogRawXMLEdit.cpp Line %1").arg(__LINE__)); return; } // this should never happen
 }
 
-TextEditDialog::~TextEditDialog()
+DialogRawXMLEdit::~DialogRawXMLEdit()
 {
     // reset the current VM.
     py_resetvm();
@@ -76,9 +76,9 @@ TextEditDialog::~TextEditDialog()
     delete ui;
 }
 
-void TextEditDialog::accept()
+void DialogRawXMLEdit::accept()
 {
-    qDebug() << "TextEditDialog::accept()";
+    qDebug() << "DialogRawXMLEdit::accept()";
 
     std::string *errorMessage = validate();
     if (errorMessage)
@@ -91,9 +91,9 @@ void TextEditDialog::accept()
     QDialog::accept();
 }
 
-void TextEditDialog::reject() // this catches cancel, close and escape key
+void DialogRawXMLEdit::reject() // this catches cancel, close and escape key
 {
-    qDebug() << "TextEditDialog::reject()";
+    qDebug() << "DialogRawXMLEdit::reject()";
 
     if (isModified())
     {
@@ -110,54 +110,54 @@ void TextEditDialog::reject() // this catches cancel, close and escape key
     QDialog::reject();
 }
 
-void TextEditDialog::closeEvent(QCloseEvent *event)
+void DialogRawXMLEdit::closeEvent(QCloseEvent *event)
 {
-    qDebug() << "TextEditDialog::closeEvent()";
+    qDebug() << "DialogRawXMLEdit::closeEvent()";
     // I don't think I need to do anything - accept and reject are always called
     // savePreferences();
     QDialog::closeEvent(event);
 }
 
-void TextEditDialog::loadPreferences()
+void DialogRawXMLEdit::loadPreferences()
 {
-    m_editorFont = Preferences::valueQFont("TextEditDialogEditorFont");
-    ui->checkBoxCaseSensitive->setChecked(Preferences::valueBool("TextEditDialogCaseSensitiveSearch"));
-    ui->checkBoxRegularExpression->setChecked(Preferences::valueBool("TextEditDialogRegularExpressionSearch"));
-    ui->lineEditFind->setText(Preferences::valueQString("TextEditDialogFind"));
-    ui->lineEditReplace->setText(Preferences::valueQString("TextEditDialogReplace"));
-    restoreGeometry(Preferences::valueQByteArray("TextEditDialogGeometry"));
-    ui->splitter->restoreState(Preferences::valueQByteArray("TextEditDialogSplitterState"));
-    attributeMachineLoadFromString(Preferences::valueQString("TextEditDialogAttributeMachineCode"), true);
+    m_editorFont = Preferences::valueQFont("DialogRawXMLEditEditorFont");
+    ui->checkBoxCaseSensitive->setChecked(Preferences::valueBool("DialogRawXMLEditCaseSensitiveSearch"));
+    ui->checkBoxRegularExpression->setChecked(Preferences::valueBool("DialogRawXMLEditRegularExpressionSearch"));
+    ui->lineEditFind->setText(Preferences::valueQString("DialogRawXMLEditFind"));
+    ui->lineEditReplace->setText(Preferences::valueQString("DialogRawXMLEditReplace"));
+    restoreGeometry(Preferences::valueQByteArray("DialogRawXMLEditGeometry"));
+    ui->splitter->restoreState(Preferences::valueQByteArray("DialogRawXMLEditSplitterState"));
+    attributeMachineLoadFromString(Preferences::valueQString("DialogRawXMLEditAttributeMachineCode"), true);
 }
 
-void TextEditDialog::savePreferences()
+void DialogRawXMLEdit::savePreferences()
 {
-    Preferences::insert("TextEditDialogCaseSensitiveSearch", ui->checkBoxCaseSensitive->isChecked());
-    Preferences::insert("TextEditDialogRegularExpressionSearch", ui->checkBoxRegularExpression->isChecked());
-    Preferences::insert("TextEditDialogEditorFont", QVariant::fromValue(m_editorFont));
-    Preferences::insert("TextEditDialogFind", ui->lineEditFind->text());
-    Preferences::insert("TextEditDialogReplace", ui->lineEditReplace->text());
-    Preferences::insert("TextEditDialogAttributeMachineCode", attributeMachineSaveToString());
-    Preferences::insert("TextEditDialogGeometry", saveGeometry());
-    Preferences::insert("TextEditDialogSplitterState", ui->splitter->saveState());
+    Preferences::insert("DialogRawXMLEditCaseSensitiveSearch", ui->checkBoxCaseSensitive->isChecked());
+    Preferences::insert("DialogRawXMLEditRegularExpressionSearch", ui->checkBoxRegularExpression->isChecked());
+    Preferences::insert("DialogRawXMLEditEditorFont", QVariant::fromValue(m_editorFont));
+    Preferences::insert("DialogRawXMLEditFind", ui->lineEditFind->text());
+    Preferences::insert("DialogRawXMLEditReplace", ui->lineEditReplace->text());
+    Preferences::insert("DialogRawXMLEditAttributeMachineCode", attributeMachineSaveToString());
+    Preferences::insert("DialogRawXMLEditGeometry", saveGeometry());
+    Preferences::insert("DialogRawXMLEditSplitterState", ui->splitter->saveState());
 }
 
-QString TextEditDialog::editorText() const
+QString DialogRawXMLEdit::editorText() const
 {
     return ui->plainTextEdit->toPlainText();
 }
 
-void TextEditDialog::setEditorText(const QString &editorText)
+void DialogRawXMLEdit::setEditorText(const QString &editorText)
 {
     ui->plainTextEdit->setPlainText(editorText);
 }
 
-void TextEditDialog::useXMLSyntaxHighlighter()
+void DialogRawXMLEdit::useXMLSyntaxHighlighter()
 {
     m_basicXMLSyntaxHighlighter = new BasicXMLSyntaxHighlighter(ui->plainTextEdit->document());
 }
 
-void TextEditDialog::find()
+void DialogRawXMLEdit::find()
 {
     QString findString = ui->lineEditFind->text();
     if (findString.isEmpty()) return;
@@ -181,7 +181,7 @@ void TextEditDialog::find()
     }
 }
 
-void TextEditDialog::replace()
+void DialogRawXMLEdit::replace()
 {
     QString findString = ui->lineEditFind->text();
     if (findString.isEmpty()) return;
@@ -199,7 +199,7 @@ void TextEditDialog::replace()
     }
 }
 
-void TextEditDialog::replaceAll()
+void DialogRawXMLEdit::replaceAll()
 {
     QString findString = ui->lineEditFind->text();
     if (findString.isEmpty()) return;
@@ -220,7 +220,7 @@ void TextEditDialog::replaceAll()
     QMessageBox::information(this, QString("Replacing \"%1\"").arg(findString), QString("%1 replacements made").arg(replaceCount));
 }
 
-bool TextEditDialog::replace(const QString &findString, const QString &replaceString)
+bool DialogRawXMLEdit::replace(const QString &findString, const QString &replaceString)
 {
     bool result = false;
     if (ui->checkBoxRegularExpression->isChecked())
@@ -256,7 +256,7 @@ bool TextEditDialog::replace(const QString &findString, const QString &replaceSt
     return true;
 }
 
-void TextEditDialog::saveAs()
+void DialogRawXMLEdit::saveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Model State File"), m_fileName, tr("Config Files (*.gaitsym);;XML files (*.xml)"), nullptr);
     if (fileName.isNull() == false)
@@ -275,7 +275,7 @@ void TextEditDialog::saveAs()
     }
 }
 
-void TextEditDialog::setEditorFonts()
+void DialogRawXMLEdit::setEditorFonts()
 {
     QList<QLineEdit *> listQLineEdit = this->findChildren<QLineEdit *>(QString(), Qt::FindChildrenRecursively);
     for (QList<QLineEdit *>::iterator it = listQLineEdit.begin(); it != listQLineEdit.end(); it++) (*it)->setFont(m_editorFont);
@@ -284,7 +284,7 @@ void TextEditDialog::setEditorFonts()
     for (QList<QPlainTextEdit *>::iterator it = listQPlainTextEdit.begin(); it != listQPlainTextEdit.end(); it++) (*it)->setFont(m_editorFont);
 }
 
-void TextEditDialog::enableControls()
+void DialogRawXMLEdit::enableControls()
 {
     ui->toolButtonDelete->setEnabled(ui->tableWidget->rowCount() > 0);
     ui->toolButtonInsert->setEnabled(true);
@@ -293,7 +293,7 @@ void TextEditDialog::enableControls()
     ui->pushButtonOK->setEnabled(isModified());
 }
 
-void TextEditDialog::attributeMachineInsert()
+void DialogRawXMLEdit::attributeMachineInsert()
 {
     int row = ui->tableWidget->currentRow();
     ui->tableWidget->insertRow(row + 1);
@@ -306,7 +306,7 @@ void TextEditDialog::attributeMachineInsert()
     enableControls();
 }
 
-void TextEditDialog::attributeMachineDelete()
+void DialogRawXMLEdit::attributeMachineDelete()
 {
     if (ui->tableWidget->rowCount() == 0) return;
     int row = ui->tableWidget->currentRow();
@@ -314,7 +314,7 @@ void TextEditDialog::attributeMachineDelete()
     enableControls();
 }
 
-void TextEditDialog::attributeMachineMoveUp()
+void DialogRawXMLEdit::attributeMachineMoveUp()
 {
     if (ui->tableWidget->rowCount() < 2) return;
     int row = ui->tableWidget->currentRow();
@@ -337,7 +337,7 @@ void TextEditDialog::attributeMachineMoveUp()
     enableControls();
 }
 
-void TextEditDialog::attributeMachineMoveDown()
+void DialogRawXMLEdit::attributeMachineMoveDown()
 {
     if (ui->tableWidget->rowCount() < 2) return;
     int row = ui->tableWidget->currentRow();
@@ -360,12 +360,12 @@ void TextEditDialog::attributeMachineMoveDown()
     enableControls();
 }
 
-void TextEditDialog::attributeMachineItemSelectionChanged()
+void DialogRawXMLEdit::attributeMachineItemSelectionChanged()
 {
     enableControls();
 }
 
-void TextEditDialog::attributeMachineSave()
+void DialogRawXMLEdit::attributeMachineSave()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save XML attribute machine"), QString(), tr("Tab Delimited Files (*.tab);;Text files (*.txt);;All files (*.*)"), nullptr);
     if (fileName.isNull() == false)
@@ -384,7 +384,7 @@ void TextEditDialog::attributeMachineSave()
     }
 }
 
-QString TextEditDialog::attributeMachineSaveToString()
+QString DialogRawXMLEdit::attributeMachineSaveToString()
 {
     QString textData;
     for (int col = 0; col < ui->tableWidget->columnCount(); col++)
@@ -408,7 +408,7 @@ QString TextEditDialog::attributeMachineSaveToString()
     return textData;
 }
 
-void TextEditDialog::attributeMachineLoad()
+void DialogRawXMLEdit::attributeMachineLoad()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open XML attribute machine"), QString(), tr("Tab Delimited Files (*.tab);;Text files (*.txt);;All files (*.*)"), nullptr);
     if (fileName.isNull() == false)
@@ -425,7 +425,7 @@ void TextEditDialog::attributeMachineLoad()
     }
 }
 
-void TextEditDialog::attributeMachineLoadFromString(const QString &string, bool quiet)
+void DialogRawXMLEdit::attributeMachineLoadFromString(const QString &string, bool quiet)
 {
     QStringList lines = string.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
     QStringList tokenList;
@@ -477,7 +477,7 @@ void TextEditDialog::attributeMachineLoadFromString(const QString &string, bool 
     }
 }
 
-void TextEditDialog::attributeMachineApply()
+void DialogRawXMLEdit::attributeMachineApply()
 {
     bool localModified = ui->plainTextEdit->document()->isModified();
     std::string *lastError;
@@ -506,13 +506,13 @@ void TextEditDialog::attributeMachineApply()
                 tokens[5].toStdString(), tokens[6].toStdString(), tokens[7].toStdString(), tokens[8].toStdString());
     }
 
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from TextEditDialog::attributeMachineApply"s);
+    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogRawXMLEdit::attributeMachineApply"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }
 
 
-void TextEditDialog::attributeMachineApplyRow(const std::string &action, const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue,
+void DialogRawXMLEdit::attributeMachineApplyRow(const std::string &action, const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue,
                                               const std::string &changeAttribute, const std::string &tokenNumber, const std::string &search, const std::string &replace, const std::string &arithmetic)
 {
     if (action == "Edit")
@@ -523,7 +523,7 @@ void TextEditDialog::attributeMachineApplyRow(const std::string &action, const s
         attributeMachineApplyRowDelete(matchTag, matchAttribute, matchAttributeValue);
 }
 
-void TextEditDialog::attributeMachineApplyRowEdit(const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue,
+void DialogRawXMLEdit::attributeMachineApplyRowEdit(const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue,
                                                   const std::string &changeAttribute, const std::string &tokenNumber, const std::string &search, const std::string &replace, const std::string &arithmetic)
 {
 
@@ -581,7 +581,7 @@ void TextEditDialog::attributeMachineApplyRowEdit(const std::string &matchTag, c
     }
 }
 
-void TextEditDialog::attributeMachineApplyRowCreate(const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue,
+void DialogRawXMLEdit::attributeMachineApplyRowCreate(const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue,
                                                     const std::string &changeAttribute, const std::string &tokenNumber, const std::string &search, const std::string &replace, const std::string &arithmetic)
 {
 
@@ -648,7 +648,7 @@ void TextEditDialog::attributeMachineApplyRowCreate(const std::string &matchTag,
     }
 }
 
-void TextEditDialog::attributeMachineApplyRowDelete(const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue)
+void DialogRawXMLEdit::attributeMachineApplyRowDelete(const std::string &matchTag, const std::string &matchAttribute, const std::string &matchAttributeValue)
 {
 
     std::regex regularExpression("^\\s*(0|[1-9]\\d*)\\s*$"s);
@@ -676,7 +676,7 @@ void TextEditDialog::attributeMachineApplyRowDelete(const std::string &matchTag,
     }
 }
 
-bool TextEditDialog::attributeMachineMatch(const std::string &refStr, const std::string &findStr)
+bool DialogRawXMLEdit::attributeMachineMatch(const std::string &refStr, const std::string &findStr)
 {
     bool caseSensitive = false;
     bool useRegex = false;
@@ -696,7 +696,7 @@ bool TextEditDialog::attributeMachineMatch(const std::string &refStr, const std:
     return match.hasMatch();
 }
 
-std::string TextEditDialog::attributeMachineReplace(const std::string input, const std::string &before, const std::string &after)
+std::string DialogRawXMLEdit::attributeMachineReplace(const std::string input, const std::string &before, const std::string &after)
 {
     bool caseSensitive = false;
     bool useRegex = false;
@@ -718,7 +718,7 @@ std::string TextEditDialog::attributeMachineReplace(const std::string input, con
 
 // this needs to be customised depending on how the genome interacts with
 // the XML file specifying the simulation
-std::string TextEditDialog::attributeMachineArithmetic(const std::string &original, const std::string &arithmetic)
+std::string DialogRawXMLEdit::attributeMachineArithmetic(const std::string &original, const std::string &arithmetic)
 {
     std::string newString;
     std::string expression = "v="s + original + ";"s + arithmetic; // this means that I can access the current value using the variable v
@@ -739,7 +739,7 @@ std::string TextEditDialog::attributeMachineArithmetic(const std::string &origin
     return newString;
 }
 
-void TextEditDialog::resetPositions()
+void DialogRawXMLEdit::resetPositions()
 {
     bool localModified = ui->plainTextEdit->document()->isModified();
     std::string *lastError;
@@ -773,12 +773,12 @@ void TextEditDialog::resetPositions()
             quaternion->second = "1 0 0 0"s;
         }
     }
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from TextEditDialog::resetPositions"s);
+    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogRawXMLEdit::resetPositions"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }
 
-std::string *TextEditDialog::validate()
+std::string *DialogRawXMLEdit::validate()
 {
     GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
@@ -791,22 +791,22 @@ std::string *TextEditDialog::validate()
     return nullptr;
 }
 
-void TextEditDialog::modificationChanged(bool /*changed*/)
+void DialogRawXMLEdit::modificationChanged(bool /*changed*/)
 {
     enableControls();
 }
 
-bool TextEditDialog::isModified() const
+bool DialogRawXMLEdit::isModified() const
 {
     return ui->plainTextEdit->document()->isModified();
 }
 
-void TextEditDialog::setFileName(const QString &fileName)
+void DialogRawXMLEdit::setFileName(const QString &fileName)
 {
    m_fileName = fileName;
 }
 
-void TextEditDialog::setModified(bool modified)
+void DialogRawXMLEdit::setModified(bool modified)
 {
     ui->plainTextEdit->document()->setModified(modified);
     enableControls();

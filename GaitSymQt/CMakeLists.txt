@@ -124,8 +124,8 @@ set(PROJECT_SOURCES
     ../GaitSymQt/Preferences.cpp
     ../GaitSymQt/SimulationWidget.cpp
     ../GaitSymQt/StrokeFont.cpp
-    ../GaitSymQt/TextEditDialog.cpp
-    ../GaitSymQt/TextEditDialog.ui
+    ../GaitSymQt/DialogRawXMLEdit.cpp
+    ../GaitSymQt/DialogRawXMLEdit.ui
     ../GaitSymQt/TrackBall.cpp
     ../GaitSymQt/UniqueNameValidator.cpp
     ../GaitSymQt/ViewControlWidget.cpp
@@ -712,7 +712,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/Preferences.h
     ../GaitSymQt/SimulationWidget.h
     ../GaitSymQt/StrokeFont.h
-    ../GaitSymQt/TextEditDialog.h
+    ../GaitSymQt/DialogRawXMLEdit.h
     ../GaitSymQt/TrackBall.h
     ../GaitSymQt/UniqueNameValidator.h
     ../GaitSymQt/ViewControlWidget.h

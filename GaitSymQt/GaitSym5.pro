@@ -70,7 +70,7 @@ SOURCES += \
     Preferences.cpp \
     SimulationWidget.cpp \
     StrokeFont.cpp \
-    TextEditDialog.cpp \
+    DialogRawXMLEdit.cpp \
     TrackBall.cpp \
     UniqueNameValidator.cpp \
     ViewControlWidget.cpp \
@@ -1108,7 +1108,7 @@ HEADERS += \
     Preferences.h \
     SimulationWidget.h \
     StrokeFont.h \
-    TextEditDialog.h \
+    DialogRawXMLEdit.h \
     TrackBall.h \
     UniqueNameValidator.h \
     ViewControlWidget.h \
@@ -1209,7 +1209,7 @@ FORMS += \
     DialogRename.ui \
     DrawFluidSac.cpp \
     MainWindow.ui \
-    TextEditDialog.ui
+    DialogRawXMLEdit.ui
 
 INCLUDEPATH += \
     ../fast_double_parser \
