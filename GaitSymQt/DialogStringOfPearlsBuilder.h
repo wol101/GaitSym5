@@ -16,13 +16,17 @@ class DialogStringOfPearlsBuilder : public QDialog
 
 public:
     explicit DialogStringOfPearlsBuilder(QWidget *parent = nullptr);
-    ~DialogStringOfPearlsBuilder();
+    virtual ~DialogStringOfPearlsBuilder() Q_DECL_OVERRIDE;
 
+    void lateInitialise();
+
+    void setSimulation(GaitSym::Simulation *newSimulation);
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
     virtual void reject() Q_DECL_OVERRIDE;
     void properties();
+    void spinBoxNumberOfPearlsChanged(const QString &text);
 
 protected:
     // void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;

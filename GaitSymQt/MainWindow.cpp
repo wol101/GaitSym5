@@ -2977,6 +2977,8 @@ void MainWindow::menuCreateTestingDrivers()
 void MainWindow::menuCreateStringOfPearls()
 {
     DialogStringOfPearlsBuilder dialog(this);
+    dialog.setSimulation(this->m_simulation);
+    dialog.lateInitialise();
     int status = dialog.exec();
     if (status == QDialog::Accepted)
     {
