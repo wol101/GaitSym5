@@ -81,6 +81,7 @@ public slots:
     void menuCreateMarker();
     void menuCreateMuscle();
     void menuCreateMirrorElements();
+    void menuCreateStringOfPearls();
     void menuCreateTestingDrivers();
     void menuLoadDefaultView();
     void menuDeleteAssembly();

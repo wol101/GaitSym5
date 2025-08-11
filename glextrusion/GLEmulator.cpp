@@ -245,7 +245,7 @@ void GLEmulator::DecodePolygon() // note that this version only copes with conve
         ++b;
         ++c;
     }
-#ifndef NDEBUG
+#ifdef DEBUG_GLEMULATOR
     if (TestConvex())
     {
         std::cerr << "Warning: polygon is not convex\n";

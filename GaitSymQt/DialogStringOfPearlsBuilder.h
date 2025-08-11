@@ -1,6 +1,9 @@
 #ifndef DIALOGSTRINGOFPEARLSBUILDER_H
 #define DIALOGSTRINGOFPEARLSBUILDER_H
 
+#include "Simulation.h"
+#include "Preferences.h"
+
 #include <QDialog>
 
 namespace Ui {
@@ -15,8 +18,24 @@ public:
     explicit DialogStringOfPearlsBuilder(QWidget *parent = nullptr);
     ~DialogStringOfPearlsBuilder();
 
+
+public slots:
+    virtual void accept() Q_DECL_OVERRIDE;
+    virtual void reject() Q_DECL_OVERRIDE;
+    void properties();
+
+protected:
+    // void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+
 private:
     Ui::DialogStringOfPearlsBuilder *ui;
+
+    GaitSym::Simulation *m_simulation = nullptr;
+
+    QMap<QString, SettingsItem> m_properties;
+
+    void updateActivation();
+
 };
 
 #endif // DIALOGSTRINGOFPEARLSBUILDER_H

@@ -57,8 +57,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>146</width>
-              <height>637</height>
+              <width>225</width>
+              <height>946</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
@@ -862,8 +862,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>346</width>
-              <height>445</height>
+              <width>366</width>
+              <height>494</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_7">
@@ -969,8 +969,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1143</width>
-          <height>358</height>
+          <width>1133</width>
+          <height>267</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_11">
@@ -1036,7 +1036,7 @@
      <x>0</x>
      <y>0</y>
      <width>1157</width>
-     <height>18</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -1144,6 +1144,7 @@
     <addaction name="separator"/>
     <addaction name="actionCreateMirrorElements"/>
     <addaction name="actionCreateTestingDrivers"/>
+    <addaction name="actionCreateStringOfPearls"/>
     <addaction name="separator"/>
     <addaction name="actionRawXMLEditor"/>
     <addaction name="actionRenameElement"/>
@@ -1803,6 +1804,11 @@
   <action name="actionExportMuJoCo">
    <property name="text">
     <string>MuJoCo...</string>
+   </property>
+  </action>
+  <action name="actionCreateStringOfPearls">
+   <property name="text">
+    <string>Create String of Pearls...</string>
    </property>
   </action>
  </widget>

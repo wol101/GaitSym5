@@ -31,6 +31,7 @@
 #include "DialogOutputSelect.h"
 #include "DialogPreferences.h"
 #include "DialogRename.h"
+#include "DialogStringOfPearlsBuilder.h"
 #include "Driver.h"
 #include "FacetedObject.h"
 #include "FluidSac.h"
@@ -129,6 +130,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionCreateMarker, SIGNAL(triggered()), this, SLOT(menuCreateMarker()));
     connect(ui->actionCreateMuscle, SIGNAL(triggered()), this, SLOT(menuCreateMuscle()));
     connect(ui->actionCreateMirrorElements, SIGNAL(triggered()), this, SLOT(menuCreateMirrorElements()));
+    connect(ui->actionCreateStringOfPearls, SIGNAL(triggered()), this, SLOT(menuCreateStringOfPearls()));
     connect(ui->actionCreateTestingDrivers, SIGNAL(triggered()), this, SLOT(menuCreateTestingDrivers()));
     connect(ui->actionCut, SIGNAL(triggered()), this, SLOT(cut()));
     connect(ui->actionLoadDefaultView, SIGNAL(triggered()), this, SLOT(menuLoadDefaultView()));
@@ -796,6 +798,7 @@ void MainWindow::updateEnable()
     ui->actionRawXMLEditor->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionRenameElement->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateMirrorElements->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
+    ui->actionCreateStringOfPearls->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetBodyList()->size() > 0);
     ui->actionCreateTestingDrivers->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->GetMuscleList()->size() > 0);
     ui->actionExportMarkers->setEnabled(m_simulation != nullptr);
     ui->actionExportOpenSim->setEnabled(m_simulation != nullptr);
@@ -2968,6 +2971,20 @@ void MainWindow::menuCreateTestingDrivers()
     else
     {
         this->ui->statusBar->showMessage(tr("Create Mirror Elements cancelled"));
+    }
+}
+
+void MainWindow::menuCreateStringOfPearls()
+{
+    DialogStringOfPearlsBuilder dialog(this);
+    int status = dialog.exec();
+    if (status == QDialog::Accepted)
+    {
+        this->ui->statusBar->showMessage(tr("Create String of Pearls finished"));
+    }
+    else
+    {
+        this->ui->statusBar->showMessage(tr("Create String of Pearls cancelled"));
     }
 }
 
