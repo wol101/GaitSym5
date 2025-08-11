@@ -51,8 +51,8 @@ find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 
 set(PROJECT_SOURCES
     ../GaitSymQt/AVIWriter.cpp
-    ../GaitSymQt/AboutDialog.cpp
-    ../GaitSymQt/AboutDialog.ui
+    ../GaitSymQt/DialogAbout.cpp
+    ../GaitSymQt/DialogAbout.ui
     ../GaitSymQt/BasicXMLSyntaxHighlighter.cpp
     ../GaitSymQt/DialogAssembly.cpp
     ../GaitSymQt/DialogAssembly.ui
@@ -659,7 +659,7 @@ set(PROJECT_SOURCES
     ../pocketpy-2.0.4/pocketpy.c
 
     ../fast_double_parser/fast_double_parser/fast_double_parser.h
-    ../GaitSymQt/AboutDialog.h
+    ../GaitSymQt/DialogAbout.h
     ../GaitSymQt/AVIWriter.h
     ../GaitSymQt/BasicXMLSyntaxHighlighter.h
     ../GaitSymQt/DialogAssembly.h

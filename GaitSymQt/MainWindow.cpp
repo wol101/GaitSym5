@@ -10,7 +10,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#include "AboutDialog.h"
+#include "DialogAbout.h"
 #include "Body.h"
 #include "Colour.h"
 #include "DataFile.h"
@@ -1660,9 +1660,9 @@ void MainWindow::menuExportMuJoCo()
 
 void MainWindow::menuAbout()
 {
-    AboutDialog aboutDialog(this);
+    DialogAbout dialogAbout(this);
 
-    int status = aboutDialog.exec();
+    int status = dialogAbout.exec();
 
     if (status == QDialog::Accepted)
     {

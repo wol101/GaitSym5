@@ -1,5 +1,5 @@
 /*
- *  AboutDialog.cpp
+ *  DialogAbout.cpp
  *  GaitSymODE2019
  *
  *  Created by Bill Sellers on 08/10/2018.
@@ -7,8 +7,8 @@
  *
  */
 
-#include "AboutDialog.h"
-#include "ui_AboutDialog.h"
+#include "DialogAbout.h"
+#include "ui_DialogAbout.h"
 
 #include "Preferences.h"
 
@@ -19,16 +19,16 @@
 #include <QLibraryInfo>
 #include <QVersionNumber>
 
-AboutDialog::AboutDialog(QWidget *parent) :
+DialogAbout::DialogAbout(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AboutDialog)
+    ui(new Ui::DialogAbout)
 {
     ui->setupUi(this);
     setWindowTitle(tr("About GaitSym5"));
 #ifdef Q_OS_MACOS
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
-    restoreGeometry(Preferences::valueQByteArray("AboutDialogGeometry"));
+    restoreGeometry(Preferences::valueQByteArray("DialogAboutGeometry"));
 
     QString buildDate = QString("Build: %1 %2").arg(__DATE__, __TIME__);
     QString buildType;
@@ -63,28 +63,28 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui->labelDescriptor->setText(descriptor);
 }
 
-AboutDialog::~AboutDialog()
+DialogAbout::~DialogAbout()
 {
     delete ui;
 }
 
 // note: need to trap closeEvent, accept and reject to be sure of getting all the things that might dismiss the dialog
 
-void AboutDialog::closeEvent(QCloseEvent *event)
+void DialogAbout::closeEvent(QCloseEvent *event)
 {
-    Preferences::insert("AboutDialogGeometry", saveGeometry());
+    Preferences::insert("DialogAboutGeometry", saveGeometry());
     QDialog::closeEvent(event);
 }
 
-void AboutDialog::accept() // this catches cancel, close and escape key
+void DialogAbout::accept() // this catches cancel, close and escape key
 {
-    Preferences::insert("AboutDialogGeometry", saveGeometry());
+    Preferences::insert("DialogAboutGeometry", saveGeometry());
     QDialog::accept();
 }
 
-void AboutDialog::reject() // this catches cancel, close and escape key
+void DialogAbout::reject() // this catches cancel, close and escape key
 {
-    Preferences::insert("AboutDialogGeometry", saveGeometry());
+    Preferences::insert("DialogAboutGeometry", saveGeometry());
     QDialog::reject();
 }
 
