@@ -9,6 +9,10 @@
 #include "MAMuscle.h"
 #include "MAMuscleComplete.h"
 #include "DampedSpringMuscle.h"
+#include "TwoPointStrap.h"
+#include "NPointStrap.h"
+#include "CylinderWrapStrap.h"
+#include "TwoCylinderWrapStrap.h"
 
 using namespace std::string_literals; // enables s-suffix for std::string literals
 
@@ -246,3 +250,99 @@ void DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged(const QString &te
     }
 }
 
+void DialogStringOfPearlsBuilder::importPathFromMuscle()
+{
+    std::string muscleID = ui->comboBoxImportFromMuscle->currentText().toStdString();
+    GaitSym::Muscle *muscle = m_simulation->GetMuscle(muscleID);
+    if (!muscle) return;
+    GaitSym::Strap *strap = muscle->GetStrap();
+
+    std::vector<pgd::Vector3> pathCoordinates;
+    while (true)
+    {
+        if (GaitSym::TwoPointStrap *twoPointStrap = dynamic_cast<GaitSym::TwoPointStrap *>(strap))
+        {
+            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = twoPointStrap->GetPointForceList();
+            pathCoordinates.reserve(pointForceList->size());
+            pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
+            pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
+            break;
+        }
+
+        if (GaitSym::NPointStrap *nPointStrap = dynamic_cast<GaitSym::NPointStrap *>(strap))
+        {
+            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = nPointStrap->GetPointForceList();
+            pathCoordinates.reserve(pointForceList->size());
+            pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
+            for (size_t i = 2; i < pointForceList->size(); i++) pathCoordinates.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));
+            pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
+            break;
+        }
+
+        if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(strap))
+        {
+            pathCoordinates = *cylinderWrapStrap->GetPathCoordinates();
+            break;
+        }
+
+        if (GaitSym::TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<GaitSym::TwoCylinderWrapStrap *>(strap))
+        {
+            pathCoordinates = *twoCylinderWrapStrap->GetPathCoordinates();
+            break;
+        }
+
+        qDebug() << "Error in DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged: Unsupported STRAP type";
+        return;
+    }
+
+    std::vector<pgd::Vector3> pathVectors(pathCoordinates.size() - 1);
+    std::vector<double> pathVectorsLength(pathCoordinates.size() - 1);
+    std::vector<double> pathVectorsCumulativeLength(pathCoordinates.size() - 1);
+    double totalLength = 0;
+    for (size_t i = 0; i < pathVectors.size(); ++i)
+    {
+        pathVectors[i] = pathCoordinates[i + 1] - pathCoordinates[i];
+        pathVectorsLength[i] = pathVectors[i].Magnitude();
+        totalLength += pathVectorsLength[i];
+        pathVectorsCumulativeLength[i] = totalLength;
+    }
+    int numPearls = ui->spinBoxNumberOfPearls->value();
+    std::vector<pgd::Vector3> stringOfPearlsPath((size_t)numPearls + 2);
+    double lengthIncrement = totalLength / (numPearls + 1);
+    stringOfPearlsPath.front() = pathCoordinates.front();
+    stringOfPearlsPath.back() = pathCoordinates.back();
+    double lengthTarget = 0;
+    for (size_t i = 1; i < numPearls + 1; ++i)
+    {
+        lengthTarget += lengthIncrement;
+        // lower_bound
+        // if a searching element exists: std::lower_bound() returns iterator to the element itself
+        // if a searching element doesn't exist:
+        //    if all elements are greater than the searching element: lower_bound() returns an iterator to begin of the range
+        //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
+        //    otherwise, lower_bound() returns an iterator to the next greater element to the search element of the range
+        auto it = std::lower_bound(pathVectorsCumulativeLength.begin(), pathVectorsCumulativeLength.end(), lengthTarget);
+        if (*it == lengthTarget)
+        {
+            std::size_t index = std::distance(std::begin(pathVectorsCumulativeLength), it);
+            stringOfPearlsPath[i] = pathCoordinates[index + 1];
+            break;
+        }
+        if (it == pathVectorsCumulativeLength.begin() || it == pathVectorsCumulativeLength.end())
+        {
+            qDebug() << "Error in DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged: lengthTarget out of range";
+            return;
+        }
+        std::size_t index = std::distance(std::begin(pathVectorsCumulativeLength), it);
+        double deltaLength = lengthTarget - pathVectorsCumulativeLength[i - 1];
+        stringOfPearlsPath[i] = pathCoordinates[index] + pathVectors[index] * (pathVectorsLength[index] / deltaLength);
+    }
+
+    for (size_t i = 0; i < stringOfPearlsPath.size(); ++i)
+    {
+        pgd::Vector3 v = stringOfPearlsPath[i];
+        dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(int(i), 0))->setValue(v.x);
+        dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(int(i), 1))->setValue(v.y);
+        dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(int(i), 2))->setValue(v.z);
+    }
+}

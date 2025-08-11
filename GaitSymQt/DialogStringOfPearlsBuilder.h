@@ -26,6 +26,7 @@ public slots:
     virtual void accept() Q_DECL_OVERRIDE;
     virtual void reject() Q_DECL_OVERRIDE;
     void properties();
+    void importPathFromMuscle();
     void spinBoxNumberOfPearlsChanged(const QString &text);
 
 protected:

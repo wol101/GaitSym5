@@ -168,7 +168,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
                 twoCylinderWrapStrap->SetNumWrapSegments(int(m_strapCylinderWrapSegments));
                 twoCylinderWrapStrap->Calculate();
             }
-            std::vector<pgd::Vector3> m_polyline = *twoCylinderWrapStrap->GetPathCoordinates();
+            m_polyline = *twoCylinderWrapStrap->GetPathCoordinates();
             // if (polyline.size())
             // {
             //     m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyline, m_strapRadius, m_strapNumSegments, m_strapColor, 1);
