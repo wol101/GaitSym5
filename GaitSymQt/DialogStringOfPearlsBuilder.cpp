@@ -305,6 +305,8 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
     GaitSym::Strap *strap = muscle->GetStrap();
 
     std::vector<pgd::Vector3> pathCoordinates;
+    std::string originID;
+    std::string insertionID;
     while (true)
     {
         if (GaitSym::TwoPointStrap *twoPointStrap = dynamic_cast<GaitSym::TwoPointStrap *>(strap))
@@ -313,6 +315,8 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
             pathCoordinates.reserve(pointForceList->size());
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
+            originID = twoPointStrap->GetOriginMarker()->GetBody()->name();
+            insertionID = twoPointStrap->GetInsertionMarker()->GetBody()->name();
             break;
         }
 
@@ -323,24 +327,35 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             for (size_t i = 2; i < pointForceList->size(); i++) pathCoordinates.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
+            originID = nPointStrap->GetOriginMarker()->GetBody()->name();
+            insertionID = nPointStrap->GetInsertionMarker()->GetBody()->name();
             break;
         }
 
         if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(strap))
         {
             pathCoordinates = *cylinderWrapStrap->GetPathCoordinates();
+            originID = cylinderWrapStrap->GetOriginMarker()->GetBody()->name();
+            insertionID = cylinderWrapStrap->GetInsertionMarker()->GetBody()->name();
             break;
         }
 
         if (GaitSym::TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<GaitSym::TwoCylinderWrapStrap *>(strap))
         {
             pathCoordinates = *twoCylinderWrapStrap->GetPathCoordinates();
+            originID = twoCylinderWrapStrap->GetOriginMarker()->GetBody()->name();
+            insertionID = twoCylinderWrapStrap->GetInsertionMarker()->GetBody()->name();
             break;
         }
 
         qDebug() << "Error in DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged: Unsupported STRAP type";
         return;
     }
+
+    int index = ui->comboBoxOriginBodyID->findText(QString::fromStdString(originID));
+    ui->comboBoxOriginBodyID->setCurrentIndex(index);
+    index = ui->comboBoxInsertionBodyID->findText(QString::fromStdString(insertionID));
+    ui->comboBoxInsertionBodyID->setCurrentIndex(index);
 
     std::vector<pgd::Vector3> pathVectors(pathCoordinates.size() - 1);
     std::vector<double> pathVectorsLength(pathCoordinates.size() - 1);
@@ -402,7 +417,7 @@ void DialogStringOfPearlsBuilder::createBodies()
     for (size_t i = 0; i < numPearls; i++)
     {
         pgd::Vector3 position;
-        int row = i + 1;
+        int row = int(i + 1);
         position.x = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 0))->value();
         position.y = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 1))->value();
         position.z = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 2))->value();
@@ -412,6 +427,8 @@ void DialogStringOfPearlsBuilder::createBodies()
         body->SetMass(mass, moi, moi, moi, 0, 0, 0);
         std::string bodyID = GaitSym::GSUtil::ToString("%s_body_%03zu", rootID.c_str(), i);
         body->setName(bodyID);
+        body->setSimulation(m_simulation);
+        body->EnterConstructionMode();
         m_bodyList.push_back(std::move(body));
     }
 }
@@ -426,11 +443,15 @@ void DialogStringOfPearlsBuilder::createGeoms()
         auto marker = std::make_unique<GaitSym::Marker>(m_bodyList[i].get());
         std::string markerID = GaitSym::GSUtil::ToString("%s_geom_marker_%03zu", rootID.c_str(), i);
         marker->setName(markerID);
+        marker->setSimulation(m_simulation);
+        marker->setUpstreamObjects( { m_bodyList[i].get() } );
 
         auto sphereGeom = std::make_unique<GaitSym::SphereGeom>(radius);
         std::string geomID = GaitSym::GSUtil::ToString("%s_geom_%03zu", rootID.c_str(), i);
         sphereGeom->setName(geomID);
         sphereGeom->setGeomMarker(marker.get());
+        sphereGeom->setSimulation(m_simulation);
+        sphereGeom->setUpstreamObjects( { marker.get() } );
 
         m_markerList.push_back(std::move(marker));
         m_geomList.push_back(std::move(sphereGeom));

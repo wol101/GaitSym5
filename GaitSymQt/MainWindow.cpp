@@ -2987,11 +2987,34 @@ void MainWindow::menuCreateStringOfPearls()
         auto geomList = dialog.geomList();
         auto muscleList = dialog.muscleList();
         auto strapList = dialog.strapList();
-        for (auto &&body : *bodyList) { m_simulation->GetBodyList()->at(body->name()) = std::move(body); }
-        for (auto &&marker : *markerList) { m_simulation->GetMarkerList()->at(marker->name()) = std::move(marker); }
-        for (auto &&geom : *geomList) { m_simulation->GetGeomList()->at(geom->name()) = std::move(geom); }
-        for (auto &&muscle : *muscleList) { m_simulation->GetMuscleList()->at(muscle->name()) = std::move(muscle); }
-        for (auto &&strap : *strapList) { m_simulation->GetStrapList()->at(strap->name()) = std::move(strap); }
+        for (auto &&body : *bodyList)
+        {
+            ui->treeWidgetElements->insertBody(QString().fromStdString(body->name()), body->visible(), body->dump());
+            (*m_simulation->GetBodyList())[body->name()] = std::move(body);
+        }
+        for (auto &&marker : *markerList)
+        {
+            ui->treeWidgetElements->insertMarker(QString().fromStdString(marker->name()), marker->visible(), marker->dump());
+            (*m_simulation->GetMarkerList())[marker->name()] = std::move(marker);
+        }
+        for (auto &&geom : *geomList)
+        {
+            ui->treeWidgetElements->insertGeom(QString().fromStdString(geom->name()), geom->visible(), geom->dump());
+            (*m_simulation->GetGeomList())[geom->name()] = std::move(geom);
+        }
+        for (auto &&muscle : *muscleList)
+        {
+            ui->treeWidgetElements->insertMuscle(QString().fromStdString(muscle->name()), muscle->visible(), muscle->dump());
+            (*m_simulation->GetMuscleList())[muscle->name()] = std::move(muscle);
+        }
+        for (auto &&strap : *strapList)
+        {
+            (*m_simulation->GetStrapList())[strap->name()] = std::move(strap);
+        }
+        this->setWindowModified(true);
+        enterConstructionMode();
+        this->updateEnable();
+        this->m_simulationWidget->update();
         this->ui->statusBar->showMessage(tr("Create String of Pearls finished"));
     }
     else
