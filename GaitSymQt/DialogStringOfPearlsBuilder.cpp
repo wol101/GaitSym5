@@ -28,10 +28,12 @@ DialogStringOfPearlsBuilder::DialogStringOfPearlsBuilder(QWidget *parent)
     setWindowFlags(windowFlags() & (~Qt::Dialog) | Qt::Window); // allows the window to be resized on macs
 #endif
     restoreGeometry(Preferences::valueQByteArray("DialogStringOfPearlsBuilderGeometry"));
+    ui->splitter->restoreState(Preferences::valueQByteArray("DialogStringOfPearlsBuilderSplitterState"));
 
     connect(ui->pushButtonOK, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(reject()));
     connect(ui->pushButtonProperties, SIGNAL(clicked()), this, SLOT(properties()));
+    connect(ui->pushButtonImportPathFromMuscle, SIGNAL(clicked()), this, SLOT(importPathFromMuscle()));
     connect(ui->spinBoxNumberOfPearls, SIGNAL(textChanged(QString)), this, SLOT(spinBoxNumberOfPearlsChanged(QString)));
 
 }
@@ -45,6 +47,7 @@ void DialogStringOfPearlsBuilder::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogStringOfPearlsBuilder::accept()";
     Preferences::insert("DialogStringOfPearlsBuilderGeometry", saveGeometry());
+    Preferences::insert("DialogStringOfPearlsBuilderSplitterState", ui->splitter->saveState());
     QDialog::accept();
 }
 
@@ -53,6 +56,7 @@ void DialogStringOfPearlsBuilder::reject() // this catches cancel, close and esc
 {
     qDebug() << "DialogStringOfPearlsBuilder::reject()";
     Preferences::insert("DialogStringOfPearlsBuilderGeometry", saveGeometry());
+    Preferences::insert("DialogStringOfPearlsBuilderSplitterState", ui->splitter->saveState());
     QDialog::reject();
 }
 
@@ -193,6 +197,11 @@ void DialogStringOfPearlsBuilder::lateInitialise()
             ui->tableWidget->setCellWidget(row, col, new LineEditDouble());
         }
     }
+    for (int col = 0; col < ui->tableWidget->columnCount(); ++col)
+    {
+        ui->tableWidget->setColumnWidth(col, ui->tableWidget->columnWidth(col) * 2);
+    }
+
 
     // set default new name
     auto nameSet = m_simulation->GetNameSet();
@@ -322,20 +331,17 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
         //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
         //    otherwise, lower_bound() returns an iterator to the next greater element to the search element of the range
         auto it = std::lower_bound(pathVectorsCumulativeLength.begin(), pathVectorsCumulativeLength.end(), lengthTarget);
+        if (it == pathVectorsCumulativeLength.end()) { qDebug() << "Error in DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged: lengthTarget out of range"; return; }
+        std::size_t index = std::distance(std::begin(pathVectorsCumulativeLength), it);
         if (*it == lengthTarget)
         {
-            std::size_t index = std::distance(std::begin(pathVectorsCumulativeLength), it);
             stringOfPearlsPath[i] = pathCoordinates[index + 1];
-            break;
         }
-        if (it == pathVectorsCumulativeLength.begin() || it == pathVectorsCumulativeLength.end())
+        else
         {
-            qDebug() << "Error in DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged: lengthTarget out of range";
-            return;
+            double deltaLength = lengthTarget - pathVectorsCumulativeLength[index];
+            stringOfPearlsPath[i] = pathCoordinates[index] + pathVectors[index] * (pathVectorsLength[index] / deltaLength);
         }
-        std::size_t index = std::distance(std::begin(pathVectorsCumulativeLength), it);
-        double deltaLength = lengthTarget - pathVectorsCumulativeLength[i - 1];
-        stringOfPearlsPath[i] = pathCoordinates[index] + pathVectors[index] * (pathVectorsLength[index] / deltaLength);
     }
 
     for (size_t i = 0; i < stringOfPearlsPath.size(); ++i)
