@@ -306,7 +306,7 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
 
     std::vector<pgd::Vector3> pathVectors(pathCoordinates.size() - 1);
     std::vector<double> pathVectorsLength(pathCoordinates.size() - 1);
-    std::vector<double> pathVectorsCumulativeLength(pathCoordinates.size() - 1);
+    std::vector<double> pathVectorsCumulativeLength(pathCoordinates.size());
     double totalLength = 0;
     for (size_t i = 0; i < pathVectors.size(); ++i)
     {
@@ -339,8 +339,9 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
         }
         else
         {
-            double deltaLength = lengthTarget - pathVectorsCumulativeLength[index];
-            stringOfPearlsPath[i] = pathCoordinates[index] + pathVectors[index] * (pathVectorsLength[index] / deltaLength);
+            double deltaLength;
+            index > 0 ? deltaLength = lengthTarget - pathVectorsCumulativeLength[index - 1] : deltaLength = lengthTarget;
+            stringOfPearlsPath[i] = pathCoordinates[index] + pathVectors[index] * (deltaLength / pathVectorsLength[index]);
         }
     }
 
