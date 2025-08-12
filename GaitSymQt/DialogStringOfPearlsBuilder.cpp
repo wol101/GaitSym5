@@ -45,6 +45,9 @@ DialogStringOfPearlsBuilder::~DialogStringOfPearlsBuilder()
 
 void DialogStringOfPearlsBuilder::accept() // this catches OK and return/enter
 {
+    createBodies();
+    createMuscles();
+
     qDebug() << "DialogStringOfPearlsBuilder::accept()";
     Preferences::insert("DialogStringOfPearlsBuilderGeometry", saveGeometry());
     Preferences::insert("DialogStringOfPearlsBuilderSplitterState", ui->splitter->saveState());
@@ -353,3 +356,14 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
         dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(int(i), 2))->setValue(v.z);
     }
 }
+
+void DialogStringOfPearlsBuilder::createBodies()
+{
+
+}
+
+void DialogStringOfPearlsBuilder::createMuscles()
+{
+}
+
+

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
-    <height>979</height>
+    <width>886</width>
+    <height>984</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -515,8 +515,59 @@
       <property name="title">
        <string>Path</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_8">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+         </property>
+         <property name="rowCount">
+          <number>3</number>
+         </property>
+         <property name="columnCount">
+          <number>3</number>
+         </property>
+         <row/>
+         <row/>
+         <row/>
+         <column/>
+         <column/>
+         <column/>
+        </widget>
+       </item>
        <item row="1" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Origin Body ID</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="comboBoxOriginBodyID"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Insertion Body ID</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBoxInsertionBodyID"/>
+       </item>
+       <item row="3" column="0" colspan="2">
         <widget class="QWidget" name="widget_2" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -525,6 +576,12 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
@@ -558,37 +615,6 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
-         </property>
-         <property name="rowCount">
-          <number>3</number>
-         </property>
-         <property name="columnCount">
-          <number>3</number>
-         </property>
-         <row/>
-         <row/>
-         <row/>
-         <column/>
-         <column/>
-         <column/>
-        </widget>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -596,6 +622,12 @@
    <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QPushButton" name="pushButtonProperties">
         <property name="text">
@@ -650,6 +682,54 @@
    <header>LineEditUniqueName.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lineEditRootID</tabstop>
+  <tabstop>lineEditPearlRadius</tabstop>
+  <tabstop>lineEditPearlMass</tabstop>
+  <tabstop>spinBoxNumberOfPearls</tabstop>
+  <tabstop>tabWidgetMuscle</tabstop>
+  <tabstop>lineEditForcePerUnitArea</tabstop>
+  <tabstop>lineEditVMaxFactor</tabstop>
+  <tabstop>lineEditPCA</tabstop>
+  <tabstop>lineEditFibreLength</tabstop>
+  <tabstop>lineEditActivationK</tabstop>
+  <tabstop>lineEditForcePerUnitArea_2</tabstop>
+  <tabstop>lineEditVMaxFactor_2</tabstop>
+  <tabstop>lineEditPCA_2</tabstop>
+  <tabstop>lineEditFibreLength_2</tabstop>
+  <tabstop>lineEditActivationK_2</tabstop>
+  <tabstop>lineEditWidth</tabstop>
+  <tabstop>lineEditTendonLength</tabstop>
+  <tabstop>lineEditSerialStrainAtFMax</tabstop>
+  <tabstop>lineEditSerialStrainRateAtFMax</tabstop>
+  <tabstop>comboBoxSerialStrainModel</tabstop>
+  <tabstop>lineEditParallelStrainAtFMax</tabstop>
+  <tabstop>lineEditParallelStrainRateAtFMax</tabstop>
+  <tabstop>comboBoxParallelStrainModel</tabstop>
+  <tabstop>lineEditInitialFibreLength</tabstop>
+  <tabstop>checkBoxUseActivation</tabstop>
+  <tabstop>lineEditFastTwitchProportion</tabstop>
+  <tabstop>lineEditTActivationA</tabstop>
+  <tabstop>lineEditTActivationB</tabstop>
+  <tabstop>lineEditTDeactivationA</tabstop>
+  <tabstop>lineEditTDeactivationB</tabstop>
+  <tabstop>lineEditActivationRate</tabstop>
+  <tabstop>lineEditInitialActivation</tabstop>
+  <tabstop>lineEditMinimumActivation</tabstop>
+  <tabstop>lineEditUnloadedLength</tabstop>
+  <tabstop>lineEditSpringConstant</tabstop>
+  <tabstop>lineEditArea</tabstop>
+  <tabstop>lineEditDamping</tabstop>
+  <tabstop>lineEditBreakingStrain</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>comboBoxOriginBodyID</tabstop>
+  <tabstop>comboBoxInsertionBodyID</tabstop>
+  <tabstop>comboBoxImportFromMuscle</tabstop>
+  <tabstop>pushButtonImportPathFromMuscle</tabstop>
+  <tabstop>pushButtonProperties</tabstop>
+  <tabstop>pushButtonOK</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
