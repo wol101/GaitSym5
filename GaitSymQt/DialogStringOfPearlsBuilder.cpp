@@ -13,6 +13,8 @@
 #include "NPointStrap.h"
 #include "CylinderWrapStrap.h"
 #include "TwoCylinderWrapStrap.h"
+#include "GSUtil.h"
+#include "SphereGeom.h"
 
 using namespace std::string_literals; // enables s-suffix for std::string literals
 
@@ -46,6 +48,7 @@ DialogStringOfPearlsBuilder::~DialogStringOfPearlsBuilder()
 void DialogStringOfPearlsBuilder::accept() // this catches OK and return/enter
 {
     createBodies();
+    createGeoms();
     createMuscles();
 
     qDebug() << "DialogStringOfPearlsBuilder::accept()";
@@ -120,6 +123,13 @@ void DialogStringOfPearlsBuilder::lateInitialise()
     QStringList muscleIDs;
     for (auto && it : *muscleList) { muscleIDs.append(QString::fromStdString(it.first)); }
     ui->comboBoxImportFromMuscle->addItems(muscleIDs);
+
+    // fill the body comboboxes
+    auto bodyList = m_simulation->GetBodyList();
+    QStringList bodyIDs;
+    for (auto && it : *bodyList) { bodyIDs.append(QString::fromStdString(it.first)); }
+    ui->comboBoxOriginBodyID->addItems(bodyIDs);
+    ui->comboBoxInsertionBodyID->addItems(bodyIDs);
 
     // now set some sensible defaults
     ui->lineEditForcePerUnitArea->setBottom(0);
@@ -262,6 +272,31 @@ void DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged(const QString &te
     }
 }
 
+std::vector<std::unique_ptr<GaitSym::Strap> > *DialogStringOfPearlsBuilder::strapList()
+{
+    return &m_strapList;
+}
+
+std::vector<std::unique_ptr<GaitSym::Muscle> > *DialogStringOfPearlsBuilder::muscleList()
+{
+    return &m_muscleList;
+}
+
+std::vector<std::unique_ptr<GaitSym::Geom> > *DialogStringOfPearlsBuilder::geomList()
+{
+    return &m_geomList;
+}
+
+std::vector<std::unique_ptr<GaitSym::Marker> > *DialogStringOfPearlsBuilder::markerList()
+{
+    return &m_markerList;
+}
+
+std::vector<std::unique_ptr<GaitSym::Body> > *DialogStringOfPearlsBuilder::bodyList()
+{
+    return &m_bodyList;
+}
+
 void DialogStringOfPearlsBuilder::importPathFromMuscle()
 {
     std::string muscleID = ui->comboBoxImportFromMuscle->currentText().toStdString();
@@ -359,7 +394,47 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
 
 void DialogStringOfPearlsBuilder::createBodies()
 {
+    double mass = ui->lineEditPearlMass->value();
+    double radius = ui->lineEditPearlRadius->value();
+    double moi = (2.0/5.0)*mass*radius*radius; // moment of interia of a solid sphere
+    int numPearls = ui->spinBoxNumberOfPearls->value();
+    std::string rootID = ui->lineEditRootID->text().toStdString();
+    for (size_t i = 0; i < numPearls; i++)
+    {
+        pgd::Vector3 position;
+        int row = i + 1;
+        position.x = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 0))->value();
+        position.y = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 1))->value();
+        position.z = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 2))->value();
+        auto body = std::make_unique<GaitSym::Body>();
+        body->SetConstructionPosition(position);
+        body->SetPosition(position);
+        body->SetMass(mass, moi, moi, moi, 0, 0, 0);
+        std::string bodyID = GaitSym::GSUtil::ToString("%s_body_%03zu", rootID.c_str(), i);
+        body->setName(bodyID);
+        m_bodyList.push_back(std::move(body));
+    }
+}
 
+void DialogStringOfPearlsBuilder::createGeoms()
+{
+    double radius = ui->lineEditPearlRadius->value();
+    int numPearls = ui->spinBoxNumberOfPearls->value();
+    std::string rootID = ui->lineEditRootID->text().toStdString();
+    for (size_t i = 0; i < numPearls; i++)
+    {
+        auto marker = std::make_unique<GaitSym::Marker>(m_bodyList[i].get());
+        std::string markerID = GaitSym::GSUtil::ToString("%s_geom_marker_%03zu", rootID.c_str(), i);
+        marker->setName(markerID);
+
+        auto sphereGeom = std::make_unique<GaitSym::SphereGeom>(radius);
+        std::string geomID = GaitSym::GSUtil::ToString("%s_geom_%03zu", rootID.c_str(), i);
+        sphereGeom->setName(geomID);
+        sphereGeom->setGeomMarker(marker.get());
+
+        m_markerList.push_back(std::move(marker));
+        m_geomList.push_back(std::move(sphereGeom));
+    }
 }
 
 void DialogStringOfPearlsBuilder::createMuscles()
