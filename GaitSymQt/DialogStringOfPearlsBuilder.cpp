@@ -348,10 +348,10 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
         return;
     }
 
-    int index = ui->comboBoxOriginBodyID->findText(QString::fromStdString(originID));
-    ui->comboBoxOriginBodyID->setCurrentIndex(index);
-    index = ui->comboBoxInsertionBodyID->findText(QString::fromStdString(insertionID));
-    ui->comboBoxInsertionBodyID->setCurrentIndex(index);
+    int index = ui->comboBoxOriginMarkerID->findText(QString::fromStdString(originID));
+    ui->comboBoxOriginMarkerID->setCurrentIndex(index);
+    index = ui->comboBoxInsertionMarkerID->findText(QString::fromStdString(insertionID));
+    ui->comboBoxInsertionMarkerID->setCurrentIndex(index);
 
     std::vector<pgd::Vector3> pathVectors(pathCoordinates.size() - 1);
     std::vector<double> pathVectorsLength(pathCoordinates.size() - 1);
@@ -456,17 +456,18 @@ void DialogStringOfPearlsBuilder::createGeoms()
 
 void DialogStringOfPearlsBuilder::createMuscles()
 {
+    std::string rootID = ui->lineEditRootID->text().toStdString();
     int numPearls = ui->spinBoxNumberOfPearls->value();
-    GaitSym::Marker *originMarker = m_simulation->GetMarker(ui->comboBoxOriginMarkerID()->text().toStdString());
+    GaitSym::Marker *originMarker = m_simulation->GetMarker(ui->comboBoxOriginMarkerID->currentText().toStdString());
     GaitSym::Marker *insertionMarker = nullptr;
-    GaitSym::Muscle *m_outputMuscle
-        = nullptr;
+    std::unique_ptr<GaitSym::Muscle> outputMuscle;
     for (size_t i = 0; i < numPearls; ++i)
     {
         insertionMarker = m_markerList[i].get();
         auto strap = std::make_unique<GaitSym::TwoPointStrap>();
         strap->SetOrigin(originMarker);
         strap->SetInsertion(insertionMarker);
+
 
         QString muscleTab = ui->tabWidgetMuscle->tabText(ui->tabWidgetMuscle->currentIndex());
         if (muscleTab == "Minetti-Alexander")
@@ -485,7 +486,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
             muscle->SetF0(pca * forcePerUnitArea);
             muscle->SetVMax(fibreLength * vMaxFactor);
             muscle->SetK(activationK);
-            m_outputMuscle = std::move(muscle);
+            outputMuscle = std::move(muscle);
         }
         else if (muscleTab == "Minetti-Alexander Elastic")
         {
@@ -542,7 +543,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
             muscle->SetActivationRate(activationRate);
             muscle->SetStartActivation(startActivation);
             muscle->SetMinimumActivation(minimumActivation);
-            m_outputMuscle = std::move(muscle);
+            outputMuscle = std::move(muscle);
         }
         else if (muscleTab == "Damped Spring")
         {
@@ -557,11 +558,12 @@ void DialogStringOfPearlsBuilder::createMuscles()
             muscle->SetArea(area);
             muscle->SetDamping(damping);
             if (ui->lineEditBreakingStrain->text().size()) muscle->SetBreakingStrain(ui->lineEditBreakingStrain->value());
-            m_outputMuscle = std::move(muscle);
+            outputMuscle = std::move(muscle);
         }
-        Q_ASSERT_X(m_outputMuscle, "DialogMuscles::accept", "m_outputMuscle undefined");
-        m_outputMuscle->setName(ui->lineEditMuscleID->text().toStdString());
-        m_outputMuscle->setSimulation(m_simulation);
+        Q_ASSERT_X(outputMuscle, "DialogStringOfPearlsBuilder::createMuscles", "outputMuscle undefined");
+        std::string muscleID = GaitSym::GSUtil::ToString("%s_link_%03zu", rootID.c_str(), i);
+        outputMuscle->setName(muscleID);
+        outputMuscle->setSimulation(m_simulation);
 
         m_strapList.push_back(std::move(strap));
         originMarker = insertionMarker;
