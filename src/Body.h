@@ -101,6 +101,8 @@ public:
 
     void SetInitialPosition(double x, double y, double z);
     void SetInitialQuaternion(double n, double x, double y, double z);
+    void SetInitialPosition(const pgd::Vector3 &position);
+    void SetInitialQuaternion(const pgd::Quaternion &quaternion);
     pgd::Vector3 GetInitialPosition();
     pgd::Quaternion GetInitialQuaternion();
 

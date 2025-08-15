@@ -379,7 +379,7 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
 
     std::vector<pgd::Vector3> pathVectors(pathCoordinates.size() - 1);
     std::vector<double> pathVectorsLength(pathCoordinates.size() - 1);
-    std::vector<double> pathVectorsCumulativeLength(pathCoordinates.size());
+    std::vector<double> pathVectorsCumulativeLength(pathCoordinates.size() - 1);
     double totalLength = 0;
     for (size_t i = 0; i < pathVectors.size(); ++i)
     {
@@ -404,7 +404,8 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
         //    if all elements are lower than the searching element: lower_bound() returns an iterator to end of the range
         //    otherwise, lower_bound() returns an iterator to the next greater element to the search element of the range
         auto it = std::lower_bound(pathVectorsCumulativeLength.begin(), pathVectorsCumulativeLength.end(), lengthTarget);
-        if (it == pathVectorsCumulativeLength.end()) { qDebug() << "Error in DialogStringOfPearlsBuilder::spinBoxNumberOfPearlsChanged: lengthTarget out of range"; return; }
+        if (it == pathVectorsCumulativeLength.end()) {
+            qDebug() << "Error in DialogStringOfPearlsBuilder::importPathFromMuscle: lengthTarget out of range"; return; }
         std::size_t index = std::distance(std::begin(pathVectorsCumulativeLength), it);
         if (*it == lengthTarget)
         {
@@ -443,7 +444,7 @@ void DialogStringOfPearlsBuilder::createBodies()
         position.z = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 2))->value();
         auto body = std::make_unique<GaitSym::Body>();
         body->SetConstructionPosition(position);
-        body->SetPosition(position);
+        body->SetInitialPosition(position);
         body->SetMass(mass, moi, moi, moi, 0, 0, 0);
         std::string bodyID = GaitSym::GSUtil::ToString("%s_body_%03zu", rootID.c_str(), i);
         body->setName(bodyID);

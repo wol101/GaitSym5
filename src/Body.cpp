@@ -1144,6 +1144,16 @@ void Body::SetInitialQuaternion(double n, double x, double y, double z)
     m_initialQuaternion[3] = z;
 }
 
+void Body::SetInitialPosition(const pgd::Vector3 &position)
+{
+    m_initialPosition = position;
+}
+
+void Body::SetInitialQuaternion(const pgd::Quaternion &quaternion)
+{
+    m_initialQuaternion = quaternion;
+}
+
 pgd::Vector3 Body::GetInitialPosition()
 {
     return m_initialPosition;
