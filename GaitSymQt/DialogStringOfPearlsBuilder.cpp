@@ -82,12 +82,36 @@ void DialogStringOfPearlsBuilder::properties()
     SettingsItem strapRadius = Preferences::settingsItem("StrapRadius");
     SettingsItem strapForceRadius = Preferences::settingsItem("StrapForceRadius");
     SettingsItem strapForceScale = Preferences::settingsItem("StrapForceScale");
+    SettingsItem bodyAxesSize = Preferences::settingsItem("BodyAxesSize");
+    SettingsItem bodyBlendFraction = Preferences::settingsItem("BodyBlendFraction");
+    SettingsItem bodyColour1 = Preferences::settingsItem("BodyColour1");
+    SettingsItem bodyColour2 = Preferences::settingsItem("BodyColour2");
+    SettingsItem bodyColour3 = Preferences::settingsItem("BodyColour3");
+    SettingsItem geomColour1 = Preferences::settingsItem("GeomColour1");
+    SettingsItem geomColour2 = Preferences::settingsItem("GeomColour2");
+    SettingsItem geomSize1 = Preferences::settingsItem("GeomSize1");
+    SettingsItem geomSize2 = Preferences::settingsItem("GeomSize2");
+    SettingsItem geomSize3 = Preferences::settingsItem("GeomSize3");
+
     m_properties.clear();
-    m_properties = { { strapColour.key, strapColour },
-                    { strapForceColour.key, strapForceColour},
-                    { strapRadius.key, strapRadius },
-                    { strapForceRadius.key, strapForceRadius },
-                    { strapForceScale.key, strapForceScale } };
+    m_properties =
+    {
+        { strapColour.key, strapColour },
+        { strapForceColour.key, strapForceColour},
+        { strapRadius.key, strapRadius },
+        { strapForceRadius.key, strapForceRadius },
+        { strapForceScale.key, strapForceScale },
+        { bodyAxesSize.key, bodyAxesSize },
+        { bodyBlendFraction.key, bodyBlendFraction },
+        { bodyColour1.key, bodyColour1 },
+        { bodyColour2.key, bodyColour2 },
+        { bodyColour3.key, bodyColour3 },
+        { geomColour1.key, geomColour1 },
+        { geomColour2.key, geomColour2 },
+        { geomSize1.key, geomSize1 },
+        { geomSize2.key, geomSize2 },
+        { geomSize3.key, geomSize3 }
+    };
     dialogProperties.setInputSettingsItems(m_properties);
     dialogProperties.initialise();
 
@@ -425,6 +449,21 @@ void DialogStringOfPearlsBuilder::createBodies()
         body->setName(bodyID);
         body->setSimulation(m_simulation);
         body->EnterConstructionMode();
+
+        if (m_properties.size() > 0)
+        {
+            if (m_properties.count("BodyAxesSize"))
+                body->setSize1(m_properties["BodyAxesSize"].value.toDouble());
+            if (m_properties.count("BodyBlendFraction"))
+                body->setSize2(m_properties["BodyBlendFraction"].value.toDouble());
+            if (m_properties.count("BodyColour1"))
+                body->setColour1(qvariant_cast<QColor>(m_properties["BodyColour1"].value).name(QColor::HexArgb).toStdString());
+            if (m_properties.count("BodyColour2"))
+                body->setColour2(qvariant_cast<QColor>(m_properties["BodyColour2"].value).name(QColor::HexArgb).toStdString());
+            if (m_properties.count("BodyColour3"))
+                body->setColour3(qvariant_cast<QColor>(m_properties["BodyColour3"].value).name(QColor::HexArgb).toStdString());
+        }
+
         m_bodyList.push_back(std::move(body));
     }
 }
@@ -449,6 +488,20 @@ void DialogStringOfPearlsBuilder::createGeoms()
         sphereGeom->setSimulation(m_simulation);
         sphereGeom->setUpstreamObjects( { marker.get() } );
 
+        if (m_properties.size() > 0)
+        {
+            if (m_properties.count("GeomColour1"))
+                sphereGeom->setColour1(qvariant_cast<QColor>(m_properties["GeomColour1"].value).name(QColor::HexArgb).toStdString());
+            if (m_properties.count("GeomColour2"))
+                sphereGeom->setColour2(qvariant_cast<QColor>(m_properties["GeomColour2"].value).name(QColor::HexArgb).toStdString());
+            if (m_properties.count("GeomSize1"))
+                sphereGeom->setSize1(m_properties["GeomSize1"].value.toDouble());
+            if (m_properties.count("GeomSize2"))
+                sphereGeom->setSize2(m_properties["GeomSize2"].value.toDouble());
+            if (m_properties.count("GeomSize3"))
+                sphereGeom->setSize3(m_properties["GeomSize3"].value.toDouble());
+        }
+
         m_markerList.push_back(std::move(marker));
         m_geomList.push_back(std::move(sphereGeom));
     }
@@ -461,13 +514,16 @@ void DialogStringOfPearlsBuilder::createMuscles()
     GaitSym::Marker *originMarker = m_simulation->GetMarker(ui->comboBoxOriginMarkerID->currentText().toStdString());
     GaitSym::Marker *insertionMarker = nullptr;
     std::unique_ptr<GaitSym::Muscle> outputMuscle;
-    for (size_t i = 0; i < numPearls; ++i)
+    for (size_t i = 0; i < numPearls + 1; ++i)
     {
-        insertionMarker = m_markerList[i].get();
+        if (i < numPearls) { insertionMarker = m_markerList[i].get(); }
+        else { insertionMarker = m_simulation->GetMarker(ui->comboBoxInsertionMarkerID->currentText().toStdString()); }
         auto strap = std::make_unique<GaitSym::TwoPointStrap>();
         strap->SetOrigin(originMarker);
         strap->SetInsertion(insertionMarker);
-
+        strap->setSimulation(m_simulation);
+        std::string strapID = GaitSym::GSUtil::ToString("%s_link_strap_%03zu", rootID.c_str(), i);
+        strap->setName(strapID);
 
         QString muscleTab = ui->tabWidgetMuscle->tabText(ui->tabWidgetMuscle->currentIndex());
         if (muscleTab == "Minetti-Alexander")
@@ -564,8 +620,24 @@ void DialogStringOfPearlsBuilder::createMuscles()
         std::string muscleID = GaitSym::GSUtil::ToString("%s_link_%03zu", rootID.c_str(), i);
         outputMuscle->setName(muscleID);
         outputMuscle->setSimulation(m_simulation);
+        outputMuscle->SetStrap(strap.get());
+
+        if (m_properties.size() > 0)
+        {
+            if (m_properties.count("StrapColour"))
+                outputMuscle->GetStrap()->setColour1(qvariant_cast<QColor>(m_properties["StrapColour"].value).name(QColor::HexArgb).toStdString());
+            if (m_properties.count("StrapForceColour"))
+                outputMuscle->setColour1(qvariant_cast<QColor>(m_properties["StrapForceColour"].value).name(QColor::HexArgb).toStdString());
+            if (m_properties.count("StrapRadius"))
+                outputMuscle->GetStrap()->setSize1(m_properties["StrapRadius"].value.toDouble());
+            if (m_properties.count("StrapForceRadius"))
+                outputMuscle->setSize1(m_properties["StrapForceRadius"].value.toDouble());
+            if (m_properties.count("StrapForceScale"))
+                outputMuscle->setSize2(m_properties["StrapForceScale"].value.toDouble());
+        }
 
         m_strapList.push_back(std::move(strap));
+        m_muscleList.push_back(std::move(outputMuscle));
         originMarker = insertionMarker;
     }
 
