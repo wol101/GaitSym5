@@ -132,6 +132,8 @@ public:
     std::string kinematicsFile() const;
     void setKinematicsFile(const std::string &newKinematicsFile);
 
+    std::string configFileRootTag() const;
+
 private:
 
     std::string *ParseGlobal(const ParseXML::XMLElement *node);
@@ -218,6 +220,9 @@ private:
     // physics engine
     std::unique_ptr<PhysicsEngine> m_physicsEngine;
     std::string m_kinematicsFile;
+
+    // file read control
+    std::string m_configFileRootTag;
 };
 
 }

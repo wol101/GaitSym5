@@ -92,9 +92,30 @@ Simulation::~Simulation()
 //----------------------------------------------------------------------------
 std::string *Simulation::LoadModel(const char *buffer, size_t length) // note this requires buffer to be a 0 terminated string of size length + 1
 {
-    std::string rootTag = "GAITSYM5"s;
+    std::string rootTag;
     std::string *ptr = m_parseXML.LoadModel(buffer, length, &rootTag);
     if (ptr) return ptr;
+
+    while(true)
+    {
+        if (rootTag == "GAITSYM5"s)
+        {
+            m_configFileRootTag = rootTag;
+            break;
+        }
+        if (rootTag == "GAITSYM5L"s)
+        {
+            m_configFileRootTag = rootTag;
+            break;
+        }
+        if (rootTag == "GAITSYM2019"s)
+        {
+            m_configFileRootTag = rootTag;
+            break;
+        }
+        setLastError("Error in LoadModel: unrecognised XML, rootTag = \""s + rootTag);
+        return lastErrorPtr();
+    }
 
     // this logic allows forward references at the expense of slightly less obvious error messages
     std::list<ParseXML::XMLElement *> unprocessedList;
@@ -1209,6 +1230,11 @@ void Simulation::DumpObject(NamedObject *namedObject)
             std::cerr << "Error writing dump file\n";
         }
     }
+}
+
+std::string Simulation::configFileRootTag() const
+{
+    return m_configFileRootTag;
 }
 
 std::string Simulation::kinematicsFile() const
