@@ -91,8 +91,8 @@ void BallJoint::appendToAttributes()
     setAttribute("Body2MarkerID"s, body2Marker()->name());
     if (m_stops)
     {
-        setAttribute("LowStops"s, GSUtil::ToString("%.17g %.17g %.17g", (*m_stops)[0].x, (*m_stops)[1].x, (*m_stops)[2].x));
-        setAttribute("HighStops"s, GSUtil::ToString("%.17g %.17g %.17g", (*m_stops)[0].y, (*m_stops)[1].y, (*m_stops)[2].y));
+        setAttribute("LowStops"s, GSUtil::ToString(pgd::Vector3((*m_stops)[0].x, (*m_stops)[1].x, (*m_stops)[2].x)));
+        setAttribute("HighStops"s, GSUtil::ToString(pgd::Vector3((*m_stops)[0].y, (*m_stops)[1].y, (*m_stops)[2].y)));
     }
 }
 

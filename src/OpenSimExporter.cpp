@@ -185,7 +185,7 @@ void OpenSimExporter::CreateBodySet()
         // }
         // XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
         XMLTagAndContent(&m_xmlString, "mass_center"s, "0 0 0"s); // Maybe the centre of mass is always at the local origin given the way I have defined the joints
-        XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
+        XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString(std::vector<double>({ixx, iyy, izz, ixy, izx, iyz}))); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
         XMLTerminateTag(&m_xmlString, "Body"s);
     }
 
@@ -301,7 +301,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(pgd::Vector2(-M_PI/2, M_PI/2)));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
@@ -312,7 +312,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(pgd::Vector2(-M_PI/2, M_PI/2)));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
@@ -323,7 +323,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
             XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
             XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
+            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(pgd::Vector2(-M_PI/2, M_PI/2)));
             XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
             XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
             XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);

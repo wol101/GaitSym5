@@ -92,12 +92,10 @@ void XMLConverter::GetFormattedXML(std::string *formattedXML)
 {
     formattedXML->clear();
     formattedXML->reserve(m_smartSubstitutionTextComponentsSize + 32 * m_smartSubstitutionValues.size());
-    char buffer[32];
     for (size_t i = 0; i < m_smartSubstitutionValues.size(); i++)
     {
         formattedXML->append(m_smartSubstitutionTextComponents[i]);
-        int l = snprintf(buffer, sizeof(buffer), "%.17g", m_smartSubstitutionValues[i]);
-        formattedXML->append(buffer, l);
+        formattedXML->append(GSUtil::ToString(m_smartSubstitutionValues[i]));
     }
     formattedXML->append(m_smartSubstitutionTextComponents[m_smartSubstitutionValues.size()]);
 }

@@ -321,7 +321,7 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     attributes.clear();
     attributes["pos"s] = GSUtil::ToString(pgd::Vector3());
     attributes["mass"s] = GSUtil::ToString(mass);
-    attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
+    attributes["fullinertia"s] = GSUtil::ToString(std::vector<double>({ixx, iyy, izz, ixy, izx, iyz}));
     XMLInitiateTag(&m_mjXML, "inertial", attributes, true);
 
     std::string *err = CreateJoint(treeBody.jointToParent);

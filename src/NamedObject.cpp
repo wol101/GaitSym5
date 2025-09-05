@@ -13,12 +13,7 @@
 #include "Simulation.h"
 #include "GSUtil.h"
 
-#include "pystring.h"
-
-#include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <typeinfo>
 
 #ifdef __GNUG__
 #include <cstdlib>
@@ -203,10 +198,10 @@ std::string NamedObject::dumpHelper(std::initializer_list<double> values)
     auto &&it = values.begin();
     if (it != values.end())
     {
-        ss << std::setprecision(17) << *it++; // this defaults to %.17g format if neither fixed nor scientific is set
+        ss << GSUtil::ToString(*it++);
         for (; it != values.end(); it++)
         {
-            ss << std::setprecision(17) << "\t" << *it;
+            ss << "\t"s << GSUtil::ToString(*it);
         }
     }
     ss << "\n";
