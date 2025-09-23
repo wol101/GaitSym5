@@ -95,11 +95,11 @@ void DialogGlobal::accept() // this catches OK and return/enter
     }
 
     int count = ui->listWidgetMeshPath->count();
-    m_outputGlobal->MeshSearchPath()->clear();
+    m_outputGlobal->meshSearchPath()->clear();
     for (int i = 0; i < count; i++)
     {
         QString itemText = ui->listWidgetMeshPath->item(i)->text();
-        if (itemText.size()) m_outputGlobal->MeshSearchPath()->push_back(itemText.toStdString());
+        if (itemText.size()) m_outputGlobal->meshSearchPath()->push_back(itemText.toStdString());
     }
 
     if (m_inputGlobal)
@@ -198,31 +198,31 @@ void DialogGlobal::updateUI(const GaitSym::Global *globalPtr)
     }
 
     ui->lineEditCFM->setValue(globalPtr->CFM());
-    ui->lineEditContactMaxCorrectingVel->setValue(globalPtr->ContactMaxCorrectingVel());
+    ui->lineEditContactMaxCorrectingVel->setValue(globalPtr->contactMaxCorrectingVel());
     ui->lineEditERP->setValue(globalPtr->ERP());
-    ui->lineEditContactSurfaceLayer->setValue(globalPtr->ContactSurfaceLayer());
-    ui->lineEditGravityX->setValue(globalPtr->Gravity().x);
-    ui->lineEditGravityY->setValue(globalPtr->Gravity().y);
-    ui->lineEditGravityZ->setValue(globalPtr->Gravity().z);
-    ui->lineEditMechanicalEnergyLimit->setValue(globalPtr->MechanicalEnergyLimit());
-    ui->lineEditMetabolicEnergyLimit->setValue(globalPtr->MetabolicEnergyLimit());
-    ui->lineEditStepSize->setValue(globalPtr->StepSize());
-    ui->lineEditTimeLimit->setValue(globalPtr->TimeLimit());
-    ui->lineEditNumericalErrorScore->setValue(globalPtr->NumericalErrorsScore());
-    ui->lineEditLinearDamping->setValue(globalPtr->LinearDamping());
-    ui->lineEditAngularDamping->setValue(globalPtr->AngularDamping());
-    ui->checkBoxAllowConnectedCollisions->setChecked(globalPtr->AllowConnectedCollisions());
-    ui->checkBoxAllowInternalCollisions->setChecked(globalPtr->AllowInternalCollisions());
-    ui->spinBoxPermittedErrorCount->setValue(globalPtr->PermittedNumericalErrors());
+    ui->lineEditContactSurfaceLayer->setValue(globalPtr->contactSurfaceLayer());
+    ui->lineEditGravityX->setValue(globalPtr->gravity().x);
+    ui->lineEditGravityY->setValue(globalPtr->gravity().y);
+    ui->lineEditGravityZ->setValue(globalPtr->gravity().z);
+    ui->lineEditMechanicalEnergyLimit->setValue(globalPtr->mechanicalEnergyLimit());
+    ui->lineEditMetabolicEnergyLimit->setValue(globalPtr->metabolicEnergyLimit());
+    ui->lineEditStepSize->setValue(globalPtr->stepSize());
+    ui->lineEditTimeLimit->setValue(globalPtr->timeLimit());
+    ui->lineEditNumericalErrorScore->setValue(globalPtr->numericalErrorsScore());
+    ui->lineEditLinearDamping->setValue(globalPtr->linearDamping());
+    ui->lineEditAngularDamping->setValue(globalPtr->angularDamping());
+    ui->checkBoxAllowConnectedCollisions->setChecked(globalPtr->allowConnectedCollisions());
+    ui->checkBoxAllowInternalCollisions->setChecked(globalPtr->allowInternalCollisions());
+    ui->spinBoxPermittedErrorCount->setValue(globalPtr->permittedNumericalErrors());
 
     ui->listWidgetMeshPath->clear();
-    for (size_t i = 0; i < globalPtr->ConstMeshSearchPath()->size(); i++)
+    for (size_t i = 0; i < globalPtr->constMeshSearchPath()->size(); i++)
     {
-        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(globalPtr->ConstMeshSearchPath()->at(i)));
+        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(globalPtr->constMeshSearchPath()->at(i)));
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         ui->listWidgetMeshPath->addItem(item);
     }
-    for (size_t i = globalPtr->ConstMeshSearchPath()->size(); i < 100; i++)
+    for (size_t i = globalPtr->constMeshSearchPath()->size(); i < 100; i++)
     {
         QListWidgetItem *item = new QListWidgetItem(QString());
         item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -376,13 +376,13 @@ void DialogGlobal::initialiseDefaultGlobal()
     m_defaultGlobal.setAngularDamping(Preferences::valueDouble("GlobalDefaultAngularDamping"));
     m_defaultGlobal.setNumericalErrorsScore(Preferences::valueDouble("GlobalDefaultNumericalErrorsScore"));
 
-    m_defaultGlobal.MeshSearchPath()->clear();
+    m_defaultGlobal.meshSearchPath()->clear();
     std::string buf = Preferences::valueQString("GlobalDefaultMeshSearchPath").toStdString();
     std::vector<std::string> encodedMeshSearchPath;
     if (buf.size())
     {
         pystring::split(buf, encodedMeshSearchPath, ":"s);
-        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_defaultGlobal.MeshSearchPath()->push_back(GaitSym::Global::percentDecode(encodedMeshSearchPath[i]));
+        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_defaultGlobal.meshSearchPath()->push_back(GaitSym::Global::percentDecode(encodedMeshSearchPath[i]));
     }
 }
 

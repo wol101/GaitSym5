@@ -336,10 +336,10 @@ void Simulation::UpdateSimulation()
     // calculate the energies
     for (auto &&iter1 : m_MuscleList)
     {
-        m_MechanicalEnergy += iter1.second->GetPower() * m_global->StepSize();
-        m_MetabolicEnergy += iter1.second->GetMetabolicPower() * m_global->StepSize();
+        m_MechanicalEnergy += iter1.second->GetPower() * m_global->stepSize();
+        m_MetabolicEnergy += iter1.second->GetMetabolicPower() * m_global->stepSize();
     }
-    m_MetabolicEnergy += m_global->BMR() * m_global->StepSize();
+    m_MetabolicEnergy += m_global->BMR() * m_global->stepSize();
 
     // update any contact force dependent drivers (because only after the simulation is the force valid
     // update the footprint indicator
@@ -356,7 +356,7 @@ void Simulation::UpdateSimulation()
     DumpObjects();
 
     // update the time counter
-    m_SimulationTime += m_global->StepSize();
+    m_SimulationTime += m_global->stepSize();
 
     // update the step counter
     m_StepCount++;
@@ -1073,9 +1073,9 @@ void Simulation::SetGlobal(std::unique_ptr<Global> &&global)
 
 bool Simulation::ShouldQuit()
 {
-    if (m_global->TimeLimit() > 0 && m_SimulationTime > m_global->TimeLimit()) return true;
-    if (m_global->MechanicalEnergyLimit() > 0 && m_MechanicalEnergy > m_global->MechanicalEnergyLimit()) return true;
-    if (m_global->MetabolicEnergyLimit() > 0 && m_MetabolicEnergy > m_global->MetabolicEnergyLimit()) return true;
+    if (m_global->timeLimit() > 0 && m_SimulationTime > m_global->timeLimit()) return true;
+    if (m_global->mechanicalEnergyLimit() > 0 && m_MechanicalEnergy > m_global->mechanicalEnergyLimit()) return true;
+    if (m_global->metabolicEnergyLimit() > 0 && m_MetabolicEnergy > m_global->metabolicEnergyLimit()) return true;
     return false;
 }
 

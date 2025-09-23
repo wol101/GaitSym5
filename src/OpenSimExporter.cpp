@@ -123,7 +123,7 @@ void OpenSimExporter::Process(Simulation *simulation)
     // but we now need to convert gravity to the opensim Y up coordinate system
     pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
     pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-    pgd::Vector3 gravity = pgd::QVRotate(rotation, m_simulation->GetGlobal()->Gravity());
+    pgd::Vector3 gravity = pgd::QVRotate(rotation, m_simulation->GetGlobal()->gravity());
     XMLTagAndContent(&m_xmlString, "gravity"s, GSUtil::ToString(gravity));
 
     CreateBodySet();
@@ -736,9 +736,9 @@ void OpenSimExporter::CreateForceSet()
                 XMLTagAndContent(&m_xmlString, "coordinate"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s);
                 XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
                 double stopSpring = hingeJoint->stopSpring();
-                if (stopSpring < 0) { stopSpring = m_simulation->GetGlobal()->SpringConstant(); }
+                if (stopSpring < 0) { stopSpring = m_simulation->GetGlobal()->springConstant(); }
                 double stopDamp = hingeJoint->stopDamp();
-                if (stopDamp < 0) { stopDamp = m_simulation->GetGlobal()->DampingConstant(); }
+                if (stopDamp < 0) { stopDamp = m_simulation->GetGlobal()->dampingConstant(); }
                 XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
                 XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
                 XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));

@@ -44,13 +44,13 @@ public:
     PhysicsEngine physicsEngine() const;
     void setPhysicsEngine(PhysicsEngine newPhysicsEngine);
 
-    bool AllowConnectedCollisions() const;
-    void setAllowConnectedCollisions(bool AllowConnectedCollisions);
+    bool allowConnectedCollisions() const;
+    void setAllowConnectedCollisions(bool allowConnectedCollisions);
 
-    bool AllowInternalCollisions() const;
-    void setAllowInternalCollisions(bool AllowInternalCollisions);
+    bool allowInternalCollisions() const;
+    void setAllowInternalCollisions(bool allowInternalCollisions);
 
-    pgd::Vector3 Gravity() const;
+    pgd::Vector3 gravity() const;
     void setGravity(const pgd::Vector3 &gravity);
     void setGravity(double gravityX, double gravityY, double gravityZ);
 
@@ -60,77 +60,77 @@ public:
     double CFM() const;
     void setCFM(double CFM);
 
-    double ContactMaxCorrectingVel() const;
+    double contactMaxCorrectingVel() const;
     void setContactMaxCorrectingVel(double ContactMaxCorrectingVel);
 
-    double ContactSurfaceLayer() const;
+    double contactSurfaceLayer() const;
     void setContactSurfaceLayer(double ContactSurfaceLayer);
 
     double ERP() const;
     void setERP(double ERP);
 
-    double MechanicalEnergyLimit() const;
+    double mechanicalEnergyLimit() const;
     void setMechanicalEnergyLimit(double MechanicalEnergyLimit);
 
-    double MetabolicEnergyLimit() const;
+    double metabolicEnergyLimit() const;
     void setMetabolicEnergyLimit(double MetabolicEnergyLimit);
 
-    double StepSize() const;
+    double stepSize() const;
     void setStepSize(double StepSize);
 
-    double TimeLimit() const;
+    double timeLimit() const;
     void setTimeLimit(double TimeLimit);
 
-    double SpringConstant() const;
+    double springConstant() const;
     void setSpringConstant(double SpringConstant);
 
-    double DampingConstant() const;
+    double dampingConstant() const;
     void setDampingConstant(double DampingConstant);
 
-    std::vector<std::string> *MeshSearchPath();
-    const std::vector<std::string> *ConstMeshSearchPath() const;
-    void MeshSearchPathAddToFront(const std::string &meshSearchPath);
-    void MeshSearchPathAddToBack(const std::string &meshSearchPath);
-    bool MeshSearchPathRemove(const std::string &meshSearchPath);
+    std::vector<std::string> *meshSearchPath();
+    const std::vector<std::string> *constMeshSearchPath() const;
+    void meshSearchPathAddToFront(const std::string &meshSearchPath);
+    void meshSearchPathAddToBack(const std::string &meshSearchPath);
+    bool meshSearchPathRemove(const std::string &meshSearchPath);
 
-    double LinearDamping() const;
+    double linearDamping() const;
     void setLinearDamping(double LinearDamping);
 
-    double AngularDamping() const;
+    double angularDamping() const;
     void setAngularDamping(double AngularDamping);
 
     static std::string percentEncode(const std::string &input, const std::string &encodeList);
     static std::string percentDecode(const std::string &input);
 
-    int PermittedNumericalErrors() const;
+    int permittedNumericalErrors() const;
     void setPermittedNumericalErrors(int PermittedNumericalErrors);
 
-    double NumericalErrorsScore() const;
+    double numericalErrorsScore() const;
     void setNumericalErrorsScore(double NumericalErrorsScore);
 
 private:
-    FitnessType m_FitnessType = TargetSum;
-    StepType m_StepType = World;
-    PhysicsEngine m_PhysicsEngine = ODE;
-    bool m_AllowConnectedCollisions = false;
-    bool m_AllowInternalCollisions = false;
-    int m_PermittedNumericalErrors = 0;
-    pgd::Vector3 m_Gravity = {0, 0, -9.81};
+    FitnessType m_fitnessType = TargetSum;
+    StepType m_stepType = World;
+    PhysicsEngine m_physicsEngine = ODE;
+    bool m_allowConnectedCollisions = false;
+    bool m_allowInternalCollisions = false;
+    int m_permittedNumericalErrors = 0;
+    pgd::Vector3 m_gravity = {0, 0, -9.81};
     double m_BMR = 0;
     double m_CFM = 1e-10;
-    double m_ContactMaxCorrectingVel = 100;
-    double m_ContactSurfaceLayer = 0.001;
-    double m_DampingConstant = 0;
+    double m_contactMaxCorrectingVel = 100;
+    double m_contactSurfaceLayer = 0.001;
+    double m_dampingConstant = 0;
     double m_ERP = 0.2;
-    double m_MechanicalEnergyLimit = 0;
-    double m_MetabolicEnergyLimit = 0;
-    double m_SpringConstant = 0;
-    double m_StepSize = 1e-4;
-    double m_TimeLimit = 10;
-    double m_LinearDamping = 0;
-    double m_AngularDamping = 0;
-    double m_NumericalErrorsScore = 0;
-    std::vector<std::string> m_MeshSearchPath = {"."s};
+    double m_mechanicalEnergyLimit = 0;
+    double m_metabolicEnergyLimit = 0;
+    double m_springConstant = 0;
+    double m_stepSize = 1e-4;
+    double m_timeLimit = 10;
+    double m_linearDamping = 0;
+    double m_angularDamping = 0;
+    double m_numericalErrorsScore = 0;
+    std::vector<std::string> m_meshSearchPath = {"."s};
 };
 
 }

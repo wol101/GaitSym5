@@ -62,13 +62,13 @@ public:
     // get hold of various variables
 
     double GetTime(void) { return m_SimulationTime; }
-    double GetTimeIncrement(void) { return m_global->StepSize(); }
+    double GetTimeIncrement(void) { return m_global->stepSize(); }
     long long GetStepCount(void) { return m_StepCount; }
     double GetMechanicalEnergy(void) { return m_MechanicalEnergy; }
     double GetMetabolicEnergy(void) { return m_MetabolicEnergy; }
-    double GetTimeLimit(void) { return m_global->TimeLimit(); }
-    double GetMetabolicEnergyLimit(void) { return m_global->MetabolicEnergyLimit(); }
-    double GetMechanicalEnergyLimit(void) { return m_global->MechanicalEnergyLimit(); }
+    double GetTimeLimit(void) { return m_global->timeLimit(); }
+    double GetMetabolicEnergyLimit(void) { return m_global->metabolicEnergyLimit(); }
+    double GetMechanicalEnergyLimit(void) { return m_global->mechanicalEnergyLimit(); }
     Body *GetBody(const std::string &name);
     Joint *GetJoint(const std::string &name);
     Geom *GetGeom(const std::string &name);

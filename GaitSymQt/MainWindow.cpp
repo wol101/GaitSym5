@@ -1342,8 +1342,8 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
 
     // check we can find the meshes
     QStringList searchPath;
-    for (size_t i = 0; i < this->m_simulation->GetGlobal()->MeshSearchPath()->size(); i++)
-        searchPath.append(QString::fromStdString(this->m_simulation->GetGlobal()->MeshSearchPath()->at(i)));
+    for (size_t i = 0; i < this->m_simulation->GetGlobal()->meshSearchPath()->size(); i++)
+        searchPath.append(QString::fromStdString(this->m_simulation->GetGlobal()->meshSearchPath()->at(i)));
     bool noToAll = false;
     bool meshPathChanged = false;
     for (auto &&iter : *this->m_simulation->GetBodyList())
@@ -1403,8 +1403,8 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     }
     if (meshPathChanged)
     {
-        this->m_simulation->GetGlobal()->MeshSearchPath()->clear();
-        for (int i = 0; i < searchPath.size(); i++) this->m_simulation->GetGlobal()->MeshSearchPath()->push_back(searchPath[i].toStdString());
+        this->m_simulation->GetGlobal()->meshSearchPath()->clear();
+        for (int i = 0; i < searchPath.size(); i++) this->m_simulation->GetGlobal()->meshSearchPath()->push_back(searchPath[i].toStdString());
     }
 
     this->m_simulationWidget->setAxesScale(float(this->m_simulation->GetGlobal()->size1()));
@@ -2679,7 +2679,7 @@ void MainWindow::menuEditGlobal()
         this->setStatusString(tr("Global values edited"), 1);
         this->setWindowModified(true);
         this->updateEnable();
-        this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetGlobal()->TimeLimit());
+        this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetGlobal()->timeLimit());
         this->m_simulationWidget->setAxesScale(float(this->m_simulation->GetGlobal()->size1()));
         this->m_simulationWidget->setBackgroundColour(QString::fromStdString(this->m_simulation->GetGlobal()->colour1().GetHexARGB()));
         this->m_simulationWidget->update();

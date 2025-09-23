@@ -90,7 +90,7 @@ public:
 
     float m_defaultLength = 1.0f;
     float m_defaultSpeed = 10.0f;
-    bool m_recordMemoryAllocations = true;
+    bool m_recordMemoryAllocations = false;
 
     std::map<std::string, physx::PxRigidDynamic*> m_bodyMap;
     std::map<std::string, physx::PxJoint*> m_jointMap;

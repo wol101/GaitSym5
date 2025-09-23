@@ -238,7 +238,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 
     // set some options
     XMLInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
-    XMLInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->StepSize())}}, true);
+    XMLInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->stepSize())}}, true);
 
     // create the world body
     XMLInitiateTag(&m_mjXML, "worldbody"s);

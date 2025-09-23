@@ -190,13 +190,13 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     std::string head, tail;
     pystring::os::path::split(head, tail, ui->lineEditMesh1->text().toStdString());
     bodyPtr->SetGraphicFile1(tail);
-    m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
+    m_simulation->GetGlobal()->meshSearchPathAddToFront(head);
     pystring::os::path::split(head, tail, ui->lineEditMesh2->text().toStdString());
     bodyPtr->SetGraphicFile2(tail);
-    m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
+    m_simulation->GetGlobal()->meshSearchPathAddToFront(head);
     pystring::os::path::split(head, tail, ui->lineEditMesh3->text().toStdString());
     bodyPtr->SetGraphicFile3(tail);
-    m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
+    m_simulation->GetGlobal()->meshSearchPathAddToFront(head);
     bodyPtr->setSimulation(m_simulation);
 
     double mass = ui->lineEditMass->value();
@@ -467,7 +467,7 @@ std::string DialogBodyBuilder::findCompletePath(const std::string &filename)
     std::string completePath;
     if (m_simulation)
     {
-        auto searchPath = m_simulation->GetGlobal()->MeshSearchPath();
+        auto searchPath = m_simulation->GetGlobal()->meshSearchPath();
         for (auto &&it : *searchPath)
         {
             completePath = pystring::os::path::join(it, filename);

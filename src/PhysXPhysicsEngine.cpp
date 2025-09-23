@@ -66,9 +66,12 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
         return lastErrorPtr();
     }
 
+#ifdef QT_DEBUG
     m_pvd = PxCreatePvd(*m_foundation);
     physx::PxPvdTransport *transport = physx::PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
     m_pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+    m_recordMemoryAllocations = true;
+#endif
 
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale(m_defaultLength, m_defaultSpeed), m_recordMemoryAllocations, m_pvd);
     if (!m_physics)
@@ -80,7 +83,7 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     PxInitExtensions(*m_physics, m_pvd);
 
     physx::PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
-    pgd::Vector3 gravity = simulation()->GetGlobal()->Gravity();
+    pgd::Vector3 gravity = simulation()->GetGlobal()->gravity();
     sceneDesc.gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
     physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
@@ -92,6 +95,7 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
+#ifdef QT_DEBUG
     physx::PxPvdSceneClient* pvdClient = m_scene->getScenePvdClient();
     if (pvdClient)
     {
@@ -99,6 +103,7 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
     }
+#endif
 
     // create the fixed world body
     physx::PxTransform transform(physx::PxVec3(0, 0, 0));
@@ -322,10 +327,10 @@ std::string *PhysXPhysicsEngine::Step()
     }
 
     // run the simulation
-    m_scene->simulate(simulation()->GetGlobal()->StepSize());
+    m_scene->simulate(simulation()->GetGlobal()->stepSize());
     m_scene->fetchResults(true);
 
-#ifdef DEBUG_ACTORS
+#ifdef QT_DEBUG
     physx::PxScene* scene;
     PxGetPhysics().getScenes(&scene,1);
     physx::PxU32 nbActors = scene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC | physx::PxActorTypeFlag::eRIGID_STATIC);
@@ -401,7 +406,7 @@ std::string *PhysXPhysicsEngine::Step()
     }
 
     simulation()->GetContactList()->clear();
-    double timeStep =simulation()->GetGlobal()->StepSize();
+    double timeStep =simulation()->GetGlobal()->stepSize();
     for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     {
         physx::PxActor *actors[2];

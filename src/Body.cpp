@@ -346,7 +346,7 @@ double Body::GetRotationalKineticEnergy()
 double Body::GetGravitationalPotentialEnergy()
 {
     // gravitational PE = mgh
-    pgd::Vector3 g = simulation()->GetGlobal()->Gravity();
+    pgd::Vector3 g = simulation()->GetGlobal()->gravity();
     double gravitationalPotentialEnergy = -1 * m_mass * (g[0]*m_currentPosition[0] + g[1]*m_currentPosition[1] + g[2]*m_currentPosition[2]);
     return gravitationalPotentialEnergy;
 }

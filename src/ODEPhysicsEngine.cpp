@@ -71,12 +71,12 @@ std::string *ODEPhysicsEngine::Initialise(Simulation *theSimulation)
 
     // apply the global values
     Global *global = simulation()->GetGlobal();
-    dWorldSetGravity(m_worldID, global->Gravity().x, global->Gravity().y, global->Gravity().z);
+    dWorldSetGravity(m_worldID, global->gravity().x, global->gravity().y, global->gravity().z);
     dWorldSetERP(m_worldID, global->ERP());
     dWorldSetCFM(m_worldID, global->CFM());
-    dWorldSetContactMaxCorrectingVel(m_worldID, global->ContactMaxCorrectingVel());
-    dWorldSetContactSurfaceLayer(m_worldID, global->ContactSurfaceLayer());
-    dWorldSetDamping(m_worldID, global->LinearDamping(), global->AngularDamping());
+    dWorldSetContactMaxCorrectingVel(m_worldID, global->contactMaxCorrectingVel());
+    dWorldSetContactSurfaceLayer(m_worldID, global->contactSurfaceLayer());
+    dWorldSetDamping(m_worldID, global->linearDamping(), global->angularDamping());
 
     // create the ODE versions of the main elements
     CreateBodies();
@@ -477,11 +477,11 @@ std::string *ODEPhysicsEngine::Step()
     switch (simulation()->GetGlobal()->stepType())
     {
     case Global::World:
-        dWorldStep(m_worldID, simulation()->GetGlobal()->StepSize());
+        dWorldStep(m_worldID, simulation()->GetGlobal()->stepSize());
         break;
 
     case Global::Quick:
-        dWorldQuickStep(m_worldID, simulation()->GetGlobal()->StepSize());
+        dWorldQuickStep(m_worldID, simulation()->GetGlobal()->stepSize());
         break;
     }
 
@@ -552,12 +552,12 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
         return; // it is never useful for two contacts on the same body to collide [I'm not sure if this every happens - FIX ME - set up a test]
     }
 
-    if (s->simulation()->GetGlobal()->AllowConnectedCollisions() == false)
+    if (s->simulation()->GetGlobal()->allowConnectedCollisions() == false)
     {
         if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact)) return;
     }
 
-    if (s->simulation()->GetGlobal()->AllowInternalCollisions() == false)
+    if (s->simulation()->GetGlobal()->allowInternalCollisions() == false)
     {
         if (g1->GetGeomLocation() == g2->GetGeomLocation()) return;
     }
