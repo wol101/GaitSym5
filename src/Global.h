@@ -108,6 +108,12 @@ public:
     double numericalErrorsScore() const;
     void setNumericalErrorsScore(double NumericalErrorsScore);
 
+    double defaultLength() const;
+    void setDefaultLength(double newDefaultLength);
+
+    double defaultSpeed() const;
+    void setDefaultSpeed(double newDefaultSpeed);
+
 private:
     FitnessType m_fitnessType = TargetSum;
     StepType m_stepType = World;
@@ -131,6 +137,8 @@ private:
     double m_angularDamping = 0;
     double m_numericalErrorsScore = 0;
     std::vector<std::string> m_meshSearchPath = {"."s};
+    double m_defaultLength = 1.0;
+    double m_defaultSpeed = 10.0;
 };
 
 }

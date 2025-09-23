@@ -422,6 +422,26 @@ void Global::setNumericalErrorsScore(double NumericalErrorsScore)
     m_numericalErrorsScore = NumericalErrorsScore;
 }
 
+double Global::defaultLength() const
+{
+    return m_defaultLength;
+}
+
+void Global::setDefaultLength(double newDefaultLength)
+{
+    m_defaultLength = newDefaultLength;
+}
+
+double Global::defaultSpeed() const
+{
+    return m_defaultSpeed;
+}
+
+void Global::setDefaultSpeed(double newDefaultSpeed)
+{
+    m_defaultSpeed = newDefaultSpeed;
+}
+
 Global::PhysicsEngine Global::physicsEngine() const
 {
     return m_physicsEngine;

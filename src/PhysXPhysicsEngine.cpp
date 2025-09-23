@@ -73,6 +73,17 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_recordMemoryAllocations = true;
 #endif
 
+    // m_defaultLength
+    // The approximate size of objects in the simulation.
+    // For simulating roughly human-sized in metric units, 1 is a good choice.
+    // If simulation is done in centimetres, use 100 instead. This is used to estimate certain length-related tolerances.
+
+    // m_defaultSpeed
+    // The typical magnitude of velocities of objects in simulation.
+    // This is used to estimate whether a contact should be treated as bouncing or resting based on its impact velocity,
+    // and a kinetic energy threshold below which the simulation may put objects to sleep.
+    // For normal physical environments, a good choice is the approximate speed of an object falling under gravity for one second.
+
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale(m_defaultLength, m_defaultSpeed), m_recordMemoryAllocations, m_pvd);
     if (!m_physics)
     {
