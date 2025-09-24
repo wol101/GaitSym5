@@ -5,7 +5,6 @@
 #include "Preferences.h"
 #include "Body.h"
 #include "LineEditDouble.h"
-#include "LineEditPath.h"
 #include "DialogProperties.h"
 #include "MainWindow.h"
 
@@ -37,6 +36,10 @@ DialogGlobal::DialogGlobal(QWidget *parent) :
     connect(ui->pushButtonDefaults, SIGNAL(clicked()), this, SLOT(setDefaults()));
     connect(ui->checkBoxSpringDamping, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSpringDampingStateChanged(int)));
 
+    // this means that when text is edited (but not when changed programmatically since that will cause loops), the change is propagated
+    connect(ui->lineEditStepSize, &QLineEdit::textEdited, ui->lineEditStepSizePhysX, &QLineEdit::setText);
+    connect(ui->lineEditStepSizePhysX, &QLineEdit::textEdited, ui->lineEditStepSize, &QLineEdit::setText);
+
     restoreGeometry(Preferences::valueQByteArray("DialogGlobalGeometry"));
 
 }
@@ -63,6 +66,8 @@ void DialogGlobal::accept() // this catches OK and return/enter
     m_outputGlobal->setNumericalErrorsScore(ui->lineEditNumericalErrorScore->value());
     m_outputGlobal->setLinearDamping(ui->lineEditLinearDamping->value());
     m_outputGlobal->setAngularDamping(ui->lineEditAngularDamping->value());
+    m_outputGlobal->setDefaultLength(ui->lineEditDefaultLengthPhysX->value());
+    m_outputGlobal->setDefaultSpeed(ui->lineEditDefaultSpeedPhysX->value());
     m_outputGlobal->setAllowConnectedCollisions(ui->checkBoxAllowConnectedCollisions->isChecked());
     m_outputGlobal->setAllowInternalCollisions(ui->checkBoxAllowInternalCollisions->isChecked());
     m_outputGlobal->setPermittedNumericalErrors(ui->spinBoxPermittedErrorCount->value());
@@ -207,10 +212,13 @@ void DialogGlobal::updateUI(const GaitSym::Global *globalPtr)
     ui->lineEditMechanicalEnergyLimit->setValue(globalPtr->mechanicalEnergyLimit());
     ui->lineEditMetabolicEnergyLimit->setValue(globalPtr->metabolicEnergyLimit());
     ui->lineEditStepSize->setValue(globalPtr->stepSize());
+    ui->lineEditStepSizePhysX->setValue(globalPtr->stepSize());
     ui->lineEditTimeLimit->setValue(globalPtr->timeLimit());
     ui->lineEditNumericalErrorScore->setValue(globalPtr->numericalErrorsScore());
     ui->lineEditLinearDamping->setValue(globalPtr->linearDamping());
     ui->lineEditAngularDamping->setValue(globalPtr->angularDamping());
+    ui->lineEditDefaultLengthPhysX->setValue(globalPtr->defaultLength());
+    ui->lineEditDefaultSpeedPhysX->setValue(globalPtr->defaultSpeed());
     ui->checkBoxAllowConnectedCollisions->setChecked(globalPtr->allowConnectedCollisions());
     ui->checkBoxAllowInternalCollisions->setChecked(globalPtr->allowInternalCollisions());
     ui->spinBoxPermittedErrorCount->setValue(globalPtr->permittedNumericalErrors());
@@ -375,6 +383,8 @@ void DialogGlobal::initialiseDefaultGlobal()
     m_defaultGlobal.setLinearDamping(Preferences::valueDouble("GlobalDefaultLinearDamping"));
     m_defaultGlobal.setAngularDamping(Preferences::valueDouble("GlobalDefaultAngularDamping"));
     m_defaultGlobal.setNumericalErrorsScore(Preferences::valueDouble("GlobalDefaultNumericalErrorsScore"));
+    m_defaultGlobal.setDefaultLength(Preferences::valueDouble("GlobalDefaultLength"));
+    m_defaultGlobal.setDefaultSpeed(Preferences::valueDouble("GlobalDefaultSpeed"));
 
     m_defaultGlobal.meshSearchPath()->clear();
     std::string buf = Preferences::valueQString("GlobalDefaultMeshSearchPath").toStdString();

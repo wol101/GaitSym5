@@ -147,89 +147,112 @@ std::string *Global::createFromAttributes()
     m_stepSize = GSUtil::Double(buf);
     if (m_stepSize <= 0.0) { setLastError("Error: GLOBAL IntegrationStepSize must be > 0"s); return lastErrorPtr(); }
 
-
-    // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
-    if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
+    while (true)
     {
-        m_ERP = GSUtil::Double(buf);
-        m_CFM = GSUtil::Double(buf2);
-        if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-        if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-        m_springConstant = m_ERP / (m_CFM * m_stepSize);
-        m_dampingConstant = (1.0 - m_ERP) / m_CFM;
-    }
-    else if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
-    {
-        m_ERP = GSUtil::Double(buf);
-        m_springConstant = GSUtil::Double(buf2);
-        if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-        if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
-        m_dampingConstant = m_stepSize * (m_springConstant / m_ERP - m_springConstant);
-        m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
-    }
-    else if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
-    {
-        m_ERP = GSUtil::Double(buf);
-        m_dampingConstant = GSUtil::Double(buf2);
-        if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-        if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
-        m_springConstant = m_dampingConstant / (m_stepSize / m_ERP - m_stepSize);
-        m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
-    }
-    else if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
-    {
-        m_CFM = GSUtil::Double(buf);
-        m_dampingConstant = GSUtil::Double(buf2);
-        if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-        if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
-        m_springConstant = (1.0 / m_CFM - m_dampingConstant) / m_stepSize;
-        m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
-    }
-    else if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
-    {
-        m_CFM = GSUtil::Double(buf);
-        m_springConstant = GSUtil::Double(buf2);
-        if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-        if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
-        m_dampingConstant = 1.0 / m_CFM - m_stepSize * m_springConstant;
-        m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
-    }
-    else if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
-    {
-        m_dampingConstant = GSUtil::Double(buf);
-        m_springConstant = GSUtil::Double(buf2);
-        m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
-        m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
-    }
-    else
-    {
-        setLastError("Error: GLOBAL needs one of these pairs ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM"s);
-        return lastErrorPtr();
-    }
-
-    if (findAttribute("ContactMaxCorrectingVel", &buf) == nullptr) return lastErrorPtr();
-    m_contactMaxCorrectingVel = GSUtil::Double(buf);
-    if (m_contactMaxCorrectingVel < 0.0) { setLastError("Error: GLOBAL ContactMaxCorrectingVel must be >= 0"s); return lastErrorPtr(); }
-
-    if (findAttribute("ContactSurfaceLayer", &buf) == nullptr) return lastErrorPtr();
-    m_contactSurfaceLayer = GSUtil::Double(buf);
-    if (m_contactSurfaceLayer < 0.0) { setLastError("Error: GLOBAL ContactSurfaceLayer must be >= 0"s); return lastErrorPtr(); }
-
-    // get the stepper required
-    // WorldStep, accurate but slow
-    // QuickStep, faster but less accurate
-    findAttribute("StepType", &buf);
-    for (i = 0; i < stepTypeCount; i++)
-    {
-        if (strcmp(buf.c_str(), stepTypeStrings(i)) == 0)
+        if (m_physicsEngine == ODE)
         {
-            m_stepType = StepType(i);
+            // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
+            if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
+            {
+                m_ERP = GSUtil::Double(buf);
+                m_CFM = GSUtil::Double(buf2);
+                if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = m_ERP / (m_CFM * m_stepSize);
+                m_dampingConstant = (1.0 - m_ERP) / m_CFM;
+            }
+            else if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
+            {
+                m_ERP = GSUtil::Double(buf);
+                m_springConstant = GSUtil::Double(buf2);
+                if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
+                m_dampingConstant = m_stepSize * (m_springConstant / m_ERP - m_springConstant);
+                m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
+            {
+                m_ERP = GSUtil::Double(buf);
+                m_dampingConstant = GSUtil::Double(buf2);
+                if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = m_dampingConstant / (m_stepSize / m_ERP - m_stepSize);
+                m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
+            {
+                m_CFM = GSUtil::Double(buf);
+                m_dampingConstant = GSUtil::Double(buf2);
+                if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = (1.0 / m_CFM - m_dampingConstant) / m_stepSize;
+                m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
+            {
+                m_CFM = GSUtil::Double(buf);
+                m_springConstant = GSUtil::Double(buf2);
+                if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
+                m_dampingConstant = 1.0 / m_CFM - m_stepSize * m_springConstant;
+                m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
+            {
+                m_dampingConstant = GSUtil::Double(buf);
+                m_springConstant = GSUtil::Double(buf2);
+                m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else
+            {
+                setLastError("Error: GLOBAL needs one of these pairs ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM"s);
+                return lastErrorPtr();
+            }
+
+            if (findAttribute("ContactMaxCorrectingVel", &buf) == nullptr) return lastErrorPtr();
+            m_contactMaxCorrectingVel = GSUtil::Double(buf);
+            if (m_contactMaxCorrectingVel < 0.0) { setLastError("Error: GLOBAL ContactMaxCorrectingVel must be >= 0"s); return lastErrorPtr(); }
+
+            if (findAttribute("ContactSurfaceLayer", &buf) == nullptr) return lastErrorPtr();
+            m_contactSurfaceLayer = GSUtil::Double(buf);
+            if (m_contactSurfaceLayer < 0.0) { setLastError("Error: GLOBAL ContactSurfaceLayer must be >= 0"s); return lastErrorPtr(); }
+
+            // get the stepper required
+            // WorldStep, accurate but slow
+            // QuickStep, faster but less accurate
+            findAttribute("StepType", &buf);
+            for (i = 0; i < stepTypeCount; i++)
+            {
+                if (strcmp(buf.c_str(), stepTypeStrings(i)) == 0)
+                {
+                    m_stepType = StepType(i);
+                    break;
+                }
+            }
+            if (i >= stepTypeCount)
+            {
+                setLastError("GLOBAL: Unrecognised StepType=\""s + buf + "\""s);
+                return lastErrorPtr();
+            }
             break;
         }
-    }
-    if (i >= stepTypeCount)
-    {
-        setLastError("GLOBAL: Unrecognised StepType=\""s + buf + "\""s);
+
+        if (m_physicsEngine == PhysX)
+        {
+            if (findAttribute("DefaultLength", &buf) == nullptr) return lastErrorPtr();
+            m_defaultLength = GSUtil::Double(buf);
+            if (findAttribute("DefaultSpeed", &buf) == nullptr) return lastErrorPtr();
+            m_defaultSpeed = GSUtil::Double(buf);
+            break;
+        }
+
+        if (m_physicsEngine == MuJoCo)
+        {
+            break;
+        }
+
+        setLastError("GLOBAL: Unimplemented PhysicsEngine"s);
         return lastErrorPtr();
     }
 
@@ -238,8 +261,8 @@ std::string *Global::createFromAttributes()
     m_allowInternalCollisions = GSUtil::Bool(buf);
 
     // allow collisions for objects connected by a joint
-    findAttribute("AllowConnectedCollisions", &buf);
-    if (buf.size()) m_allowConnectedCollisions = GSUtil::Bool(buf);
+    if (findAttribute("AllowConnectedCollisions", &buf) == nullptr) return lastErrorPtr();
+    m_allowConnectedCollisions = GSUtil::Bool(buf);
 
     if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::Double(buf));
     if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::Double(buf));
