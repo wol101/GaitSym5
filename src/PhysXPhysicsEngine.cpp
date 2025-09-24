@@ -16,6 +16,7 @@
 #include "FluidSac.h"
 #include "Geom.h"
 #include "HingeJoint.h"
+#include "BallJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
@@ -84,6 +85,8 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     // and a kinetic energy threshold below which the simulation may put objects to sleep.
     // For normal physical environments, a good choice is the approximate speed of an object falling under gravity for one second.
 
+    m_defaultLength = simulation()->GetGlobal()->defaultLength();
+    m_defaultSpeed = simulation()->GetGlobal()->defaultSpeed();
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale(m_defaultLength, m_defaultSpeed), m_recordMemoryAllocations, m_pvd);
     if (!m_physics)
     {
@@ -193,6 +196,29 @@ std::string *PhysXPhysicsEngine::CreateJoints()
                 break;
             }
             break;
+            if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(iter.second.get()))
+            {
+                Marker *marker1 = ballJoint->body1Marker();
+                Marker *marker2 = ballJoint->body2Marker();
+                pgd::Vector3 p1 = marker1->GetPosition();
+                pgd::Vector3 p2 = marker2->GetPosition();
+                pgd::Quaternion q1 = marker1->GetQuaternion();
+                pgd::Quaternion q2 = marker2->GetQuaternion();
+                physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
+                physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
+                physx::PxRigidActor *actor0 = m_bodyMap[ballJoint->body1()->name()];
+                physx::PxRigidActor *actor1 = m_bodyMap[ballJoint->body2()->name()];
+                physx::PxSphericalJoint *spherical = PxSphericalJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
+                spherical->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+
+                // physx::PxReal yLimitAngle = physx::PxPi/2; // The limit angle from the Y-axis of the constraint frame
+                // physx::PxReal zLimitAngle = physx::PxPi/2; // The limit angle from the Z-axis of the constraint frame
+                // spherical->setLimitCone(physx::PxJointLimitCone(yLimitAngle, zLimitAngle)); // there is also a soft version PxJointLimitCone(PxReal yLimitAngle, PxReal zLimitAngle, const PxSpring &spring)
+                // spherical->setSphericalJointFlag(physx::PxSphericalJointFlag::eLIMIT_ENABLED, true);
+                spherical->userData = spherical;
+                m_jointMap[iter.first] = spherical;
+                break;
+            }
         }
     }
     return nullptr;
