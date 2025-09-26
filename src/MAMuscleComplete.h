@@ -76,38 +76,36 @@ public:
     MAMuscleComplete();
     virtual ~MAMuscleComplete();
 
-    void SetSerialElasticProperties(double serialStrainAtFmax, double serialStrainRateAtFmax, double tendonLength, MAMuscleComplete::StrainModel serialStrainModel);
-    void SetParallelElasticProperties(double parallelStrainAtFmax, double parallelStrainRateAtFmax, double parallelElementLength, MAMuscleComplete::StrainModel parallelStrainModel);
-    void SetMuscleProperties(double vMax, double Fmax, double K, double Width);
-    void SetActivationKinetics(bool activationKinetics, double akFastTwitchProportion, double akTActivationA, double akTActivationB, double akTDeactivationA, double akTDeactivationB);
-    void SetInitialFibreLength(double initialFibreLength) { m_Params.lastlpe = initialFibreLength; }
-    void SetActivationRate(double activationRate) { m_ActivationRate = activationRate; }
-    void SetStartActivation(double startActivation) { m_Params.alpha = startActivation; }
-    void SetMinimumActivation(double minimumActivation) { m_MinimumActivation = minimumActivation; }
+    void setSerialElasticProperties(double serialStrainAtFmax, double serialStrainRateAtFmax, double tendonLength, MAMuscleComplete::StrainModel serialStrainModel);
+    void setParallelElasticProperties(double parallelStrainAtFmax, double parallelStrainRateAtFmax, double parallelElementLength, MAMuscleComplete::StrainModel parallelStrainModel);
+    void setMuscleProperties(double vMax, double Fmax, double K, double Width);
+    void setActivationKinetics(bool activationKinetics, double akFastTwitchProportion, double akTActivationA, double akTActivationB, double akTDeactivationA, double akTDeactivationB);
+    void setActivationRate(double activationRate) { m_activationRate = activationRate; }
+    void setMinimumActivation(double minimumActivation) { m_minimumActivation = minimumActivation; }
 
     virtual double metabolicPower();
 
     virtual void updateActivation();
-    virtual double activation() { return m_Params.alpha; }
-    virtual double elasticEnergy() { return GetESE(); }
+    virtual double activation() { return m_params.alpha; }
+    virtual double elasticEnergy() { return ese(); }
 
-    double GetStimulation() { return m_Stim; }
+    double stimulation() { return m_stim; }
 
-    double GetFCE() { return m_Params.fce; } // contractile force (N)
-    double GetLPE() { return m_Params.lpe; } // contractile and parallel length (m)
-    double GetFPE() { return m_Params.fpe; } // parallel element force (N)
-    double GetLSE() { return m_Params.lse; } // serial length (m)
-    double GetFSE() { return m_Params.fse; } // serial element force (N)
-    double GetVCE() { return m_Params.vce; } // contractile element velocity (m/s)
-    double GetVPE() { return m_Params.vce; } // parallel element velocity (m/s)
-    double GetVSE() { return m_Params.vse; } // serial element velocity (m/s)
-    double GetESE(); // energy serial element
-    double GetEPE(); // energy parallel element
-    double GetPSE() { return GetVSE() * -m_Params.fse; } // power serial element
-    double GetPPE() { return GetVPE() * -m_Params.fpe; } // power parallel element
-    double GetPCE() { return GetVCE() * -m_Params.fce; } // power contractile element
-    double GetSSE() { return m_Params.sse; }
-    double GetSPE() { return m_Params.spe; }
+    double fce() { return m_params.fce; } // contractile force (N)
+    double lpe() { return m_params.lpe; } // contractile and parallel length (m)
+    double fpe() { return m_params.fpe; } // parallel element force (N)
+    double lse() { return m_params.lse; } // serial length (m)
+    double fse() { return m_params.fse; } // serial element force (N)
+    double vce() { return m_params.vce; } // contractile element velocity (m/s)
+    double vpe() { return m_params.vce; } // parallel element velocity (m/s)
+    double vse() { return m_params.vse; } // serial element velocity (m/s)
+    double ese(); // energy serial element
+    double epe(); // energy parallel element
+    double pse() { return vse() * -m_params.fse; } // power serial element
+    double ppe() { return vpe() * -m_params.fpe; } // power parallel element
+    double pce() { return vce() * -m_params.fce; } // power contractile element
+    double sse() { return m_params.sse; }
+    double spe() { return m_params.spe; }
 
     virtual std::string dumpToString();
     virtual void LateInitialisation();
@@ -167,20 +165,20 @@ public:
 
 private:
 
-    double m_Stim = 0;
-    bool m_ActivationKinetics = false;
+    double m_stim = 0;
+    bool m_activationKinetics = false;
     double m_ft = 0;
     double m_tact = 0;
     double m_tdeact = 0;
-    double m_ActivationRate = 0;
+    double m_activationRate = 0;
     double m_serialStrainAtFmax = 0;
     double m_serialStrainRateAtFmax = 0;
     double m_parallelStrainAtFmax = 0;
     double m_parallelStrainRateAtFmax = 0;
-    double m_MinimumActivation = 0.001; // arbitrary value so that we avoid some numerical issues
+    double m_minimumActivation = 0.001; // arbitrary value so that we avoid some numerical issues
 
-    CalculateForceErrorParams m_Params;
-    double m_Tolerance = 1e-8; // solution tolerance (m) - small because the serial tendons are quite stiff
+    CalculateForceErrorParams m_params;
+    double m_tolerance = 1e-8; // solution tolerance (m) - small because the serial tendons are quite stiff
 
     // these values are only used for loading and saving
     StrainModel m_serialStrainModel = StrainModel::linear;

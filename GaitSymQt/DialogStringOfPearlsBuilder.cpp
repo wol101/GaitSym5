@@ -592,14 +592,14 @@ void DialogStringOfPearlsBuilder::createMuscles()
             muscle->setVMaxFactor(vMaxFactor);
             muscle->setWidth(width);
 
-            muscle->SetSerialElasticProperties(serialStrainAtFmax, serialStrainRateAtFmax, tendonLength, muscle->serialStrainModel());
-            muscle->SetParallelElasticProperties(parallelStrainAtFmax, parallelStrainRateAtFmax, parallelElementLength, muscle->parallelStrainModel());
-            muscle->SetMuscleProperties(vMax, fMax, activationK, width);
-            muscle->SetActivationKinetics(activationKinetics, akFastTwitchProportion, akTActivationA, akTActivationB, akTDeactivationA, akTDeactivationB);
-            muscle->SetInitialFibreLength(initialFibreLength);
-            muscle->SetActivationRate(activationRate);
-            muscle->SetStartActivation(startActivation);
-            muscle->SetMinimumActivation(minimumActivation);
+            muscle->setSerialElasticProperties(serialStrainAtFmax, serialStrainRateAtFmax, tendonLength, muscle->serialStrainModel());
+            muscle->setParallelElasticProperties(parallelStrainAtFmax, parallelStrainRateAtFmax, parallelElementLength, muscle->parallelStrainModel());
+            muscle->setMuscleProperties(vMax, fMax, activationK, width);
+            muscle->setActivationKinetics(activationKinetics, akFastTwitchProportion, akTActivationA, akTActivationB, akTDeactivationA, akTDeactivationB);
+            muscle->setInitialFibreLength(initialFibreLength);
+            muscle->setActivationRate(activationRate);
+            muscle->setStartActivation(startActivation);
+            muscle->setMinimumActivation(minimumActivation);
             outputMuscle = std::move(muscle);
         }
         else if (muscleTab == "Damped Spring")
