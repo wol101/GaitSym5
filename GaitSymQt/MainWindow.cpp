@@ -1595,7 +1595,7 @@ void MainWindow::menuExportOpenSim()
                 temp.WriteOBJFile(newDir.absoluteFilePath(QString::fromStdString(body->graphicFile1())).toStdString());
             }
         }
-        openSimExporter.Process(m_simulation);
+        openSimExporter.process(m_simulation);
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly))
         {
