@@ -42,34 +42,34 @@ ObjectiveMain::ObjectiveMain(int argc, const char **argv)
 {
     std::string compileDate(__DATE__);
     std::string compileTime(__TIME__);
-    m_argparse.Initialise(argc, argv, "ObjectiveMain command line interface to GaitSym2019 build "s + compileDate + " "s + compileTime, 0, 0);
-    m_argparse.AddArgument("-sc"s, "--score"s, "Score filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-co"s, "--config"s, "Config filename"s, ""s, 1, true, ArgParse::String);
-    m_argparse.AddArgument("-ms"s, "--modelState"s, "Model state filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-rt"s, "--runTimeLimit"s, "Run time limit"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-st"s, "--simulationTimeLimit"s, "Simulation time limit"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-de"s, "--debug"s, "Turn debugging on"s);
+    m_argparse.initialise(argc, argv, "ObjectiveMain command line interface to GaitSym2019 build "s + compileDate + " "s + compileTime, 0, 0);
+    m_argparse.addArgument("-sc"s, "--score"s, "Score filename"s, ""s, 1, false, ArgParse::String);
+    m_argparse.addArgument("-co"s, "--config"s, "Config filename"s, ""s, 1, true, ArgParse::String);
+    m_argparse.addArgument("-ms"s, "--modelState"s, "Model state filename"s, ""s, 1, false, ArgParse::String);
+    m_argparse.addArgument("-rt"s, "--runTimeLimit"s, "Run time limit"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-st"s, "--simulationTimeLimit"s, "Simulation time limit"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-de"s, "--debug"s, "Turn debugging on"s);
 
-    m_argparse.AddArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
+    m_argparse.addArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
 
-    int err = m_argparse.Parse();
+    int err = m_argparse.parse();
     if (err)
     {
-        m_argparse.Usage();
+        m_argparse.usage();
         exit(1);
     }
 
-    m_argparse.Get("--outputList"s, &m_outputList);
-    m_argparse.Get("--runTimeLimit"s, &m_runTimeLimit);
-    m_argparse.Get("--outputModelStateAtTime"s, &m_outputModelStateAtTime);
-    m_argparse.Get("--outputModelStateAtCycle"s, &m_outputModelStateAtCycle);
-    m_argparse.Get("--simulationTimeLimit"s, &m_simulationTimeLimit);
-    m_argparse.Get("--config"s, &m_configFilename);
-    m_argparse.Get("--score"s, &m_scoreFilename);
-    m_argparse.Get("--modelState"s, &m_outputModelStateFilename);
-    m_argparse.Get("--debug"s, &m_debug);
+    m_argparse.get("--outputList"s, &m_outputList);
+    m_argparse.get("--runTimeLimit"s, &m_runTimeLimit);
+    m_argparse.get("--outputModelStateAtTime"s, &m_outputModelStateAtTime);
+    m_argparse.get("--outputModelStateAtCycle"s, &m_outputModelStateAtCycle);
+    m_argparse.get("--simulationTimeLimit"s, &m_simulationTimeLimit);
+    m_argparse.get("--config"s, &m_configFilename);
+    m_argparse.get("--score"s, &m_scoreFilename);
+    m_argparse.get("--modelState"s, &m_outputModelStateFilename);
+    m_argparse.get("--debug"s, &m_debug);
 }
 
 int ObjectiveMain::Run()
