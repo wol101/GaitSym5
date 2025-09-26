@@ -163,7 +163,7 @@ void OpenSimExporter::CreateBodySet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLInitiateTag(&m_xmlString, "Appearance"s);
             XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(bodyIter.second->colour1().alpha()));
-            XMLTagAndContent(&m_xmlString, "color"s, bodyIter.second->colour1().GetFloatColourRGB());
+            XMLTagAndContent(&m_xmlString, "color"s, bodyIter.second->colour1().floatColourRGB());
             XMLTerminateTag(&m_xmlString, "Appearance"s);
             XMLTagAndContent(&m_xmlString, "mesh_file"s, mesh_path);
             XMLTerminateTag(&m_xmlString, "Mesh"s);
@@ -645,7 +645,7 @@ void OpenSimExporter::CreateForceSet()
 
         XMLInitiateTag(&m_xmlString, "Appearance"s);
         XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(muscle->colour1().alpha()));
-        XMLTagAndContent(&m_xmlString, "color"s, muscle->colour1().GetFloatColourRGB());
+        XMLTagAndContent(&m_xmlString, "color"s, muscle->colour1().floatColourRGB());
         XMLTerminateTag(&m_xmlString, "Appearance"s);
 
         while (true)
@@ -932,7 +932,7 @@ void OpenSimExporter::CreateContactGeometrySet()
                 XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(sphereGeom->geomMarker()->GetPosition()));
                 XMLInitiateTag(&m_xmlString, "Appearance"s);
                 XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(sphereGeom->colour1().alpha()));
-                XMLTagAndContent(&m_xmlString, "color"s, sphereGeom->colour1().GetFloatColourRGB());
+                XMLTagAndContent(&m_xmlString, "color"s, sphereGeom->colour1().floatColourRGB());
                 XMLTerminateTag(&m_xmlString, "Appearance"s);
                 XMLTerminateTag(&m_xmlString, "ContactSphere"s);
                 break;
@@ -944,7 +944,7 @@ void OpenSimExporter::CreateContactGeometrySet()
                 XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(planeGeom->geomMarker()->GetPosition()));
                 XMLInitiateTag(&m_xmlString, "Appearance"s);
                 XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(planeGeom->colour1().alpha()));
-                XMLTagAndContent(&m_xmlString, "color"s, planeGeom->colour1().GetFloatColourRGB());
+                XMLTagAndContent(&m_xmlString, "color"s, planeGeom->colour1().floatColourRGB());
                 XMLTerminateTag(&m_xmlString, "Appearance"s);
                 XMLInitiateTag(&m_xmlString, "SurfaceProperties"s);
                 XMLTagAndContent(&m_xmlString, "representation"s, "2"s); // representation (1:Points, 2:Wire, 3:Shaded) used to display the object

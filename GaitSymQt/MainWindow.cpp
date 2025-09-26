@@ -1408,7 +1408,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     }
 
     this->m_simulationWidget->setAxesScale(float(this->m_simulation->GetGlobal()->size1()));
-    QString backgroundColour = QString::fromStdString(this->m_simulation->GetGlobal()->colour1().GetHexARGB());
+    QString backgroundColour = QString::fromStdString(this->m_simulation->GetGlobal()->colour1().hexARGB());
     this->m_simulationWidget->setSimulation(this->m_simulation);
     this->m_simulationWidget->setBackgroundColour(QColor(backgroundColour));
     this->m_simulationWidget->update();
@@ -2681,7 +2681,7 @@ void MainWindow::menuEditGlobal()
         this->updateEnable();
         this->ui->doubleSpinBoxTimeMax->setValue(this->m_simulation->GetGlobal()->timeLimit());
         this->m_simulationWidget->setAxesScale(float(this->m_simulation->GetGlobal()->size1()));
-        this->m_simulationWidget->setBackgroundColour(QString::fromStdString(this->m_simulation->GetGlobal()->colour1().GetHexARGB()));
+        this->m_simulationWidget->setBackgroundColour(QString::fromStdString(this->m_simulation->GetGlobal()->colour1().hexARGB()));
         this->m_simulationWidget->update();
     }
     else

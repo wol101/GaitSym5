@@ -659,7 +659,7 @@ void FixedJoint::CalculatePixmap()
         for (size_t i = 0; i < 256; i++)
         {
             float r = ((float)i / 255.0f);
-            Colour::SetColourFromMap(r, Colour::JetColourMap, &mappedColour, false);
+            Colour::setColourFromMap(r, Colour::JetColourMap, &mappedColour, false);
             m_colourMap.push_back(static_cast<unsigned char>(255.0 * mappedColour.r()));
             m_colourMap.push_back(static_cast<unsigned char>(255.0 * mappedColour.g()));
             m_colourMap.push_back(static_cast<unsigned char>(255.0 * mappedColour.b()));

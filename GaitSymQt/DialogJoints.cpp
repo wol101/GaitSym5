@@ -568,7 +568,7 @@ void DialogJoints::properties()
     if (m_inputJoint)
     {
         jointAxesSize.value = m_inputJoint->size1();
-        jointColour.value = QColor(QString::fromStdString(m_inputJoint->colour1().GetHexARGB()));
+        jointColour.value = QColor(QString::fromStdString(m_inputJoint->colour1().hexARGB()));
     }
     m_properties.clear();
     m_properties = { { jointAxesSize.key, jointAxesSize },

@@ -449,8 +449,8 @@ void DialogGeoms::properties()
 
     if (m_inputGeom)
     {
-        geomColour1.value = QColor(QString::fromStdString(m_inputGeom->colour1().GetHexARGB()));
-        geomColour2.value = QColor(QString::fromStdString(m_inputGeom->colour2().GetHexARGB()));
+        geomColour1.value = QColor(QString::fromStdString(m_inputGeom->colour1().hexARGB()));
+        geomColour2.value = QColor(QString::fromStdString(m_inputGeom->colour2().hexARGB()));
         geomSize1.value = m_inputGeom->size1();
         geomSize2.value = m_inputGeom->size2();
         geomSize3.value = m_inputGeom->size3();

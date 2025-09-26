@@ -25,62 +25,62 @@ Colour::Colour()
 
 Colour::Colour(float index, ColourMap m, bool invert)
 {
-    SetColourFromMap(index, m, this, invert);
+    setColourFromMap(index, m, this, invert);
 }
 
 Colour::Colour(const std::string &str)
 {
-    if (!SetColourFromString(str, this)) this->SetColour(0.f, 0.f, 0.f, 1.f);
+    if (!setColourFromString(str, this)) this->setColour(0.f, 0.f, 0.f, 1.f);
 }
 
-void Colour::SetColour(float index, ColourMap m, bool invert)
+void Colour::setColour(float index, ColourMap m, bool invert)
 {
-    SetColourFromMap(index, m, this, invert);
+    setColourFromMap(index, m, this, invert);
 }
 
-bool Colour::SetColour(const std::string &name)
+bool Colour::setColour(const std::string &name)
 {
-    return SetColourFromString(name, this);
+    return setColourFromString(name, this);
 }
 
-bool Colour::SetColourFromString(const std::string &str, Colour *stringColour)
+bool Colour::setColourFromString(const std::string &str, Colour *stringColour)
 {
     // is name a set of 3 or 4 numbers?
     std::vector< std::string > result;
     pystring::split(str, result);
     if (result.size() == 3)
     {
-        if (IsInt(result[0]) && IsInt(result[1]) && IsInt(result[2]))
+        if (isInt(result[0]) && isInt(result[1]) && isInt(result[2]))
         {
-            stringColour->SetColour(std::strtol(result[0].c_str(), nullptr, 0), std::strtol(result[1].c_str(), nullptr, 0), std::strtol(result[2].c_str(), nullptr, 0), 255);
+            stringColour->setColour(std::strtol(result[0].c_str(), nullptr, 0), std::strtol(result[1].c_str(), nullptr, 0), std::strtol(result[2].c_str(), nullptr, 0), 255);
             return true;
         }
-        if (IsNumber(result[0]) && IsNumber(result[1]) && IsNumber(result[2]))
+        if (isNumber(result[0]) && isNumber(result[1]) && isNumber(result[2]))
         {
-            stringColour->SetColour(std::stof(result[0]), std::stof(result[1]), std::stof(result[2]), 1.0f);
+            stringColour->setColour(std::stof(result[0]), std::stof(result[1]), std::stof(result[2]), 1.0f);
             return true;
         }
-        return SetColourFromName(str, stringColour);
+        return setColourFromName(str, stringColour);
     }
     if (result.size() == 4)
     {
-        if (IsInt(result[0]) && IsInt(result[1]) && IsInt(result[2]) && IsInt(result[3]))
+        if (isInt(result[0]) && isInt(result[1]) && isInt(result[2]) && isInt(result[3]))
         {
-            stringColour->SetColour(int(std::strtol(result[0].c_str(), nullptr, 0)), int(std::strtol(result[1].c_str(), nullptr, 0)), int(std::strtol(result[2].c_str(), nullptr, 0)), int(std::strtol(result[3].c_str(), nullptr, 0)));
+            stringColour->setColour(int(std::strtol(result[0].c_str(), nullptr, 0)), int(std::strtol(result[1].c_str(), nullptr, 0)), int(std::strtol(result[2].c_str(), nullptr, 0)), int(std::strtol(result[3].c_str(), nullptr, 0)));
             return true;
         }
-        if (IsNumber(result[0]) && IsNumber(result[1]) && IsNumber(result[2]) && IsNumber(result[3]))
+        if (isNumber(result[0]) && isNumber(result[1]) && isNumber(result[2]) && isNumber(result[3]))
         {
-            stringColour->SetColour(std::stof(result[0]), std::stof(result[1]), std::stof(result[2]), std::stof(result[3]));
+            stringColour->setColour(std::stof(result[0]), std::stof(result[1]), std::stof(result[2]), std::stof(result[3]));
             return true;
         }
-        return SetColourFromName(str, stringColour);
+        return setColourFromName(str, stringColour);
     }
-    return SetColourFromName(str, stringColour);
+    return setColourFromName(str, stringColour);
 }
 
 
-bool Colour::IsNumber(const std::string &s)
+bool Colour::isNumber(const std::string &s)
 {
     std::regex e("^([+-]?)(?=[0-9]|\\.[0-9])[0-9]*(\\.[0-9]*)?([Ee]([+-]?[0-9]+))?$");
     return std::regex_match (s, e);
@@ -126,7 +126,7 @@ void Colour::setAlpha(float alpha)
     m_alpha = alpha;
 }
 
-bool Colour::IsInt(const std::string &s)
+bool Colour::isInt(const std::string &s)
 {
     std::regex e("^(?:(0[xX][a-fA-F0-9]+(?:[uU](?:ll|LL|[lL])?|(?:ll|LL|[lL])[uU]?)?)"           // Hexadecimal
                  "|([1-9][0-9]*(?:[uU](?:ll|LL|[lL])?|(?:ll|LL|[lL])[uU]?)?)"                    // Decimal
@@ -134,7 +134,7 @@ bool Colour::IsInt(const std::string &s)
     return std::regex_match (s, e);
 }
 
-std::string Colour::GetFloatColourRGBA()
+std::string Colour::floatColourRGBA()
 {
     std::string output;
     char buf[32 * 4];
@@ -143,7 +143,7 @@ std::string Colour::GetFloatColourRGBA()
     return output;
 }
 
-std::string Colour::GetIntColourRGBA()
+std::string Colour::intColourRGBA()
 {
     std::string output;
     char buf[32 * 4];
@@ -152,7 +152,7 @@ std::string Colour::GetIntColourRGBA()
     return output;
 }
 
-std::string Colour::GetFloatColourRGB()
+std::string Colour::floatColourRGB()
 {
     std::string output;
     char buf[32 * 4];
@@ -161,7 +161,7 @@ std::string Colour::GetFloatColourRGB()
     return output;
 }
 
-std::string Colour::GetIntColourRGB()
+std::string Colour::intColourRGB()
 {
     std::string output;
     char buf[32 * 4];
@@ -170,7 +170,7 @@ std::string Colour::GetIntColourRGB()
     return output;
 }
 
-std::string Colour::GetHexARGB()
+std::string Colour::hexARGB()
 {
     // name is #AARRGGBB
     std::string output;
@@ -180,7 +180,7 @@ std::string Colour::GetHexARGB()
     return output;
 }
 
-std::string Colour::GetHexRGB()
+std::string Colour::hexRGB()
 {
     // name is #RRGGBB
     std::string output;
@@ -190,7 +190,7 @@ std::string Colour::GetHexRGB()
     return output;
 }
 
-bool Colour::SetColourFromName(const std::string &name, Colour *namedColour)
+bool Colour::setColourFromName(const std::string &name, Colour *namedColour)
 {
     const std::unordered_map<std::string, uint64_t> colourNameMap(
     {
@@ -951,7 +951,7 @@ bool Colour::SetColourFromName(const std::string &name, Colour *namedColour)
     if (it != colourNameMap.end())
     {
         uint64_t color = it->second;
-        namedColour->SetColour(int((color & 0x00FF0000) >> 16), int((color & 0x0000FF00) >> 8), int((color & 0x000000FF) >> 0), 255);
+        namedColour->setColour(int((color & 0x00FF0000) >> 16), int((color & 0x0000FF00) >> 8), int((color & 0x000000FF) >> 0), 255);
         return true;
     }
     else
@@ -961,8 +961,8 @@ bool Colour::SetColourFromName(const std::string &name, Colour *namedColour)
             // name is #AARRGGBB or #RRGGBB
             int a, b, c, d;
             int l = sscanf(name.c_str(), "#%02x%02x%02x%02x", &a, &b, &c, &d);
-            if (l == 4) { namedColour->SetColour(b, c, d, a); return true; }
-            if (l == 3) { namedColour->SetColour(a, b, c, 255); return true; }
+            if (l == 4) { namedColour->setColour(b, c, d, a); return true; }
+            if (l == 3) { namedColour->setColour(a, b, c, 255); return true; }
         }
     }
     return false;
@@ -970,7 +970,7 @@ bool Colour::SetColourFromName(const std::string &name, Colour *namedColour)
 
 // set colour based on a colour map indexed from 0 to 1
 // uses built in 256 element colour maps
-void Colour::SetColourFromMap(float index, ColourMap m, Colour *mappedColour, bool invert)
+void Colour::setColourFromMap(float index, ColourMap m, Colour *mappedColour, bool invert)
 {
 
     const float grey[256][4] =
@@ -2555,7 +2555,7 @@ void Colour::SetColourFromMap(float index, ColourMap m, Colour *mappedColour, bo
     if (i < 0) i = 0;
     else if (i >= 256) i = 255;
     if (invert) i = 255 - i;
-    mappedColour->SetColour((*mapPtr)[i][0], (*mapPtr)[i][1], (*mapPtr)[i][2], (*mapPtr)[i][3]);
+    mappedColour->setColour((*mapPtr)[i][0], (*mapPtr)[i][1], (*mapPtr)[i][2], (*mapPtr)[i][3]);
 }
 } // namespace GaitSym
 

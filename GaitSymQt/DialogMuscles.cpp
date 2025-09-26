@@ -712,9 +712,9 @@ void DialogMuscles::properties()
     SettingsItem strapForceScale = Preferences::settingsItem("StrapForceScale");
     if (m_inputMuscle)
     {
-        strapColour.value = QColor(QString::fromStdString(m_inputMuscle->GetStrap()->colour1().GetHexARGB()));
-        strapCylinderColour.value = QColor(QString::fromStdString(m_inputMuscle->GetStrap()->colour2().GetHexARGB()));
-        strapForceColour.value = QColor(QString::fromStdString(m_inputMuscle->colour1().GetHexARGB()));
+        strapColour.value = QColor(QString::fromStdString(m_inputMuscle->GetStrap()->colour1().hexARGB()));
+        strapCylinderColour.value = QColor(QString::fromStdString(m_inputMuscle->GetStrap()->colour2().hexARGB()));
+        strapForceColour.value = QColor(QString::fromStdString(m_inputMuscle->colour1().hexARGB()));
         strapRadius.value = m_inputMuscle->GetStrap()->size1();
         strapCylinderLength.value = m_inputMuscle->GetStrap()->size2();
         strapForceRadius.value = m_inputMuscle->size1();
