@@ -131,18 +131,18 @@ void CylinderWrapStrap::calculate()
     pgd::Quaternion qCylinderQuaternionInv = ~m_cylinderQuaternion;
 
     // get the world coordinates of the origin and insertion
-    pgd::Vector3 worldOriginPosition = QVRotate(qOriginBody, m_originPosition) + vOriginBody;
-    pgd::Vector3 worldInsertionPosition = QVRotate(qInsertionBody, m_insertionPosition) + vInsertionBody;
+    pgd::Vector3 worldOriginPosition = qVRotate(qOriginBody, m_originPosition) + vOriginBody;
+    pgd::Vector3 worldInsertionPosition = qVRotate(qInsertionBody, m_insertionPosition) + vInsertionBody;
 
     // now calculate as cylinder coordinates
     pgd::Vector3 v;
     if (m_originBody == m_cylinderBody) v = m_originPosition;
-    else v = QVRotate(qCylinderBodyInv, worldOriginPosition - vCylinderBody);
-    pgd::Vector3 cylinderOriginPosition = QVRotate(qCylinderQuaternionInv, v - m_cylinderPosition);
+    else v = qVRotate(qCylinderBodyInv, worldOriginPosition - vCylinderBody);
+    pgd::Vector3 cylinderOriginPosition = qVRotate(qCylinderQuaternionInv, v - m_cylinderPosition);
 
     if (m_insertionBody == m_cylinderBody) v = m_insertionPosition;
-    else v = QVRotate(qCylinderBodyInv, worldInsertionPosition - vCylinderBody);
-    pgd::Vector3 cylinderInsertionPosition = QVRotate(qCylinderQuaternionInv, v - m_cylinderPosition);
+    else v = qVRotate(qCylinderBodyInv, worldInsertionPosition - vCylinderBody);
+    pgd::Vector3 cylinderInsertionPosition = qVRotate(qCylinderQuaternionInv, v - m_cylinderPosition);
 
     // std::cerr << "cylinderOriginPosition " << cylinderOriginPosition.x << " " << cylinderOriginPosition.y << " " << cylinderOriginPosition.z << " ";
     // std::cerr << "cylinderInsertionPosition " << cylinderInsertionPosition.x << " " << cylinderInsertionPosition.y << " " << cylinderInsertionPosition.z << "\n";
@@ -164,11 +164,11 @@ void CylinderWrapStrap::calculate()
 
     // now rotate back to world reference frame
 
-    theOriginForce = QVRotate(qCylinderBody, QVRotate(m_cylinderQuaternion, theOriginForce));
-    theInsertionForce = QVRotate(qCylinderBody, QVRotate(m_cylinderQuaternion, theInsertionForce));
-    theCylinderForce = QVRotate(qCylinderBody, QVRotate(m_cylinderQuaternion, theCylinderForce));
-    theCylinderForcePosition = QVRotate(m_cylinderQuaternion, theCylinderForcePosition) + m_cylinderPosition;
-    theCylinderForcePosition = QVRotate(qCylinderBody, theCylinderForcePosition) + vCylinderBody;
+    theOriginForce = qVRotate(qCylinderBody, qVRotate(m_cylinderQuaternion, theOriginForce));
+    theInsertionForce = qVRotate(qCylinderBody, qVRotate(m_cylinderQuaternion, theInsertionForce));
+    theCylinderForce = qVRotate(qCylinderBody, qVRotate(m_cylinderQuaternion, theCylinderForce));
+    theCylinderForcePosition = qVRotate(m_cylinderQuaternion, theCylinderForcePosition) + m_cylinderPosition;
+    theCylinderForcePosition = qVRotate(qCylinderBody, theCylinderForcePosition) + vCylinderBody;
 
 
     PointForce *theOrigin = (*GetPointForceList())[0].get();
@@ -184,8 +184,8 @@ void CylinderWrapStrap::calculate()
     // and handle the path coordinates
     for (size_t i = 0; i < m_pathCoordinates.size(); i++)
     {
-        m_pathCoordinates[i] = QVRotate(m_cylinderQuaternion, m_pathCoordinates[i]) + m_cylinderPosition;
-        m_pathCoordinates[i] = QVRotate(qCylinderBody, m_pathCoordinates[i]) + vCylinderBody;
+        m_pathCoordinates[i] = qVRotate(m_cylinderQuaternion, m_pathCoordinates[i]) + m_cylinderPosition;
+        m_pathCoordinates[i] = qVRotate(qCylinderBody, m_pathCoordinates[i]) + vCylinderBody;
     }
 
     // check that we don't have any non-finite values for directions which can occur if points co-locate

@@ -482,7 +482,7 @@ void Body::getRelativeLinearVelocity(const Body *rel, pgd::Vector3 *vel) const
         pgd::Vector3 worldV = linearVelocity();
         pgd::Vector3 relV = rel->linearVelocity();
         pgd::Quaternion qRelBody = rel->quaternion();
-        *vel = QVRotate(~qRelBody, worldV - relV);
+        *vel = qVRotate(~qRelBody, worldV - relV);
     }
     else
     {
@@ -497,7 +497,7 @@ void Body::getRelativeAngularVelocity(const Body *rel, pgd::Vector3 *rVel) const
         pgd::Vector3 worldVR = angularVelocity();
         pgd::Vector3 relVR = rel->angularVelocity();
         pgd::Quaternion qRelBody = rel->quaternion();
-        *rVel = QVRotate(~qRelBody, worldVR - relVR);
+        *rVel = qVRotate(~qRelBody, worldVR - relVR);
     }
     else
     {

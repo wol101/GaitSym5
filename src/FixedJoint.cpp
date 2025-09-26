@@ -54,8 +54,8 @@ void FixedJoint::calculateStress()
     // now rotate new values to stress based coordinates
     const double *q = dBodyGetQuaternion (this->GetBody1()->GetBodyID());
     pgd::Quaternion bodyOrientation(q[0], q[1], q[2], q[3]);
-    m_torqueStressCoords = pgd::QVRotate(m_StressOrientation, pgd::QVRotate(bodyOrientation, torqueStressOrigin));
-    m_forceStressCoords = pgd::QVRotate(m_StressOrientation, pgd::QVRotate(bodyOrientation, forceCM));
+    m_torqueStressCoords = pgd::qVRotate(m_StressOrientation, pgd::qVRotate(bodyOrientation, torqueStressOrigin));
+    m_forceStressCoords = pgd::qVRotate(m_StressOrientation, pgd::qVRotate(bodyOrientation, forceCM));
 
     if (m_stressCalculationType == beam)
     {

@@ -105,7 +105,7 @@ void TwoHingeJointDriver::update()
 #ifdef CHECK_VECTOR_MATH
     // check what we get by rotating the intial vector by the two quaternions
     pgd::Quaternion q2 = pgd::MakeQFromAxisAngle(normal2, angle2);
-    pgd::Vector3 checkVector = pgd::QVRotate(q2, pgd::QVRotate(q1, startVector));
+    pgd::Vector3 checkVector = pgd::qVRotate(q2, pgd::qVRotate(q1, startVector));
     std::cerr << "targetVector = " << targetVector << "\n";
     std::cerr << "checkVector = " << checkVector << "\n";
     std::cerr << "difference = " << targetVector - checkVector << "\n";

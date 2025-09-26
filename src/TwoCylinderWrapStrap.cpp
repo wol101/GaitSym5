@@ -356,18 +356,18 @@ void TwoCylinderWrapStrap::calculate()
     pgd::Quaternion qCylinderQuaternionInv = ~m_cylinderQuaternion;
 
     // get the world coordinates of the origin and insertion
-    pgd::Vector3 worldOriginPosition = QVRotate(qOriginBody, m_originPosition) + vOriginBody;
-    pgd::Vector3 worldInsertionPosition = QVRotate(qInsertionBody, m_insertionPosition) + vInsertionBody;
+    pgd::Vector3 worldOriginPosition = qVRotate(qOriginBody, m_originPosition) + vOriginBody;
+    pgd::Vector3 worldInsertionPosition = qVRotate(qInsertionBody, m_insertionPosition) + vInsertionBody;
 
     // get the world coordinates of the cylinders
-    pgd::Vector3 worldCylinder1Position = QVRotate(qCylinder1Body, m_cylinder1Position) + vCylinder1Body;
-    pgd::Vector3 worldCylinder2Position = QVRotate(qCylinder2Body, m_cylinder2Position) + vCylinder2Body;
+    pgd::Vector3 worldCylinder1Position = qVRotate(qCylinder1Body, m_cylinder1Position) + vCylinder1Body;
+    pgd::Vector3 worldCylinder2Position = qVRotate(qCylinder2Body, m_cylinder2Position) + vCylinder2Body;
 
     // now rotate so the cylinder axes are lined up on the z axis
-    pgd::Vector3 cylinderOriginPosition = QVRotate(qCylinderQuaternionInv, QVRotate(qCylinder1BodyInv, worldOriginPosition));
-    pgd::Vector3 cylinderInsertionPosition = QVRotate(qCylinderQuaternionInv, QVRotate(qCylinder1BodyInv, worldInsertionPosition));
-    pgd::Vector3 cylinderCylinder1Position = QVRotate(qCylinderQuaternionInv, QVRotate(qCylinder1BodyInv, worldCylinder1Position));
-    pgd::Vector3 cylinderCylinder2Position = QVRotate(qCylinderQuaternionInv, QVRotate(qCylinder1BodyInv, worldCylinder2Position));
+    pgd::Vector3 cylinderOriginPosition = qVRotate(qCylinderQuaternionInv, qVRotate(qCylinder1BodyInv, worldOriginPosition));
+    pgd::Vector3 cylinderInsertionPosition = qVRotate(qCylinderQuaternionInv, qVRotate(qCylinder1BodyInv, worldInsertionPosition));
+    pgd::Vector3 cylinderCylinder1Position = qVRotate(qCylinderQuaternionInv, qVRotate(qCylinder1BodyInv, worldCylinder1Position));
+    pgd::Vector3 cylinderCylinder2Position = qVRotate(qCylinderQuaternionInv, qVRotate(qCylinder1BodyInv, worldCylinder2Position));
 
     pgd::Vector3 theOriginForce;
     pgd::Vector3 theInsertionForce;
@@ -391,12 +391,12 @@ void TwoCylinderWrapStrap::calculate()
 
     // now rotate back to world reference frame
 
-    theOriginForce = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, theOriginForce));
-    theInsertionForce = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, theInsertionForce));
-    theCylinder1Force = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, theCylinder1Force));
-    theCylinder1ForcePosition = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, theCylinder1ForcePosition));
-    theCylinder2Force = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, theCylinder2Force));
-    theCylinder2ForcePosition = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, theCylinder2ForcePosition));
+    theOriginForce = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, theOriginForce));
+    theInsertionForce = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, theInsertionForce));
+    theCylinder1Force = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, theCylinder1Force));
+    theCylinder1ForcePosition = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, theCylinder1ForcePosition));
+    theCylinder2Force = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, theCylinder2Force));
+    theCylinder2ForcePosition = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, theCylinder2ForcePosition));
 
 
     PointForce *theOrigin = (*GetPointForceList())[0].get();
@@ -415,7 +415,7 @@ void TwoCylinderWrapStrap::calculate()
     // and handle the path coordinates
     for (size_t i = 0; i < m_pathCoordinates.size(); i++)
     {
-        m_pathCoordinates[i] = QVRotate(qCylinder1Body, QVRotate(m_cylinderQuaternion, m_pathCoordinates[i]));
+        m_pathCoordinates[i] = qVRotate(qCylinder1Body, qVRotate(m_cylinderQuaternion, m_pathCoordinates[i]));
     }
 
     // check that we don't have any non-finite values for directions which can occur if points co-locate
