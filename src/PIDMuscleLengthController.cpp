@@ -43,7 +43,7 @@ void PIDMuscleLengthController::update()
     // in this driver, the length is driven by the upstream driver
     m_setpoint = dataSum();
     Muscle *muscle = dynamic_cast<Muscle *>(getTarget(""s));
-    if (muscle) m_current_length = muscle->GetLength();
+    if (muscle) m_current_length = muscle->length();
     m_error = m_current_length - m_setpoint;
     if (m_previous_error == std::numeric_limits<double>::infinity()) m_previous_error = m_error;
 

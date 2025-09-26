@@ -53,8 +53,8 @@ std::string TorqueReporter::dumpToString()
     }
 
     // sum the torques acting on body 0 of the joint
-    std::vector<std::unique_ptr<PointForce >> *pointForceList = mMuscle->GetPointForceList();
-    double tension = mMuscle->GetTension();
+    std::vector<std::unique_ptr<PointForce >> *pointForceList = mMuscle->pointForceList();
+    double tension = mMuscle->tension();
     pgd::Vector3 torque, point, force, centre;
     pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;

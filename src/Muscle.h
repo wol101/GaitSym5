@@ -27,12 +27,12 @@ public:
     Muscle();
     virtual ~Muscle();
 
-    double GetLength() const;
-    double GetVelocity() const;
-    double GetTension() const;
-    double GetPower() const;
+    double length() const;
+    double velocity() const;
+    double tension() const;
+    double power() const;
 
-    void CalculateStrap();
+    void calculateStrap();
 
     SMART_ENUM(StrapColourControl, strapColourControlStrings, strapColourControlCount, fixedColour, activationMap, strainMap, forceMap);
 //    enum StrapColourControl { fixedColour, activationMap, strainMap, forceMap };
@@ -42,13 +42,13 @@ public:
     virtual double metabolicPower() = 0;
     virtual double elasticEnergy() = 0;
 
-    std::vector<std::unique_ptr<PointForce >> *GetPointForceList() const;
+    std::vector<std::unique_ptr<PointForce >> *pointForceList() const;
 
-    Strap *GetStrap() const;
-    void SetStrap(Strap *strap);
+    Strap *strap() const;
+    void setStrap(Strap *strap);
 
 //    virtual int sanityCheck(Muscle *otherMuscle, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
-    virtual void LateInitialisation();
+    virtual void lateInitialisation();
     virtual std::string *createFromAttributes();
     virtual void saveToAttributes();
     virtual void appendToAttributes();

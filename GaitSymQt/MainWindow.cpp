@@ -1010,7 +1010,7 @@ void MainWindow::deleteExistingMuscle(const QString &name, bool force)
         }
         // now delete the marker itself
         ui->treeWidgetElements->removeMuscle(QString::fromStdString(muscle->name()));
-        m_simulation->DeleteNamedObject(muscle->GetStrap()->name());
+        m_simulation->DeleteNamedObject(muscle->strap()->name());
         m_simulation->DeleteNamedObject(muscle->name());
         setWindowModified(true);
         updateEnable();
@@ -2548,7 +2548,7 @@ void MainWindow::menuCreateEditMuscle(GaitSym::Muscle *muscle)
         else if (text == "Strain Colour") colourControl = GaitSym::Muscle::strainMap;
         else if (text == "Force Colour") colourControl = GaitSym::Muscle::forceMap;
         muscle->setStrapColourControl(colourControl);
-        muscle->LateInitialisation();
+        muscle->lateInitialisation();
         this->updateEnable();
         this->m_simulationWidget->update();
     }
@@ -3068,9 +3068,9 @@ void MainWindow::elementInfo(const QString &elementType, const QString &elementN
     lines.push_back("/>"s);
     if (GaitSym::Muscle *muscle = dynamic_cast<GaitSym::Muscle *>(element))
     {
-        muscle->GetStrap()->saveToAttributes();
+        muscle->strap()->saveToAttributes();
         lines.push_back("<STRAP"s);
-        for (auto &&it : muscle->GetStrap()->attributeMap()) lines.push_back("    "s + it.first + "=\"" + it.second + "\"");
+        for (auto &&it : muscle->strap()->attributeMap()) lines.push_back("    "s + it.first + "=\"" + it.second + "\"");
         lines.push_back("/>"s);
     }
     std::string text = pystring::join("\n"s, lines);

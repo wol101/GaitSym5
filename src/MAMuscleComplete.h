@@ -108,7 +108,7 @@ public:
     double spe() { return m_params.spe; }
 
     virtual std::string dumpToString();
-    virtual void LateInitialisation();
+    virtual void lateInitialisation();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

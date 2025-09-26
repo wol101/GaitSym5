@@ -400,7 +400,7 @@ void TwoHingeJointDriver::sendData()
     {
         PIDMuscleLengthController *pidMuscleLengthController = dynamic_cast<PIDMuscleLengthController *>(it.second);
         if (!pidMuscleLengthController) continue;
-        Strap *remoteStrap = pidMuscleLengthController->muscle()->GetStrap();
+        Strap *remoteStrap = pidMuscleLengthController->muscle()->strap();
         auto localStrap = m_localStrapList.find(remoteStrap->name());
         if (localStrap == m_localStrapList.end()) continue;
         double length = localStrap->second->Length();
@@ -638,7 +638,7 @@ std::string *TwoHingeJointDriver::createFromAttributes()
     {
         PIDMuscleLengthController *pidMuscleLengthController = dynamic_cast<PIDMuscleLengthController *>(it.second);
         if (!pidMuscleLengthController) continue;
-        Strap *strapPtr = pidMuscleLengthController->muscle()->GetStrap();
+        Strap *strapPtr = pidMuscleLengthController->muscle()->strap();
 
         if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strapPtr))
         {

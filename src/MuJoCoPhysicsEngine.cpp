@@ -596,8 +596,8 @@ std::string *MuJoCoPhysicsEngine::step()
     std::vector<double> qfrc_target(m_mjModel->nv);
     for (auto &&iter :  *simulation()->GetMuscleList())
     {
-        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->GetPointForceList();
-        double tension = iter.second->GetTension();
+        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->pointForceList();
+        double tension = iter.second->tension();
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
             const PointForce *pf = pointForceList->at(i).get();

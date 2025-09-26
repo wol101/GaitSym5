@@ -124,10 +124,10 @@ void MAMuscleComplete::setActivationKinetics(bool activationKinetics,
 
 // do any intialisation that relies on the strap being set up properly
 
-void MAMuscleComplete::LateInitialisation()
+void MAMuscleComplete::lateInitialisation()
 {
-    Muscle::LateInitialisation();
-    m_params.len = GetStrap()->Length();
+    Muscle::lateInitialisation();
+    m_params.len = strap()->Length();
 
     // lastlpe perhaps not set to anything useful
 
@@ -221,8 +221,8 @@ void MAMuscleComplete::updateActivation()
         m_params.alpha = m_stim;
     }
 
-    m_params.len = GetStrap()->Length();
-    m_params.v = GetStrap()->Velocity();
+    m_params.len = strap()->Length();
+    m_params.v = strap()->Velocity();
 
     double minlpe = m_params.spe - (m_params.spe * m_params.width / 2);
     if (minlpe < 0) minlpe = 0;
@@ -325,7 +325,7 @@ void MAMuscleComplete::updateActivation()
         }
     }
 
-    GetStrap()->setTension(m_params.fse);
+    strap()->setTension(m_params.fse);
 }
 
 // calculate the metabolic power of the muscle
@@ -800,8 +800,8 @@ std::string MAMuscleComplete::dumpToString()
           m_params.fce << "\t" << m_params.lpe << "\t" << m_params.fpe << "\t" << m_params.lse << "\t" << m_params.fse << "\t" <<
           m_params.vce << "\t" << m_params.vse << "\t" << m_params.targetFce << "\t" << m_params.f0 << "\t" << m_params.err << "\t" <<
           ese() << "\t" << epe() << "\t" << pse() << "\t" << ppe() << "\t" << pce() << "\t" <<
-          GetTension() << "\t" << GetLength() << "\t" << GetVelocity() << "\t" <<
-          GetPower() << "\t" << metabolicPower() <<
+          tension() << "\t" << length() << "\t" << velocity() << "\t" <<
+          power() << "\t" << metabolicPower() <<
           "\n";
     return ss.str();
 }

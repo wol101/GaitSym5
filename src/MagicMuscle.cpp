@@ -18,7 +18,7 @@ MagicMuscle::MagicMuscle() {}
 void MagicMuscle::updateActivation()
 {
     m_activation = dataSum();
-    GetStrap()->setTension(m_activation * m_forceMultiplier + m_forceOffset);
+    strap()->setTension(m_activation * m_forceMultiplier + m_forceOffset);
 }
 
 double MagicMuscle::activation()
@@ -64,7 +64,7 @@ std::string MagicMuscle::dumpToString()
         setFirstDump(false);
         s += dumpHelper({"time"s, "activation"s, "forceMultiplier"s, "forceOffset"s, "tension"s});
     }
-    s += dumpHelper({simulation()->GetTime(), m_activation, m_forceMultiplier, m_forceOffset, GetStrap()->Tension()});
+    s += dumpHelper({simulation()->GetTime(), m_activation, m_forceMultiplier, m_forceOffset, strap()->Tension()});
     return s;
 }
 

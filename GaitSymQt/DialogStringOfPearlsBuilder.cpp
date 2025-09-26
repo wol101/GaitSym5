@@ -322,7 +322,7 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
     std::string muscleID = ui->comboBoxImportFromMuscle->currentText().toStdString();
     GaitSym::Muscle *muscle = m_simulation->GetMuscle(muscleID);
     if (!muscle) return;
-    GaitSym::Strap *strap = muscle->GetStrap();
+    GaitSym::Strap *strap = muscle->strap();
 
     std::vector<pgd::Vector3> pathCoordinates;
     std::string originID;
@@ -530,7 +530,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
         if (muscleTab == "Minetti-Alexander")
         {
             std::unique_ptr<GaitSym::MAMuscle> muscle = std::make_unique<GaitSym::MAMuscle>();
-            muscle->SetStrap(strap.get());
+            muscle->setStrap(strap.get());
             double forcePerUnitArea = ui->lineEditForcePerUnitArea->value();
             double vMaxFactor = ui->lineEditVMaxFactor->value();
             double pca = ui->lineEditPCA->value();
@@ -548,7 +548,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
         else if (muscleTab == "Minetti-Alexander Elastic")
         {
             std::unique_ptr<GaitSym::MAMuscleComplete> muscle = std::make_unique<GaitSym::MAMuscleComplete>();
-            muscle->SetStrap(strap.get());
+            muscle->setStrap(strap.get());
             double forcePerUnitArea = ui->lineEditForcePerUnitArea_2->value();
             double vMaxFactor = ui->lineEditVMaxFactor_2->value();
             double pca = ui->lineEditPCA_2->value();
@@ -605,7 +605,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
         else if (muscleTab == "Damped Spring")
         {
             std::unique_ptr<GaitSym::DampedSpringMuscle> muscle = std::make_unique<GaitSym::DampedSpringMuscle>();
-            muscle->SetStrap(strap.get());
+            muscle->setStrap(strap.get());
             double unloadedLength = ui->lineEditUnloadedLength->value();
             double springConstant = ui->lineEditSpringConstant->value();
             double area = ui->lineEditArea->value();
@@ -621,16 +621,16 @@ void DialogStringOfPearlsBuilder::createMuscles()
         std::string muscleID = GaitSym::GSUtil::toString("%s_link_%03zu", rootID.c_str(), i);
         outputMuscle->setName(muscleID);
         outputMuscle->setSimulation(m_simulation);
-        outputMuscle->SetStrap(strap.get());
+        outputMuscle->setStrap(strap.get());
 
         if (m_properties.size() > 0)
         {
             if (m_properties.count("StrapColour"))
-                outputMuscle->GetStrap()->setColour1(qvariant_cast<QColor>(m_properties["StrapColour"].value).name(QColor::HexArgb).toStdString());
+                outputMuscle->strap()->setColour1(qvariant_cast<QColor>(m_properties["StrapColour"].value).name(QColor::HexArgb).toStdString());
             if (m_properties.count("StrapForceColour"))
                 outputMuscle->setColour1(qvariant_cast<QColor>(m_properties["StrapForceColour"].value).name(QColor::HexArgb).toStdString());
             if (m_properties.count("StrapRadius"))
-                outputMuscle->GetStrap()->setSize1(m_properties["StrapRadius"].value.toDouble());
+                outputMuscle->strap()->setSize1(m_properties["StrapRadius"].value.toDouble());
             if (m_properties.count("StrapForceRadius"))
                 outputMuscle->setSize1(m_properties["StrapForceRadius"].value.toDouble());
             if (m_properties.count("StrapForceScale"))

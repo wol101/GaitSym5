@@ -597,7 +597,7 @@ void DialogOutputSelect::acceptButtonClicked()
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
         (*m_simulation->GetMuscleList())[std::string(item->text().toUtf8())]->setDump(dump);
-        (*m_simulation->GetMuscleList())[std::string(item->text().toUtf8())]->GetStrap()->setDump(dump);
+        (*m_simulation->GetMuscleList())[std::string(item->text().toUtf8())]->strap()->setDump(dump);
     }
 
     for (i = 0; listWidgetGeom() && i < listWidgetGeom()->count(); i++)

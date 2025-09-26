@@ -63,44 +63,44 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     if (!m_muscle) return;
     m_simulationWidget = simulationWidget;
 
-    GaitSym::Colour colour(m_muscle->GetStrap()->colour1());
+    GaitSym::Colour colour(m_muscle->strap()->colour1());
     switch (m_muscle->strapColourControl())
     {
     case GaitSym::Muscle::fixedColour:
-        m_strapColor.setRedF(qreal(m_muscle->GetStrap()->colour1().r()));
-        m_strapColor.setGreenF(qreal(m_muscle->GetStrap()->colour1().g()));
-        m_strapColor.setBlueF(qreal(m_muscle->GetStrap()->colour1().b()));
-        m_strapColor.setAlphaF(qreal(m_muscle->GetStrap()->colour1().alpha()));
+        m_strapColor.setRedF(qreal(m_muscle->strap()->colour1().r()));
+        m_strapColor.setGreenF(qreal(m_muscle->strap()->colour1().g()));
+        m_strapColor.setBlueF(qreal(m_muscle->strap()->colour1().b()));
+        m_strapColor.setAlphaF(qreal(m_muscle->strap()->colour1().alpha()));
         break;
     case GaitSym::Muscle::activationMap:
         GaitSym::Colour::setColourFromMap(float(m_muscle->activation()), m_strapColourMap, &colour, false);
         m_strapColor = QColor(QString::fromStdString(colour.hexARGB()));
         break;
     case GaitSym::Muscle::strainMap:
-        if (dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap(float(m_muscle->GetLength() / dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)->unloadedLength()) - 0.5f, m_strapColourMap, &colour, false);
-        else if (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->GetLength() / (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->fibreLength() + dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->tendonLength())) - 0.5f, m_strapColourMap, &colour, false);
-        else if (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap(float(m_muscle->GetLength() / (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)->fibreLength())) - 0.5f, m_strapColourMap, &colour, false);
+        if (dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap(float(m_muscle->length() / dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)->unloadedLength()) - 0.5f, m_strapColourMap, &colour, false);
+        else if (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->length() / (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->fibreLength() + dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->tendonLength())) - 0.5f, m_strapColourMap, &colour, false);
+        else if (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap(float(m_muscle->length() / (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)->fibreLength())) - 0.5f, m_strapColourMap, &colour, false);
         m_strapColor = QColor(QString::fromStdString(colour.hexARGB()));
         break;
     case GaitSym::Muscle::forceMap:
-        if (dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->GetTension() / (dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)->unloadedLength() * dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)->springConstant())), m_strapColourMap, &colour, false);
-        else if (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->GetTension() / (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->forcePerUnitArea() * dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->pca())), m_strapColourMap, &colour, false);
-        else if (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->GetLength() / (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)->forcePerUnitArea() * dynamic_cast<GaitSym::MAMuscle *>(m_muscle)->pca())), m_strapColourMap, &colour, false);
+        if (dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->tension() / (dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)->unloadedLength() * dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle)->springConstant())), m_strapColourMap, &colour, false);
+        else if (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->tension() / (dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->forcePerUnitArea() * dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle)->pca())), m_strapColourMap, &colour, false);
+        else if (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)) GaitSym::Colour::setColourFromMap( float(m_muscle->length() / (dynamic_cast<GaitSym::MAMuscle *>(m_muscle)->forcePerUnitArea() * dynamic_cast<GaitSym::MAMuscle *>(m_muscle)->pca())), m_strapColourMap, &colour, false);
         m_strapColor = QColor(QString::fromStdString(colour.hexARGB()));
         break;
     }
-    m_strapCylinderColor.setRedF(qreal(m_muscle->GetStrap()->colour2().r()));
-    m_strapCylinderColor.setGreenF(qreal(m_muscle->GetStrap()->colour2().g()));
-    m_strapCylinderColor.setBlueF(qreal(m_muscle->GetStrap()->colour2().b()));
-    m_strapCylinderColor.setAlphaF(qreal(m_muscle->GetStrap()->colour2().alpha()));
+    m_strapCylinderColor.setRedF(qreal(m_muscle->strap()->colour2().r()));
+    m_strapCylinderColor.setGreenF(qreal(m_muscle->strap()->colour2().g()));
+    m_strapCylinderColor.setBlueF(qreal(m_muscle->strap()->colour2().b()));
+    m_strapCylinderColor.setAlphaF(qreal(m_muscle->strap()->colour2().alpha()));
 
     m_strapForceColor.setRedF(qreal(m_muscle->colour1().r()));
     m_strapForceColor.setGreenF(qreal(m_muscle->colour1().g()));
     m_strapForceColor.setBlueF(qreal(m_muscle->colour1().b()));
     m_strapForceColor.setAlphaF(qreal(m_muscle->colour1().alpha()));
 
-    m_strapRadius = m_muscle->GetStrap()->size1();
-    m_strapCylinderLength  = m_muscle->GetStrap()->size2();
+    m_strapRadius = m_muscle->strap()->size1();
+    m_strapCylinderLength  = m_muscle->strap()->size2();
     m_strapForceRadius  = m_muscle->size1();
     m_strapForceScale  = m_muscle->size2();
 
@@ -108,7 +108,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     while (true)
     {
 
-        if (GaitSym::TwoPointStrap *twoPointStrap = dynamic_cast<GaitSym::TwoPointStrap *>(m_muscle->GetStrap()))
+        if (GaitSym::TwoPointStrap *twoPointStrap = dynamic_cast<GaitSym::TwoPointStrap *>(m_muscle->strap()))
         {
             std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = twoPointStrap->GetPointForceList();
             m_polyline.reserve(pointForceList->size());
@@ -120,7 +120,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             break;
         }
 
-        if (GaitSym::NPointStrap *nPointStrap = dynamic_cast<GaitSym::NPointStrap *>(m_muscle->GetStrap()))
+        if (GaitSym::NPointStrap *nPointStrap = dynamic_cast<GaitSym::NPointStrap *>(m_muscle->strap()))
         {
             std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = nPointStrap->GetPointForceList();
             m_polyline.reserve(pointForceList->size());
@@ -133,7 +133,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             break;
         }
 
-        if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(m_muscle->GetStrap()))
+        if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(m_muscle->strap()))
         {
             if (cylinderWrapStrap->numWrapSegments() != int(m_strapCylinderWrapSegments))
             {
@@ -161,7 +161,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             break;
         }
 
-        if (GaitSym::TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<GaitSym::TwoCylinderWrapStrap *>(m_muscle->GetStrap()))
+        if (GaitSym::TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<GaitSym::TwoCylinderWrapStrap *>(m_muscle->strap()))
         {
             if (twoCylinderWrapStrap->GetNumWrapSegments() != int(m_strapCylinderWrapSegments))
             {
@@ -217,13 +217,13 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 
     if (m_displayMuscleForces)
     {
-        std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = m_muscle->GetPointForceList();
+        std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = m_muscle->pointForceList();
         for (size_t i = 0; i < pointForceList->size(); i++)
         {
             std::vector<pgd::Vector3> polyline;
             polyline.reserve(2);
             polyline.clear();
-            pgd::Vector3 f = pgd::Vector3(pointForceList->at(i)->vector[0], pointForceList->at(i)->vector[1], pointForceList->at(i)->vector[2]) * m_muscle->GetTension() * m_strapForceScale;
+            pgd::Vector3 f = pgd::Vector3(pointForceList->at(i)->vector[0], pointForceList->at(i)->vector[1], pointForceList->at(i)->vector[2]) * m_muscle->tension() * m_strapForceScale;
             polyline.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));
             polyline.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]) + f);
             std::unique_ptr<FacetedPolyline>facetedPolyline = std::make_unique<FacetedPolyline>(&polyline, m_strapForceRadius, m_strapNumSegments, m_strapForceColor, 1, true);
@@ -248,7 +248,7 @@ void DrawMuscle::Draw()
         m_facetedObjectForceList.at(i)->Draw();
     }
     m_muscle->setRedraw(false);
-    m_muscle->GetStrap()->setRedraw(false);
+    m_muscle->strap()->setRedraw(false);
 }
 
 void DrawMuscle::Cylinder()
@@ -267,7 +267,7 @@ void DrawMuscle::Cylinder()
             switch (m_muscleDrawStyle)
             {
             case VolumeCylinder:
-                radius = std::sqrt((maMuscle->pca() * maMuscle->fibreLength())/ (M_PI * maMuscle->GetLength()));
+                radius = std::sqrt((maMuscle->pca() * maMuscle->fibreLength())/ (M_PI * maMuscle->length()));
                 break;
             case AreaCylinder:
                 radius = std::sqrt(maMuscle->pca()/ M_PI);
@@ -283,7 +283,7 @@ void DrawMuscle::Cylinder()
             switch (m_muscleDrawStyle)
             {
             case VolumeCylinder:
-                radius = std::sqrt((maMuscleComplete->pca() * maMuscleComplete->fibreLength())/ (M_PI * maMuscleComplete->GetLength()));
+                radius = std::sqrt((maMuscleComplete->pca() * maMuscleComplete->fibreLength())/ (M_PI * maMuscleComplete->length()));
                 break;
             case AreaCylinder:
                 radius = std::sqrt(maMuscleComplete->pca()/ M_PI);
@@ -298,7 +298,7 @@ void DrawMuscle::Cylinder()
             switch (m_muscleDrawStyle)
             {
             case VolumeCylinder:
-                radius = std::sqrt((dampedSpringMuscle->area() * dampedSpringMuscle->unloadedLength())/ (M_PI * dampedSpringMuscle->GetLength()));
+                radius = std::sqrt((dampedSpringMuscle->area() * dampedSpringMuscle->unloadedLength())/ (M_PI * dampedSpringMuscle->length()));
                 break;
             case AreaCylinder:
                 radius = std::sqrt(dampedSpringMuscle->area()/ M_PI);
@@ -332,7 +332,7 @@ void DrawMuscle::Fusiform()
             switch (m_muscleDrawStyle)
             {
             case VolumeFusiform:
-                volume = 2 * M_PI * maMuscle->pca() * maMuscle->fibreLength() /  maMuscle->GetLength();
+                volume = 2 * M_PI * maMuscle->pca() * maMuscle->fibreLength() /  maMuscle->length();
                 a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
                 break;
             case AreaFusiform:
@@ -347,7 +347,7 @@ void DrawMuscle::Fusiform()
                 break;
             }
 
-            double delta = maMuscle->GetLength() / m_strapNumSections;
+            double delta = maMuscle->length() / m_strapNumSections;
             double distance = 0;
             for (size_t i = 0; i < m_polyline.size() - 1; i++)
             {
@@ -357,7 +357,7 @@ void DrawMuscle::Fusiform()
                 {
                     vertexList.push_back(m_polyline[i]);
                     vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-                    double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
+                    double x = (distance / maMuscle->length()) * ( 2 * M_PI) - M_PI;
                     double radius = (a/2) * (std::cos(x)+1);
                     radiusList.push_back(radius);
                     distance += vecLen;
@@ -370,7 +370,7 @@ void DrawMuscle::Fusiform()
                 {
                     vertexList.push_back(m_polyline[i] + j * newVec);
                     vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-                    double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
+                    double x = (distance / maMuscle->length()) * ( 2 * M_PI) - M_PI;
                     double radius = (a/2) * (std::cos(x)+1);
                     radiusList.push_back(radius);
                     distance += newDelta;
@@ -378,7 +378,7 @@ void DrawMuscle::Fusiform()
             }
             vertexList.push_back(m_polyline.back());
             vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-            double x = (distance / maMuscle->GetLength()) * ( 2 * M_PI) - M_PI;
+            double x = (distance / maMuscle->length()) * ( 2 * M_PI) - M_PI;
             double radius = (a/2) * (std::cos(x)+1);
             radiusList.push_back(radius);
             m_facetedObject1 = std::make_unique<FacetedPolyCone>(vertexList, vertexColours, radiusList, m_strapNumSegments, m_strapColor, 1.0);
