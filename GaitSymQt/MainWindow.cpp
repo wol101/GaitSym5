@@ -1476,8 +1476,8 @@ void MainWindow::menuSaveAs()
         if (this->m_mode == MainWindow::constructionMode) // need to put everything into run mode to save properly
         {
             for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
-            for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
-            for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+            for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->lateInitialisation();
+            for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->lateInitialisation();
             for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
         }
         this->setStatusString(fileName + QString(" saving"), 2);
@@ -1510,8 +1510,8 @@ void MainWindow::menuSaveAs()
         if (this->m_mode == MainWindow::constructionMode)
         {
             for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
-            for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
-            for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+            for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->lateInitialisation();
+            for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->lateInitialisation();
         }
         Preferences::Write();
         this->updateEnable();
@@ -1528,8 +1528,8 @@ void MainWindow::menuSave()
     if (this->m_mode == MainWindow::constructionMode) // need to put everything into run mode to save properly
     {
         for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
-        for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
-        for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+        for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->lateInitialisation();
+        for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->lateInitialisation();
         for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
     }
     QString fileName = this->m_configFile.absoluteFilePath();
@@ -1555,8 +1555,8 @@ void MainWindow::menuSave()
     if (this->m_mode == MainWindow::constructionMode)
     {
         for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
-        for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
-        for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+        for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->lateInitialisation();
+        for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->lateInitialisation();
     }
     Preferences::Write();
     this->updateEnable();
@@ -2695,8 +2695,8 @@ void MainWindow::enterRunMode()
     Q_ASSERT_X(this->m_simulation, "MainWindow::enterRunMode", "this->m_simulation undefined");
     this->m_mode = MainWindow::runMode;
     for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
-    for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
-    for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->lateInitialisation();
+    for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->lateInitialisation();
     for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
     this->ui->actionRunMode->setChecked(true);
     this->ui->actionConstructionMode->setChecked(false);
@@ -2712,8 +2712,8 @@ void MainWindow::enterConstructionMode()
     Q_ASSERT_X(this->m_stepCount == 0, "MainWindow::enterConstructionMode", "this->m_stepCount not zero");
     this->m_mode = MainWindow::constructionMode;
     for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
-    for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
-    for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->lateInitialisation();
+    for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->lateInitialisation();
     for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
     this->ui->actionRunMode->setChecked(false);
     this->ui->actionConstructionMode->setChecked(true);

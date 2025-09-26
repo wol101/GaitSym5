@@ -6,7 +6,8 @@
 
 #include <iostream>
 
-#pragma pack(push, 1) // packing needed to allow indexed access to the elements
+#pragma pack(push) // the clang warning is a known bug
+#pragma pack(1) // packing needed to allow indexed access to the elements
 
 // wis  - namespace to avoid naming problems
 namespace pgd

@@ -1165,7 +1165,7 @@ void SimulationWidget::drawModel()
     while (drawMuscleMapIter != m_drawMuscleMap.end())
     {
         auto found = muscleList->find(drawMuscleMapIter->first);
-        if (found == muscleList->end() || found->second->redraw() == true || found->second->GetStrap()->redraw() == true)
+        if (found == muscleList->end() || found->second->redraw() == true || found->second->strap()->redraw() == true)
         {
             drawMuscleMapIter = m_drawMuscleMap.erase(drawMuscleMapIter);
         }
