@@ -265,7 +265,7 @@ std::string *PhysXPhysicsEngine::createGeoms()
             if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get()))
             {
                 double a, b, c, d;
-                planeGeom->GetPlane(&a, &b, &c, &d);
+                planeGeom->getPlane(&a, &b, &c, &d);
                 physx::PxReal staticFriction = planeGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;

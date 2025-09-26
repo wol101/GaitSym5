@@ -261,7 +261,7 @@ std::string *ODEPhysicsEngine::createGeoms()
             if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get()))
             {
                 double a, b, c, d;
-                planeGeom->GetPlane(&a, &b, &c, &d);
+                planeGeom->getPlane(&a, &b, &c, &d);
                 geomID = dCreatePlane(m_spaceID, a, b, c, d);
                 dGeomSetData(geomID, planeGeom);
                 iter.second->setData(geomID);

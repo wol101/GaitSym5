@@ -27,10 +27,10 @@ namespace GaitSym {
 
 PlaneGeom::PlaneGeom(double a, double b, double c, double d)
 {
-    SetPlane(a, b, c, d);
+    setPlane(a, b, c, d);
 }
 
-void PlaneGeom::SetPlane(double a, double b, double c, double d)
+void PlaneGeom::setPlane(double a, double b, double c, double d)
 {
     // create the geom
     double length = std::sqrt(a * a + b * b + c * c);
@@ -53,7 +53,7 @@ void PlaneGeom::SetPlane(double a, double b, double c, double d)
     m_d = d;
 }
 
-void PlaneGeom::GetPlane(double *a, double *b, double *c, double *d)
+void PlaneGeom::getPlane(double *a, double *b, double *c, double *d)
 {
     *a = m_a;
     *b = m_b;
@@ -86,7 +86,7 @@ std::string *PlaneGeom::createFromAttributes()
     double b = normal.y;
     double c = normal.z;
     double d = normal.dot(point);
-    SetPlane(a, b, c, d);
+    setPlane(a, b, c, d);
     return nullptr;
 }
 

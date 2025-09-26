@@ -34,13 +34,13 @@ std::string *PlaybackPhysicsEngine::initialise(Simulation *theSimulation)
     std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
-    err = ReadSourceFile();
+    err = readSourceFile();
     if (err) { return err; }
 
     return nullptr;
 }
 
-std::string *PlaybackPhysicsEngine::ReadSourceFile()
+std::string *PlaybackPhysicsEngine::readSourceFile()
 {
     if (simulation()->kinematicsFile().size() == 0)
     {
@@ -55,13 +55,13 @@ std::string *PlaybackPhysicsEngine::ReadSourceFile()
         return lastErrorPtr();
     }
 
-    std::string *err = ReadOSIMBodyKinematicsFile();
+    std::string *err = readOSIMBodyKinematicsFile();
     if (err) return err;
 
     return nullptr;
 }
 
-std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
+std::string *PlaybackPhysicsEngine::readOSIMBodyKinematicsFile()
 {
     std::vector<std::string> columnHeadings;
     std::vector<std::vector<std::string>> data;
