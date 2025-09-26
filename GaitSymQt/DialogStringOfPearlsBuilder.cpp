@@ -540,9 +540,9 @@ void DialogStringOfPearlsBuilder::createMuscles()
             muscle->setVMaxFactor(vMaxFactor);
             muscle->setPca(pca);
             muscle->setFibreLength(fibreLength);
-            muscle->SetF0(pca * forcePerUnitArea);
-            muscle->SetVMax(fibreLength * vMaxFactor);
-            muscle->SetK(activationK);
+            muscle->setF0(pca * forcePerUnitArea);
+            muscle->setVMax(fibreLength * vMaxFactor);
+            muscle->setK(activationK);
             outputMuscle = std::move(muscle);
         }
         else if (muscleTab == "Minetti-Alexander Elastic")
