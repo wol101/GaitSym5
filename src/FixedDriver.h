@@ -24,8 +24,8 @@ public:
 
     virtual void update();
 
-    void MultiplyValue(double mod);
-    void AddValue(double mod);
+    void multiplyValue(double mod);
+    void addValue(double mod);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

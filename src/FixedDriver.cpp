@@ -28,12 +28,12 @@ void FixedDriver::update()
     setLastStepCount(simulation()->GetStepCount());
 }
 
-void FixedDriver::MultiplyValue(double mod)
+void FixedDriver::multiplyValue(double mod)
 {
     setValue(value() * mod);
 }
 
-void FixedDriver::AddValue(double mod)
+void FixedDriver::addValue(double mod)
 {
     setValue(value() + mod);
 }
