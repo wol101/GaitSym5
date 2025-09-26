@@ -38,7 +38,7 @@ public:
 
     std::vector<std::unique_ptr<PointForce >> *GetPointForceList();
 
-    virtual void Calculate() = 0;
+    virtual void calculate() = 0;
 
 //    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight) = 0;
 

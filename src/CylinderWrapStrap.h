@@ -25,31 +25,21 @@ public:
     CylinderWrapStrap();
     virtual ~CylinderWrapStrap();
 
-//    void SetOrigin(Body *body, pgd::Vector3 point);
-//    void SetInsertion(Body *body, pgd::Vector3 point);
-    void SetOrigin(Marker *originMarker);
-    void SetInsertion(Marker *insertionMarker);
+    void setOriginMarker(Marker *originMarker);
+    void setInsertionMarker(Marker *insertionMarker);
 
-//    void SetCylinderBody(Body *body);
-    void SetCylinderRadius(double radius);
-//    void SetCylinderPosition(double x, double y, double z);
-//    void SetCylinderQuaternion(double q0, double q1, double q2, double q3);
-//    void SetCylinderAxis(double x, double y, double z);
-    void SetCylinder(Marker *cylinderMarker);
-    void SetNumWrapSegments(int numWrapSegments);
+    void setCylinderRadius(double cylinderRadius);
+    void setCylinderMarker(Marker *cylinderMarker);
+    void setNumWrapSegments(int numWrapSegments);
 
-    virtual void Calculate();
+    virtual void calculate();
 
-//    void GetOrigin(const Body **body, pgd::Vector3 pos) const;
-//    void GetInsertion(const Body **body, pgd::Vector3 pos) const;
-//    void GetCylinder(const Body **body, pgd::Vector3 pos, double *radius, pgd::Quaternion q) const;
+    Marker *originMarker() const;
+    Marker *insertionMarker() const;
+    Marker *cylinderMarker() const;
 
-    Marker *GetOriginMarker() const;
-    Marker *GetInsertionMarker() const;
-    Marker *GetCylinderMarker() const;
-
-    const std::vector<pgd::Vector3> *GetPathCoordinates();
-    int GetNumWrapSegments();
+    const std::vector<pgd::Vector3> *pathCoordinates();
+    int numWrapSegments();
 
 //    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 
@@ -60,7 +50,7 @@ public:
 
 private:
 
-    int CylinderWrap(pgd::Vector3 &origin, pgd::Vector3 &insertion, double radius, int nWrapSegments, double maxAngle,
+    int cylinderWrap(pgd::Vector3 &origin, pgd::Vector3 &insertion, double radius, int nWrapSegments, double maxAngle,
                      pgd::Vector3 &originForce, pgd::Vector3 &insertionForce, pgd::Vector3 &cylinderForce, pgd::Vector3 &cylinderForcePosition,
                      double *pathLength, std::vector<pgd::Vector3> *pathCoordinates);
 

@@ -294,7 +294,7 @@ void TwoHingeJointDriver::update()
     // and calculate all the straps
     for (auto &&it : m_localStrapList)
     {
-        it.second->Calculate();
+        it.second->calculate();
 //        std::cerr << it.first << " " << it.second->Length() << "\n";
     }
 }
@@ -679,9 +679,9 @@ std::string *TwoHingeJointDriver::createFromAttributes()
 
         if (CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(cylinderWrapStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(cylinderWrapStrap->GetInsertionMarker());
-            Marker *cylinderMarker = createLocalMarkerCopy(cylinderWrapStrap->GetCylinderMarker());
+            Marker *originMarker = createLocalMarkerCopy(cylinderWrapStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(cylinderWrapStrap->insertionMarker());
+            Marker *cylinderMarker = createLocalMarkerCopy(cylinderWrapStrap->cylinderMarker());
             if (!originMarker || !insertionMarker || !cylinderMarker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -689,10 +689,10 @@ std::string *TwoHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<CylinderWrapStrap> strap = std::make_unique<CylinderWrapStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
-            strap->SetCylinder(cylinderMarker);
-            strap->SetCylinderRadius(cylinderWrapStrap->cylinderRadius());
+            strap->setOriginMarker(originMarker);
+            strap->setInsertionMarker(insertionMarker);
+            strap->setCylinderMarker(cylinderMarker);
+            strap->setCylinderRadius(cylinderWrapStrap->cylinderRadius());
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }

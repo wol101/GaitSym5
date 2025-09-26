@@ -40,7 +40,7 @@ public:
     void SetCylinder2(Marker *cylinder2Marker);
     void SetNumWrapSegments(int numWrapSegments);
 
-    virtual void Calculate();
+    virtual void calculate();
 
 //    void GetOrigin(const Body **body, pgd::Vector3 pos) const;
 //    void GetInsertion(const Body **body, pgd::Vector3 pos) const;

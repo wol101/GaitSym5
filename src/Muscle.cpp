@@ -120,7 +120,7 @@ double Muscle::GetPower() const
 
 void Muscle::CalculateStrap()
 {
-    m_Strap->Calculate();
+    m_Strap->calculate();
 }
 
 std::vector<std::unique_ptr<PointForce >> *Muscle::GetPointForceList() const

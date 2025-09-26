@@ -29,7 +29,7 @@ CylinderWrapStrap::~CylinderWrapStrap()
 }
 
 
-void CylinderWrapStrap::SetOrigin(Marker *originMarker)
+void CylinderWrapStrap::setOriginMarker(Marker *originMarker)
 {
     m_originMarker = originMarker;
     if (GetPointForceList()->size() == 0)
@@ -44,7 +44,7 @@ void CylinderWrapStrap::SetOrigin(Marker *originMarker)
     }
 }
 
-void CylinderWrapStrap::SetInsertion(Marker *insertionMarker)
+void CylinderWrapStrap::setInsertionMarker(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
     if (GetPointForceList()->size() <= 1)
@@ -59,7 +59,7 @@ void CylinderWrapStrap::SetInsertion(Marker *insertionMarker)
     }
 }
 
-void CylinderWrapStrap::SetCylinder(Marker *cylinderMarker)
+void CylinderWrapStrap::setCylinderMarker(Marker *cylinderMarker)
 {
     m_cylinderMarker = cylinderMarker;
     if (GetPointForceList()->size() <= 2)
@@ -74,55 +74,55 @@ void CylinderWrapStrap::SetCylinder(Marker *cylinderMarker)
     }
 }
 
-void CylinderWrapStrap::SetCylinderRadius(double radius)
+void CylinderWrapStrap::setCylinderRadius(double cylinderRadius)
 {
-    m_cylinderRadius = radius;
+    m_cylinderRadius = cylinderRadius;
 }
 
-void CylinderWrapStrap::SetNumWrapSegments(int numWrapSegments)
+void CylinderWrapStrap::setNumWrapSegments(int numWrapSegments)
 {
     m_numWrapSegments = numWrapSegments;
     m_pathCoordinates.reserve(size_t(m_numWrapSegments) + 2);
 }
 
-int CylinderWrapStrap::GetNumWrapSegments()
+int CylinderWrapStrap::numWrapSegments()
 {
     return m_numWrapSegments;
 }
 
-Marker *CylinderWrapStrap::GetOriginMarker() const
+Marker *CylinderWrapStrap::originMarker() const
 {
     return m_originMarker;
 }
 
-Marker *CylinderWrapStrap::GetInsertionMarker() const
+Marker *CylinderWrapStrap::insertionMarker() const
 {
     return m_insertionMarker;
 }
 
-Marker *CylinderWrapStrap::GetCylinderMarker() const
+Marker *CylinderWrapStrap::cylinderMarker() const
 {
     return m_cylinderMarker;
 }
 
-void CylinderWrapStrap::Calculate()
+void CylinderWrapStrap::calculate()
 {
-    pgd::Quaternion qOriginBody = GetOriginMarker()->GetBody()->quaternion();
-    pgd::Vector3 vOriginBody = GetOriginMarker()->GetBody()->position();
-    pgd::Quaternion qInsertionBody = GetInsertionMarker()->GetBody()->quaternion();
-    pgd::Vector3 vInsertionBody = GetInsertionMarker()->GetBody()->position();
-    pgd::Quaternion qCylinderBody = GetCylinderMarker()->GetBody()->quaternion();
-    pgd::Vector3 vCylinderBody = GetCylinderMarker()->GetBody()->position();
+    pgd::Quaternion qOriginBody = originMarker()->GetBody()->quaternion();
+    pgd::Vector3 vOriginBody = originMarker()->GetBody()->position();
+    pgd::Quaternion qInsertionBody = insertionMarker()->GetBody()->quaternion();
+    pgd::Vector3 vInsertionBody = insertionMarker()->GetBody()->position();
+    pgd::Quaternion qCylinderBody = cylinderMarker()->GetBody()->quaternion();
+    pgd::Vector3 vCylinderBody = cylinderMarker()->GetBody()->position();
 
-    pgd::Vector3 m_originPosition = GetOriginMarker()->GetPosition();
-    pgd::Vector3 m_insertionPosition = GetInsertionMarker()->GetPosition();
-    pgd::Vector3 m_cylinderPosition = GetCylinderMarker()->GetPosition();
-    Body *m_originBody = GetOriginMarker()->GetBody();
-    Body *m_insertionBody = GetInsertionMarker()->GetBody();
-    Body *m_cylinderBody = GetCylinderMarker()->GetBody();
+    pgd::Vector3 m_originPosition = originMarker()->GetPosition();
+    pgd::Vector3 m_insertionPosition = insertionMarker()->GetPosition();
+    pgd::Vector3 m_cylinderPosition = cylinderMarker()->GetPosition();
+    Body *m_originBody = originMarker()->GetBody();
+    Body *m_insertionBody = insertionMarker()->GetBody();
+    Body *m_cylinderBody = cylinderMarker()->GetBody();
 
     // the cylinder quaternion in this implementation is the quaternion that rotates the the x axis of the marker to the z axis
-    pgd::Vector3 v2 = GetCylinderMarker()->GetAxis(Marker::Axis::X);
+    pgd::Vector3 v2 = cylinderMarker()->GetAxis(Marker::Axis::X);
     pgd::Vector3 v1(0, 0, 1); // and this is the Z axis we need to rotate
     pgd::Quaternion m_cylinderQuaternion = pgd::FindRotation(v1, v2);
 
@@ -153,7 +153,7 @@ void CylinderWrapStrap::Calculate()
     pgd::Vector3 theCylinderForcePosition;
 
     double length = 0;
-    m_wrapStatus = CylinderWrap(cylinderOriginPosition, cylinderInsertionPosition, m_cylinderRadius, m_numWrapSegments, M_PI,
+    m_wrapStatus = cylinderWrap(cylinderOriginPosition, cylinderInsertionPosition, m_cylinderRadius, m_numWrapSegments, M_PI,
                                 theOriginForce, theInsertionForce, theCylinderForce, theCylinderForcePosition,
                                 &length, &m_pathCoordinates);
     if (m_wrapStatus == -1) {
@@ -211,7 +211,7 @@ void CylinderWrapStrap::Calculate()
 // returns -1 if a solution is impossible
 // returns 0 if wrapping is unnecessary
 // returns 1 if wrapping occurs
-int CylinderWrapStrap::CylinderWrap(pgd::Vector3 &origin, pgd::Vector3 &insertion, double radius, int nWrapSegments, double maxAngle,
+int CylinderWrapStrap::cylinderWrap(pgd::Vector3 &origin, pgd::Vector3 &insertion, double radius, int nWrapSegments, double maxAngle,
                  pgd::Vector3 &originForce, pgd::Vector3 &insertionForce, pgd::Vector3 &cylinderForce, pgd::Vector3 &cylinderForcePosition,
                  double *pathLength, std::vector<pgd::Vector3> *pathCoordinates)
 {
@@ -390,7 +390,7 @@ double CylinderWrapStrap::cylinderRadius() const
     return m_cylinderRadius;
 }
 
-const std::vector<pgd::Vector3> *CylinderWrapStrap::GetPathCoordinates()
+const std::vector<pgd::Vector3> *CylinderWrapStrap::pathCoordinates()
 {
     return &m_pathCoordinates;
 }
@@ -475,7 +475,7 @@ std::string *CylinderWrapStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" OriginMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetOrigin(originMarker->second.get());
+    this->setOriginMarker(originMarker->second.get());
     if (findAttribute("InsertionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
     auto insertionMarker = simulation()->GetMarkerList()->find(buf);
     if (insertionMarker == simulation()->GetMarkerList()->end())
@@ -483,7 +483,7 @@ std::string *CylinderWrapStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" InsertionMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetInsertion(insertionMarker->second.get());
+    this->setInsertionMarker(insertionMarker->second.get());
     if (findAttribute("CylinderMarkerID"s, &buf) == nullptr) return lastErrorPtr();
     auto cylinderMarker = simulation()->GetMarkerList()->find(buf);
     if (cylinderMarker == simulation()->GetMarkerList()->end())
@@ -491,9 +491,9 @@ std::string *CylinderWrapStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" CylinderMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetCylinder(cylinderMarker->second.get());
+    this->setCylinderMarker(cylinderMarker->second.get());
     if (findAttribute("CylinderRadius"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetCylinderRadius(GSUtil::Double(buf));
+    this->setCylinderRadius(GSUtil::Double(buf));
 
     setUpstreamObjects({m_originMarker, m_insertionMarker, m_cylinderMarker});
     return nullptr;

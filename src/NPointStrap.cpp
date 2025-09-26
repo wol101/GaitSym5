@@ -104,7 +104,7 @@ Marker *NPointStrap::GetInsertionMarker() const
     return m_insertionMarker;
 }
 
-void NPointStrap::Calculate()
+void NPointStrap::calculate()
 {
     PointForce *theOrigin = (*GetPointForceList())[0].get();
     PointForce *theInsertion = (*GetPointForceList())[1].get();

@@ -44,7 +44,7 @@ public:
     Marker *GetInsertionMarker() const;
 
 
-    virtual void Calculate();
+    virtual void calculate();
 
 //    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 

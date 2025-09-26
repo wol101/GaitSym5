@@ -22,7 +22,7 @@ MagicStrap::MagicStrap()
 }
 
 
-void MagicStrap::Calculate()
+void MagicStrap::calculate()
 {
     switch (m_forceType)
     {

@@ -108,7 +108,7 @@ void TwoPointStrap::SetInsertion(Marker *insertionMarker)
     }
 }
 
-void TwoPointStrap::Calculate()
+void TwoPointStrap::calculate()
 {
     PointForce *theOrigin = (*GetPointForceList())[0].get();
     PointForce *theInsertion = (*GetPointForceList())[1].get();

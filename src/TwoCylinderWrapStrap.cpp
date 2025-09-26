@@ -304,7 +304,7 @@ int TwoCylinderWrapStrap::GetNumWrapSegments()
     return m_numWrapSegments;
 }
 
-void TwoCylinderWrapStrap::Calculate()
+void TwoCylinderWrapStrap::calculate()
 {
     // get the necessary body orientations and positions
 //    const double *q;

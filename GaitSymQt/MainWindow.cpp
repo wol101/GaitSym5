@@ -1233,7 +1233,7 @@ void MainWindow::moveExistingMarker(const QString &s, const QVector3D &p)
             it->createFromAttributes();
             it->setRedraw(true);
             // everything needs a redraw but some things also need extra work
-            if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
+            if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->calculate();
         }
     }
     setWindowModified(true);
@@ -2422,7 +2422,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
                     it->createFromAttributes();
                     it->setRedraw(true);
                     // everything needs a redraw but some things also need extra work
-                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
+                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->calculate();
                 }
             }
         }
@@ -2483,7 +2483,7 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
                     it->createFromAttributes();
                     it->setRedraw(true);
                     // everything needs a redraw but somethings also need extra work
-                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
+                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->calculate();
                 }
             }
             this->setStatusString(QString("Marker edited: %1").arg(QString::fromStdString(marker->name())), 1);
@@ -2597,7 +2597,7 @@ void MainWindow::menuCreateEditGeom(GaitSym::Geom *geom)
                     it->createFromAttributes();
                     it->setRedraw(true);
                     // everything needs a redraw but somethings also need extra work
-                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
+                    if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->calculate();
                 }
             }
 
@@ -2831,7 +2831,7 @@ void MainWindow::menuImportMarkers()
                             it->createFromAttributes();
                             it->setRedraw(true);
                             // everything needs a redraw but somethings also need extra work
-                            if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->Calculate();
+                            if (dynamic_cast<GaitSym::Strap *>(it)) dynamic_cast<GaitSym::Strap *>(it)->calculate();
                         }
                     }
                 }

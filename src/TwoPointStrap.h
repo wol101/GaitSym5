@@ -32,7 +32,7 @@ public:
 //    void GetOrigin(const Body **body, pgd::Vector3 origin) const;
 //    void GetInsertion(const Body **body, pgd::Vector3 insertion) const;
 
-    virtual void Calculate();
+    virtual void calculate();
 
 //    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 

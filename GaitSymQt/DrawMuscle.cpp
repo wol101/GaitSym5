@@ -135,12 +135,12 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 
         if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(m_muscle->GetStrap()))
         {
-            if (cylinderWrapStrap->GetNumWrapSegments() != int(m_strapCylinderWrapSegments))
+            if (cylinderWrapStrap->numWrapSegments() != int(m_strapCylinderWrapSegments))
             {
-                cylinderWrapStrap->SetNumWrapSegments(int(m_strapCylinderWrapSegments));
-                cylinderWrapStrap->Calculate();
+                cylinderWrapStrap->setNumWrapSegments(int(m_strapCylinderWrapSegments));
+                cylinderWrapStrap->calculate();
             }
-            m_polyline = *cylinderWrapStrap->GetPathCoordinates();
+            m_polyline = *cylinderWrapStrap->pathCoordinates();
             // if (m_polyline.size())
             // {
             //     m_facetedObject1 = std::make_unique<FacetedPolyline>(&polyline, m_strapRadius, m_strapNumSegments, m_strapColor, 1);
@@ -148,8 +148,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             //     m_facetedObjectList.push_back(m_facetedObject1.get());
             // }
 
-            pgd::Vector3 position = cylinderWrapStrap->GetCylinderMarker()->GetWorldPosition();
-            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderWrapStrap->GetCylinderMarker()->GetWorldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
+            pgd::Vector3 position = cylinderWrapStrap->cylinderMarker()->GetWorldPosition();
+            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderWrapStrap->cylinderMarker()->GetWorldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
             double radius = cylinderWrapStrap->cylinderRadius();
             // and draw it
             std::vector<pgd::Vector3> polyline;
@@ -166,7 +166,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             if (twoCylinderWrapStrap->GetNumWrapSegments() != int(m_strapCylinderWrapSegments))
             {
                 twoCylinderWrapStrap->SetNumWrapSegments(int(m_strapCylinderWrapSegments));
-                twoCylinderWrapStrap->Calculate();
+                twoCylinderWrapStrap->calculate();
             }
             m_polyline = *twoCylinderWrapStrap->GetPathCoordinates();
             // if (polyline.size())

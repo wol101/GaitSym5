@@ -26,7 +26,7 @@ public:
     SMART_ENUM(ForceDirection, forceDirectionStrings, forceDirectionCount, WorldRelative, BodyRelative);
     SMART_ENUM(ForceType, forceTypeStrings, forceTypeCount, SimpleForce, TorqueCouple);
 
-    virtual void Calculate();
+    virtual void calculate();
 
     virtual std::string dumpToString();
 

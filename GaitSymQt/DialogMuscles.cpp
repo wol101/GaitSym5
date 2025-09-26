@@ -140,11 +140,11 @@ void DialogMuscles::accept() // this catches OK and return/enter
         strap =  std::make_unique<GaitSym::CylinderWrapStrap>();
         GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
         GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetOrigin(originMarker);
-        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetInsertion(insertionMarker);
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->setOriginMarker(originMarker);
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->setInsertionMarker(insertionMarker);
         GaitSym::Marker *cylinderMarker = markerList->at(ui->comboBoxCylinderMarker->currentText().toStdString()).get();
-        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetCylinder(cylinderMarker);
-        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->SetCylinderRadius(ui->lineEditCylinderRadius->value());
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->setCylinderMarker(cylinderMarker);
+        reinterpret_cast<GaitSym::CylinderWrapStrap *>(strap.get())->setCylinderRadius(ui->lineEditCylinderRadius->value());
     }
     else if (strapTab == "2-Cylinder")
     {

@@ -354,9 +354,9 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
 
         if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(strap))
         {
-            pathCoordinates = *cylinderWrapStrap->GetPathCoordinates();
-            originID = cylinderWrapStrap->GetOriginMarker()->name();
-            insertionID = cylinderWrapStrap->GetInsertionMarker()->name();
+            pathCoordinates = *cylinderWrapStrap->pathCoordinates();
+            originID = cylinderWrapStrap->originMarker()->name();
+            insertionID = cylinderWrapStrap->insertionMarker()->name();
             break;
         }
 
