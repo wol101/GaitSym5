@@ -23,14 +23,14 @@ BoxGeom::BoxGeom(double lx, double ly, double lz)
     m_lz = lz;
 }
 
-void BoxGeom::GetDimensions(double *lx, double *ly, double *lz)
+void BoxGeom::getDimensions(double *lx, double *ly, double *lz)
 {
     *lx = m_lx;
     *ly = m_lx;
     *lz = m_lx;
 }
 
-void BoxGeom::SetDimensions(double lx, double ly, double lz)
+void BoxGeom::setDimensions(double lx, double ly, double lz)
 {
     m_lx = lx;
     m_ly = ly;
@@ -48,7 +48,7 @@ std::string *BoxGeom::createFromAttributes()
     double lengthY = GSUtil::Double(buf);
     if (findAttribute("LengthZ"s, &buf) == nullptr) return lastErrorPtr();
     double lengthZ = GSUtil::Double(buf);
-    SetDimensions(lengthX, lengthY, lengthZ);
+    setDimensions(lengthX, lengthY, lengthZ);
 
     return nullptr;
 }
@@ -59,7 +59,7 @@ void BoxGeom::appendToAttributes()
     std::string buf;
     setAttribute("Type"s, "Box"s);
     double lx, ly, lz;
-    GetDimensions(&lx, &ly, &lz);
+    getDimensions(&lx, &ly, &lz);
     setAttribute("LengthX"s, *GSUtil::ToString(lx, &buf));
     setAttribute("LengthY"s, *GSUtil::ToString(ly, &buf));
     setAttribute("LengthZ"s, *GSUtil::ToString(lz, &buf));

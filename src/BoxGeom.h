@@ -20,8 +20,8 @@ class BoxGeom : public Geom
 public:
     BoxGeom(double lx, double ly, double lz);
 
-    void SetDimensions(double lx, double ly, double lz);
-    void GetDimensions(double *lx, double *ly, double *lz);
+    void setDimensions(double lx, double ly, double lz);
+    void getDimensions(double *lx, double *ly, double *lz);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
