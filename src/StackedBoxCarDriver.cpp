@@ -26,12 +26,12 @@ StackedBoxcarDriver::~StackedBoxcarDriver()
 {
 }
 
-void StackedBoxcarDriver::SetStackSize(size_t StackSize)
+void StackedBoxcarDriver::setStackSize(size_t stackSize)
 {
-    m_StackSize = StackSize;
-    m_Delays.resize(m_StackSize);
-    m_Widths.resize(m_StackSize);
-    m_Heights.resize(m_StackSize);
+    m_stackSize = stackSize;
+    m_delays.resize(m_stackSize);
+    m_widths.resize(m_stackSize);
+    m_heights.resize(m_stackSize);
 }
 
 // these parameters control the shape of the box car and when it occurs
@@ -41,24 +41,24 @@ void StackedBoxcarDriver::SetStackSize(size_t StackSize)
 // Height    - value when the box car is active (otherwise the output is zero)
 // Note: Delay and Width values are subtracted from the floor value to guarantee a value from 0 to 1
 
-void StackedBoxcarDriver::SetCycleTime(double CycleTime)
+void StackedBoxcarDriver::setCycleTime(double cycleTime)
 {
-    m_CycleTime = CycleTime;
+    m_cycleTime = cycleTime;
 }
 
-void StackedBoxcarDriver::SetDelays(double *Delays)
+void StackedBoxcarDriver::setDelays(double *delays)
 {
-    for (size_t i = 0; i < m_StackSize; i++) m_Delays[i] = Delays[i] - floor(Delays[i]);
+    for (size_t i = 0; i < m_stackSize; i++) m_delays[i] = delays[i] - floor(delays[i]);
 }
 
-void StackedBoxcarDriver::SetWidths(double *Widths)
+void StackedBoxcarDriver::setWidths(double *widths)
 {
-    for (size_t i = 0; i < m_StackSize; i++) m_Widths[i] = Widths[i] - floor(Widths[i]);
+    for (size_t i = 0; i < m_stackSize; i++) m_widths[i] = widths[i] - floor(widths[i]);
 }
 
-void StackedBoxcarDriver::SetHeights(double *Heights)
+void StackedBoxcarDriver::setHeights(double *heights)
 {
-    for (size_t i = 0; i < m_StackSize; i++) m_Heights[i] = Heights[i];
+    for (size_t i = 0; i < m_stackSize; i++) m_heights[i] = heights[i];
 }
 
 
@@ -71,18 +71,18 @@ void StackedBoxcarDriver::update()
     double offTime;
     // get a normalised cycle time (value from 0 to 1)
     double time = simulation()->simulationTime();
-    double normalisedCycleTime = (time / m_CycleTime) - floor(time / m_CycleTime);
+    double normalisedCycleTime = (time / m_cycleTime) - floor(time / m_cycleTime);
 
-    for (size_t i = 0; i < m_StackSize; i++)
+    for (size_t i = 0; i < m_stackSize; i++)
     {
-        offTime = m_Delays[i] + m_Widths[i];
+        offTime = m_delays[i] + m_widths[i];
         if (offTime < 1) // no wrap case
         {
-            if (normalisedCycleTime > m_Delays[i] && normalisedCycleTime < offTime) output += m_Heights[i];
+            if (normalisedCycleTime > m_delays[i] && normalisedCycleTime < offTime) output += m_heights[i];
         }
         else // wrap case
         {
-            if (normalisedCycleTime < offTime - 1 || normalisedCycleTime > m_Delays[i]) output += m_Heights[i];
+            if (normalisedCycleTime < offTime - 1 || normalisedCycleTime > m_delays[i]) output += m_heights[i];
         }
     }
 
@@ -99,20 +99,20 @@ std::string *StackedBoxcarDriver::createFromAttributes()
 
     std::string buf;
     if (findAttribute("StackSize"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetStackSize(size_t(GSUtil::toInt(buf)));
+    this->setStackSize(size_t(GSUtil::toInt(buf)));
 
-    buf.reserve(m_StackSize * 32);
+    buf.reserve(m_stackSize * 32);
     std::vector<double> doubleList;
-    doubleList.reserve(m_StackSize);
+    doubleList.reserve(m_stackSize);
 
     if (findAttribute("CycleTime"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetCycleTime(GSUtil::toDouble(buf));
+    this->setCycleTime(GSUtil::toDouble(buf));
     if (findAttribute("Delays"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetDelays(GSUtil::toDouble(buf, int(m_StackSize), doubleList.data()));
+    this->setDelays(GSUtil::toDouble(buf, int(m_stackSize), doubleList.data()));
     if (findAttribute("Widths"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetWidths(GSUtil::toDouble(buf, int(m_StackSize), doubleList.data()));
+    this->setWidths(GSUtil::toDouble(buf, int(m_stackSize), doubleList.data()));
     if (findAttribute("Heights"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetHeights(GSUtil::toDouble(buf, int(m_StackSize), doubleList.data()));
+    this->setHeights(GSUtil::toDouble(buf, int(m_stackSize), doubleList.data()));
 
     return nullptr;
 }
@@ -122,13 +122,13 @@ void StackedBoxcarDriver::appendToAttributes()
 {
     Driver::appendToAttributes();
     std::string buf;
-    buf.reserve(m_StackSize * 32); // should be big enough but it will grow if necessary anyway
+    buf.reserve(m_stackSize * 32); // should be big enough but it will grow if necessary anyway
     setAttribute("Type"s, "StackedBoxcar"s);
-    setAttribute("StackSize", *GSUtil::toString(m_StackSize, &buf));
-    setAttribute("CycleTime", *GSUtil::toString(m_CycleTime, &buf));
-    setAttribute("Delays", *GSUtil::toString(m_Delays.data(), m_StackSize, &buf));
-    setAttribute("Widths", *GSUtil::toString(m_Widths.data(), m_StackSize, &buf));
-    setAttribute("Heights", *GSUtil::toString(m_Heights.data(), m_StackSize, &buf));
+    setAttribute("StackSize", *GSUtil::toString(m_stackSize, &buf));
+    setAttribute("CycleTime", *GSUtil::toString(m_cycleTime, &buf));
+    setAttribute("Delays", *GSUtil::toString(m_delays.data(), m_stackSize, &buf));
+    setAttribute("Widths", *GSUtil::toString(m_widths.data(), m_stackSize, &buf));
+    setAttribute("Heights", *GSUtil::toString(m_heights.data(), m_stackSize, &buf));
 }
 
 

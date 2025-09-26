@@ -24,16 +24,13 @@ public:
     StackedBoxcarDriver();
     virtual ~StackedBoxcarDriver();
 
-    void SetStackSize(size_t StackSize);
-    void SetCycleTime(double CycleTime);
-    void SetDelays(double *Delays);
-    void SetWidths(double *Widths);
-    void SetHeights(double *Heights);
+    void setStackSize(size_t stackSize);
+    void setCycleTime(double cycleTime);
+    void setDelays(double *delays);
+    void setWidths(double *widths);
+    void setHeights(double *heights);
 
-    double GetCycleTime() { return m_CycleTime; }
-    std::vector<double> *GetDelays() { return &m_Delays; }
-    std::vector<double> *GetWidths() { return &m_Widths; }
-    std::vector<double> *GetHeights() { return &m_Heights; }
+    double cycleTime() { return m_cycleTime; }
 
     virtual void update();
 
@@ -41,11 +38,11 @@ public:
     virtual void appendToAttributes();
 
 private:
-    double m_CycleTime;
-    std::vector<double> m_Delays;
-    std::vector<double> m_Widths;
-    std::vector<double> m_Heights;
-    size_t m_StackSize = 0;
+    double m_cycleTime;
+    std::vector<double> m_delays;
+    std::vector<double> m_widths;
+    std::vector<double> m_heights;
+    size_t m_stackSize = 0;
 };
 
 }

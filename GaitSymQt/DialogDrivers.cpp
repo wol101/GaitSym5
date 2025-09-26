@@ -163,9 +163,9 @@ void DialogDrivers::accept() // this catches OK and return/enter
     else if (tab == "Boxcar")
     {
         std::unique_ptr<GaitSym::StackedBoxcarDriver> driver = std::make_unique<GaitSym::StackedBoxcarDriver>();
-        driver->SetCycleTime(ui->lineEditBoxcarCycleTime->value());
+        driver->setCycleTime(ui->lineEditBoxcarCycleTime->value());
         size_t stackSize = static_cast<size_t>(ui->spinBoxBoxcarStackSize->value());
-        driver->SetStackSize(stackSize);
+        driver->setStackSize(stackSize);
         std::vector<double> delays;
         delays.reserve(stackSize);
         std::vector<double> widths;
@@ -178,9 +178,9 @@ void DialogDrivers::accept() // this catches OK and return/enter
             widths.push_back(m_boxcarLineEditDoubleList[i * 3 + 1]->value());
             heights.push_back(m_boxcarLineEditDoubleList[i * 3 + 2]->value());
         }
-        driver->SetDelays(delays.data());
-        driver->SetWidths(widths.data());
-        driver->SetHeights(heights.data());
+        driver->setDelays(delays.data());
+        driver->setWidths(widths.data());
+        driver->setHeights(heights.data());
         m_outputDriver = std::move(driver);
     }
 

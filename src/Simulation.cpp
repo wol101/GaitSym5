@@ -182,7 +182,7 @@ std::string *Simulation::loadModel(const char *buffer, size_t length) // note th
     for (auto &&driver : m_driverList)
     {
         if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get())) m_cycleTime = std::max(cyclicDriver->cycleTime(), m_cycleTime);
-        else if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get())) m_cycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_cycleTime);
+        else if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get())) m_cycleTime = std::max(stackedBoxcarDriver->cycleTime(), m_cycleTime);
     }
     return nullptr;
 }
