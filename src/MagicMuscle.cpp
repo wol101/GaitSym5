@@ -15,23 +15,23 @@ namespace GaitSym {
 
 MagicMuscle::MagicMuscle() {}
 
-void MagicMuscle::SetActivation()
+void MagicMuscle::updateActivation()
 {
     m_activation = dataSum();
     GetStrap()->setTension(m_activation * m_forceMultiplier + m_forceOffset);
 }
 
-double MagicMuscle::GetActivation()
+double MagicMuscle::activation()
 {
     return m_activation;
 }
 
-double MagicMuscle::GetMetabolicPower()
+double MagicMuscle::metabolicPower()
 {
     return 0;
 }
 
-double MagicMuscle::GetElasticEnergy()
+double MagicMuscle::elasticEnergy()
 {
     return 0;
 }

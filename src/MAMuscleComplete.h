@@ -85,11 +85,11 @@ public:
     void SetStartActivation(double startActivation) { m_Params.alpha = startActivation; }
     void SetMinimumActivation(double minimumActivation) { m_MinimumActivation = minimumActivation; }
 
-    virtual double GetMetabolicPower();
+    virtual double metabolicPower();
 
-    virtual void SetActivation();
-    virtual double GetActivation() { return m_Params.alpha; }
-    virtual double GetElasticEnergy() { return GetESE(); }
+    virtual void updateActivation();
+    virtual double activation() { return m_Params.alpha; }
+    virtual double elasticEnergy() { return GetESE(); }
 
     double GetStimulation() { return m_Stim; }
 

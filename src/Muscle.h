@@ -37,10 +37,10 @@ public:
     SMART_ENUM(StrapColourControl, strapColourControlStrings, strapColourControlCount, fixedColour, activationMap, strainMap, forceMap);
 //    enum StrapColourControl { fixedColour, activationMap, strainMap, forceMap };
 
-    virtual void SetActivation() = 0;
-    virtual double GetActivation() = 0;
-    virtual double GetMetabolicPower() = 0;
-    virtual double GetElasticEnergy() = 0;
+    virtual void updateActivation() = 0;
+    virtual double activation() = 0;
+    virtual double metabolicPower() = 0;
+    virtual double elasticEnergy() = 0;
 
     std::vector<std::unique_ptr<PointForce >> *GetPointForceList() const;
 

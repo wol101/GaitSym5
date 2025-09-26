@@ -25,30 +25,30 @@ DampedSpringMuscle::DampedSpringMuscle(): Muscle()
 {
 }
 
-double DampedSpringMuscle::GetElasticEnergy()
+double DampedSpringMuscle::elasticEnergy()
 {
-    double delLen = GetStrap()->Length() - m_UnloadedLength;
+    double delLen = GetStrap()->Length() - m_unloadedLength;
     if (delLen < 0) return 0;
 
     // difference between these two values is the amount of energy lost by damping
     // std::cerr << 0.5 * GetStrap()->GetTension() * delLen << "\n";
     // std::cerr << 0.5 * m_SpringConstant * m_Area * delLen * delLen / m_UnloadedLength << "\n";
 
-    return 0.5 * m_SpringConstant * m_Area * delLen * delLen / m_UnloadedLength;
+    return 0.5 * m_springConstant * m_area * delLen * delLen / m_unloadedLength;
 }
 
 
 // update the tension depending on length and velocity
 // activation is used as a linear multiplier
-void DampedSpringMuscle::SetActivation()
+void DampedSpringMuscle::updateActivation()
 {
-    m_Activation = dataSum();
+    m_activation = dataSum();
 
     // calculate strain
-    double elasticStrain = (GetStrap()->Length() - m_UnloadedLength) / m_UnloadedLength;
+    double elasticStrain = (GetStrap()->Length() - m_unloadedLength) / m_unloadedLength;
 
     // calculate stress
-    double elasticStress = elasticStrain * m_SpringConstant;
+    double elasticStress = elasticStrain * m_springConstant;
     double tension;
     if (elasticStress <= 0) // if not stretching the spring then set tension to zero
     {
@@ -58,12 +58,12 @@ void DampedSpringMuscle::SetActivation()
     {
 
         // calculate damping (+ve when lengthening)
-        double relativeVelocity = GetStrap()->Velocity() / m_UnloadedLength;
-        double dampingStress = relativeVelocity * m_Damping;
+        double relativeVelocity = GetStrap()->Velocity() / m_unloadedLength;
+        double dampingStress = relativeVelocity * m_damping;
 
         // now calculate tension
         // NB. tension is negative when muscle shortening
-        tension = (elasticStress + dampingStress) * m_Area * m_Activation;
+        tension = (elasticStress + dampingStress) * m_area * m_activation;
 
         // stop any pushing
         if (tension < 0) tension = 0;
@@ -71,11 +71,11 @@ void DampedSpringMuscle::SetActivation()
     GetStrap()->setTension(tension);
 }
 
-bool DampedSpringMuscle::ShouldBreak()
+bool DampedSpringMuscle::shouldBreak()
 {
-    if (m_BreakingStrain <= 0) return false;
-    double elasticStrain = (GetStrap()->Length() - m_UnloadedLength) / m_UnloadedLength;
-    if (elasticStrain > m_BreakingStrain)
+    if (m_breakingStrain <= 0) return false;
+    double elasticStrain = (GetStrap()->Length() - m_unloadedLength) / m_unloadedLength;
+    if (elasticStrain > m_breakingStrain)
     {
         std::cerr << "DampedSpringMuscle::ShouldBreak returns true\n";
         return true;
@@ -93,7 +93,7 @@ std::string DampedSpringMuscle::dumpToString()
         setFirstDump(false);
         ss << "Time\tact\ttension\tlength\tvelocity\tPMECH\n";
     }
-    ss << simulation()->GetTime() << "\t" << m_Activation <<
+    ss << simulation()->GetTime() << "\t" << m_activation <<
           "\t" << GetStrap()->Tension() << "\t" << GetStrap()->Length() << "\t" << GetStrap()->Velocity() <<
           "\t" << GetStrap()->Velocity() * GetStrap()->Tension() <<
           "\n";
@@ -105,15 +105,15 @@ std::string *DampedSpringMuscle::createFromAttributes()
     if (Muscle::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("UnloadedLength"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetUnloadedLength(GSUtil::Double(buf.c_str()));
+    this->setUnloadedLength(GSUtil::Double(buf.c_str()));
     if (findAttribute("SpringConstant"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetSpringConstant(GSUtil::Double(buf.c_str()));
+    this->setSpringConstant(GSUtil::Double(buf.c_str()));
     if (findAttribute("Area"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetArea(GSUtil::Double(buf.c_str()));
+    this->setArea(GSUtil::Double(buf.c_str()));
     if (findAttribute("Damping"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetDamping(GSUtil::Double(buf.c_str()));
+    this->setDamping(GSUtil::Double(buf.c_str()));
     if (findAttribute("BreakingStrain"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetBreakingStrain(GSUtil::Double(buf.c_str()));
+    this->setBreakingStrain(GSUtil::Double(buf.c_str()));
     return nullptr;
 }
 
@@ -122,11 +122,11 @@ std::string *DampedSpringMuscle::createFromAttributes()
      Muscle::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "DampedSpring"s);
-    setAttribute("UnloadedLength"s, *GSUtil::ToString(m_UnloadedLength, &buf));
-    setAttribute("SpringConstant"s, *GSUtil::ToString(m_SpringConstant, &buf));
-    setAttribute("Area"s, *GSUtil::ToString(m_Area, &buf));
-    setAttribute("Damping"s, *GSUtil::ToString(m_Damping, &buf));
-    setAttribute("BreakingStrain"s, *GSUtil::ToString(m_BreakingStrain, &buf));
+    setAttribute("UnloadedLength"s, *GSUtil::ToString(m_unloadedLength, &buf));
+    setAttribute("SpringConstant"s, *GSUtil::ToString(m_springConstant, &buf));
+    setAttribute("Area"s, *GSUtil::ToString(m_area, &buf));
+    setAttribute("Damping"s, *GSUtil::ToString(m_damping, &buf));
+    setAttribute("BreakingStrain"s, *GSUtil::ToString(m_breakingStrain, &buf));
 }
 
 } // namespace GaitSym

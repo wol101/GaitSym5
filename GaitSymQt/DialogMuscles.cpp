@@ -255,11 +255,11 @@ void DialogMuscles::accept() // this catches OK and return/enter
         double springConstant = ui->lineEditSpringConstant->value();
         double area = ui->lineEditArea->value();
         double damping = ui->lineEditDamping->value();
-        muscle->SetUnloadedLength(unloadedLength);
-        muscle->SetSpringConstant(springConstant);
-        muscle->SetArea(area);
-        muscle->SetDamping(damping);
-        if (ui->lineEditBreakingStrain->text().size()) muscle->SetBreakingStrain(ui->lineEditBreakingStrain->value());
+        muscle->setUnloadedLength(unloadedLength);
+        muscle->setSpringConstant(springConstant);
+        muscle->setArea(area);
+        muscle->setDamping(damping);
+        if (ui->lineEditBreakingStrain->text().size()) muscle->setBreakingStrain(ui->lineEditBreakingStrain->value());
         m_outputMuscle = std::move(muscle);
     }
     Q_ASSERT_X(m_outputMuscle, "DialogMuscles::accept", "m_outputMuscle undefined");

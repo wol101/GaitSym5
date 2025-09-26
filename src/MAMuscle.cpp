@@ -54,17 +54,17 @@ void MAMuscle::SetK(double k)
     m_K = k;
 }
 
-void MAMuscle::SetActivation()
+void MAMuscle::updateActivation()
 {
     SetAlpha(dataSum());
 }
 
-double MAMuscle::GetActivation()
+double MAMuscle::activation()
 {
     return m_Alpha;
 }
 
-double MAMuscle::GetElasticEnergy()
+double MAMuscle::elasticEnergy()
 {
     return 0;
 }
@@ -148,7 +148,7 @@ double MAMuscle::fibreLength() const
 
 // calculate the metabolic power of the muscle
 
-double MAMuscle::GetMetabolicPower()
+double MAMuscle::metabolicPower()
 {
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
@@ -210,7 +210,7 @@ std::string MAMuscle::dumpToString()
     }
     ss << simulation()->GetTime() << "\t" << m_VMax << "\t" << m_F0 << "\t" << m_K << "\t" << m_Alpha <<
           "\t" << GetStrap()->Tension() << "\t" << GetStrap()->Length() << "\t" << GetStrap()->Velocity() <<
-          "\t" << GetStrap()->Velocity() * GetStrap()->Tension() << "\t" << GetMetabolicPower() <<
+          "\t" << GetStrap()->Velocity() * GetStrap()->Tension() << "\t" << metabolicPower() <<
           "\n";
     return ss.str();
 }

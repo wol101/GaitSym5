@@ -281,12 +281,12 @@ void Simulation::UpdateSimulation()
     for (auto iter1 = m_MuscleList.begin(); iter1 != m_MuscleList.end(); /* no increment */ )
     {
         // muscle straps are valid at this point so they do not need recaulculating
-        iter1->second->SetActivation();
+        iter1->second->updateActivation();
 
         // check for breaking strain
         if (DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<DampedSpringMuscle *>(iter1->second.get()))
         {
-            if (dampedSpringMuscle->ShouldBreak())
+            if (dampedSpringMuscle->shouldBreak())
             {
                 iter1 = m_MuscleList.erase(iter1); // erase returns the next iterator [but m_MuscleList.erase(iter1++) would also work and is compatible with older C++ compilers]
                 continue;
@@ -337,7 +337,7 @@ void Simulation::UpdateSimulation()
     for (auto &&iter1 : m_MuscleList)
     {
         m_MechanicalEnergy += iter1.second->GetPower() * m_global->stepSize();
-        m_MetabolicEnergy += iter1.second->GetMetabolicPower() * m_global->stepSize();
+        m_MetabolicEnergy += iter1.second->metabolicPower() * m_global->stepSize();
     }
     m_MetabolicEnergy += m_global->BMR() * m_global->stepSize();
 

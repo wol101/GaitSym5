@@ -35,11 +35,11 @@ public:
     void SetF0(double f0);
     void SetK(double k);
 
-    virtual double GetMetabolicPower();
+    virtual double metabolicPower();
 
-    virtual void SetActivation();
-    virtual double GetActivation();
-    virtual double GetElasticEnergy();
+    virtual void updateActivation();
+    virtual double activation();
+    virtual double elasticEnergy();
 
     virtual std::string dumpToString();
 

@@ -170,7 +170,7 @@ void MAMuscleComplete::LateInitialisation()
 // set the proportion of muscle fibres that are active
 // calculates the tension in the strap
 
-void MAMuscleComplete::SetActivation()
+void MAMuscleComplete::updateActivation()
 {
     double activation = dataSum();
     // set variable input parameters
@@ -330,7 +330,7 @@ void MAMuscleComplete::SetActivation()
 
 // calculate the metabolic power of the muscle
 
-double MAMuscleComplete::GetMetabolicPower()
+double MAMuscleComplete::metabolicPower()
 {
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
@@ -801,7 +801,7 @@ std::string MAMuscleComplete::dumpToString()
           m_Params.vce << "\t" << m_Params.vse << "\t" << m_Params.targetFce << "\t" << m_Params.f0 << "\t" << m_Params.err << "\t" <<
           GetESE() << "\t" << GetEPE() << "\t" << GetPSE() << "\t" << GetPPE() << "\t" << GetPCE() << "\t" <<
           GetTension() << "\t" << GetLength() << "\t" << GetVelocity() << "\t" <<
-          GetPower() << "\t" << GetMetabolicPower() <<
+          GetPower() << "\t" << metabolicPower() <<
           "\n";
     return ss.str();
 }

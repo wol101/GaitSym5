@@ -25,23 +25,23 @@ public:
 
     DampedSpringMuscle();
 
-    void SetDamping(double d) { m_Damping = d; } // value is in N/(m2 s) (Stress per Strain rate)
-    void SetSpringConstant(double k) { m_SpringConstant = k; } // value is in N/m2 (this is the Young's Modulus)
-    void SetUnloadedLength(double l) { m_UnloadedLength = l; } // value is in m
-    void SetArea(double a) { m_Area = a; } // value is in m2
-    void SetBreakingStrain(double breakingStrain) { m_BreakingStrain = breakingStrain; } // value is strain
-    double GetDamping() { return m_Damping; } // value is in N/m2
-    double GetSpringConstant() { return m_SpringConstant; } // value is in N/m2
-    double GetUnloadedLength() { return m_UnloadedLength; } // value is in m
-    double GetArea() { return m_Area; } // value is in m2
-    double GetBreakingStrain() { return m_BreakingStrain; } // value is strain
-    double GetElasticEnergy();
+    void setDamping(double d) { m_damping = d; } // value is in N/(m2 s) (Stress per Strain rate)
+    void setSpringConstant(double k) { m_springConstant = k; } // value is in N/m2 (this is the Young's Modulus)
+    void setUnloadedLength(double l) { m_unloadedLength = l; } // value is in m
+    void setArea(double a) { m_area = a; } // value is in m2
+    void setBreakingStrain(double breakingStrain) { m_breakingStrain = breakingStrain; } // value is strain
+    double damping() { return m_damping; } // value is in N/m2
+    double springConstant() { return m_springConstant; } // value is in N/m2
+    double unloadedLength() { return m_unloadedLength; } // value is in m
+    double area() { return m_area; } // value is in m2
+    double breakingStrain() { return m_breakingStrain; } // value is strain
+    double elasticEnergy();
 
-    virtual void SetActivation();
-    virtual double GetActivation() { return m_Activation; }
-    virtual double GetMetabolicPower() { return 0; }
+    virtual void updateActivation();
+    virtual double activation() { return m_activation; }
+    virtual double metabolicPower() { return 0; }
 
-    bool ShouldBreak();
+    bool shouldBreak();
 
     virtual std::string dumpToString();
 
@@ -50,12 +50,12 @@ public:
 
 private:
 
-    double m_Damping = 0;
-    double m_SpringConstant = 0;
-    double m_UnloadedLength = 0;
-    double m_Area = 1;
-    double m_BreakingStrain = 0;
-    double m_Activation = 0;
+    double m_damping = 0;
+    double m_springConstant = 0;
+    double m_unloadedLength = 0;
+    double m_area = 1;
+    double m_breakingStrain = 0;
+    double m_activation = 0;
 };
 
 }
