@@ -172,7 +172,7 @@ int DialogMarkerImport::ImportMarkers()
     size_t errorCount = 0;
     QString fileName = ui->lineEditFileName->text();
     GaitSym::DataFile dataFile;
-    if (dataFile.ReadFile(fileName.toStdString()))
+    if (dataFile.readFile(fileName.toStdString()))
     {
         errorCount++;
         ui->plainTextEditLog->appendPlainText(QString("Error: Could not read '%1'. No markers imported.\n").arg(fileName));
@@ -194,7 +194,7 @@ int DialogMarkerImport::ImportMarkers()
     std::vector<std::string> tokens;
     std::vector<double> values;
     values.reserve(12);
-    pystring::splitlines(std::string(dataFile.GetRawData(), dataFile.GetSize()), lines);
+    pystring::splitlines(std::string(dataFile.rawData(), dataFile.size()), lines);
     size_t startLine = 0;
     if (ui->checkBoxHeaderRow->isChecked())
     {

@@ -93,9 +93,9 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 
     // read the whole file into memory
     GaitSym::DataFile theFile;
-    if (theFile.ReadFile(filename) == true) return __LINE__;
-    const char *ptr = theFile.GetRawData();
-    const char *endPtr = ptr + theFile.GetSize();
+    if (theFile.readFile(filename) == true) return __LINE__;
+    const char *ptr = theFile.rawData();
+    const char *endPtr = ptr + theFile.size();
 
     pgd::Vector3 vertex;
     std::vector<pgd::Vector3> vertexList;
@@ -113,7 +113,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
     Triangle triangle;
     std::vector<Triangle> triangleList;
     // having checked a few files ball park is 20M file, 100k vertices, 200k faces, 200k normals
-    size_t estimated_max_capacity = theFile.GetSize() / 25; // this will give a factor of 4 to 8 leeway
+    size_t estimated_max_capacity = theFile.size() / 25; // this will give a factor of 4 to 8 leeway
     vertexList.reserve(estimated_max_capacity);
     normalList.reserve(estimated_max_capacity);
     uvList.reserve(estimated_max_capacity);
@@ -478,14 +478,14 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
 int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<std::string, OBJMaterial> *materialMap)
 {
     GaitSym::DataFile materialsFile;
-    if (materialsFile.ReadFile(filename))
+    if (materialsFile.readFile(filename))
     {
         std::string strippedFilename = pystring::strip(filename);
-        if (materialsFile.ReadFile(strippedFilename))
+        if (materialsFile.readFile(strippedFilename))
         {
             if (strippedFilename[0] == '"' && strippedFilename.back() == '"')
             {
-                if (materialsFile.ReadFile(strippedFilename.substr(1, strippedFilename.size() - 2)))
+                if (materialsFile.readFile(strippedFilename.substr(1, strippedFilename.size() - 2)))
                     return __LINE__;
             }
             else
@@ -495,7 +495,7 @@ int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<st
         }
     }
 
-    std::string materialsData(materialsFile.GetRawData(), materialsFile.GetSize());
+    std::string materialsData(materialsFile.rawData(), materialsFile.size());
     std::vector<std::string> lines;
     pystring::splitlines(materialsData, lines);
     std::string currentMaterialName;
@@ -597,7 +597,7 @@ int FacetedObject::ParsePLYFile(const std::string &filename)
         std::ifstream ss;
         ss.exceptions(std::ios::failbit|std::ios::badbit|std::ios::eofbit);
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-        ss.open(GaitSym::DataFile::ConvertUTF8ToWide(filename), std::ios::binary);
+        ss.open(GaitSym::DataFile::convertUTF8ToWide(filename), std::ios::binary);
 #else
         ss.open(filename, std::ios::binary);
 #endif
@@ -1027,7 +1027,7 @@ void FacetedObject::WritePOVRay(std::string filename)
         std::ofstream f;
         f.exceptions(std::ios::failbit|std::ios::badbit);
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-        f.open(GaitSym::DataFile::ConvertUTF8ToWide(filename));
+        f.open(GaitSym::DataFile::convertUTF8ToWide(filename));
 #else
         f.open(filename);
 #endif
@@ -1088,7 +1088,7 @@ void FacetedObject::WriteOBJFile(std::string filename)
         std::ofstream f;
         f.exceptions(std::ios::failbit|std::ios::badbit);
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__MINGW32__)
-        f.open(GaitSym::DataFile::ConvertUTF8ToWide(filename));
+        f.open(GaitSym::DataFile::convertUTF8ToWide(filename));
 #else
         f.open(filename);
 #endif

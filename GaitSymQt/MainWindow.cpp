@@ -1318,7 +1318,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     {
         GaitSym::DataFile file;
         int err;
-        err = file.ReadFile(canonicalFilePath.toStdString());
+        err = file.readFile(canonicalFilePath.toStdString());
         if (err)
         {
             this->setStatusString(QString("Error reading ") + canonicalFilePath, 0);
@@ -1326,7 +1326,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
             return;
         }
         this->m_simulation = new GaitSym::Simulation();
-        errorMessage = this->m_simulation->LoadModel(file.GetRawData(), file.GetSize());
+        errorMessage = this->m_simulation->LoadModel(file.rawData(), file.size());
     }
     if (errorMessage)
     {

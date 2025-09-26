@@ -852,7 +852,7 @@ static PxU32 D6JointSolverPrep(Px1DConstraint* constraints,
 					if(!data.mUsePyramidLimits)
 						setupDualConeSwingLimits(ch, data, aZ.cross(bX), -aZ.dot(bX), data.swingLimit.yAngle);	// PT: swing Y limited, swing Z free
 					else
-						PxGetFoundation().error(PxErrorCode::eINVALID_OPERATION, PX_FL, "D6JointSolverPrep: invalid joint setup. Double pyramid mode not supported.");
+						PxGetFoundation().error(PxErrorCode::eINVALID_OPERATION, PX_FL, "D6JointSolverPrep: invalid joint setup. double pyramid mode not supported.");
 				}
 			}
 			if(limited & SWING2_FLAG)
@@ -868,7 +868,7 @@ static PxU32 D6JointSolverPrep(Px1DConstraint* constraints,
 					if(!data.mUsePyramidLimits)
 						setupDualConeSwingLimits(ch, data, -aY.cross(bX), aY.dot(bX), data.swingLimit.zAngle);	// PT: swing Z limited, swing Y free
 					else
-						PxGetFoundation().error(PxErrorCode::eINVALID_OPERATION, PX_FL, "D6JointSolverPrep: invalid joint setup. Double pyramid mode not supported.");
+						PxGetFoundation().error(PxErrorCode::eINVALID_OPERATION, PX_FL, "D6JointSolverPrep: invalid joint setup. double pyramid mode not supported.");
 			}
 		}
 

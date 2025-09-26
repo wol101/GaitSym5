@@ -151,7 +151,7 @@ void LineEditDouble::menuRequestPath(const QPoint &pos)
     menu->addAction(tr("Scientific Notation"));
     menu->addAction(tr("Standard Notation"));
     menu->addAction(tr("Float Precision"));
-    menu->addAction(tr("Double Precision"));
+    menu->addAction(tr("double Precision"));
     menu->addSeparator();
     menu->addAction(tr("Calculator..."));
     QPoint gp = this->mapToGlobal(pos);
@@ -163,7 +163,7 @@ void LineEditDouble::menuRequestPath(const QPoint &pos)
         if (action->text() == tr("Scientific Notation")) { setNotation(QDoubleValidator::ScientificNotation); setValue(value()); break; }
         if (action->text() == tr("Standard Notation")) { setNotation(QDoubleValidator::StandardNotation); setValue(value()); break; }
         if (action->text() == tr("Float Precision")) { setDecimals(std::numeric_limits<float>::max_digits10); setValue(value()); break; }
-        if (action->text() == tr("Double Precision")) { setDecimals(std::numeric_limits<double>::max_digits10); setValue(value()); break; }
+        if (action->text() == tr("double Precision")) { setDecimals(std::numeric_limits<double>::max_digits10); setValue(value()); break; }
         if (action->text() == tr("Calculator..."))
         {
             QDialog dialog(this);

@@ -38,8 +38,8 @@ XMLConverter::~XMLConverter()
 int XMLConverter::LoadBaseXMLFile(const char *filename)
 {
     DataFile smartSubstitutionBaseXMLFile;
-    if (smartSubstitutionBaseXMLFile.ReadFile(filename)) return 1;
-    LoadBaseXMLString(smartSubstitutionBaseXMLFile.GetRawData(), smartSubstitutionBaseXMLFile.GetSize());
+    if (smartSubstitutionBaseXMLFile.readFile(filename)) return 1;
+    LoadBaseXMLString(smartSubstitutionBaseXMLFile.rawData(), smartSubstitutionBaseXMLFile.size());
     return 0;
 }
 

@@ -1057,8 +1057,8 @@ void Simulation::OutputProgramState()
 {
     std::string xmlString = SaveToXML();
     DataFile outputFile;
-    outputFile.SetRawData(xmlString.c_str(), xmlString.size());
-    outputFile.WriteFile(m_OutputModelStateFile);
+    outputFile.setRawData(xmlString.c_str(), xmlString.size());
+    outputFile.writeFile(m_OutputModelStateFile);
 }
 
 void Simulation::SetOutputModelStateFile(const std::string &filename)
@@ -1209,7 +1209,7 @@ void Simulation::DumpObject(NamedObject *namedObject)
             try
             {
 #if defined _WIN32 && defined _MSC_VER // required because windows and visual studio require wstring for full filename support
-                output.open(DataFile::ConvertUTF8ToWide(namedObject->name() + m_dumpExtension));
+                output.open(DataFile::convertUTF8ToWide(namedObject->name() + m_dumpExtension));
 #else
                 output.open(namedObject->name() + m_dumpExtension);
 #endif

@@ -108,11 +108,11 @@ int ObjectiveMain::Run()
 int ObjectiveMain::ReadModel()
 {
     DataFile myFile;
-    myFile.SetExitOnError(true);
+    myFile.setExitOnErrorFlag(true);
 
     if (m_debug) std::cerr << "Reading file \"" << m_configFilename << "\"\n";
-    myFile.ReadFile(m_configFilename);
-    if (m_debug) std::cerr << "Read " << myFile.GetSize() << " bytes\n";
+    myFile.readFile(m_configFilename);
+    if (m_debug) std::cerr << "Read " << myFile.size() << " bytes\n";
 
     // create the simulation object
     m_simulation = std::make_unique<Simulation>();
@@ -121,7 +121,7 @@ int ObjectiveMain::ReadModel()
     if (m_outputModelStateAtCycle >= 0) m_simulation->SetOutputModelStateAtCycle(m_outputModelStateAtCycle);
 
     if (m_debug) std::cerr << "Loading model\n";
-    if (m_simulation->LoadModel(myFile.GetRawData(), myFile.GetSize()))
+    if (m_simulation->LoadModel(myFile.rawData(), myFile.size()))
     {
         m_simulation.reset();
         return 1;
@@ -150,9 +150,9 @@ int ObjectiveMain::WriteOutput()
     if (m_scoreFilename.size())
     {
         DataFile myFile;
-        myFile.SetExitOnError(false);
-        myFile.SetRawData(reinterpret_cast<char *>(&score), sizeof(double));
-        if (myFile.WriteFile(m_scoreFilename)) return __LINE__;
+        myFile.setExitOnErrorFlag(false);
+        myFile.setRawData(reinterpret_cast<char *>(&score), sizeof(double));
+        if (myFile.writeFile(m_scoreFilename)) return __LINE__;
     }
 
     return 0;

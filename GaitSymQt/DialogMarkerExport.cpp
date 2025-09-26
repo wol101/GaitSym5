@@ -306,9 +306,9 @@ int DialogMarkerExport::ExportMarkers()
 
     std::string data = pystring::join("\n"s, lines);
     GaitSym::DataFile dataFile;
-    dataFile.SetRawData(data.data(), data.size());
+    dataFile.setRawData(data.data(), data.size());
     QString fileName = ui->lineEditFileName->text();
-    if (dataFile.WriteFile(fileName.toStdString()))
+    if (dataFile.writeFile(fileName.toStdString()))
     {
         ui->plainTextEditLog->appendPlainText(QString("Error writing '%1'.\n").arg(fileName));
         QMessageBox::information(this, "Marker Export Errors", QString("Error writing '%1'.\n").arg(fileName), QMessageBox::Ok);

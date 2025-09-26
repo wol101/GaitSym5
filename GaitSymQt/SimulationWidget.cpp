@@ -970,8 +970,8 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     "}\n";
 
     GaitSym::DataFile file;
-    file.SetRawData(usdStream.str().data(), usdStream.str().size());
-    if (file.WriteFile(pathname.toStdString()))
+    file.setRawData(usdStream.str().data(), usdStream.str().size());
+    if (file.writeFile(pathname.toStdString()))
     {
         QMessageBox::warning(nullptr, "WriteUSDFrame Error", QString("Error writing '%1'\nClick button to return to simulation").arg(pathname));
         return __LINE__;
