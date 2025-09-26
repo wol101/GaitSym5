@@ -29,10 +29,10 @@ void Trackball::StartTrackball(int mouseX, int mouseY, int trackballOriginX, int
     mTrackballOriginY = trackballOriginY;
     mOut = out;
     mUp = up;
-    mOut.Normalize();
-    mUp.Normalize();
+    mOut.normalize();
+    mUp.normalize();
     mLeft = mUp ^ mOut;
-    mLeft.Normalize();
+    mLeft.normalize();
 
     double dx = mStartMouseX - mTrackballOriginX;
     double dy = mTrackballOriginY - mStartMouseY;
@@ -76,18 +76,18 @@ void Trackball::RollTrackballToClick(int mouseX, int mouseY, pgd::Quaternion *ro
     // cos angle obtained from dot product formula
     // cos(a) = (s . e) / (||s|| ||e||)
     double cosAng = v1 * v2; // (s . e)
-    double ls = v1.Magnitude();
+    double ls = v1.magnitude();
     ls = 1. / ls; // 1 / ||s||
-    double le = v2.Magnitude();
+    double le = v2.magnitude();
     le = 1. / le; // 1 / ||e||
     cosAng = cosAng * ls * le;
 
     // sin angle obtained from cross product formula
     // sin(a) = ||(s X e)|| / (||s|| ||e||)
-    double sinAng = axis.Magnitude(); // ||(s X e)||;
+    double sinAng = axis.magnitude(); // ||(s X e)||;
     sinAng = sinAng * ls * le;
     double angle = atan2(sinAng, cosAng); // rotations are in radians.
 
-    *rotation = pgd::MakeQFromAxisAngle(axis.x, axis.y, axis.z, angle);
+    *rotation = pgd::makeQFromAxisAngle(axis.x, axis.y, axis.z, angle);
 }
 

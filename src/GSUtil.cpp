@@ -113,7 +113,7 @@ double *GSUtil::toQuaternion(char *bufPtrs[], double *q)
 
     if (*p == 'r') // radian angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], q[0]);
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], q[0]);
         q[0] = qq.n;
         q[1] = qq.x;
         q[2] = qq.y;
@@ -122,7 +122,7 @@ double *GSUtil::toQuaternion(char *bufPtrs[], double *q)
     }
     if (*p == 'd') // degee angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
         q[0] = qq.n;
         q[1] = qq.x;
         q[2] = qq.y;
@@ -140,12 +140,12 @@ pgd::Quaternion GSUtil::toQuaternion(const std::vector<std::string> &tokens, siz
     char p = tokens[startIndex].back();
     if (p == 'r') // radian angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], q[0]);
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], q[0]);
         return qq;
     }
     if (p == 'd') // degee angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
         return qq;
     }
     return pgd::Quaternion(q[0], q[1], q[2], q[3]);
@@ -203,7 +203,7 @@ double GSUtil::distanceBetweenTwoLines(pgd::Vector3 p1, pgd::Vector3 d1, pgd::Ve
 {
     // first find ther perpendicular to the two vectors
     pgd::Vector3 perpendicular = d1 ^ d2;
-    perpendicular.Normalize();
+    perpendicular.normalize();
 
     // now find a vector from l1 to l2
     pgd::Vector3 link = p2 - p1;
@@ -1218,7 +1218,7 @@ void GSUtil::logger(const std::string &file, const std::string &message)
 
 double GSUtil::threeAxisDecompositionError(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double ang1, double ang2, double ang3)
 {
-    pgd::Quaternion product = pgd::MakeQFromAxisAngle(ax3, ang3, true) * pgd::MakeQFromAxisAngle(ax2, ang2, true) * pgd::MakeQFromAxisAngle(ax1, ang1, true);
+    pgd::Quaternion product = pgd::makeQFromAxisAngle(ax3, ang3, true) * pgd::makeQFromAxisAngle(ax2, ang2, true) * pgd::makeQFromAxisAngle(ax1, ang1, true);
     // now we need a distance metric between product and target. I could just calculate the angle between them:
     // theta = acos(2(q1,q2)^2-1) where (q1,q2) is the inner product (n1n2 + x1x2+ y1y2 + z1z2)
     // but there are other quantities that will do a similar job in less time

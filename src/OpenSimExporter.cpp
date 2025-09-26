@@ -122,8 +122,8 @@ void OpenSimExporter::process(Simulation *simulation)
     xmlTagAndContent(&m_xmlString, "force_units"s, "N"s);
     // but we now need to convert gravity to the opensim Y up coordinate system
     pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
-    pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-    pgd::Vector3 gravity = pgd::QVRotate(rotation, m_simulation->GetGlobal()->gravity());
+    pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+    pgd::Vector3 gravity = pgd::qVRotate(rotation, m_simulation->GetGlobal()->gravity());
     xmlTagAndContent(&m_xmlString, "gravity"s, GSUtil::toString(gravity));
 
     createBodySet();
@@ -231,8 +231,8 @@ void OpenSimExporter::createJointSet()
             xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body1Marker()->position()));
             pgd::Vector3 axis = hingeJoint->body1Marker()->axis(GaitSym::Marker::X);
             pgd::Vector3 zAxis(0, 0, 1);
-            pgd::Quaternion rotation = pgd::FindRotation(zAxis, axis);
-            pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(rotation);
+            pgd::Quaternion rotation = pgd::findRotation(zAxis, axis);
+            pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(rotation);
             xmlTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
             xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
@@ -244,8 +244,8 @@ void OpenSimExporter::createJointSet()
             xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body2()->name()]);
             xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body2Marker()->position()));
             axis = hingeJoint->body1Marker()->axis(GaitSym::Marker::X);
-            rotation = pgd::FindRotation(zAxis, axis);
-            euler = pgd::MakeEulerAnglesFromQRadian(rotation);
+            rotation = pgd::findRotation(zAxis, axis);
+            euler = pgd::makeEulerAnglesFromQRadian(rotation);
             xmlTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
             xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
@@ -447,8 +447,8 @@ void OpenSimExporter::createJointSet()
         {
             pgd::Vector3 position = bodyIter.second->constructionPosition();
             pgd::Vector3 euler(-1.5707963267948966, 0, 0); // all GaitSym bodies are constructed with no rotation, and rotating -90 degrees about the X axis converts from Z up to Y up
-            pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-            position = pgd::QVRotate(rotation, position);
+            pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+            position = pgd::qVRotate(rotation, position);
             if (m_mocoExport)  { xmlInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); } // moco does not support FreeJoint so we have to create a custom joint that does the same thing
             else { xmlInitiateTag(&m_xmlString, "FreeJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); }
 
@@ -743,7 +743,7 @@ void OpenSimExporter::createForceSet()
                 xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                 xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
                 pgd::Vector2 stops = hingeJoint->stops();
-                stops.Set(pgd::RadToDeg(-stops[1]), pgd::RadToDeg(-stops[0]));
+                stops.set(pgd::RadToDeg(-stops[1]), pgd::RadToDeg(-stops[0]));
                 xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(stops[0]));
                 xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(stops[1]));
                 xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((stops[1] - stops[0]) / 1000));
@@ -765,7 +765,7 @@ void OpenSimExporter::createForceSet()
                     xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                     xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                     xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
-                    degStops.Set(pgd::RadToDeg(-(*stops)[0].x), pgd::RadToDeg(-(*stops)[0].y));
+                    degStops.set(pgd::RadToDeg(-(*stops)[0].x), pgd::RadToDeg(-(*stops)[0].y));
                     xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(degStops[0]));
                     xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(degStops[1]));
                     xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((degStops[1] - degStops[0]) / 1000));
@@ -780,7 +780,7 @@ void OpenSimExporter::createForceSet()
                     xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                     xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                     xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
-                    degStops.Set(pgd::RadToDeg(-(*stops)[1].x), pgd::RadToDeg(-(*stops)[1].y));
+                    degStops.set(pgd::RadToDeg(-(*stops)[1].x), pgd::RadToDeg(-(*stops)[1].y));
                     xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(degStops[0]));
                     xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(degStops[1]));
                     xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((degStops[1] - degStops[0]) / 1000));
@@ -795,7 +795,7 @@ void OpenSimExporter::createForceSet()
                     xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                     xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                     xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
-                    degStops.Set(pgd::RadToDeg(-(*stops)[2].x), pgd::RadToDeg(-(*stops)[2].y));
+                    degStops.set(pgd::RadToDeg(-(*stops)[2].x), pgd::RadToDeg(-(*stops)[2].y));
                     xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(degStops[0]));
                     xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(degStops[1]));
                     xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((degStops[1] - degStops[0]) / 1000));
@@ -954,11 +954,11 @@ void OpenSimExporter::createContactGeometrySet()
                 pgd::Vector3 normal = planeGeom->geomMarker()->worldAxis(Marker::Z);
                 // but we now need to convert this normal to the opensim Y up coordinate system
                 pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
-                pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-                normal = pgd::QVRotate(rotation, normal);
+                pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+                normal = pgd::qVRotate(rotation, normal);
                 pgd::Vector3 minusXAxis(-1, 0, 0);
-                pgd::Quaternion quaternion = pgd::FindRotation(minusXAxis, normal); // now we just need to find the rotation that maps the -X axis to this normal
-                euler = pgd::MakeEulerAnglesFromQRadian(quaternion);
+                pgd::Quaternion quaternion = pgd::findRotation(minusXAxis, normal); // now we just need to find the rotation that maps the -X axis to this normal
+                euler = pgd::makeEulerAnglesFromQRadian(quaternion);
                 xmlTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
                 xmlTerminateTag(&m_xmlString, "ContactHalfSpace"s);
                 break;

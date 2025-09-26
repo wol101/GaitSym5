@@ -121,7 +121,7 @@ void DialogBodyBuilder::lateInitialise()
         ui->lineEditRunY->setValue(initialPosition[1]);
         ui->lineEditRunZ->setValue(initialPosition[2]);
         pgd::Quaternion initialQuaternion = m_inputBody->initialQuaternion();
-        pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(pgd::Quaternion(initialQuaternion));
+        pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQ(pgd::Quaternion(initialQuaternion));
         ui->lineEditEulerX->setValue(eulerAngles.x);
         ui->lineEditEulerY->setValue(eulerAngles.y);
         ui->lineEditEulerZ->setValue(eulerAngles.z);
@@ -255,7 +255,7 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     double ex = ui->lineEditEulerX->value();
     double ey = ui->lineEditEulerY->value();
     double ez = ui->lineEditEulerZ->value();
-    pgd::Quaternion q = pgd::MakeQFromEulerAngles(ex, ey, ez);
+    pgd::Quaternion q = pgd::makeQFromEulerAngles(ex, ey, ez);
     bodyPtr->setInitialQuaternion(q.n, q.x, q.y, q.z);
     // but the velocities can just be set
     pgd::Vector3 linearVelocity;
@@ -343,10 +343,10 @@ void DialogBodyBuilder::calculate()
     ui->lineEditY->setValue(centreOfMass[1]);
     ui->lineEditZ->setValue(centreOfMass[2]);
     // now recalculate the inertial tensor arount the centre of mass
-    translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
+    translation.set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
     m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
     double ixx, iyy, izz, ixy, izx, iyz;
-    inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    inertialTensor.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
     ui->lineEditI11->setValue(ixx);
     ui->lineEditI22->setValue(iyy);
     ui->lineEditI33->setValue(izz);

@@ -192,8 +192,8 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
     *worldTorque = totalTorque;
     *worldMomentArm = momentArm;
     pgd::Quaternion q = marker.worldQuaternion();
-    *markerTorque = pgd::QVRotate(q, *worldTorque);
-    *markerMomentArm = pgd::QVRotate(q, *worldMomentArm);
+    *markerTorque = pgd::qVRotate(q, *worldTorque);
+    *markerMomentArm = pgd::qVRotate(q, *worldMomentArm);
 }
 
 std::string Strap::dumpToString()

@@ -203,8 +203,8 @@ int DialogMarkerExport::ExportMarkers()
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
             pgd::Vector3 euler;
-            if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::MakeEulerAnglesFromQRadian(qOutput);
-            else euler = pgd::MakeEulerAnglesFromQ(qOutput);
+            if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::makeEulerAnglesFromQRadian(qOutput);
+            else euler = pgd::makeEulerAnglesFromQ(qOutput);
             line.push_back(GaitSym::GSUtil::toString(euler.x));
             line.push_back(GaitSym::GSUtil::toString(euler.y));
             line.push_back(GaitSym::GSUtil::toString(euler.z));
@@ -235,7 +235,7 @@ int DialogMarkerExport::ExportMarkers()
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
             double xa, ya, za, angle;
-            pgd::MakeAxisAngleFromQ(qOutput, &xa, &ya, &za, &angle);
+            pgd::makeAxisAngleFromQ(qOutput, &xa, &ya, &za, &angle);
             if (ui->checkBoxAnglesInRadians->isChecked() == false) angle = pgd::RadToDeg(angle);
             line.push_back(GaitSym::GSUtil::toString(angle));
             line.push_back(GaitSym::GSUtil::toString(xa));
@@ -297,7 +297,7 @@ int DialogMarkerExport::ExportMarkers()
             line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
-            pgd::Matrix3x3 matrix = MakeMFromQ(qOutput);
+            pgd::Matrix3x3 matrix = makeMFromQ(qOutput);
             for (size_t i =0; i < 9; i++)
                 line.push_back(GaitSym::GSUtil::toString(matrix.data()[i]));
             lines.push_back(pystring::join(separator, line));

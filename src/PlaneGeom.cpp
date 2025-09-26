@@ -85,7 +85,7 @@ std::string *PlaneGeom::createFromAttributes()
     double a = normal.x;
     double b = normal.y;
     double c = normal.z;
-    double d = normal.Dot(point);
+    double d = normal.dot(point);
     SetPlane(a, b, c, d);
     return nullptr;
 }

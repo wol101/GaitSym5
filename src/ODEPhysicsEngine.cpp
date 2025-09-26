@@ -312,15 +312,15 @@ std::string *ODEPhysicsEngine::createGeoms()
                 double d;
                 for (size_t i = 0; i < convexGeom->triangles()->size();)
                 {
-                    v1.Set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
+                    v1.set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
                            convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 1),
                            convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 2));
                     i++;
-                    v2.Set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
+                    v2.set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
                            convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 1),
                            convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 2));
                     i++;
-                    v3.Set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
+                    v3.set(convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3),
                            convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 1),
                            convexGeom->vertices()->at(convexGeom->triangles()->at(i) * 3 + 2));
                     i++;
@@ -330,9 +330,9 @@ std::string *ODEPhysicsEngine::createGeoms()
                     p = v1;
                     u = v2 - v1;
                     v = v3 - v1;
-                    n = pgd::Cross(u, v);
-                    n.Normalize();
-                    d = pgd::Dot(n, p);
+                    n = pgd::cross(u, v);
+                    n.normalize();
+                    d = pgd::dot(n, p);
                     m_planes.push_back(n.x);
                     m_planes.push_back(n.y);
                     m_planes.push_back(n.z);

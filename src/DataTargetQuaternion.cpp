@@ -44,13 +44,13 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
         if (Body *body = dynamic_cast<Body *>(target()))
         {
             q = body->quaternion();
-            angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+            angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
         if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             q = geom->worldQuaternion();
-            angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+            angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
         std::cerr << "DataTargetQuaternion target missing error " << name() << "\n";
@@ -78,13 +78,13 @@ double DataTargetQuaternion::calculateError(size_t index, size_t indexNext, doub
         if (Body *body = dynamic_cast<Body *>(target()))
         {
             q = body->quaternion();
-            angle = pgd::FindAngle(interpolatedTarget, q);
+            angle = pgd::findAngle(interpolatedTarget, q);
             break;
         }
         if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             q = geom->worldQuaternion();
-            angle = pgd::FindAngle(interpolatedTarget, q);
+            angle = pgd::findAngle(interpolatedTarget, q);
             break;
         }
         std::cerr << "DataTargetQuaternion target missing error " << name() << "\n";
@@ -115,12 +115,12 @@ std::string DataTargetQuaternion::dumpToString()
     if ((body = dynamic_cast<Body *>(target())) != nullptr)
     {
         q = body->quaternion();
-        angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+        angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
     }
     else if ((geom = dynamic_cast<Geom *>(target())) != nullptr)
     {
         q = geom->worldQuaternion();
-        angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+        angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
     }
 
     ss << simulation()->GetTime() <<

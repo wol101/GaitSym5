@@ -52,26 +52,26 @@ double DataTargetMarkerCompare::calculateError(size_t index, size_t indexNext, d
         }
         if (m_marker1Comparison == Distance && m_marker2Comparison == Distance)
         {
-            double distance = (m_marker1->worldPosition() - m_marker2->worldPosition()).Magnitude();
+            double distance = (m_marker1->worldPosition() - m_marker2->worldPosition()).magnitude();
             m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == Angle && m_marker2Comparison == Angle)
         {
-            pgd::Quaternion q = pgd::FindRotation(m_marker1->worldQuaternion(), m_marker2->worldQuaternion());
-            double angle = pgd::QGetAngle(q);
+            pgd::Quaternion q = pgd::findRotation(m_marker1->worldQuaternion(), m_marker2->worldQuaternion());
+            double angle = pgd::qGetAngle(q);
             m_errorScore = (angle - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == LinearVelocity && m_marker2Comparison == LinearVelocity)
         {
-            double linearVelocity = (m_marker1->worldLinearVelocity() - m_marker2->worldLinearVelocity()).Magnitude();
+            double linearVelocity = (m_marker1->worldLinearVelocity() - m_marker2->worldLinearVelocity()).magnitude();
             m_errorScore = (linearVelocity - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == AngularVelocity && m_marker2Comparison == AngularVelocity)
         {
-            double angularVelocity = (m_marker1->worldAngularVelocity() - m_marker2->worldAngularVelocity()).Magnitude();
+            double angularVelocity = (m_marker1->worldAngularVelocity() - m_marker2->worldAngularVelocity()).magnitude();
             m_errorScore = (angularVelocity - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
@@ -133,25 +133,25 @@ double DataTargetMarkerCompare::calculateError(size_t index)
         }
         if (m_marker1Comparison == Distance && m_marker2Comparison == Distance)
         {
-            double distance = (m_marker1->worldPosition() - m_marker2->worldPosition()).Magnitude();
+            double distance = (m_marker1->worldPosition() - m_marker2->worldPosition()).magnitude();
             m_errorScore = (distance - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == Angle && m_marker2Comparison == Angle)
         {
-            double angle = pgd::FindAngle(m_marker1->worldQuaternion(), m_marker2->worldQuaternion());
+            double angle = pgd::findAngle(m_marker1->worldQuaternion(), m_marker2->worldQuaternion());
             m_errorScore = (angle - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == LinearVelocity && m_marker2Comparison == LinearVelocity)
         {
-            double linearVelocity = (m_marker1->worldLinearVelocity() - m_marker2->worldLinearVelocity()).Magnitude();
+            double linearVelocity = (m_marker1->worldLinearVelocity() - m_marker2->worldLinearVelocity()).magnitude();
             m_errorScore = (linearVelocity - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == AngularVelocity && m_marker2Comparison == AngularVelocity)
         {
-            double angularVelocity = (m_marker1->worldAngularVelocity() - m_marker2->worldAngularVelocity()).Magnitude();
+            double angularVelocity = (m_marker1->worldAngularVelocity() - m_marker2->worldAngularVelocity()).magnitude();
             m_errorScore = (angularVelocity - m_valueList[size_t(index)]);
             break;
         }

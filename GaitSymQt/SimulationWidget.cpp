@@ -828,19 +828,19 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     // this code from gluLookAT
     pgd::Vector3 forward = centre - eye;
     pgd::Vector3 up(m_upX, m_upY, m_upZ);
-    forward.Normalize();
-    up.Normalize();
+    forward.normalize();
+    up.normalize();
     // Side = forward x up
-    pgd::Vector3 side = pgd::Cross(forward, up);
-    side.Normalize();
+    pgd::Vector3 side = pgd::cross(forward, up);
+    side.normalize();
     // Recompute up as: up = side x forward
-    up = pgd::Cross(side, forward);
+    up = pgd::cross(side, forward);
     // now assemble the matrix
     pgd::Matrix3x3 cameraMatrix(side.x, up.x, -forward.x,
                                 side.y, up.y, -forward.y,
                                 side.z, up.z, -forward.z);
     // convert to Euler angles
-    pgd::Vector3 euler = pgd::MakeEulerAnglesFromQ(pgd::MakeQfromM(cameraMatrix));
+    pgd::Vector3 euler = pgd::makeEulerAnglesFromQ(pgd::makeQfromM(cameraMatrix));
     std::string rotateXYZ = GaitSym::GSUtil::toString("(%g,%g,%g)", euler.x, euler.y, euler.z);
 
     // we want to create a sensor that approximates that of a 35mm film camera so that the focal length is the 35mm equivalent
@@ -956,7 +956,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     {
         for (auto &&facetedObjectIter : drawableIter->facetedObjectList())
         {
-            if (facetedObjectIter->GetVertexList().size() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().Magnitude2() != 0)
+            if (facetedObjectIter->GetVertexList().size() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().magnitude2() != 0)
             {
                 facetedObjectIter->WriteUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
                 meshCount++;
@@ -1377,7 +1377,7 @@ bool SimulationWidget::intersectModel(float winX, float winY)
             QVector3D rayVector = farPoint4D.toVector3DAffine() - rayOrigin;
             pgd::Vector3 origin(double(rayOrigin.x()), double(rayOrigin.y()), double(rayOrigin.z()));
             pgd::Vector3 vector(double(rayVector.x()), double(rayVector.y()), double(rayVector.z()));
-            pgd::Vector3 vectorNorm = vector / vector.Magnitude();
+            pgd::Vector3 vectorNorm = vector / vector.magnitude();
 
             intersectionCoordList.clear();
             intersectionIndexList.clear();
@@ -1418,7 +1418,7 @@ bool SimulationWidget::intersectModel(float winX, float winY)
         QVector3D rayVector = farPoint4D.toVector3DAffine() - rayOrigin;
         pgd::Vector3 origin(double(rayOrigin.x()), double(rayOrigin.y()), double(rayOrigin.z()));
         pgd::Vector3 vector(double(rayVector.x()), double(rayVector.y()), double(rayVector.z()));
-        pgd::Vector3 vectorNorm = vector / vector.Magnitude();
+        pgd::Vector3 vectorNorm = vector / vector.magnitude();
 
         intersectionCoordList.clear();
         intersectionIndexList.clear();

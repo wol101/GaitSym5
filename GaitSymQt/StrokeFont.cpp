@@ -25,7 +25,7 @@ const size_t line_buffer_stride = 7;
 
 StrokeFont::StrokeFont()
 {
-    m_displayRotation.SetIdentity();
+    m_displayRotation.setIdentity();
     // the line buffer is organised x1,y1,z1,r1,g1,b1,a1,x2,y2,z2,r2,g2,b2,a2
     line_buffer = new float[max_lines * line_buffer_stride * 2];
 }
@@ -463,7 +463,7 @@ void StrokeFont::SetDisplayRotation(const pgd::Matrix3x3 &R)
 
 void StrokeFont::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
-    m_displayRotation = pgd::MakeMFromQ(q);
+    m_displayRotation = pgd::makeMFromQ(q);
 }
 
 // move the object

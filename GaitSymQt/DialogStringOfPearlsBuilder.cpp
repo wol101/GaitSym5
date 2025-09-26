@@ -384,7 +384,7 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
     for (size_t i = 0; i < pathVectors.size(); ++i)
     {
         pathVectors[i] = pathCoordinates[i + 1] - pathCoordinates[i];
-        pathVectorsLength[i] = pathVectors[i].Magnitude();
+        pathVectorsLength[i] = pathVectors[i].magnitude();
         totalLength += pathVectorsLength[i];
         pathVectorsCumulativeLength[i] = totalLength;
     }

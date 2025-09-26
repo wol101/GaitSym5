@@ -412,7 +412,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
                     std::vector<std::string> tokensPrime(tokens.begin() + 1, tokens.end()); // because tokens[0] is the body name
                     pgd::Quaternion q = GaitSym::GSUtil::toQuaternion(tokensPrime, 0);
                     pgd::Vector3 unitX(1, 0, 0);
-                    pgd::Vector3 unitXPrime = pgd::QVRotate(q, unitX);
+                    pgd::Vector3 unitXPrime = pgd::qVRotate(q, unitX);
                     // and it seems that reversing the non axes components does the trick
                     switch(axis)
                     {
@@ -430,7 +430,7 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
                         break;
                     }
                     // now convert this back to a quaternion
-                    pgd::Quaternion qPrime = pgd::FindRotation(unitX, unitXPrime);
+                    pgd::Quaternion qPrime = pgd::findRotation(unitX, unitXPrime);
                     quaternion->second = tokens[0] + " "s + GaitSym::GSUtil::toString(qPrime);
                 }
             }

@@ -2171,7 +2171,7 @@ void MainWindow::menuImportMeshes()
                 body->setConstructionPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
                 body->setPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
                 // now recalculate the inertial tensor arount the centre of mass
-                translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
+                translation.set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
                 mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
             }
             else
@@ -2181,9 +2181,9 @@ void MainWindow::menuImportMeshes()
                 body->setConstructionPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
                 body->setPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
                 mass = 1;
-                inertialTensor.SetInertia(1, 1, 1, 0, 0, 0);
+                inertialTensor.setInertia(1, 1, 1, 0, 0, 0);
             }
-            inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+            inertialTensor.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
             body->setMass(mass, ixx, iyy, izz, ixy, izx, iyz);
 
             // set the default properties

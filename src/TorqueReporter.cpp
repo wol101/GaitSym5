@@ -29,7 +29,7 @@ TorqueReporter::TorqueReporter()
 void TorqueReporter::SetAxis(double x, double y, double z)
 {
     mAxis = pgd::Vector3(x, y, z);
-    mAxis.Normalize();
+    mAxis.normalize();
 }
 
 //Theory:

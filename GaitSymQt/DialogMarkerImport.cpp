@@ -246,9 +246,9 @@ int DialogMarkerImport::ImportMarkers()
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
             else { marker->setWorldPosition(values[0], values[1], values[2]); }
             if (ui->checkBoxAnglesInRadians->isChecked())
-                qInput = pgd::MakeQFromEulerAnglesRadian(values[3], values[4], values[5]);
+                qInput = pgd::makeQFromEulerAnglesRadian(values[3], values[4], values[5]);
             else
-                qInput = pgd::MakeQFromEulerAngles(values[3], values[4], values[5]);
+                qInput = pgd::makeQFromEulerAngles(values[3], values[4], values[5]);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
             else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
@@ -258,7 +258,7 @@ int DialogMarkerImport::ImportMarkers()
             else { marker->setWorldPosition(values[0], values[1], values[2]); }
             angle = values[3];
             if (!ui->checkBoxAnglesInRadians->isChecked()) angle = pgd::DegToRad(angle);
-            qInput = pgd::MakeQFromAxisAngle(values[4], values[5], values[6], angle);
+            qInput = pgd::makeQFromAxisAngle(values[4], values[5], values[6], angle);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
             else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
@@ -266,7 +266,7 @@ int DialogMarkerImport::ImportMarkers()
         {
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
             else { marker->setWorldPosition(values[0], values[1], values[2]); }
-            qInput.Set(values[3], values[4],  values[5], values[6]);
+            qInput.set(values[3], values[4],  values[5], values[6]);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
             else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
@@ -274,7 +274,7 @@ int DialogMarkerImport::ImportMarkers()
         {
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
             else { marker->setWorldPosition(values[0], values[1], values[2]); }
-            qInput = pgd::MakeQfromM(pgd::Matrix3x3(values[3], values[4],  values[5],
+            qInput = pgd::makeQfromM(pgd::Matrix3x3(values[3], values[4],  values[5],
                     values[6], values[7],  values[8],
                     values[9], values[10], values[11]));
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }

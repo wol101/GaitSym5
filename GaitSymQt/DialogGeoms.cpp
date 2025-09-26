@@ -118,7 +118,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
             double a = normal.x;
             double b = normal.y;
             double c = normal.z;
-            double d = normal.Dot(point);
+            double d = normal.dot(point);
             m_outputGeom = std::make_unique<GaitSym::PlaneGeom>(a, b, c, d);
             break;
         }

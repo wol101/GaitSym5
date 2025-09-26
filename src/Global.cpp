@@ -140,7 +140,7 @@ std::string *Global::createFromAttributes()
     // gravity
     if (findAttribute("GravityVector", &buf) == nullptr) return lastErrorPtr();
     GSUtil::toDouble(buf, 3, m_DoubleList);
-    m_gravity.Set(m_DoubleList);
+    m_gravity.set(m_DoubleList);
 
     // set the simulation integration step size
     if (findAttribute("IntegrationStepSize", &buf) == nullptr) return lastErrorPtr();
@@ -527,7 +527,7 @@ void Global::setGravity(const pgd::Vector3 &gravity)
 
 void Global::setGravity(double gravityX, double gravityY, double gravityZ)
 {
-    m_gravity.Set(gravityX, gravityY, gravityZ);
+    m_gravity.set(gravityX, gravityY, gravityZ);
 }
 
 double Global::BMR() const

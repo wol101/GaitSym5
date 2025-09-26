@@ -105,7 +105,7 @@ void DialogMarkers::accept() // this catches OK and return/enter
         double ex = ui->lineEditEulerX->value();
         double ey = ui->lineEditEulerY->value();
         double ez = ui->lineEditEulerZ->value();
-        pgd::Quaternion qWorld = pgd::MakeQFromEulerAngles(ex, ey, ez);
+        pgd::Quaternion qWorld = pgd::makeQFromEulerAngles(ex, ey, ez);
         markerPtr->setWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
     else     // world marker
@@ -119,7 +119,7 @@ void DialogMarkers::accept() // this catches OK and return/enter
         double ex = ui->lineEditEulerX->value();
         double ey = ui->lineEditEulerY->value();
         double ez = ui->lineEditEulerZ->value();
-        pgd::Quaternion qWorld = pgd::MakeQFromEulerAngles(ex, ey, ez);
+        pgd::Quaternion qWorld = pgd::makeQFromEulerAngles(ex, ey, ez);
         markerPtr->setQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
 
@@ -220,7 +220,7 @@ void DialogMarkers::lateInitialise()
         ui->lineEditMarkerID->setText(QString::fromStdString(m_inputMarker->name()));
         ui->lineEditMarkerID->setEnabled(false);
         const pgd::Quaternion q = m_inputMarker->worldQuaternion();
-        eulerAngles = pgd::MakeEulerAnglesFromQ(q);
+        eulerAngles = pgd::makeEulerAnglesFromQ(q);
         position = m_inputMarker->worldPosition();
     }
     ui->lineEditPositionX->setValue(position.x);
@@ -251,7 +251,7 @@ void DialogMarkers::calculatePosition()
     pgd::Quaternion q1 = marker1->worldQuaternion();
     pgd::Quaternion q2 = marker2->worldQuaternion();
     pgd::Quaternion q = slerp(q1, q2, fraction, true);
-    pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
+    pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
     ui->lineEditEulerZ->setValue(e.z);
@@ -274,7 +274,7 @@ void DialogMarkers::calculatePositionCopyMarker1()
     ui->lineEditPositionZ->setValue(p.z);
 
     pgd::Quaternion q = marker->worldQuaternion();
-    pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
+    pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
     ui->lineEditEulerZ->setValue(e.z);
@@ -292,7 +292,7 @@ void DialogMarkers::calculatePositionCopyMarker2()
     ui->lineEditPositionZ->setValue(p.z);
 
     pgd::Quaternion q = marker->worldQuaternion();
-    pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
+    pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
     ui->lineEditEulerZ->setValue(e.z);
@@ -308,8 +308,8 @@ void DialogMarkers::calculateOrientation2Marker()
 
     pgd::Vector3 v1(1, 0, 0);
     pgd::Vector3 v2 = marker2->worldPosition() - marker1->worldPosition();
-    pgd::Quaternion q = pgd::FindRotation(v1, v2);
-    pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
+    pgd::Quaternion q = pgd::findRotation(v1, v2);
+    pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
     ui->lineEditEulerZ->setValue(e.z);
@@ -332,17 +332,17 @@ void DialogMarkers::calculateOrientation3Marker()
     GaitSym::Marker *marker3 = markerList->at(ui->comboBoxOrientation3Marker3->currentText().toStdString()).get();
 
     pgd::Vector3 xAxis = (marker2->worldPosition() - marker1->worldPosition());
-    xAxis.Normalize();
+    xAxis.normalize();
     pgd::Vector3 zAxis = xAxis ^ (marker3->worldPosition() - marker2->worldPosition());
-    zAxis.Normalize();
+    zAxis.normalize();
     pgd::Vector3 yAxis = zAxis ^ xAxis;
-    yAxis.Normalize();
+    yAxis.normalize();
 
     pgd::Matrix3x3 R(xAxis.x, yAxis.x, zAxis.x,
                      xAxis.y, yAxis.y, zAxis.y,
                      xAxis.z, yAxis.z, zAxis.z);
-    pgd::Quaternion q = pgd::MakeQfromM(R);
-    pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
+    pgd::Quaternion q = pgd::makeQfromM(R);
+    pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
     ui->lineEditEulerZ->setValue(e.z);
@@ -381,10 +381,10 @@ void DialogMarkers::calculateMirrorMarker()
     x = m * x;
     y = m * y;
     z = x ^ y;
-    z.Normalize();
-    m.SetCols(x, y, z);
-    pgd::Quaternion q = pgd::MakeQfromM(m);
-    pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
+    z.normalize();
+    m.setCols(x, y, z);
+    pgd::Quaternion q = pgd::makeQfromM(m);
+    pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
     ui->lineEditEulerZ->setValue(e.z);
@@ -395,14 +395,14 @@ void DialogMarkers::calculateCalculator()
     double ex = ui->lineEditEulerX->value();
     double ey = ui->lineEditEulerY->value();
     double ez = ui->lineEditEulerZ->value();
-    pgd::Quaternion qMarker = pgd::MakeQFromEulerAngles(ex, ey, ez);
+    pgd::Quaternion qMarker = pgd::makeQFromEulerAngles(ex, ey, ez);
     pgd::Quaternion qRotation;
     qRotation.n = ui->lineEditQuaternionN->value();
     qRotation.x = ui->lineEditQuaternionX->value();
     qRotation.y = ui->lineEditQuaternionY->value();
     qRotation.z = ui->lineEditQuaternionZ->value();
     pgd::Quaternion qMarker2 = qRotation * qMarker;
-    pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(qMarker2);
+    pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQ(qMarker2);
     ui->lineEditEulerX->setValue(eulerAngles.x);
     ui->lineEditEulerY->setValue(eulerAngles.y);
     ui->lineEditEulerZ->setValue(eulerAngles.z);
@@ -423,8 +423,8 @@ void DialogMarkers::calculateMatrix()
     double ex = ui->lineEditEulerX->value();
     double ey = ui->lineEditEulerY->value();
     double ez = ui->lineEditEulerZ->value();
-    pgd::Quaternion qMarker = pgd::MakeQFromEulerAngles(ex, ey, ez);
-    pgd::Matrix3x3 mMarker = pgd::MakeMFromQ(qMarker);
+    pgd::Quaternion qMarker = pgd::makeQFromEulerAngles(ex, ey, ez);
+    pgd::Matrix3x3 mMarker = pgd::makeMFromQ(qMarker);
     pgd::Matrix3x3 matrix;
     matrix.e11 = ui->lineEditMatrixr1c1->value();
     matrix.e12 = ui->lineEditMatrixr1c2->value();
@@ -436,8 +436,8 @@ void DialogMarkers::calculateMatrix()
     matrix.e32 = ui->lineEditMatrixr3c2->value();
     matrix.e33 = ui->lineEditMatrixr3c3->value();
     pgd::Matrix3x3 mMarker2 = matrix * mMarker;
-    pgd::Quaternion qMarker2 = pgd::MakeQfromM(mMarker2);
-    pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(qMarker2);
+    pgd::Quaternion qMarker2 = pgd::makeQfromM(mMarker2);
+    pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQ(qMarker2);
     ui->lineEditEulerX->setValue(eulerAngles.x);
     ui->lineEditEulerY->setValue(eulerAngles.y);
     ui->lineEditEulerZ->setValue(eulerAngles.z);
@@ -448,8 +448,8 @@ void DialogMarkers::importMatrix()
     double ex = ui->lineEditEulerX->value();
     double ey = ui->lineEditEulerY->value();
     double ez = ui->lineEditEulerZ->value();
-    pgd::Quaternion qMarker = pgd::MakeQFromEulerAngles(ex, ey, ez);
-    pgd::Matrix3x3 mMarker = pgd::MakeMFromQ(qMarker);
+    pgd::Quaternion qMarker = pgd::makeQFromEulerAngles(ex, ey, ez);
+    pgd::Matrix3x3 mMarker = pgd::makeMFromQ(qMarker);
     ui->lineEditMatrixr1c1->setValue(mMarker.e11);
     ui->lineEditMatrixr1c2->setValue(mMarker.e12);
     ui->lineEditMatrixr1c3->setValue(mMarker.e13);
@@ -494,7 +494,7 @@ void DialogMarkers::lineEditFractionTextChanged(const QString & /* text */)
     pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = (p2 - p1) * fraction;
     QSignalBlocker blocker(ui->lineEditDistance);
-    ui->lineEditDistance->setValue(p.Magnitude());
+    ui->lineEditDistance->setValue(p.magnitude());
 }
 
 void DialogMarkers::lineEditDistanceTextChanged(const QString & /* text */)
@@ -509,7 +509,7 @@ void DialogMarkers::lineEditDistanceTextChanged(const QString & /* text */)
     pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = (p2 - p1) / distance;
     QSignalBlocker blocker(ui->lineEditFraction);
-    ui->lineEditFraction->setValue(p.Magnitude());
+    ui->lineEditFraction->setValue(p.magnitude());
 }
 
 void DialogMarkers::lineEditEulerAppendTextChanged(const QString & /*text*/)
@@ -517,7 +517,7 @@ void DialogMarkers::lineEditEulerAppendTextChanged(const QString & /*text*/)
     double ex = ui->lineEditEulerXAppend->value();
     double ey = ui->lineEditEulerYAppend->value();
     double ez = ui->lineEditEulerZAppend->value();
-    pgd::Quaternion qRotation = pgd::MakeQFromEulerAngles(ex, ey, ez);
+    pgd::Quaternion qRotation = pgd::makeQFromEulerAngles(ex, ey, ez);
     QSignalBlocker blocker1(ui->lineEditQuaternionN);
     QSignalBlocker blocker2(ui->lineEditQuaternionX);
     QSignalBlocker blocker3(ui->lineEditQuaternionY);
@@ -528,7 +528,7 @@ void DialogMarkers::lineEditEulerAppendTextChanged(const QString & /*text*/)
     ui->lineEditQuaternionZ->setValue(qRotation.z);
     double angle;
     pgd::Vector3 axis;
-    pgd::MakeAxisAngleFromQ(qRotation, &axis.x, &axis.y, &axis.z, &angle);
+    pgd::makeAxisAngleFromQ(qRotation, &axis.x, &axis.y, &axis.z, &angle);
     angle = pgd::RadToDeg(angle);
     QSignalBlocker blocker5(ui->lineEditAngle);
     QSignalBlocker blocker6(ui->lineEditAxisX);
@@ -548,8 +548,8 @@ void DialogMarkers::lineEditAxisAngleTextChanged(const QString & /*text*/)
     axis.y = ui->lineEditAxisY->value();
     axis.z = ui->lineEditAxisZ->value();
     pgd::Quaternion qRotation;
-    if (axis.Magnitude2() > std::numeric_limits<double>::epsilon()) qRotation = pgd::MakeQFromAxisAngle(axis, angle, false);
-    else qRotation.Set(1, 0, 0, 0);
+    if (axis.magnitude2() > std::numeric_limits<double>::epsilon()) qRotation = pgd::makeQFromAxisAngle(axis, angle, false);
+    else qRotation.set(1, 0, 0, 0);
     QSignalBlocker blocker1(ui->lineEditQuaternionN);
     QSignalBlocker blocker2(ui->lineEditQuaternionX);
     QSignalBlocker blocker3(ui->lineEditQuaternionY);
@@ -558,7 +558,7 @@ void DialogMarkers::lineEditAxisAngleTextChanged(const QString & /*text*/)
     ui->lineEditQuaternionX->setValue(qRotation.x);
     ui->lineEditQuaternionY->setValue(qRotation.y);
     ui->lineEditQuaternionZ->setValue(qRotation.z);
-    pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(qRotation);
+    pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQ(qRotation);
     QSignalBlocker blocker5(ui->lineEditEulerXAppend);
     QSignalBlocker blocker6(ui->lineEditEulerYAppend);
     QSignalBlocker blocker7(ui->lineEditEulerZAppend);
@@ -576,7 +576,7 @@ void DialogMarkers::lineEditQuaternionTextChanged(const QString & /*text*/)
     qRotation.z = ui->lineEditQuaternionZ->value();
     double angle;
     pgd::Vector3 axis;
-    pgd::MakeAxisAngleFromQ(qRotation, &axis.x, &axis.y, &axis.z, &angle);
+    pgd::makeAxisAngleFromQ(qRotation, &axis.x, &axis.y, &axis.z, &angle);
     angle = pgd::RadToDeg(angle);
     QSignalBlocker blocker1(ui->lineEditAngle);
     QSignalBlocker blocker2(ui->lineEditAxisX);
@@ -586,7 +586,7 @@ void DialogMarkers::lineEditQuaternionTextChanged(const QString & /*text*/)
     ui->lineEditAxisX->setValue(axis.x);
     ui->lineEditAxisY->setValue(axis.y);
     ui->lineEditAxisZ->setValue(axis.z);
-    pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(qRotation);
+    pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQ(qRotation);
     QSignalBlocker blocker5(ui->lineEditEulerXAppend);
     QSignalBlocker blocker6(ui->lineEditEulerYAppend);
     QSignalBlocker blocker7(ui->lineEditEulerZAppend);
@@ -609,7 +609,7 @@ void DialogMarkers::positionMarkerChanged(const QString & /* text */)
     pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = (p2 - p1) * fraction;
     QSignalBlocker blocker(ui->lineEditDistance);
-    ui->lineEditDistance->setValue(p.Magnitude());
+    ui->lineEditDistance->setValue(p.magnitude());
 }
 
 void DialogMarkers::orientation2MarkerChanged(const QString & /* text */)
@@ -624,7 +624,7 @@ void DialogMarkers::orientation2MarkerChanged(const QString & /* text */)
     marker2 = markerList->at(ui->comboBoxOrientation2Marker2->currentText().toStdString()).get();
 
     v2 = marker2->worldPosition() - marker1->worldPosition();
-    if (v2.Magnitude2() > 1e-10) goto enable_button;
+    if (v2.magnitude2() > 1e-10) goto enable_button;
     else goto disable_button;
 
 enable_button:
@@ -652,9 +652,9 @@ void DialogMarkers::orientation3MarkerChanged(const QString & /* text */)
     v1 = (marker2->worldPosition() - marker1->worldPosition());
     v2 = (marker3->worldPosition() - marker2->worldPosition());
 
-    if (v1.Magnitude2() < 1e-10 || v2.Magnitude2() < 1e-10) goto disable_button;
-    v1.Normalize();
-    v2.Normalize();
+    if (v1.magnitude2() < 1e-10 || v2.magnitude2() < 1e-10) goto disable_button;
+    v1.normalize();
+    v2.normalize();
     d = v1 * v2;
     if (d < 0.9999999999) goto enable_button;
     else goto disable_button;

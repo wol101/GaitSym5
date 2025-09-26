@@ -152,7 +152,7 @@ void NPointStrap::calculate()
             line.x = (*GetPointForceList())[mapping[i + 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
             line.y = (*GetPointForceList())[mapping[i + 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
             line.z = (*GetPointForceList())[mapping[i + 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
-            len = line.Magnitude();
+            len = line.magnitude();
             totalLength += len;
             line /= len;
         }
@@ -161,20 +161,20 @@ void NPointStrap::calculate()
             line.x = (*GetPointForceList())[mapping[i - 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
             line.y = (*GetPointForceList())[mapping[i - 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
             line.z = (*GetPointForceList())[mapping[i - 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
-            line.Normalize();
+            line.normalize();
         }
         else
         {
             line.x = (*GetPointForceList())[mapping[i + 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
             line.y = (*GetPointForceList())[mapping[i + 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
             line.z = (*GetPointForceList())[mapping[i + 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
-            len = line.Magnitude();
+            len = line.magnitude();
             totalLength += len;
             line /= len;
             line2.x = (*GetPointForceList())[mapping[i - 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
             line2.y = (*GetPointForceList())[mapping[i - 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
             line2.z = (*GetPointForceList())[mapping[i - 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
-            line2.Normalize();
+            line2.normalize();
             line += line2;
         }
 

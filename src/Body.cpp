@@ -60,7 +60,7 @@ double Body::constructionDensity() const
 
 void Body::setPosition(double x, double y, double z)
 {
-    m_currentPosition.Set(x, y, z);
+    m_currentPosition.set(x, y, z);
 }
 
 void Body::setQuaternion(double n, double x, double y, double z)
@@ -160,7 +160,7 @@ std::string *Body::setPosition(const std::string &buf)
             // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
             //    pgd::Vector3 result;
             //    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result); // convert from body to world
-            pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
+            pgd::Vector3 bodyWorldPosition = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
             this->setPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
             return nullptr;
         }
@@ -177,8 +177,8 @@ std::string *Body::setPosition(const std::string &buf)
         pgd::Vector3 world1, world2, pos;
         // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), world1);
         // dBodyGetRelPointPos (m_bodyID, GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]), world2);
-        world1 = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
-        world2 = pgd::QVRotate(this->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]))) + pgd::Vector3(this->position());
+        world1 = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
+        world2 = pgd::qVRotate(this->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]))) + pgd::Vector3(this->position());
         // add the error to the current position
         pgd::Vector3 p = this->position();
         for (size_t i = 0; i < 3; i++) pos[i] = p[i] + (world1[i] - world2[i]);
@@ -252,7 +252,7 @@ std::string *Body::setQuaternion(const std::string &buf)
 
 void Body::setLinearVelocity(double x, double y, double z)
 {
-    m_currentLinearVelocity.Set(x, y, z);
+    m_currentLinearVelocity.set(x, y, z);
 }
 
 void Body::setLinearVelocity(const pgd::Vector3 &linearVelocity)
@@ -294,7 +294,7 @@ std::string *Body::setLinearVelocity(const std::string &buf)
         {
             // pgd::Vector3 result;
             // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
-            pgd::Vector3 worldVelocity = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
+            pgd::Vector3 worldVelocity = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
             pgd::Vector3 vRel = theBody->linearVelocity();
 
             setLinearVelocity(worldVelocity[0] + vRel[0], worldVelocity[1] + vRel[1], worldVelocity[2] + vRel[2]);
@@ -321,7 +321,7 @@ void Body::setQuaternionDelta(double n, double x, double y, double z)
 double Body::linearKineticEnergy()
 {
     // linear KE = 0.5 m v^2
-    double linearKE = 0.5 * m_mass * m_currentLinearVelocity.Magnitude2();
+    double linearKE = 0.5 * m_mass * m_currentLinearVelocity.magnitude2();
     return linearKE;
 }
 
@@ -353,7 +353,7 @@ double Body::gravitationalPotentialEnergy()
 
 void Body::setAngularVelocity(double x, double y, double z)
 {
-    m_currentAngularVelocity.Set(x, y, z);
+    m_currentAngularVelocity.set(x, y, z);
 }
 
 void Body::setAngularVelocity(const pgd::Vector3 &angularVelocity)
@@ -395,7 +395,7 @@ std::string *Body::setAngularVelocity(const std::string &buf)
         {
             // pgd::Vector3 result;
             // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
-            pgd::Vector3 worldAVelocity = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
+            pgd::Vector3 worldAVelocity = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
             pgd::Vector3 vARel = theBody->angularVelocity();
             setAngularVelocity(worldAVelocity[0] + vARel[0], worldAVelocity[1] + vARel[1], worldAVelocity[2] + vARel[2]);
             return nullptr;
@@ -414,7 +414,7 @@ void Body::setMass(double mass)
 void Body::setMass(double mass, double ixx, double iyy, double izz, double ixy, double izx, double iyz)
 {
     m_mass = mass;
-    m_inertia.SetInertia(ixx, iyy, izz, ixy, izx, iyz);
+    m_inertia.setInertia(ixx, iyy, izz, ixy, izx, iyz);
 }
 
 pgd::Vector3 Body::position() const
@@ -453,7 +453,7 @@ void Body::getRelativePosition(const Body *rel, pgd::Vector3 *pos) const
     if (rel)
     {
         // dBodyGetPosRelPoint(rel->GetBodyID(), p[0], p[1], p[2], result); // convert from world to body
-        *pos = pgd::QVRotate(pgd::Conjugate(rel->quaternion()), this->position() - pgd::Vector3(rel->position()));
+        *pos = pgd::qVRotate(pgd::conjugate(rel->quaternion()), this->position() - pgd::Vector3(rel->position()));
     }
     else
     {
@@ -514,7 +514,7 @@ double Body::mass() const
 void Body::getMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const
 {
     *mass = m_mass;
-    m_inertia.GetInertia(ixx, iyy, izz, ixy, izx, iyz);
+    m_inertia.getInertia(ixx, iyy, izz, ixy, izx, iyz);
     return;
 }
 
@@ -563,9 +563,9 @@ double Body::getProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vecto
     // B cross (A cross B)
     // which we then normalise anyway
     pgd::Vector3 startDirection1 = planeNormal ^ (vector1 ^ planeNormal);
-    startDirection1.Normalize();
+    startDirection1.normalize();
     pgd::Vector3 endDirection1 = planeNormal ^ (vector2 ^ planeNormal);
-    endDirection1.Normalize();
+    endDirection1.normalize();
     // now we can find the angle in the plane using
     // dot = x1*x2 + y1*y2 + z1*z2
     // det = x1*y2*zn + x2*yn*z1 + xn*y1*z2 - z1*y2*xn - z2*yn*x1 - zn*y1*x2
@@ -621,7 +621,7 @@ void Body::parallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const
     y = translation[1];
     z = translation[2];
     m = mass;
-    inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    inertialTensor.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
 
     ang = 2*acos(quaternion[0]);
     double magnitude = sqrt(SQUARE(quaternion[1]) + SQUARE(quaternion[2]) + SQUARE(quaternion[3]));
@@ -635,7 +635,7 @@ void Body::parallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const
 
     parallelAxis(x, y, z, m, ixx, iyy, izz, ixy, izx, iyz, ang, ax, ay, az, &ixxp, &iyyp, &izzp, &ixyp, &izxp, &iyzp);
 
-    newInertialTensor->SetInertia(ixxp, iyyp, izzp, ixyp, izxp, iyzp);
+    newInertialTensor->setInertia(ixxp, iyyp, izzp, ixyp, izxp, iyzp);
 }
 
 // a utility function to calculate moments of interia given an arbitrary translation and rotation
@@ -766,13 +766,13 @@ void Body::computeDrag()
     double v_rel[6]; // angular follwed by linear
 
     pgd::Vector3 aVel = angularVelocity();
-    pgd::Vector3 aVelBody = pgd::QVRotate(~quaternion(), aVel);
+    pgd::Vector3 aVelBody = pgd::qVRotate(~quaternion(), aVel);
     v_rel[0] = aVelBody.x;
     v_rel[1] = aVelBody.y;
     v_rel[2] = aVelBody.z;
 
     pgd::Vector3 lVel = linearVelocity();
-    pgd::Vector3 lVelBody = pgd::QVRotate(~quaternion(), lVel);
+    pgd::Vector3 lVelBody = pgd::qVRotate(~quaternion(), lVel);
     v_rel[3] = lVelBody.x;
     v_rel[4] = lVelBody.y;
     v_rel[5] = lVelBody.z;
@@ -889,8 +889,8 @@ void Body::computeDrag()
     // need to add them to the body
     // dBodyAddRelTorque(m_bodyID, f_D[0], f_D[1], f_D[2]);
     // dBodyAddRelForce(m_bodyID, f_D[3], f_D[4], f_D[5]);
-    m_dragTorque.Set(f_D[0], f_D[1], f_D[2]);
-    m_dragForce.Set(f_D[3], f_D[4], f_D[5]);
+    m_dragTorque.set(f_D[0], f_D[1], f_D[2]);
+    m_dragForce.set(f_D[3], f_D[4], f_D[5]);
 }
 
 // this function initialises the data in the object based on the contents
@@ -1042,7 +1042,7 @@ void Body::appendToAttributes()
 
     setAttribute("Mass"s, *GSUtil::toString(m_mass, &buf));
     double ixx, iyy, izz, ixy, izx, iyz;
-    m_inertia.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    m_inertia.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
     double MOI[6] = {ixx, iyy, izz, ixy, izx, iyz}; // xx, yy, zz, xy, xz, yz
     setAttribute("MOI"s, *GSUtil::toString(MOI, 6, &buf));
     if (m_LinearDamping >= 0) setAttribute("LinearDamping"s, *GSUtil::toString(m_LinearDamping, &buf));

@@ -73,7 +73,7 @@ double DataTargetVector::calculateError(size_t valueListIndex)
         break;
     }
     m_vectorError = m_vectorValue - m_vectorTarget;
-    return m_vectorError.Magnitude();
+    return m_vectorError.magnitude();
 }
 
 // returns the degree of match to the stored values
@@ -86,7 +86,7 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
     double interpX = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].x, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].x, time);
     double interpY = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].y, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].y, time);
     double interpZ = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].z, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].z, time);
-    m_vectorTarget.Set(interpX, interpY, interpZ);
+    m_vectorTarget.set(interpX, interpY, interpZ);
 
     while (true)
     {
@@ -124,7 +124,7 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
         break;
     }
     m_vectorError = m_vectorValue - m_vectorTarget;
-    return m_vectorError.Magnitude();
+    return m_vectorError.magnitude();
 
 }
 

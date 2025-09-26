@@ -135,7 +135,7 @@ void TegotaeDriver::UpdateReactionForce()
             // add the force that matches the X direction of the marker
             worldXAxis = m_forceDirection->worldAxis(Marker::Axis::X);
             worldReactionForce = contactList->at(i)->force();
-            m_N += pgd::Dot(worldXAxis, worldReactionForce);
+            m_N += pgd::dot(worldXAxis, worldReactionForce);
         }
     }
     if (m_N < 0) m_N = 0;

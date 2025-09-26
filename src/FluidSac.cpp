@@ -55,11 +55,11 @@ void FluidSac::calculateLoadsOnMarkers()
         areaCentroidNormal(m_vertexList[it->v0], m_vertexList[it->v1], m_vertexList[it->v2], &it->area, &it->centroid, &it->normal);
 
         // now rotate the system so that the normal is aligned to the z axis
-        pgd::Quaternion r = pgd::FindRotation(it->normal, pgd::Vector3(0, 0, 1));
-        pgd::Vector3 v0 = pgd::QVRotate(r, m_vertexList[it->v0]);
-        pgd::Vector3 v1 = pgd::QVRotate(r, m_vertexList[it->v1]);
-        pgd::Vector3 v2 = pgd::QVRotate(r, m_vertexList[it->v2]);
-        pgd::Vector3 centroid = pgd::QVRotate(r, it->centroid);
+        pgd::Quaternion r = pgd::findRotation(it->normal, pgd::Vector3(0, 0, 1));
+        pgd::Vector3 v0 = pgd::qVRotate(r, m_vertexList[it->v0]);
+        pgd::Vector3 v1 = pgd::qVRotate(r, m_vertexList[it->v1]);
+        pgd::Vector3 v2 = pgd::qVRotate(r, m_vertexList[it->v2]);
+        pgd::Vector3 centroid = pgd::qVRotate(r, it->centroid);
 
         // now we can use the Z=0 triangle formulae
         // the triangle is in the z=0 plane
@@ -131,7 +131,7 @@ bool FluidSac::isGoodMesh(const std::vector<FluidSac::Triangle> &triangleList, c
 
 double FluidSac::signedVolumeOfTriangle(pgd::Vector3 p1, pgd::Vector3 p2, pgd::Vector3 p3)
 {
-    return p1.Dot(p2.Cross(p3)) / 6.0;
+    return p1.dot(p2.cross(p3)) / 6.0;
 }
 
 double FluidSac::volumeOfMesh(const std::vector<FluidSac::Triangle> &triangleList, const std::vector<pgd::Vector3> &vectorList)
@@ -190,9 +190,9 @@ void FluidSac::areaCentroidNormal(const pgd::Vector3 &v0, const pgd::Vector3 &v1
     *centroid = (v0 + v1 + v2) / 3.0; // centroid is easy for triangles
     pgd::Vector3 edge0 = v1 - v0;
     pgd::Vector3 edge1 = v2 - v1;
-    pgd::Vector3 crossProduct = edge0.Cross(edge1);
-    double crossProductMagnitude = crossProduct.Magnitude(); // cross product magnitude is the area of the parallelogram
-    *area = crossProduct.Magnitude() / 2; // and the area of the triangle is half the area of the prallelogram
+    pgd::Vector3 crossProduct = edge0.cross(edge1);
+    double crossProductMagnitude = crossProduct.magnitude(); // cross product magnitude is the area of the parallelogram
+    *area = crossProduct.magnitude() / 2; // and the area of the triangle is half the area of the prallelogram
     *normal = crossProduct / crossProductMagnitude;
 }
 

@@ -46,7 +46,7 @@ Body *Geom::body()
 
 void Geom::setPosition (double x, double y, double z)
 {
-    m_position.Set(x, y, z);
+    m_position.set(x, y, z);
 }
 
 pgd::Vector3 Geom::position() const
@@ -62,7 +62,7 @@ pgd::Vector3 Geom::worldPosition() const
         //        pgd::Vector3 p;
         //        dBodyGetRelPointPos(m_body->GetBodyID(), m_position.x, m_position.y, m_position.z, p);
         //        return pgd::Vector3(p[0], p[1], p[2]);
-        pgd::Vector3 bodyWorldPosition = pgd::QVRotate(m_body->quaternion(), m_position) + pgd::Vector3(m_body->position());
+        pgd::Vector3 bodyWorldPosition = pgd::qVRotate(m_body->quaternion(), m_position) + pgd::Vector3(m_body->position());
         return bodyWorldPosition;
     }
     else
@@ -73,7 +73,7 @@ pgd::Vector3 Geom::worldPosition() const
 
 void Geom::setQuaternion(double n, double x, double y, double z)
 {
-    m_quaternion.Set(n, x, y, z);
+    m_quaternion.set(n, x, y, z);
 }
 
 void Geom::setGeomMarker(Marker *geomMarker)

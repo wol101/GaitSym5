@@ -149,7 +149,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             // }
 
             pgd::Vector3 position = cylinderWrapStrap->cylinderMarker()->worldPosition();
-            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderWrapStrap->cylinderMarker()->worldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
+            pgd::Vector3 cylinderVecWorld = pgd::qVRotate(cylinderWrapStrap->cylinderMarker()->worldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
             double radius = cylinderWrapStrap->cylinderRadius();
             // and draw it
             std::vector<pgd::Vector3> polyline;
@@ -176,7 +176,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             //     m_facetedObjectList.push_back(m_facetedObject1.get());
             // }
             pgd::Vector3 position = twoCylinderWrapStrap->GetCylinder1Marker()->worldPosition();
-            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(twoCylinderWrapStrap->GetCylinder1Marker()->worldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
+            pgd::Vector3 cylinderVecWorld = pgd::qVRotate(twoCylinderWrapStrap->GetCylinder1Marker()->worldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
             double radius = twoCylinderWrapStrap->Cylinder1Radius();
             // and draw it
             std::vector<pgd::Vector3> polyline;
@@ -352,7 +352,7 @@ void DrawMuscle::Fusiform()
             for (size_t i = 0; i < m_polyline.size() - 1; i++)
             {
                 pgd::Vector3 vec = m_polyline[i + 1] - m_polyline[i];
-                double vecLen = vec.Magnitude();
+                double vecLen = vec.magnitude();
                 if (vecLen <= delta)
                 {
                     vertexList.push_back(m_polyline[i]);

@@ -104,10 +104,10 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
     {
         v1 = (*polyline)[i] - (*polyline)[i - 1];
         v2 = (*polyline)[i + 1] - (*polyline)[i];
-        v1.Normalize();
-        v2.Normalize();
+        v1.normalize();
+        v2.normalize();
         p1 = v1 - v2;
-        if (p1.Magnitude2() > epsilon2)   // not parallel so use two vector form of plane
+        if (p1.magnitude2() > epsilon2)   // not parallel so use two vector form of plane
         {
             p2 = v1 ^ v2;
             plane = Plane3D(&(*polyline)[i], &p1, &p2);
@@ -124,12 +124,12 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
     // note for a truly generic routine you need two rotations to allow an up vector to be defined
     pgd::Vector3 zVec(0, 0, 1);
     v1 = (*polyline)[1] - (*polyline)[0];
-    pgd::Quaternion q = pgd::FindRotation(zVec, v1);
+    pgd::Quaternion q = pgd::findRotation(zVec, v1);
     std::vector<pgd::Vector3> rotatedProfile;
     rotatedProfile.reserve(polyline->size());
     for (i = 0; i < (*profile).size(); i++)
     {
-        pgd::Vector3 v = pgd::QVRotate(q, (*profile)[i]);
+        pgd::Vector3 v = pgd::qVRotate(q, (*profile)[i]);
         rotatedProfile.push_back(v);
     }
 
@@ -198,22 +198,22 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
                 polygon[11] = vertexList[j].z;
             }
             normal = pgd::Vector3(polygon[0], polygon[1], polygon[2]) - centroid1;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[0] = normal.x;
             polygonNormal[1] = normal.y;
             polygonNormal[2] = normal.z;
             normal = pgd::Vector3(polygon[3], polygon[4], polygon[5]) - centroid2;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[3] = normal.x;
             polygonNormal[4] = normal.y;
             polygonNormal[5] = normal.z;
             normal = pgd::Vector3(polygon[6], polygon[7], polygon[8]) - centroid2;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[6] = normal.x;
             polygonNormal[7] = normal.y;
             polygonNormal[8] = normal.z;
             normal = pgd::Vector3(polygon[9], polygon[10], polygon[11]) - centroid1;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[9] = normal.x;
             polygonNormal[10] = normal.y;
             polygonNormal[11] = normal.z;

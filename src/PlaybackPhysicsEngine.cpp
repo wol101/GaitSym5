@@ -117,7 +117,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     m_poses.clear();
 
     pgd::Vector3 euler(1.5707963267948966, 0, 0); // rotating +90 degrees about the X axis converts from Y up to Z up
-    pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+    pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
     for (auto &&bodyIt : *simulation()->GetBodyList())
     {
         // check the names are OK
@@ -143,12 +143,12 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
         for (size_t i = 0; i < nTimes; i++)
         {
             Pose pose;
-            pose.p.Set(x[i], y[i], z[i]);
+            pose.p.set(x[i], y[i], z[i]);
             pgd::Vector3 eulerAngles;
             if (inDegrees) { eulerAngles.x = pgd::DegToRad(ox[i]); eulerAngles.y = pgd::DegToRad(oy[i]); eulerAngles.z = pgd::DegToRad(oz[i]); }
             else { eulerAngles.x = ox[i]; eulerAngles.y = oy[i]; eulerAngles.z = oz[i]; }
-            pose.q = pgd::MakeQFromEulerAnglesRadian(eulerAngles, "XYZ");
-            pose.p = pgd::QVRotate(rotation, pose.p); // correct for Z up
+            pose.q = pgd::makeQFromEulerAnglesRadian(eulerAngles, "XYZ");
+            pose.p = pgd::qVRotate(rotation, pose.p); // correct for Z up
             pose.q = rotation * pose.q; // correct for Z up
             poses.push_back(std::move(pose));
         }

@@ -37,7 +37,7 @@ double LMotorJoint::position(int anum)
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->worldPosition()) - pgd::Vector3(body1Marker()->worldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
     // not 100% sure this should be the inverse of the body rotation here
-    if (body1Marker()->body()) relativePositionBody1Marker = pgd::QVRotate(~pgd::Quaternion(body1Marker()->body()->quaternion()), relativePositionWorld);
+    if (body1Marker()->body()) relativePositionBody1Marker = pgd::qVRotate(~pgd::Quaternion(body1Marker()->body()->quaternion()), relativePositionWorld);
     switch (anum)
     {
     case 0:
@@ -59,7 +59,7 @@ void LMotorJoint::getPositions(double *x, double *y, double *z)
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->worldPosition()) - pgd::Vector3(body1Marker()->worldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
     // not 100% sure this should be the inverse of the body rotation here
-    if (body1Marker()->body()) relativePositionBody1Marker = pgd::QVRotate(~pgd::Quaternion(body1Marker()->body()->quaternion()), relativePositionWorld);
+    if (body1Marker()->body()) relativePositionBody1Marker = pgd::qVRotate(~pgd::Quaternion(body1Marker()->body()->quaternion()), relativePositionWorld);
     *x = relativePositionBody1Marker.x;
     *y = relativePositionBody1Marker.y;
     *z = relativePositionBody1Marker.z;
@@ -109,22 +109,22 @@ void LMotorJoint::setStops(int anum, double low, double high)
     switch (anum)
     {
     case 0:
-        m_stops0.Set(low, high);
+        m_stops0.set(low, high);
         m_stopsSet0 = true;
         break;
     case 1:
-        m_stops1.Set(low, high);
+        m_stops1.set(low, high);
         m_stopsSet1 = true;
         break;
     case 2:
-        m_stops2.Set(low, high);
+        m_stops2.set(low, high);
         m_stopsSet2 = true;
         break;
     default:
 #ifndef NDEBUG
         std::cerr << "Warning: LMotorJoint::setStops anum out of range, setting to 0\n";
 #endif
-        m_stops0.Set(low, high);
+        m_stops0.set(low, high);
         m_stopsSet0 = true;
         break;
     }

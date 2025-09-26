@@ -84,16 +84,16 @@ std::string *Joint::createFromAttributes()
 
     // these checks use the construction positions and rotations (body rotations are always zero at construction)
     pgd::Vector3 distanceVector = marker2Iterator->second->constructionPosition() - marker1Iterator->second->constructionPosition();
-    pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->quaternion(), marker2Iterator->second->quaternion());
+    pgd::Quaternion rotationQuaternion = pgd::findRotation(marker1Iterator->second->quaternion(), marker2Iterator->second->quaternion());
     double testEpsilon = std::numeric_limits<double>::epsilon() * 100.0;
-    if (distanceVector.Magnitude2() > testEpsilon)
+    if (distanceVector.magnitude2() > testEpsilon)
     {
-        setLastError(GSUtil::toString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.Magnitude2(), testEpsilon));
+        setLastError(GSUtil::toString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.magnitude2(), testEpsilon));
         return lastErrorPtr();
     }
-    if (pgd::QGetAngle(rotationQuaternion) > testEpsilon)
+    if (pgd::qGetAngle(rotationQuaternion) > testEpsilon)
     {
-        setLastError(GSUtil::toString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::QGetAngle(rotationQuaternion), testEpsilon));
+        setLastError(GSUtil::toString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::qGetAngle(rotationQuaternion), testEpsilon));
         return lastErrorPtr();
     }
 
@@ -156,7 +156,7 @@ pgd::Vector3 Joint::worldDistance() const
 
 pgd::Quaternion Joint::worldRotation() const
 {
-    pgd::Quaternion result = pgd::FindRotation(m_body1Marker->worldQuaternion(), m_body2Marker->worldQuaternion());
+    pgd::Quaternion result = pgd::findRotation(m_body1Marker->worldQuaternion(), m_body2Marker->worldQuaternion());
     // pgd::Quaternion result2 = pgd::FindRotation(m_body1Marker->GetBody()->GetQuaternion(), m_body2Marker->GetBody()->GetQuaternion()); // just checking that using the marker gives the same result as usning the body
     return result;
 }

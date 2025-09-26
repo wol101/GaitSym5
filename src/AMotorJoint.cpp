@@ -52,13 +52,13 @@ void AMotorJoint::getAxisAngle(double *xa, double *ya, double *za, double *angle
     {
         // angle is calculated with respect to body 1
         pgd::Quaternion body1ToBody2 = body2MarkerWorld * (~body1MarkerWorld);
-        pgd::MakeAxisAngleFromQ(body1ToBody2, xa, ya, za, angle);
+        pgd::makeAxisAngleFromQ(body1ToBody2, xa, ya, za, angle);
     }
     else
     {
         // angle is calculated with respect to body 2
         pgd::Quaternion body2ToBody1 = body1MarkerWorld * (~body2MarkerWorld);
-        pgd::MakeAxisAngleFromQ(body2ToBody1, xa, ya, za, angle);
+        pgd::makeAxisAngleFromQ(body2ToBody1, xa, ya, za, angle);
     }
 }
 
@@ -88,14 +88,14 @@ pgd::Vector3 AMotorJoint::eulerAngles() const
     {
         // angle is calculated with respect to body 1
         pgd::Quaternion body1ToBody2 = body2MarkerWorld * (~body1MarkerWorld);
-        pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(body1ToBody2);
+        pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(body1ToBody2);
         return euler;
     }
     else
     {
         // angle is calculated with respect to body 2
         pgd::Quaternion body2ToBody1 = body1MarkerWorld * (~body2MarkerWorld);
-        pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(body2ToBody1);
+        pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(body2ToBody1);
         return euler;
     }
 }
@@ -110,13 +110,13 @@ pgd::Vector3 AMotorJoint::eulerAngles(const Marker &basisMarker) const
     {
         // angle is calculated with respect to body 1
         pgd::Quaternion body1ToBody2 = body2MarkerWorld * (~body1MarkerWorld);
-        euler = pgd::MakeEulerAnglesFromQRadian(body1ToBody2, basisMarker.worldBasis());
+        euler = pgd::makeEulerAnglesFromQRadian(body1ToBody2, basisMarker.worldBasis());
     }
     else
     {
         // angle is calculated with respect to body 2
         pgd::Quaternion body2ToBody1 = body1MarkerWorld * (~body2MarkerWorld);
-        euler = pgd::MakeEulerAnglesFromQRadian(body2ToBody1, basisMarker.worldBasis());
+        euler = pgd::makeEulerAnglesFromQRadian(body2ToBody1, basisMarker.worldBasis());
     }
     return euler;
 }
@@ -134,7 +134,7 @@ void AMotorJoint::updateDynamicFriction()
 {
     pgd::Vector3 axis;
     double deltaAngle;
-    pgd::MakeAxisAngleFromQ(m_lastToCurrent, &axis.x, &axis.y, &axis.z, &deltaAngle);
+    pgd::makeAxisAngleFromQ(m_lastToCurrent, &axis.x, &axis.y, &axis.z, &deltaAngle);
     double angularVelocity = deltaAngle / simulation()->GetTimeIncrement();  // note this value will not necessarily have the correct sign
     double maxTorque = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(angularVelocity);
     setMaxTorque(maxTorque);
@@ -167,9 +167,9 @@ void AMotorJoint::setTargetAngles(double angle0, double angle1)
 {
     pgd::Vector3 ax,ay,az;
     body1Marker()->getWorldBasis(&ax, &ay, &az);
-    pgd::Quaternion r1 = pgd::MakeQFromAxisAngle(ax, angle0);
-    pgd::Quaternion r2 = pgd::MakeQFromAxisAngle(ay, angle1);
-    pgd::MakeAxisAngleFromQ(r2 * r1, &m_targetAxis.x, &m_targetAxis.y, &m_targetAxis.z, &m_targetAngle);
+    pgd::Quaternion r1 = pgd::makeQFromAxisAngle(ax, angle0);
+    pgd::Quaternion r2 = pgd::makeQFromAxisAngle(ay, angle1);
+    pgd::makeAxisAngleFromQ(r2 * r1, &m_targetAxis.x, &m_targetAxis.y, &m_targetAxis.z, &m_targetAngle);
     m_targetAnglesList.clear();
     m_targetAnglesList.push_back(angle0);
     m_targetAnglesList.push_back(angle1);
@@ -179,10 +179,10 @@ void AMotorJoint::setTargetAngles(double angle0, double angle1, double angle2)
 {
     pgd::Vector3 ax,ay,az;
     body1Marker()->getWorldBasis(&ax, &ay, &az);
-    pgd::Quaternion r1 = pgd::MakeQFromAxisAngle(ax, angle0);
-    pgd::Quaternion r2 = pgd::MakeQFromAxisAngle(ay, angle1);
-    pgd::Quaternion r3 = pgd::MakeQFromAxisAngle(az, angle2);
-    pgd::MakeAxisAngleFromQ(r3 * r2 * r1, &m_targetAxis.x, &m_targetAxis.y, &m_targetAxis.z, &m_targetAngle);
+    pgd::Quaternion r1 = pgd::makeQFromAxisAngle(ax, angle0);
+    pgd::Quaternion r2 = pgd::makeQFromAxisAngle(ay, angle1);
+    pgd::Quaternion r3 = pgd::makeQFromAxisAngle(az, angle2);
+    pgd::makeAxisAngleFromQ(r3 * r2 * r1, &m_targetAxis.x, &m_targetAxis.y, &m_targetAxis.z, &m_targetAngle);
     m_targetAnglesList.clear();
     m_targetAnglesList.push_back(angle0);
     m_targetAnglesList.push_back(angle1);
@@ -227,16 +227,16 @@ void AMotorJoint::update()
     m_lastToCurrent = m_currentQuaternion * (~m_lastQuaternion);
     m_lastQuaternion = m_currentQuaternion;
 
-    pgd::Quaternion targetQuaternion = pgd::MakeQFromAxisAngle(m_targetAxis, m_targetAngle);
+    pgd::Quaternion targetQuaternion = pgd::makeQFromAxisAngle(m_targetAxis, m_targetAngle);
     pgd::Quaternion currentToTarget = targetQuaternion * (~m_currentQuaternion);
-    pgd::MakeAxisAngleFromQ(currentToTarget, &m_deltaAxis.x, &m_deltaAxis.y, &m_deltaAxis.z, &m_deltaAngle);
+    pgd::makeAxisAngleFromQ(currentToTarget, &m_deltaAxis.x, &m_deltaAxis.y, &m_deltaAxis.z, &m_deltaAngle);
     if (body1())
     {
         pgd::Quaternion bodyRotation(body1()->quaternion());
-        m_deltaAxis = pgd::QVRotate(bodyRotation, m_deltaAxis);
+        m_deltaAxis = pgd::qVRotate(bodyRotation, m_deltaAxis);
     }
     if (m_firstTime) m_lastDeltaAxis = m_deltaAxis;
-    if (pgd::Dot(m_lastDeltaAxis, m_deltaAxis) < 0)
+    if (pgd::dot(m_lastDeltaAxis, m_deltaAxis) < 0)
     {
         m_deltaAxis = -m_deltaAxis;
         m_deltaAngle = -m_deltaAngle;
@@ -308,11 +308,11 @@ std::string AMotorJoint::dumpToString()
 
     pgd::Vector3 currentAxis;
     double currentAngle;
-    pgd::MakeAxisAngleFromQ(m_currentQuaternion, &currentAxis.x, &currentAxis.y, &currentAxis.z, &currentAngle);
+    pgd::makeAxisAngleFromQ(m_currentQuaternion, &currentAxis.x, &currentAxis.y, &currentAxis.z, &currentAngle);
 
     pgd::Vector3 lastToCurrentAxis;
     double deltaAngle;
-    pgd::MakeAxisAngleFromQ(m_lastToCurrent, &lastToCurrentAxis.x, &lastToCurrentAxis.y, &lastToCurrentAxis.z, &deltaAngle);
+    pgd::makeAxisAngleFromQ(m_lastToCurrent, &lastToCurrentAxis.x, &lastToCurrentAxis.y, &lastToCurrentAxis.z, &deltaAngle);
     double angularVelocity = deltaAngle / simulation()->GetTimeIncrement(); // note this value will not necessarily have the correct sign
 
     pgd::Vector3 axis;

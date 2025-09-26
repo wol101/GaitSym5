@@ -361,7 +361,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             {
             case DriverError:
                 errorVector = tegotaeDriver->localErrorVector();
-                m_errorScore = errorVector.Magnitude() - value;
+                m_errorScore = errorVector.magnitude() - value;
                 break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";

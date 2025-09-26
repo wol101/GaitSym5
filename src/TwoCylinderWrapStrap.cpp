@@ -349,7 +349,7 @@ void TwoCylinderWrapStrap::calculate()
     // the cylinder quaternion in this implementation is the quaternion that rotates the the x axis of the marker to the z axis
     pgd::Vector3 v2 = GetCylinder1Marker()->axis(Marker::Axis::X);
     pgd::Vector3 v1(0, 0, 1); // and this is the Z axis we need to rotate
-    pgd::Quaternion m_cylinderQuaternion = pgd::FindRotation(v1, v2);
+    pgd::Quaternion m_cylinderQuaternion = pgd::findRotation(v1, v2);
 
     // calculate some inverses
     pgd::Quaternion qCylinder1BodyInv = ~qCylinder1Body; // we only need qCylinder1Body because the m_CylinderQuaternion is relative to body 1

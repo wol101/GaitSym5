@@ -390,7 +390,7 @@ void FixedJoint::setStressOrientation(double q0, double q1, double q2, double q3
     m_stressOrientation.x = q1;
     m_stressOrientation.y = q2;
     m_stressOrientation.z = q3;
-    m_stressOrientation.Normalize(); // this is the safest option
+    m_stressOrientation.normalize(); // this is the safest option
 }
 
 

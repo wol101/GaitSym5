@@ -417,9 +417,9 @@ std::string *MarkerEllipseDriver::createFromAttributes()
         return lastErrorPtr();
     }
     pgd::Vector4 xrV, yrV;
-    if (xr.size() == 1) xrV.Set(xr[0], xr[0], xr[0], xr[0]);
+    if (xr.size() == 1) xrV.set(xr[0], xr[0], xr[0], xr[0]);
     else for (size_t i = 0; i < xr.size(); i++) { xrV[i] = xr[i]; }
-    if (yr.size() == 1) yrV.Set(yr[0], yr[0], yr[0], yr[0]);
+    if (yr.size() == 1) yrV.set(yr[0], yr[0], yr[0], yr[0]);
     else for (size_t i = 0; i < yr.size(); i++) { yrV[i] = yr[i]; }
     Initialise(omega, sigma, xrV, yrV, phi, markerEllipseCentre, markerEllipseRim, phaseControlInput);
 

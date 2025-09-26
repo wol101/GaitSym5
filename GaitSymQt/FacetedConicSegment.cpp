@@ -311,13 +311,13 @@ void FacetedConicSegment::WritePOVRay(std::ostringstream &theString)
     if (m_Length / ((m_R1 + m_R2) / 2) < 0.001) drawDisc = true;
 
     pgd::Vector3 prel, p;
-    prel.Set(m_OX, m_OY, m_OZ);
+    prel.set(m_OX, m_OY, m_OZ);
     p = GetDisplayRotation() * prel;
     double bpx = p[0] + GetDisplayPosition()[0];
     double bpy = p[1] + GetDisplayPosition()[1];
     double bpz = p[2] + GetDisplayPosition()[2];
 
-    prel.Set(m_OX, m_OY, m_OZ + m_Length);
+    prel.set(m_OX, m_OY, m_OZ + m_Length);
     p = GetDisplayRotation() * prel;
     double cpx = p[0] + GetDisplayPosition()[0];
     double cpy = p[1] + GetDisplayPosition()[1];

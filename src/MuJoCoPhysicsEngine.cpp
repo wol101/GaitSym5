@@ -553,7 +553,7 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
             }
             pgd::Quaternion rotation = joint->worldRotation();
             pgd::Matrix3x3 basis = joint->body1Marker()->worldBasis();
-            pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
+            pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQRadian(rotation, basis);
             pgd::Vector3 angularVelocity = joint->body1Marker()->vector(joint->worldAngularVelocity());
             m_mjData->qpos[jnt_qposadr] = eulerAngles.x;
             m_mjData->qvel[jnt_dofadr] = angularVelocity.x;

@@ -1059,7 +1059,7 @@ void FacetedObject::WritePOVRay(std::ostringstream &theString)
         theString << "    triangle {\n";
         for (j = 0; j < 3; j++)
         {
-            prel.Set(m_vertexList[i * 9 + j * 3], m_vertexList[i * 9 + j * 3 + 1], m_vertexList[i * 9 + j * 3 + 2]);
+            prel.set(m_vertexList[i * 9 + j * 3], m_vertexList[i * 9 + j * 3 + 1], m_vertexList[i * 9 + j * 3 + 2]);
             p = m_displayRotation * prel;
             result = p + m_displayPosition;
             result[0] = p[0] + m_displayPosition[0];
@@ -1457,20 +1457,20 @@ void FacetedObject::Rotate(double x, double y, double z, double angleDegrees)
 {
     Q_ASSERT_X(x != 0 || y != 0 || z != 0, "Axis must be non-zero", "FacetedObject::Rotate");
     if (angleDegrees == 0) return;
-    pgd::Quaternion q = pgd::MakeQFromAxisAngle(x, y, z, pgd::DegToRad(angleDegrees));
+    pgd::Quaternion q = pgd::makeQFromAxisAngle(x, y, z, pgd::DegToRad(angleDegrees));
     pgd::Vector3 v;
     for (size_t i = 0; i < m_vertexList.size() / 3; i++)
     {
-        v = pgd::QVRotate(q, pgd::Vector3(m_vertexList[i * 3], m_vertexList[i * 3 + 1], m_vertexList[i * 3 + 2]));
+        v = pgd::qVRotate(q, pgd::Vector3(m_vertexList[i * 3], m_vertexList[i * 3 + 1], m_vertexList[i * 3 + 2]));
         m_vertexList[i * 3] = v.x;
         m_vertexList[i * 3 + 1] = v.y;
         m_vertexList[i * 3 + 2] = v.z;
     }
-    v = pgd::QVRotate(q, m_lowerBound);
+    v = pgd::qVRotate(q, m_lowerBound);
     m_lowerBound[0] = v.x;
     m_lowerBound[1] = v.y;
     m_lowerBound[2] = v.z;
-    v = pgd::QVRotate(q, m_upperBound);
+    v = pgd::qVRotate(q, m_upperBound);
     m_upperBound[0] = v.x;
     m_upperBound[1] = v.y;
     m_upperBound[2] = v.z;
@@ -1808,7 +1808,7 @@ void FacetedObject::CalculateMassProperties(double density, bool clockwise, cons
         pgd::Vector3 n, a, b;
         a = v[1] - v[0];
         b = v[2] - v[0];
-        n = pgd::Cross(b, a);
+        n = pgd::cross(b, a);
         nx = std::fabs(n[0]);
         ny = std::fabs(n[1]);
         nz = std::fabs(n[2]);
@@ -1916,7 +1916,7 @@ void FacetedObject::CalculateMassProperties(double density, bool clockwise, cons
                     Pabb /= -60.0;
                 }
 
-                w = - pgd::Dot(n, v[0]);
+                w = - pgd::dot(n, v[0]);
 
                 k1 = 1 / n[C];
                 k2 = k1 * k1;
@@ -1982,7 +1982,7 @@ void FacetedObject::CalculateMassProperties(double density, bool clockwise, cons
 //    m->_I(1,2) = - density * TP[1];
 //    m->_I(2,0) = - density * TP[2];
 //    m->_I(0,2) = - density * TP[2];
-    inertialTensor->Set( density * (T2[1] + T2[2]), -density * TP[0],           -density * TP[2],
+    inertialTensor->set( density * (T2[1] + T2[2]), -density * TP[0],           -density * TP[2],
                         -density * TP[0],            density * (T2[2] + T2[0]), -density * TP[1],
                         -density * TP[2],           -density * TP[1],            density * (T2[0] + T2[1]));
     centreOfMass->x = T1[0] / T0;
@@ -2216,21 +2216,21 @@ bool FacetedObject::RayIntersectsTriangle(const pgd::Vector3 &rayOrigin,
     double a,f,u,v;
     edge1 = vertex1 - vertex0;
     edge2 = vertex2 - vertex0;
-    h = rayVector.Cross(edge2);
-    a = edge1.Dot(h);
+    h = rayVector.cross(edge2);
+    a = edge1.dot(h);
     if (a > -EPSILON && a < EPSILON)
         return false;    // This ray is parallel to this triangle.
     f = 1.0/a;
     s = rayOrigin - vertex0;
-    u = f * s.Dot(h);
+    u = f * s.dot(h);
     if (u < 0.0 || u > 1.0)
         return false;
-    q = s.Cross(edge1);
-    v = f * rayVector.Dot(q);
+    q = s.cross(edge1);
+    v = f * rayVector.dot(q);
     if (v < 0.0 || u + v > 1.0)
         return false;
     // At this stage we can compute t to find out where the intersection point is on the line.
-    double t = f * edge2.Dot(q);
+    double t = f * edge2.dot(q);
     if (t > EPSILON && t < 1/EPSILON) // ray intersection
     {
         *outIntersectionPoint = rayOrigin + rayVector * t;
@@ -2414,7 +2414,7 @@ void FacetedObject::SetDisplayScale(const pgd::Vector3 &displayScale)
 void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 &R)
 {
     m_displayRotation = R;
-    m_displayQuaternion = pgd::MakeQfromM(R);
+    m_displayQuaternion = pgd::makeQfromM(R);
     m_modelValid = false;
 }
 
@@ -2422,7 +2422,7 @@ void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 &R)
 void FacetedObject::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
     m_displayQuaternion = q;
-    m_displayRotation = pgd::MakeMFromQ(q);
+    m_displayRotation = pgd::makeMFromQ(q);
     m_modelValid = false;
 }
 

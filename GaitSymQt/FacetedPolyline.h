@@ -28,7 +28,7 @@ public:
 
     void Normalize()
     {
-        direction.Normalize();
+        direction.normalize();
     }
 
     pgd::Vector3 origin;

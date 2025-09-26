@@ -43,7 +43,7 @@ void ThreeHingeJointDriver::update()
     // set the desired distance
     pgd::Vector3 proximalJointPositionWorld = m_proximalJoint->body1Marker()->worldPosition();
     pgd::Vector3 targetPositionWorld = m_targetMarker->worldPosition();
-    m_desiredLength = (targetPositionWorld - proximalJointPositionWorld).Magnitude();
+    m_desiredLength = (targetPositionWorld - proximalJointPositionWorld).magnitude();
 
     // now find the zero of the CalculateLengthDifference to get the angle fraction that achieves this length
     m_angleFraction = GSUtil::zeroin(0, 1, &CalculateLengthDifference, this, m_tolerance);
@@ -59,9 +59,9 @@ void ThreeHingeJointDriver::update()
     pgd::Vector3 targetVector = m_targetMarker->position() - m_proximalJoint->body1Marker()->position(); // these will both be on the same body
     // need to find the rotations about m_proximalJoint->body1Marker()->GetAxis(Marker::X) and m_proximalJoint->body1Marker()->GetAxis(Marker::Y)
     // that rotate m_distalBodyMarkerPositionWRTProxJoint to targetVector
-    targetVector.Normalize();
+    targetVector.normalize();
     pgd::Vector3 startVector = m_distalBodyMarkerPositionWRTProxJoint;
-    startVector.Normalize();
+    startVector.normalize();
 
     // start by projecting the two vectors onto a plane defined by the first axis as a normal
     // from https://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/index.htm
@@ -74,9 +74,9 @@ void ThreeHingeJointDriver::update()
     // which we then normalise anyway
     pgd::Vector3 normal1 = m_proximalJoint->body1Marker()->axis(Marker::X);
     pgd::Vector3 startDirection1 = normal1 ^ (startVector ^ normal1);
-    startDirection1.Normalize();
+    startDirection1.normalize();
     pgd::Vector3 endDirection1 = normal1 ^ (targetVector ^ normal1);
-    endDirection1.Normalize();
+    endDirection1.normalize();
     // now we can find the angle in the plane using
     // dot = x1*x2 + y1*y2 + z1*z2
     // det = x1*y2*zn + x2*yn*z1 + xn*y1*z2 - z1*y2*xn - z2*yn*x1 - zn*y1*x2
@@ -85,19 +85,19 @@ void ThreeHingeJointDriver::update()
     double dot = startDirection1 * endDirection1;
     double det = normal1 * (startDirection1 ^ endDirection1);
     double angle1 = atan2(det, dot);
-    pgd::Quaternion q1 = pgd::MakeQFromAxisAngle(normal1, angle1);
+    pgd::Quaternion q1 = pgd::makeQFromAxisAngle(normal1, angle1);
 
     // now work on the second rotation
-    pgd::Vector3 rotatedStartVector = pgd::QVRotate(q1, startVector);
+    pgd::Vector3 rotatedStartVector = pgd::qVRotate(q1, startVector);
 #ifdef USE_UNROTATED_SECOND_AXIS
     pgd::Vector3 normal2 =m_proximalJoint->body1Marker()->GetAxis(Marker::Y);
 #else // using the rotated seconds axis is what is required to mimic a universal joint
-    pgd::Vector3 normal2 = pgd::QVRotate(q1, m_proximalJoint->body1Marker()->axis(Marker::Y));
+    pgd::Vector3 normal2 = pgd::qVRotate(q1, m_proximalJoint->body1Marker()->axis(Marker::Y));
 #endif
     pgd::Vector3 startDirection2 = normal2 ^ (rotatedStartVector ^ normal2);
-    startDirection2.Normalize();
+    startDirection2.normalize();
     pgd::Vector3 endDirection2 = normal2 ^ (targetVector ^ normal2);
-    endDirection2.Normalize();
+    endDirection2.normalize();
     dot = startDirection2 * endDirection2;
     det = normal2 * (startDirection2 ^ endDirection2);
     double angle2 = atan2(det, dot);
@@ -124,7 +124,7 @@ void ThreeHingeJointDriver::update()
                 m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
-            m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
+            m_proximalJointRotation = pgd::makeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
             break;
         }
 
@@ -138,10 +138,10 @@ void ThreeHingeJointDriver::update()
                 m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
-            m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
+            m_proximalJointRotation = pgd::makeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
             m_proximalJointAxis2 = normal2;
             m_proximalJointAngle2 = angle2;
-            m_proximalJointRotation =  pgd::MakeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
+            m_proximalJointRotation =  pgd::makeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
             break;
         }
 
@@ -155,10 +155,10 @@ void ThreeHingeJointDriver::update()
                 m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
-            m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
+            m_proximalJointRotation = pgd::makeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
             m_proximalJointAxis2 = normal2;
             m_proximalJointAngle2 = angle2;
-            m_proximalJointRotation =  pgd::MakeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
+            m_proximalJointRotation =  pgd::makeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
             break;
         }
 
@@ -337,21 +337,21 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
         pgd::Quaternion body2ToBody1 = body1MarkerWorld * (~body2MarkerWorld);
         R = pgd::Matrix3x3(body2ToBody1);
     }
-    pgd::Matrix3x3 A = pgd::MakeMFromQ(basisMarker.worldQuaternion());
-    pgd::Matrix3x3 At = A.Transpose();
+    pgd::Matrix3x3 A = pgd::makeMFromQ(basisMarker.worldQuaternion());
+    pgd::Matrix3x3 At = A.transpose();
     pgd::Matrix3x3 Rp = At * R * A;
-    pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(pgd::MakeQfromM(Rp));
-    pgd::Matrix3x3 Xp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(1, 0, 0, (euler.x), true)) * At;
-    pgd::Matrix3x3 Yp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 1, 0, (euler.y), true)) * At;
-    pgd::Matrix3x3 Zp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 0, 1, (euler.z), true)) * At;
-    pgd::Quaternion Xpq = pgd::MakeQfromM(Xp);
-    pgd::Quaternion Ypq = pgd::MakeQfromM(Yp);
-    pgd::Quaternion Zpq = pgd::MakeQfromM(Zp);
+    pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(pgd::makeQfromM(Rp));
+    pgd::Matrix3x3 Xp = A * pgd::makeMFromQ(pgd::makeQFromAxisAngle(1, 0, 0, (euler.x), true)) * At;
+    pgd::Matrix3x3 Yp = A * pgd::makeMFromQ(pgd::makeQFromAxisAngle(0, 1, 0, (euler.y), true)) * At;
+    pgd::Matrix3x3 Zp = A * pgd::makeMFromQ(pgd::makeQFromAxisAngle(0, 0, 1, (euler.z), true)) * At;
+    pgd::Quaternion Xpq = pgd::makeQfromM(Xp);
+    pgd::Quaternion Ypq = pgd::makeQfromM(Yp);
+    pgd::Quaternion Zpq = pgd::makeQfromM(Zp);
 
     // we can't just convert the quaternions into axis angle to get the angles because the axes might be reversed, or might be arbitrary if close to zero
-    double xMag = Xpq.GetVector().Magnitude();
-    double yMag = Ypq.GetVector().Magnitude();
-    double zMag = Zpq.GetVector().Magnitude();
+    double xMag = Xpq.vector().magnitude();
+    double yMag = Ypq.vector().magnitude();
+    double zMag = Zpq.vector().magnitude();
     double dotX = 0, dotY = 0, dotZ = 0;
     pgd::Vector3 axisX, axisY, axisZ;
     double angle0 = 0, angle1 = 0, angle2 = 0;
@@ -364,8 +364,8 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     {
         angle0 = 2 * std::acos(Xpq.n); // acos produces a value from 0 to pi, so this angle is 0 to 2*pi
         if (angle0 > M_PI) angle0 -= 2 * M_PI; // so this means the angle is restricted to the more usual -pi to pi
-        axisX = Xpq.GetVector() / xMag;
-        dotX =pgd::Dot(axisX, pgd::Vector3(A.e11, A.e21, A.e31));
+        axisX = Xpq.vector() / xMag;
+        dotX =pgd::dot(axisX, pgd::Vector3(A.e11, A.e21, A.e31));
         if (dotX < 0)
             angle0 = - angle0;
     }
@@ -377,8 +377,8 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     {
         angle1 = 2 * std::acos(Ypq.n);
         if (angle1 > M_PI) angle1 -= 2 * M_PI;
-        axisY = Ypq.GetVector() / yMag;
-        dotY =pgd::Dot(axisY, pgd::Vector3(A.e12, A.e22, A.e32));
+        axisY = Ypq.vector() / yMag;
+        dotY =pgd::dot(axisY, pgd::Vector3(A.e12, A.e22, A.e32));
         if (dotY < 0)
             angle1 = - angle1;
     }
@@ -390,8 +390,8 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     {
         angle2 = 2 * std::acos(Zpq.n);
         if (angle2 > M_PI) angle2 -= 2 * M_PI;
-        axisZ = Zpq.GetVector() / zMag;
-        dotZ =pgd::Dot(axisZ, pgd::Vector3(A.e13, A.e23, A.e33));
+        axisZ = Zpq.vector() / zMag;
+        dotZ =pgd::dot(axisZ, pgd::Vector3(A.e13, A.e23, A.e33));
         if (dotZ < 0)
             angle2 = - angle2;
     }
@@ -422,14 +422,14 @@ void ThreeHingeJointDriver::CalculateLength(double angleFraction)
     // now calculate the rotations at the joints in a consistent coordinate frame (and this can be the local frame because at contruction nothing is rotated)
     m_intermediateJointAngle = std::pow(angleFraction, m_intermediateJointAngleGamma) * (m_intermediateJointRange[1] - m_intermediateJointRange[0]) + m_intermediateJointRange[0];
     m_intermediateJointAxis = m_intermediateJoint->body1Marker()->axis(Marker::X);
-    m_intermediateJointRotation = pgd::MakeQFromAxisAngle(m_intermediateJointAxis, -m_intermediateJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
+    m_intermediateJointRotation = pgd::makeQFromAxisAngle(m_intermediateJointAxis, -m_intermediateJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
     m_distalJointAngle = std::pow(angleFraction, m_distalJointAngleGamma) * (m_distalJointRange[1] - m_distalJointRange[0]) + m_distalJointRange[0];
     m_distalJointAxis = m_distalJoint->body1Marker()->axis(Marker::X);
-    m_distalJointRotation = pgd::MakeQFromAxisAngle(m_distalJointAxis, -m_distalJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
+    m_distalJointRotation = pgd::makeQFromAxisAngle(m_distalJointAxis, -m_distalJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
 
     // now sum the vectors to get the position of the end point
-    m_distalBodyMarkerPositionWRTProxJoint = m_proximalBodyVector + pgd::QVRotate(m_intermediateJointRotation, m_intermediateBodyVector) + pgd::QVRotate(m_distalJointRotation * m_intermediateJointRotation, m_distalBodyVector);
-    m_actualLength = m_distalBodyMarkerPositionWRTProxJoint.Magnitude();
+    m_distalBodyMarkerPositionWRTProxJoint = m_proximalBodyVector + pgd::qVRotate(m_intermediateJointRotation, m_intermediateBodyVector) + pgd::qVRotate(m_distalJointRotation * m_intermediateJointRotation, m_distalBodyVector);
+    m_actualLength = m_distalBodyMarkerPositionWRTProxJoint.magnitude();
 //    std::cerr << "angleFraction " << angleFraction << " actualLength " << m_actualLength << "\n";
 }
 
@@ -521,7 +521,7 @@ std::string ThreeHingeJointDriver::dumpToString()
     pgd::Vector3 intermediateJointMarker1Position = m_intermediateJointMarker1->worldPosition();
     pgd::Vector3 distalJointMarker1Position = m_distalJointMarker1->worldPosition();
     pgd::Vector3 distalBodyMarkerLocalPosition = m_distalBodyMarkerLocal->worldPosition();
-    double markerDistance = (m_distalBodyMarker->worldPosition() - m_proximalJoint->body1Marker()->worldPosition()).Magnitude();
+    double markerDistance = (m_distalBodyMarker->worldPosition() - m_proximalJoint->body1Marker()->worldPosition()).magnitude();
     s += dumpHelper({simulation()->GetTime(), markerDistance, m_desiredLength, m_angleFraction, m_proximalAngleFraction1,
                      m_proximalJointAngle1, m_proximalJointAngle2, m_intermediateJointAngle, m_distalJointAngle,
                      proximalJointMarker1Position.x, proximalJointMarker1Position.y, proximalJointMarker1Position.z,
