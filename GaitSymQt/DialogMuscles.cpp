@@ -151,14 +151,14 @@ void DialogMuscles::accept() // this catches OK and return/enter
         strap =  std::make_unique<GaitSym::TwoCylinderWrapStrap>();
         GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
         GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetOrigin(originMarker);
-        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetInsertion(insertionMarker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->setOrigin(originMarker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->setInsertion(insertionMarker);
         GaitSym::Marker *cylinder1Marker = markerList->at(ui->comboBox2Cylinder1Marker->currentText().toStdString()).get();
-        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder1(cylinder1Marker);
-        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder1Radius(ui->lineEdit2Cylinder1Radius->value());
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->setCylinder1Marker(cylinder1Marker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->setCylinder1Radius(ui->lineEdit2Cylinder1Radius->value());
         GaitSym::Marker *cylinder2Marker = markerList->at(ui->comboBox2Cylinder2Marker->currentText().toStdString()).get();
-        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder2(cylinder2Marker);
-        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->SetCylinder2Radius(ui->lineEdit2Cylinder2Radius->value());
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->setCylinder2Marker(cylinder2Marker);
+        reinterpret_cast<GaitSym::TwoCylinderWrapStrap *>(strap.get())->setCylinder2Radius(ui->lineEdit2Cylinder2Radius->value());
     }
     Q_ASSERT_X(strap, "DialogMuscles::accept", "strap undefined");
     strap->setSimulation(m_simulation);

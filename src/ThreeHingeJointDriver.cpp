@@ -758,10 +758,10 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
 
         if (TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(twoCylinderWrapStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(twoCylinderWrapStrap->GetInsertionMarker());
-            Marker *cylinder1Marker = createLocalMarkerCopy(twoCylinderWrapStrap->GetCylinder1Marker());
-            Marker *cylinder2Marker = createLocalMarkerCopy(twoCylinderWrapStrap->GetCylinder2Marker());
+            Marker *originMarker = createLocalMarkerCopy(twoCylinderWrapStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(twoCylinderWrapStrap->insertionMarker());
+            Marker *cylinder1Marker = createLocalMarkerCopy(twoCylinderWrapStrap->cylinder1Marker());
+            Marker *cylinder2Marker = createLocalMarkerCopy(twoCylinderWrapStrap->cylinder2Marker());
             if (!originMarker || !insertionMarker || !cylinder1Marker || !cylinder2Marker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -769,12 +769,12 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<TwoCylinderWrapStrap> strap = std::make_unique<TwoCylinderWrapStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
-            strap->SetCylinder1(cylinder1Marker);
-            strap->SetCylinder2(cylinder2Marker);
-            strap->SetCylinder1Radius(twoCylinderWrapStrap->Cylinder1Radius());
-            strap->SetCylinder2Radius(twoCylinderWrapStrap->Cylinder2Radius());
+            strap->setOrigin(originMarker);
+            strap->setInsertion(insertionMarker);
+            strap->setCylinder1Marker(cylinder1Marker);
+            strap->setCylinder2Marker(cylinder2Marker);
+            strap->setCylinder1Radius(twoCylinderWrapStrap->cylinder1Radius());
+            strap->setCylinder2Radius(twoCylinderWrapStrap->cylinder2Radius());
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
