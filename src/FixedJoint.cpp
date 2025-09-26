@@ -734,12 +734,12 @@ void FixedJoint::CalculatePixmap()
                         case Butterworth2ndOrderLowPass:
                             if (m_lowRange != m_highRange)
                             {
-                                v = (m_filteredStress[filteredStressIndex]->Output() - m_lowRange) / (m_highRange - m_lowRange);
+                                v = (m_filteredStress[filteredStressIndex]->output() - m_lowRange) / (m_highRange - m_lowRange);
                             }
                             else
                             {
                                 if (m_minStress != m_maxStress)
-                                    v = (m_filteredStress[filteredStressIndex]->Output() - m_minStress) / (m_maxStress - m_minStress);
+                                    v = (m_filteredStress[filteredStressIndex]->output() - m_minStress) / (m_maxStress - m_minStress);
                                 else
                                     v = 0;
                             }

@@ -154,9 +154,9 @@ void MarkerEllipseDriver::Update()
 
 int MarkerEllipseDriver::detectSignChange(double value)
 {
-    double lastValue = m_butterworthFilter.Output();
-    m_butterworthFilter.AddNewSample(value);
-    double delta = m_butterworthFilter.Output() - lastValue;
+    double lastValue = m_butterworthFilter.output();
+    m_butterworthFilter.addNewSample(value);
+    double delta = m_butterworthFilter.output() - lastValue;
 //    std::cerr << "delta = " << delta << "\n";
     if (m_phaseStateIncreasing && delta > 0)
     {
@@ -424,7 +424,7 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     Initialise(omega, sigma, XRV, YRV, phi, markerEllipseCentre, markerEllipseRim, phaseControlInput);
 
     if (findAttribute("LowPassFrequency"s, &buf) == nullptr) return lastErrorPtr();
-    m_butterworthFilter.CalculateCoefficients(GSUtil::Double(buf), 1.0 / simulation()->GetTimeIncrement());
+    m_butterworthFilter.calculateCoefficients(GSUtil::Double(buf), 1.0 / simulation()->GetTimeIncrement());
     if (findAttribute("PhaseOffset"s, &buf) == nullptr) return lastErrorPtr();
     m_phaseOffset = GSUtil::Double(buf);
     if (findAttribute("MaxPhiDot"s, &buf) == nullptr) return lastErrorPtr();
