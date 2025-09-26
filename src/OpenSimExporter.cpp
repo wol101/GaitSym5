@@ -680,7 +680,7 @@ void OpenSimExporter::createForceSet()
             {
                 xmlTagAndContent(&m_xmlString, "max_isometric_force"s, GSUtil::toString(maMuscle->pca() * maMuscle->forcePerUnitArea()));
                 xmlTagAndContent(&m_xmlString, "optimal_fiber_length"s, GSUtil::toString(maMuscle->fibreLength()));
-                double tendonLength = strap->Length() - maMuscle->fibreLength();
+                double tendonLength = strap->length() - maMuscle->fibreLength();
                 xmlTagAndContent(&m_xmlString, "tendon_slack_length"s, GSUtil::toString(std::max(tendonLength, 0.001)));
                 xmlTagAndContent(&m_xmlString, "pennation_angle_at_optimal"s, "0"s);
                 xmlTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::toString(maMuscle->vMaxFactor()));

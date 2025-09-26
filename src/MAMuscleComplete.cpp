@@ -127,7 +127,7 @@ void MAMuscleComplete::setActivationKinetics(bool activationKinetics,
 void MAMuscleComplete::lateInitialisation()
 {
     Muscle::lateInitialisation();
-    m_params.len = strap()->Length();
+    m_params.len = strap()->length();
 
     // lastlpe perhaps not set to anything useful
 
@@ -221,8 +221,8 @@ void MAMuscleComplete::updateActivation()
         m_params.alpha = m_stim;
     }
 
-    m_params.len = strap()->Length();
-    m_params.v = strap()->Velocity();
+    m_params.len = strap()->length();
+    m_params.v = strap()->velocity();
 
     double minlpe = m_params.spe - (m_params.spe * m_params.width / 2);
     if (minlpe < 0) minlpe = 0;

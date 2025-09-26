@@ -31,15 +31,15 @@ void NPointStrap::setOrigin(Marker *originMarker)
 {
     m_originMarker = originMarker;
 //    this->SetOrigin(originMarker->GetBody(), originMarker->GetPosition().data());
-    if (GetPointForceList()->size() == 0)
+    if (pointForceList()->size() == 0)
     {
         std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
         origin->body = m_originMarker->body();
-        GetPointForceList()->push_back(std::move(origin));
+        pointForceList()->push_back(std::move(origin));
     }
     else
     {
-        GetPointForceList()->at(0)->body = m_originMarker->body();
+        pointForceList()->at(0)->body = m_originMarker->body();
     }
 }
 
@@ -47,15 +47,15 @@ void NPointStrap::setInsertion(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
 //    this->SetInsertion(insertionMarker->GetBody(), insertionMarker->GetPosition().data());
-    if (GetPointForceList()->size() <= 1)
+    if (pointForceList()->size() <= 1)
     {
         std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
         insertion->body = m_insertionMarker->body();
-        GetPointForceList()->push_back(std::move(insertion));
+        pointForceList()->push_back(std::move(insertion));
     }
     else
     {
-        GetPointForceList()->at(1)->body =  m_insertionMarker->body();
+        pointForceList()->at(1)->body =  m_insertionMarker->body();
     }
 }
 
@@ -64,7 +64,7 @@ void NPointStrap::setViaPoints(std::vector<Marker *> *viaPointMarkerList)
     m_viaBodyList.clear();
     m_viaPointList.clear();
     m_viaPointMarkerList.clear();
-    GetPointForceList()->reserve(viaPointMarkerList->size() + 2);
+    pointForceList()->reserve(viaPointMarkerList->size() + 2);
     m_viaBodyList.reserve(viaPointMarkerList->size());
     m_viaPointList.reserve(viaPointMarkerList->size());
     m_viaPointMarkerList.reserve(viaPointMarkerList->size());
@@ -75,7 +75,7 @@ void NPointStrap::setViaPoints(std::vector<Marker *> *viaPointMarkerList)
         m_viaBodyList.push_back(viaPointForce->body);
         m_viaPointList.push_back(viaPointMarkerList->at(i)->position());
         m_viaPointMarkerList.push_back(viaPointMarkerList->at(i));
-        GetPointForceList()->push_back(std::move(viaPointForce));
+        pointForceList()->push_back(std::move(viaPointForce));
     }
 }
 
@@ -106,8 +106,8 @@ Marker *NPointStrap::insertionMarker() const
 
 void NPointStrap::calculate()
 {
-    PointForce *theOrigin = (*GetPointForceList())[0].get();
-    PointForce *theInsertion = (*GetPointForceList())[1].get();
+    PointForce *theOrigin = (*pointForceList())[0].get();
+    PointForce *theInsertion = (*pointForceList())[1].get();
     unsigned int i;
     pgd::Vector3 v;
 
@@ -123,13 +123,13 @@ void NPointStrap::calculate()
     for (i = 0; i < m_viaPointMarkerList.size(); i++)
     {
         v = m_viaPointMarkerList[i]->worldPosition();
-        (*GetPointForceList())[i + 2]->point[0] = v.x;
-        (*GetPointForceList())[i + 2]->point[1] = v.y;
-        (*GetPointForceList())[i + 2]->point[2] = v.z;
+        (*pointForceList())[i + 2]->point[0] = v.x;
+        (*pointForceList())[i + 2]->point[1] = v.y;
+        (*pointForceList())[i + 2]->point[2] = v.z;
     }
 
-    std::unique_ptr<unsigned int[]> mapping = std::make_unique<unsigned int[]>(GetPointForceList()->size());
-    for (i = 0; i < GetPointForceList()->size(); i++)
+    std::unique_ptr<unsigned int[]> mapping = std::make_unique<unsigned int[]>(pointForceList()->size());
+    for (i = 0; i < pointForceList()->size(); i++)
     {
         if (i == 0)
         {
@@ -137,7 +137,7 @@ void NPointStrap::calculate()
         }
         else
         {
-            if (i == GetPointForceList()->size() - 1) mapping[i] = 1;
+            if (i == pointForceList()->size() - 1) mapping[i] = 1;
             else mapping[i] = i + 1;
         }
     }
@@ -145,56 +145,56 @@ void NPointStrap::calculate()
     pgd::Vector3 line, line2;
     double totalLength = 0;
     double len;
-    for (i = 0; i < GetPointForceList()->size(); i++)
+    for (i = 0; i < pointForceList()->size(); i++)
     {
         if (i == 0)
         {
-            line.x = (*GetPointForceList())[mapping[i + 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
-            line.y = (*GetPointForceList())[mapping[i + 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
-            line.z = (*GetPointForceList())[mapping[i + 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
+            line.x = (*pointForceList())[mapping[i + 1]]->point[0] - (*pointForceList())[mapping[i]]->point[0];
+            line.y = (*pointForceList())[mapping[i + 1]]->point[1] - (*pointForceList())[mapping[i]]->point[1];
+            line.z = (*pointForceList())[mapping[i + 1]]->point[2] - (*pointForceList())[mapping[i]]->point[2];
             len = line.magnitude();
             totalLength += len;
             line /= len;
         }
-        else if (i == GetPointForceList()->size() - 1)
+        else if (i == pointForceList()->size() - 1)
         {
-            line.x = (*GetPointForceList())[mapping[i - 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
-            line.y = (*GetPointForceList())[mapping[i - 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
-            line.z = (*GetPointForceList())[mapping[i - 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
+            line.x = (*pointForceList())[mapping[i - 1]]->point[0] - (*pointForceList())[mapping[i]]->point[0];
+            line.y = (*pointForceList())[mapping[i - 1]]->point[1] - (*pointForceList())[mapping[i]]->point[1];
+            line.z = (*pointForceList())[mapping[i - 1]]->point[2] - (*pointForceList())[mapping[i]]->point[2];
             line.normalize();
         }
         else
         {
-            line.x = (*GetPointForceList())[mapping[i + 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
-            line.y = (*GetPointForceList())[mapping[i + 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
-            line.z = (*GetPointForceList())[mapping[i + 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
+            line.x = (*pointForceList())[mapping[i + 1]]->point[0] - (*pointForceList())[mapping[i]]->point[0];
+            line.y = (*pointForceList())[mapping[i + 1]]->point[1] - (*pointForceList())[mapping[i]]->point[1];
+            line.z = (*pointForceList())[mapping[i + 1]]->point[2] - (*pointForceList())[mapping[i]]->point[2];
             len = line.magnitude();
             totalLength += len;
             line /= len;
-            line2.x = (*GetPointForceList())[mapping[i - 1]]->point[0] - (*GetPointForceList())[mapping[i]]->point[0];
-            line2.y = (*GetPointForceList())[mapping[i - 1]]->point[1] - (*GetPointForceList())[mapping[i]]->point[1];
-            line2.z = (*GetPointForceList())[mapping[i - 1]]->point[2] - (*GetPointForceList())[mapping[i]]->point[2];
+            line2.x = (*pointForceList())[mapping[i - 1]]->point[0] - (*pointForceList())[mapping[i]]->point[0];
+            line2.y = (*pointForceList())[mapping[i - 1]]->point[1] - (*pointForceList())[mapping[i]]->point[1];
+            line2.z = (*pointForceList())[mapping[i - 1]]->point[2] - (*pointForceList())[mapping[i]]->point[2];
             line2.normalize();
             line += line2;
         }
 
-        (*GetPointForceList())[mapping[i]]->vector[0] = line.x;
-        (*GetPointForceList())[mapping[i]]->vector[1] = line.y;
-        (*GetPointForceList())[mapping[i]]->vector[2] = line.z;
+        (*pointForceList())[mapping[i]]->vector[0] = line.x;
+        (*pointForceList())[mapping[i]]->vector[1] = line.y;
+        (*pointForceList())[mapping[i]]->vector[2] = line.z;
     }
 
-    if (Length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((totalLength - Length()) / simulation()->global()->stepSize());
+    if (length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((totalLength - length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(totalLength);
 
     // check that we don't have any non-normal values for directions which can occur if points co-locate
-    for (size_t i = 0; i < GetPointForceList()->size(); i++)
+    for (size_t i = 0; i < pointForceList()->size(); i++)
     {
-        if ((std::isfinite((*GetPointForceList())[i]->vector[0]) && std::isfinite((*GetPointForceList())[i]->vector[1]) && std::isfinite((*GetPointForceList())[i]->vector[2])) == false)
+        if ((std::isfinite((*pointForceList())[i]->vector[0]) && std::isfinite((*pointForceList())[i]->vector[1]) && std::isfinite((*pointForceList())[i]->vector[2])) == false)
         {
-            (*GetPointForceList())[i]->vector[0] = 0.0;
-            (*GetPointForceList())[i]->vector[1] = 0.0;
-            (*GetPointForceList())[i]->vector[2] = 0.0;
+            (*pointForceList())[i]->vector[0] = 0.0;
+            (*pointForceList())[i]->vector[1] = 0.0;
+            (*pointForceList())[i]->vector[2] = 0.0;
             std::cerr << "Warning: point force direction in \"" << name() << "\" is invalid so applying standard fixup\n";
         }
     }

@@ -331,7 +331,7 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
     {
         if (GaitSym::TwoPointStrap *twoPointStrap = dynamic_cast<GaitSym::TwoPointStrap *>(strap))
         {
-            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = twoPointStrap->GetPointForceList();
+            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = twoPointStrap->pointForceList();
             pathCoordinates.reserve(pointForceList->size());
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
@@ -342,7 +342,7 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
 
         if (GaitSym::NPointStrap *nPointStrap = dynamic_cast<GaitSym::NPointStrap *>(strap))
         {
-            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = nPointStrap->GetPointForceList();
+            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = nPointStrap->pointForceList();
             pathCoordinates.reserve(pointForceList->size());
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             for (size_t i = 2; i < pointForceList->size(); i++) pathCoordinates.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));

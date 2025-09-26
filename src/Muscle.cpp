@@ -100,22 +100,22 @@ void Muscle::setStrapColourControl(const Muscle::StrapColourControl &strapColour
 
 double Muscle::length() const
 {
-    return m_Strap->Length();
+    return m_Strap->length();
 }
 
 double Muscle::velocity() const
 {
-    return m_Strap->Velocity();
+    return m_Strap->velocity();
 }
 
 double Muscle::tension() const
 {
-    return m_Strap->Tension();
+    return m_Strap->tension();
 }
 
 double Muscle::power() const
 {
-    return -(m_Strap->Tension() * m_Strap->Velocity());
+    return -(m_Strap->tension() * m_Strap->velocity());
 }
 
 void Muscle::calculateStrap()
@@ -125,7 +125,7 @@ void Muscle::calculateStrap()
 
 std::vector<std::unique_ptr<PointForce >> *Muscle::pointForceList() const
 {
-    return m_Strap->GetPointForceList();
+    return m_Strap->pointForceList();
 }
 
 Strap *Muscle::strap() const

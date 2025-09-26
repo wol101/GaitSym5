@@ -110,7 +110,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 
         if (GaitSym::TwoPointStrap *twoPointStrap = dynamic_cast<GaitSym::TwoPointStrap *>(m_muscle->strap()))
         {
-            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = twoPointStrap->GetPointForceList();
+            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = twoPointStrap->pointForceList();
             m_polyline.reserve(pointForceList->size());
             m_polyline.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             m_polyline.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
@@ -122,7 +122,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
 
         if (GaitSym::NPointStrap *nPointStrap = dynamic_cast<GaitSym::NPointStrap *>(m_muscle->strap()))
         {
-            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = nPointStrap->GetPointForceList();
+            std::vector<std::unique_ptr<GaitSym::PointForce >> *pointForceList = nPointStrap->pointForceList();
             m_polyline.reserve(pointForceList->size());
             m_polyline.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             for (size_t i = 2; i < pointForceList->size(); i++) m_polyline.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));

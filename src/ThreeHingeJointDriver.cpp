@@ -408,7 +408,7 @@ void ThreeHingeJointDriver::sendData()
         Strap *remoteStrap = pidMuscleLengthController->muscle()->strap();
         auto localStrap = m_localStrapList.find(remoteStrap->name());
         if (localStrap == m_localStrapList.end()) continue;
-        double length = localStrap->second->Length();
+        double length = localStrap->second->length();
         // now set the target length
         pidMuscleLengthController->receiveData(clamp(length), simulation()->stepCount());
     }

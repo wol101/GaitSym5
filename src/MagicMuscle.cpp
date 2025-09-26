@@ -64,7 +64,7 @@ std::string MagicMuscle::dumpToString()
         setFirstDump(false);
         s += dumpHelper({"time"s, "activation"s, "forceMultiplier"s, "forceOffset"s, "tension"s});
     }
-    s += dumpHelper({simulation()->simulationTime(), m_activation, m_forceMultiplier, m_forceOffset, strap()->Tension()});
+    s += dumpHelper({simulation()->simulationTime(), m_activation, m_forceMultiplier, m_forceOffset, strap()->tension()});
     return s;
 }
 

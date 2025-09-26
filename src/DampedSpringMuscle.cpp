@@ -27,7 +27,7 @@ DampedSpringMuscle::DampedSpringMuscle(): Muscle()
 
 double DampedSpringMuscle::elasticEnergy()
 {
-    double delLen = strap()->Length() - m_unloadedLength;
+    double delLen = strap()->length() - m_unloadedLength;
     if (delLen < 0) return 0;
 
     // difference between these two values is the amount of energy lost by damping
@@ -45,7 +45,7 @@ void DampedSpringMuscle::updateActivation()
     m_activation = dataSum();
 
     // calculate strain
-    double elasticStrain = (strap()->Length() - m_unloadedLength) / m_unloadedLength;
+    double elasticStrain = (strap()->length() - m_unloadedLength) / m_unloadedLength;
 
     // calculate stress
     double elasticStress = elasticStrain * m_springConstant;
@@ -58,7 +58,7 @@ void DampedSpringMuscle::updateActivation()
     {
 
         // calculate damping (+ve when lengthening)
-        double relativeVelocity = strap()->Velocity() / m_unloadedLength;
+        double relativeVelocity = strap()->velocity() / m_unloadedLength;
         double dampingStress = relativeVelocity * m_damping;
 
         // now calculate tension
@@ -74,7 +74,7 @@ void DampedSpringMuscle::updateActivation()
 bool DampedSpringMuscle::shouldBreak()
 {
     if (m_breakingStrain <= 0) return false;
-    double elasticStrain = (strap()->Length() - m_unloadedLength) / m_unloadedLength;
+    double elasticStrain = (strap()->length() - m_unloadedLength) / m_unloadedLength;
     if (elasticStrain > m_breakingStrain)
     {
         std::cerr << "DampedSpringMuscle::ShouldBreak returns true\n";
@@ -94,8 +94,8 @@ std::string DampedSpringMuscle::dumpToString()
         ss << "Time\tact\ttension\tlength\tvelocity\tPMECH\n";
     }
     ss << simulation()->simulationTime() << "\t" << m_activation <<
-          "\t" << strap()->Tension() << "\t" << strap()->Length() << "\t" << strap()->Velocity() <<
-          "\t" << strap()->Velocity() * strap()->Tension() <<
+          "\t" << strap()->tension() << "\t" << strap()->length() << "\t" << strap()->velocity() <<
+          "\t" << strap()->velocity() * strap()->tension() <<
           "\n";
     return ss.str();
 }

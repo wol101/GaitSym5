@@ -86,7 +86,7 @@ void MAMuscle::SetAlpha(double alpha)
 
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    v = -strap()->Velocity();
+    v = -strap()->velocity();
 
     // limit v
     if (v > m_vMax) v = m_vMax;
@@ -152,7 +152,7 @@ double MAMuscle::metabolicPower()
 {
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    double relV = -strap()->Velocity() / m_vMax;
+    double relV = -strap()->velocity() / m_vMax;
 
     // limit relV
     if (relV > 1) relV = 1;
@@ -209,8 +209,8 @@ std::string MAMuscle::dumpToString()
         ss << "Time\tVMax\tF0\tK\tAlpha\tFCE\tLCE\tVCE\tPMECH\tPMET\n";
     }
     ss << simulation()->simulationTime() << "\t" << m_vMax << "\t" << m_f0 << "\t" << m_k << "\t" << m_alpha <<
-          "\t" << strap()->Tension() << "\t" << strap()->Length() << "\t" << strap()->Velocity() <<
-          "\t" << strap()->Velocity() * strap()->Tension() << "\t" << metabolicPower() <<
+          "\t" << strap()->tension() << "\t" << strap()->length() << "\t" << strap()->velocity() <<
+          "\t" << strap()->velocity() * strap()->tension() << "\t" << metabolicPower() <<
           "\n";
     return ss.str();
 }

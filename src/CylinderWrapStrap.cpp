@@ -32,45 +32,45 @@ CylinderWrapStrap::~CylinderWrapStrap()
 void CylinderWrapStrap::setOriginMarker(Marker *originMarker)
 {
     m_originMarker = originMarker;
-    if (GetPointForceList()->size() == 0)
+    if (pointForceList()->size() == 0)
     {
         std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
         origin->body = m_originMarker->body();
-        GetPointForceList()->push_back(std::move(origin));
+        pointForceList()->push_back(std::move(origin));
     }
     else
     {
-        GetPointForceList()->at(0)->body = m_originMarker->body();
+        pointForceList()->at(0)->body = m_originMarker->body();
     }
 }
 
 void CylinderWrapStrap::setInsertionMarker(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
-    if (GetPointForceList()->size() <= 1)
+    if (pointForceList()->size() <= 1)
     {
         std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
         insertion->body = m_insertionMarker->body();
-        GetPointForceList()->push_back(std::move(insertion));
+        pointForceList()->push_back(std::move(insertion));
     }
     else
     {
-        GetPointForceList()->at(1)->body =  m_insertionMarker->body();
+        pointForceList()->at(1)->body =  m_insertionMarker->body();
     }
 }
 
 void CylinderWrapStrap::setCylinderMarker(Marker *cylinderMarker)
 {
     m_cylinderMarker = cylinderMarker;
-    if (GetPointForceList()->size() <= 2)
+    if (pointForceList()->size() <= 2)
     {
         std::unique_ptr<PointForce> cylinder = std::make_unique<PointForce>();
         cylinder->body = m_cylinderMarker->body();
-        GetPointForceList()->push_back(std::move(cylinder));
+        pointForceList()->push_back(std::move(cylinder));
     }
     else
     {
-        GetPointForceList()->at(2)->body = m_cylinderMarker->body();
+        pointForceList()->at(2)->body = m_cylinderMarker->body();
     }
 }
 
@@ -158,7 +158,7 @@ void CylinderWrapStrap::calculate()
                                 &length, &m_pathCoordinates);
     if (m_wrapStatus == -1) {
         std::cerr << "Warning: wrapping impossible in \"" << name() << "\" - attachment inside cylinder\n"; }
-    if (Length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - Length()) / simulation()->global()->stepSize());
+    if (length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 
@@ -171,9 +171,9 @@ void CylinderWrapStrap::calculate()
     theCylinderForcePosition = qVRotate(qCylinderBody, theCylinderForcePosition) + vCylinderBody;
 
 
-    PointForce *theOrigin = (*GetPointForceList())[0].get();
-    PointForce *theInsertion = (*GetPointForceList())[1].get();
-    PointForce *theCylinder = (*GetPointForceList())[2].get();
+    PointForce *theOrigin = (*pointForceList())[0].get();
+    PointForce *theInsertion = (*pointForceList())[1].get();
+    PointForce *theCylinder = (*pointForceList())[2].get();
     theOrigin->vector[0] = theOriginForce.x; theOrigin->vector[1] = theOriginForce.y; theOrigin->vector[2] = theOriginForce.z;
     theOrigin->point[0] = worldOriginPosition.x; theOrigin->point[1] = worldOriginPosition.y; theOrigin->point[2] = worldOriginPosition.z;
     theInsertion->vector[0] = theInsertionForce.x; theInsertion->vector[1] = theInsertionForce.y; theInsertion->vector[2] = theInsertionForce.z;
@@ -189,13 +189,13 @@ void CylinderWrapStrap::calculate()
     }
 
     // check that we don't have any non-finite values for directions which can occur if points co-locate
-    for (size_t i = 0; i < GetPointForceList()->size(); i++)
+    for (size_t i = 0; i < pointForceList()->size(); i++)
     {
-        if ((std::isfinite((*GetPointForceList())[i]->vector[0]) && std::isfinite((*GetPointForceList())[i]->vector[1]) && std::isfinite((*GetPointForceList())[i]->vector[2])) == false)
+        if ((std::isfinite((*pointForceList())[i]->vector[0]) && std::isfinite((*pointForceList())[i]->vector[1]) && std::isfinite((*pointForceList())[i]->vector[2])) == false)
         {
-            (*GetPointForceList())[i]->vector[0] = 0.0;
-            (*GetPointForceList())[i]->vector[1] = 0.0;
-            (*GetPointForceList())[i]->vector[2] = 0.0;
+            (*pointForceList())[i]->vector[0] = 0.0;
+            (*pointForceList())[i]->vector[1] = 0.0;
+            (*pointForceList())[i]->vector[2] = 0.0;
             std::cerr << "Warning: point force direction in \"" << name() << "\" is invalid so applying standard fixup\n";
         }
     }
