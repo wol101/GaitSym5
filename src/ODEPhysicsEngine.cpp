@@ -53,9 +53,9 @@ ODEPhysicsEngine::~ODEPhysicsEngine()
     dCloseODE();
 }
 
-std::string *ODEPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *ODEPhysicsEngine::initialise(Simulation *theSimulation)
 {
-    std::string *err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
     // initialise the ODE world
@@ -392,7 +392,7 @@ std::string *ODEPhysicsEngine::MoveBodies()
     return nullptr;
 }
 
-std::string *ODEPhysicsEngine::Step()
+std::string *ODEPhysicsEngine::step()
 {
     // check collisions first
     dJointGroupEmpty(m_contactGroup);

@@ -26,8 +26,8 @@ public:
     ODEPhysicsEngine();
     virtual ~ODEPhysicsEngine();
 
-    virtual std::string *Initialise(Simulation *theSimulation);
-    virtual std::string *Step();
+    virtual std::string *initialise(Simulation *theSimulation);
+    virtual std::string *step();
 
     dWorldID worldID() const;
 

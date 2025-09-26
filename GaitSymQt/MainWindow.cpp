@@ -1633,7 +1633,7 @@ void MainWindow::menuExportMuJoCo()
     {
         setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
         GaitSym::MuJoCoPhysicsEngine muJoCoPhysicsEngine;
-        std::string *err = muJoCoPhysicsEngine.Initialise(simulation());
+        std::string *err = muJoCoPhysicsEngine.initialise(simulation());
         if (err)
         {
             setStatusString(QString("Error parsing \"%1\" for MuJoCo export").arg(fileName), 0);

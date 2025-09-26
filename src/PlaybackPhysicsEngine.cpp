@@ -29,9 +29,9 @@ PlaybackPhysicsEngine::~PlaybackPhysicsEngine()
 {
 }
 
-std::string *PlaybackPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *PlaybackPhysicsEngine::initialise(Simulation *theSimulation)
 {
-    std::string *err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
     err = ReadSourceFile();
@@ -157,7 +157,7 @@ std::string *PlaybackPhysicsEngine::ReadOSIMBodyKinematicsFile()
     return nullptr;
 }
 
-std::string *PlaybackPhysicsEngine::Step()
+std::string *PlaybackPhysicsEngine::step()
 {
     // start by sorting out the time
     double time = simulation()->GetTime();

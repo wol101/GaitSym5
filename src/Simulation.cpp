@@ -199,7 +199,7 @@ void Simulation::UpdateSimulation()
         case Global::PhysicsEngine::ODE:
             {
                 m_physicsEngine = std::make_unique<ODEPhysicsEngine>();
-                err = m_physicsEngine->Initialise(this);
+                err = m_physicsEngine->initialise(this);
                 if (err)
                 {
                     std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << *err << "\n";
@@ -211,7 +211,7 @@ void Simulation::UpdateSimulation()
         case Global::PhysicsEngine::PhysX:
             {
                 m_physicsEngine = std::make_unique<PhysXPhysicsEngine>();
-                err = m_physicsEngine->Initialise(this);
+                err = m_physicsEngine->initialise(this);
                 if (err)
                 {
                     std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << *err << "\n";
@@ -223,7 +223,7 @@ void Simulation::UpdateSimulation()
         case Global::PhysicsEngine::MuJoCo:
             {
                 m_physicsEngine = std::make_unique<MuJoCoPhysicsEngine>();
-                err = m_physicsEngine->Initialise(this);
+                err = m_physicsEngine->initialise(this);
                 if (err)
                 {
                     std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << *err << "\n";
@@ -325,7 +325,7 @@ void Simulation::UpdateSimulation()
     }
 
     // run the simulation
-    m_physicsEngine->Step();
+    m_physicsEngine->step();
 
     // now the muscle straps are invalid because the bodies have moved so they need recalculating
     for (auto &&iter1 : m_MuscleList)
@@ -1249,14 +1249,14 @@ void Simulation::setKinematicsFile(const std::string &newKinematicsFile)
     if (m_kinematicsFile.size())
     {
         m_physicsEngine = std::make_unique<PlaybackPhysicsEngine>();
-        std::string *err = m_physicsEngine->Initialise(this);
+        std::string *err = m_physicsEngine->initialise(this);
         if (err)
         {
             std::cerr << "Error: unable to initialise PlaybackPhysicsEngine\n" << *err << "\n";
             m_SimulationError = true;
             return;
         }
-        m_physicsEngine->Step();
+        m_physicsEngine->step();
         for (auto &&muscleIt : m_MuscleList) { muscleIt.second->CalculateStrap(); }
     }
 }

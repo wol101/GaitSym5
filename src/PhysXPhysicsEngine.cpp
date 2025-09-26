@@ -55,9 +55,9 @@ PhysXPhysicsEngine::~PhysXPhysicsEngine()
     PX_RELEASE(m_foundation);
 }
 
-std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
 {
-    std::string *err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
     m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, g_allocator, g_errorCallback);
@@ -311,7 +311,7 @@ std::string *PhysXPhysicsEngine::MoveBodies()
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::Step()
+std::string *PhysXPhysicsEngine::step()
 {
     // clear the contacts
     g_contactReportCallback.contactData()->clear();

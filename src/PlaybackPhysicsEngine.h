@@ -24,8 +24,8 @@ public:
     PlaybackPhysicsEngine();
     virtual ~PlaybackPhysicsEngine();
 
-    virtual std::string *Initialise(Simulation *simulation);
-    virtual std::string *Step();
+    virtual std::string *initialise(Simulation *simulation);
+    virtual std::string *step();
 
 private:
     std::string *ReadSourceFile();

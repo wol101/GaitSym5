@@ -41,16 +41,16 @@ MuJoCoPhysicsEngine::~MuJoCoPhysicsEngine()
     if (m_mjModel) mj_deleteModel(m_mjModel);
 }
 
-std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *MuJoCoPhysicsEngine::initialise(Simulation *theSimulation)
 {
-    std::string *err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
     // create the MuJoCo xml versions of the main elements
-    err = CreateConnectedGroups();
+    err = createConnectedGroups();
     if (err) { return err; }
 
-    err = CreateTree();
+    err = createTree();
     if (err) { return err; }
 
 #define DEBUG_MUJOCO_XML
@@ -61,7 +61,7 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
 #endif
 
     char error[1000] = "";
-    m_mjModel = LoadModelFromString(m_mjXML, error, sizeof(error));
+    m_mjModel = loadModelFromString(m_mjXML, error, sizeof(error));
     if (!m_mjModel)
     {
         setLastError("Error: MuJoCoPhysicsEngine error in LoadModelFromString\n"s + std::string(error));
@@ -72,15 +72,15 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
     mj_forward(m_mjModel, m_mjData);
 
     // move to start positions
-    MoveBodies();
+    moveBodies();
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
-    for (auto &&iter : m_rootTreeBodyList) { InsertMJBodyIDs(&iter); }
+    for (auto &&iter : m_rootTreeBodyList) { insertMJBodyIDs(&iter); }
 
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
+std::string *MuJoCoPhysicsEngine::createConnectedGroups()
 {
     std::map<std::string, Body *> untestedBodies;
     for (auto &&iter : *simulation()->GetBodyList()) { untestedBodies[iter.first] = iter.second.get(); }
@@ -136,7 +136,7 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
 
 
 
-std::string *MuJoCoPhysicsEngine::CreateTree()
+std::string *MuJoCoPhysicsEngine::createTree()
 {
     // with no hint just assume the biggest body is the root
     for (auto &&groupIter : m_connectedGroups)
@@ -234,21 +234,21 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 #endif
 
     // start building the XML
-    XMLInitiateTag(&m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
+    xmlInitiateTag(&m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
 
     // set some options
-    XMLInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
-    XMLInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::toString(simulation()->GetGlobal()->stepSize())}}, true);
+    xmlInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
+    xmlInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::toString(simulation()->GetGlobal()->stepSize())}}, true);
 
     // create the world body
-    XMLInitiateTag(&m_mjXML, "worldbody"s);
+    xmlInitiateTag(&m_mjXML, "worldbody"s);
 
     // create any geoms attached to world
     for (auto &&iter : *simulation()->GetGeomList())
     {
         if (iter.second->body() == nullptr)
         {
-            std::string *err = CreateGeom(iter.second.get());
+            std::string *err = createGeom(iter.second.get());
             if (err) return err;
         }
     }
@@ -256,21 +256,21 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     // this creates the whole model recursively
     for (auto &&iter : m_rootTreeBodyList)
     {
-        CreateBody(iter);
+        createBody(iter);
     }
 
-    XMLTerminateTag(&m_mjXML, "worldbody"s);
+    xmlTerminateTag(&m_mjXML, "worldbody"s);
 
-    XMLInitiateTag(&m_mjXML, "sensor"s);
+    xmlInitiateTag(&m_mjXML, "sensor"s);
     m_mjXML.append(m_mjXMLSensors);
-    XMLTerminateTag(&m_mjXML, "sensor"s);
+    xmlTerminateTag(&m_mjXML, "sensor"s);
 
-    XMLTerminateTag(&m_mjXML, "mujoco"s);
+    xmlTerminateTag(&m_mjXML, "mujoco"s);
 
     return nullptr;
 }
 
-void MuJoCoPhysicsEngine::InsertMJBodyIDs(TreeBody *treeBody)
+void MuJoCoPhysicsEngine::insertMJBodyIDs(TreeBody *treeBody)
 {
     int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, treeBody->body->name().c_str());
     treeBody->bodyID = bodyID;
@@ -278,11 +278,11 @@ void MuJoCoPhysicsEngine::InsertMJBodyIDs(TreeBody *treeBody)
     if (treeBody->childList.size() == 0) return;
     for (auto &&child : treeBody->childList)
     {
-        InsertMJBodyIDs(child.get());
+        insertMJBodyIDs(child.get());
     }
 }
 
-void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
+void MuJoCoPhysicsEngine::xmlInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
 {
     xmlString->append("<"s + tag + " "s);
     for (auto &&iter : attributes)
@@ -294,12 +294,12 @@ void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::stri
     else { xmlString->append(">\n"s); }
 }
 
-void MuJoCoPhysicsEngine::XMLTerminateTag(std::string *xmlString, const std::string &tag)
+void MuJoCoPhysicsEngine::xmlTerminateTag(std::string *xmlString, const std::string &tag)
 {
     xmlString->append("</"s + tag + ">\n"s);
 }
 
-std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
+std::string *MuJoCoPhysicsEngine::createBody(const TreeBody &treeBody)
 {
     Body *body = treeBody.body;
     pgd::Vector3 position = body->constructionPosition();
@@ -313,8 +313,8 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     attributes["name"s] = body->name();
     attributes["pos"s] = GSUtil::toString(position);
     attributes["quat"s] = GSUtil::toString(quaternion);
-    XMLInitiateTag(&m_mjXML, "body", attributes);
-    XMLInitiateTag(&m_mjXML, "geom", {{"type"s, "sphere"s}, {"size"s, ".1"s}}, true); // this is just a CM marker for debugging
+    xmlInitiateTag(&m_mjXML, "body", attributes);
+    xmlInitiateTag(&m_mjXML, "geom", {{"type"s, "sphere"s}, {"size"s, ".1"s}}, true); // this is just a CM marker for debugging
 
     double mass, ixx, iyy, izz, ixy, izx, iyz;
     body->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
@@ -322,38 +322,38 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     attributes["pos"s] = GSUtil::toString(pgd::Vector3());
     attributes["mass"s] = GSUtil::toString(mass);
     attributes["fullinertia"s] = GSUtil::toString(std::vector<double>({ixx, iyy, izz, ixy, izx, iyz}));
-    XMLInitiateTag(&m_mjXML, "inertial", attributes, true);
+    xmlInitiateTag(&m_mjXML, "inertial", attributes, true);
 
-    std::string *err = CreateJoint(treeBody.jointToParent);
+    std::string *err = createJoint(treeBody.jointToParent);
     if (err) return err;
 
     for (auto &&iter : *simulation()->GetGeomList())
     {
         if (iter.second->body() == body)
         {
-            err = CreateGeom(iter.second.get());
+            err = createGeom(iter.second.get());
             if (err) return err;
         }
     }
 
     for (auto &&iter : treeBody.childList)
     {
-        err = CreateBody(*iter);
+        err = createBody(*iter);
         if (err) return err;
     }
 
-    XMLTerminateTag(&m_mjXML, "body");
+    xmlTerminateTag(&m_mjXML, "body");
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
+std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
 {
     std::map<std::string, std::string> attributes;
     if (!joint)
     {
         attributes["name"s] = GSUtil::toString("root%02d", m_freeJointCount);
         m_freeJointCount++;
-        XMLInitiateTag(&m_mjXML, "freejoint"s, attributes, true);
+        xmlInitiateTag(&m_mjXML, "freejoint"s, attributes, true);
         return nullptr;
     }
 
@@ -379,25 +379,25 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             attributes["limited"s] = GSUtil::toString(true);
             pgd::Vector2 reversedStops(-stops[1], -stops[0]);
             attributes["range"s] = GSUtil::toString(reversedStops);
-            XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_site"s;
             attributes["pos"s] = GSUtil::toString(p2);
-            XMLInitiateTag(&m_mjXML, "site"s, attributes, true);
+            xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
             // we also need sensors to get reaction forces and torques
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_jointpos"s;
             attributes["joint"s] = hingeJoint->name();
-            XMLInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_jointvel"s;
-            XMLInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_force"s;
             attributes["site"s] = hingeJoint->name() + "_site"s;
-            XMLInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_torque"s;
-            XMLInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
             break;
         }
         if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(joint))
@@ -407,19 +407,19 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             attributes["name"s] = ballJoint->name();
             attributes["type"s] = "ball"s;
             attributes["pos"s] = GSUtil::toString(p2);
-            XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = ballJoint->name() + "_site"s;
             attributes["pos"s] = GSUtil::toString(p2);
-            XMLInitiateTag(&m_mjXML, "site"s, attributes, true);
+            xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
             // we also need sensors to get reaction forces and torques
             attributes.clear();
             attributes["name"s] = ballJoint->name() + "_ballquat"s;
             attributes["joint"s] = ballJoint->name();
-            XMLInitiateTag(&m_mjXMLSensors, "ballquat"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "ballquat"s, attributes, true);
             attributes["name"s] = ballJoint->name() + "_ballangvel"s;
-            XMLInitiateTag(&m_mjXMLSensors, "ballangvel"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "ballangvel"s, attributes, true);
             attributes.clear();
             break;
         }
@@ -429,7 +429,7 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
 }
 
 
-std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
+std::string *MuJoCoPhysicsEngine::createGeom(const Geom *geom)
 {
     std::map<std::string, std::string> attributes;
     while (true)
@@ -447,7 +447,7 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
             attributes["size"s] = GSUtil::toString(radius);
             attributes["pos"s] = GSUtil::toString(position);
             attributes["quat"s] = GSUtil::toString(quaternion);
-            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            xmlInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
         if (const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom))
@@ -460,7 +460,7 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
             attributes["pos"s] = GSUtil::toString(position);
             attributes["zaxis"s] = GSUtil::toString(zAxis);
             attributes["size"s] = GSUtil::toString(pgd::Vector3(1, 1, 1));
-            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            xmlInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
         break;
@@ -468,7 +468,7 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::MoveBodies()
+std::string *MuJoCoPhysicsEngine::moveBodies()
 {
     // in mucojo everything is done via the joints
     // these are specified in mjModel as
@@ -588,7 +588,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::Step()
+std::string *MuJoCoPhysicsEngine::step()
 {
     // apply the point forces from the muscles
     // choices are to apply the forces and torques to the bodies directly using xfrc_applied
@@ -794,7 +794,7 @@ std::string *MuJoCoPhysicsEngine::Step()
 }
 
 
-mjModel *MuJoCoPhysicsEngine::LoadModelFromString(const std::string &xml, char* error, int error_size, mjVFS* vfs)
+mjModel *MuJoCoPhysicsEngine::loadModelFromString(const std::string &xml, char* error, int error_size, mjVFS* vfs)
 {
     // register string resource provider if not registered before
     if (mjp_getResourceProvider("LoadModelFromString:") == nullptr)
