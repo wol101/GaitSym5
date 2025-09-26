@@ -436,7 +436,7 @@ bool FixedJoint::CheckStressAbort()
     return false;
 }
 
-void FixedJoint::Update()
+void FixedJoint::update()
 {
     if (m_stressCalculationType != none) CalculateStress();
 }

@@ -62,7 +62,7 @@ class FixedJoint: public Joint
 
     const std::vector<double> &GetStress() { return m_stress; }
 
-    virtual void Update();
+    virtual void update();
     virtual std::string dumpToString();
 
     virtual std::string *createFromAttributes();

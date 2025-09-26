@@ -296,7 +296,7 @@ void Simulation::UpdateSimulation()
     }
 
     // update the joints (needed for motors, end stops and stress calculations)
-    for (auto &&jointIter : m_JointList) jointIter.second->Update();
+    for (auto &&jointIter : m_JointList) jointIter.second->update();
 
     // update the fluid sacs
     for (auto fsIter = m_FluidSacList.begin(); fsIter != m_FluidSacList.end(); fsIter++)

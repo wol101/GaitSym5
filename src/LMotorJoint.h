@@ -39,7 +39,7 @@ public:
     double targetPosition(int anum);
 
     virtual std::string dumpToString();
-    virtual void Update();
+    virtual void update();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

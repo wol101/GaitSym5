@@ -254,7 +254,7 @@ int HingeJoint::TestLimits()
     return 0;
 }
 
-void HingeJoint::Update()
+void HingeJoint::update()
 {
     CalculateStopTorque();
 }

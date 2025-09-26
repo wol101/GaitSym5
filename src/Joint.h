@@ -29,7 +29,7 @@ public:
     Joint();
 
     // some joints (particularly those with motors) need to do something before the simulation step
-    virtual void Update() {}
+    virtual void update() {}
 
     // this might be needed at some point in the future
     virtual void LateInitialisation() {}

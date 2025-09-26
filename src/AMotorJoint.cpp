@@ -44,7 +44,7 @@ AMotorJoint::AMotorJoint() : Joint()
     // dJointSetAMotorAxis(JointID(), 0, rel, axis.x, axis.y, axis.z);
 }
 
-void AMotorJoint::GetAxisAngle(double *xa, double *ya, double *za, double *angle) const
+void AMotorJoint::getAxisAngle(double *xa, double *ya, double *za, double *angle) const
 {
     pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
     pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
@@ -62,7 +62,7 @@ void AMotorJoint::GetAxisAngle(double *xa, double *ya, double *za, double *angle
     }
 }
 
-pgd::Quaternion AMotorJoint::GetQuaternion() const
+pgd::Quaternion AMotorJoint::quaternion() const
 {
     pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
     pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
@@ -80,7 +80,7 @@ pgd::Quaternion AMotorJoint::GetQuaternion() const
     }
 }
 
-pgd::Vector3 AMotorJoint::GetEulerAngles() const
+pgd::Vector3 AMotorJoint::eulerAngles() const
 {
     pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
     pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
@@ -100,7 +100,7 @@ pgd::Vector3 AMotorJoint::GetEulerAngles() const
     }
 }
 
-pgd::Vector3 AMotorJoint::GetEulerAngles(const Marker &basisMarker) const
+pgd::Vector3 AMotorJoint::eulerAngles(const Marker &basisMarker) const
 {
     // returns the Euler angles using marker axes as the basis
     pgd::Vector3 euler;
@@ -121,23 +121,23 @@ pgd::Vector3 AMotorJoint::GetEulerAngles(const Marker &basisMarker) const
     return euler;
 }
 
-void AMotorJoint::SetDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope)
+void AMotorJoint::setDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope)
 {
     m_dynamicFrictionIntercept = dynamicFrictionIntercept;
     m_dynamicFrictionSlope = dynamicFrictionSlope;
     m_dynamicFrictionFlag = true;
 
-    UpdateDynamicFriction();
+    updateDynamicFriction();
 }
 
-void AMotorJoint::UpdateDynamicFriction()
+void AMotorJoint::updateDynamicFriction()
 {
     pgd::Vector3 axis;
     double deltaAngle;
     pgd::MakeAxisAngleFromQ(m_lastToCurrent, &axis.x, &axis.y, &axis.z, &deltaAngle);
     double angularVelocity = deltaAngle / simulation()->GetTimeIncrement();  // note this value will not necessarily have the correct sign
     double maxTorque = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(angularVelocity);
-    SetMaxTorque(maxTorque);
+    setMaxTorque(maxTorque);
 }
 
 const std::vector<double> &AMotorJoint::targetAnglesList() const
@@ -155,7 +155,7 @@ void AMotorJoint::setReverseBodyOrderInCalculations(bool reverseBodyOrderInCalcu
     m_reverseBodyOrderInCalculations = reverseBodyOrderInCalculations;
 }
 
-void AMotorJoint::SetTargetAngles(double angle0)
+void AMotorJoint::setTargetAngles(double angle0)
 {
     m_targetAxis = body1Marker()->GetWorldAxis(Marker::X);
     m_targetAngle = angle0;
@@ -163,7 +163,7 @@ void AMotorJoint::SetTargetAngles(double angle0)
     m_targetAnglesList.push_back(angle0);
 }
 
-void AMotorJoint::SetTargetAngles(double angle0, double angle1)
+void AMotorJoint::setTargetAngles(double angle0, double angle1)
 {
     pgd::Vector3 ax,ay,az;
     body1Marker()->GetWorldBasis(&ax, &ay, &az);
@@ -175,7 +175,7 @@ void AMotorJoint::SetTargetAngles(double angle0, double angle1)
     m_targetAnglesList.push_back(angle1);
 }
 
-void AMotorJoint::SetTargetAngles(double angle0, double angle1, double angle2)
+void AMotorJoint::setTargetAngles(double angle0, double angle1, double angle2)
 {
     pgd::Vector3 ax,ay,az;
     body1Marker()->GetWorldBasis(&ax, &ay, &az);
@@ -189,40 +189,40 @@ void AMotorJoint::SetTargetAngles(double angle0, double angle1, double angle2)
     m_targetAnglesList.push_back(angle2);
 }
 
-void AMotorJoint::SetTargetAngleGain(double targetAngleGain)
+void AMotorJoint::setTargetAngleGain(double targetAngleGain)
 {
     m_targetAngleGain = targetAngleGain;
 }
 
-void AMotorJoint::SetMaxTorque(double maxTorque)
+void AMotorJoint::setMaxTorque(double maxTorque)
 {
     m_maxTorque = maxTorque;
 }
 
-pgd::Vector3 AMotorJoint::GetTargetAxis() const
+pgd::Vector3 AMotorJoint::targetAxis() const
 {
     return m_targetAxis;
 }
 
-double AMotorJoint::GetTargetAngle() const
+double AMotorJoint::targetAngle() const
 {
     return m_targetAngle;
 }
 
-double AMotorJoint::GetTargetAngleGain() const
+double AMotorJoint::targetAngleGain() const
 {
     return m_targetAngleGain;
 }
 
-double AMotorJoint::GetMaxTorque() const
+double AMotorJoint::maxTorque() const
 {
     return m_maxTorque;
 }
 
-void AMotorJoint::Update()
+void AMotorJoint::update()
 {
     // handle the angular change code
-    m_currentQuaternion = GetQuaternion();
+    m_currentQuaternion = quaternion();
     if (m_firstTime) m_lastQuaternion = m_currentQuaternion;
     m_lastToCurrent = m_currentQuaternion * (~m_lastQuaternion);
     m_lastQuaternion = m_currentQuaternion;
@@ -253,9 +253,9 @@ std::string *AMotorJoint::createFromAttributes()
     std::string buf, buf2, buf3;
 
     if (findAttribute("MaxTorque"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetMaxTorque(GSUtil::Double(buf));
+    this->setMaxTorque(GSUtil::Double(buf));
     if (findAttribute("TargetAngleGain"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetTargetAngleGain(GSUtil::Double(buf));
+    this->setTargetAngleGain(GSUtil::Double(buf));
 
     if (findAttribute("TargetAngles"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> tokens;
@@ -264,13 +264,13 @@ std::string *AMotorJoint::createFromAttributes()
     switch (tokens.size())
     {
     case 1:
-        this->SetTargetAngles(GSUtil::Double(tokens[0]));
+        this->setTargetAngles(GSUtil::Double(tokens[0]));
         break;
     case 2:
-        this->SetTargetAngles(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]));
+        this->setTargetAngles(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]));
         break;
     case 3:
-        this->SetTargetAngles(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        this->setTargetAngles(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
         break;
     }
 

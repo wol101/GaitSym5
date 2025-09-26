@@ -24,27 +24,27 @@ public:
 
     AMotorJoint();
 
-    void GetAxisAngle(double *xa, double *ya, double *za, double *angle) const;
-    pgd::Quaternion GetQuaternion() const;
-    pgd::Vector3 GetEulerAngles() const;
-    pgd::Vector3 GetEulerAngles(const Marker &basisMarker) const;
+    void getAxisAngle(double *xa, double *ya, double *za, double *angle) const;
+    pgd::Quaternion quaternion() const;
+    pgd::Vector3 eulerAngles() const;
+    pgd::Vector3 eulerAngles(const Marker &basisMarker) const;
 
-    void SetTargetAngles(double angle0);
-    void SetTargetAngles(double angle0, double angle1);
-    void SetTargetAngles(double angle0, double angle1, double angle2);
-    void SetTargetAngleGain(double targetAngleGain);
-    void SetMaxTorque(double maxTorque);
+    void setTargetAngles(double angle0);
+    void setTargetAngles(double angle0, double angle1);
+    void setTargetAngles(double angle0, double angle1, double angle2);
+    void setTargetAngleGain(double targetAngleGain);
+    void setMaxTorque(double maxTorque);
 
-    pgd::Vector3 GetTargetAxis() const;
-    double GetTargetAngle() const;
-    double GetTargetAngleGain() const;
-    double GetMaxTorque() const;
+    pgd::Vector3 targetAxis() const;
+    double targetAngle() const;
+    double targetAngleGain() const;
+    double maxTorque() const;
 
 
-    void SetDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope);
+    void setDynamicFriction(double dynamicFrictionIntercept, double dynamicFrictionSlope);
 
     virtual std::string dumpToString();
-    virtual void Update();
+    virtual void update();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -71,7 +71,7 @@ private:
     double m_maxTorque = std::numeric_limits<double>::infinity();
     double m_targetVelocity = 0;
 
-    void UpdateDynamicFriction();
+    void updateDynamicFriction();
     double m_dynamicFrictionIntercept = 0;
     double m_dynamicFrictionSlope = 0;
     bool m_dynamicFrictionFlag = false;

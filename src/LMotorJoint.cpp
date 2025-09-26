@@ -284,7 +284,7 @@ void LMotorJoint::SetDynamicFriction()
     setMaxForce(2, maximumForce);
 }
 
-void LMotorJoint::Update()
+void LMotorJoint::update()
 {
     double position0, position1, position2, delPosition;
     getPositions(&position0, &position1, &position2);
