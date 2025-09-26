@@ -32,7 +32,7 @@ TegotaeDriver::TegotaeDriver()
 {
 }
 
-void TegotaeDriver::Initialise(double omega, double sigma, double A, double Aprime, double B, double phi,
+void TegotaeDriver::initialise(double omega, double sigma, double A, double Aprime, double B, double phi,
                                Marker *tegotaeCentre, Marker *tegotaeRim, Marker *errorOutput, Marker *forceDirection,
                                const std::vector<Geom *> &contactGeomList)
 {
@@ -121,7 +121,7 @@ void TegotaeDriver::update()
     m_phi = std::fmod(m_phi + m_phi_dot * deltaT, 2 * M_PI);
 }
 
-void TegotaeDriver::UpdateReactionForce()
+void TegotaeDriver::updateReactionForce()
 {
     // N is the ground reaction force (GRF) acting on the leg
     m_N = 0;
@@ -373,7 +373,7 @@ std::string *TegotaeDriver::createFromAttributes()
         m_BDriver = driver;
     }
 
-    Initialise(omega, sigma, A, Aprime, B, phi, tegotaeCentre, tegotaeRim, errorOutput, forceDirection, contactGeomList);
+    initialise(omega, sigma, A, Aprime, B, phi, tegotaeCentre, tegotaeRim, errorOutput, forceDirection, contactGeomList);
 
     upstreamObjects.push_back(m_tegotaeCentre);
     upstreamObjects.push_back(m_tegotaeRim);

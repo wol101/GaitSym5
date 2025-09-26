@@ -25,14 +25,14 @@ class TegotaeDriver : public Driver
 public:
     TegotaeDriver();
 
-    void Initialise(double omega, double sigma, double A, double Aprime, double B, double phi,
+    void initialise(double omega, double sigma, double A, double Aprime, double B, double phi,
                     Marker *tegotaeCentre, Marker *tegotaeRim, Marker *errorOutput, Marker *forceDirection,
                     const std::vector<Geom *> &contactGeomList);
 
     virtual void update();
     virtual void sendData();
 
-    void UpdateReactionForce();
+    void updateReactionForce();
 
     virtual std::string dumpToString();
 

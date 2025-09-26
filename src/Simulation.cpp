@@ -347,7 +347,7 @@ void Simulation::updateSimulation()
     {
         for (auto &&it : m_driverList)
         {
-            if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(it.second.get())) tegotaeDriver->UpdateReactionForce();
+            if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(it.second.get())) tegotaeDriver->updateReactionForce();
         }
     }
 
