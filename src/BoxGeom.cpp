@@ -43,11 +43,11 @@ std::string *BoxGeom::createFromAttributes()
     std::string buf;
 
     if (findAttribute("LengthX"s, &buf) == nullptr) return lastErrorPtr();
-    double lengthX = GSUtil::Double(buf);
+    double lengthX = GSUtil::toDouble(buf);
     if (findAttribute("LengthY"s, &buf) == nullptr) return lastErrorPtr();
-    double lengthY = GSUtil::Double(buf);
+    double lengthY = GSUtil::toDouble(buf);
     if (findAttribute("LengthZ"s, &buf) == nullptr) return lastErrorPtr();
-    double lengthZ = GSUtil::Double(buf);
+    double lengthZ = GSUtil::toDouble(buf);
     setDimensions(lengthX, lengthY, lengthZ);
 
     return nullptr;
@@ -60,9 +60,9 @@ void BoxGeom::appendToAttributes()
     setAttribute("Type"s, "Box"s);
     double lx, ly, lz;
     getDimensions(&lx, &ly, &lz);
-    setAttribute("LengthX"s, *GSUtil::ToString(lx, &buf));
-    setAttribute("LengthY"s, *GSUtil::ToString(ly, &buf));
-    setAttribute("LengthZ"s, *GSUtil::ToString(lz, &buf));
+    setAttribute("LengthX"s, *GSUtil::toString(lx, &buf));
+    setAttribute("LengthY"s, *GSUtil::toString(ly, &buf));
+    setAttribute("LengthZ"s, *GSUtil::toString(lz, &buf));
 
     return;
 }

@@ -50,7 +50,7 @@ class GSUtil {
 public:
 
 // calculate cross product (vector product)
-inline static void CrossProduct3x1(const double *a, const double *b, double *c)
+inline static void crossProduct3x1(const double *a, const double *b, double *c)
 {
         c[0] = a[1] * b[2] - a[2] * b[1];
         c[1] = a[2] * b[0] - a[0] * b[2];
@@ -58,25 +58,25 @@ inline static void CrossProduct3x1(const double *a, const double *b, double *c)
 }
 
 // calculate dot product (scalar product)
-inline static double DotProduct3x1(const double *a, const double *b)
+inline static double dotProduct3x1(const double *a, const double *b)
 {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
 // calculate length of vector
-inline static double Magnitude3x1(const double *a)
+inline static double magnitude3x1(const double *a)
 {
     return sqrt(SQUARE(a[0]) + SQUARE(a[1]) + SQUARE(a[2]));
 }
 
 // calculate distance between two points
-inline static double Distance3x1(const double *a, const double *b)
+inline static double distance3x1(const double *a, const double *b)
 {
     return sqrt(SQUARE(a[0] - b[0]) + SQUARE(a[1] - b[1]) + SQUARE(a[2] - b[2]));
 }
 
 // calculate unit vector
-inline static void Unit3x1(double *a)
+inline static void unit3x1(double *a)
 {
     double len = sqrt(SQUARE(a[0]) + SQUARE(a[1]) + SQUARE(a[2]));
     // default fixup for zero length vectors
@@ -95,7 +95,7 @@ inline static void Unit3x1(double *a)
 }
 
 // c = a + b vectors
-inline static void Add3x1(const double *a, const double *b, double *c)
+inline static void add3x1(const double *a, const double *b, double *c)
 {
     c[0] = a[0] + b[0];
     c[1] = a[1] + b[1];
@@ -103,7 +103,7 @@ inline static void Add3x1(const double *a, const double *b, double *c)
 }
 
 // c = a - b vectors
-inline static void Subtract3x1(const double *a, const double *b, double *c)
+inline static void subtract3x1(const double *a, const double *b, double *c)
 {
     c[0] = a[0] - b[0];
     c[1] = a[1] - b[1];
@@ -111,7 +111,7 @@ inline static void Subtract3x1(const double *a, const double *b, double *c)
 }
 
 // c = scalar * a
-inline static void ScalarMultiply3x1(const double scalar, const double *a, double *c)
+inline static void scalarMultiply3x1(const double scalar, const double *a, double *c)
 {
     c[0] = a[0] * scalar;
     c[1] = a[1] * scalar;
@@ -119,7 +119,7 @@ inline static void ScalarMultiply3x1(const double scalar, const double *a, doubl
 }
 
 // b = a
-inline static void Copy3x1(const double *a, double *b)
+inline static void copy3x1(const double *a, double *b)
 {
     b[0] = a[0];
     b[1] = a[1];
@@ -127,7 +127,7 @@ inline static void Copy3x1(const double *a, double *b)
 }
 
 
-inline static void ZPlaneRotate(double theta, double *location)
+inline static void zPlaneRotate(double theta, double *location)
 {
     double internal[3];
 
@@ -147,7 +147,7 @@ inline static void ZPlaneRotate(double theta, double *location)
     location[1] = internal[1]*ctheta + internal[0]*stheta;
 }
 
-inline static bool OutRange(double v, double l, double h)
+inline static bool outRange(double v, double l, double h)
 {
     if (v < l)
         return true;
@@ -156,24 +156,24 @@ inline static bool OutRange(double v, double l, double h)
     return false;
 }
 
-template <typename T> static T Clamp(const T& n, const T& lower, const T& upper)
+template <typename T> static T clamp(const T& n, const T& lower, const T& upper)
 {
     if (n < lower) return lower;
     if (n > upper) return upper;
     return n;
 }
 
-inline static double Double(const std::string &buf)
+inline static double toDouble(const std::string &buf)
 {
     return strtod(buf.c_str(), nullptr);
 }
 
-inline static double Double(const char *buf)
+inline static double toDouble(const char *buf)
 {
     return strtod(buf, nullptr);
 }
 
-inline static double Double(const unsigned char *buf)
+inline static double toDouble(const unsigned char *buf)
 {
     return strtod(reinterpret_cast<const char *>(buf), nullptr);
 }
@@ -190,7 +190,7 @@ inline static double *Double(const char *buf, int n, double *d)
     return d;
 }
 
-inline static double *Double(const unsigned char *buf, int n, double *d)
+inline static double *toDouble(const unsigned char *buf, int n, double *d)
 {
     const char *cptr = reinterpret_cast<const char *>(buf);
     char *ptr;
@@ -202,12 +202,12 @@ inline static double *Double(const unsigned char *buf, int n, double *d)
     return d;
 }
 
-inline static double *Double(const std::string &buf, int n, double *d)
+inline static double *toDouble(const std::string &buf, int n, double *d)
 {
     return Double(buf.c_str(), n, d);
 }
 
-inline static std::vector<double> *Double(const std::string &buf, std::vector<double> *d)
+inline static std::vector<double> *toDouble(const std::string &buf, std::vector<double> *d)
 {
     const char *cptr = buf.data();
     char *ptr = nullptr;
@@ -222,22 +222,22 @@ inline static std::vector<double> *Double(const std::string &buf, std::vector<do
     return d;
 }
 
-inline static int Int(const std::string &buf)
+inline static int toInt(const std::string &buf)
 {
     return int(strtol(buf.c_str(), nullptr, 0));
 }
 
-inline static int Int(const char *buf)
+inline static int toInt(const char *buf)
 {
     return int(strtol(buf, nullptr, 0));
 }
 
-inline static int Int(const unsigned char *buf)
+inline static int toInt(const unsigned char *buf)
 {
     return int(strtol(reinterpret_cast<const char *>(buf), nullptr, 0));
 }
 
-inline static int *Int(const char *buf, int n, int *d)
+inline static int *toInt(const char *buf, int n, int *d)
 {
     const char *cptr = buf;
     char *ptr;
@@ -249,7 +249,7 @@ inline static int *Int(const char *buf, int n, int *d)
     return d;
 }
 
-inline static int *Int(unsigned char *buf, int n, int *d)
+inline static int *toInt(unsigned char *buf, int n, int *d)
 {
     const char *cptr = reinterpret_cast<const char *>(buf);
     char *ptr;
@@ -261,12 +261,12 @@ inline static int *Int(unsigned char *buf, int n, int *d)
     return d;
 }
 
-inline static int *Int(const std::string &buf, int n, int *d)
+inline static int *toInt(const std::string &buf, int n, int *d)
 {
-    return Int(buf.c_str(), n, d);
+    return toInt(buf.c_str(), n, d);
 }
 
-inline static std::vector<int> *Int(const std::string &buf, std::vector<int> *d)
+inline static std::vector<int> *toInt(const std::string &buf, std::vector<int> *d)
 {
     const char *cptr = buf.data();
     char *ptr = nullptr;
@@ -281,27 +281,27 @@ inline static std::vector<int> *Int(const std::string &buf, std::vector<int> *d)
     return d;
 }
 
-inline static bool Bool(const std::string &buf)
+inline static bool toBool(const std::string &buf)
 {
     std::vector<char> vbuf(buf.c_str(), buf.c_str() + buf.size() + 1);
-    Strip(vbuf.data());
+    strip(vbuf.data());
     if (strcasecmp(vbuf.data(), "false") == 0) return false;
     if (strcasecmp(vbuf.data(), "true") == 0) return true;
     if (strtol(vbuf.data(), nullptr, 0) != 0) return true;
     return false;
 }
 
-inline static bool Bool(const char *cbuf)
+inline static bool toBool(const char *cbuf)
 {
     std::vector<char> vbuf(cbuf, cbuf + strlen(cbuf) + 1);
-    Strip(vbuf.data());
+    strip(vbuf.data());
     if (strcasecmp(vbuf.data(), "false") == 0) return false;
     if (strcasecmp(vbuf.data(), "true") == 0) return true;
     if (strtol(vbuf.data(), nullptr, 0) != 0) return true;
     return false;
 }
 
-inline static bool BoolNoStrip(const char *cbuf)
+inline static bool toBoolNoStrip(const char *cbuf)
 {
     if (strcasecmp(cbuf, "false") == 0) return false;
     if (strcasecmp(cbuf, "true") == 0) return true;
@@ -309,50 +309,50 @@ inline static bool BoolNoStrip(const char *cbuf)
     return false;
 }
 
-inline static bool Bool(const unsigned char *cbuf)
+inline static bool toBool(const unsigned char *cbuf)
 {
-    return Bool(reinterpret_cast<const char *>(cbuf));
+    return toBool(reinterpret_cast<const char *>(cbuf));
 }
 
-inline static bool *Bool(char *buf, int n, bool *d)
+inline static bool *toBool(char *buf, int n, bool *d)
 {
     char *token;
     token = strtok(buf, " \t\n\r");
-    d[0] = Bool(token);
+    d[0] = toBool(token);
 
     for (int i = 0; i < n; i++)
     {
         token = strtok(nullptr, " \t\n\r");
-        if (token) d[i] = BoolNoStrip(token);
+        if (token) d[i] = toBoolNoStrip(token);
         else d[i] = false;
     }
     return d;
 }
 
-inline static bool *Bool(unsigned char *buf, int n, bool *d)
+inline static bool *toBool(unsigned char *buf, int n, bool *d)
 {
     char *token;
     token = strtok(reinterpret_cast<char *>(buf), " \t\n\r");
-    d[0] = Bool(token);
+    d[0] = toBool(token);
 
     for (int i = 0; i < n; i++)
     {
         token = strtok(nullptr, " \t\n\r");
-        if (token) d[i] = BoolNoStrip(token);
+        if (token) d[i] = toBoolNoStrip(token);
         else d[i] = false;
     }
     return d;
 }
 
-inline static bool *Bool(const std::string &buf, int n, bool *d)
+inline static bool *toBool(const std::string &buf, int n, bool *d)
 {
     std::vector<char> newBuf(buf.c_str(), buf.c_str() + buf.size() + 1);
-    return Bool(newBuf.data(), n, d);
+    return toBool(newBuf.data(), n, d);
 }
 
 // strip out beginning and ending whitespace
 // Note modifies string
-inline static void Strip(char *str)
+inline static void strip(char *str)
 {
     char *p1, *p2;
 
@@ -397,7 +397,7 @@ inline static void Strip(char *str)
 }
 
 // Count whitespace delimited tokens (tokens surrounded by double quotes are considered a single token)
-inline static int CountTokens(const char *string)
+inline static int countTokens(const char *string)
 {
     const char *p = string;
     bool inToken = false;
@@ -427,10 +427,10 @@ inline static int CountTokens(const char *string)
     }
     return count;
 }
-inline static int CountTokens(const unsigned char *string) { return CountTokens(reinterpret_cast<const char *>(string)); }
+inline static int countTokens(const unsigned char *string) { return countTokens(reinterpret_cast<const char *>(string)); }
 
 // linear interpolate using 2 sets of (x,y) coordinates to define the line
-inline static double Interpolate(double x1, double y1, double x2, double y2, double x)
+inline static double interpolate(double x1, double y1, double x2, double y2, double x)
 {
     // y - y1 = ( (y2 - y1) / (x2 - x1) ) * (x - x1)
     double delX = x2 - x1;
@@ -440,7 +440,7 @@ inline static double Interpolate(double x1, double y1, double x2, double y2, dou
 }
 
 // return the index of a matching item in a sorted array
-template <class T> inline static int BinarySearchMatch
+template <class T> inline static int binarySearchMatch
 (T array[ ], int listlen, T item)
 {
     int first = 0;
@@ -460,7 +460,7 @@ template <class T> inline static int BinarySearchMatch
 // return the index of a matching item in a sorted array
 // special case when I'm searching for a range rather than an exact match
 // returns the index of array[index] <= item < array[index+1]
-template <class T> inline static int BinarySearchRange
+template <class T> inline static int binarySearchRange
 (const T array[ ], int listlen, T item)
 {
     int first = 0;
@@ -476,101 +476,101 @@ template <class T> inline static int BinarySearchRange
     return -1;
 }
 
-static void Tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList);
+static void tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList);
 
-static double *GetQuaternion(char *bufPtrs[], double *q);
-static pgd::Quaternion GetQuaternion(const std::vector<std::string> &tokens, size_t startIndex);
-static double GetAngle(const char *buf);
-static double GetAngle(const std::string &buf);
+static double *toQuaternion(char *bufPtrs[], double *q);
+static pgd::Quaternion toQuaternion(const std::vector<std::string> &tokens, size_t startIndex);
+static double toAngle(const char *buf);
+static double toAngle(const std::string &buf);
 
-static double DistanceBetweenTwoLines(pgd::Vector3 p1, pgd::Vector3 d1, pgd::Vector3 p2, pgd::Vector3 d2);
-static bool LineLineIntersect(pgd::Vector3 p1, pgd::Vector3 p2,
+static double distanceBetweenTwoLines(pgd::Vector3 p1, pgd::Vector3 d1, pgd::Vector3 p2, pgd::Vector3 d2);
+static bool lineLineIntersect(pgd::Vector3 p1, pgd::Vector3 p2,
                               pgd::Vector3 p3, pgd::Vector3 p4,
                               pgd::Vector3 *pa, pgd::Vector3 *pb,
                               double *mua, double *mub);
 
-static unsigned char *AsciiToBitMap(const char *string, int width, int height, char setChar, bool reverseY, unsigned char *bitmap);
-static void FindAndReplace( std::string *source, const std::string &find, const std::string &replace );
-static void FindBoundsCheck(double *list, double x, int *lowBound, int *highBound); // might be quicker than BinarySearchRange for special case
-static void FindBounds(double *list, double x, int *lowBound, int *highBound);
-static double GetTime();
-static int QuickInt(const char *p);
-static double QuickDouble(const char *p);
-static double QuickPow(double base, int exp);
-static bool BoolRegex(const std::string &buf);
-static std::string Wrap(const char *text, size_t line_length);
+static unsigned char *asciiToBitMap(const char *string, int width, int height, char setChar, bool reverseY, unsigned char *bitmap);
+static void findAndReplace( std::string *source, const std::string &find, const std::string &replace );
+static void findBoundsCheck(double *list, double x, int *lowBound, int *highBound); // might be quicker than BinarySearchRange for special case
+static void findBounds(double *list, double x, int *lowBound, int *highBound);
+static double systemTime();
+static int quickInt(const char *p);
+static double quickDouble(const char *p);
+static double quickPow(double base, int exp);
+static bool boolRegex(const std::string &buf);
+static std::string wrap(const char *text, size_t line_length);
 
-static std::string *ToString(double v, std::string *output);
-static std::string *ToString(float v, std::string *output);
-static std::string *ToString(int32_t v, std::string *output);
-static std::string *ToString(uint32_t v, std::string *output);
-static std::string *ToString(int64_t v, std::string *output);
-static std::string *ToString(uint64_t v, std::string *output);
-static std::string *ToString(bool v, std::string *output);
-static std::string *ToString(const double *v, size_t n, std::string *output);
-static std::string *ToString(const float *v, size_t n, std::string *output);
-static std::string *ToString(const int32_t *v, size_t n, std::string *output);
-static std::string *ToString(const uint32_t *v, size_t n, std::string *output);
-static std::string *ToString(const int64_t *v, size_t n, std::string *output);
-static std::string *ToString(const uint64_t *v, size_t n, std::string *output);
-static std::string *ToString(const bool *v, size_t n, std::string *output);
-static std::string *ToString(const pgd::Matrix3x3 &m, std::string *output);
-static std::string *ToString(const pgd::Quaternion &v, std::string *output);
-static std::string *ToString(const pgd::Vector2 &v, std::string *output);
-static std::string *ToString(const pgd::Vector3 &v, std::string *output);
-static std::string *ToString(const pgd::Vector4 &v, std::string *output);
-static std::string *ToString(const std::string &s, std::string *output);
+static std::string *toString(double v, std::string *output);
+static std::string *toString(float v, std::string *output);
+static std::string *toString(int32_t v, std::string *output);
+static std::string *toString(uint32_t v, std::string *output);
+static std::string *toString(int64_t v, std::string *output);
+static std::string *toString(uint64_t v, std::string *output);
+static std::string *toString(bool v, std::string *output);
+static std::string *toString(const double *v, size_t n, std::string *output);
+static std::string *toString(const float *v, size_t n, std::string *output);
+static std::string *toString(const int32_t *v, size_t n, std::string *output);
+static std::string *toString(const uint32_t *v, size_t n, std::string *output);
+static std::string *toString(const int64_t *v, size_t n, std::string *output);
+static std::string *toString(const uint64_t *v, size_t n, std::string *output);
+static std::string *toString(const bool *v, size_t n, std::string *output);
+static std::string *toString(const pgd::Matrix3x3 &m, std::string *output);
+static std::string *toString(const pgd::Quaternion &v, std::string *output);
+static std::string *toString(const pgd::Vector2 &v, std::string *output);
+static std::string *toString(const pgd::Vector3 &v, std::string *output);
+static std::string *toString(const pgd::Vector4 &v, std::string *output);
+static std::string *toString(const std::string &s, std::string *output);
 
-static std::string ToString(double v);
-static std::string ToString(float v);
-static std::string ToString(int32_t v);
-static std::string ToString(int64_t v);
-static std::string ToString(uint32_t v);
-static std::string ToString(uint64_t v);
-static std::string ToString(bool v);
-static std::string ToString(const double *v, size_t n);
-static std::string ToString(const float *v, size_t n);
-static std::string ToString(const int32_t *v, size_t n);
-static std::string ToString(const uint32_t *v, size_t n);
-static std::string ToString(const int64_t *v, size_t n);
-static std::string ToString(const uint64_t *v, size_t n);
-static std::string ToString(const bool *v, size_t n);
-static std::string ToString(const pgd::Matrix3x3 &m);
-static std::string ToString(const pgd::Quaternion &v);
-static std::string ToString(const pgd::Vector2 &v);
-static std::string ToString(const pgd::Vector3 &v);
-static std::string ToString(const pgd::Vector4 &v);
+static std::string toString(double v);
+static std::string toString(float v);
+static std::string toString(int32_t v);
+static std::string toString(int64_t v);
+static std::string toString(uint32_t v);
+static std::string toString(uint64_t v);
+static std::string toString(bool v);
+static std::string toString(const double *v, size_t n);
+static std::string toString(const float *v, size_t n);
+static std::string toString(const int32_t *v, size_t n);
+static std::string toString(const uint32_t *v, size_t n);
+static std::string toString(const int64_t *v, size_t n);
+static std::string toString(const uint64_t *v, size_t n);
+static std::string toString(const bool *v, size_t n);
+static std::string toString(const pgd::Matrix3x3 &m);
+static std::string toString(const pgd::Quaternion &v);
+static std::string toString(const pgd::Vector2 &v);
+static std::string toString(const pgd::Vector3 &v);
+static std::string toString(const pgd::Vector4 &v);
 
-static std::string *ToString(uint32_t address, uint16_t port, std::string *output);
-static std::string ToString(uint32_t address, uint16_t port);
+static std::string *toString(uint32_t address, uint16_t port, std::string *output);
+static std::string toString(uint32_t address, uint16_t port);
 
-static std::string ToString(const char * const printfFormatString, ...);
+static std::string toString(const char * const printfFormatString, ...);
 static std::string ConvertIPAddressToString(uint32_t address, bool networkOrder);
 
-template<typename T> static std::string ToString(T v);
-template<typename T> static std::string ToString(const std::vector<T> &vector);
+template<typename T> static std::string toString(T v);
+template<typename T> static std::string toString(const std::vector<T> &vector);
 
 #if defined(__APPLE__)
-static std::string *ToString(size_t v, std::string *output);
-static std::string *ToString(const size_t *v, size_t n, std::string *output);
-static std::string ToString(const size_t *v, size_t n);
+static std::string *toString(size_t v, std::string *output);
+static std::string *toString(const size_t *v, size_t n, std::string *output);
+static std::string toString(const size_t *v, size_t n);
 #endif
 
-static void BinaryOutput(std::ostream &stream, int8_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, uint8_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, int16_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, uint16_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, int32_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, uint32_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, int64_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, uint64_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, bool v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, float v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, double v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
-static void BinaryOutput(std::ostream &stream, const std::string &v) { size_t l = v.size(); stream.write(reinterpret_cast<const char *>(&l), sizeof(l)); stream.write(v.c_str(), std::streamsize(v.size())); }
+static void binaryOutput(std::ostream &stream, int8_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, uint8_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, int16_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, uint16_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, int32_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, uint32_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, int64_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, uint64_t v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, bool v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, float v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, double v) { stream.write(reinterpret_cast<const char *>(&v), sizeof(v)); }
+static void binaryOutput(std::ostream &stream, const std::string &v) { size_t l = v.size(); stream.write(reinterpret_cast<const char *>(&l), sizeof(l)); stream.write(v.c_str(), std::streamsize(v.size())); }
 
-static size_t SplitExceptQuoted(const std::string &line, std::vector<std::string> *tokens);
-static size_t SplitGeneric(const std::string &line, std::vector<std::string> *tokens, char split, bool quoted, bool allowEmpty);
+static size_t splitExceptQuoted(const std::string &line, std::vector<std::string> *tokens);
+static size_t splitGeneric(const std::string &line, std::vector<std::string> *tokens, char split, bool quoted, bool allowEmpty);
 
 static std::wstring utf8_to_utf16(const std::string& utf8);
 
@@ -586,11 +586,11 @@ static uint64_t fast_a_to_uint64_t(const char *nptr, const char **endptr);
 static double fast_a_to_double(const char *nptr, const char **endptr);
 static double fast_a_to_double(const char *nptr);
 
-void Logger(const std::string &file, const std::string &message);
+void logger(const std::string &file, const std::string &message);
 
-static double ThreeAxisDecompositionScore(double x[] , void *data);
-static double ThreeAxisDecomposition(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double *ang1, double *ang2, double *ang3);
-static double ThreeAxisDecompositionError(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double ang1, double ang2, double ang3);
+static double threeAxisDecompositionScore(double x[] , void *data);
+static double threeAxisDecomposition(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double *ang1, double *ang2, double *ang3);
+static double threeAxisDecompositionError(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double ang1, double ang2, double ang3);
 static void nelmin ( double fn ( double x[] , void *data ), void *data, int n, double start[], double xmin[],
                      double *ynewlo, double reqmin, double step[], int konvge, int kcount,
                      int *icount, int *numres, int *ifault );
@@ -598,13 +598,13 @@ static double zeroin(double ax, double bx, double (*f)(double x, void *info), vo
 
 };
 
-template<typename T> std::string GSUtil::ToString(T v)
+template<typename T> std::string GSUtil::toString(T v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-template<typename T> std::string GSUtil::ToString(const std::vector<T> &vector) // template function definitions seem to behave better in the header
+template<typename T> std::string GSUtil::toString(const std::vector<T> &vector) // template function definitions seem to behave better in the header
 {
     std::string output;
     output.reserve(32 * vector.size());
@@ -612,7 +612,7 @@ template<typename T> std::string GSUtil::ToString(const std::vector<T> &vector) 
     token.reserve(32);
     for (auto &&it : vector)
     {
-        ToString(it, &token);
+        toString(it, &token);
         token.append(" ");
         output.append(token);
     }

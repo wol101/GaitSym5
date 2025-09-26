@@ -88,11 +88,11 @@ int ObjectiveMain::Run()
         if (m_simulation->GetReporterList()->find(m_outputList[i]) != m_simulation->GetReporterList()->end()) (*m_simulation->GetReporterList())[m_outputList[i]]->setDump(true);
     }
 
-    double startTime = GSUtil::GetTime();
+    double startTime = GSUtil::systemTime();
 
     while(m_runTimeLimit <= 0 || m_simulationTime <= m_runTimeLimit)
     {
-        m_simulationTime = GSUtil::GetTime() - startTime;
+        m_simulationTime = GSUtil::systemTime() - startTime;
         if (m_simulation->ShouldQuit()) break;
         if (m_simulation->TestForCatastrophy()) break;
         m_simulation->UpdateSimulation();

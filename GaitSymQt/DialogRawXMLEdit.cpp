@@ -729,7 +729,7 @@ std::string DialogRawXMLEdit::attributeMachineArithmetic(const std::string &orig
         ok = py_castfloat(py_retval(), &newValue); // py_castfloat copes with int and float types
         if (ok)
         {
-            newString = GaitSym::GSUtil::ToString(newValue);
+            newString = GaitSym::GSUtil::toString(newValue);
         }
     }
     if (!ok)

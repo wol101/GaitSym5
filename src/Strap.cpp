@@ -36,7 +36,7 @@ std::string *Strap::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("Length"s, &buf) == nullptr) return lastErrorPtr();
-    this->setLength(GSUtil::Double(buf));
+    this->setLength(GSUtil::toDouble(buf));
 
     if (findAttribute("TorqueMarkerIDList"s, &buf))
     {
@@ -71,7 +71,7 @@ void Strap::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     std::string buf;
-    setAttribute("Length"s, *GSUtil::ToString(m_length, &buf));
+    setAttribute("Length"s, *GSUtil::toString(m_length, &buf));
     std::vector<std::string> markerNames;
     markerNames.reserve(m_torqueMarkerList.size());
     for (auto &&it: m_torqueMarkerList) markerNames.push_back(it->name());

@@ -269,7 +269,7 @@ std::string *FluidSac::createFromAttributes()
     buf.reserve(1000000);
 
     if (findAttribute("NumMarkers"s, &buf) == nullptr) return lastErrorPtr();
-    size_t numMarkers = size_t(GSUtil::Int(buf));
+    size_t numMarkers = size_t(GSUtil::toInt(buf));
     if (findAttribute("MarkerIDList"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> markerNames;
     pystring::split(buf, markerNames);
@@ -291,7 +291,7 @@ std::string *FluidSac::createFromAttributes()
         m_markerList.push_back(it->second.get());
     }
     if (findAttribute("NumTriangles"s, &buf) == nullptr) return lastErrorPtr();
-    size_t numTriangles = size_t(GSUtil::Int(buf));
+    size_t numTriangles = size_t(GSUtil::toInt(buf));
     if (findAttribute("TriangleIndexList"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> markerIndices;
     pystring::split(buf, markerIndices);
@@ -304,9 +304,9 @@ std::string *FluidSac::createFromAttributes()
     m_triangleList.resize(numTriangles);
     for (size_t i = 0; i < numTriangles; i++)
     {
-        m_triangleList[i].v0 = size_t(GSUtil::Int(markerIndices[i * 3 + 0]));
-        m_triangleList[i].v1 = size_t(GSUtil::Int(markerIndices[i * 3 + 1]));
-        m_triangleList[i].v2 = size_t(GSUtil::Int(markerIndices[i * 3 + 2]));
+        m_triangleList[i].v0 = size_t(GSUtil::toInt(markerIndices[i * 3 + 0]));
+        m_triangleList[i].v1 = size_t(GSUtil::toInt(markerIndices[i * 3 + 1]));
+        m_triangleList[i].v2 = size_t(GSUtil::toInt(markerIndices[i * 3 + 2]));
         m_triangleList[i].area = 0;
         m_triangleList[i].normal = {0, 0, 0};
         m_triangleList[i].centroid = {0, 0, 0};
@@ -333,19 +333,19 @@ void FluidSac::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     std::string buf;
-    setAttribute("NumMarkers"s, *GSUtil::ToString(m_markerList.size(), &buf));
+    setAttribute("NumMarkers"s, *GSUtil::toString(m_markerList.size(), &buf));
     std::vector<std::string> stringList;
     stringList.reserve(m_markerList.size());
     for (size_t i = 0; i < m_markerList.size(); i++) stringList.push_back(m_markerList[i]->name());
     setAttribute("MarkerIDList"s, pystring::join(" "s, stringList));
-    setAttribute("NumTriangles"s, *GSUtil::ToString(m_triangleList.size(), &buf));
+    setAttribute("NumTriangles"s, *GSUtil::toString(m_triangleList.size(), &buf));
     stringList.clear();
     stringList.reserve(m_triangleList.size());
     size_t triVertices[3];
     for (size_t i = 0; i < m_triangleList.size(); i++)
     {
         triVertices[0] = m_triangleList[i].v0; triVertices[1] = m_triangleList[i].v1; triVertices[2] = m_triangleList[i].v2;
-        stringList.push_back(*GSUtil::ToString(triVertices, 3, &buf));
+        stringList.push_back(*GSUtil::toString(triVertices, 3, &buf));
     }
     setAttribute("TriangleIndexList"s, pystring::join(" "s, stringList));
 }

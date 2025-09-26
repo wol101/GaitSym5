@@ -233,48 +233,48 @@ std::string *Geom::createFromAttributes()
     {
         if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
         {
-            m_ERP = GSUtil::Double(buf);
-            m_CFM = GSUtil::Double(buf2);
+            m_ERP = GSUtil::toDouble(buf);
+            m_CFM = GSUtil::toDouble(buf2);
             m_SpringConstant = m_ERP / (m_CFM * stepSize);
             m_DampingConstant = (1.0 - m_ERP) / m_CFM;
             break;
         }
         if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
         {
-            m_ERP = GSUtil::Double(buf);
-            m_SpringConstant = GSUtil::Double(buf2);
+            m_ERP = GSUtil::toDouble(buf);
+            m_SpringConstant = GSUtil::toDouble(buf2);
             m_DampingConstant = stepSize * (m_SpringConstant / m_ERP - m_SpringConstant);
             m_CFM = 1.0/(stepSize * m_SpringConstant + m_DampingConstant);
             break;
         }
         if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
         {
-            m_ERP = GSUtil::Double(buf);
-            m_DampingConstant = GSUtil::Double(buf2);
+            m_ERP = GSUtil::toDouble(buf);
+            m_DampingConstant = GSUtil::toDouble(buf2);
             m_SpringConstant = m_DampingConstant / (stepSize / m_ERP - stepSize);
             m_CFM = 1.0/(stepSize * m_SpringConstant + m_DampingConstant);
             break;
         }
         if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
         {
-            m_CFM = GSUtil::Double(buf);
-            m_DampingConstant = GSUtil::Double(buf2);
+            m_CFM = GSUtil::toDouble(buf);
+            m_DampingConstant = GSUtil::toDouble(buf2);
             m_SpringConstant = (1.0 / m_CFM - m_DampingConstant) / stepSize;
             m_ERP = stepSize * m_SpringConstant/(stepSize * m_SpringConstant + m_DampingConstant);
             break;
         }
         if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
         {
-            m_CFM = GSUtil::Double(buf);
-            m_SpringConstant = GSUtil::Double(buf2);
+            m_CFM = GSUtil::toDouble(buf);
+            m_SpringConstant = GSUtil::toDouble(buf2);
             m_DampingConstant = 1.0 / m_CFM - stepSize * m_SpringConstant;
             m_ERP = stepSize * m_SpringConstant/(stepSize * m_SpringConstant + m_DampingConstant);
             break;
         }
         if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
         {
-            m_DampingConstant = GSUtil::Double(buf);
-            m_SpringConstant = GSUtil::Double(buf2);
+            m_DampingConstant = GSUtil::toDouble(buf);
+            m_SpringConstant = GSUtil::toDouble(buf2);
             m_CFM = 1.0/(stepSize * m_SpringConstant + m_DampingConstant);
             m_ERP = stepSize * m_SpringConstant/(stepSize * m_SpringConstant + m_DampingConstant);
             break;
@@ -284,17 +284,17 @@ std::string *Geom::createFromAttributes()
     }
 
     if (findAttribute("Bounce"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetContactBounce(GSUtil::Double(buf));
+    this->SetContactBounce(GSUtil::toDouble(buf));
     if (findAttribute("Mu"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetContactMu(GSUtil::Double(buf));
+    this->SetContactMu(GSUtil::toDouble(buf));
     if (findAttribute("Abort"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetAbort(GSUtil::Bool(buf));
+    this->SetAbort(GSUtil::toBool(buf));
     if (findAttribute("Adhesion"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetAdhesion(GSUtil::Bool(buf));
+    this->SetAdhesion(GSUtil::toBool(buf));
 
     if (findAttribute("Rho"s, &buf))
     {
-        this->SetContactRho(GSUtil::Double(buf));
+        this->SetContactRho(GSUtil::toDouble(buf));
     }
 
     m_ExcludeList.clear();
@@ -337,13 +337,13 @@ void Geom::appendToAttributes()
     std::string buf;
     setAttribute("Type", type());
     setAttribute("MarkerID"s, m_geomMarker->name());
-    setAttribute("SpringConstant"s, *GSUtil::ToString(m_SpringConstant, &buf));
-    setAttribute("DampingConstant"s, *GSUtil::ToString(m_DampingConstant, &buf));
-    setAttribute("Bounce"s, *GSUtil::ToString(m_Bounce, &buf));
-    setAttribute("Mu"s, *GSUtil::ToString(m_Mu, &buf));
-    setAttribute("Rho"s, *GSUtil::ToString(m_Rho, &buf));
-    setAttribute("Abort"s, *GSUtil::ToString(m_Abort, &buf));
-    setAttribute("Adhesion"s, *GSUtil::ToString(m_Adhesion, &buf));
+    setAttribute("SpringConstant"s, *GSUtil::toString(m_SpringConstant, &buf));
+    setAttribute("DampingConstant"s, *GSUtil::toString(m_DampingConstant, &buf));
+    setAttribute("Bounce"s, *GSUtil::toString(m_Bounce, &buf));
+    setAttribute("Mu"s, *GSUtil::toString(m_Mu, &buf));
+    setAttribute("Rho"s, *GSUtil::toString(m_Rho, &buf));
+    setAttribute("Abort"s, *GSUtil::toString(m_Abort, &buf));
+    setAttribute("Adhesion"s, *GSUtil::toString(m_Adhesion, &buf));
     std::vector<std::string> geomNames;
     for (size_t i = 0; i < m_ExcludeList.size(); i++) geomNames.push_back(m_ExcludeList[i]->name());
     setAttribute("ExcludeIDList"s, pystring::join(" "s, geomNames));

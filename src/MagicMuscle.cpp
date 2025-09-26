@@ -42,9 +42,9 @@ std::string *MagicMuscle::createFromAttributes()
     if (Muscle::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("ForceMultiplier"s, &buf) == nullptr) return lastErrorPtr();
-    m_forceMultiplier = GSUtil::Double(buf);
+    m_forceMultiplier = GSUtil::toDouble(buf);
     if (findAttribute("ForceOffset"s, &buf) == nullptr) return lastErrorPtr();
-    m_forceOffset = GSUtil::Double(buf);
+    m_forceOffset = GSUtil::toDouble(buf);
     return nullptr;
 }
 
@@ -52,8 +52,8 @@ void MagicMuscle::appendToAttributes()
 {
     Muscle::appendToAttributes();
     setAttribute("Type"s, "Magic"s);
-    setAttribute("ForceMultiplier"s, GSUtil::ToString(m_forceMultiplier));
-    setAttribute("ForceOffset"s, GSUtil::ToString(m_forceOffset));
+    setAttribute("ForceMultiplier"s, GSUtil::toString(m_forceMultiplier));
+    setAttribute("ForceOffset"s, GSUtil::toString(m_forceOffset));
 }
 
 std::string MagicMuscle::dumpToString()

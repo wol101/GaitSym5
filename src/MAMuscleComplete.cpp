@@ -495,35 +495,35 @@ std::string *MAMuscleComplete::createFromAttributes()
     std::string buf;
 
     if (findAttribute("ForcePerUnitArea"s, &buf) == nullptr) return lastErrorPtr();
-    m_forcePerUnitArea = GSUtil::Double(buf);
+    m_forcePerUnitArea = GSUtil::toDouble(buf);
     if (findAttribute("VMaxFactor"s, &buf) == nullptr) return lastErrorPtr();
-    m_vMaxFactor = GSUtil::Double(buf);
+    m_vMaxFactor = GSUtil::toDouble(buf);
     if (findAttribute("PCA"s, &buf) == nullptr) return lastErrorPtr();
-    m_pca = GSUtil::Double(buf);
+    m_pca = GSUtil::toDouble(buf);
     double f0 = m_pca * m_forcePerUnitArea;
     if (findAttribute("FibreLength"s, &buf) == nullptr) return lastErrorPtr();
-    m_fibreLength = GSUtil::Double(buf);
+    m_fibreLength = GSUtil::toDouble(buf);
     double vMax = m_fibreLength * m_vMaxFactor;
     if (findAttribute("ActivationK"s, &buf) == nullptr) return lastErrorPtr();
-    m_activationK = GSUtil::Double(buf);
+    m_activationK = GSUtil::toDouble(buf);
     if (findAttribute("Width"s, &buf) == nullptr) return lastErrorPtr();
-    m_width = GSUtil::Double(buf);
+    m_width = GSUtil::toDouble(buf);
     this->SetMuscleProperties(vMax, f0, m_activationK, m_width);
 
     if (findAttribute("TendonLength"s, &buf) == nullptr) return lastErrorPtr();
-    m_tendonLength = GSUtil::Double(buf);
+    m_tendonLength = GSUtil::toDouble(buf);
     if (findAttribute("SerialStrainAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double serialStrainAtFmax = GSUtil::Double(buf);
+    double serialStrainAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("SerialStrainRateAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double serialStrainRateAtFmax = GSUtil::Double(buf);
+    double serialStrainRateAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("SerialStrainModel"s, &buf) == nullptr) return lastErrorPtr();
     if (buf == "Linear"s) m_serialStrainModel = MAMuscleComplete::linear;
     else if (buf == "Square"s) m_serialStrainModel = MAMuscleComplete::square;
     else { setLastError("MUSCLE ID=\""s + name() + "\": Invalid SerialStrainModel"s); return lastErrorPtr(); }
     if (findAttribute("ParallelStrainAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double parallelStrainAtFmax = GSUtil::Double(buf);
+    double parallelStrainAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("ParallelStrainRateAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double parallelStrainRateAtFmax = GSUtil::Double(buf);
+    double parallelStrainRateAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("ParallelStrainModel"s, &buf) == nullptr) return lastErrorPtr();
     if (buf == "Linear"s) m_parallelStrainModel = MAMuscleComplete::linear;
     else if (buf == "Square"s) m_parallelStrainModel = MAMuscleComplete::square;
@@ -532,31 +532,31 @@ std::string *MAMuscleComplete::createFromAttributes()
     this->SetParallelElasticProperties(parallelStrainAtFmax, parallelStrainRateAtFmax, m_fibreLength, m_parallelStrainModel);
 
     if (findAttribute("ActivationKinetics"s, &buf) == nullptr) return lastErrorPtr();
-    bool activationKinetics = GSUtil::Bool(buf);
+    bool activationKinetics = GSUtil::toBool(buf);
     if (activationKinetics)
     {
         if (findAttribute("FastTwitchProportion"s, &buf) == nullptr) return lastErrorPtr();
-        m_akFastTwitchProportion = GSUtil::Double(buf);
+        m_akFastTwitchProportion = GSUtil::toDouble(buf);
         if (findAttribute("TActivationA"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTActivationA = GSUtil::Double(buf);
+        m_akTActivationA = GSUtil::toDouble(buf);
         if (findAttribute("TActivationB"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTActivationB = GSUtil::Double(buf);
+        m_akTActivationB = GSUtil::toDouble(buf);
         if (findAttribute("TDeactivationA"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTDeactivationA = GSUtil::Double(buf);
+        m_akTDeactivationA = GSUtil::toDouble(buf);
         if (findAttribute("TDeactivationB"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTDeactivationB = GSUtil::Double(buf);
+        m_akTDeactivationB = GSUtil::toDouble(buf);
         this->SetActivationKinetics(activationKinetics, m_akFastTwitchProportion, m_akTActivationA, m_akTActivationB, m_akTDeactivationA, m_akTDeactivationB);
     }
     if (findAttribute("InitialFibreLength"s, &buf) == nullptr) return lastErrorPtr(); // FIX ME - InitialFibreLength is currently not used
-    m_initialFibreLength = GSUtil::Double(buf);
+    m_initialFibreLength = GSUtil::toDouble(buf);
     this->SetInitialFibreLength(m_initialFibreLength);
     if (findAttribute("ActivationRate"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetActivationRate(GSUtil::Double(buf));
+    this->SetActivationRate(GSUtil::toDouble(buf));
     if (findAttribute("StartActivation"s, &buf) == nullptr) return lastErrorPtr(); // FIX ME - StartActivation is currently not used
-    m_startActivation = GSUtil::Double(buf);
+    m_startActivation = GSUtil::toDouble(buf);
     this->SetStartActivation(m_startActivation);
     if (findAttribute("MinimumActivation"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetMinimumActivation(GSUtil::Double(buf));
+    this->SetMinimumActivation(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -566,16 +566,16 @@ void MAMuscleComplete::appendToAttributes()
     Muscle::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "MinettiAlexanderComplete"s);
-    setAttribute("ForcePerUnitArea"s, *GSUtil::ToString(m_forcePerUnitArea, &buf));
-    setAttribute("VMaxFactor"s, *GSUtil::ToString(m_vMaxFactor, &buf));
-    setAttribute("PCA"s, *GSUtil::ToString(m_pca, &buf));
-    setAttribute("FibreLength"s, *GSUtil::ToString(m_fibreLength, &buf));
-    setAttribute("ActivationK"s, *GSUtil::ToString(m_activationK, &buf));
-    setAttribute("Width"s, *GSUtil::ToString(m_width, &buf));
+    setAttribute("ForcePerUnitArea"s, *GSUtil::toString(m_forcePerUnitArea, &buf));
+    setAttribute("VMaxFactor"s, *GSUtil::toString(m_vMaxFactor, &buf));
+    setAttribute("PCA"s, *GSUtil::toString(m_pca, &buf));
+    setAttribute("FibreLength"s, *GSUtil::toString(m_fibreLength, &buf));
+    setAttribute("ActivationK"s, *GSUtil::toString(m_activationK, &buf));
+    setAttribute("Width"s, *GSUtil::toString(m_width, &buf));
 
-    setAttribute("TendonLength"s, *GSUtil::ToString(m_tendonLength, &buf));
-    setAttribute("SerialStrainAtFmax"s, *GSUtil::ToString(m_serialStrainAtFmax, &buf));
-    setAttribute("SerialStrainRateAtFmax"s, *GSUtil::ToString(m_serialStrainRateAtFmax, &buf));
+    setAttribute("TendonLength"s, *GSUtil::toString(m_tendonLength, &buf));
+    setAttribute("SerialStrainAtFmax"s, *GSUtil::toString(m_serialStrainAtFmax, &buf));
+    setAttribute("SerialStrainRateAtFmax"s, *GSUtil::toString(m_serialStrainRateAtFmax, &buf));
     switch (m_serialStrainModel)
     {
     case MAMuscleComplete::linear:
@@ -585,8 +585,8 @@ void MAMuscleComplete::appendToAttributes()
         setAttribute("SerialStrainModel"s, "Square"s);
         break;
     }
-    setAttribute("ParallelStrainAtFmax"s, *GSUtil::ToString(m_parallelStrainAtFmax, &buf));
-    setAttribute("ParallelStrainRateAtFmax"s, *GSUtil::ToString(m_parallelStrainRateAtFmax, &buf));
+    setAttribute("ParallelStrainAtFmax"s, *GSUtil::toString(m_parallelStrainAtFmax, &buf));
+    setAttribute("ParallelStrainRateAtFmax"s, *GSUtil::toString(m_parallelStrainRateAtFmax, &buf));
     switch (m_parallelStrainModel)
     {
     case MAMuscleComplete::linear:
@@ -597,19 +597,19 @@ void MAMuscleComplete::appendToAttributes()
         break;
     }
 
-    setAttribute("ActivationKinetics"s, *GSUtil::ToString(m_ActivationKinetics, &buf));
+    setAttribute("ActivationKinetics"s, *GSUtil::toString(m_ActivationKinetics, &buf));
     if (m_ActivationKinetics)
     {
-        setAttribute("FastTwitchProportion"s, *GSUtil::ToString(m_akFastTwitchProportion, &buf));
-        setAttribute("TActivationA"s, *GSUtil::ToString(m_akTActivationA, &buf));
-        setAttribute("TActivationB"s, *GSUtil::ToString(m_akTActivationB, &buf));
-        setAttribute("TDeactivationA"s, *GSUtil::ToString(m_akTDeactivationA, &buf));
-        setAttribute("TDeactivationB"s, *GSUtil::ToString(m_akTDeactivationB, &buf));
+        setAttribute("FastTwitchProportion"s, *GSUtil::toString(m_akFastTwitchProportion, &buf));
+        setAttribute("TActivationA"s, *GSUtil::toString(m_akTActivationA, &buf));
+        setAttribute("TActivationB"s, *GSUtil::toString(m_akTActivationB, &buf));
+        setAttribute("TDeactivationA"s, *GSUtil::toString(m_akTDeactivationA, &buf));
+        setAttribute("TDeactivationB"s, *GSUtil::toString(m_akTDeactivationB, &buf));
     }
-    setAttribute("InitialFibreLength"s, *GSUtil::ToString(m_initialFibreLength, &buf));
-    setAttribute("ActivationRate"s, *GSUtil::ToString(m_ActivationRate, &buf));
-    setAttribute("StartActivation"s, *GSUtil::ToString(m_startActivation, &buf));
-    setAttribute("MinimumActivation"s, *GSUtil::ToString(m_MinimumActivation, &buf));
+    setAttribute("InitialFibreLength"s, *GSUtil::toString(m_initialFibreLength, &buf));
+    setAttribute("ActivationRate"s, *GSUtil::toString(m_ActivationRate, &buf));
+    setAttribute("StartActivation"s, *GSUtil::toString(m_startActivation, &buf));
+    setAttribute("MinimumActivation"s, *GSUtil::toString(m_MinimumActivation, &buf));
 
 }
 

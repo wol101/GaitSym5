@@ -1098,9 +1098,9 @@ std::string *TwoCylinderWrapStrap::createFromAttributes()
     }
     this->SetCylinder2(cylinder2Marker->second.get());
     if (findAttribute("Cylinder1Radius"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetCylinder1Radius(GSUtil::Double(buf.c_str()));
+    this->SetCylinder1Radius(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("Cylinder2Radius"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetCylinder2Radius(GSUtil::Double(buf.c_str()));
+    this->SetCylinder2Radius(GSUtil::toDouble(buf.c_str()));
 
     setUpstreamObjects({m_originMarker, m_insertionMarker, m_cylinder1Marker, m_cylinder2Marker});
     return nullptr;
@@ -1114,9 +1114,9 @@ void TwoCylinderWrapStrap::appendToAttributes()
     setAttribute("OriginMarkerID"s, m_originMarker->name());
     setAttribute("InsertionMarkerID"s, m_insertionMarker->name());
     setAttribute("Cylinder1MarkerID"s, m_cylinder1Marker->name());
-    setAttribute("Cylinder1Radius"s, *GSUtil::ToString(m_cylinder1Radius, &buf));
+    setAttribute("Cylinder1Radius"s, *GSUtil::toString(m_cylinder1Radius, &buf));
     setAttribute("Cylinder2MarkerID"s, m_cylinder2Marker->name());
-    setAttribute("Cylinder2Radius"s, *GSUtil::ToString(m_cylinder2Radius, &buf));
+    setAttribute("Cylinder2Radius"s, *GSUtil::toString(m_cylinder2Radius, &buf));
 }
 
 } // namespace GaitSym

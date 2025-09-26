@@ -139,12 +139,12 @@ std::string *Global::createFromAttributes()
 
     // gravity
     if (findAttribute("GravityVector", &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 3, m_DoubleList);
+    GSUtil::toDouble(buf, 3, m_DoubleList);
     m_gravity.Set(m_DoubleList);
 
     // set the simulation integration step size
     if (findAttribute("IntegrationStepSize", &buf) == nullptr) return lastErrorPtr();
-    m_stepSize = GSUtil::Double(buf);
+    m_stepSize = GSUtil::toDouble(buf);
     if (m_stepSize <= 0.0) { setLastError("Error: GLOBAL IntegrationStepSize must be > 0"s); return lastErrorPtr(); }
 
     while (true)
@@ -154,8 +154,8 @@ std::string *Global::createFromAttributes()
             // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
             if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
             {
-                m_ERP = GSUtil::Double(buf);
-                m_CFM = GSUtil::Double(buf2);
+                m_ERP = GSUtil::toDouble(buf);
+                m_CFM = GSUtil::toDouble(buf2);
                 if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
                 if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
                 m_springConstant = m_ERP / (m_CFM * m_stepSize);
@@ -163,8 +163,8 @@ std::string *Global::createFromAttributes()
             }
             else if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
             {
-                m_ERP = GSUtil::Double(buf);
-                m_springConstant = GSUtil::Double(buf2);
+                m_ERP = GSUtil::toDouble(buf);
+                m_springConstant = GSUtil::toDouble(buf2);
                 if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
                 if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
                 m_dampingConstant = m_stepSize * (m_springConstant / m_ERP - m_springConstant);
@@ -172,8 +172,8 @@ std::string *Global::createFromAttributes()
             }
             else if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
             {
-                m_ERP = GSUtil::Double(buf);
-                m_dampingConstant = GSUtil::Double(buf2);
+                m_ERP = GSUtil::toDouble(buf);
+                m_dampingConstant = GSUtil::toDouble(buf2);
                 if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
                 if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
                 m_springConstant = m_dampingConstant / (m_stepSize / m_ERP - m_stepSize);
@@ -181,8 +181,8 @@ std::string *Global::createFromAttributes()
             }
             else if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
             {
-                m_CFM = GSUtil::Double(buf);
-                m_dampingConstant = GSUtil::Double(buf2);
+                m_CFM = GSUtil::toDouble(buf);
+                m_dampingConstant = GSUtil::toDouble(buf2);
                 if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
                 if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
                 m_springConstant = (1.0 / m_CFM - m_dampingConstant) / m_stepSize;
@@ -190,8 +190,8 @@ std::string *Global::createFromAttributes()
             }
             else if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
             {
-                m_CFM = GSUtil::Double(buf);
-                m_springConstant = GSUtil::Double(buf2);
+                m_CFM = GSUtil::toDouble(buf);
+                m_springConstant = GSUtil::toDouble(buf2);
                 if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
                 if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
                 m_dampingConstant = 1.0 / m_CFM - m_stepSize * m_springConstant;
@@ -199,8 +199,8 @@ std::string *Global::createFromAttributes()
             }
             else if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
             {
-                m_dampingConstant = GSUtil::Double(buf);
-                m_springConstant = GSUtil::Double(buf2);
+                m_dampingConstant = GSUtil::toDouble(buf);
+                m_springConstant = GSUtil::toDouble(buf2);
                 m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
                 m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
             }
@@ -211,11 +211,11 @@ std::string *Global::createFromAttributes()
             }
 
             if (findAttribute("ContactMaxCorrectingVel", &buf) == nullptr) return lastErrorPtr();
-            m_contactMaxCorrectingVel = GSUtil::Double(buf);
+            m_contactMaxCorrectingVel = GSUtil::toDouble(buf);
             if (m_contactMaxCorrectingVel < 0.0) { setLastError("Error: GLOBAL ContactMaxCorrectingVel must be >= 0"s); return lastErrorPtr(); }
 
             if (findAttribute("ContactSurfaceLayer", &buf) == nullptr) return lastErrorPtr();
-            m_contactSurfaceLayer = GSUtil::Double(buf);
+            m_contactSurfaceLayer = GSUtil::toDouble(buf);
             if (m_contactSurfaceLayer < 0.0) { setLastError("Error: GLOBAL ContactSurfaceLayer must be >= 0"s); return lastErrorPtr(); }
 
             // get the stepper required
@@ -241,9 +241,9 @@ std::string *Global::createFromAttributes()
         if (m_physicsEngine == PhysX)
         {
             if (findAttribute("DefaultLength", &buf) == nullptr) return lastErrorPtr();
-            m_defaultLength = GSUtil::Double(buf);
+            m_defaultLength = GSUtil::toDouble(buf);
             if (findAttribute("DefaultSpeed", &buf) == nullptr) return lastErrorPtr();
-            m_defaultSpeed = GSUtil::Double(buf);
+            m_defaultSpeed = GSUtil::toDouble(buf);
             break;
         }
 
@@ -258,26 +258,26 @@ std::string *Global::createFromAttributes()
 
     // allow internal collisions
     if (findAttribute("AllowInternalCollisions", &buf) == nullptr) return lastErrorPtr();
-    m_allowInternalCollisions = GSUtil::Bool(buf);
+    m_allowInternalCollisions = GSUtil::toBool(buf);
 
     // allow collisions for objects connected by a joint
     if (findAttribute("AllowConnectedCollisions", &buf) == nullptr) return lastErrorPtr();
-    m_allowConnectedCollisions = GSUtil::Bool(buf);
+    m_allowConnectedCollisions = GSUtil::toBool(buf);
 
-    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::Double(buf));
-    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::Double(buf));
+    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::toDouble(buf));
+    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::toDouble(buf));
 
     // now some run parameters
 
     if (findAttribute("BMR", &buf) == nullptr) return lastErrorPtr();
-    m_BMR = GSUtil::Double(buf);
+    m_BMR = GSUtil::toDouble(buf);
 
     if (findAttribute("TimeLimit", &buf) == nullptr) return lastErrorPtr();
-    m_timeLimit = GSUtil::Double(buf);
+    m_timeLimit = GSUtil::toDouble(buf);
     if (findAttribute("MechanicalEnergyLimit", &buf) == nullptr) return lastErrorPtr();
-    m_mechanicalEnergyLimit = GSUtil::Double(buf);
+    m_mechanicalEnergyLimit = GSUtil::toDouble(buf);
     if (findAttribute("MetabolicEnergyLimit", &buf) == nullptr) return lastErrorPtr();
-    m_metabolicEnergyLimit = GSUtil::Double(buf);
+    m_metabolicEnergyLimit = GSUtil::toDouble(buf);
     if (findAttribute("FitnessType", &buf) == nullptr) return lastErrorPtr();
     for (i = 0; i < fitnessTypeCount; i++)
     {
@@ -293,8 +293,8 @@ std::string *Global::createFromAttributes()
         return lastErrorPtr();
     }
 
-    if (findAttribute("PermittedNumericalErrors", &buf)) m_permittedNumericalErrors = GSUtil::Int(buf);
-    if (findAttribute("NumericalErrorsScore", &buf)) m_numericalErrorsScore = GSUtil::Double(buf);
+    if (findAttribute("PermittedNumericalErrors", &buf)) m_permittedNumericalErrors = GSUtil::toInt(buf);
+    if (findAttribute("NumericalErrorsScore", &buf)) m_numericalErrorsScore = GSUtil::toDouble(buf);
 
     m_meshSearchPath.clear();
     findAttribute("MeshSearchPath", &buf);
@@ -322,25 +322,25 @@ void Global::appendToAttributes()
     NamedObject::appendToAttributes();
     std::string buf;
 
-    setAttribute("AllowConnectedCollisions", *GSUtil::ToString(m_allowConnectedCollisions, &buf));
-    setAttribute("AllowInternalCollisions", *GSUtil::ToString(m_allowInternalCollisions, &buf));
-    setAttribute("BMR", *GSUtil::ToString(m_BMR, &buf));
-    setAttribute("CFM", *GSUtil::ToString(m_CFM, &buf));
-    setAttribute("ContactMaxCorrectingVel", *GSUtil::ToString(m_contactMaxCorrectingVel, &buf));
-    setAttribute("ContactSurfaceLayer", *GSUtil::ToString(m_contactSurfaceLayer, &buf));
-    setAttribute("ERP", *GSUtil::ToString(m_ERP, &buf));
+    setAttribute("AllowConnectedCollisions", *GSUtil::toString(m_allowConnectedCollisions, &buf));
+    setAttribute("AllowInternalCollisions", *GSUtil::toString(m_allowInternalCollisions, &buf));
+    setAttribute("BMR", *GSUtil::toString(m_BMR, &buf));
+    setAttribute("CFM", *GSUtil::toString(m_CFM, &buf));
+    setAttribute("ContactMaxCorrectingVel", *GSUtil::toString(m_contactMaxCorrectingVel, &buf));
+    setAttribute("ContactSurfaceLayer", *GSUtil::toString(m_contactSurfaceLayer, &buf));
+    setAttribute("ERP", *GSUtil::toString(m_ERP, &buf));
     setAttribute("FitnessType", fitnessTypeStrings(m_fitnessType));
-    setAttribute("LinearDamping", *GSUtil::ToString(m_linearDamping, &buf));
-    setAttribute("AngularDamping", *GSUtil::ToString(m_angularDamping, &buf));
-    setAttribute("GravityVector", *GSUtil::ToString(m_gravity, &buf));
-    setAttribute("IntegrationStepSize", *GSUtil::ToString(m_stepSize, &buf));
-    setAttribute("MechanicalEnergyLimit", *GSUtil::ToString(m_mechanicalEnergyLimit, &buf));
-    setAttribute("MetabolicEnergyLimit", *GSUtil::ToString(m_metabolicEnergyLimit, &buf));
+    setAttribute("LinearDamping", *GSUtil::toString(m_linearDamping, &buf));
+    setAttribute("AngularDamping", *GSUtil::toString(m_angularDamping, &buf));
+    setAttribute("GravityVector", *GSUtil::toString(m_gravity, &buf));
+    setAttribute("IntegrationStepSize", *GSUtil::toString(m_stepSize, &buf));
+    setAttribute("MechanicalEnergyLimit", *GSUtil::toString(m_mechanicalEnergyLimit, &buf));
+    setAttribute("MetabolicEnergyLimit", *GSUtil::toString(m_metabolicEnergyLimit, &buf));
     setAttribute("PhysicsEngine", physicsEngineTypeStrings(m_physicsEngine));
     setAttribute("StepType", stepTypeStrings(m_stepType));
-    setAttribute("TimeLimit", *GSUtil::ToString(m_timeLimit, &buf));
-    setAttribute("NumericalErrorsScore", *GSUtil::ToString(m_numericalErrorsScore, &buf));
-    setAttribute("PermittedNumericalErrors", *GSUtil::ToString(m_permittedNumericalErrors, &buf));
+    setAttribute("TimeLimit", *GSUtil::toString(m_timeLimit, &buf));
+    setAttribute("NumericalErrorsScore", *GSUtil::toString(m_numericalErrorsScore, &buf));
+    setAttribute("PermittedNumericalErrors", *GSUtil::toString(m_permittedNumericalErrors, &buf));
 
     std::vector<std::string> encodedMeshSearchPath;
     for (size_t i = 0; i < m_meshSearchPath.size(); i++) encodedMeshSearchPath.push_back(percentEncode(m_meshSearchPath[i], "%:"s));

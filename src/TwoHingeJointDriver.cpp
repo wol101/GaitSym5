@@ -121,7 +121,7 @@ void TwoHingeJointDriver::update()
             m_proximalAngleFraction1 = (m_proximalJointAngle1 - m_proximalJointRange[0]) / (m_proximalJointRange[1] - m_proximalJointRange[0]);
             if (m_proximalAngleFraction1 < 0 || m_proximalAngleFraction1 > 1)
             {
-                m_proximalAngleFraction1 = GSUtil::Clamp(m_proximalAngleFraction1, 0.0, 1.0);
+                m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
             m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
@@ -135,7 +135,7 @@ void TwoHingeJointDriver::update()
             m_proximalAngleFraction1 = (m_proximalJointAngle1 - m_proximalJointRange[0]) / (m_proximalJointRange[1] - m_proximalJointRange[0]);
             if (m_proximalAngleFraction1 < 0 || m_proximalAngleFraction1 > 1)
             {
-                m_proximalAngleFraction1 = GSUtil::Clamp(m_proximalAngleFraction1, 0.0, 1.0);
+                m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
             m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
@@ -152,7 +152,7 @@ void TwoHingeJointDriver::update()
             m_proximalAngleFraction1 = (m_proximalJointAngle1 - m_proximalJointRange[0]) / (m_proximalJointRange[1] - m_proximalJointRange[0]);
             if (m_proximalAngleFraction1 < 0 || m_proximalAngleFraction1 > 1)
             {
-                m_proximalAngleFraction1 = GSUtil::Clamp(m_proximalAngleFraction1, 0.0, 1.0);
+                m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
             m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
@@ -568,11 +568,11 @@ std::string *TwoHingeJointDriver::createFromAttributes()
         }
     }
     if (findAttribute("ProximalJointRange"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 2, m_proximalJointRange.data());
+    GSUtil::toDouble(buf, 2, m_proximalJointRange.data());
     if (findAttribute("DistalJointRange"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 2, m_distalJointRange.data());
+    GSUtil::toDouble(buf, 2, m_distalJointRange.data());
 
-    if (findAttribute("Tolerance"s, &buf)) m_tolerance = GSUtil::Double(buf);
+    if (findAttribute("Tolerance"s, &buf)) m_tolerance = GSUtil::toDouble(buf);
 
     // check for consistency
     if (m_proximalJoint->body2Marker()->GetBody() != m_distalJoint->body1Marker()->GetBody())
@@ -602,12 +602,12 @@ std::string *TwoHingeJointDriver::createFromAttributes()
     if (monotonic != +1 && monotonic != -1)
     {
         std::string message = "Driver ID=\""s + name() +"\" selected DistalJointRange does not produce a monotonic length change\n"s;
-        message += "\" and DistalJointRange=\""s + *GSUtil::ToString(m_distalJointRange, &buf) + "\""s;
+        message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_distalJointRange.x, m_distalJointRange.y);
         monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
-        message += "\" and DistalJointRange=\""s + *GSUtil::ToString(m_distalJointRange, &buf) + "\""s;
+        message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         setLastError(message);
@@ -735,9 +735,9 @@ void TwoHingeJointDriver::appendToAttributes()
     setAttribute("DistalBodyMarkerID"s, m_distalBodyMarker->name());
     setAttribute("ProximalJointID"s, m_proximalJoint->name());
     setAttribute("DistalJointID"s, m_distalJoint->name());
-    setAttribute("ProximalJointRange"s, *GSUtil::ToString(m_proximalJointRange, &buf));
-    setAttribute("DistalJointRange"s, *GSUtil::ToString(m_distalJointRange, &buf));
-    setAttribute("Tolerance"s, *GSUtil::ToString(m_tolerance, &buf));
+    setAttribute("ProximalJointRange"s, *GSUtil::toString(m_proximalJointRange, &buf));
+    setAttribute("DistalJointRange"s, *GSUtil::toString(m_distalJointRange, &buf));
+    setAttribute("Tolerance"s, *GSUtil::toString(m_tolerance, &buf));
 }
 
 

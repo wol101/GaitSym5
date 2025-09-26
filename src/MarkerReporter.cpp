@@ -40,7 +40,7 @@ std::string *MarkerReporter::createFromAttributes()
 
     if (findAttribute("ReportTimes"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> reportTimes;
-    GSUtil::Double(buf, &reportTimes);
+    GSUtil::toDouble(buf, &reportTimes);
     if (reportTimes.empty())
     {
         setLastError("REPORTER ID=\""s + name() +"\" ReportTimes list is empty"s);
@@ -49,9 +49,9 @@ std::string *MarkerReporter::createFromAttributes()
     m_reportTimes = std::move(reportTimes);
 
     if (findAttribute("ReportPosition"s, &buf) == nullptr) return lastErrorPtr();
-    m_reportPosition = GSUtil::Bool(buf);
+    m_reportPosition = GSUtil::toBool(buf);
     if (findAttribute("ReportQuaternion"s, &buf) == nullptr) return lastErrorPtr();
-    m_reportQuaternion = GSUtil::Bool(buf);
+    m_reportQuaternion = GSUtil::toBool(buf);
 
     return nullptr;
 }
@@ -63,10 +63,10 @@ void MarkerReporter::appendToAttributes()
     std::vector<std::string> strings;
     strings.reserve(m_markerList.size());
     for (auto && marker : m_markerList) { strings.push_back(marker->name()); }
-    setAttribute("MarkerIDList"s, GSUtil::ToString(strings));
-    setAttribute("ReportTimes"s, GSUtil::ToString(m_reportTimes));
-    setAttribute("ReportPosition"s, GSUtil::ToString(m_reportPosition));
-    setAttribute("ReportQuaternion"s, GSUtil::ToString(m_reportQuaternion));
+    setAttribute("MarkerIDList"s, GSUtil::toString(strings));
+    setAttribute("ReportTimes"s, GSUtil::toString(m_reportTimes));
+    setAttribute("ReportPosition"s, GSUtil::toString(m_reportPosition));
+    setAttribute("ReportQuaternion"s, GSUtil::toString(m_reportQuaternion));
 }
 
 std::string MarkerReporter::dumpToString()
@@ -103,7 +103,7 @@ std::string MarkerReporter::dumpToString()
     if (index > m_lastReportIndex)
     {
         m_lastReportIndex = index;
-        sList.push_back(GSUtil::ToString(time));
+        sList.push_back(GSUtil::toString(time));
         pgd::Vector3 v;
         pgd::Quaternion q;
         for (auto && marker : m_markerList)
@@ -111,17 +111,17 @@ std::string MarkerReporter::dumpToString()
             if (m_reportPosition)
             {
                 v = marker->GetWorldPosition();
-                sList.push_back(GSUtil::ToString(v.x));
-                sList.push_back(GSUtil::ToString(v.y));
-                sList.push_back(GSUtil::ToString(v.z));
+                sList.push_back(GSUtil::toString(v.x));
+                sList.push_back(GSUtil::toString(v.y));
+                sList.push_back(GSUtil::toString(v.z));
             }
             if (m_reportQuaternion)
             {
                 q = marker->GetWorldQuaternion();
-                sList.push_back(GSUtil::ToString(q.n));
-                sList.push_back(GSUtil::ToString(q.x));
-                sList.push_back(GSUtil::ToString(q.y));
-                sList.push_back(GSUtil::ToString(q.z));
+                sList.push_back(GSUtil::toString(q.n));
+                sList.push_back(GSUtil::toString(q.x));
+                sList.push_back(GSUtil::toString(q.y));
+                sList.push_back(GSUtil::toString(q.z));
             }
         }
         s.append(pystring::join("\t"s, sList) + "\n"s);

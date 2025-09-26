@@ -72,11 +72,11 @@ std::string *PIDMuscleLengthController::createFromAttributes()
     }
     std::string buf;
     if (findAttribute("Kp"s, &buf) == nullptr) return lastErrorPtr();
-    double Kp = GSUtil::Double(buf);
+    double Kp = GSUtil::toDouble(buf);
     if (findAttribute("Ki"s, &buf) == nullptr) return lastErrorPtr();
-    double Ki = GSUtil::Double(buf);
+    double Ki = GSUtil::toDouble(buf);
     if (findAttribute("Kd"s, &buf) == nullptr) return lastErrorPtr();
-    double Kd = GSUtil::Double(buf);
+    double Kd = GSUtil::toDouble(buf);
     Initialise(Kp, Ki, Kd);
     return nullptr;
 }
@@ -87,9 +87,9 @@ void PIDMuscleLengthController::appendToAttributes()
     Controller::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "PIDMuscleLength"s);
-    setAttribute("Kp"s, *GSUtil::ToString(m_Kp, &buf));
-    setAttribute("Ki"s, *GSUtil::ToString(m_Ki, &buf));
-    setAttribute("Kd"s, *GSUtil::ToString(m_Kd, &buf));
+    setAttribute("Kp"s, *GSUtil::toString(m_Kp, &buf));
+    setAttribute("Ki"s, *GSUtil::toString(m_Ki, &buf));
+    setAttribute("Kd"s, *GSUtil::toString(m_Kd, &buf));
 }
 
 std::string PIDMuscleLengthController::dumpToString()

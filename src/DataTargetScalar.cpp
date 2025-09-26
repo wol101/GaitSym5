@@ -438,7 +438,7 @@ double DataTargetScalar::calculateError(size_t index, size_t indexNext, double t
     if (index >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
     if (indexNext >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
 
-    double value = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time);
+    double value = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time);
     return calculateErrorScore(value);
 }
 
@@ -533,7 +533,7 @@ std::string *DataTargetScalar::createFromAttributes()
     }
     m_valueList.clear();
     m_valueList.reserve(targetValuesTokens.size());
-    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::Double(token));
+    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::toDouble(token));
 
     if (m_target) setUpstreamObjects({m_target});
     return nullptr;
@@ -545,7 +545,7 @@ void DataTargetScalar::appendToAttributes()
     DataTarget::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Scalar"s);
-    setAttribute("TargetValues"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(m_valueList.data(), m_valueList.size(), &buf));
     setAttribute("DataType", dataTypeStrings(m_dataType));
     if (m_noTargetList.count(m_dataType) == 0) setAttribute("TargetID"s, m_target->name());
 }

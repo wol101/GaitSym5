@@ -253,9 +253,9 @@ std::string *AMotorJoint::createFromAttributes()
     std::string buf, buf2, buf3;
 
     if (findAttribute("MaxTorque"s, &buf) == nullptr) return lastErrorPtr();
-    this->setMaxTorque(GSUtil::Double(buf));
+    this->setMaxTorque(GSUtil::toDouble(buf));
     if (findAttribute("TargetAngleGain"s, &buf) == nullptr) return lastErrorPtr();
-    this->setTargetAngleGain(GSUtil::Double(buf));
+    this->setTargetAngleGain(GSUtil::toDouble(buf));
 
     if (findAttribute("TargetAngles"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> tokens;
@@ -264,17 +264,17 @@ std::string *AMotorJoint::createFromAttributes()
     switch (tokens.size())
     {
     case 1:
-        this->setTargetAngles(GSUtil::Double(tokens[0]));
+        this->setTargetAngles(GSUtil::toDouble(tokens[0]));
         break;
     case 2:
-        this->setTargetAngles(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]));
+        this->setTargetAngles(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]));
         break;
     case 3:
-        this->setTargetAngles(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        this->setTargetAngles(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         break;
     }
 
-    if (findAttribute("ReverseBodyOrderInCalculations"s, &buf)) this->setReverseBodyOrderInCalculations(GSUtil::Bool(buf));
+    if (findAttribute("ReverseBodyOrderInCalculations"s, &buf)) this->setReverseBodyOrderInCalculations(GSUtil::toBool(buf));
 
     return nullptr;
 }
@@ -285,10 +285,10 @@ void AMotorJoint::appendToAttributes()
     std::string buf;
     buf.reserve(256);
     setAttribute("Type"s, "AMotor"s);
-    setAttribute("MaxTorque"s, *GSUtil::ToString(m_maxTorque, &buf));
-    setAttribute("TargetAngleGain"s, *GSUtil::ToString(m_targetAngleGain, &buf));
-    setAttribute("TargetAngles"s, *GSUtil::ToString(m_targetAnglesList.data(), m_targetAnglesList.size(), &buf));
-    setAttribute("ReverseBodyOrderInCalculations"s, *GSUtil::ToString(m_reverseBodyOrderInCalculations, &buf));
+    setAttribute("MaxTorque"s, *GSUtil::toString(m_maxTorque, &buf));
+    setAttribute("TargetAngleGain"s, *GSUtil::toString(m_targetAngleGain, &buf));
+    setAttribute("TargetAngles"s, *GSUtil::toString(m_targetAnglesList.data(), m_targetAnglesList.size(), &buf));
+    setAttribute("ReverseBodyOrderInCalculations"s, *GSUtil::toString(m_reverseBodyOrderInCalculations, &buf));
 }
 
 std::string AMotorJoint::dumpToString()

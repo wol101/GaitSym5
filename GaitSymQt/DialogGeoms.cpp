@@ -129,10 +129,10 @@ void DialogGeoms::accept() // this catches OK and return/enter
             convexGeom->setIndexStart(ui->spinBoxIndexStartConvex->value());
             std::string triangleIndicesString = ui->plainTextEditTriangleIndicesConvex->toPlainText().toStdString();
             std::vector<int> *triangles = convexGeom->triangles();
-            GaitSym::GSUtil::Int(triangleIndicesString, triangles);
+            GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
             std::string verticesString = ui->plainTextEditVerticesConvex->toPlainText().toStdString();
             std::vector<double> *vertices = convexGeom->vertices();
-            GaitSym::GSUtil::Double(verticesString, vertices);
+            GaitSym::GSUtil::toDouble(verticesString, vertices);
             m_outputGeom = std::move(convexGeom);
             break;
         }
@@ -143,10 +143,10 @@ void DialogGeoms::accept() // this catches OK and return/enter
             trimeshGeom->setIndexStart(ui->spinBoxIndexStartTrimesh->value());
             std::string triangleIndicesString = ui->plainTextEditTriangleIndicesTrimesh->toPlainText().toStdString();
             std::vector<int> *triangles = trimeshGeom->triangles();
-            GaitSym::GSUtil::Int(triangleIndicesString, triangles);
+            GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
             std::string verticesString = ui->plainTextEditVerticesTrimesh->toPlainText().toStdString();
             std::vector<double> *vertices = trimeshGeom->vertices();
-            GaitSym::GSUtil::Double(verticesString, vertices);
+            GaitSym::GSUtil::toDouble(verticesString, vertices);
             m_outputGeom = std::move(trimeshGeom);
             break;
         }
@@ -290,13 +290,13 @@ void DialogGeoms::lateInitialise()
     ui->lineEditGeomID->setText(QString::fromStdString(m_inputGeom->findAttribute("ID"s)));
     ui->lineEditGeomID->setEnabled(false);
     ui->comboBoxGeomMarker->setCurrentText(QString::fromStdString(m_inputGeom->findAttribute("MarkerID"s)));
-    if ((s = m_inputGeom->findAttribute("SpringConstant"s)).size()) ui->lineEditSpring->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("DampingConstant"s)).size()) ui->lineEditDamp->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Bounce"s)).size()) ui->lineEditBounce->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Mu"s)).size()) ui->lineEditMu->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Rho"s)).size()) ui->lineEditRho->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GaitSym::GSUtil::Bool(s));
-    if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GaitSym::GSUtil::Bool(s));
+    if ((s = m_inputGeom->findAttribute("SpringConstant"s)).size()) ui->lineEditSpring->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("DampingConstant"s)).size()) ui->lineEditDamp->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Bounce"s)).size()) ui->lineEditBounce->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Mu"s)).size()) ui->lineEditMu->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Rho"s)).size()) ui->lineEditRho->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GaitSym::GSUtil::toBool(s));
+    if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GaitSym::GSUtil::toBool(s));
 
     std::vector<GaitSym::Geom *> *excludeList = m_inputGeom->GetExcludeList();
     if (excludeList->size())
@@ -324,22 +324,22 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::SphereGeom *sphereGeom = dynamic_cast<GaitSym::SphereGeom *>(m_inputGeom))
     {
-        if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Sphere"));
     }
 
     if (GaitSym::CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<GaitSym::CappedCylinderGeom *>(m_inputGeom))
     {
-        if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Capsule"));
     }
 
     if (GaitSym::BoxGeom *boxGeom = dynamic_cast<GaitSym::BoxGeom *>(m_inputGeom))
     {
-        if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = boxGeom->findAttribute("LengthZ"s)).size()) ui->lineEditBoxLengthZ->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = boxGeom->findAttribute("LengthZ"s)).size()) ui->lineEditBoxLengthZ->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Box"));
     }
 
@@ -351,8 +351,8 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::TrimeshGeom *trimeshGeom = dynamic_cast<GaitSym::TrimeshGeom *>(m_inputGeom))
     {
-        if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::Int(s));
-        if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::toInt(s));
+        if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::toBool(s));
         if ((s = trimeshGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(listToLines(pystring::split(s), 3)));
         if ((s = trimeshGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(listToLines(pystring::split(s), 3)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Trimesh"));
@@ -360,8 +360,8 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::ConvexGeom *convexGeom = dynamic_cast<GaitSym::ConvexGeom *>(m_inputGeom))
     {
-        if ((s = convexGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartConvex->setValue(GaitSym::GSUtil::Int(s));
-        if ((s = convexGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingConvex->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = convexGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartConvex->setValue(GaitSym::GSUtil::toInt(s));
+        if ((s = convexGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingConvex->setChecked(GaitSym::GSUtil::toBool(s));
         if ((s = convexGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesConvex->setPlainText(QString::fromStdString(s));
         if ((s = convexGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesConvex->setPlainText(QString::fromStdString(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Convex"));

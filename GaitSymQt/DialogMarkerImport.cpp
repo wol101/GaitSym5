@@ -203,7 +203,7 @@ int DialogMarkerImport::ImportMarkers()
     }
     for (size_t i = startLine; i < lines.size(); i++)
     {
-        if (GaitSym::GSUtil::SplitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
+        if (GaitSym::GSUtil::splitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
         if (!ui->checkBoxAllowOverwrite->isChecked() && m_simulation->GetMarker(tokens[0]))
         {
             errorCount++;
@@ -234,7 +234,7 @@ int DialogMarkerImport::ImportMarkers()
         marker->SetBody(body);
         marker->setSize1(Preferences::valueDouble("MarkerSize"));
         values.clear();
-        for (size_t j = 2; j < tokens.size(); j++) values.push_back(GaitSym::GSUtil::Double(tokens[j]));
+        for (size_t j = 2; j < tokens.size(); j++) values.push_back(GaitSym::GSUtil::toDouble(tokens[j]));
         for (size_t j = values.size(); j < 12; j++) values.push_back(0);
         if (ui->radioButtonPositionOnly->isChecked())
         {

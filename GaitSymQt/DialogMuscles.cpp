@@ -462,41 +462,41 @@ void DialogMuscles::lateInitialise()
     ui->lineEditMuscleID->setEnabled(false);
     ui->comboBoxOriginMarker->setCurrentText(QString::fromStdString(m_inputMuscle->GetStrap()->findAttribute("OriginMarkerID"s)));
     ui->comboBoxInsertionMarker->setCurrentText(QString::fromStdString(m_inputMuscle->GetStrap()->findAttribute("InsertionMarkerID"s)));
-    if ((s = m_inputMuscle->GetStrap()->findAttribute("Length"s)).size()) ui->lineEditLength->setValue(GaitSym::GSUtil::Double(s));
+    if ((s = m_inputMuscle->GetStrap()->findAttribute("Length"s)).size()) ui->lineEditLength->setValue(GaitSym::GSUtil::toDouble(s));
 
     if (GaitSym::MAMuscle *maMuscle = dynamic_cast<GaitSym::MAMuscle *>(m_inputMuscle))
     {
-        if ((s = maMuscle->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("PCA"s)).size()) ui->lineEditPCA->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscle->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = maMuscle->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscle->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscle->findAttribute("PCA"s)).size()) ui->lineEditPCA->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscle->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscle->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Minetti-Alexander"));
     }
 
     if (GaitSym::MAMuscleComplete *maMuscleComplete = dynamic_cast<GaitSym::MAMuscleComplete *>(m_inputMuscle))
     {
-        if ((s = maMuscleComplete->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea_2->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor_2->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("PCA"s)).size()) ui->lineEditPCA_2->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength_2->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK_2->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("Width"s)).size()) ui->lineEditWidth->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TendonLength"s)).size()) ui->lineEditTendonLength->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("SerialStrainAtFmax"s)).size()) ui->lineEditSerialStrainAtFMax->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("SerialStrainRateAtFmax"s)).size()) ui->lineEditSerialStrainRateAtFMax->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ParallelStrainAtFmax"s)).size()) ui->lineEditParallelStrainAtFMax->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ParallelStrainRateAtFmax"s)).size()) ui->lineEditParallelStrainRateAtFMax->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("InitialFibreLength"s)).size()) ui->lineEditInitialFibreLength->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("FastTwitchProportion"s)).size()) ui->lineEditFastTwitchProportion->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TActivationA"s)).size()) ui->lineEditTActivationA->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TActivationB"s)).size()) ui->lineEditTActivationB->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TDeactivationA"s)).size()) ui->lineEditTDeactivationA->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("TDeactivationB"s)).size()) ui->lineEditTDeactivationB->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ActivationRate"s)).size()) ui->lineEditActivationRate->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("StartActivation"s)).size()) ui->lineEditInitialActivation->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("MinimumActivation"s)).size()) ui->lineEditMinimumActivation->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = maMuscleComplete->findAttribute("ActivationKinetics"s)).size()) ui->checkBoxUseActivation->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = maMuscleComplete->findAttribute("ForcePerUnitArea"s)).size()) ui->lineEditForcePerUnitArea_2->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("VMaxFactor"s)).size()) ui->lineEditVMaxFactor_2->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("PCA"s)).size()) ui->lineEditPCA_2->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("FibreLength"s)).size()) ui->lineEditFibreLength_2->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("ActivationK"s)).size()) ui->lineEditActivationK_2->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("Width"s)).size()) ui->lineEditWidth->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("TendonLength"s)).size()) ui->lineEditTendonLength->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("SerialStrainAtFmax"s)).size()) ui->lineEditSerialStrainAtFMax->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("SerialStrainRateAtFmax"s)).size()) ui->lineEditSerialStrainRateAtFMax->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("ParallelStrainAtFmax"s)).size()) ui->lineEditParallelStrainAtFMax->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("ParallelStrainRateAtFmax"s)).size()) ui->lineEditParallelStrainRateAtFMax->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("InitialFibreLength"s)).size()) ui->lineEditInitialFibreLength->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("FastTwitchProportion"s)).size()) ui->lineEditFastTwitchProportion->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("TActivationA"s)).size()) ui->lineEditTActivationA->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("TActivationB"s)).size()) ui->lineEditTActivationB->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("TDeactivationA"s)).size()) ui->lineEditTDeactivationA->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("TDeactivationB"s)).size()) ui->lineEditTDeactivationB->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("ActivationRate"s)).size()) ui->lineEditActivationRate->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("StartActivation"s)).size()) ui->lineEditInitialActivation->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("MinimumActivation"s)).size()) ui->lineEditMinimumActivation->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = maMuscleComplete->findAttribute("ActivationKinetics"s)).size()) ui->checkBoxUseActivation->setChecked(GaitSym::GSUtil::toBool(s));
         if ((s = maMuscleComplete->findAttribute("SerialStrainModel"s)).size()) ui->comboBoxSerialStrainModel->setCurrentIndex(ui->comboBoxSerialStrainModel->findText(QString::fromStdString(s)));
         if ((s = maMuscleComplete->findAttribute("ParallelStrainModel"s)).size()) ui->comboBoxParallelStrainModel->setCurrentIndex(ui->comboBoxParallelStrainModel->findText(QString::fromStdString(s)));
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Minetti-Alexander Elastic"));
@@ -504,11 +504,11 @@ void DialogMuscles::lateInitialise()
 
     if (GaitSym::DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<GaitSym::DampedSpringMuscle *>(m_inputMuscle))
     {
-        if ((s = dampedSpringMuscle->findAttribute("UnloadedLength"s)).size()) ui->lineEditUnloadedLength->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("SpringConstant"s)).size()) ui->lineEditSpringConstant->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("Area"s)).size()) ui->lineEditArea->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("Damping"s)).size()) ui->lineEditDamping->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = dampedSpringMuscle->findAttribute("BreakingStrain"s)).size()) ui->lineEditBreakingStrain->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = dampedSpringMuscle->findAttribute("UnloadedLength"s)).size()) ui->lineEditUnloadedLength->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = dampedSpringMuscle->findAttribute("SpringConstant"s)).size()) ui->lineEditSpringConstant->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = dampedSpringMuscle->findAttribute("Area"s)).size()) ui->lineEditArea->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = dampedSpringMuscle->findAttribute("Damping"s)).size()) ui->lineEditDamping->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = dampedSpringMuscle->findAttribute("BreakingStrain"s)).size()) ui->lineEditBreakingStrain->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidgetMuscle->setCurrentIndex(tabNamesMuscle.indexOf("Damped Spring"));
     }
 
@@ -546,16 +546,16 @@ void DialogMuscles::lateInitialise()
     if (GaitSym::CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<GaitSym::CylinderWrapStrap *>(m_inputMuscle->GetStrap()))
     {
         if ((s = cylinderWrapStrap->findAttribute("CylinderMarkerID"s)).size()) ui->comboBoxCylinderMarker->setCurrentText(QString::fromStdString(s));
-        if ((s = cylinderWrapStrap->findAttribute("CylinderRadius"s)).size()) ui->lineEditCylinderRadius->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = cylinderWrapStrap->findAttribute("CylinderRadius"s)).size()) ui->lineEditCylinderRadius->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("Cylinder"));
     }
 
     if (GaitSym::TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<GaitSym::TwoCylinderWrapStrap *>(m_inputMuscle->GetStrap()))
     {
         if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1MarkerID"s)).size()) ui->comboBox2Cylinder1Marker->setCurrentText(QString::fromStdString(s));
-        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1Radius"s)).size()) ui->lineEdit2Cylinder1Radius->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder1Radius"s)).size()) ui->lineEdit2Cylinder1Radius->setValue(GaitSym::GSUtil::toDouble(s));
         if ((s = twoCylinderWrapStrap->findAttribute("Cylinder2MarkerID"s)).size()) ui->comboBox2Cylinder2Marker->setCurrentText(QString::fromStdString(s));
-        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder2Radius"s)).size()) ui->lineEdit2Cylinder2Radius->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = twoCylinderWrapStrap->findAttribute("Cylinder2Radius"s)).size()) ui->lineEdit2Cylinder2Radius->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidgetStrap->setCurrentIndex(tabNamesStrap.indexOf("2-Cylinder"));
     }
 

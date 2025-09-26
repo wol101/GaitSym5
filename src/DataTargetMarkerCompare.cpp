@@ -35,44 +35,44 @@ double DataTargetMarkerCompare::calculateError(size_t index, size_t indexNext, d
         if (m_marker1Comparison == XWP && m_marker2Comparison == XWP)
         {
             double distance = m_marker2->GetWorldPosition().x - m_marker1->GetWorldPosition().x;
-            m_errorScore = (distance - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == YWP && m_marker2Comparison == YWP)
         {
             double distance = m_marker2->GetWorldPosition().y - m_marker1->GetWorldPosition().y;
-            m_errorScore = (distance - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == ZWP && m_marker2Comparison == ZWP)
         {
             double distance = m_marker2->GetWorldPosition().z - m_marker1->GetWorldPosition().z;
-            m_errorScore = (distance - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == Distance && m_marker2Comparison == Distance)
         {
             double distance = (m_marker1->GetWorldPosition() - m_marker2->GetWorldPosition()).Magnitude();
-            m_errorScore = (distance - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == Angle && m_marker2Comparison == Angle)
         {
             pgd::Quaternion q = pgd::FindRotation(m_marker1->GetWorldQuaternion(), m_marker2->GetWorldQuaternion());
             double angle = pgd::QGetAngle(q);
-            m_errorScore = (angle - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (angle - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == LinearVelocity && m_marker2Comparison == LinearVelocity)
         {
             double linearVelocity = (m_marker1->GetWorldLinearVelocity() - m_marker2->GetWorldLinearVelocity()).Magnitude();
-            m_errorScore = (linearVelocity - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (linearVelocity - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == AngularVelocity && m_marker2Comparison == AngularVelocity)
         {
             double angularVelocity = (m_marker1->GetWorldAngularVelocity() - m_marker2->GetWorldAngularVelocity()).Magnitude();
-            m_errorScore = (angularVelocity - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+            m_errorScore = (angularVelocity - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         pgd::Vector3 axis1, axis2;
@@ -94,7 +94,7 @@ double DataTargetMarkerCompare::calculateError(size_t index, size_t indexNext, d
         // angle = acos(v1 dot v2)
         // axis = norm(v1 cross v2)
         double angle = std::acos(axis1 * axis2);
-        m_errorScore = (angle - GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
+        m_errorScore = (angle - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
         break;
     }
 
@@ -281,7 +281,7 @@ std::string *DataTargetMarkerCompare::createFromAttributes()
     }
     m_valueList.clear();
     m_valueList.reserve(targetValuesTokens.size());
-    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::Double(token));
+    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::toDouble(token));
 
     setUpstreamObjects({m_marker1, m_marker2});
     return nullptr;
@@ -297,7 +297,7 @@ void DataTargetMarkerCompare::appendToAttributes()
     setAttribute("Marker2ID"s, m_marker2->name());
     setAttribute("Marker1Comparison"s, comparisonStrings(m_marker1Comparison));
     setAttribute("Marker2Comparison"s, comparisonStrings(m_marker2Comparison));
-    setAttribute("TargetValues"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(m_valueList.data(), m_valueList.size(), &buf));
 }
 
 } // namespace GaitSym

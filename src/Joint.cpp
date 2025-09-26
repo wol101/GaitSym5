@@ -88,20 +88,20 @@ std::string *Joint::createFromAttributes()
     double testEpsilon = std::numeric_limits<double>::epsilon() * 100.0;
     if (distanceVector.Magnitude2() > testEpsilon)
     {
-        setLastError(GSUtil::ToString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.Magnitude2(), testEpsilon));
+        setLastError(GSUtil::toString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.Magnitude2(), testEpsilon));
         return lastErrorPtr();
     }
     if (pgd::QGetAngle(rotationQuaternion) > testEpsilon)
     {
-        setLastError(GSUtil::ToString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::QGetAngle(rotationQuaternion), testEpsilon));
+        setLastError(GSUtil::toString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::QGetAngle(rotationQuaternion), testEpsilon));
         return lastErrorPtr();
     }
 
     this->setBody1Marker(marker1Iterator->second.get());
     this->setBody2Marker(marker2Iterator->second.get());
 
-    if (findAttribute("CFM"s, &buf)) m_CFM = GSUtil::Double(buf);
-    if (findAttribute("ERP"s, &buf)) m_ERP = GSUtil::Double(buf);
+    if (findAttribute("CFM"s, &buf)) m_CFM = GSUtil::toDouble(buf);
+    if (findAttribute("ERP"s, &buf)) m_ERP = GSUtil::toDouble(buf);
 
     setUpstreamObjects({m_body1Marker, m_body2Marker});
     return nullptr;
@@ -124,8 +124,8 @@ void Joint::appendToAttributes()
     setAttribute("Type", type());
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
-    if (m_CFM >= 0) setAttribute("CFM"s, *GSUtil::ToString(m_CFM, &buf));
-    if (m_ERP >= 0) setAttribute("ERP"s, *GSUtil::ToString(m_ERP, &buf));
+    if (m_CFM >= 0) setAttribute("CFM"s, *GSUtil::toString(m_CFM, &buf));
+    if (m_ERP >= 0) setAttribute("ERP"s, *GSUtil::toString(m_ERP, &buf));
 }
 
 double Joint::CFM() const

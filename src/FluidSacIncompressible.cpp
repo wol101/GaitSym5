@@ -45,13 +45,13 @@ std::string *FluidSacIncompressible::createFromAttributes()
     std::string buf;
 
     if (findAttribute("FluidVolume"s, &buf) == nullptr) return lastErrorPtr();
-    this->setFluidVolume(GSUtil::Double(buf));
+    this->setFluidVolume(GSUtil::toDouble(buf));
     if (findAttribute("BulkModulus"s, &buf) == nullptr) return lastErrorPtr();
-    this->setBulkModulus(GSUtil::Double(buf));
+    this->setBulkModulus(GSUtil::toDouble(buf));
     if (findAttribute("BulkModulusDamping"s, &buf) == nullptr) return lastErrorPtr();
-    this->setBulkModulusDamping(GSUtil::Double(buf));
+    this->setBulkModulusDamping(GSUtil::toDouble(buf));
     if (findAttribute("StartingPressure"s, &buf) == nullptr) return lastErrorPtr();
-    this->setStartingPressure(GSUtil::Double(buf));
+    this->setStartingPressure(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -61,10 +61,10 @@ void FluidSacIncompressible::appendToAttributes()
     FluidSac::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Incompressible"s);
-    setAttribute("FluidVolume"s, GSUtil::ToString(m_fluidVolume));
-    setAttribute("BulkModulus"s, GSUtil::ToString(m_bulkModulus));
-    setAttribute("BulkModulusDamping"s, GSUtil::ToString(m_bulkModulusDamping));
-    setAttribute("StartingPressure"s, GSUtil::ToString(m_startingPressure));
+    setAttribute("FluidVolume"s, GSUtil::toString(m_fluidVolume));
+    setAttribute("BulkModulus"s, GSUtil::toString(m_bulkModulus));
+    setAttribute("BulkModulusDamping"s, GSUtil::toString(m_bulkModulusDamping));
+    setAttribute("StartingPressure"s, GSUtil::toString(m_startingPressure));
 }
 
 double FluidSacIncompressible::bulkModulus() const

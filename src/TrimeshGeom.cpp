@@ -28,12 +28,12 @@ std::string *TrimeshGeom::createFromAttributes()
     std::string buf;
     buf.reserve(1000000);
     if (findAttribute("IndexStart"s, &buf) == nullptr) return lastErrorPtr();
-    m_indexStart = GSUtil::Int(buf);
+    m_indexStart = GSUtil::toInt(buf);
     if (findAttribute("Vertices"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, &m_vertices);
+    GSUtil::toDouble(buf, &m_vertices);
     if (findAttribute("Triangles"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Int(buf, &m_triangles);
-    if (findAttribute("ReverseWinding"s, &buf)) m_reverseWinding = GSUtil::Bool(buf);
+    GSUtil::toInt(buf, &m_triangles);
+    if (findAttribute("ReverseWinding"s, &buf)) m_reverseWinding = GSUtil::toBool(buf);
     if (m_indexStart) { for (size_t i = 0; i < m_triangles.size(); i++) { m_triangles[i] -= m_indexStart; } }
     if (m_reverseWinding) { for (size_t i = 0; i < m_triangles.size(); i += 3) { std::swap(m_triangles[i], m_triangles[i + 2]); } }
     return nullptr;
@@ -45,12 +45,12 @@ void TrimeshGeom::appendToAttributes()
     std::string buf;
     buf.reserve(1000000);
     setAttribute("Type"s, "Trimesh"s);
-    setAttribute("IndexStart"s, *GSUtil::ToString(m_indexStart, &buf));
-    setAttribute("ReverseWinding"s, *GSUtil::ToString(m_reverseWinding, &buf));
-    setAttribute("Vertices"s, *GSUtil::ToString(m_vertices.data(), m_vertices.size(), &buf));
+    setAttribute("IndexStart"s, *GSUtil::toString(m_indexStart, &buf));
+    setAttribute("ReverseWinding"s, *GSUtil::toString(m_reverseWinding, &buf));
+    setAttribute("Vertices"s, *GSUtil::toString(m_vertices.data(), m_vertices.size(), &buf));
     if (m_indexStart) { for (size_t i = 0; i < m_triangles.size(); i++) { m_triangles[i] += m_indexStart; } }
     if (m_reverseWinding) { for (size_t i = 0; i < m_triangles.size(); i += 3) { std::swap(m_triangles[i], m_triangles[i + 2]); } }
-    setAttribute("Triangles"s, *GSUtil::ToString(m_triangles.data(), m_triangles.size(), &buf));
+    setAttribute("Triangles"s, *GSUtil::toString(m_triangles.data(), m_triangles.size(), &buf));
     if (m_reverseWinding) { for (size_t i = 0; i < m_triangles.size(); i += 3) { std::swap(m_triangles[i], m_triangles[i + 2]); } }
     if (m_indexStart) { for (size_t i = 0; i < m_triangles.size(); i++) { m_triangles[i] -= m_indexStart; } }
     return;

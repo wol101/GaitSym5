@@ -185,8 +185,8 @@ std::string *DataTargetQuaternion::createFromAttributes()
     m_qValueList.reserve(targetTimeList()->size());
     for (size_t i = 0; i < targetTimeList()->size(); i++)
     {
-        pgd::Quaternion q(GSUtil::Double(targetValuesTokens[i * 4]), GSUtil::Double(targetValuesTokens[i * 4 + 1]),
-                          GSUtil::Double(targetValuesTokens[i * 4 + 2]), GSUtil::Double(targetValuesTokens[i * 4 + 3]));
+        pgd::Quaternion q(GSUtil::toDouble(targetValuesTokens[i * 4]), GSUtil::toDouble(targetValuesTokens[i * 4 + 1]),
+                          GSUtil::toDouble(targetValuesTokens[i * 4 + 2]), GSUtil::toDouble(targetValuesTokens[i * 4 + 3]));
         m_qValueList.push_back(q);
     }
 
@@ -209,7 +209,7 @@ void DataTargetQuaternion::appendToAttributes()
         valueList.push_back(m_qValueList[i].y);
         valueList.push_back(m_qValueList[i].z);
     }
-    setAttribute("TargetValues"s, *GSUtil::ToString(valueList.data(), valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(valueList.data(), valueList.size(), &buf));
     setAttribute("TargetID"s, m_target->name());
 }
 

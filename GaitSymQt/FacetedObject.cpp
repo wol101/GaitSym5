@@ -519,50 +519,50 @@ int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<st
         pystring::split(line, tokens);
         if (tokens.size() >= 2 && tokens[0] == "Ns"s)
         {
-            currentMaterial.Ns = GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.Ns = GaitSym::GSUtil::toDouble(tokens[1]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Ka"s)
         {
-            currentMaterial.Ka[0] =GaitSym::GSUtil::Double(tokens[1]);
-            currentMaterial.Ka[1] =GaitSym::GSUtil::Double(tokens[2]);
-            currentMaterial.Ka[2] =GaitSym::GSUtil::Double(tokens[3]);
+            currentMaterial.Ka[0] =GaitSym::GSUtil::toDouble(tokens[1]);
+            currentMaterial.Ka[1] =GaitSym::GSUtil::toDouble(tokens[2]);
+            currentMaterial.Ka[2] =GaitSym::GSUtil::toDouble(tokens[3]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Kd"s)
         {
-            currentMaterial.Kd[0] =GaitSym::GSUtil::Double(tokens[1]);
-            currentMaterial.Kd[1] =GaitSym::GSUtil::Double(tokens[2]);
-            currentMaterial.Kd[2] =GaitSym::GSUtil::Double(tokens[3]);
+            currentMaterial.Kd[0] =GaitSym::GSUtil::toDouble(tokens[1]);
+            currentMaterial.Kd[1] =GaitSym::GSUtil::toDouble(tokens[2]);
+            currentMaterial.Kd[2] =GaitSym::GSUtil::toDouble(tokens[3]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Ks"s)
         {
-            currentMaterial.Ks[0] =GaitSym::GSUtil::Double(tokens[1]);
-            currentMaterial.Ks[1] =GaitSym::GSUtil::Double(tokens[2]);
-            currentMaterial.Ks[2] =GaitSym::GSUtil::Double(tokens[3]);
+            currentMaterial.Ks[0] =GaitSym::GSUtil::toDouble(tokens[1]);
+            currentMaterial.Ks[1] =GaitSym::GSUtil::toDouble(tokens[2]);
+            currentMaterial.Ks[2] =GaitSym::GSUtil::toDouble(tokens[3]);
             continue;
         }
         if (tokens.size() >= 4 && tokens[0] == "Ke"s)
         {
-            currentMaterial.Ke[0] =GaitSym::GSUtil::Double(tokens[1]);
-            currentMaterial.Ke[1] =GaitSym::GSUtil::Double(tokens[2]);
-            currentMaterial.Ke[2] =GaitSym::GSUtil::Double(tokens[3]);
+            currentMaterial.Ke[0] =GaitSym::GSUtil::toDouble(tokens[1]);
+            currentMaterial.Ke[1] =GaitSym::GSUtil::toDouble(tokens[2]);
+            currentMaterial.Ke[2] =GaitSym::GSUtil::toDouble(tokens[3]);
             continue;
         }
         if (tokens.size() >= 2 && tokens[0] == "Ni"s)
         {
-            currentMaterial.Ni = GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.Ni = GaitSym::GSUtil::toDouble(tokens[1]);
             continue;
         }
         if (tokens.size() >= 2 && tokens[0] == "d"s)
         {
-            currentMaterial.d = GaitSym::GSUtil::Double(tokens[1]);
+            currentMaterial.d = GaitSym::GSUtil::toDouble(tokens[1]);
             continue;
         }
         if (tokens.size() >= 2 && tokens[0] == "illum"s)
         {
-            currentMaterial.illum = GaitSym::GSUtil::Int(tokens[1]);
+            currentMaterial.illum = GaitSym::GSUtil::toInt(tokens[1]);
             continue;
         }
     }

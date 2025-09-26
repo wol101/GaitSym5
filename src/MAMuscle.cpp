@@ -172,17 +172,17 @@ std::string *MAMuscle::createFromAttributes()
     if (Muscle::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("ForcePerUnitArea"s, &buf) == nullptr) return lastErrorPtr();
-    m_forcePerUnitArea = GSUtil::Double(buf);
+    m_forcePerUnitArea = GSUtil::toDouble(buf);
     if (findAttribute("VMaxFactor"s, &buf) == nullptr) return lastErrorPtr();
-    m_vMaxFactor = GSUtil::Double(buf);
+    m_vMaxFactor = GSUtil::toDouble(buf);
     if (findAttribute("PCA"s, &buf) == nullptr) return lastErrorPtr();
-    m_pca = GSUtil::Double(buf);
+    m_pca = GSUtil::toDouble(buf);
     this->SetF0(m_pca * m_forcePerUnitArea);
     if (findAttribute("FibreLength"s, &buf) == nullptr) return lastErrorPtr();
-    m_fibreLength = GSUtil::Double(buf);
+    m_fibreLength = GSUtil::toDouble(buf);
     this->SetVMax(m_fibreLength * m_vMaxFactor);
     if (findAttribute("ActivationK"s, &buf) == nullptr) return lastErrorPtr();
-    m_K = GSUtil::Double(buf);
+    m_K = GSUtil::toDouble(buf);
     return nullptr;
 }
 
@@ -191,11 +191,11 @@ void MAMuscle::appendToAttributes()
     Muscle::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "MinettiAlexander"s);
-    setAttribute("ForcePerUnitArea"s, *GSUtil::ToString(m_forcePerUnitArea, &buf));
-    setAttribute("VMaxFactor"s, *GSUtil::ToString(m_vMaxFactor, &buf));
-    setAttribute("PCA"s, *GSUtil::ToString(m_pca, &buf));
-    setAttribute("FibreLength"s, *GSUtil::ToString(m_fibreLength, &buf));
-    setAttribute("ActivationK"s, *GSUtil::ToString(m_K, &buf));
+    setAttribute("ForcePerUnitArea"s, *GSUtil::toString(m_forcePerUnitArea, &buf));
+    setAttribute("VMaxFactor"s, *GSUtil::toString(m_vMaxFactor, &buf));
+    setAttribute("PCA"s, *GSUtil::toString(m_pca, &buf));
+    setAttribute("FibreLength"s, *GSUtil::toString(m_fibreLength, &buf));
+    setAttribute("ActivationK"s, *GSUtil::toString(m_K, &buf));
 }
 
 std::string MAMuscle::dumpToString()

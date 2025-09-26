@@ -85,10 +85,10 @@ std::string *CyclicDriver::createFromAttributes()
     buf.reserve(100000);
     if (findAttribute("Values"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> values;
-    GSUtil::Double(buf, &values);
+    GSUtil::toDouble(buf, &values);
     if (findAttribute("Durations"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> durations;
-    GSUtil::Double(buf, &durations);
+    GSUtil::toDouble(buf, &durations);
     if (values.size() != durations.size())
     {
         setLastError("CyclicDriver ID=\""s + name() + "\" number of values ("s + std::to_string(values.size()) + ") must match number of durations ("s + std::to_string(durations.size()) + ")"s);
@@ -102,7 +102,7 @@ std::string *CyclicDriver::createFromAttributes()
     m_changeTimes[m_durationList.size() + 1] = std::numeric_limits<double>::infinity();
 
     if (findAttribute("PhaseDelay"s, &buf) == nullptr) return lastErrorPtr();
-    m_PhaseDelay =  GSUtil::Double(buf);
+    m_PhaseDelay =  GSUtil::toDouble(buf);
 
     return nullptr;
 }
@@ -114,9 +114,9 @@ void CyclicDriver::appendToAttributes()
     std::string buf;
     buf.reserve(m_durationList.size() * 32); // should be big enough but it will grow if necessary anyway
     setAttribute("Type"s, "Cyclic"s);
-    setAttribute("Durations"s, *GSUtil::ToString(m_durationList.data(), m_durationList.size(), &buf));
-    setAttribute("Values"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
-    setAttribute("PhaseDelay"s, *GSUtil::ToString(m_PhaseDelay, &buf));
+    setAttribute("Durations"s, *GSUtil::toString(m_durationList.data(), m_durationList.size(), &buf));
+    setAttribute("Values"s, *GSUtil::toString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("PhaseDelay"s, *GSUtil::toString(m_PhaseDelay, &buf));
 }
 
 std::vector<double> CyclicDriver::valueList() const

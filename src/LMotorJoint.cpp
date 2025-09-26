@@ -355,82 +355,82 @@ std::string *LMotorJoint::createFromAttributes()
     // if (ERP() >= 0) dJointSetLMotorParam (JointID(), dParamERP, ERP());
 
     if (findAttribute("NumAxes"s, &buf) == nullptr) return lastErrorPtr();
-    int numAxes = GSUtil::Int(buf);
+    int numAxes = GSUtil::toInt(buf);
     if (numAxes < 1 || numAxes > 3) { setLastError("Joint ID=\""s + name() +"\" NumAxes out of range"s); return lastErrorPtr(); }
     this->setNumAxes(numAxes);
     switch (numAxes)
     {
     case 1:
         if (findAttribute("MaxForce0"s, &buf) == nullptr) return lastErrorPtr();
-        this->setMaxForce(0, GSUtil::Double(buf));
+        this->setMaxForce(0, GSUtil::toDouble(buf));
         findAttribute("LowStop0"s, &buf);
         findAttribute("HighStop0"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop0 and HighStop0 required"s); return lastErrorPtr(); }
-            this->setStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(0, GSUtil::toDouble(buf), GSUtil::toDouble(buf2));
         }
-        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::toDouble(buf));
         break;
     case 2:
         if (findAttribute("MaxForce0"s, &buf) == nullptr) return lastErrorPtr();
-        this->setMaxForce(0, GSUtil::Double(buf));
+        this->setMaxForce(0, GSUtil::toDouble(buf));
         if (findAttribute("MaxForce1"s, &buf) == nullptr) return lastErrorPtr();
-        this->setMaxForce(1, GSUtil::Double(buf));
+        this->setMaxForce(1, GSUtil::toDouble(buf));
         findAttribute("LowStop0"s, &buf);
         findAttribute("HighStop0"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop0 and HighStop0 required"s); return lastErrorPtr(); }
-            this->setStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(0, GSUtil::toDouble(buf), GSUtil::toDouble(buf2));
         }
         findAttribute("LowStop1"s, &buf);
         findAttribute("HighStop1"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop1 and HighStop1 required"s); return lastErrorPtr(); }
-            this->setStops(1, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(1, GSUtil::toDouble(buf), GSUtil::toDouble(buf2));
         }
-        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPosition1"s, &buf)) this->setTargetPosition(1, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain1"s, &buf)) this->setTargetPositionGain(1, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPosition1"s, &buf)) this->setTargetPosition(1, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPositionGain1"s, &buf)) this->setTargetPositionGain(1, GSUtil::toDouble(buf));
         break;
     case 3:
         if (findAttribute("MaxForce0"s, &buf) == nullptr) return lastErrorPtr();
-        this->setMaxForce(0, GSUtil::Double(buf));
+        this->setMaxForce(0, GSUtil::toDouble(buf));
         if (findAttribute("MaxForce1"s, &buf) == nullptr) return lastErrorPtr();
-        this->setMaxForce(1, GSUtil::Double(buf));
+        this->setMaxForce(1, GSUtil::toDouble(buf));
         if (findAttribute("MaxForce2"s, &buf) == nullptr) return lastErrorPtr();
-        this->setMaxForce(2, GSUtil::Double(buf));
+        this->setMaxForce(2, GSUtil::toDouble(buf));
         findAttribute("LowStop0"s, &buf);
         findAttribute("HighStop0"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop0 and HighStop0 required"s); return lastErrorPtr(); }
-            this->setStops(0, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(0, GSUtil::toDouble(buf), GSUtil::toDouble(buf2));
         }
         findAttribute("LowStop1"s, &buf);
         findAttribute("HighStop1"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop1 and HighStop1 required"s); return lastErrorPtr(); }
-            this->setStops(1, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(1, GSUtil::toDouble(buf), GSUtil::toDouble(buf2));
         }
         findAttribute("LowStop2"s, &buf);
         findAttribute("HighStop2"s, &buf2);
         if (buf.size() || buf2.size())
         {
             if (!(buf.size() && buf2.size())) { setLastError("Joint ID=\""s + name() +"\" both LowStop2 and HighStop2 required"s); return lastErrorPtr(); }
-            this->setStops(2, GSUtil::Double(buf), GSUtil::Double(buf2));
+            this->setStops(2, GSUtil::toDouble(buf), GSUtil::toDouble(buf2));
         }
-        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPosition1"s, &buf)) this->setTargetPosition(1, GSUtil::Double(buf));
-        if (findAttribute("TargetPosition2"s, &buf)) this->setTargetPosition(2, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain1"s, &buf)) this->setTargetPositionGain(1, GSUtil::Double(buf));
-        if (findAttribute("TargetPositionGain2"s, &buf)) this->setTargetPositionGain(2, GSUtil::Double(buf));
+        if (findAttribute("TargetPosition0"s, &buf)) this->setTargetPosition(0, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPosition1"s, &buf)) this->setTargetPosition(1, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPosition2"s, &buf)) this->setTargetPosition(2, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPositionGain0"s, &buf)) this->setTargetPositionGain(0, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPositionGain1"s, &buf)) this->setTargetPositionGain(1, GSUtil::toDouble(buf));
+        if (findAttribute("TargetPositionGain2"s, &buf)) this->setTargetPositionGain(2, GSUtil::toDouble(buf));
         break;
     }
 
@@ -444,79 +444,79 @@ void LMotorJoint::appendToAttributes()
     setAttribute("Type"s, "LMotor"s);
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
-    setAttribute("NumAxes"s, *GSUtil::ToString(this->numAxes(), &buf));
+    setAttribute("NumAxes"s, *GSUtil::toString(this->numAxes(), &buf));
     switch (this->numAxes())
     {
     case 1:
-        setAttribute("MaxForce0"s, *GSUtil::ToString(m_maxForce0, &buf));
+        setAttribute("MaxForce0"s, *GSUtil::toString(m_maxForce0, &buf));
         if (m_stopsSet0)
         {
-            setAttribute("LowStop0"s, *GSUtil::ToString(m_stops0[0], &buf));
-            setAttribute("HighStop0"s, *GSUtil::ToString(m_stops0[1], &buf));
+            setAttribute("LowStop0"s, *GSUtil::toString(m_stops0[0], &buf));
+            setAttribute("HighStop0"s, *GSUtil::toString(m_stops0[1], &buf));
         }
         if (m_targetPositionSet0)
         {
-            setAttribute("TargetPosition0"s, *GSUtil::ToString(m_targetPosition0, &buf));
-            setAttribute("TargetPositionGain0"s, *GSUtil::ToString(m_targetPositionGain0, &buf));
+            setAttribute("TargetPosition0"s, *GSUtil::toString(m_targetPosition0, &buf));
+            setAttribute("TargetPositionGain0"s, *GSUtil::toString(m_targetPositionGain0, &buf));
         }
         break;
     case 2:
-        setAttribute("MaxForce0"s, *GSUtil::ToString(m_maxForce0, &buf));
-        setAttribute("MaxForce1"s, *GSUtil::ToString(m_maxForce1, &buf));
+        setAttribute("MaxForce0"s, *GSUtil::toString(m_maxForce0, &buf));
+        setAttribute("MaxForce1"s, *GSUtil::toString(m_maxForce1, &buf));
         if (m_stopsSet0)
         {
-            setAttribute("LowStop0"s, *GSUtil::ToString(m_stops0[0], &buf));
-            setAttribute("HighStop0"s, *GSUtil::ToString(m_stops0[1], &buf));
+            setAttribute("LowStop0"s, *GSUtil::toString(m_stops0[0], &buf));
+            setAttribute("HighStop0"s, *GSUtil::toString(m_stops0[1], &buf));
         }
         if (m_stopsSet1)
         {
-            setAttribute("LowStop1"s, *GSUtil::ToString(m_stops1[0], &buf));
-            setAttribute("HighStop1"s, *GSUtil::ToString(m_stops1[1], &buf));
+            setAttribute("LowStop1"s, *GSUtil::toString(m_stops1[0], &buf));
+            setAttribute("HighStop1"s, *GSUtil::toString(m_stops1[1], &buf));
         }
         if (m_targetPositionSet0)
         {
-            setAttribute("TargetPosition0"s, *GSUtil::ToString(m_targetPosition0, &buf));
-            setAttribute("TargetPositionGain0"s, *GSUtil::ToString(m_targetPositionGain0, &buf));
+            setAttribute("TargetPosition0"s, *GSUtil::toString(m_targetPosition0, &buf));
+            setAttribute("TargetPositionGain0"s, *GSUtil::toString(m_targetPositionGain0, &buf));
         }
         if (m_targetPositionSet1)
         {
-            setAttribute("TargetPosition1"s, *GSUtil::ToString(m_targetPosition1, &buf));
-            setAttribute("TargetPositionGain1"s, *GSUtil::ToString(m_targetPositionGain1, &buf));
+            setAttribute("TargetPosition1"s, *GSUtil::toString(m_targetPosition1, &buf));
+            setAttribute("TargetPositionGain1"s, *GSUtil::toString(m_targetPositionGain1, &buf));
         }
         break;
     case 3:
-        setAttribute("MaxForce0"s, *GSUtil::ToString(m_maxForce0, &buf));
-        setAttribute("MaxForce1"s, *GSUtil::ToString(m_maxForce1, &buf));
-        setAttribute("MaxForce2"s, *GSUtil::ToString(m_maxForce2, &buf));
+        setAttribute("MaxForce0"s, *GSUtil::toString(m_maxForce0, &buf));
+        setAttribute("MaxForce1"s, *GSUtil::toString(m_maxForce1, &buf));
+        setAttribute("MaxForce2"s, *GSUtil::toString(m_maxForce2, &buf));
         if (m_stopsSet0)
         {
-            setAttribute("LowStop0"s, *GSUtil::ToString(m_stops0[0], &buf));
-            setAttribute("HighStop0"s, *GSUtil::ToString(m_stops0[1], &buf));
+            setAttribute("LowStop0"s, *GSUtil::toString(m_stops0[0], &buf));
+            setAttribute("HighStop0"s, *GSUtil::toString(m_stops0[1], &buf));
         }
         if (m_stopsSet1)
         {
-            setAttribute("LowStop1"s, *GSUtil::ToString(m_stops1[0], &buf));
-            setAttribute("HighStop1"s, *GSUtil::ToString(m_stops1[1], &buf));
+            setAttribute("LowStop1"s, *GSUtil::toString(m_stops1[0], &buf));
+            setAttribute("HighStop1"s, *GSUtil::toString(m_stops1[1], &buf));
         }
         if (m_stopsSet2)
         {
-            setAttribute("LowStop2"s, *GSUtil::ToString(m_stops2[0], &buf));
-            setAttribute("HighStop2"s, *GSUtil::ToString(m_stops2[1], &buf));
+            setAttribute("LowStop2"s, *GSUtil::toString(m_stops2[0], &buf));
+            setAttribute("HighStop2"s, *GSUtil::toString(m_stops2[1], &buf));
         }
         if (m_targetPositionSet0)
         {
-            setAttribute("TargetPosition0"s, *GSUtil::ToString(m_targetPosition0, &buf));
-            setAttribute("TargetPositionGain0"s, *GSUtil::ToString(m_targetPositionGain0, &buf));
+            setAttribute("TargetPosition0"s, *GSUtil::toString(m_targetPosition0, &buf));
+            setAttribute("TargetPositionGain0"s, *GSUtil::toString(m_targetPositionGain0, &buf));
         }
         if (m_targetPositionSet1)
         {
-            setAttribute("TargetPosition1"s, *GSUtil::ToString(m_targetPosition1, &buf));
-            setAttribute("TargetPositionGain1"s, *GSUtil::ToString(m_targetPositionGain1, &buf));
+            setAttribute("TargetPosition1"s, *GSUtil::toString(m_targetPosition1, &buf));
+            setAttribute("TargetPositionGain1"s, *GSUtil::toString(m_targetPositionGain1, &buf));
         }
         if (m_targetPositionSet2)
         {
-            setAttribute("TargetPosition2"s, *GSUtil::ToString(m_targetPosition2, &buf));
-            setAttribute("TargetPositionGain2"s, *GSUtil::ToString(m_targetPositionGain2, &buf));
+            setAttribute("TargetPosition2"s, *GSUtil::toString(m_targetPosition2, &buf));
+            setAttribute("TargetPositionGain2"s, *GSUtil::toString(m_targetPositionGain2, &buf));
         }
         break;
     }

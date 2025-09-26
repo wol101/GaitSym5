@@ -493,7 +493,7 @@ std::string *CylinderWrapStrap::createFromAttributes()
     }
     this->setCylinderMarker(cylinderMarker->second.get());
     if (findAttribute("CylinderRadius"s, &buf) == nullptr) return lastErrorPtr();
-    this->setCylinderRadius(GSUtil::Double(buf));
+    this->setCylinderRadius(GSUtil::toDouble(buf));
 
     setUpstreamObjects({m_originMarker, m_insertionMarker, m_cylinderMarker});
     return nullptr;
@@ -507,7 +507,7 @@ void CylinderWrapStrap::appendToAttributes()
     setAttribute("OriginMarkerID"s, m_originMarker->name());
     setAttribute("InsertionMarkerID"s, m_insertionMarker->name());
     setAttribute("CylinderMarkerID"s, m_cylinderMarker->name());
-    setAttribute("CylinderRadius"s, *GSUtil::ToString(m_cylinderRadius, &buf));
+    setAttribute("CylinderRadius"s, *GSUtil::toString(m_cylinderRadius, &buf));
 }
 
 } // namespace GaitSym

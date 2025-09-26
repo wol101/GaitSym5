@@ -26,9 +26,9 @@ std::string *CappedCylinderGeom::createFromAttributes()
     if (Geom::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("Radius"s, &buf) == nullptr) return lastErrorPtr();
-    double radius = GSUtil::Double(buf);
+    double radius = GSUtil::toDouble(buf);
     if (findAttribute("Length"s, &buf) == nullptr) return lastErrorPtr();
-    double length = GSUtil::Double(buf);
+    double length = GSUtil::toDouble(buf);
     setLengthRadius(length, radius);
 
     return nullptr;
@@ -42,8 +42,8 @@ void CappedCylinderGeom::appendToAttributes()
     setAttribute("Type"s, "CappedCylinder"s);
     double length, radius;
     getLengthRadius(&length, &radius);
-    setAttribute("Radius"s, *GSUtil::ToString(radius, &buf));
-    setAttribute("Length"s, *GSUtil::ToString(length, &buf));
+    setAttribute("Radius"s, *GSUtil::toString(radius, &buf));
+    setAttribute("Length"s, *GSUtil::toString(length, &buf));
     return;
 }
 

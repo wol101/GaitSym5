@@ -173,9 +173,9 @@ int DialogMarkerExport::ExportMarkers()
             line.push_back(bodyName);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
             else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -197,17 +197,17 @@ int DialogMarkerExport::ExportMarkers()
             line.push_back(bodyName);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
             else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
             else { qOutput = markerIt.second->GetWorldQuaternion(); }
             pgd::Vector3 euler;
             if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::MakeEulerAnglesFromQRadian(qOutput);
             else euler = pgd::MakeEulerAnglesFromQ(qOutput);
-            line.push_back(GaitSym::GSUtil::ToString(euler.x));
-            line.push_back(GaitSym::GSUtil::ToString(euler.y));
-            line.push_back(GaitSym::GSUtil::ToString(euler.z));
+            line.push_back(GaitSym::GSUtil::toString(euler.x));
+            line.push_back(GaitSym::GSUtil::toString(euler.y));
+            line.push_back(GaitSym::GSUtil::toString(euler.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -229,18 +229,18 @@ int DialogMarkerExport::ExportMarkers()
             line.push_back(bodyName);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
             else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
             else { qOutput = markerIt.second->GetWorldQuaternion(); }
             double xa, ya, za, angle;
             pgd::MakeAxisAngleFromQ(qOutput, &xa, &ya, &za, &angle);
             if (ui->checkBoxAnglesInRadians->isChecked() == false) angle = pgd::RadToDeg(angle);
-            line.push_back(GaitSym::GSUtil::ToString(angle));
-            line.push_back(GaitSym::GSUtil::ToString(xa));
-            line.push_back(GaitSym::GSUtil::ToString(ya));
-            line.push_back(GaitSym::GSUtil::ToString(za));
+            line.push_back(GaitSym::GSUtil::toString(angle));
+            line.push_back(GaitSym::GSUtil::toString(xa));
+            line.push_back(GaitSym::GSUtil::toString(ya));
+            line.push_back(GaitSym::GSUtil::toString(za));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -262,15 +262,15 @@ int DialogMarkerExport::ExportMarkers()
             line.push_back(bodyName);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
             else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
             else { qOutput = markerIt.second->GetWorldQuaternion(); }
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.n));
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.z));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.n));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -292,14 +292,14 @@ int DialogMarkerExport::ExportMarkers()
             line.push_back(bodyName);
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
             else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
             else { qOutput = markerIt.second->GetWorldQuaternion(); }
             pgd::Matrix3x3 matrix = MakeMFromQ(qOutput);
             for (size_t i =0; i < 9; i++)
-                line.push_back(GaitSym::GSUtil::ToString(matrix.data()[i]));
+                line.push_back(GaitSym::GSUtil::toString(matrix.data()[i]));
             lines.push_back(pystring::join(separator, line));
         }
     }

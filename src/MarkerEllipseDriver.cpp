@@ -380,15 +380,15 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     double omega, sigma, phi;
     std::vector<double> XR, YR;
     if (findAttribute("Omega"s, &buf) == nullptr) return lastErrorPtr();
-    omega = GSUtil::Double(buf);
+    omega = GSUtil::toDouble(buf);
     if (findAttribute("Sigma"s, &buf) == nullptr) return lastErrorPtr();
-    sigma = GSUtil::Double(buf);
+    sigma = GSUtil::toDouble(buf);
     if (findAttribute("XR"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, &XR);
+    GSUtil::toDouble(buf, &XR);
     if (findAttribute("YR"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, &YR);
+    GSUtil::toDouble(buf, &YR);
     if (findAttribute("Phi"s, &buf) == nullptr) return lastErrorPtr();
-    phi = GSUtil::Double(buf);
+    phi = GSUtil::toDouble(buf);
 
     if (findAttribute("CentreMarkerID"s, &buf) == nullptr) return lastErrorPtr();
     Marker *markerEllipseCentre = simulation()->GetMarker(buf);
@@ -424,13 +424,13 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     Initialise(omega, sigma, XRV, YRV, phi, markerEllipseCentre, markerEllipseRim, phaseControlInput);
 
     if (findAttribute("LowPassFrequency"s, &buf) == nullptr) return lastErrorPtr();
-    m_butterworthFilter.calculateCoefficients(GSUtil::Double(buf), 1.0 / simulation()->GetTimeIncrement());
+    m_butterworthFilter.calculateCoefficients(GSUtil::toDouble(buf), 1.0 / simulation()->GetTimeIncrement());
     if (findAttribute("PhaseOffset"s, &buf) == nullptr) return lastErrorPtr();
-    m_phaseOffset = GSUtil::Double(buf);
+    m_phaseOffset = GSUtil::toDouble(buf);
     if (findAttribute("MaxPhiDot"s, &buf) == nullptr) return lastErrorPtr();
-    m_maxPhiDot = GSUtil::Double(buf);
+    m_maxPhiDot = GSUtil::toDouble(buf);
     if (findAttribute("PeriodMultiplier"s, &buf) == nullptr) return lastErrorPtr();
-    m_periodMultiplier = GSUtil::Double(buf);
+    m_periodMultiplier = GSUtil::toDouble(buf);
 
     if (findAttribute("OmegaDriverID"s, &buf))
     {
@@ -518,18 +518,18 @@ void MarkerEllipseDriver::appendToAttributes()
     Driver::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "MarkerEllipse"s);
-    setAttribute("Omega"s, *GSUtil::ToString(m_omega, &buf));
-    setAttribute("Sigma"s, *GSUtil::ToString(m_sigma, &buf));
-    setAttribute("XR"s, *GSUtil::ToString(m_XR.data(), 4, &buf));
-    setAttribute("YR"s, *GSUtil::ToString(m_YR.data(), 4, &buf));
-    setAttribute("Phi"s, *GSUtil::ToString(m_phi, &buf));
+    setAttribute("Omega"s, *GSUtil::toString(m_omega, &buf));
+    setAttribute("Sigma"s, *GSUtil::toString(m_sigma, &buf));
+    setAttribute("XR"s, *GSUtil::toString(m_XR.data(), 4, &buf));
+    setAttribute("YR"s, *GSUtil::toString(m_YR.data(), 4, &buf));
+    setAttribute("Phi"s, *GSUtil::toString(m_phi, &buf));
     setAttribute("CentreMarkerID"s, m_markerEllipseCentre->name());
     setAttribute("RimMarkerID"s, m_markerEllipseRim->name());
     setAttribute("PhaseControlInputID"s, m_phaseControlInput->name());
-    setAttribute("LowPassFrequency"s, *GSUtil::ToString(m_butterworthFilter.cutoffFrequency(), &buf));
-    setAttribute("PhaseOffset"s, *GSUtil::ToString(m_phaseOffset, &buf));
-    setAttribute("MaxPhiDot"s, *GSUtil::ToString(m_maxPhiDot, &buf));
-    setAttribute("PeriodMultiplier"s, *GSUtil::ToString(m_periodMultiplier, &buf));
+    setAttribute("LowPassFrequency"s, *GSUtil::toString(m_butterworthFilter.cutoffFrequency(), &buf));
+    setAttribute("PhaseOffset"s, *GSUtil::toString(m_phaseOffset, &buf));
+    setAttribute("MaxPhiDot"s, *GSUtil::toString(m_maxPhiDot, &buf));
+    setAttribute("PeriodMultiplier"s, *GSUtil::toString(m_periodMultiplier, &buf));
     if (m_omegaDriver) setAttribute("OmegaDriverID"s, m_omegaDriver->name());
     if (m_sigmaDriver) setAttribute("SigmaDriverID"s, m_sigmaDriver->name());
     if (m_XRDriver0) setAttribute("XRDriver0ID"s, m_XRDriver0->name());

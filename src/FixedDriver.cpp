@@ -48,7 +48,7 @@ std::string *FixedDriver::createFromAttributes()
 
     std::string buf;
     if (findAttribute("Value"s, &buf) == nullptr) return lastErrorPtr();
-    this->setValue(GSUtil::Double(buf));
+    this->setValue(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -59,7 +59,7 @@ void FixedDriver::appendToAttributes()
     Driver::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Fixed"s);
-    setAttribute("Value"s, *GSUtil::ToString(value(), &buf));
+    setAttribute("Value"s, *GSUtil::toString(value(), &buf));
 }
 
 } // namespace GaitSym

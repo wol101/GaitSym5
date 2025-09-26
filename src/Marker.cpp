@@ -62,7 +62,7 @@ std::string *Marker::SetPosition(const std::string &buf)
     }
     if (tokens.size() == 3)
     {
-        SetPosition(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        SetPosition(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
@@ -71,14 +71,14 @@ std::string *Marker::SetPosition(const std::string &buf)
         if (m_body)
         {
 //            pgd::Vector3 pos;
-//            dBodyGetPosRelPoint(m_body->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), pos); // convert from world to body
+//            dBodyGetPosRelPoint(m_body->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), pos); // convert from world to body
 //            SetPosition(pos[0], pos[1], pos[2]);
-            pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])) - pgd::Vector3(m_body->position()));
+            pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])) - pgd::Vector3(m_body->position()));
             SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
         }
         else
         {
-            SetPosition(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+            SetPosition(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
         }
         return nullptr;
     }
@@ -90,8 +90,8 @@ std::string *Marker::SetPosition(const std::string &buf)
         return lastErrorPtr();
     }
 //    pgd::Vector3 result;
-//    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result); // convert from body to world
-    pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->position());
+//    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result); // convert from body to world
+    pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
     if (m_body)
     {
 //        pgd::Vector3 pos;
@@ -200,7 +200,7 @@ std::string *Marker::SetQuaternion(const std::string &buf)
     }
     if (tokens.size() == 4)
     {
-        pgd::Quaternion q = GSUtil::GetQuaternion(tokens, 0);
+        pgd::Quaternion q = GSUtil::toQuaternion(tokens, 0);
         SetQuaternion(q.n, q.x, q.y, q.z);
         return nullptr;
     }
@@ -210,13 +210,13 @@ std::string *Marker::SetQuaternion(const std::string &buf)
         if (m_body)
         {
             pgd::Quaternion qBody = m_body->quaternion();
-            pgd::Quaternion qWorld = GSUtil::GetQuaternion(tokens, 1);
+            pgd::Quaternion qWorld = GSUtil::toQuaternion(tokens, 1);
             pgd::Quaternion qLocal = ~qBody * qWorld;
             SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
         }
         else
         {
-            pgd::Quaternion q = GSUtil::GetQuaternion(tokens, 1);
+            pgd::Quaternion q = GSUtil::toQuaternion(tokens, 1);
             SetQuaternion(q.n, q.x, q.y, q.z);
         }
         return nullptr;
@@ -231,7 +231,7 @@ std::string *Marker::SetQuaternion(const std::string &buf)
 
     // first get world quaternion
     pgd::Quaternion qBody1 = theBody->quaternion();
-    pgd::Quaternion qBody2 = GSUtil::GetQuaternion(tokens, 1);
+    pgd::Quaternion qBody2 = GSUtil::toQuaternion(tokens, 1);
     pgd::Quaternion qWorld = qBody1 * qBody2;
 
     // then set the local quaternion
@@ -633,10 +633,10 @@ void Marker::appendToAttributes()
     if (this->GetBody()) bodyName = this->GetBody()->name();
     else bodyName = "World"s;
     setAttribute("BodyID"s, bodyName);
-    setAttribute("Quaternion"s, bodyName + " "s + *GSUtil::ToString(m_quaternion, &buf));
-    setAttribute("Position"s, bodyName + " "s + *GSUtil::ToString(m_position, &buf));
-    setAttribute("WorldQuaternion"s, *GSUtil::ToString(GetWorldQuaternion(), &buf));
-    setAttribute("WorldPosition"s, *GSUtil::ToString(GetWorldPosition(), &buf));
+    setAttribute("Quaternion"s, bodyName + " "s + *GSUtil::toString(m_quaternion, &buf));
+    setAttribute("Position"s, bodyName + " "s + *GSUtil::toString(m_position, &buf));
+    setAttribute("WorldQuaternion"s, *GSUtil::toString(GetWorldQuaternion(), &buf));
+    setAttribute("WorldPosition"s, *GSUtil::toString(GetWorldPosition(), &buf));
 }
 
 Body *Marker::GetBody() const

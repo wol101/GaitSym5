@@ -134,7 +134,7 @@ std::string *Body::setPosition(const std::string &buf)
 
     if (tokens.size() == 3)
     {
-        this->setPosition(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        this->setPosition(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
@@ -145,7 +145,7 @@ std::string *Body::setPosition(const std::string &buf)
         {
             if (tokens[0] == "World"s)
             {
-                this->setPosition(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+                this->setPosition(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
                 return nullptr;
             }
             else
@@ -157,10 +157,10 @@ std::string *Body::setPosition(const std::string &buf)
         else
         {
             // pgd::Vector3 result;
-            // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
+            // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
             //    pgd::Vector3 result;
-            //    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result); // convert from body to world
-            pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->position());
+            //    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result); // convert from body to world
+            pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
             this->setPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
             return nullptr;
         }
@@ -175,10 +175,10 @@ std::string *Body::setPosition(const std::string &buf)
         }
         // get world coordinates of x1,y1,z1
         pgd::Vector3 world1, world2, pos;
-        // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), world1);
-        // dBodyGetRelPointPos (m_bodyID, GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]), world2);
-        world1 = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->position());
-        world2 = pgd::QVRotate(this->quaternion(), pgd::Vector3(GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]))) + pgd::Vector3(this->position());
+        // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), world1);
+        // dBodyGetRelPointPos (m_bodyID, GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]), world2);
+        world1 = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
+        world2 = pgd::QVRotate(this->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]))) + pgd::Vector3(this->position());
         // add the error to the current position
         pgd::Vector3 p = this->position();
         for (size_t i = 0; i < 3; i++) pos[i] = p[i] + (world1[i] - world2[i]);
@@ -218,7 +218,7 @@ std::string *Body::setQuaternion(const std::string &buf)
 
     if (tokens.size() == 4)
     {
-        pgd::Quaternion wq = GSUtil::GetQuaternion(tokens, 0);
+        pgd::Quaternion wq = GSUtil::toQuaternion(tokens, 0);
         this->setQuaternion(wq.n, wq.x, wq.y, wq.z);
         return nullptr;
     }
@@ -230,7 +230,7 @@ std::string *Body::setQuaternion(const std::string &buf)
         {
             if (tokens[0] == "World"s)
             {
-                pgd::Quaternion wq = GSUtil::GetQuaternion(tokens, 1);
+                pgd::Quaternion wq = GSUtil::toQuaternion(tokens, 1);
                 this->setQuaternion(wq.n, wq.x, wq.y, wq.z);
                 return nullptr;
             }
@@ -241,7 +241,7 @@ std::string *Body::setQuaternion(const std::string &buf)
             }
         }
         pgd::Quaternion qBody = theBody->quaternion();
-        pgd::Quaternion qIn = GSUtil::GetQuaternion(tokens, 1);
+        pgd::Quaternion qIn = GSUtil::toQuaternion(tokens, 1);
         pgd::Quaternion qNew = qBody * qIn;
         this->setQuaternion(qNew.n, qNew.x, qNew.y, qNew.z);
         return nullptr;
@@ -270,7 +270,7 @@ std::string *Body::setLinearVelocity(const std::string &buf)
 
     if (tokens.size() == 3)
     {
-        this->setLinearVelocity(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        this->setLinearVelocity(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
@@ -281,7 +281,7 @@ std::string *Body::setLinearVelocity(const std::string &buf)
         {
             if (tokens[0] == "World"s)
             {
-                this->setLinearVelocity(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+                this->setLinearVelocity(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
                 return nullptr;
             }
             else
@@ -293,8 +293,8 @@ std::string *Body::setLinearVelocity(const std::string &buf)
         else
         {
             // pgd::Vector3 result;
-            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            pgd::Vector3 worldVelocity = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])));
+            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
+            pgd::Vector3 worldVelocity = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
             pgd::Vector3 vRel = theBody->linearVelocity();
 
             setLinearVelocity(worldVelocity[0] + vRel[0], worldVelocity[1] + vRel[1], worldVelocity[2] + vRel[2]);
@@ -371,7 +371,7 @@ std::string *Body::setAngularVelocity(const std::string &buf)
 
     if (tokens.size() == 3)
     {
-        setAngularVelocity(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        setAngularVelocity(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
@@ -382,7 +382,7 @@ std::string *Body::setAngularVelocity(const std::string &buf)
         {
             if (tokens[0] == "World"s)
             {
-                setAngularVelocity(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+                setAngularVelocity(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
                 return nullptr;
             }
             else
@@ -394,8 +394,8 @@ std::string *Body::setAngularVelocity(const std::string &buf)
         else
         {
             // pgd::Vector3 result;
-            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            pgd::Vector3 worldAVelocity = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])));
+            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
+            pgd::Vector3 worldAVelocity = pgd::QVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
             pgd::Vector3 vARel = theBody->angularVelocity();
             setAngularVelocity(worldAVelocity[0] + vARel[0], worldAVelocity[1] + vARel[1], worldAVelocity[2] + vARel[2]);
             return nullptr;
@@ -931,54 +931,54 @@ std::string *Body::createFromAttributes()
     // (remember the origin is always at the centre of mass)
 
     if (findAttribute("Mass"s, &buf) == nullptr) return lastErrorPtr();
-    double mass = GSUtil::Double(buf);
+    double mass = GSUtil::toDouble(buf);
 
     if (findAttribute("MOI"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 6, doubleList);
+    GSUtil::toDouble(buf, 6, doubleList);
 
     setMass(mass, doubleList[0], doubleList[1], doubleList[2], doubleList[3], doubleList[4], doubleList[5]);
 
     // get limits if available
     if (findAttribute("PositionLowBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
+        GSUtil::toDouble(buf, 3, doubleList);
         this->setPositionLowBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("PositionHighBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
+        GSUtil::toDouble(buf, 3, doubleList);
         this->setPositionHighBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("LinearVelocityLowBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
+        GSUtil::toDouble(buf, 3, doubleList);
         this->setLinearVelocityLowBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("LinearVelocityHighBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
+        GSUtil::toDouble(buf, 3, doubleList);
         this->setLinearVelocityHighBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("AngularVelocityLowBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
+        GSUtil::toDouble(buf, 3, doubleList);
         this->setAngularVelocityLowBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("AngularVelocityHighBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
+        GSUtil::toDouble(buf, 3, doubleList);
         this->setAngularVelocityHighBound(doubleList[0], doubleList[1], doubleList[2]);
     }
 
     if (findAttribute("ConstructionDensity"s, &buf) == nullptr) return lastErrorPtr();
-    this->setConstructionDensity(GSUtil::Double(buf));
+    this->setConstructionDensity(GSUtil::toDouble(buf));
 
     // set damping if necessary
-    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::Double(buf));
-    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::Double(buf));
-    if (findAttribute("LinearDampingThreshold"s, &buf)) this->setLinearDampingThreshold(GSUtil::Double(buf));
-    if (findAttribute("AngularDampingThreshold"s, &buf)) this->setAngularDampingThreshold(GSUtil::Double(buf));
-    if (findAttribute("MaxAngularSpeed"s, &buf)) this->setMaxAngularSpeed(GSUtil::Double(buf));
+    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::toDouble(buf));
+    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::toDouble(buf));
+    if (findAttribute("LinearDampingThreshold"s, &buf)) this->setLinearDampingThreshold(GSUtil::toDouble(buf));
+    if (findAttribute("AngularDampingThreshold"s, &buf)) this->setAngularDampingThreshold(GSUtil::toDouble(buf));
+    if (findAttribute("MaxAngularSpeed"s, &buf)) this->setMaxAngularSpeed(GSUtil::toDouble(buf));
 
     if (findAttribute("DragControl"s, &buf))
     {
@@ -996,21 +996,21 @@ std::string *Body::createFromAttributes()
     if (m_dragControl == DragCoefficients)
     {
         if (findAttribute("DirectDragCoefficients"s, &buf) == nullptr) return lastErrorPtr();
-        GSUtil::Double(buf, 6, doubleList);
+        GSUtil::toDouble(buf, 6, doubleList);
         this->setDirectDragCoefficients(doubleList[0], doubleList[1], doubleList[2], doubleList[3], doubleList[4], doubleList[5]); // 3 rotational then 3 linear
     }
     else if (m_dragControl == DragCylinderX || m_dragControl == DragCylinderY || m_dragControl == DragCylinderZ)
     {
         if (findAttribute("DragFluidDensity"s, &buf) == nullptr) return lastErrorPtr();
-        double dragFluidDensity = GSUtil::Double(buf);
+        double dragFluidDensity = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderMin"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderMin = GSUtil::Double(buf);
+        double dragCylinderMin = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderMax"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderMax = GSUtil::Double(buf);
+        double dragCylinderMax = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderRadius"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderRadius = GSUtil::Double(buf);
+        double dragCylinderRadius = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderCoefficient"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderCoefficient = GSUtil::Double(buf);
+        double dragCylinderCoefficient = GSUtil::toDouble(buf);
         this->setCylinderDragParameters(m_dragControl, dragFluidDensity, dragCylinderMin, dragCylinderMax, dragCylinderRadius, dragCylinderCoefficient);
     }
 
@@ -1040,32 +1040,32 @@ void Body::appendToAttributes()
     bool constructionMode = m_constructionMode;
     if (constructionMode) enterRunMode();
 
-    setAttribute("Mass"s, *GSUtil::ToString(m_mass, &buf));
+    setAttribute("Mass"s, *GSUtil::toString(m_mass, &buf));
     double ixx, iyy, izz, ixy, izx, iyz;
     m_inertia.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
     double MOI[6] = {ixx, iyy, izz, ixy, izx, iyz}; // xx, yy, zz, xy, xz, yz
-    setAttribute("MOI"s, *GSUtil::ToString(MOI, 6, &buf));
-    if (m_LinearDamping >= 0) setAttribute("LinearDamping"s, *GSUtil::ToString(m_LinearDamping, &buf));
-    if (m_AngularDamping >= 0) setAttribute("AngularDamping"s, *GSUtil::ToString(m_AngularDamping, &buf));
-    if (m_LinearDampingThreshold >= 0) setAttribute("LinearDampingThreshold"s, *GSUtil::ToString(m_LinearDampingThreshold, &buf));
-    if (m_AngularDampingThreshold >= 0) setAttribute("AngularDampingThreshold"s, *GSUtil::ToString(m_AngularDampingThreshold, &buf));
-    if (m_MaxAngularSpeed >= 0) setAttribute("MaxAngularSpeed"s, *GSUtil::ToString(m_MaxAngularSpeed, &buf));
+    setAttribute("MOI"s, *GSUtil::toString(MOI, 6, &buf));
+    if (m_LinearDamping >= 0) setAttribute("LinearDamping"s, *GSUtil::toString(m_LinearDamping, &buf));
+    if (m_AngularDamping >= 0) setAttribute("AngularDamping"s, *GSUtil::toString(m_AngularDamping, &buf));
+    if (m_LinearDampingThreshold >= 0) setAttribute("LinearDampingThreshold"s, *GSUtil::toString(m_LinearDampingThreshold, &buf));
+    if (m_AngularDampingThreshold >= 0) setAttribute("AngularDampingThreshold"s, *GSUtil::toString(m_AngularDampingThreshold, &buf));
+    if (m_MaxAngularSpeed >= 0) setAttribute("MaxAngularSpeed"s, *GSUtil::toString(m_MaxAngularSpeed, &buf));
 
-    setAttribute("Quaternion"s, *GSUtil::ToString(quaternion(), &buf)); // note quaternion is (qs,qx,qy,qz)
-    setAttribute("Position"s, *GSUtil::ToString(position(), &buf));
+    setAttribute("Quaternion"s, *GSUtil::toString(quaternion(), &buf)); // note quaternion is (qs,qx,qy,qz)
+    setAttribute("Position"s, *GSUtil::toString(position(), &buf));
 
-    setAttribute("LinearVelocity"s, *GSUtil::ToString(linearVelocity(), &buf));
-    setAttribute("AngularVelocity"s, *GSUtil::ToString(angularVelocity(), &buf));
+    setAttribute("LinearVelocity"s, *GSUtil::toString(linearVelocity(), &buf));
+    setAttribute("AngularVelocity"s, *GSUtil::toString(angularVelocity(), &buf));
 
-    setAttribute("ConstructionPosition"s, *GSUtil::ToString(m_constructionPosition, &buf));
-    setAttribute("ConstructionDensity"s, *GSUtil::ToString(m_constructionDensity, &buf));
+    setAttribute("ConstructionPosition"s, *GSUtil::toString(m_constructionPosition, &buf));
+    setAttribute("ConstructionDensity"s, *GSUtil::toString(m_constructionDensity, &buf));
 
-    setAttribute("PositionLowBound"s, *GSUtil::ToString(m_positionLowBound, &buf));
-    setAttribute("PositionHighBound"s, *GSUtil::ToString(m_positionHighBound, &buf));
-    setAttribute("LinearVelocityLowBound"s, *GSUtil::ToString(m_linearVelocityLowBound, &buf));
-    setAttribute("LinearVelocityHighBound"s, *GSUtil::ToString(m_linearVelocityHighBound, &buf));
-    setAttribute("AngularVelocityLowBound"s, *GSUtil::ToString(m_angularVelocityLowBound, &buf));
-    setAttribute("AngularVelocityHighBound"s, *GSUtil::ToString(m_angularVelocityHighBound, &buf));
+    setAttribute("PositionLowBound"s, *GSUtil::toString(m_positionLowBound, &buf));
+    setAttribute("PositionHighBound"s, *GSUtil::toString(m_positionHighBound, &buf));
+    setAttribute("LinearVelocityLowBound"s, *GSUtil::toString(m_linearVelocityLowBound, &buf));
+    setAttribute("LinearVelocityHighBound"s, *GSUtil::toString(m_linearVelocityHighBound, &buf));
+    setAttribute("AngularVelocityLowBound"s, *GSUtil::toString(m_angularVelocityLowBound, &buf));
+    setAttribute("AngularVelocityHighBound"s, *GSUtil::toString(m_angularVelocityHighBound, &buf));
 
     setAttribute("GraphicFile1"s, m_graphicFile1);
     setAttribute("GraphicFile2"s, m_graphicFile2);
@@ -1078,12 +1078,12 @@ void Body::appendToAttributes()
     else if (m_dragControl == DragCylinderZ) setAttribute("DragControl"s, "DragCylinderZ"s);
     if (m_dragControl != NoDrag)
     {
-        setAttribute("DragCoefficients"s, *GSUtil::ToString(m_dragCoefficients, 6, &buf));
-        setAttribute("DragFluidDensity"s, *GSUtil::ToString(m_dragFluidDensity, &buf));
-        setAttribute("DragCylinderMin"s, *GSUtil::ToString(m_dragCylinderMin, &buf));
-        setAttribute("DragCylinderLength"s, *GSUtil::ToString(m_dragCylinderLength, &buf));
-        setAttribute("DragCylinderRadius"s, *GSUtil::ToString(m_dragCylinderRadius, &buf));
-        setAttribute("DragCylinderCoefficient"s, *GSUtil::ToString(m_dragCylinderCoefficient, &buf));
+        setAttribute("DragCoefficients"s, *GSUtil::toString(m_dragCoefficients, 6, &buf));
+        setAttribute("DragFluidDensity"s, *GSUtil::toString(m_dragFluidDensity, &buf));
+        setAttribute("DragCylinderMin"s, *GSUtil::toString(m_dragCylinderMin, &buf));
+        setAttribute("DragCylinderLength"s, *GSUtil::toString(m_dragCylinderLength, &buf));
+        setAttribute("DragCylinderRadius"s, *GSUtil::toString(m_dragCylinderRadius, &buf));
+        setAttribute("DragCylinderCoefficient"s, *GSUtil::toString(m_dragCylinderCoefficient, &buf));
     }
 
     if (constructionMode) enterConstructionMode();

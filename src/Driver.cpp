@@ -128,14 +128,14 @@ std::string *Driver::createFromAttributes()
 
     if (findAttribute("DriverRange"s, &buf))
     {
-        GSUtil::Double(buf, 2, doubleList);
+        GSUtil::toDouble(buf, 2, doubleList);
         this->setMinValue(doubleList[0]);
         this->setMaxValue(doubleList[1]);
     }
 
     if (findAttribute("LinearInterpolation"s, &buf))
     {
-        this->setInterp(GSUtil::Bool(buf));
+        this->setInterp(GSUtil::toBool(buf));
     }
 
     setUpstreamObjects(std::move(upstreamObjects));
@@ -161,8 +161,8 @@ void Driver::appendToAttributes()
     for (auto it = m_targetList.begin(); it != m_targetList.end(); it++) stringList.push_back(it->first);
     setAttribute("TargetIDList"s, pystring::join(" "s, stringList));
     double doubleList[2] = { m_minValue, m_maxValue };
-    setAttribute("DriverRange"s, *GSUtil::ToString(doubleList, 2, &buf));
-    setAttribute("LinearInterpolation"s, *GSUtil::ToString(Interp(), &buf));
+    setAttribute("DriverRange"s, *GSUtil::toString(doubleList, 2, &buf));
+    setAttribute("LinearInterpolation"s, *GSUtil::toString(Interp(), &buf));
 }
 
 double Driver::MinValue() const

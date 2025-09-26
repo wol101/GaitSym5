@@ -446,7 +446,7 @@ void DialogStringOfPearlsBuilder::createBodies()
         body->setConstructionPosition(position);
         body->setInitialPosition(position);
         body->setMass(mass, moi, moi, moi, 0, 0, 0);
-        std::string bodyID = GaitSym::GSUtil::ToString("%s_body_%03zu", rootID.c_str(), i);
+        std::string bodyID = GaitSym::GSUtil::toString("%s_body_%03zu", rootID.c_str(), i);
         body->setName(bodyID);
         body->setSimulation(m_simulation);
         body->enterConstructionMode();
@@ -477,13 +477,13 @@ void DialogStringOfPearlsBuilder::createGeoms()
     for (size_t i = 0; i < numPearls; ++i)
     {
         auto marker = std::make_unique<GaitSym::Marker>(m_bodyList[i].get());
-        std::string markerID = GaitSym::GSUtil::ToString("%s_geom_marker_%03zu", rootID.c_str(), i);
+        std::string markerID = GaitSym::GSUtil::toString("%s_geom_marker_%03zu", rootID.c_str(), i);
         marker->setName(markerID);
         marker->setSimulation(m_simulation);
         marker->setUpstreamObjects( { m_bodyList[i].get() } );
 
         auto sphereGeom = std::make_unique<GaitSym::SphereGeom>(radius);
-        std::string geomID = GaitSym::GSUtil::ToString("%s_geom_%03zu", rootID.c_str(), i);
+        std::string geomID = GaitSym::GSUtil::toString("%s_geom_%03zu", rootID.c_str(), i);
         sphereGeom->setName(geomID);
         sphereGeom->setGeomMarker(marker.get());
         sphereGeom->setSimulation(m_simulation);
@@ -523,7 +523,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
         strap->SetOrigin(originMarker);
         strap->SetInsertion(insertionMarker);
         strap->setSimulation(m_simulation);
-        std::string strapID = GaitSym::GSUtil::ToString("%s_link_strap_%03zu", rootID.c_str(), i);
+        std::string strapID = GaitSym::GSUtil::toString("%s_link_strap_%03zu", rootID.c_str(), i);
         strap->setName(strapID);
 
         QString muscleTab = ui->tabWidgetMuscle->tabText(ui->tabWidgetMuscle->currentIndex());
@@ -618,7 +618,7 @@ void DialogStringOfPearlsBuilder::createMuscles()
             outputMuscle = std::move(muscle);
         }
         Q_ASSERT_X(outputMuscle, "DialogStringOfPearlsBuilder::createMuscles", "outputMuscle undefined");
-        std::string muscleID = GaitSym::GSUtil::ToString("%s_link_%03zu", rootID.c_str(), i);
+        std::string muscleID = GaitSym::GSUtil::toString("%s_link_%03zu", rootID.c_str(), i);
         outputMuscle->setName(muscleID);
         outputMuscle->setSimulation(m_simulation);
         outputMuscle->SetStrap(strap.get());

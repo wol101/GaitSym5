@@ -823,7 +823,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     pgd::Vector3 cameraVector(m_cameraVecX, m_cameraVecY, m_cameraVecZ);
     pgd::Vector3 centre(m_COIx, m_COIy, m_COIz);
     pgd::Vector3 eye =  centre - m_cameraDistance * cameraVector;
-    std::string translate = GaitSym::GSUtil::ToString("(%g,%g,%g)", eye.x, eye.y, eye.z);
+    std::string translate = GaitSym::GSUtil::toString("(%g,%g,%g)", eye.x, eye.y, eye.z);
 
     // this code from gluLookAT
     pgd::Vector3 forward = centre - eye;
@@ -841,18 +841,18 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
                                 side.z, up.z, -forward.z);
     // convert to Euler angles
     pgd::Vector3 euler = pgd::MakeEulerAnglesFromQ(pgd::MakeQfromM(cameraMatrix));
-    std::string rotateXYZ = GaitSym::GSUtil::ToString("(%g,%g,%g)", euler.x, euler.y, euler.z);
+    std::string rotateXYZ = GaitSym::GSUtil::toString("(%g,%g,%g)", euler.x, euler.y, euler.z);
 
     // we want to create a sensor that approximates that of a 35mm film camera so that the focal length is the 35mm equivalent
     // we use the width-based EFL rather than the diagonal becuase it isn't that important and width is easier to calculate
     float aspectRatio = float(width()) / float(height());
     float sensorWidth = 36; // 35mm film standard
     float sensorHeight = sensorWidth / aspectRatio;
-    std::string clippingRange = GaitSym::GSUtil::ToString("(%g,%g)", m_frontClip, m_backClip);
-    std::string focalLength = GaitSym::GSUtil::ToString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
-    std::string focusDistance = GaitSym::GSUtil::ToString("%g", m_cameraDistance);
-    std::string verticalAperture = GaitSym::GSUtil::ToString("%g", sensorHeight);
-    std::string horizontalAperture = GaitSym::GSUtil::ToString("%g", sensorWidth);
+    std::string clippingRange = GaitSym::GSUtil::toString("(%g,%g)", m_frontClip, m_backClip);
+    std::string focalLength = GaitSym::GSUtil::toString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
+    std::string focusDistance = GaitSym::GSUtil::toString("%g", m_cameraDistance);
+    std::string verticalAperture = GaitSym::GSUtil::toString("%g", sensorHeight);
+    std::string horizontalAperture = GaitSym::GSUtil::toString("%g", sensorWidth);
     std::string projection = "perspective";
     if (m_orthographicProjection == true)
     {
@@ -860,8 +860,8 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
         // if the camera is switched back to perspective in omniverse, then the horizontal aperture needs to go back to 36 for the views to match
         float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
         float halfViewWidth = halfViewHeight * aspectRatio;
-        verticalAperture = GaitSym::GSUtil::ToString("%g", halfViewHeight * 20);
-        horizontalAperture = GaitSym::GSUtil::ToString("%g", halfViewWidth * 20);
+        verticalAperture = GaitSym::GSUtil::toString("%g", halfViewHeight * 20);
+        horizontalAperture = GaitSym::GSUtil::toString("%g", halfViewWidth * 20);
         projection = "orthographic";
     }
 
@@ -958,12 +958,12 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
         {
             if (facetedObjectIter->GetVertexList().size() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().Magnitude2() != 0)
             {
-                facetedObjectIter->WriteUSDFile(usdStream, GaitSym::GSUtil::ToString("mesh%05d", meshCount));
+                facetedObjectIter->WriteUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
                 meshCount++;
             }
         }
     }
-    m_globalAxes->WriteUSDFile(usdStream, GaitSym::GSUtil::ToString("mesh%05d", meshCount));
+    m_globalAxes->WriteUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
     meshCount++;
 
     usdStream <<

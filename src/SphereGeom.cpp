@@ -25,7 +25,7 @@ std::string *SphereGeom::createFromAttributes()
     if (Geom::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("Radius"s, &buf) == nullptr) return lastErrorPtr();
-    setRadius(GSUtil::Double(buf));
+    setRadius(GSUtil::toDouble(buf));
     return nullptr;
 }
 
@@ -34,7 +34,7 @@ void SphereGeom::appendToAttributes()
     Geom::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Sphere"s);
-    setAttribute("Radius"s, *GSUtil::ToString(radius(), &buf));
+    setAttribute("Radius"s, *GSUtil::toString(radius(), &buf));
     return;
 }
 

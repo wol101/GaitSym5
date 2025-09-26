@@ -270,9 +270,9 @@ std::string *HingeJoint::createFromAttributes()
     this->setAnchor(position);
 
     if (findAttribute("LowStop"s, &buf) == nullptr) return lastErrorPtr();
-    double loStop = GSUtil::GetAngle(buf);
+    double loStop = GSUtil::toAngle(buf);
     if (findAttribute("HighStop"s, &buf) == nullptr) return lastErrorPtr();
-    double hiStop = GSUtil::GetAngle(buf);
+    double hiStop = GSUtil::toAngle(buf);
     if (loStop >= hiStop)
     {
         setLastError("Hinge ID=\""s + name() +"\" LowStop >= HighStop"s);
@@ -282,17 +282,17 @@ std::string *HingeJoint::createFromAttributes()
 
     if (findAttribute("HighStopTorqueLimit"s, &buf))
     {
-        double hiStopTorqueLimit = GSUtil::Double(buf);
+        double hiStopTorqueLimit = GSUtil::toDouble(buf);
         if (findAttribute("LowStopTorqueLimit"s, &buf) == nullptr) return lastErrorPtr();
-        double loStopTorqueLimit = GSUtil::Double(buf);
+        double loStopTorqueLimit = GSUtil::toDouble(buf);
         this->setAxisTorqueLimits(pgd::Vector2(loStopTorqueLimit, hiStopTorqueLimit));
         if (findAttribute("StopTorqueWindow"s, &buf) == nullptr) return lastErrorPtr();
-        this->setAxisTorqueWindow(GSUtil::Int(buf));
+        this->setAxisTorqueWindow(GSUtil::toInt(buf));
     }
 
-    if (findAttribute("StopSpring"s, &buf)) this->setStopSpring(GSUtil::Double(buf));
-    if (findAttribute("StopDamp"s, &buf)) this->setStopDamp(GSUtil::Double(buf));
-    if (findAttribute("StopBounce"s, &buf)) this->setStopBounce(GSUtil::Double(buf));
+    if (findAttribute("StopSpring"s, &buf)) this->setStopSpring(GSUtil::toDouble(buf));
+    if (findAttribute("StopDamp"s, &buf)) this->setStopDamp(GSUtil::toDouble(buf));
+    if (findAttribute("StopBounce"s, &buf)) this->setStopBounce(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -302,17 +302,17 @@ void HingeJoint::appendToAttributes()
     Joint::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Hinge"s);
-    setAttribute("LowStop"s, *GSUtil::ToString(m_stops[0], &buf));
-    setAttribute("HighStop"s, *GSUtil::ToString(m_stops[1], &buf));
+    setAttribute("LowStop"s, *GSUtil::toString(m_stops[0], &buf));
+    setAttribute("HighStop"s, *GSUtil::toString(m_stops[1], &buf));
     if (m_axisTorqueLimits[1] != std::numeric_limits<double>::infinity())
     {
-        setAttribute("HighStopTorqueLimit"s, *GSUtil::ToString(m_axisTorqueLimits[1], &buf));
-        setAttribute("LowStopTorqueLimit"s, *GSUtil::ToString(m_axisTorqueLimits[0], &buf));
-        setAttribute("StopTorqueWindow"s, *GSUtil::ToString(m_axisTorqueWindow, &buf));
+        setAttribute("HighStopTorqueLimit"s, *GSUtil::toString(m_axisTorqueLimits[1], &buf));
+        setAttribute("LowStopTorqueLimit"s, *GSUtil::toString(m_axisTorqueLimits[0], &buf));
+        setAttribute("StopTorqueWindow"s, *GSUtil::toString(m_axisTorqueWindow, &buf));
     }
-    setAttribute("StopSpring"s, *GSUtil::ToString(m_stopSpring, &buf));
-    setAttribute("StopDamp"s, *GSUtil::ToString(m_stopDamp, &buf));
-    setAttribute("StopBounce"s, *GSUtil::ToString(m_stopBounce, &buf));
+    setAttribute("StopSpring"s, *GSUtil::toString(m_stopSpring, &buf));
+    setAttribute("StopDamp"s, *GSUtil::toString(m_stopDamp, &buf));
+    setAttribute("StopBounce"s, *GSUtil::toString(m_stopBounce, &buf));
 }
 
 std::string HingeJoint::dumpToString()

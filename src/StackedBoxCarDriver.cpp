@@ -99,20 +99,20 @@ std::string *StackedBoxcarDriver::createFromAttributes()
 
     std::string buf;
     if (findAttribute("StackSize"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetStackSize(size_t(GSUtil::Int(buf)));
+    this->SetStackSize(size_t(GSUtil::toInt(buf)));
 
     buf.reserve(m_StackSize * 32);
     std::vector<double> doubleList;
     doubleList.reserve(m_StackSize);
 
     if (findAttribute("CycleTime"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetCycleTime(GSUtil::Double(buf));
+    this->SetCycleTime(GSUtil::toDouble(buf));
     if (findAttribute("Delays"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetDelays(GSUtil::Double(buf, int(m_StackSize), doubleList.data()));
+    this->SetDelays(GSUtil::toDouble(buf, int(m_StackSize), doubleList.data()));
     if (findAttribute("Widths"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetWidths(GSUtil::Double(buf, int(m_StackSize), doubleList.data()));
+    this->SetWidths(GSUtil::toDouble(buf, int(m_StackSize), doubleList.data()));
     if (findAttribute("Heights"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetHeights(GSUtil::Double(buf, int(m_StackSize), doubleList.data()));
+    this->SetHeights(GSUtil::toDouble(buf, int(m_StackSize), doubleList.data()));
 
     return nullptr;
 }
@@ -124,11 +124,11 @@ void StackedBoxcarDriver::appendToAttributes()
     std::string buf;
     buf.reserve(m_StackSize * 32); // should be big enough but it will grow if necessary anyway
     setAttribute("Type"s, "StackedBoxcar"s);
-    setAttribute("StackSize", *GSUtil::ToString(m_StackSize, &buf));
-    setAttribute("CycleTime", *GSUtil::ToString(m_CycleTime, &buf));
-    setAttribute("Delays", *GSUtil::ToString(m_Delays.data(), m_StackSize, &buf));
-    setAttribute("Widths", *GSUtil::ToString(m_Widths.data(), m_StackSize, &buf));
-    setAttribute("Heights", *GSUtil::ToString(m_Heights.data(), m_StackSize, &buf));
+    setAttribute("StackSize", *GSUtil::toString(m_StackSize, &buf));
+    setAttribute("CycleTime", *GSUtil::toString(m_CycleTime, &buf));
+    setAttribute("Delays", *GSUtil::toString(m_Delays.data(), m_StackSize, &buf));
+    setAttribute("Widths", *GSUtil::toString(m_Widths.data(), m_StackSize, &buf));
+    setAttribute("Heights", *GSUtil::toString(m_Heights.data(), m_StackSize, &buf));
 }
 
 

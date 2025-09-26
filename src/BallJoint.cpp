@@ -48,7 +48,7 @@ std::string *BallJoint::createFromAttributes()
             return lastErrorPtr();
         }
         std::vector<double> d1;
-        GSUtil::Double(buf, &d1);
+        GSUtil::toDouble(buf, &d1);
         if (d1.size() != 3)
         {
             setLastError("Ball ID=\""s + name() +"\" LowStops needs 3 values"s);
@@ -60,7 +60,7 @@ std::string *BallJoint::createFromAttributes()
             return lastErrorPtr();
         }
         std::vector<double> d2;
-        GSUtil::Double(buf, &d2);
+        GSUtil::toDouble(buf, &d2);
         if (d2.size() != 3)
         {
             setLastError("Ball ID=\""s + name() +"\" HighStops needs 3 values"s);
@@ -91,8 +91,8 @@ void BallJoint::appendToAttributes()
     setAttribute("Body2MarkerID"s, body2Marker()->name());
     if (m_stops)
     {
-        setAttribute("LowStops"s, GSUtil::ToString(pgd::Vector3((*m_stops)[0].x, (*m_stops)[1].x, (*m_stops)[2].x)));
-        setAttribute("HighStops"s, GSUtil::ToString(pgd::Vector3((*m_stops)[0].y, (*m_stops)[1].y, (*m_stops)[2].y)));
+        setAttribute("LowStops"s, GSUtil::toString(pgd::Vector3((*m_stops)[0].x, (*m_stops)[1].x, (*m_stops)[2].x)));
+        setAttribute("HighStops"s, GSUtil::toString(pgd::Vector3((*m_stops)[0].y, (*m_stops)[1].y, (*m_stops)[2].y)));
     }
 }
 

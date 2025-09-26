@@ -455,7 +455,7 @@ std::string *FixedJoint::createFromAttributes()
     SetFixed();
     // if (CFM() >= 0) dJointSetFixedParam (JointID(), dParamCFM, CFM());
     // if (ERP() >= 0) dJointSetFixedParam (JointID(), dParamERP, ERP());
-    if (findAttribute("LateFix"s, &buf)) m_lateFix = GSUtil::Bool(buf);
+    if (findAttribute("LateFix"s, &buf)) m_lateFix = GSUtil::toBool(buf);
 
     if (findAttribute("StressCalculationType"s, &buf) == nullptr) return lastErrorPtr();
     if (buf == "None"s) this->SetStressCalculationType(FixedJoint::none);
@@ -472,15 +472,15 @@ std::string *FixedJoint::createFromAttributes()
         else { setLastError("Joint ID=\""s + name() +"\" unrecognised LowPassType"s); return lastErrorPtr(); }
 
         if (findAttribute("StressLimit"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetStressLimit(GSUtil::Double(buf));
+        this->SetStressLimit(GSUtil::toDouble(buf));
 
         double doubleList[2];
         if (findAttribute("StressBitmapPixelSize"s, &buf) == nullptr) return lastErrorPtr();
-        GSUtil::Double(buf, 2, doubleList);
+        GSUtil::toDouble(buf, 2, doubleList);
         double dx = doubleList[0];
         double dy = doubleList[1];
         if (findAttribute("StressBitmapDimensions"s, &buf) == nullptr) return lastErrorPtr();
-        GSUtil::Double(buf, 2, doubleList);
+        GSUtil::toDouble(buf, 2, doubleList);
         int nx = int(doubleList[0] + 0.5);
         int ny = int(doubleList[1] + 0.5);
         if (findAttribute("StressBitmap"s, &buf) == nullptr) return lastErrorPtr();
@@ -492,17 +492,17 @@ std::string *FixedJoint::createFromAttributes()
             break;
         case FixedJoint::Butterworth2ndOrderLowPass:
             if (findAttribute("CutoffFrequency"s, &buf) == nullptr) return lastErrorPtr();
-            this->SetCutoffFrequency(GSUtil::Double(buf));
+            this->SetCutoffFrequency(GSUtil::toDouble(buf));
             break;
         case FixedJoint::MovingAverageLowPass:
             if (findAttribute("Window"s, &buf) == nullptr) return lastErrorPtr();
-            this->SetWindow(GSUtil::Int(buf));
+            this->SetWindow(GSUtil::toInt(buf));
             break;
         }
 
         if (findAttribute("StressBitmapDisplayRange"s, &buf))
         {
-            GSUtil::Double(buf, 2, doubleList);
+            GSUtil::toDouble(buf, 2, doubleList);
             setLowRange(doubleList[0]);
             setHighRange(doubleList[1]);
         }
@@ -519,7 +519,7 @@ void FixedJoint::appendToAttributes()
     std::string buf;
     buf.reserve(1000000);
     setAttribute("Type"s, "Fixed"s);
-    setAttribute("LateFix"s, *GSUtil::ToString(m_lateFix, &buf));
+    setAttribute("LateFix"s, *GSUtil::toString(m_lateFix, &buf));
     switch (m_stressCalculationType)
     {
     case FixedJoint::none:
@@ -538,21 +538,21 @@ void FixedJoint::appendToAttributes()
         {
         case FixedJoint::Butterworth2ndOrderLowPass:
             setAttribute("LowPassType"s, "Butterworth2ndOrderLowPass"s);
-            setAttribute("CutoffFrequency"s, *GSUtil::ToString(m_cutoffFrequency, &buf));
+            setAttribute("CutoffFrequency"s, *GSUtil::toString(m_cutoffFrequency, &buf));
             break;
         case FixedJoint::MovingAverageLowPass:
             setAttribute("LowPassType"s, "MovingAverageLowPass"s);
-            setAttribute("Window"s, *GSUtil::ToString(m_window, &buf));
+            setAttribute("Window"s, *GSUtil::toString(m_window, &buf));
             break;
         case FixedJoint::NoLowPass:
             setAttribute("LowPassType"s, "NoLowPass"s);
             break;
         }
-        setAttribute("StressLimit"s, *GSUtil::ToString(m_stressLimit, &buf));
+        setAttribute("StressLimit"s, *GSUtil::toString(m_stressLimit, &buf));
         double doubleList[2] = { m_dx, m_dy };
-        setAttribute("StressBitmapPixelSize"s, *GSUtil::ToString(doubleList, 2, &buf));
+        setAttribute("StressBitmapPixelSize"s, *GSUtil::toString(doubleList, 2, &buf));
         size_t intList[2] = { m_nx, m_ny };
-        setAttribute("StressBitmapDimensions"s, *GSUtil::ToString(intList, 2, &buf));
+        setAttribute("StressBitmapDimensions"s, *GSUtil::toString(intList, 2, &buf));
         std::string bitmap;
         bitmap.reserve(size_t((m_nx + 2) * m_ny));
         for (size_t iy = m_ny - 1; iy < m_ny; iy--)
@@ -567,7 +567,7 @@ void FixedJoint::appendToAttributes()
         bitmap.append("\n");
         setAttribute("StressBitmap"s, bitmap);
         double doubleList2[2] = { m_lowRange, m_highRange };
-        setAttribute("StressBitmapDisplayRange"s, *GSUtil::ToString(doubleList2, 2, &buf));
+        setAttribute("StressBitmapDisplayRange"s, *GSUtil::toString(doubleList2, 2, &buf));
     }
 }
 

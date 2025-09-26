@@ -79,10 +79,10 @@ std::string *StepDriver::createFromAttributes()
     buf.reserve(100000);
     if (findAttribute("Values"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> values;
-    GSUtil::Double(buf, &values);
+    GSUtil::toDouble(buf, &values);
     if (findAttribute("Durations"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> durations;
-    GSUtil::Double(buf, &durations);
+    GSUtil::toDouble(buf, &durations);
     if (values.size() != durations.size())
     {
         setLastError("StepDriver ID=\""s + name() + "\" number of values ("s + std::to_string(values.size()) + ") must match number of durations ("s + std::to_string(durations.size()) + ")"s);
@@ -104,8 +104,8 @@ void StepDriver::appendToAttributes()
     std::string buf;
     buf.reserve(m_durationList.size() * 32); // should be big enough but it will grow if necessary anyway
     setAttribute("Type"s, "Step"s);
-    setAttribute("Durations"s, *GSUtil::ToString(m_durationList.data(), m_durationList.size(), &buf));
-    setAttribute("Values"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("Durations"s, *GSUtil::toString(m_durationList.data(), m_durationList.size(), &buf));
+    setAttribute("Values"s, *GSUtil::toString(m_valueList.data(), m_valueList.size(), &buf));
 }
 
 std::vector<double> StepDriver::valueList() const

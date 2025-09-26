@@ -105,15 +105,15 @@ std::string *DampedSpringMuscle::createFromAttributes()
     if (Muscle::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("UnloadedLength"s, &buf) == nullptr) return lastErrorPtr();
-    this->setUnloadedLength(GSUtil::Double(buf.c_str()));
+    this->setUnloadedLength(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("SpringConstant"s, &buf) == nullptr) return lastErrorPtr();
-    this->setSpringConstant(GSUtil::Double(buf.c_str()));
+    this->setSpringConstant(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("Area"s, &buf) == nullptr) return lastErrorPtr();
-    this->setArea(GSUtil::Double(buf.c_str()));
+    this->setArea(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("Damping"s, &buf) == nullptr) return lastErrorPtr();
-    this->setDamping(GSUtil::Double(buf.c_str()));
+    this->setDamping(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("BreakingStrain"s, &buf) == nullptr) return lastErrorPtr();
-    this->setBreakingStrain(GSUtil::Double(buf.c_str()));
+    this->setBreakingStrain(GSUtil::toDouble(buf.c_str()));
     return nullptr;
 }
 
@@ -122,11 +122,11 @@ std::string *DampedSpringMuscle::createFromAttributes()
      Muscle::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "DampedSpring"s);
-    setAttribute("UnloadedLength"s, *GSUtil::ToString(m_unloadedLength, &buf));
-    setAttribute("SpringConstant"s, *GSUtil::ToString(m_springConstant, &buf));
-    setAttribute("Area"s, *GSUtil::ToString(m_area, &buf));
-    setAttribute("Damping"s, *GSUtil::ToString(m_damping, &buf));
-    setAttribute("BreakingStrain"s, *GSUtil::ToString(m_breakingStrain, &buf));
+    setAttribute("UnloadedLength"s, *GSUtil::toString(m_unloadedLength, &buf));
+    setAttribute("SpringConstant"s, *GSUtil::toString(m_springConstant, &buf));
+    setAttribute("Area"s, *GSUtil::toString(m_area, &buf));
+    setAttribute("Damping"s, *GSUtil::toString(m_damping, &buf));
+    setAttribute("BreakingStrain"s, *GSUtil::toString(m_breakingStrain, &buf));
 }
 
 } // namespace GaitSym

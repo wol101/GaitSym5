@@ -83,9 +83,9 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
     if (index >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
     if (indexNext >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
 
-    double interpX = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].x, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].x, time);
-    double interpY = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].y, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].y, time);
-    double interpZ = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].z, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].z, time);
+    double interpX = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].x, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].x, time);
+    double interpY = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].y, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].y, time);
+    double interpZ = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].z, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].z, time);
     m_vectorTarget.Set(interpX, interpY, interpZ);
 
     while (true)
@@ -201,7 +201,7 @@ std::string *DataTargetVector::createFromAttributes()
     m_valueList.reserve(targetTimeList()->size());
     for (size_t i = 0; i < targetTimeList()->size(); i++)
     {
-        pgd::Vector3 v(GSUtil::Double(targetValuesTokens[i * 3]), GSUtil::Double(targetValuesTokens[i * 3 + 1]), GSUtil::Double(targetValuesTokens[i * 3 + 2]));
+        pgd::Vector3 v(GSUtil::toDouble(targetValuesTokens[i * 3]), GSUtil::toDouble(targetValuesTokens[i * 3 + 1]), GSUtil::toDouble(targetValuesTokens[i * 3 + 2]));
         m_valueList.push_back(v);
     }
 
@@ -223,7 +223,7 @@ void DataTargetVector::appendToAttributes()
         valueList.push_back(m_valueList[i].y);
         valueList.push_back(m_valueList[i].z);
     }
-    setAttribute("TargetValues"s, *GSUtil::ToString(valueList.data(), valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(valueList.data(), valueList.size(), &buf));
     setAttribute("TargetID"s, m_target->name());
 }
 

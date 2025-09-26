@@ -95,7 +95,7 @@ void XMLConverter::GetFormattedXML(std::string *formattedXML)
     for (size_t i = 0; i < m_smartSubstitutionValues.size(); i++)
     {
         formattedXML->append(m_smartSubstitutionTextComponents[i]);
-        formattedXML->append(GSUtil::ToString(m_smartSubstitutionValues[i]));
+        formattedXML->append(GSUtil::toString(m_smartSubstitutionValues[i]));
     }
     formattedXML->append(m_smartSubstitutionTextComponents[m_smartSubstitutionValues.size()]);
 }
@@ -109,7 +109,7 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
     // slow but reliable version by creating a python command to assign the list
     std::vector<std::string> stringList;
     stringList.reserve(genomeData.size());
-    for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
+    for (auto &&x : genomeData) { stringList.push_back(GSUtil::toString(x)); }
     std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
     ok = py_exec(pythonString.c_str(), "<string>", EXEC_MODE, NULL);
     if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";

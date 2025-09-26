@@ -187,29 +187,29 @@ std::string MagicStrap::dumpToString()
                 items.push_back("time"s);
                 for (size_t i = 0; i < GetPointForceList()->size(); ++i)
                 {
-                    items.push_back(GSUtil::ToString("body%zu", i));
-                    items.push_back(GSUtil::ToString("px%zu", i));
-                    items.push_back(GSUtil::ToString("py%zu", i));
-                    items.push_back(GSUtil::ToString("pz%zu", i));
-                    items.push_back(GSUtil::ToString("vx%zu", i));
-                    items.push_back(GSUtil::ToString("vy%zu", i));
-                    items.push_back(GSUtil::ToString("vz%zu", i));
+                    items.push_back(GSUtil::toString("body%zu", i));
+                    items.push_back(GSUtil::toString("px%zu", i));
+                    items.push_back(GSUtil::toString("py%zu", i));
+                    items.push_back(GSUtil::toString("pz%zu", i));
+                    items.push_back(GSUtil::toString("vx%zu", i));
+                    items.push_back(GSUtil::toString("vy%zu", i));
+                    items.push_back(GSUtil::toString("vz%zu", i));
                 }
                 s += pystring::join("\t"s, items);
                 s += "\n"s;
             }
             items.clear();
-            items.push_back(GSUtil::ToString(simulation()->GetTime()));
+            items.push_back(GSUtil::toString(simulation()->GetTime()));
             for (auto &&it : *GetPointForceList())
             {
                 if (it->body) { items.push_back(it->body->name()); }
                 else { items.push_back("World"s); }
-                items.push_back(GSUtil::ToString(it->point.x));
-                items.push_back(GSUtil::ToString(it->point.y));
-                items.push_back(GSUtil::ToString(it->point.z));
-                items.push_back(GSUtil::ToString(it->vector.x));
-                items.push_back(GSUtil::ToString(it->vector.y));
-                items.push_back(GSUtil::ToString(it->vector.z));
+                items.push_back(GSUtil::toString(it->point.x));
+                items.push_back(GSUtil::toString(it->point.y));
+                items.push_back(GSUtil::toString(it->point.z));
+                items.push_back(GSUtil::toString(it->vector.x));
+                items.push_back(GSUtil::toString(it->vector.y));
+                items.push_back(GSUtil::toString(it->vector.z));
             }
             s += pystring::join("\t"s, items);
             s += "\n"s;
@@ -224,35 +224,35 @@ std::string MagicStrap::dumpToString()
                 items.push_back("time"s);
                 for (size_t i = 0; i < m_markerList.size(); ++i)
                 {
-                    items.push_back(GSUtil::ToString("body%zu", i));
-                    items.push_back(GSUtil::ToString("px%zu", i));
-                    items.push_back(GSUtil::ToString("py%zu", i));
-                    items.push_back(GSUtil::ToString("pz%zu", i));
-                    items.push_back(GSUtil::ToString("ax%zu", i));
-                    items.push_back(GSUtil::ToString("ay%zu", i));
-                    items.push_back(GSUtil::ToString("az%zu", i));
+                    items.push_back(GSUtil::toString("body%zu", i));
+                    items.push_back(GSUtil::toString("px%zu", i));
+                    items.push_back(GSUtil::toString("py%zu", i));
+                    items.push_back(GSUtil::toString("pz%zu", i));
+                    items.push_back(GSUtil::toString("ax%zu", i));
+                    items.push_back(GSUtil::toString("ay%zu", i));
+                    items.push_back(GSUtil::toString("az%zu", i));
                 }
                 s += pystring::join("\t"s, items);
                 s += "\n"s;
             }
             items.clear();
-            items.push_back(GSUtil::ToString(simulation()->GetTime()));
+            items.push_back(GSUtil::toString(simulation()->GetTime()));
             for (size_t i = 0; i < m_markerList.size(); ++i)
             {
                 if (m_markerList[i]->GetBody()) { items.push_back(m_markerList[i]->GetBody()->name()); }
                 else { items.push_back("World"s); }
                 pgd::Vector3 v = m_markerList[i]->GetWorldPosition();
-                items.push_back(GSUtil::ToString(v.x));
-                items.push_back(GSUtil::ToString(v.y));
-                items.push_back(GSUtil::ToString(v.z));
+                items.push_back(GSUtil::toString(v.x));
+                items.push_back(GSUtil::toString(v.y));
+                items.push_back(GSUtil::toString(v.z));
                 switch (m_forceDirection)
                 {
                 case BodyRelative: { v = m_markerList[i]->GetWorldAxis(Marker::X); break; }
                 case WorldRelative: { v = m_markerList[i]->GetAxis(Marker::X); break; }
                 }
-                items.push_back(GSUtil::ToString(v.x));
-                items.push_back(GSUtil::ToString(v.y));
-                items.push_back(GSUtil::ToString(v.z));
+                items.push_back(GSUtil::toString(v.x));
+                items.push_back(GSUtil::toString(v.y));
+                items.push_back(GSUtil::toString(v.z));
             }
             s += pystring::join("\t"s, items);
             s += "\n"s;
