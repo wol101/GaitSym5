@@ -25,26 +25,27 @@ class TorqueReporter : public Reporter
 public:
     TorqueReporter();
 
-    void SetMuscle(Muscle *muscle) { mMuscle = muscle; }
-    void SetPivotPoint(double x, double y, double z) { mPivotPoint = pgd::Vector3(x, y, z); }
-    void SetAxis(double x, double y, double z);
-    void SetBody(Body *body) { mBody = body; }
+    void setMuscle(Muscle *muscle) { m_muscle = muscle; }
+    void setPivotPoint(double x, double y, double z) { m_pivotPoint = pgd::Vector3(x, y, z); }
+    void setAxis(double x, double y, double z);
+    void setBody(Body *body) { m_body = body; }
 
-    Muscle *GetMuscle() { return mMuscle; }
-    pgd::Vector3 GetPivotPoint() { return mPivotPoint; }
-    Body *GetBody() { return mBody; }
+    Muscle *muscle() { return m_muscle; }
+    pgd::Vector3 pivotPoint() { return m_pivotPoint; }
+    pgd::Vector3 axis() { return m_axis; }
+    Body *body() { return m_body; }
 
     virtual std::string dumpToString();
 
     // Utility to function to calculate a matrix that lines the x axis up with a supplied vector
-    static void CalculateRotationFromAxis(double x, double y, double z, pgd::Matrix3x3 *R);
+    static void calculateRotationFromAxis(double x, double y, double z, pgd::Matrix3x3 *R);
 
 private:
 
-    Body *mBody;
-    pgd::Vector3 mPivotPoint;
-    pgd::Vector3 mAxis;
-    Muscle *mMuscle;
+    Body *m_body;
+    pgd::Vector3 m_pivotPoint;
+    pgd::Vector3 m_axis;
+    Muscle *m_muscle;
 
 
 };
