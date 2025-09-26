@@ -18,7 +18,7 @@ PIDMuscleLengthController::PIDMuscleLengthController()
 {
 }
 
-void PIDMuscleLengthController::Initialise(double Kp, double Ki, double Kd)
+void PIDMuscleLengthController::initialise(double Kp, double Ki, double Kd)
 {
     m_setpoint = 0;
     m_Kp = Kp;
@@ -77,7 +77,7 @@ std::string *PIDMuscleLengthController::createFromAttributes()
     double Ki = GSUtil::toDouble(buf);
     if (findAttribute("Kd"s, &buf) == nullptr) return lastErrorPtr();
     double Kd = GSUtil::toDouble(buf);
-    Initialise(Kp, Ki, Kd);
+    initialise(Kp, Ki, Kd);
     return nullptr;
 }
 
