@@ -157,13 +157,13 @@ void DialogGeoms::accept() // this catches OK and return/enter
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());
     m_outputGeom->setSimulation(m_simulation);
     m_outputGeom->setGeomMarker(markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get());
-    m_outputGeom->SetSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->GetTimeIncrement());
-    m_outputGeom->SetContactMu(ui->lineEditMu->value());
-    m_outputGeom->SetContactRho(ui->lineEditRho->value());
-    m_outputGeom->SetContactBounce(ui->lineEditBounce->value());
-    m_outputGeom->SetAbort(ui->checkBoxAbort->isChecked());
+    m_outputGeom->setSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->GetTimeIncrement());
+    m_outputGeom->setContactMu(ui->lineEditMu->value());
+    m_outputGeom->setContactRho(ui->lineEditRho->value());
+    m_outputGeom->setContactBounce(ui->lineEditBounce->value());
+    m_outputGeom->setAbort(ui->checkBoxAbort->isChecked());
 
-    std::vector<GaitSym::Geom *> *excludedGeoms = m_outputGeom->GetExcludeList();
+    std::vector<GaitSym::Geom *> *excludedGeoms = m_outputGeom->excludeList();
     excludedGeoms->clear();
     if (ui->spinBoxNExcludedGeoms->value())
     {
@@ -298,7 +298,7 @@ void DialogGeoms::lateInitialise()
     if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GaitSym::GSUtil::toBool(s));
     if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GaitSym::GSUtil::toBool(s));
 
-    std::vector<GaitSym::Geom *> *excludeList = m_inputGeom->GetExcludeList();
+    std::vector<GaitSym::Geom *> *excludeList = m_inputGeom->excludeList();
     if (excludeList->size())
     {
         QStringList geomIDs;

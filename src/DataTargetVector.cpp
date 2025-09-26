@@ -46,7 +46,7 @@ double DataTargetVector::calculateError(size_t valueListIndex)
         }
         if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            m_vectorValue = geom->GetWorldPosition();
+            m_vectorValue = geom->worldPosition();
             break;
         }
         if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
@@ -97,7 +97,7 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
         }
         if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            m_vectorValue = geom->GetWorldPosition();
+            m_vectorValue = geom->worldPosition();
             break;
         }
         if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))

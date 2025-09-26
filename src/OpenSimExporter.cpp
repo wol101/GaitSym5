@@ -828,11 +828,11 @@ void OpenSimExporter::CreateForceSet()
 
                     XMLTagAndContent(&m_xmlString, "socket_sphere"s, "/contactgeometryset/"s + m_legalNameMap[sphereGeom->name()]);
                     XMLTagAndContent(&m_xmlString, "socket_half_space"s, "/contactgeometryset/"s + m_legalNameMap[floorName]);
-                    XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::toString(sphereGeom->GetContactSpringConstant()));
+                    XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::toString(sphereGeom->contactSpringConstant()));
                     XMLTagAndContent(&m_xmlString, "dissipation"s, GSUtil::toString(2));
-                    XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::toString(sphereGeom->GetContactMu()));
-                    XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::toString(sphereGeom->GetContactMu()));
-                    XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::toString(sphereGeom->GetContactMu()));
+                    XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                    XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                    XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::toString(sphereGeom->contactMu()));
                     XMLTagAndContent(&m_xmlString, "transition_velocity"s, GSUtil::toString(0.2));
                     XMLTagAndContent(&m_xmlString, "derivative_smoothing"s, GSUtil::toString(1.0e-05));
                     XMLTagAndContent(&m_xmlString, "hertz_smoothing"s, GSUtil::toString(300));
@@ -849,11 +849,11 @@ void OpenSimExporter::CreateForceSet()
                 XMLInitiateTag(&m_xmlString, "objects"s);
                 XMLInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
                 XMLTagAndContent(&m_xmlString, "geometry"s, m_legalNameMap[floorName] + " "s + m_legalNameMap[sphereGeom->name()]);
-                XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::toString(sphereGeom->GetContactSpringConstant()));
+                XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::toString(sphereGeom->contactSpringConstant()));
                 XMLTagAndContent(&m_xmlString, "dissipation"s, "0.5"s);
-                XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::toString(sphereGeom->GetContactMu()));
-                XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::toString(sphereGeom->GetContactMu()));
-                XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::toString(sphereGeom->GetContactMu()));
+                XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::toString(sphereGeom->contactMu()));
                 XMLTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
                 XMLTerminateTag(&m_xmlString, "objects"s);
                 XMLTagAndContent(&m_xmlString, "groups"s, ""s);

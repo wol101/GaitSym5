@@ -19,8 +19,8 @@ namespace GaitSym {
 
 Global::Global()
 {
-    m_springConstant = m_ERP / (m_CFM * m_stepSize);
-    m_dampingConstant = (1.0 - m_ERP) / m_CFM;
+    m_springConstant = m_erp / (m_cfm * m_stepSize);
+    m_dampingConstant = (1.0 - m_erp) / m_cfm;
 }
 
 double Global::springConstant() const
@@ -154,55 +154,55 @@ std::string *Global::createFromAttributes()
             // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
             if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
             {
-                m_ERP = GSUtil::toDouble(buf);
-                m_CFM = GSUtil::toDouble(buf2);
-                if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-                if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-                m_springConstant = m_ERP / (m_CFM * m_stepSize);
-                m_dampingConstant = (1.0 - m_ERP) / m_CFM;
+                m_erp = GSUtil::toDouble(buf);
+                m_cfm = GSUtil::toDouble(buf2);
+                if (m_erp <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_cfm <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = m_erp / (m_cfm * m_stepSize);
+                m_dampingConstant = (1.0 - m_erp) / m_cfm;
             }
             else if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
             {
-                m_ERP = GSUtil::toDouble(buf);
+                m_erp = GSUtil::toDouble(buf);
                 m_springConstant = GSUtil::toDouble(buf2);
-                if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_erp <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
                 if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
-                m_dampingConstant = m_stepSize * (m_springConstant / m_ERP - m_springConstant);
-                m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_dampingConstant = m_stepSize * (m_springConstant / m_erp - m_springConstant);
+                m_cfm = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
             }
             else if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
             {
-                m_ERP = GSUtil::toDouble(buf);
+                m_erp = GSUtil::toDouble(buf);
                 m_dampingConstant = GSUtil::toDouble(buf2);
-                if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_erp <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
                 if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
-                m_springConstant = m_dampingConstant / (m_stepSize / m_ERP - m_stepSize);
-                m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_springConstant = m_dampingConstant / (m_stepSize / m_erp - m_stepSize);
+                m_cfm = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
             }
             else if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
             {
-                m_CFM = GSUtil::toDouble(buf);
+                m_cfm = GSUtil::toDouble(buf);
                 m_dampingConstant = GSUtil::toDouble(buf2);
-                if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                if (m_cfm <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
                 if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
-                m_springConstant = (1.0 / m_CFM - m_dampingConstant) / m_stepSize;
-                m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_springConstant = (1.0 / m_cfm - m_dampingConstant) / m_stepSize;
+                m_erp = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
             }
             else if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
             {
-                m_CFM = GSUtil::toDouble(buf);
+                m_cfm = GSUtil::toDouble(buf);
                 m_springConstant = GSUtil::toDouble(buf2);
-                if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                if (m_cfm <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
                 if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
-                m_dampingConstant = 1.0 / m_CFM - m_stepSize * m_springConstant;
-                m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_dampingConstant = 1.0 / m_cfm - m_stepSize * m_springConstant;
+                m_erp = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
             }
             else if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
             {
                 m_dampingConstant = GSUtil::toDouble(buf);
                 m_springConstant = GSUtil::toDouble(buf2);
-                m_CFM = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
-                m_ERP = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_cfm = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_erp = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
             }
             else
             {
@@ -270,7 +270,7 @@ std::string *Global::createFromAttributes()
     // now some run parameters
 
     if (findAttribute("BMR", &buf) == nullptr) return lastErrorPtr();
-    m_BMR = GSUtil::toDouble(buf);
+    m_bmr = GSUtil::toDouble(buf);
 
     if (findAttribute("TimeLimit", &buf) == nullptr) return lastErrorPtr();
     m_timeLimit = GSUtil::toDouble(buf);
@@ -324,11 +324,11 @@ void Global::appendToAttributes()
 
     setAttribute("AllowConnectedCollisions", *GSUtil::toString(m_allowConnectedCollisions, &buf));
     setAttribute("AllowInternalCollisions", *GSUtil::toString(m_allowInternalCollisions, &buf));
-    setAttribute("BMR", *GSUtil::toString(m_BMR, &buf));
-    setAttribute("CFM", *GSUtil::toString(m_CFM, &buf));
+    setAttribute("BMR", *GSUtil::toString(m_bmr, &buf));
+    setAttribute("CFM", *GSUtil::toString(m_cfm, &buf));
     setAttribute("ContactMaxCorrectingVel", *GSUtil::toString(m_contactMaxCorrectingVel, &buf));
     setAttribute("ContactSurfaceLayer", *GSUtil::toString(m_contactSurfaceLayer, &buf));
-    setAttribute("ERP", *GSUtil::toString(m_ERP, &buf));
+    setAttribute("ERP", *GSUtil::toString(m_erp, &buf));
     setAttribute("FitnessType", fitnessTypeStrings(m_fitnessType));
     setAttribute("LinearDamping", *GSUtil::toString(m_linearDamping, &buf));
     setAttribute("AngularDamping", *GSUtil::toString(m_angularDamping, &buf));
@@ -532,22 +532,22 @@ void Global::setGravity(double gravityX, double gravityY, double gravityZ)
 
 double Global::BMR() const
 {
-    return m_BMR;
+    return m_bmr;
 }
 
 void Global::setBMR(double BMR)
 {
-    m_BMR = BMR;
+    m_bmr = BMR;
 }
 
 double Global::CFM() const
 {
-    return m_CFM;
+    return m_cfm;
 }
 
 void Global::setCFM(double CFM)
 {
-    m_CFM = CFM;
+    m_cfm = CFM;
 }
 
 double Global::contactMaxCorrectingVel() const
@@ -572,12 +572,12 @@ void Global::setContactSurfaceLayer(double ContactSurfaceLayer)
 
 double Global::ERP() const
 {
-    return m_ERP;
+    return m_erp;
 }
 
 void Global::setERP(double ERP)
 {
-    m_ERP = ERP;
+    m_erp = ERP;
 }
 
 double Global::mechanicalEnergyLimit() const

@@ -296,31 +296,31 @@ double DataTargetScalar::calculateErrorScore(double value)
             switch (m_dataType)
             {
             case Q0:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[0] - value);
                 break;
             case Q1:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[1] - value);
                 break;
             case Q2:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[2] - value);
                 break;
             case Q3:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[3] - value);
                 break;
             case XP:
-                result = geom->GetWorldPosition();
+                result = geom->worldPosition();
                 m_errorScore = (result[0] - value);
                 break;
             case YP:
-                result = geom->GetWorldPosition();
+                result = geom->worldPosition();
                 m_errorScore = (result[1] - value);
                 break;
             case ZP:
-                result = geom->GetWorldPosition();
+                result = geom->worldPosition();
                 m_errorScore = (result[2] - value);
                 break;
 #ifdef FIX_ME

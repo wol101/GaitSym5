@@ -122,12 +122,12 @@ private:
     bool m_allowInternalCollisions = false;
     int m_permittedNumericalErrors = 0;
     pgd::Vector3 m_gravity = {0, 0, -9.81};
-    double m_BMR = 0;
-    double m_CFM = 1e-10;
+    double m_bmr = 0;
+    double m_cfm = 1e-10;
     double m_contactMaxCorrectingVel = 100;
     double m_contactSurfaceLayer = 0.001;
     double m_dampingConstant = 0;
-    double m_ERP = 0.2;
+    double m_erp = 0.2;
     double m_mechanicalEnergyLimit = 0;
     double m_metabolicEnergyLimit = 0;
     double m_springConstant = 0;

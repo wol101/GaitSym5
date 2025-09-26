@@ -129,7 +129,7 @@ void TegotaeDriver::UpdateReactionForce()
     pgd::Vector3 worldReactionForce;
     for (auto geomIt : m_contactGeomList)
     {
-        std::vector<Contact *> *contactList = geomIt->GetContactList();
+        std::vector<Contact *> *contactList = geomIt->contactList();
         for (unsigned int i = 0; i < contactList->size(); i++)
         {
             // add the force that matches the X direction of the marker

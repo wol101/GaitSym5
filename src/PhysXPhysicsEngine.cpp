@@ -234,20 +234,20 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get()))
             {
                 double radius = sphereGeom->radius();
-                pgd::Vector3 position = sphereGeom->GetPosition();
-                pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
-                physx::PxReal staticFriction = sphereGeom->GetContactMu();
+                pgd::Vector3 position = sphereGeom->position();
+                pgd::Quaternion quaternion = sphereGeom->quaternion();
+                physx::PxReal staticFriction = sphereGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (sphereGeom->GetContactBounce() > 0)
+                if (sphereGeom->contactBounce() > 0)
                 {
-                    physx::PxReal restitution = sphereGeom->GetContactBounce();
+                    physx::PxReal restitution = sphereGeom->contactBounce();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                 }
                 else
                 {
-                    physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
-                    physx::PxReal damping = sphereGeom->GetContactDampingConstant();
+                    physx::PxReal restitution = -1 * sphereGeom->contactSpringConstant();
+                    physx::PxReal damping = sphereGeom->contactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                     material->setDamping(damping);
                 }
@@ -257,7 +257,7 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
                 physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
                 shape->setLocalPose(transform);
                 shape->userData = sphereGeom;
-                m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
+                m_bodyMap[sphereGeom->body()->name()]->attachShape(*shape);
                 material->release();
                 shape->release();
                 break;
@@ -266,18 +266,18 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
             {
                 double a, b, c, d;
                 planeGeom->GetPlane(&a, &b, &c, &d);
-                physx::PxReal staticFriction = planeGeom->GetContactMu();
+                physx::PxReal staticFriction = planeGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (planeGeom->GetContactBounce() > 0)
+                if (planeGeom->contactBounce() > 0)
                 {
-                    physx::PxReal restitution = planeGeom->GetContactBounce();
+                    physx::PxReal restitution = planeGeom->contactBounce();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                 }
                 else
                 {
-                    physx::PxReal restitution = -1 * planeGeom->GetContactSpringConstant();
-                    physx::PxReal damping = planeGeom->GetContactDampingConstant();
+                    physx::PxReal restitution = -1 * planeGeom->contactSpringConstant();
+                    physx::PxReal damping = planeGeom->contactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                     material->setDamping(damping);
                 }
@@ -461,10 +461,10 @@ std::string *PhysXPhysicsEngine::Step()
             myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
             Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
             Geom *geom2 = reinterpret_cast<Geom *>(shape2->userData);
-            geom1->AddContact(myContact.get());
-            geom2->AddContact(myContact.get());
-            myContact->setBody1(geom1->GetBody());
-            myContact->setBody2(geom2->GetBody());
+            geom1->addContact(myContact.get());
+            geom2->addContact(myContact.get());
+            myContact->setBody1(geom1->body());
+            myContact->setBody2(geom2->body());
             simulation()->GetContactList()->push_back(std::move(myContact));
         }
     }

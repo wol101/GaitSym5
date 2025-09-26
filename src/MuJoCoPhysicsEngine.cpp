@@ -246,7 +246,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     // create any geoms attached to world
     for (auto &&iter : *simulation()->GetGeomList())
     {
-        if (iter.second->GetBody() == nullptr)
+        if (iter.second->body() == nullptr)
         {
             std::string *err = CreateGeom(iter.second.get());
             if (err) return err;
@@ -329,7 +329,7 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
 
     for (auto &&iter : *simulation()->GetGeomList())
     {
-        if (iter.second->GetBody() == body)
+        if (iter.second->body() == body)
         {
             err = CreateGeom(iter.second.get());
             if (err) return err;
@@ -437,8 +437,8 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
         if (const SphereGeom *sphereGeom = dynamic_cast<const SphereGeom *>(geom))
         {
             double radius = sphereGeom->radius();
-            pgd::Vector3 position = sphereGeom->GetPosition();
-            pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
+            pgd::Vector3 position = sphereGeom->position();
+            pgd::Quaternion quaternion = sphereGeom->quaternion();
             // double staticFriction = sphereGeom->GetContactMu();
             // double dynamicFriction = staticFriction;
             // double contactBounce = sphereGeom->GetContactBounce();

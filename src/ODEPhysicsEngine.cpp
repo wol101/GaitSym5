@@ -230,13 +230,13 @@ std::string *ODEPhysicsEngine::CreateGeoms()
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get()))
             {
                 double radius = sphereGeom->radius();
-                pgd::Vector3 position = sphereGeom->GetPosition();
-                pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
+                pgd::Vector3 position = sphereGeom->position();
+                pgd::Quaternion quaternion = sphereGeom->quaternion();
                 geomID = dCreateSphere(m_spaceID, radius);
                 dGeomSetData(geomID, sphereGeom);
                 iter.second->setData(geomID);
                 dGeomSphereSetRadius(geomID, radius);
-                dBodyID bodyID = reinterpret_cast<dBodyID>(sphereGeom->GetBody()->data());
+                dBodyID bodyID = reinterpret_cast<dBodyID>(sphereGeom->body()->data());
                 dGeomSetBody(geomID, bodyID);
                 dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
                 dGeomSetOffsetQuaternion(geomID, quaternion.constData());
@@ -246,13 +246,13 @@ std::string *ODEPhysicsEngine::CreateGeoms()
             {
                 double length, radius;
                 cappedCylinderGeom->getLengthRadius(&length, &radius);
-                pgd::Vector3 position = cappedCylinderGeom->GetPosition();
-                pgd::Quaternion quaternion = cappedCylinderGeom->GetQuaternion();
+                pgd::Vector3 position = cappedCylinderGeom->position();
+                pgd::Quaternion quaternion = cappedCylinderGeom->quaternion();
                 geomID = dCreateCapsule(m_spaceID, radius, length);
                 dGeomSetData(geomID, cappedCylinderGeom);
                 iter.second->setData(geomID);
                 dGeomCapsuleSetParams(geomID, radius, length);
-                dBodyID bodyID = reinterpret_cast<dBodyID>(cappedCylinderGeom->GetBody()->data());
+                dBodyID bodyID = reinterpret_cast<dBodyID>(cappedCylinderGeom->body()->data());
                 dGeomSetBody(geomID, bodyID);
                 dGeomSetOffsetPosition(geomID, position.x, position.y, position.z);
                 dGeomSetOffsetQuaternion(geomID, quaternion.constData());
@@ -342,7 +342,7 @@ std::string *ODEPhysicsEngine::CreateGeoms()
                 geomID = dCreateConvex(m_spaceID, m_planes.data(), planecount, m_points.data(), pointcount, m_polygons.data());
                 dGeomSetData(geomID, convexGeom);
                 iter.second->setData(geomID);
-                dBodyID bodyID = reinterpret_cast<dBodyID>(convexGeom->GetBody()->data());
+                dBodyID bodyID = reinterpret_cast<dBodyID>(convexGeom->body()->data());
                 dGeomSetBody(geomID, bodyID);
                 break;
             }
@@ -361,7 +361,7 @@ std::string *ODEPhysicsEngine::CreateGeoms()
                 geomID =  dCreateTriMesh (m_spaceID, m_TriMeshDataID, 0, 0, 0);
                 dGeomSetData(geomID, trimeshGeom);
                 iter.second->setData(geomID);
-                dBodyID bodyID = reinterpret_cast<dBodyID>(trimeshGeom->GetBody()->data());
+                dBodyID bodyID = reinterpret_cast<dBodyID>(trimeshGeom->body()->data());
                 dGeomSetBody(geomID, bodyID);
                 break;
             }
@@ -559,20 +559,20 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
 
     if (s->simulation()->GetGlobal()->allowInternalCollisions() == false)
     {
-        if (g1->GetGeomLocation() == g2->GetGeomLocation()) return;
+        if (g1->geomLocation() == g2->geomLocation()) return;
     }
 
-    if (g1->GetExcludeList()->size())
+    if (g1->excludeList()->size())
     {
-        std::vector<Geom *> *excludeList = g1->GetExcludeList();
+        std::vector<Geom *> *excludeList = g1->excludeList();
         for (size_t i = 0; i < excludeList->size(); i++)
         {
             if (excludeList->at(i) == g2) return;
         }
     }
-    if (g2->GetExcludeList()->size())
+    if (g2->excludeList()->size())
     {
-        std::vector<Geom *> *excludeList = g2->GetExcludeList();
+        std::vector<Geom *> *excludeList = g2->excludeList();
         for (size_t i = 0; i < excludeList->size(); i++)
         {
             if (excludeList->at(i) == g1) return;
@@ -582,16 +582,16 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
     std::vector<dContact> contact(size_t(MAX_CONTACTS), dContact{}); // in this case default initialisation is potentially useful
     // std::unique_ptr<dContact[]> contact = std::make_unique<dContact[]>(size_t(s->m_MaxContacts)); // but this version would be slightly quicker
     // the choice of std::max(cfm) and std::min(erp) means that the softest contact should be used
-    double cfm = std::max(g1->GetContactSoftCFM(), g2->GetContactSoftCFM());
-    double erp = std::min(g1->GetContactSoftERP(), g2->GetContactSoftERP());
+    double cfm = std::max(g1->contactSoftCFM(), g2->contactSoftCFM());
+    double erp = std::min(g1->contactSoftERP(), g2->contactSoftERP());
     // just use the largest for mu, rho and bounce
-    double mu = std::max(g1->GetContactMu(), g2->GetContactMu());
-    double bounce = std::max(g1->GetContactBounce(), g2->GetContactBounce());
-    double rho = std::max(g1->GetContactRho(), g2->GetContactRho());
+    double mu = std::max(g1->contactMu(), g2->contactMu());
+    double bounce = std::max(g1->contactBounce(), g2->contactBounce());
+    double rho = std::max(g1->contactRho(), g2->contactRho());
     if (erp < 0) // the only one that needs checking because all the others are std::max so values <0 will never be chosen if one value is >0
     {
-        if (g1->GetContactSoftERP() < 0) erp = g2->GetContactSoftERP();
-        else erp = g1->GetContactSoftERP();
+        if (g1->contactSoftERP() < 0) erp = g2->contactSoftERP();
+        else erp = g1->contactSoftERP();
     }
     for (size_t i = 0; i < size_t(MAX_CONTACTS); i++)
     {
@@ -623,10 +623,10 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
     {
         for (size_t i = 0; i < size_t(numc); i++)
         {
-            if (g1->GetAbort()) s->simulation()->SetContactAbort(g1->name());
-            if (g2->GetAbort()) s->simulation()->SetContactAbort(g2->name());
+            if (g1->abort()) s->simulation()->SetContactAbort(g1->name());
+            if (g2->abort()) s->simulation()->SetContactAbort(g2->name());
             dJointID c;
-            if (g1->GetAdhesion() == false && g2->GetAdhesion() == false)
+            if (g1->adhesion() == false && g2->adhesion() == false)
             {
                 c = dJointCreateContact(s->worldID(), s->contactGroup(), &contact[i]);
                 dJointAttach(c, b1, b2);
@@ -636,10 +636,10 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
                 dJointSetFeedback(c, jointFeedback.get());
                 myContact->setData(c);
                 myContact->setPosition(pgd::Vector3(contact[i].geom.pos[0], contact[i].geom.pos[1], contact[i].geom.pos[2]));
-                g1->AddContact(myContact.get());
-                g2->AddContact(myContact.get());
-                myContact->setBody1(g1->GetBody());
-                myContact->setBody2(g2->GetBody());
+                g1->addContact(myContact.get());
+                g2->addContact(myContact.get());
+                myContact->setBody1(g1->body());
+                myContact->setBody2(g2->body());
                 s->simulation()->GetContactList()->push_back(std::move(myContact));
                 s->contactFeedbackList()->push_back(std::move(jointFeedback));
             }

@@ -49,7 +49,7 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
         }
         if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            q = geom->GetWorldQuaternion();
+            q = geom->worldQuaternion();
             angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
@@ -83,7 +83,7 @@ double DataTargetQuaternion::calculateError(size_t index, size_t indexNext, doub
         }
         if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            q = geom->GetWorldQuaternion();
+            q = geom->worldQuaternion();
             angle = pgd::FindAngle(interpolatedTarget, q);
             break;
         }
@@ -119,7 +119,7 @@ std::string DataTargetQuaternion::dumpToString()
     }
     else if ((geom = dynamic_cast<Geom *>(target())) != nullptr)
     {
-        q = geom->GetWorldQuaternion();
+        q = geom->worldQuaternion();
         angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
     }
 
