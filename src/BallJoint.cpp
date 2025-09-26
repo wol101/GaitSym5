@@ -23,7 +23,7 @@ BallJoint::BallJoint() : Joint()
 }
 
 // get the quaternion that rotates from body1 to body2
-pgd::Quaternion BallJoint::CalculateQuaternion()
+pgd::Quaternion BallJoint::calculateQuaternion()
 {
     pgd::Quaternion q;
     body2Marker()->GetBody()->GetRelativeQuaternion(body1Marker()->GetBody(), &q);
