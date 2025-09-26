@@ -1478,7 +1478,7 @@ void MainWindow::menuSaveAs()
             for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
             for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
             for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
-            for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+            for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
         }
         this->setStatusString(fileName + QString(" saving"), 2);
         this->m_configFile.setFile(fileName);
@@ -1530,7 +1530,7 @@ void MainWindow::menuSave()
         for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
         for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
         for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
-        for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+        for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
     }
     QString fileName = this->m_configFile.absoluteFilePath();
     QDir currentDir(this->m_configFile.absolutePath());
@@ -2290,7 +2290,7 @@ void MainWindow::menuCreateEditJoint(GaitSym::Joint *joint)
         {
             std::unique_ptr<GaitSym::Joint> newJoint = dialogJoints.outputJoint();
             std::string newJointName = newJoint->name();
-            newJoint->LateInitialisation();
+            newJoint->lateInitialisation();
             this->ui->treeWidgetElements->insertJoint(QString().fromStdString(newJointName), newJoint->visible(), newJoint->dump());
             (*this->m_simulation->GetJointList())[newJointName] = std::move(newJoint);
             this->setStatusString(QString("New joint created: %1").arg(QString::fromStdString(newJointName)), 1);
@@ -2299,7 +2299,7 @@ void MainWindow::menuCreateEditJoint(GaitSym::Joint *joint)
         {
             std::unique_ptr<GaitSym::Joint> replacementJoint = dialogJoints.outputJoint();
             std::string replacementJointName = replacementJoint->name();
-            replacementJoint->LateInitialisation();
+            replacementJoint->lateInitialisation();
             // the only thing that currently depends on joints is the ThreeJointDriver
             for (auto &&driverIt : *this->m_simulation->GetDriverList())
             {
@@ -2697,7 +2697,7 @@ void MainWindow::enterRunMode()
     for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
     for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
     for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
-    for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
     this->ui->actionRunMode->setChecked(true);
     this->ui->actionConstructionMode->setChecked(false);
     this->updateEnable();
@@ -2714,7 +2714,7 @@ void MainWindow::enterConstructionMode()
     for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
     for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
     for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
-    for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
+    for (auto &&it : *this->m_simulation->GetJointList()) it.second->lateInitialisation();
     this->ui->actionRunMode->setChecked(false);
     this->ui->actionConstructionMode->setChecked(true);
     this->updateEnable();

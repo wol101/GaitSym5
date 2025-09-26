@@ -129,7 +129,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
 
     if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
-        if (fixedJoint->GetStressCalculationType() != GaitSym::FixedJoint::none)
+        if (fixedJoint->stressCalculationType() != GaitSym::FixedJoint::none)
         {
             qDebug() << "Debug DrawJoint::initialise:" << m_joint->name().c_str() << " draw not implemented";
             // m_facetedObject1 = std::make_unique<FacetedRect>(fixedJoint->width(), fixedJoint->height(), m_jointColor, 1);
@@ -167,7 +167,7 @@ void DrawJoint::updateEntityPose()
     SetDisplayPosition(p.x, p.y, p.z);
     if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
-        if (fixedJoint->CalculatePixmapNeeded() /*&& m_facetedObject1->texture()*/)
+        if (fixedJoint->calculatePixmapNeeded() /*&& m_facetedObject1->texture()*/)
         {
             qDebug() << "Debug DrawJoint::updateEntityPose:" << m_joint->name().c_str() << " draw not implemented";
             // fixedJoint->CalculatePixmap();

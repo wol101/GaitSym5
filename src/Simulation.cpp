@@ -170,7 +170,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
     for (auto &&it :  m_MuscleList) it.second->LateInitialisation();
     for (auto &&it : m_FluidSacList) it.second->LateInitialisation();
     // and some joints require things to be done after the bodies are moved to their start positions
-    for (auto &&it :  m_JointList) it.second->LateInitialisation();
+    for (auto &&it :  m_JointList) it.second->lateInitialisation();
 
     // and we need to set the cycle time
     // currently just using the maximum value but some sort of fuzzy lowest common multiple might be better
@@ -443,9 +443,9 @@ bool Simulation::TestForCatastrophy()
 
         if (auto f = dynamic_cast<FixedJoint *>(iter3.second.get()))
         {
-            if (f->CheckStressAbort())
+            if (f->checkStressAbort())
             {
-                std::cerr << "Failed due to stress limit error in: " << iter3.second->name() << " " << f->GetLowPassMinStress() << " " << f->GetLowPassMaxStress() << "\n";
+                std::cerr << "Failed due to stress limit error in: " << iter3.second->name() << " " << f->lowPassMinStress() << " " << f->lowPassMaxStress() << "\n";
                 return true;
             }
         }

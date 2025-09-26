@@ -155,7 +155,6 @@ void DialogJoints::accept() // this catches OK and return/enter
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
-        joint->SetFixed();
         joint->setLateFix(ui->checkBoxLateFix->isChecked());
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
@@ -180,32 +179,32 @@ void DialogJoints::accept() // this catches OK and return/enter
                 }
             }
             // remember that SetCrossSection takes ownership of the stiffnessMap
-            joint->SetCrossSection(stiffnessMap, size_t(image.width()), size_t(image.height()),
+            joint->setCrossSection(stiffnessMap, size_t(image.width()), size_t(image.height()),
                                    ui->lineEditFixedStressBitmapPixelSize->value(), ui->lineEditFixedStressBitmapPixelSize->value());
 
             if (mode == "Beam Low Pass")
             {
-                joint->SetStressCalculationType(GaitSym::FixedJoint::beam);
-                joint->SetLowPassType(GaitSym::FixedJoint::Butterworth2ndOrderLowPass);
+                joint->setStressCalculationType(GaitSym::FixedJoint::beam);
+                joint->setLowPassType(GaitSym::FixedJoint::Butterworth2ndOrderLowPass);
             }
             else if (mode == "Spring Low Pass")
             {
-                joint->SetStressCalculationType(GaitSym::FixedJoint::spring);
-                joint->SetLowPassType(GaitSym::FixedJoint::Butterworth2ndOrderLowPass);
+                joint->setStressCalculationType(GaitSym::FixedJoint::spring);
+                joint->setLowPassType(GaitSym::FixedJoint::Butterworth2ndOrderLowPass);
             }
             else if (mode == "Beam Moving Average")
             {
-                joint->SetStressCalculationType(GaitSym::FixedJoint::beam);
-                joint->SetLowPassType(GaitSym::FixedJoint::MovingAverageLowPass);
+                joint->setStressCalculationType(GaitSym::FixedJoint::beam);
+                joint->setLowPassType(GaitSym::FixedJoint::MovingAverageLowPass);
             }
             else if (mode == "Spring Moving Average")
             {
-                joint->SetStressCalculationType(GaitSym::FixedJoint::spring);
-                joint->SetLowPassType(GaitSym::FixedJoint::MovingAverageLowPass);
+                joint->setStressCalculationType(GaitSym::FixedJoint::spring);
+                joint->setLowPassType(GaitSym::FixedJoint::MovingAverageLowPass);
             }
-            joint->SetWindow(size_t(ui->spinBoxFixedStressWindow->value()));
-            joint->SetCutoffFrequency(ui->lineEditFixedStressCutoffFrequency->value());
-            joint->SetStressLimit(ui->lineEditFixedStressLimit->value());
+            joint->setWindow(size_t(ui->spinBoxFixedStressWindow->value()));
+            joint->setCutoffFrequency(ui->lineEditFixedStressCutoffFrequency->value());
+            joint->setStressLimit(ui->lineEditFixedStressLimit->value());
         }
         m_outputJoint = std::move(joint);
     }

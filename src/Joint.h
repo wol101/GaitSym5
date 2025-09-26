@@ -32,7 +32,7 @@ public:
     virtual void update() {}
 
     // this might be needed at some point in the future
-    virtual void LateInitialisation() {}
+    virtual void lateInitialisation() {}
 
     Marker *body1Marker() const;
     void setBody1Marker(Marker *body1Marker);
