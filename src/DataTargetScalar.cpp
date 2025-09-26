@@ -130,43 +130,43 @@ double DataTargetScalar::calculateErrorScore(double value)
             switch (m_dataType)
             {
             case Q0:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.n - value);
                 break;
             case Q1:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.x - value);
                 break;
             case Q2:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.y - value);
                 break;
             case Q3:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.z - value);
                 break;
             case XP:
-                pv = marker->GetWorldPosition();
+                pv = marker->worldPosition();
                 m_errorScore = (pv.x - value);
                 break;
             case YP:
-                pv = marker->GetWorldPosition();
+                pv = marker->worldPosition();
                 m_errorScore = (pv.y - value);
                 break;
             case ZP:
-                pv = marker->GetWorldPosition();
+                pv = marker->worldPosition();
                 m_errorScore = (pv.z - value);
                 break;
             case XV:
-                pv = marker->GetWorldLinearVelocity();
+                pv = marker->worldLinearVelocity();
                 m_errorScore = (pv.x - value);
                 break;
             case YV:
-                pv = marker->GetWorldLinearVelocity();
+                pv = marker->worldLinearVelocity();
                 m_errorScore = (pv.y - value);
                 break;
             case ZV:
-                pv = marker->GetWorldLinearVelocity();
+                pv = marker->worldLinearVelocity();
                 m_errorScore = (pv.z - value);
                 break;
             default:

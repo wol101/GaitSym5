@@ -46,8 +46,8 @@ AMotorJoint::AMotorJoint() : Joint()
 
 void AMotorJoint::getAxisAngle(double *xa, double *ya, double *za, double *angle) const
 {
-    pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
-    pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
+    pgd::Quaternion body1MarkerWorld = body1Marker()->worldQuaternion();
+    pgd::Quaternion body2MarkerWorld = body2Marker()->worldQuaternion();
     if (m_reverseBodyOrderInCalculations)
     {
         // angle is calculated with respect to body 1
@@ -64,8 +64,8 @@ void AMotorJoint::getAxisAngle(double *xa, double *ya, double *za, double *angle
 
 pgd::Quaternion AMotorJoint::quaternion() const
 {
-    pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
-    pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
+    pgd::Quaternion body1MarkerWorld = body1Marker()->worldQuaternion();
+    pgd::Quaternion body2MarkerWorld = body2Marker()->worldQuaternion();
     if (m_reverseBodyOrderInCalculations)
     {
         // angle is calculated with respect to body 1
@@ -82,8 +82,8 @@ pgd::Quaternion AMotorJoint::quaternion() const
 
 pgd::Vector3 AMotorJoint::eulerAngles() const
 {
-    pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
-    pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
+    pgd::Quaternion body1MarkerWorld = body1Marker()->worldQuaternion();
+    pgd::Quaternion body2MarkerWorld = body2Marker()->worldQuaternion();
     if (m_reverseBodyOrderInCalculations)
     {
         // angle is calculated with respect to body 1
@@ -104,19 +104,19 @@ pgd::Vector3 AMotorJoint::eulerAngles(const Marker &basisMarker) const
 {
     // returns the Euler angles using marker axes as the basis
     pgd::Vector3 euler;
-    pgd::Quaternion body1MarkerWorld = body1Marker()->GetWorldQuaternion();
-    pgd::Quaternion body2MarkerWorld = body2Marker()->GetWorldQuaternion();
+    pgd::Quaternion body1MarkerWorld = body1Marker()->worldQuaternion();
+    pgd::Quaternion body2MarkerWorld = body2Marker()->worldQuaternion();
     if (m_reverseBodyOrderInCalculations)
     {
         // angle is calculated with respect to body 1
         pgd::Quaternion body1ToBody2 = body2MarkerWorld * (~body1MarkerWorld);
-        euler = pgd::MakeEulerAnglesFromQRadian(body1ToBody2, basisMarker.GetWorldBasis());
+        euler = pgd::MakeEulerAnglesFromQRadian(body1ToBody2, basisMarker.worldBasis());
     }
     else
     {
         // angle is calculated with respect to body 2
         pgd::Quaternion body2ToBody1 = body1MarkerWorld * (~body2MarkerWorld);
-        euler = pgd::MakeEulerAnglesFromQRadian(body2ToBody1, basisMarker.GetWorldBasis());
+        euler = pgd::MakeEulerAnglesFromQRadian(body2ToBody1, basisMarker.worldBasis());
     }
     return euler;
 }
@@ -157,7 +157,7 @@ void AMotorJoint::setReverseBodyOrderInCalculations(bool reverseBodyOrderInCalcu
 
 void AMotorJoint::setTargetAngles(double angle0)
 {
-    m_targetAxis = body1Marker()->GetWorldAxis(Marker::X);
+    m_targetAxis = body1Marker()->worldAxis(Marker::X);
     m_targetAngle = angle0;
     m_targetAnglesList.clear();
     m_targetAnglesList.push_back(angle0);
@@ -166,7 +166,7 @@ void AMotorJoint::setTargetAngles(double angle0)
 void AMotorJoint::setTargetAngles(double angle0, double angle1)
 {
     pgd::Vector3 ax,ay,az;
-    body1Marker()->GetWorldBasis(&ax, &ay, &az);
+    body1Marker()->getWorldBasis(&ax, &ay, &az);
     pgd::Quaternion r1 = pgd::MakeQFromAxisAngle(ax, angle0);
     pgd::Quaternion r2 = pgd::MakeQFromAxisAngle(ay, angle1);
     pgd::MakeAxisAngleFromQ(r2 * r1, &m_targetAxis.x, &m_targetAxis.y, &m_targetAxis.z, &m_targetAngle);
@@ -178,7 +178,7 @@ void AMotorJoint::setTargetAngles(double angle0, double angle1)
 void AMotorJoint::setTargetAngles(double angle0, double angle1, double angle2)
 {
     pgd::Vector3 ax,ay,az;
-    body1Marker()->GetWorldBasis(&ax, &ay, &az);
+    body1Marker()->getWorldBasis(&ax, &ay, &az);
     pgd::Quaternion r1 = pgd::MakeQFromAxisAngle(ax, angle0);
     pgd::Quaternion r2 = pgd::MakeQFromAxisAngle(ay, angle1);
     pgd::Quaternion r3 = pgd::MakeQFromAxisAngle(az, angle2);

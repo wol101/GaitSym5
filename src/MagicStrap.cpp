@@ -32,16 +32,16 @@ void MagicStrap::calculate()
             for (size_t i = 0; i < m_markerList.size(); i++)
             {
                 PointForce *pointForce = GetPointForceList()->at(i).get();
-                pointForce->body = m_markerList[i]->GetBody();
+                pointForce->body = m_markerList[i]->body();
                 // the positions of the forces are always the world positions of the markers
-                pointForce->point = m_markerList[i]->GetWorldPosition();
+                pointForce->point = m_markerList[i]->worldPosition();
                 // and the directions depend on the ForceDirection setting
                 // it might appear a bit strange but body relative uses the actual axis currently
                 // whereas world relative treats the specified axis as if it were world and it never changes
                 switch (m_forceDirection)
                 {
-                case BodyRelative: { v = m_markerList[i]->GetWorldAxis(Marker::X); break; }
-                case WorldRelative: { v = m_markerList[i]->GetAxis(Marker::X); break; }
+                case BodyRelative: { v = m_markerList[i]->worldAxis(Marker::X); break; }
+                case WorldRelative: { v = m_markerList[i]->axis(Marker::X); break; }
                 }
                 pointForce->vector = v;
             }
@@ -53,16 +53,16 @@ void MagicStrap::calculate()
             for (size_t i = 0; i < m_markerList.size(); i++)
             {
                 PointForce *pointForce = GetPointForceList()->at(i * 2).get();
-                pointForce->body = m_markerList[i]->GetBody();
+                pointForce->body = m_markerList[i]->body();
                 // the positions of the forces are always the world positions of the markers
-                p = m_markerList[i]->GetWorldPosition();
+                p = m_markerList[i]->worldPosition();
                 // and the directions depend on the ForceDirection setting
                 // it might appear a bit strange but body relative uses the actual axis currently
                 // whereas world relative treats the specified axis as if it were world and it never changes
                 switch (m_forceDirection)
                 {
-                case BodyRelative: { m_markerList[i]->GetWorldBasis(&x, &y, &z); break; }
-                case WorldRelative: { m_markerList[i]->GetBasis(&x, &y, &z); break; }
+                case BodyRelative: { m_markerList[i]->getWorldBasis(&x, &y, &z); break; }
+                case WorldRelative: { m_markerList[i]->getBasis(&x, &y, &z); break; }
                 }
                 // we are rotating around the x axis
                 // so the position needs to be offset by 0.5 in the y axis
@@ -71,7 +71,7 @@ void MagicStrap::calculate()
                 pointForce->vector = z;
                 // and now the second component of the couple
                 pointForce = GetPointForceList()->at(i * 2 + 1).get();
-                pointForce->body = m_markerList[i]->GetBody();
+                pointForce->body = m_markerList[i]->body();
                 pointForce->point = p - (0.5 * y); // offset by -0.5 in the y axis
                 pointForce->vector = -z; // force applied in the -z axis
             }
@@ -239,16 +239,16 @@ std::string MagicStrap::dumpToString()
             items.push_back(GSUtil::toString(simulation()->GetTime()));
             for (size_t i = 0; i < m_markerList.size(); ++i)
             {
-                if (m_markerList[i]->GetBody()) { items.push_back(m_markerList[i]->GetBody()->name()); }
+                if (m_markerList[i]->body()) { items.push_back(m_markerList[i]->body()->name()); }
                 else { items.push_back("World"s); }
-                pgd::Vector3 v = m_markerList[i]->GetWorldPosition();
+                pgd::Vector3 v = m_markerList[i]->worldPosition();
                 items.push_back(GSUtil::toString(v.x));
                 items.push_back(GSUtil::toString(v.y));
                 items.push_back(GSUtil::toString(v.z));
                 switch (m_forceDirection)
                 {
-                case BodyRelative: { v = m_markerList[i]->GetWorldAxis(Marker::X); break; }
-                case WorldRelative: { v = m_markerList[i]->GetAxis(Marker::X); break; }
+                case BodyRelative: { v = m_markerList[i]->worldAxis(Marker::X); break; }
+                case WorldRelative: { v = m_markerList[i]->axis(Marker::X); break; }
                 }
                 items.push_back(GSUtil::toString(v.x));
                 items.push_back(GSUtil::toString(v.y));

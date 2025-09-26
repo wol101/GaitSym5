@@ -66,7 +66,7 @@ std::string *PlaneGeom::createFromAttributes()
     if (Geom::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
-    if (geomMarker()->GetBody())
+    if (geomMarker()->body())
     {
         setLastError("GEOM ID=\""s + name() +"\" PlaneGeom must be attached to the World"s);
         return lastErrorPtr();
@@ -80,8 +80,8 @@ std::string *PlaneGeom::createFromAttributes()
     // the normal is (a,b,c)
     // d is the dot product of the normal at the point on the plane
 
-    pgd::Vector3 normal = geomMarker()->GetWorldAxis(Marker::Axis::Z);
-    pgd::Vector3 point = geomMarker()->GetWorldPosition();
+    pgd::Vector3 normal = geomMarker()->worldAxis(Marker::Axis::Z);
+    pgd::Vector3 point = geomMarker()->worldPosition();
     double a = normal.x;
     double b = normal.y;
     double c = normal.z;

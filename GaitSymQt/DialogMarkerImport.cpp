@@ -231,54 +231,54 @@ int DialogMarkerImport::ImportMarkers()
         m_addedNames.insert(tokens[0]);
         marker->setSimulation(m_simulation);
         marker->setName(tokens[0]);
-        marker->SetBody(body);
+        marker->setBody(body);
         marker->setSize1(Preferences::valueDouble("MarkerSize"));
         values.clear();
         for (size_t j = 2; j < tokens.size(); j++) values.push_back(GaitSym::GSUtil::toDouble(tokens[j]));
         for (size_t j = values.size(); j < 12; j++) values.push_back(0);
         if (ui->radioButtonPositionOnly->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
         }
         else if (ui->radioButtonPositionEuler->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
             if (ui->checkBoxAnglesInRadians->isChecked())
                 qInput = pgd::MakeQFromEulerAnglesRadian(values[3], values[4], values[5]);
             else
                 qInput = pgd::MakeQFromEulerAngles(values[3], values[4], values[5]);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         else if (ui->radioButtonPositionAngleAxis->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
             angle = values[3];
             if (!ui->checkBoxAnglesInRadians->isChecked()) angle = pgd::DegToRad(angle);
             qInput = pgd::MakeQFromAxisAngle(values[4], values[5], values[6], angle);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         else if (ui->radioButtonPositionQuaternion->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
             qInput.Set(values[3], values[4],  values[5], values[6]);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         else if (ui->radioButtonPositionMatrix->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
             qInput = pgd::MakeQfromM(pgd::Matrix3x3(values[3], values[4],  values[5],
                     values[6], values[7],  values[8],
                     values[9], values[10], values[11]));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         ui->plainTextEditLog->appendPlainText(QString("Marker '%1' attached to '%2' created.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
         marker->saveToAttributes();

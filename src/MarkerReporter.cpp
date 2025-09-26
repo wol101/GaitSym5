@@ -110,14 +110,14 @@ std::string MarkerReporter::dumpToString()
         {
             if (m_reportPosition)
             {
-                v = marker->GetWorldPosition();
+                v = marker->worldPosition();
                 sList.push_back(GSUtil::toString(v.x));
                 sList.push_back(GSUtil::toString(v.y));
                 sList.push_back(GSUtil::toString(v.z));
             }
             if (m_reportQuaternion)
             {
-                q = marker->GetWorldQuaternion();
+                q = marker->worldQuaternion();
                 sList.push_back(GSUtil::toString(q.n));
                 sList.push_back(GSUtil::toString(q.x));
                 sList.push_back(GSUtil::toString(q.y));

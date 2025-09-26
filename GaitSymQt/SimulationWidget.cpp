@@ -1243,8 +1243,8 @@ void SimulationWidget::SetupLights()
             }
             if (GaitSym::DirectionalLight *directional = dynamic_cast<GaitSym::DirectionalLight *>(baseLight.second.get()))
             {
-                pgd::Vector3 p = directional->positionMarker()->GetWorldPosition();
-                pgd::Vector3 t = directional->targetMarker()->GetWorldPosition();
+                pgd::Vector3 p = directional->positionMarker()->worldPosition();
+                pgd::Vector3 t = directional->targetMarker()->worldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);
                 threepp::Vector3 target(t.x, t.y, t.z);
                 auto light = threepp::DirectionalLight::create(colour, intensity);
@@ -1269,8 +1269,8 @@ void SimulationWidget::SetupLights()
             }
             if (GaitSym::SpotLight *spot = dynamic_cast<GaitSym::SpotLight *>(baseLight.second.get()))
             {
-                pgd::Vector3 p = spot->positionMarker()->GetWorldPosition();
-                pgd::Vector3 t = spot->targetMarker()->GetWorldPosition();
+                pgd::Vector3 p = spot->positionMarker()->worldPosition();
+                pgd::Vector3 t = spot->targetMarker()->worldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);
                 threepp::Vector3 target(t.x, t.y, t.z);
                 auto light = threepp::SpotLight::create(colour, intensity, spot->distance(), spot->angle(), spot->penumbra());
@@ -1291,7 +1291,7 @@ void SimulationWidget::SetupLights()
             }
             if (GaitSym::PointLight *point = dynamic_cast<GaitSym::PointLight *>(baseLight.second.get()))
             {
-                pgd::Vector3 p = point->positionMarker()->GetWorldPosition();
+                pgd::Vector3 p = point->positionMarker()->worldPosition();
                 threepp::Vector3 position(p.x, p.y, p.z);
                 auto light = threepp::SpotLight::create(colour, intensity, point->distance());
                 light->name = name;

@@ -26,10 +26,10 @@ std::string *UniversalJoint::createFromAttributes()
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
-    pgd::Vector3 position = body1Marker()->GetWorldPosition();
+    pgd::Vector3 position = body1Marker()->worldPosition();
     this->setAnchor(position);
     pgd::Vector3 x, y, z;
-    body1Marker()->GetWorldBasis(&x, &y, &z);
+    body1Marker()->getWorldBasis(&x, &y, &z);
     this->setAxis0(x);
     this->setAxis1(y);
     // if (CFM() >= 0) dJointSetUniversalParam (JointID(), dParamCFM, CFM());

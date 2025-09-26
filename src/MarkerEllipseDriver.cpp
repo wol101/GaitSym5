@@ -61,11 +61,11 @@ void MarkerEllipseDriver::Initialise(double omega, double sigma, const pgd::Vect
         break;
     }
 
-    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_markerEllipseCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
+    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_markerEllipseCentre->worldPosition(pgd::Vector3(m_X, m_Y, 0));
     m_markerEllipseRim = markerEllipseRim;
-    m_markerEllipseRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_markerEllipseRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    m_markerEllipseRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_markerEllipseRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
     m_phaseControlInput = phaseControlInput;
 }
 
@@ -145,10 +145,10 @@ void MarkerEllipseDriver::update()
     }
 
     // get the world position of the MarkerEllipse target
-    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_markerEllipseCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
-    m_markerEllipseRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_markerEllipseRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_markerEllipseCentre->worldPosition(pgd::Vector3(m_X, m_Y, 0));
+    m_markerEllipseRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_markerEllipseRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
 
 }
 
@@ -404,7 +404,7 @@ std::string *MarkerEllipseDriver::createFromAttributes()
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" RimMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
-    if (markerEllipseCentre->GetBody() != markerEllipseRim->GetBody())
+    if (markerEllipseCentre->body() != markerEllipseRim->body())
     {
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" RimMarkerID marker and CentreMarkerID must have the same BODY\"");
         return lastErrorPtr();

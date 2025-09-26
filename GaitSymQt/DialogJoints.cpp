@@ -74,8 +74,8 @@ void DialogJoints::accept() // this catches OK and return/enter
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
-        pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
-        pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(GaitSym::Marker::Axis::X);
+        pgd::Vector3 anchor = joint->body1Marker()->worldPosition();
+        pgd::Vector3 axis = joint->body1Marker()->worldAxis(GaitSym::Marker::Axis::X);
         joint->setAnchor(anchor);
         joint->setAxis(axis);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
@@ -109,9 +109,9 @@ void DialogJoints::accept() // this catches OK and return/enter
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
-        pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
+        pgd::Vector3 anchor = joint->body1Marker()->worldPosition();
         pgd::Vector3 x, y, z;
-        joint->body1Marker()->GetWorldBasis(&x, &y, &z);
+        joint->body1Marker()->getWorldBasis(&x, &y, &z);
         joint->setAnchor(anchor);
         // joint->SetAxes(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z, static_cast<int>(iMode));
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
@@ -138,7 +138,7 @@ void DialogJoints::accept() // this catches OK and return/enter
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
-        pgd::Vector3 axis = joint->body1Marker()->GetWorldAxis(GaitSym::Marker::Axis::X);
+        pgd::Vector3 axis = joint->body1Marker()->worldAxis(GaitSym::Marker::Axis::X);
         joint->setAxis(axis);
         if (ui->lineEditCFM->text().size()) joint->setCFM(ui->lineEditCFM->value());
         if (ui->lineEditERP->text().size()) joint->setERP(ui->lineEditERP->value());
@@ -217,9 +217,9 @@ void DialogJoints::accept() // this catches OK and return/enter
         joint->setBody1Marker(markerList->at(ui->comboBoxMarker1->currentText().toStdString()).get());
         joint->setBody2Marker(markerList->at(ui->comboBoxMarker2->currentText().toStdString()).get());
         // joint->Attach();
-        pgd::Vector3 anchor = joint->body1Marker()->GetWorldPosition();
+        pgd::Vector3 anchor = joint->body1Marker()->worldPosition();
         pgd::Vector3 x, y, z;
-        joint->body1Marker()->GetWorldBasis(&x, &y, &z);
+        joint->body1Marker()->getWorldBasis(&x, &y, &z);
         joint->setAnchor(anchor);
         joint->setAxis0(x);
         joint->setAxis1(y);
@@ -465,8 +465,8 @@ void DialogJoints::updateActivation()
 
     if (markerList->count(ui->comboBoxMarker1->currentText().toStdString()) == 0
             || markerList->count(ui->comboBoxMarker2->currentText().toStdString()) == 0) okEnable = false;
-    else if (markerList->at(ui->comboBoxMarker1->currentText().toStdString())->GetBody() ==
-             markerList->at(ui->comboBoxMarker2->currentText().toStdString())->GetBody()) okEnable = false;
+    else if (markerList->at(ui->comboBoxMarker1->currentText().toStdString())->body() ==
+             markerList->at(ui->comboBoxMarker2->currentText().toStdString())->body()) okEnable = false;
 
     if (tab == "Hinge")
     {

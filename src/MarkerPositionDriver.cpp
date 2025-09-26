@@ -77,15 +77,15 @@ void MarkerPositionDriver::update()
     {
         for (auto &&it : m_targetMarkerList)
         {
-            it->SetWorldPosition(x, y, z);
+            it->setWorldPosition(x, y, z);
         }
     }
     else
     {
         for (auto &&it : m_targetMarkerList)
         {
-            pgd::Vector3 p = m_referenceMarker->GetWorldPosition(pgd::Vector3(x, y, z));
-            it->SetWorldPosition(p.x, p.y, p.z);
+            pgd::Vector3 p = m_referenceMarker->worldPosition(pgd::Vector3(x, y, z));
+            it->setWorldPosition(p.x, p.y, p.z);
         }
     }
 }

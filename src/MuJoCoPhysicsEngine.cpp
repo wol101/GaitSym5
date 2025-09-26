@@ -367,8 +367,8 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             // attributes["axis"s] = GSUtil::toString(axis1);
             // attributes["pos"s] = GSUtil::toString(p1);
             Marker *marker2 = hingeJoint->body2Marker();
-            pgd::Vector3 p2 = marker2->GetPosition();
-            pgd::Vector3 axis2 = marker2->GetAxis(Marker::X);
+            pgd::Vector3 p2 = marker2->position();
+            pgd::Vector3 axis2 = marker2->axis(Marker::X);
             pgd::Vector2 stops = hingeJoint->stops();
             // double springConstant = hingeJoint->stopSpring();
             // double dampingConstant = hingeJoint->stopDamp();
@@ -403,7 +403,7 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
         if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(joint))
         {
             Marker *marker2 = ballJoint->body2Marker();
-            pgd::Vector3 p2 = marker2->GetPosition();
+            pgd::Vector3 p2 = marker2->position();
             attributes["name"s] = ballJoint->name();
             attributes["type"s] = "ball"s;
             attributes["pos"s] = GSUtil::toString(p2);
@@ -453,8 +453,8 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
         if (const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom))
         {
             Marker *marker = planeGeom->geomMarker();
-            pgd::Vector3 position = marker->GetPosition();
-            pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
+            pgd::Vector3 position = marker->position();
+            pgd::Vector3 zAxis = marker->axis(Marker::Z);
             attributes["name"s] = planeGeom->name();
             attributes["type"s] = "plane"s;
             attributes["pos"s] = GSUtil::toString(position);
@@ -552,9 +552,9 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
                 return lastErrorPtr();
             }
             pgd::Quaternion rotation = joint->worldRotation();
-            pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
+            pgd::Matrix3x3 basis = joint->body1Marker()->worldBasis();
             pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
-            pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->worldAngularVelocity());
+            pgd::Vector3 angularVelocity = joint->body1Marker()->vector(joint->worldAngularVelocity());
             m_mjData->qpos[jnt_qposadr] = eulerAngles.x;
             m_mjData->qvel[jnt_dofadr] = angularVelocity.x;
             break;
@@ -632,8 +632,8 @@ std::string *MuJoCoPhysicsEngine::Step()
         pgd::Vector3 dragTorque = iter.second->dragTorque();
         iter.second->computeDrag();
         Marker marker(iter.second.get());
-        pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
-        pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
+        pgd::Vector3 worldDragForce = marker.worldVector(dragForce);
+        pgd::Vector3 worldDragTorque = marker.worldVector(dragTorque);
         int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
         mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->position().constData(), bodyID, qfrc_target.data());
     }
@@ -723,8 +723,8 @@ std::string *MuJoCoPhysicsEngine::Step()
                 hingeJoint->setAngle(angle); // and these should be the same as the internally calculated values
                 hingeJoint->setAngleRate(angleRate); // and these should be the same as the internally calculated values
                 Marker marker(iter.second.get()->body1());
-                hingeJoint->setForce(marker.GetWorldVector(jointforce));
-                hingeJoint->setTorque(marker.GetWorldVector(jointtorque));
+                hingeJoint->setForce(marker.worldVector(jointforce));
+                hingeJoint->setTorque(marker.worldVector(jointtorque));
                 break;
             }
             if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))

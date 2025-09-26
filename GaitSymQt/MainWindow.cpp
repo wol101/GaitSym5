@@ -441,7 +441,7 @@ void MainWindow::handleTracking()
     GaitSym::Marker *marker = m_simulation->GetMarker(ui->comboBoxTrackingMarker->currentText().toStdString());
     if (marker)
     {
-        pgd::Vector3 position = marker->GetWorldPosition();
+        pgd::Vector3 position = marker->worldPosition();
         if (ui->radioButtonTrackingX->isChecked())
         {
             m_simulationWidget->setCOIx(float(position.x + ui->doubleSpinBoxTrackingOffset->value()));
@@ -2394,16 +2394,16 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
             {
                 for (auto &&it : *this->m_simulation->GetMarkerList())
                 {
-                    if (it.second->GetBody() == body)
+                    if (it.second->body() == body)
                         it.second->OffsetPosition(-deltaPosition.x, -deltaPosition.y, -deltaPosition.z);
                 }
             }
             // and handle the CM marker if it exists
             std::string cmMarkerName = body->name() + "_CM_Marker"s;
             GaitSym::Marker *cmMarker = this->m_simulation->GetMarker(cmMarkerName);
-            if (cmMarker && cmMarker->GetBody()->name() == body->name())
+            if (cmMarker && cmMarker->body()->name() == body->name())
             {
-                cmMarker->SetPosition(0, 0, 0); // this puts it back at the centre of mass
+                cmMarker->setPosition(0, 0, 0); // this puts it back at the centre of mass
             }
             else
             {

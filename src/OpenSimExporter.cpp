@@ -228,8 +228,8 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body1()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body1Marker()->GetPosition()));
-            pgd::Vector3 axis = hingeJoint->body1Marker()->GetAxis(GaitSym::Marker::X);
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body1Marker()->position()));
+            pgd::Vector3 axis = hingeJoint->body1Marker()->axis(GaitSym::Marker::X);
             pgd::Vector3 zAxis(0, 0, 1);
             pgd::Quaternion rotation = pgd::FindRotation(zAxis, axis);
             pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(rotation);
@@ -242,8 +242,8 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body2()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body2Marker()->GetPosition()));
-            axis = hingeJoint->body1Marker()->GetAxis(GaitSym::Marker::X);
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body2Marker()->position()));
+            axis = hingeJoint->body1Marker()->axis(GaitSym::Marker::X);
             rotation = pgd::FindRotation(zAxis, axis);
             euler = pgd::MakeEulerAnglesFromQRadian(rotation);
             XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
@@ -269,7 +269,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[fixedJoint->body1()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(fixedJoint->body1Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(fixedJoint->body1Marker()->position()));
             XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
             XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
@@ -279,7 +279,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[fixedJoint->body2()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(fixedJoint->body2Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(fixedJoint->body2Marker()->position()));
             XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
             XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
@@ -340,7 +340,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body1()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(ballJoint->body1Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(ballJoint->body1Marker()->position()));
             XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
             XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
@@ -350,7 +350,7 @@ void OpenSimExporter::CreateJointSet()
             XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
             XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
             XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body2()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(ballJoint->body2Marker()->GetPosition()));
+            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(ballJoint->body2Marker()->position()));
             XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
             XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
@@ -359,7 +359,7 @@ void OpenSimExporter::CreateJointSet()
             XMLInitiateTag(&m_xmlString, "SpatialTransform"s);
 
             pgd::Vector3 x, y, z;
-            ballJoint->body1Marker()->GetBasis(&x, &y, &z);
+            ballJoint->body1Marker()->getBasis(&x, &y, &z);
 
             XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
             XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_0"s);
@@ -882,9 +882,9 @@ void OpenSimExporter::CreatePathPointSet(std::string name, const std::vector<con
     {
         const Marker *marker = markerList[i];
         XMLInitiateTag(&m_xmlString, "PathPoint"s, {{"name"s, m_legalNameMap[name] + "-P"s + GSUtil::toString(i + 1)}});
-        if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
+        if (marker->body()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->body()->name()]); }
         else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
-        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(marker->GetPosition()));
+        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(marker->position()));
         XMLTerminateTag(&m_xmlString, "PathPoint"s);
     }
 
@@ -902,9 +902,9 @@ void OpenSimExporter::CreateMarkerSet()
     {
         Marker *marker = markerIter.second.get();
         XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s,  m_legalNameMap[marker->name()]}});
-        if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
+        if (marker->body()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->body()->name()]); }
         else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
-        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(marker->GetPosition()));
+        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(marker->position()));
         XMLTagAndContent(&m_xmlString, "fixed"s, "true"s);
         XMLTerminateTag(&m_xmlString, "Marker"s);
     }
@@ -927,9 +927,9 @@ void OpenSimExporter::CreateContactGeometrySet()
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(geom))
             {
                 XMLInitiateTag(&m_xmlString, "ContactSphere"s, {{"name"s, m_legalNameMap[sphereGeom->name()]}});
-                XMLTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->GetBody()->name()]);
+                XMLTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->body()->name()]);
                 XMLTagAndContent(&m_xmlString, "radius"s, GSUtil::toString(sphereGeom->radius()));
-                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(sphereGeom->geomMarker()->GetPosition()));
+                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(sphereGeom->geomMarker()->position()));
                 XMLInitiateTag(&m_xmlString, "Appearance"s);
                 XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::toString(sphereGeom->colour1().alpha()));
                 XMLTagAndContent(&m_xmlString, "color"s, sphereGeom->colour1().floatColourRGB());
@@ -941,7 +941,7 @@ void OpenSimExporter::CreateContactGeometrySet()
             {
                 XMLInitiateTag(&m_xmlString, "ContactHalfSpace"s, {{"name"s, m_legalNameMap[planeGeom->name()]}});
                 XMLTagAndContent(&m_xmlString, "socket_frame"s, "/ground"s); // has to be attached to the ground
-                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(planeGeom->geomMarker()->GetPosition()));
+                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::toString(planeGeom->geomMarker()->position()));
                 XMLInitiateTag(&m_xmlString, "Appearance"s);
                 XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::toString(planeGeom->colour1().alpha()));
                 XMLTagAndContent(&m_xmlString, "color"s, planeGeom->colour1().floatColourRGB());
@@ -951,7 +951,7 @@ void OpenSimExporter::CreateContactGeometrySet()
                 XMLTerminateTag(&m_xmlString, "SurfaceProperties"s);
                 // plane normal in opensim is defined by the -X axis
                 // plane normal in gaitsym is defined by the Z axis
-                pgd::Vector3 normal = planeGeom->geomMarker()->GetWorldAxis(Marker::Z);
+                pgd::Vector3 normal = planeGeom->geomMarker()->worldAxis(Marker::Z);
                 // but we now need to convert this normal to the opensim Y up coordinate system
                 pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
                 pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);

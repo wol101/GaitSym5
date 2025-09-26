@@ -26,23 +26,23 @@ Marker::Marker(Body *body)
     m_body = body;
 }
 
-void Marker::SetPosition(double x, double y, double z)
+void Marker::setPosition(double x, double y, double z)
 {
     m_position.x = x; m_position.y = y; m_position.z = z;
 }
 
-void Marker::SetPosition(const pgd::Vector3 &position)
+void Marker::setPosition(const pgd::Vector3 &position)
 {
     m_position = position;
 }
 
-void Marker::SetQuaternion(double qs0, double qx1, double qy2, double qz3)
+void Marker::setQuaternion(double qs0, double qx1, double qy2, double qz3)
 {
     m_quaternion.n = qs0;
     m_quaternion.x = qx1; m_quaternion.y = qy2; m_quaternion.z = qz3;
 }
 
-void Marker::SetQuaternion(const pgd::Quaternion &quaternion)
+void Marker::setQuaternion(const pgd::Quaternion &quaternion)
 {
     m_quaternion = quaternion;
 }
@@ -51,7 +51,7 @@ void Marker::SetQuaternion(const pgd::Quaternion &quaternion)
 // x y z - body coordinates
 // bodyName x y z - position relative to bodyName local coordinate system
 // bodyName can be "World"
-std::string *Marker::SetPosition(const std::string &buf)
+std::string *Marker::setPosition(const std::string &buf)
 {
     std::vector<std::string> tokens;
     pystring::split(buf, tokens);
@@ -62,7 +62,7 @@ std::string *Marker::SetPosition(const std::string &buf)
     }
     if (tokens.size() == 3)
     {
-        SetPosition(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
+        setPosition(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
@@ -74,11 +74,11 @@ std::string *Marker::SetPosition(const std::string &buf)
 //            dBodyGetPosRelPoint(m_body->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), pos); // convert from world to body
 //            SetPosition(pos[0], pos[1], pos[2]);
             pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])) - pgd::Vector3(m_body->position()));
-            SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+            setPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
         }
         else
         {
-            SetPosition(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
+            setPosition(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
         }
         return nullptr;
     }
@@ -98,12 +98,12 @@ std::string *Marker::SetPosition(const std::string &buf)
 //        dBodyGetPosRelPoint(m_body->GetBodyID(), result[0], result[1], result[2], pos); // convert from world to body
 //        SetPosition(pos[0], pos[1], pos[2]);
         pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), bodyWorldPosition - pgd::Vector3(m_body->position()));
-        SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+        setPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
     }
     else
     {
 //        SetPosition(result[0], result[1], result[2]);
-        SetPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
+        setPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
     }
     return nullptr;
 }
@@ -112,7 +112,7 @@ std::string *Marker::SetPosition(const std::string &buf)
 // x y z - body coordinates
 // bodyName x y z - position relative to bodyName local coordinate system
 // bodyName can be "World"
-std::string *Marker::SetPosition(const std::string &body, double x, double y, double z)
+std::string *Marker::setPosition(const std::string &body, double x, double y, double z)
 {
 //    pgd::Vector3 result;
     if (body == "World"s)
@@ -122,11 +122,11 @@ std::string *Marker::SetPosition(const std::string &body, double x, double y, do
 //            dBodyGetPosRelPoint(m_body->GetBodyID(), x, y, z, result); // convert from world to body
 //            SetPosition(result[0], result[1], result[2]);
             pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), pgd::Vector3(x, y, z) - pgd::Vector3(m_body->position()));
-            SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+            setPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
         }
         else
         {
-            SetPosition(x, y, z);
+            setPosition(x, y, z);
         }
         return nullptr;
     }
@@ -145,17 +145,17 @@ std::string *Marker::SetPosition(const std::string &body, double x, double y, do
 //        dBodyGetPosRelPoint(m_body->GetBodyID(), result[0], result[1], result[2], pos); // convert from world to body
 //        SetPosition(pos[0], pos[1], pos[2]);
         pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), bodyWorldPosition - pgd::Vector3(m_body->position()));
-        SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+        setPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
     }
     else
     {
 //        SetPosition(result[0], result[1], result[2]);
-        SetPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
+        setPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
     }
     return nullptr;
 }
 
-void Marker::SetWorldPosition(double x, double y, double z)
+void Marker::setWorldPosition(double x, double y, double z)
 {
     //    pgd::Vector3 result;
     if (m_body)
@@ -163,24 +163,24 @@ void Marker::SetWorldPosition(double x, double y, double z)
         //        dBodyGetPosRelPoint(m_body->GetBodyID(), x, y, z, result); // convert from world to body
         //        SetPosition(result[0], result[1], result[2]);
         pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), pgd::Vector3(x, y, z) - pgd::Vector3(m_body->position()));
-        SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+        setPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
     }
     else
     {
-        SetPosition(x, y, z);
+        setPosition(x, y, z);
     }
 }
 
-void Marker::SetWorldPosition(const pgd::Vector3 &pWorld)
+void Marker::setWorldPosition(const pgd::Vector3 &pWorld)
 {
     if (m_body)
     {
         pgd::Vector3 bodyRelativePosition = pgd::QVRotate(pgd::Conjugate(m_body->quaternion()), pWorld - pgd::Vector3(m_body->position()));
-        SetPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
+        setPosition(bodyRelativePosition.x, bodyRelativePosition.y, bodyRelativePosition.z);
     }
     else
     {
-        SetPosition(pWorld);
+        setPosition(pWorld);
     }
 }
 
@@ -189,7 +189,7 @@ void Marker::SetWorldPosition(const pgd::Vector3 &pWorld)
 // s x y z - body coordinates
 // bodyName s x y z - position relative to bodyName local coordinate system
 // bodyName can be "World"
-std::string *Marker::SetQuaternion(const std::string &buf)
+std::string *Marker::setQuaternion(const std::string &buf)
 {
     std::vector<std::string> tokens;
     pystring::split(buf, tokens);
@@ -201,7 +201,7 @@ std::string *Marker::SetQuaternion(const std::string &buf)
     if (tokens.size() == 4)
     {
         pgd::Quaternion q = GSUtil::toQuaternion(tokens, 0);
-        SetQuaternion(q.n, q.x, q.y, q.z);
+        setQuaternion(q.n, q.x, q.y, q.z);
         return nullptr;
     }
 
@@ -212,12 +212,12 @@ std::string *Marker::SetQuaternion(const std::string &buf)
             pgd::Quaternion qBody = m_body->quaternion();
             pgd::Quaternion qWorld = GSUtil::toQuaternion(tokens, 1);
             pgd::Quaternion qLocal = ~qBody * qWorld;
-            SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+            setQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
         }
         else
         {
             pgd::Quaternion q = GSUtil::toQuaternion(tokens, 1);
-            SetQuaternion(q.n, q.x, q.y, q.z);
+            setQuaternion(q.n, q.x, q.y, q.z);
         }
         return nullptr;
     }
@@ -239,11 +239,11 @@ std::string *Marker::SetQuaternion(const std::string &buf)
     {
         pgd::Quaternion qBody = m_body->quaternion();
         pgd::Quaternion qLocal = ~qBody * qWorld;
-        SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+        setQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
     }
     else
     {
-        SetQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
+        setQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
     return nullptr;
 }
@@ -253,7 +253,7 @@ std::string *Marker::SetQuaternion(const std::string &buf)
 // s x y z - body coordinates
 // bodyName s x y z - position relative to bodyName local coordinate system
 // bodyName can be "World"
-std::string *Marker::SetQuaternion(const std::string &body, double qs0, double qx1, double qy2, double qz3)
+std::string *Marker::setQuaternion(const std::string &body, double qs0, double qx1, double qy2, double qz3)
 {
     if (body == "World"s)
     {
@@ -262,11 +262,11 @@ std::string *Marker::SetQuaternion(const std::string &body, double qs0, double q
             pgd::Quaternion qBody = m_body->quaternion();
             pgd::Quaternion qWorld(qs0, qx1, qy2, qz3);
             pgd::Quaternion qLocal = ~qBody * qWorld;
-            SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+            setQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
         }
         else
         {
-            SetQuaternion(qs0, qx1, qy2, qz3);
+            setQuaternion(qs0, qx1, qy2, qz3);
         }
         return nullptr;
     }
@@ -288,76 +288,76 @@ std::string *Marker::SetQuaternion(const std::string &body, double qs0, double q
     {
         pgd::Quaternion qBody = m_body->quaternion();
         pgd::Quaternion qLocal = ~qBody * qWorld;
-        SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+        setQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
     }
     else
     {
-        SetQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
+        setQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
     return nullptr;
 }
 
-void Marker::SetWorldQuaternion(double qs0, double qx1, double qy2, double qz3)
+void Marker::setWorldQuaternion(double qs0, double qx1, double qy2, double qz3)
 {
     if (m_body)
     {
         pgd::Quaternion qBody = m_body->quaternion();
         pgd::Quaternion qWorld(qs0, qx1, qy2, qz3);
         pgd::Quaternion qLocal = ~qBody * qWorld;
-        SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+        setQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
     }
     else
     {
-        SetQuaternion(qs0, qx1, qy2, qz3);
+        setQuaternion(qs0, qx1, qy2, qz3);
     }
 }
 
-void Marker::SetWorldQuaternion(const pgd::Quaternion &qWorld)
+void Marker::setWorldQuaternion(const pgd::Quaternion &qWorld)
 {
     if (m_body)
     {
         pgd::Quaternion qBody = m_body->quaternion();
         pgd::Quaternion qLocal = ~qBody * qWorld;
-        SetQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
+        setQuaternion(qLocal.n, qLocal.x, qLocal.y, qLocal.z);
     }
     else
     {
-        SetQuaternion(qWorld);
+        setQuaternion(qWorld);
     }
 }
 
-void Marker::OffsetPosition(double x, double y, double z)
+void Marker::offsetPosition(double x, double y, double z)
 {
     m_position.x += x; m_position.y += y; m_position.z += z;
 }
 
-pgd::Vector3 Marker::GetPosition() const
+pgd::Vector3 Marker::position() const
 {
     return m_position;
 }
 
-pgd::Quaternion Marker::GetQuaternion() const
+pgd::Quaternion Marker::quaternion() const
 {
     return m_quaternion;
 }
 
-pgd::Vector3 Marker::GetAxis(Marker::Axis axis) const
+pgd::Vector3 Marker::axis(Marker::Axis axis) const
 {
     switch (axis)
     {
     case Marker::Axis::X:
-        return pgd::QVRotate(this->GetQuaternion(), pgd::Vector3(1, 0, 0));
+        return pgd::QVRotate(this->quaternion(), pgd::Vector3(1, 0, 0));
     case Marker::Axis::Y:
-        return pgd::QVRotate(this->GetQuaternion(), pgd::Vector3(0, 1, 0));
+        return pgd::QVRotate(this->quaternion(), pgd::Vector3(0, 1, 0));
     case Marker::Axis::Z:
-        return pgd::QVRotate(this->GetQuaternion(), pgd::Vector3(0, 0, 1));
+        return pgd::QVRotate(this->quaternion(), pgd::Vector3(0, 0, 1));
     }
     return pgd::Vector3(1, 0, 0); // just to stop warnings
 }
 
-void Marker::GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
+void Marker::getBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
 {
-    pgd::Matrix3x3 m(this->GetQuaternion());
+    pgd::Matrix3x3 m(this->quaternion());
     x->x = m.e11;
     x->y = m.e21;
     x->z = m.e31;
@@ -369,13 +369,13 @@ void Marker::GetBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
     z->z = m.e33;
 }
 
-pgd::Matrix3x3  Marker::GetBasis() const
+pgd::Matrix3x3  Marker::getBasis() const
 {
-    pgd::Matrix3x3 m(this->GetQuaternion());
+    pgd::Matrix3x3 m(this->quaternion());
     return m;
 }
 
-pgd::Vector3 Marker::GetWorldPosition() const
+pgd::Vector3 Marker::worldPosition() const
 {
     if (m_body)
     {
@@ -392,7 +392,7 @@ pgd::Vector3 Marker::GetWorldPosition() const
     }
 }
 
-pgd::Vector3 Marker::GetConstructionPosition() const
+pgd::Vector3 Marker::constructionPosition() const
 {
     if (m_body)
     {
@@ -405,71 +405,71 @@ pgd::Vector3 Marker::GetConstructionPosition() const
     }
 }
 
-pgd::Vector3 Marker::GetWorldPosition(const pgd::Vector3 &localCoordinates) const
+pgd::Vector3 Marker::worldPosition(const pgd::Vector3 &localCoordinates) const
 {
-    pgd::Vector3 worldDelta = pgd::QVRotate(GetWorldQuaternion(), localCoordinates);
-    return GetWorldPosition() + worldDelta;
+    pgd::Vector3 worldDelta = pgd::QVRotate(worldQuaternion(), localCoordinates);
+    return worldPosition() + worldDelta;
 }
 
-pgd::Vector3 Marker::GetPosition(const pgd::Vector3 &worldCoordinates) const
+pgd::Vector3 Marker::position(const pgd::Vector3 &worldCoordinates) const
 {
-    pgd::Vector3 worldDelta = worldCoordinates - GetWorldPosition();
-    return pgd::QVRotate(~GetWorldQuaternion(), worldDelta);
+    pgd::Vector3 worldDelta = worldCoordinates - worldPosition();
+    return pgd::QVRotate(~worldQuaternion(), worldDelta);
 }
 
-pgd::Vector3 Marker::GetWorldVector(const pgd::Vector3 &localVector) const
+pgd::Vector3 Marker::worldVector(const pgd::Vector3 &localVector) const
 {
-    return pgd::QVRotate(GetWorldQuaternion(), localVector);
+    return pgd::QVRotate(worldQuaternion(), localVector);
 }
 
-pgd::Vector3 Marker::GetVector(const pgd::Vector3 &worldVector) const
+pgd::Vector3 Marker::vector(const pgd::Vector3 &worldVector) const
 {
-    return pgd::QVRotate(~GetWorldQuaternion(), worldVector);
+    return pgd::QVRotate(~worldQuaternion(), worldVector);
 }
 
-pgd::Quaternion Marker::GetWorldQuaternion(const pgd::Quaternion &localQuaternion) const
+pgd::Quaternion Marker::worldQuaternion(const pgd::Quaternion &localQuaternion) const
 {
-    return GetWorldQuaternion() * localQuaternion;
+    return worldQuaternion() * localQuaternion;
 }
 
-pgd::Quaternion Marker::GetQuaternion(const pgd::Quaternion &worldQuaternion) const
+pgd::Quaternion Marker::quaternion(const pgd::Quaternion &worldQuaternion) const
 {
-    return (~GetWorldQuaternion()) * worldQuaternion;
+    return (~worldQuaternion()) * worldQuaternion;
 }
 
-pgd::Vector3 Marker::GetPosition(const Body &body, const pgd::Vector3 &worldCoordinates)
+pgd::Vector3 Marker::position(const Body &body, const pgd::Vector3 &worldCoordinates)
 {
     pgd::Vector3 worldDelta = worldCoordinates - body.position();
     return pgd::QVRotate(~body.quaternion(), worldDelta);
 }
 
-pgd::Vector3 Marker::GetWorldPosition(const Body &body, const pgd::Vector3 &localCoordinates)
+pgd::Vector3 Marker::worldPosition(const Body &body, const pgd::Vector3 &localCoordinates)
 {
     pgd::Vector3 worldDelta = pgd::QVRotate(body.quaternion(), localCoordinates);
     return body.position() + worldDelta;
 }
 
-pgd::Vector3 Marker::GetVector(const Body &body, const pgd::Vector3 &worldVector)
+pgd::Vector3 Marker::vector(const Body &body, const pgd::Vector3 &worldVector)
 {
     return pgd::QVRotate(~body.quaternion(), worldVector);
 }
 
-pgd::Vector3 Marker::GetWorldVector(const Body &body, const pgd::Vector3 &localVector)
+pgd::Vector3 Marker::worldVector(const Body &body, const pgd::Vector3 &localVector)
 {
     return pgd::QVRotate(body.quaternion(), localVector);
 }
 
-pgd::Quaternion Marker::GetWorldQuaternion(const Body &body, const pgd::Quaternion &localQuaternion)
+pgd::Quaternion Marker::worldQuaternion(const Body &body, const pgd::Quaternion &localQuaternion)
 {
     return body.quaternion() * localQuaternion;
 }
 
-pgd::Quaternion Marker::GetQuaternion(const Body &body, const pgd::Quaternion &worldQuaternion)
+pgd::Quaternion Marker::quaternion(const Body &body, const pgd::Quaternion &worldQuaternion)
 {
     return (~body.quaternion()) * worldQuaternion;
 }
 
-pgd::Vector3 Marker::GetWorldLinearVelocity() const
+pgd::Vector3 Marker::worldLinearVelocity() const
 {
     if (m_body)
     {
@@ -493,26 +493,26 @@ pgd::Vector3 Marker::GetWorldLinearVelocity() const
     }
 }
 
-pgd::Vector3 Marker::GetWorldAngularVelocity() const
+pgd::Vector3 Marker::worldAngularVelocity() const
 {
     pgd::Vector3 worldAngularVelocity;
     if (m_body) { worldAngularVelocity = m_body->angularVelocity(); }
     return worldAngularVelocity;
 }
 
-pgd::Vector3 Marker::GetLinearVelocity() const
+pgd::Vector3 Marker::linearVelocity() const
 {
-    pgd::Vector3 worldVelocity = GetWorldLinearVelocity();
-    return GetVector(worldVelocity);
+    pgd::Vector3 worldVelocity = worldLinearVelocity();
+    return vector(worldVelocity);
 }
 
-pgd::Vector3 Marker::GetAngularVelocity() const
+pgd::Vector3 Marker::angularVelocity() const
 {
-    pgd::Vector3 worldAngularVelocity = GetWorldAngularVelocity();
-    return GetVector(worldAngularVelocity);
+    pgd::Vector3 worldAngularVelocity = worldAngularVelocity();
+    return vector(worldAngularVelocity);
 }
 
-pgd::Quaternion Marker::GetWorldQuaternion() const
+pgd::Quaternion Marker::worldQuaternion() const
 {
     if (m_body)
     {
@@ -525,23 +525,23 @@ pgd::Quaternion Marker::GetWorldQuaternion() const
     }
 }
 
-pgd::Vector3 Marker::GetWorldAxis(Marker::Axis axis) const
+pgd::Vector3 Marker::worldAxis(Marker::Axis axis) const
 {
     switch (axis)
     {
     case Marker::Axis::X:
-        return pgd::QVRotate(this->GetWorldQuaternion(), pgd::Vector3(1, 0, 0));
+        return pgd::QVRotate(this->worldQuaternion(), pgd::Vector3(1, 0, 0));
     case Marker::Axis::Y:
-        return pgd::QVRotate(this->GetWorldQuaternion(), pgd::Vector3(0, 1, 0));
+        return pgd::QVRotate(this->worldQuaternion(), pgd::Vector3(0, 1, 0));
     case Marker::Axis::Z:
-        return pgd::QVRotate(this->GetWorldQuaternion(), pgd::Vector3(0, 0, 1));
+        return pgd::QVRotate(this->worldQuaternion(), pgd::Vector3(0, 0, 1));
     }
     return pgd::Vector3(1, 0, 0); // just to stop warnings
 }
 
-void Marker::GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
+void Marker::getWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
 {
-    pgd::Matrix3x3 m(this->GetWorldQuaternion());
+    pgd::Matrix3x3 m(this->worldQuaternion());
     x->x = m.e11;
     x->y = m.e21;
     x->z = m.e31;
@@ -553,9 +553,9 @@ void Marker::GetWorldBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) co
     z->z = m.e33;
 }
 
-pgd::Matrix3x3 Marker::GetWorldBasis() const
+pgd::Matrix3x3 Marker::worldBasis() const
 {
-    pgd::Matrix3x3 m(this->GetWorldQuaternion());
+    pgd::Matrix3x3 m(this->worldQuaternion());
     return m;
 }
 
@@ -569,8 +569,8 @@ std::string Marker::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\tQW\tQX\tQY\tQZ\n";
     }
-    pgd::Vector3 p = GetWorldPosition();
-    pgd::Quaternion q = GetWorldQuaternion();
+    pgd::Vector3 p = worldPosition();
+    pgd::Quaternion q = worldQuaternion();
 
     ss << simulation()->GetTime() << "\t" << p.x << "\t" << p.y << "\t" << p.z <<
           "\t" << q.n << "\t" << q.x << "\t" << q.y << "\t" << q.z << "\n";
@@ -596,7 +596,7 @@ std::string *Marker::createFromAttributes()
             setLastError("Marker ID=\""s + name() +"\" BodyID=\""s + buf + "\" not found"s);
             return lastErrorPtr();
         }
-        this->SetBody(it->second.get());
+        this->setBody(it->second.get());
     }
     else
     {
@@ -605,11 +605,11 @@ std::string *Marker::createFromAttributes()
 
     // note quaternion is (qs,qx,qy,qz)
     if (findAttribute("Quaternion"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetQuaternion(buf);
+    this->setQuaternion(buf);
 
     // note position
     if (findAttribute("Position"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetPosition(buf);
+    this->setPosition(buf);
 
     if (m_body) setUpstreamObjects({m_body});
     return nullptr;
@@ -630,21 +630,21 @@ void Marker::appendToAttributes()
     NamedObject::appendToAttributes();
     std::string buf;
     std::string bodyName;
-    if (this->GetBody()) bodyName = this->GetBody()->name();
+    if (this->body()) bodyName = this->body()->name();
     else bodyName = "World"s;
     setAttribute("BodyID"s, bodyName);
     setAttribute("Quaternion"s, bodyName + " "s + *GSUtil::toString(m_quaternion, &buf));
     setAttribute("Position"s, bodyName + " "s + *GSUtil::toString(m_position, &buf));
-    setAttribute("WorldQuaternion"s, *GSUtil::toString(GetWorldQuaternion(), &buf));
-    setAttribute("WorldPosition"s, *GSUtil::toString(GetWorldPosition(), &buf));
+    setAttribute("WorldQuaternion"s, *GSUtil::toString(worldQuaternion(), &buf));
+    setAttribute("WorldPosition"s, *GSUtil::toString(worldPosition(), &buf));
 }
 
-Body *Marker::GetBody() const
+Body *Marker::body() const
 {
     return m_body;
 }
 
-void Marker::SetBody(Body *body)
+void Marker::setBody(Body *body)
 {
     m_body = body;
 }

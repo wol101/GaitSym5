@@ -264,9 +264,9 @@ std::string *HingeJoint::createFromAttributes()
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
-    pgd::Vector3 axis = body1Marker()->GetWorldAxis(Marker::Axis::X);
+    pgd::Vector3 axis = body1Marker()->worldAxis(Marker::Axis::X);
     this->setAxis(axis);
-    pgd::Vector3 position = body1Marker()->GetWorldPosition();
+    pgd::Vector3 position = body1Marker()->worldPosition();
     this->setAnchor(position);
 
     if (findAttribute("LowStop"s, &buf) == nullptr) return lastErrorPtr();

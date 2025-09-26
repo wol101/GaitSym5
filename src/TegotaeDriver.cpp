@@ -56,11 +56,11 @@ void TegotaeDriver::Initialise(double omega, double sigma, double A, double Apri
     if (m_phi < M_PI) m_Y = m_A * std::sin(m_phi); // Y (0<= m_phi < pi)
     else m_Y = m_Aprime * std::sin(m_phi);         // Y (pi<= m_phi < 2pi)
 
-    pgd::Quaternion rimLocalQ = m_tegotaeCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_tegotaeCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
+    pgd::Quaternion rimLocalQ = m_tegotaeCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_tegotaeCentre->worldPosition(pgd::Vector3(m_X, m_Y, 0));
     m_tegotaeRim = tegotaeRim;
-    m_tegotaeRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_tegotaeRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    m_tegotaeRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_tegotaeRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
 
 }
 
@@ -108,13 +108,13 @@ void TegotaeDriver::update()
     else m_Y = m_Aprime * std::sin(m_phi);         // Y (pi<= m_phi < 2pi)
 
     // get the world position of the Tegotae target
-    pgd::Quaternion rimLocalQ = m_tegotaeCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_tegotaeCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
-    m_tegotaeRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_tegotaeRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
-    pgd::Vector3 targetDesiredPosition = m_errorOutput->GetWorldPosition();
+    pgd::Quaternion rimLocalQ = m_tegotaeCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_tegotaeCentre->worldPosition(pgd::Vector3(m_X, m_Y, 0));
+    m_tegotaeRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_tegotaeRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    pgd::Vector3 targetDesiredPosition = m_errorOutput->worldPosition();
     m_worldErrorVector = rimWorldP - targetDesiredPosition;
-    m_localErrorVector = m_tegotaeCentre->GetVector(m_worldErrorVector); // this should mean that the position depends on m_errorOutput but direction depends on m_tegotaeCentre
+    m_localErrorVector = m_tegotaeCentre->vector(m_worldErrorVector); // this should mean that the position depends on m_errorOutput but direction depends on m_tegotaeCentre
 
     // update m_phi depending on m_phi_dot values
     double deltaT = simulation()->GetTimeIncrement();
@@ -133,7 +133,7 @@ void TegotaeDriver::UpdateReactionForce()
         for (unsigned int i = 0; i < contactList->size(); i++)
         {
             // add the force that matches the X direction of the marker
-            worldXAxis = m_forceDirection->GetWorldAxis(Marker::Axis::X);
+            worldXAxis = m_forceDirection->worldAxis(Marker::Axis::X);
             worldReactionForce = contactList->at(i)->force();
             m_N += pgd::Dot(worldXAxis, worldReactionForce);
         }
@@ -246,7 +246,7 @@ std::string *TegotaeDriver::createFromAttributes()
         setLastError("TegotaeDriver ID=\""s + name() + "\" RimMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
-    if (tegotaeCentre->GetBody() != tegotaeRim->GetBody())
+    if (tegotaeCentre->body() != tegotaeRim->body())
     {
         setLastError("TegotaeDriver ID=\""s + name() + "\" RimMarkerID marker and CentreMarkerID must have the same BODY\"");
         return lastErrorPtr();

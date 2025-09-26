@@ -178,7 +178,7 @@ std::string *ODEPhysicsEngine::CreateJoints()
                     dJointSetAMotorNumAxes(motorJointID, 3);
                     int axisMode = 1; // axisMode: 0 global, 1 relative to body 1, 2 relative to body
                     pgd::Vector3 x, y, z;
-                    ballJoint->body1Marker()->GetBasis(&x, &y, &z);
+                    ballJoint->body1Marker()->getBasis(&x, &y, &z);
                     dJointSetAMotorAxis(motorJointID, 0, axisMode, x.x, x.y, x.z);
                     dJointSetAMotorAxis(motorJointID, 1, axisMode, y.x, y.y, y.z);
                     dJointSetAMotorAxis(motorJointID, 2, axisMode, z.x, z.y, z.z);

@@ -174,10 +174,10 @@ std::string *PhysXPhysicsEngine::CreateJoints()
             {
                 Marker *marker1 = hingeJoint->body1Marker();
                 Marker *marker2 = hingeJoint->body2Marker();
-                pgd::Vector3 p1 = marker1->GetPosition();
-                pgd::Vector3 p2 = marker2->GetPosition();
-                pgd::Quaternion q1 = marker1->GetQuaternion();
-                pgd::Quaternion q2 = marker2->GetQuaternion();
+                pgd::Vector3 p1 = marker1->position();
+                pgd::Vector3 p2 = marker2->position();
+                pgd::Quaternion q1 = marker1->quaternion();
+                pgd::Quaternion q2 = marker2->quaternion();
                 physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
                 physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
                 physx::PxRigidActor *actor0 = m_bodyMap[hingeJoint->body1()->name()];
@@ -200,10 +200,10 @@ std::string *PhysXPhysicsEngine::CreateJoints()
             {
                 Marker *marker1 = ballJoint->body1Marker();
                 Marker *marker2 = ballJoint->body2Marker();
-                pgd::Vector3 p1 = marker1->GetPosition();
-                pgd::Vector3 p2 = marker2->GetPosition();
-                pgd::Quaternion q1 = marker1->GetQuaternion();
-                pgd::Quaternion q2 = marker2->GetQuaternion();
+                pgd::Vector3 p1 = marker1->position();
+                pgd::Vector3 p2 = marker2->position();
+                pgd::Quaternion q1 = marker1->quaternion();
+                pgd::Quaternion q2 = marker2->quaternion();
                 physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
                 physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
                 physx::PxRigidActor *actor0 = m_bodyMap[ballJoint->body1()->name()];
@@ -356,8 +356,8 @@ std::string *PhysXPhysicsEngine::Step()
         pgd::Vector3 dragTorque = iter.second->dragTorque();
         iter.second->computeDrag();
         Marker marker(iter.second.get());
-        pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
-        pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
+        pgd::Vector3 worldDragForce = marker.worldVector(dragForce);
+        pgd::Vector3 worldDragTorque = marker.worldVector(dragTorque);
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
         rigidDynamic->addForce(physx::PxVec3(worldDragForce[0], worldDragForce[1], worldDragForce[2]), physx::PxForceMode::eFORCE, true);
         rigidDynamic->addTorque(physx::PxVec3(worldDragTorque[0], worldDragTorque[1], worldDragTorque[2]), physx::PxForceMode::eFORCE, true);

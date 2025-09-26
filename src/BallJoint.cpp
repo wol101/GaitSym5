@@ -26,7 +26,7 @@ BallJoint::BallJoint() : Joint()
 pgd::Quaternion BallJoint::calculateQuaternion()
 {
     pgd::Quaternion q;
-    body2Marker()->GetBody()->getRelativeQuaternion(body1Marker()->GetBody(), &q);
+    body2Marker()->body()->getRelativeQuaternion(body1Marker()->body(), &q);
     return q;
 }
 
@@ -36,7 +36,7 @@ std::string *BallJoint::createFromAttributes()
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
-    pgd::Vector3 position = body1Marker()->GetWorldPosition();
+    pgd::Vector3 position = body1Marker()->worldPosition();
     this->setAnchor(position);
     pgd::Vector3 x, y, z;
 

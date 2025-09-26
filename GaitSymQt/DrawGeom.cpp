@@ -204,8 +204,8 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
 void DrawGeom::updateEntityPose()
 {
     GaitSym::Marker *marker = m_geom->geomMarker();
-    pgd::Quaternion q = marker->GetWorldQuaternion();
-    pgd::Vector3 p = marker->GetWorldPosition();
+    pgd::Quaternion q = marker->worldQuaternion();
+    pgd::Vector3 p = marker->worldPosition();
     SetDisplayRotationFromQuaternion(q.data());
     SetDisplayPosition(p.x, p.y, p.z);
 }

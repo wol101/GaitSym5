@@ -148,8 +148,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             //     m_facetedObjectList.push_back(m_facetedObject1.get());
             // }
 
-            pgd::Vector3 position = cylinderWrapStrap->cylinderMarker()->GetWorldPosition();
-            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderWrapStrap->cylinderMarker()->GetWorldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
+            pgd::Vector3 position = cylinderWrapStrap->cylinderMarker()->worldPosition();
+            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(cylinderWrapStrap->cylinderMarker()->worldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
             double radius = cylinderWrapStrap->cylinderRadius();
             // and draw it
             std::vector<pgd::Vector3> polyline;
@@ -175,8 +175,8 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             //     m_facetedObject1->setSimulationWidget(simulationWidget);
             //     m_facetedObjectList.push_back(m_facetedObject1.get());
             // }
-            pgd::Vector3 position = twoCylinderWrapStrap->GetCylinder1Marker()->GetWorldPosition();
-            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(twoCylinderWrapStrap->GetCylinder1Marker()->GetWorldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
+            pgd::Vector3 position = twoCylinderWrapStrap->GetCylinder1Marker()->worldPosition();
+            pgd::Vector3 cylinderVecWorld = pgd::QVRotate(twoCylinderWrapStrap->GetCylinder1Marker()->worldQuaternion(), pgd::Vector3(m_strapCylinderLength / 2, 0, 0));
             double radius = twoCylinderWrapStrap->Cylinder1Radius();
             // and draw it
             std::vector<pgd::Vector3> polyline;
@@ -185,7 +185,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1, true);
             m_facetedObject2->setSimulationWidget(simulationWidget);
             m_facetedObjectList.push_back(m_facetedObject2.get());
-            position = twoCylinderWrapStrap->GetCylinder2Marker()->GetWorldPosition();
+            position = twoCylinderWrapStrap->GetCylinder2Marker()->worldPosition();
             radius = twoCylinderWrapStrap->Cylinder2Radius();
             // and draw it
             polyline.clear();

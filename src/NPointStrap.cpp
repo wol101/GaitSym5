@@ -34,12 +34,12 @@ void NPointStrap::SetOrigin(Marker *originMarker)
     if (GetPointForceList()->size() == 0)
     {
         std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
-        origin->body = m_originMarker->GetBody();
+        origin->body = m_originMarker->body();
         GetPointForceList()->push_back(std::move(origin));
     }
     else
     {
-        GetPointForceList()->at(0)->body = m_originMarker->GetBody();
+        GetPointForceList()->at(0)->body = m_originMarker->body();
     }
 }
 
@@ -50,12 +50,12 @@ void NPointStrap::SetInsertion(Marker *insertionMarker)
     if (GetPointForceList()->size() <= 1)
     {
         std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
-        insertion->body = m_insertionMarker->GetBody();
+        insertion->body = m_insertionMarker->body();
         GetPointForceList()->push_back(std::move(insertion));
     }
     else
     {
-        GetPointForceList()->at(1)->body =  m_insertionMarker->GetBody();
+        GetPointForceList()->at(1)->body =  m_insertionMarker->body();
     }
 }
 
@@ -71,9 +71,9 @@ void NPointStrap::SetViaPoints(std::vector<Marker *> *viaPointMarkerList)
     for (size_t i = 0; i < viaPointMarkerList->size(); i++)
     {
         std::unique_ptr<PointForce> viaPointForce = std::make_unique<PointForce>();
-        viaPointForce->body = viaPointMarkerList->at(i)->GetBody();
+        viaPointForce->body = viaPointMarkerList->at(i)->body();
         m_ViaBodyList.push_back(viaPointForce->body);
-        m_ViaPointList.push_back(viaPointMarkerList->at(i)->GetPosition());
+        m_ViaPointList.push_back(viaPointMarkerList->at(i)->position());
         m_ViaPointMarkerList.push_back(viaPointMarkerList->at(i));
         GetPointForceList()->push_back(std::move(viaPointForce));
     }
@@ -112,17 +112,17 @@ void NPointStrap::calculate()
     pgd::Vector3 v;
 
     // calculate the world positions
-    pgd::Vector3 origin = m_originMarker->GetWorldPosition();
+    pgd::Vector3 origin = m_originMarker->worldPosition();
     theOrigin->point[0] = origin.x;
     theOrigin->point[1] = origin.y;
     theOrigin->point[2] = origin.z;
-    pgd::Vector3 insertion = m_insertionMarker->GetWorldPosition();
+    pgd::Vector3 insertion = m_insertionMarker->worldPosition();
     theInsertion->point[0] = insertion.x;
     theInsertion->point[1] = insertion.y;
     theInsertion->point[2] = insertion.z;
     for (i = 0; i < m_ViaPointMarkerList.size(); i++)
     {
-        v = m_ViaPointMarkerList[i]->GetWorldPosition();
+        v = m_ViaPointMarkerList[i]->worldPosition();
         (*GetPointForceList())[i + 2]->point[0] = v.x;
         (*GetPointForceList())[i + 2]->point[1] = v.y;
         (*GetPointForceList())[i + 2]->point[2] = v.z;

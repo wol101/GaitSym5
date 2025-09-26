@@ -66,7 +66,7 @@ double DataTargetVector::calculateError(size_t valueListIndex)
         }
         if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
-            m_vectorValue = marker->GetWorldPosition();
+            m_vectorValue = marker->worldPosition();
             break;
         }
         std::cerr << "DataTargetVector target missing error " << name() << "\n";
@@ -117,7 +117,7 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
         }
         if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
-            m_vectorValue = marker->GetWorldPosition();
+            m_vectorValue = marker->worldPosition();
             break;
         }
         std::cerr << "DataTargetVector target missing error " << name() << "\n";

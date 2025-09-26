@@ -140,7 +140,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
     pgd::Vector3 torque, point, force, centre;
     pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-    centre = marker.GetWorldPosition();
+    centre = marker.worldPosition();
 
 // These are the same but the second option works even when tension is zero
 //        if (m_Tension > 0)
@@ -164,7 +164,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
       {
         for (unsigned int i = 0; i < m_pointForceList.size(); i++)
         {
-            if (m_pointForceList[i]->body == marker.GetBody())
+            if (m_pointForceList[i]->body == marker.body())
             {
                 //Torque = cross(Point - Center, Force)
                 forcePoint = m_pointForceList[i]->point;
@@ -191,7 +191,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
 
     *worldTorque = totalTorque;
     *worldMomentArm = momentArm;
-    pgd::Quaternion q = marker.GetWorldQuaternion();
+    pgd::Quaternion q = marker.worldQuaternion();
     *markerTorque = pgd::QVRotate(q, *worldTorque);
     *markerMomentArm = pgd::QVRotate(q, *worldMomentArm);
 }

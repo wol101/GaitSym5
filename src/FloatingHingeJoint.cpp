@@ -24,7 +24,7 @@ FloatingHingeJoint::FloatingHingeJoint() : Joint()
 std::string *FloatingHingeJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
-    pgd::Vector3 axis = body1Marker()->GetWorldAxis(Marker::Axis::X);
+    pgd::Vector3 axis = body1Marker()->worldAxis(Marker::Axis::X);
     this->setAxis(axis);
 
     std::string buf;

@@ -79,10 +79,10 @@ void Geom::setQuaternion(double n, double x, double y, double z)
 void Geom::setGeomMarker(Marker *geomMarker)
 {
     m_geomMarker = geomMarker;
-    if (m_geomMarker->GetBody())
+    if (m_geomMarker->body())
     {
         this->setGeomLocation(Geom::OnBody);
-        this->setBody(m_geomMarker->GetBody());
+        this->setBody(m_geomMarker->body());
     }
     else
     {
@@ -92,9 +92,9 @@ void Geom::setGeomMarker(Marker *geomMarker)
     }
     if (dynamic_cast<PlaneGeom *>(this)) return; // do not try to place non-placeable geoms
 
-    pgd::Vector3 p = geomMarker->GetPosition();
+    pgd::Vector3 p = geomMarker->position();
     this->setPosition(p.x, p.y, p.z);
-    pgd::Quaternion q = geomMarker->GetQuaternion();
+    pgd::Quaternion q = geomMarker->quaternion();
     this->setQuaternion(q.n, q.x, q.y, q.z);
 }
 
@@ -174,8 +174,8 @@ std::string Geom::dumpToString()
         ss << "Time\tXP\tYP\tZP\tQW\tQX\tQY\tQZ\tNContacts\tBody1\tBody2\tXC\tYC\tZC\tFX\tFY\tFZ\tTX\tTY\tTZ\n";
     }
 
-    pgd::Vector3 p = m_geomMarker->GetWorldPosition();
-    pgd::Quaternion q = m_geomMarker->GetWorldQuaternion();
+    pgd::Vector3 p = m_geomMarker->worldPosition();
+    pgd::Quaternion q = m_geomMarker->worldQuaternion();
     ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" << m_contactList.size();
     std::string body1, body2;
     for (auto &&iter : m_contactList)

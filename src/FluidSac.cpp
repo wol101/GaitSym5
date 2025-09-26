@@ -27,11 +27,11 @@ FluidSac::FluidSac()
 
 void FluidSac::calculateVolume()
 {
-    for (size_t i = 0; i < m_markerList.size(); i++) m_vertexList[i] = m_markerList[i]->GetWorldPosition();
+    for (size_t i = 0; i < m_markerList.size(); i++) m_vertexList[i] = m_markerList[i]->worldPosition();
     double currentVolume = volumeOfMesh(m_triangleList, m_vertexList);
     double deltaT = simulation()->GetTimeIncrement() / 1e-6;
     std::vector<pgd::Vector3> deltaList(m_markerList.size());
-    for (size_t i = 0; i < m_markerList.size(); i++) deltaList[i] = m_markerList[i]->GetWorldLinearVelocity() * deltaT; // using the marker velocities gives a semi-implicit solution which should be more stable
+    for (size_t i = 0; i < m_markerList.size(); i++) deltaList[i] = m_markerList[i]->worldLinearVelocity() * deltaT; // using the marker velocities gives a semi-implicit solution which should be more stable
     std::vector<pgd::Vector3> vertexList1 = m_vertexList;
     std::vector<pgd::Vector3> vertexList2 = m_vertexList;
     for (size_t i = 0; i < m_markerList.size(); i++) vertexList1[i] -= deltaList[i];
@@ -87,15 +87,15 @@ void FluidSac::calculateLoadsOnMarkers()
         double R2 = (F*(x*y0 - x0*y - x*y1 + x0*y1 + x1*y - x1*y0)) / denom;
 
         // and add the reaction forces to the body
-        m_pointForceList[pointListIndex].body = m_markerList[it->v0]->GetBody();
+        m_pointForceList[pointListIndex].body = m_markerList[it->v0]->body();
         m_pointForceList[pointListIndex].point = m_vertexList[it->v0];
         m_pointForceList[pointListIndex].vector = it->normal * R0;
         pointListIndex++;
-        m_pointForceList[pointListIndex].body = m_markerList[it->v1]->GetBody();
+        m_pointForceList[pointListIndex].body = m_markerList[it->v1]->body();
         m_pointForceList[pointListIndex].point = m_vertexList[it->v1];
         m_pointForceList[pointListIndex].vector = it->normal * R1;
         pointListIndex++;
-        m_pointForceList[pointListIndex].body = m_markerList[it->v2]->GetBody();
+        m_pointForceList[pointListIndex].body = m_markerList[it->v2]->body();
         m_pointForceList[pointListIndex].point = m_vertexList[it->v2];
         m_pointForceList[pointListIndex].vector = it->normal * R2;
         pointListIndex++;

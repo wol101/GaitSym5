@@ -58,8 +58,8 @@ void DrawMarker::initialise(SimulationWidget *simulationWidget)
 
 void DrawMarker::updateEntityPose()
 {
-    pgd::Vector3 p = m_marker->GetWorldPosition();
-    pgd::Quaternion q = m_marker->GetWorldQuaternion();
+    pgd::Vector3 p = m_marker->worldPosition();
+    pgd::Quaternion q = m_marker->worldQuaternion();
     SetDisplayScale(m_marker->size1(), m_marker->size1(), m_marker->size1());
     SetDisplayRotationFromQuaternion(q.constData());
     SetDisplayPosition(p.x, p.y, p.z);

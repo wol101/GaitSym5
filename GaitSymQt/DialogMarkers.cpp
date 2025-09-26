@@ -94,19 +94,19 @@ void DialogMarkers::accept() // this catches OK and return/enter
     markerPtr->setSimulation(m_simulation);
     if (ui->comboBoxBodyID->currentText() != "World")
     {
-        markerPtr->SetBody(m_simulation->GetBodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
+        markerPtr->setBody(m_simulation->GetBodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
 
         pgd::Vector3 pos;
         pos[0] = ui->lineEditPositionX->value();
         pos[1] = ui->lineEditPositionY->value();
         pos[2] = ui->lineEditPositionZ->value();
-        markerPtr->SetWorldPosition(pos[0], pos[1], pos[2]);
+        markerPtr->setWorldPosition(pos[0], pos[1], pos[2]);
 
         double ex = ui->lineEditEulerX->value();
         double ey = ui->lineEditEulerY->value();
         double ez = ui->lineEditEulerZ->value();
         pgd::Quaternion qWorld = pgd::MakeQFromEulerAngles(ex, ey, ez);
-        markerPtr->SetWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
+        markerPtr->setWorldQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
     else     // world marker
     {
@@ -114,13 +114,13 @@ void DialogMarkers::accept() // this catches OK and return/enter
         pos[0] = ui->lineEditPositionX->value();
         pos[1] = ui->lineEditPositionY->value();
         pos[2] = ui->lineEditPositionZ->value();
-        markerPtr->SetPosition(pos[0], pos[1], pos[2]);
+        markerPtr->setPosition(pos[0], pos[1], pos[2]);
 
         double ex = ui->lineEditEulerX->value();
         double ey = ui->lineEditEulerY->value();
         double ez = ui->lineEditEulerZ->value();
         pgd::Quaternion qWorld = pgd::MakeQFromEulerAngles(ex, ey, ez);
-        markerPtr->SetQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
+        markerPtr->setQuaternion(qWorld.n, qWorld.x, qWorld.y, qWorld.z);
     }
 
     if (m_inputMarker)
@@ -215,13 +215,13 @@ void DialogMarkers::lateInitialise()
     }
     else
     {
-        if (m_inputMarker->GetBody()) ui->comboBoxBodyID->setCurrentText(QString::fromStdString(m_inputMarker->GetBody()->name()));
+        if (m_inputMarker->body()) ui->comboBoxBodyID->setCurrentText(QString::fromStdString(m_inputMarker->body()->name()));
         else ui->comboBoxBodyID->setCurrentText("World");
         ui->lineEditMarkerID->setText(QString::fromStdString(m_inputMarker->name()));
         ui->lineEditMarkerID->setEnabled(false);
-        const pgd::Quaternion q = m_inputMarker->GetWorldQuaternion();
+        const pgd::Quaternion q = m_inputMarker->worldQuaternion();
         eulerAngles = pgd::MakeEulerAnglesFromQ(q);
-        position = m_inputMarker->GetWorldPosition();
+        position = m_inputMarker->worldPosition();
     }
     ui->lineEditPositionX->setValue(position.x);
     ui->lineEditPositionY->setValue(position.y);
@@ -241,15 +241,15 @@ void DialogMarkers::calculatePosition()
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
-    pgd::Vector3 p1 = marker1->GetWorldPosition();
-    pgd::Vector3 p2 = marker2->GetWorldPosition();
+    pgd::Vector3 p1 = marker1->worldPosition();
+    pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = p1 + (p2 - p1) * fraction;
     ui->lineEditPositionX->setValue(p.x);
     ui->lineEditPositionY->setValue(p.y);
     ui->lineEditPositionZ->setValue(p.z);
 
-    pgd::Quaternion q1 = marker1->GetWorldQuaternion();
-    pgd::Quaternion q2 = marker2->GetWorldQuaternion();
+    pgd::Quaternion q1 = marker1->worldQuaternion();
+    pgd::Quaternion q2 = marker2->worldQuaternion();
     pgd::Quaternion q = slerp(q1, q2, fraction, true);
     pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
@@ -268,12 +268,12 @@ void DialogMarkers::calculatePositionCopyMarker1()
     if (markerList->size() < 1) return;
     GaitSym::Marker *marker = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
 
-    pgd::Vector3 p = marker->GetWorldPosition();
+    pgd::Vector3 p = marker->worldPosition();
     ui->lineEditPositionX->setValue(p.x);
     ui->lineEditPositionY->setValue(p.y);
     ui->lineEditPositionZ->setValue(p.z);
 
-    pgd::Quaternion q = marker->GetWorldQuaternion();
+    pgd::Quaternion q = marker->worldQuaternion();
     pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
@@ -286,12 +286,12 @@ void DialogMarkers::calculatePositionCopyMarker2()
     if (markerList->size() < 1) return;
     GaitSym::Marker *marker = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
-    pgd::Vector3 p = marker->GetWorldPosition();
+    pgd::Vector3 p = marker->worldPosition();
     ui->lineEditPositionX->setValue(p.x);
     ui->lineEditPositionY->setValue(p.y);
     ui->lineEditPositionZ->setValue(p.z);
 
-    pgd::Quaternion q = marker->GetWorldQuaternion();
+    pgd::Quaternion q = marker->worldQuaternion();
     pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
     ui->lineEditEulerY->setValue(e.y);
@@ -307,7 +307,7 @@ void DialogMarkers::calculateOrientation2Marker()
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxOrientation2Marker2->currentText().toStdString()).get();
 
     pgd::Vector3 v1(1, 0, 0);
-    pgd::Vector3 v2 = marker2->GetWorldPosition() - marker1->GetWorldPosition();
+    pgd::Vector3 v2 = marker2->worldPosition() - marker1->worldPosition();
     pgd::Quaternion q = pgd::FindRotation(v1, v2);
     pgd::Vector3 e = pgd::MakeEulerAnglesFromQ(q);
     ui->lineEditEulerX->setValue(e.x);
@@ -331,9 +331,9 @@ void DialogMarkers::calculateOrientation3Marker()
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxOrientation3Marker2->currentText().toStdString()).get();
     GaitSym::Marker *marker3 = markerList->at(ui->comboBoxOrientation3Marker3->currentText().toStdString()).get();
 
-    pgd::Vector3 xAxis = (marker2->GetWorldPosition() - marker1->GetWorldPosition());
+    pgd::Vector3 xAxis = (marker2->worldPosition() - marker1->worldPosition());
     xAxis.Normalize();
-    pgd::Vector3 zAxis = xAxis ^ (marker3->GetWorldPosition() - marker2->GetWorldPosition());
+    pgd::Vector3 zAxis = xAxis ^ (marker3->worldPosition() - marker2->worldPosition());
     zAxis.Normalize();
     pgd::Vector3 yAxis = zAxis ^ xAxis;
     yAxis.Normalize();
@@ -369,7 +369,7 @@ void DialogMarkers::calculateMirrorMarker()
     else if (ui->radioButtonZ->isChecked()) m = pgd::Matrix3x3(1, 0, 0,
                                                                0, 1, 0,
                                                                0, 0, -1);
-    pgd::Vector3 p = m * marker->GetWorldPosition();
+    pgd::Vector3 p = m * marker->worldPosition();
     ui->lineEditPositionX->setValue(p.x);
     ui->lineEditPositionY->setValue(p.y);
     ui->lineEditPositionZ->setValue(p.z);
@@ -377,7 +377,7 @@ void DialogMarkers::calculateMirrorMarker()
     // you cannot mirror a marker orientation ('cos chirality)
     // so I can only mirror 2 axes and I have to recalculate the 3rd
     pgd::Vector3 x, y, z;
-    marker->GetWorldBasis(&x, &y, &z);
+    marker->getWorldBasis(&x, &y, &z);
     x = m * x;
     y = m * y;
     z = x ^ y;
@@ -490,8 +490,8 @@ void DialogMarkers::lineEditFractionTextChanged(const QString & /* text */)
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
-    pgd::Vector3 p1 = marker1->GetWorldPosition();
-    pgd::Vector3 p2 = marker2->GetWorldPosition();
+    pgd::Vector3 p1 = marker1->worldPosition();
+    pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = (p2 - p1) * fraction;
     QSignalBlocker blocker(ui->lineEditDistance);
     ui->lineEditDistance->setValue(p.Magnitude());
@@ -505,8 +505,8 @@ void DialogMarkers::lineEditDistanceTextChanged(const QString & /* text */)
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
-    pgd::Vector3 p1 = marker1->GetWorldPosition();
-    pgd::Vector3 p2 = marker2->GetWorldPosition();
+    pgd::Vector3 p1 = marker1->worldPosition();
+    pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = (p2 - p1) / distance;
     QSignalBlocker blocker(ui->lineEditFraction);
     ui->lineEditFraction->setValue(p.Magnitude());
@@ -605,8 +605,8 @@ void DialogMarkers::positionMarkerChanged(const QString & /* text */)
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
-    pgd::Vector3 p1 = marker1->GetWorldPosition();
-    pgd::Vector3 p2 = marker2->GetWorldPosition();
+    pgd::Vector3 p1 = marker1->worldPosition();
+    pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = (p2 - p1) * fraction;
     QSignalBlocker blocker(ui->lineEditDistance);
     ui->lineEditDistance->setValue(p.Magnitude());
@@ -623,7 +623,7 @@ void DialogMarkers::orientation2MarkerChanged(const QString & /* text */)
     marker1 = markerList->at(ui->comboBoxOrientation2Marker1->currentText().toStdString()).get();
     marker2 = markerList->at(ui->comboBoxOrientation2Marker2->currentText().toStdString()).get();
 
-    v2 = marker2->GetWorldPosition() - marker1->GetWorldPosition();
+    v2 = marker2->worldPosition() - marker1->worldPosition();
     if (v2.Magnitude2() > 1e-10) goto enable_button;
     else goto disable_button;
 
@@ -649,8 +649,8 @@ void DialogMarkers::orientation3MarkerChanged(const QString & /* text */)
     marker2 = markerList->at(ui->comboBoxOrientation3Marker2->currentText().toStdString()).get();
     marker3 = markerList->at(ui->comboBoxOrientation3Marker3->currentText().toStdString()).get();
 
-    v1 = (marker2->GetWorldPosition() - marker1->GetWorldPosition());
-    v2 = (marker3->GetWorldPosition() - marker2->GetWorldPosition());
+    v1 = (marker2->worldPosition() - marker1->worldPosition());
+    v2 = (marker3->worldPosition() - marker2->worldPosition());
 
     if (v1.Magnitude2() < 1e-10 || v2.Magnitude2() < 1e-10) goto disable_button;
     v1.Normalize();

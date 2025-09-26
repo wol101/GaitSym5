@@ -113,8 +113,8 @@ void DialogGeoms::accept() // this catches OK and return/enter
         if (strapTab == "Plane")
         {
             GaitSym::Marker *geomMarker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
-            pgd::Vector3 normal = geomMarker->GetWorldAxis(GaitSym::Marker::Axis::Z);
-            pgd::Vector3 point = geomMarker->GetWorldPosition();
+            pgd::Vector3 normal = geomMarker->worldAxis(GaitSym::Marker::Axis::Z);
+            pgd::Vector3 point = geomMarker->worldPosition();
             double a = normal.x;
             double b = normal.y;
             double c = normal.z;

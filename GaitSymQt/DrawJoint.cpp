@@ -161,8 +161,8 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
 void DrawJoint::updateEntityPose()
 {
     GaitSym::Marker *marker = m_joint->body1Marker();
-    pgd::Quaternion q = marker->GetWorldQuaternion();
-    pgd::Vector3 p = marker->GetWorldPosition();
+    pgd::Quaternion q = marker->worldQuaternion();
+    pgd::Vector3 p = marker->worldPosition();
     SetDisplayRotationFromQuaternion(q.data());
     SetDisplayPosition(p.x, p.y, p.z);
     if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))

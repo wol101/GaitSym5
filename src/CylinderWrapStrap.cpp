@@ -35,12 +35,12 @@ void CylinderWrapStrap::setOriginMarker(Marker *originMarker)
     if (GetPointForceList()->size() == 0)
     {
         std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
-        origin->body = m_originMarker->GetBody();
+        origin->body = m_originMarker->body();
         GetPointForceList()->push_back(std::move(origin));
     }
     else
     {
-        GetPointForceList()->at(0)->body = m_originMarker->GetBody();
+        GetPointForceList()->at(0)->body = m_originMarker->body();
     }
 }
 
@@ -50,12 +50,12 @@ void CylinderWrapStrap::setInsertionMarker(Marker *insertionMarker)
     if (GetPointForceList()->size() <= 1)
     {
         std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
-        insertion->body = m_insertionMarker->GetBody();
+        insertion->body = m_insertionMarker->body();
         GetPointForceList()->push_back(std::move(insertion));
     }
     else
     {
-        GetPointForceList()->at(1)->body =  m_insertionMarker->GetBody();
+        GetPointForceList()->at(1)->body =  m_insertionMarker->body();
     }
 }
 
@@ -65,12 +65,12 @@ void CylinderWrapStrap::setCylinderMarker(Marker *cylinderMarker)
     if (GetPointForceList()->size() <= 2)
     {
         std::unique_ptr<PointForce> cylinder = std::make_unique<PointForce>();
-        cylinder->body = m_cylinderMarker->GetBody();
+        cylinder->body = m_cylinderMarker->body();
         GetPointForceList()->push_back(std::move(cylinder));
     }
     else
     {
-        GetPointForceList()->at(2)->body = m_cylinderMarker->GetBody();
+        GetPointForceList()->at(2)->body = m_cylinderMarker->body();
     }
 }
 
@@ -107,22 +107,22 @@ Marker *CylinderWrapStrap::cylinderMarker() const
 
 void CylinderWrapStrap::calculate()
 {
-    pgd::Quaternion qOriginBody = originMarker()->GetBody()->quaternion();
-    pgd::Vector3 vOriginBody = originMarker()->GetBody()->position();
-    pgd::Quaternion qInsertionBody = insertionMarker()->GetBody()->quaternion();
-    pgd::Vector3 vInsertionBody = insertionMarker()->GetBody()->position();
-    pgd::Quaternion qCylinderBody = cylinderMarker()->GetBody()->quaternion();
-    pgd::Vector3 vCylinderBody = cylinderMarker()->GetBody()->position();
+    pgd::Quaternion qOriginBody = originMarker()->body()->quaternion();
+    pgd::Vector3 vOriginBody = originMarker()->body()->position();
+    pgd::Quaternion qInsertionBody = insertionMarker()->body()->quaternion();
+    pgd::Vector3 vInsertionBody = insertionMarker()->body()->position();
+    pgd::Quaternion qCylinderBody = cylinderMarker()->body()->quaternion();
+    pgd::Vector3 vCylinderBody = cylinderMarker()->body()->position();
 
-    pgd::Vector3 m_originPosition = originMarker()->GetPosition();
-    pgd::Vector3 m_insertionPosition = insertionMarker()->GetPosition();
-    pgd::Vector3 m_cylinderPosition = cylinderMarker()->GetPosition();
-    Body *m_originBody = originMarker()->GetBody();
-    Body *m_insertionBody = insertionMarker()->GetBody();
-    Body *m_cylinderBody = cylinderMarker()->GetBody();
+    pgd::Vector3 m_originPosition = originMarker()->position();
+    pgd::Vector3 m_insertionPosition = insertionMarker()->position();
+    pgd::Vector3 m_cylinderPosition = cylinderMarker()->position();
+    Body *m_originBody = originMarker()->body();
+    Body *m_insertionBody = insertionMarker()->body();
+    Body *m_cylinderBody = cylinderMarker()->body();
 
     // the cylinder quaternion in this implementation is the quaternion that rotates the the x axis of the marker to the z axis
-    pgd::Vector3 v2 = cylinderMarker()->GetAxis(Marker::Axis::X);
+    pgd::Vector3 v2 = cylinderMarker()->axis(Marker::Axis::X);
     pgd::Vector3 v1(0, 0, 1); // and this is the Z axis we need to rotate
     pgd::Quaternion m_cylinderQuaternion = pgd::FindRotation(v1, v2);
 

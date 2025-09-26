@@ -59,8 +59,8 @@ std::string TorqueReporter::dumpToString()
     pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;
     Marker marker(mBody);
-    marker.SetPosition(mPivotPoint.x, mPivotPoint.y, mPivotPoint.z);
-    centre = marker.GetWorldPosition();
+    marker.setPosition(mPivotPoint.x, mPivotPoint.y, mPivotPoint.z);
+    centre = marker.worldPosition();
 
 // These are the same but the second option works even when tension is zero
 //        if (tension > 0)
@@ -100,8 +100,8 @@ std::string TorqueReporter::dumpToString()
 
     // convert to body local coordinates
     pgd::Vector3 bodyTorque, bodyMomentArm;
-    bodyTorque = marker.GetVector(totalTorque);
-    bodyMomentArm = marker.GetVector(momentArm);
+    bodyTorque = marker.vector(totalTorque);
+    bodyMomentArm = marker.vector(momentArm);
 
     // now find the rotation axis specific values
     pgd::Matrix3x3 R;

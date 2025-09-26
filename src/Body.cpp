@@ -98,7 +98,7 @@ std::string *Body::setPosition(const std::string &buf)
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" marker not found"s);
             return lastErrorPtr();
         }
-        pgd::Vector3 wp = marker->GetWorldPosition();
+        pgd::Vector3 wp = marker->worldPosition();
         this->setPosition(wp.x, wp.y, wp.z);
         return nullptr;
     }
@@ -113,20 +113,20 @@ std::string *Body::setPosition(const std::string &buf)
             return lastErrorPtr();
         }
         // find the marker that is relative to this body and make it marker1
-        if (marker2->GetBody() == this) std::swap(marker1, marker2);
-        if (marker2->GetBody() == this)
+        if (marker2->body() == this) std::swap(marker1, marker2);
+        if (marker2->body() == this)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" Only one marker of pair must be relative to the body"s);
             return lastErrorPtr();
         }
-        if (marker1->GetBody() != this)
+        if (marker1->body() != this)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" Only one marker of pair must be relative to the body"s);
             return lastErrorPtr();
         }
 
-        pgd::Vector3 target = marker2->GetWorldPosition();
-        pgd::Vector3 current = marker2->GetWorldPosition();
+        pgd::Vector3 target = marker2->worldPosition();
+        pgd::Vector3 current = marker2->worldPosition();
         pgd::Vector3 difference = target - current;
         this->setPosition(difference.x, difference.y, difference.z);
         return nullptr;
@@ -211,7 +211,7 @@ std::string *Body::setQuaternion(const std::string &buf)
             setLastError("Body ID=\""s + name() +"\" Quaternion=\""s + buf + "\" Cannot find marker"s);
             return lastErrorPtr();
         }
-        pgd::Quaternion wq = marker->GetWorldQuaternion();
+        pgd::Quaternion wq = marker->worldQuaternion();
         this->setQuaternion(wq.n, wq.x, wq.y, wq.z);
         return nullptr;
     }

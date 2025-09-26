@@ -441,9 +441,9 @@ std::string *FixedJoint::createFromAttributes()
     std::string buf;
     buf.reserve(1000000);
 
-    pgd::Vector3 position = body1Marker()->GetPosition();
+    pgd::Vector3 position = body1Marker()->position();
     this->setStressOrigin(position.x, position.y, position.z);
-    pgd::Quaternion quaternion = body1Marker()->GetQuaternion();
+    pgd::Quaternion quaternion = body1Marker()->quaternion();
     this->setStressOrientation(quaternion.n, quaternion.x, quaternion.y, quaternion.z);
 
     // if (CFM() >= 0) dJointSetFixedParam (JointID(), dParamCFM, CFM());

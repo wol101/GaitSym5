@@ -34,60 +34,60 @@ double DataTargetMarkerCompare::calculateError(size_t index, size_t indexNext, d
     {
         if (m_marker1Comparison == XWP && m_marker2Comparison == XWP)
         {
-            double distance = m_marker2->GetWorldPosition().x - m_marker1->GetWorldPosition().x;
+            double distance = m_marker2->worldPosition().x - m_marker1->worldPosition().x;
             m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == YWP && m_marker2Comparison == YWP)
         {
-            double distance = m_marker2->GetWorldPosition().y - m_marker1->GetWorldPosition().y;
+            double distance = m_marker2->worldPosition().y - m_marker1->worldPosition().y;
             m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == ZWP && m_marker2Comparison == ZWP)
         {
-            double distance = m_marker2->GetWorldPosition().z - m_marker1->GetWorldPosition().z;
+            double distance = m_marker2->worldPosition().z - m_marker1->worldPosition().z;
             m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == Distance && m_marker2Comparison == Distance)
         {
-            double distance = (m_marker1->GetWorldPosition() - m_marker2->GetWorldPosition()).Magnitude();
+            double distance = (m_marker1->worldPosition() - m_marker2->worldPosition()).Magnitude();
             m_errorScore = (distance - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == Angle && m_marker2Comparison == Angle)
         {
-            pgd::Quaternion q = pgd::FindRotation(m_marker1->GetWorldQuaternion(), m_marker2->GetWorldQuaternion());
+            pgd::Quaternion q = pgd::FindRotation(m_marker1->worldQuaternion(), m_marker2->worldQuaternion());
             double angle = pgd::QGetAngle(q);
             m_errorScore = (angle - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == LinearVelocity && m_marker2Comparison == LinearVelocity)
         {
-            double linearVelocity = (m_marker1->GetWorldLinearVelocity() - m_marker2->GetWorldLinearVelocity()).Magnitude();
+            double linearVelocity = (m_marker1->worldLinearVelocity() - m_marker2->worldLinearVelocity()).Magnitude();
             m_errorScore = (linearVelocity - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         if (m_marker1Comparison == AngularVelocity && m_marker2Comparison == AngularVelocity)
         {
-            double angularVelocity = (m_marker1->GetWorldAngularVelocity() - m_marker2->GetWorldAngularVelocity()).Magnitude();
+            double angularVelocity = (m_marker1->worldAngularVelocity() - m_marker2->worldAngularVelocity()).Magnitude();
             m_errorScore = (angularVelocity - GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time));
             break;
         }
         pgd::Vector3 axis1, axis2;
         while (true)
         {
-            if (m_marker1Comparison == XAD) { axis1 = m_marker1->GetWorldAxis(Marker::X); break; }
-            if (m_marker1Comparison == YAD) { axis1 = m_marker1->GetWorldAxis(Marker::Y); break; }
-            if (m_marker1Comparison == ZAD) { axis1 = m_marker1->GetWorldAxis(Marker::Z); break; }
+            if (m_marker1Comparison == XAD) { axis1 = m_marker1->worldAxis(Marker::X); break; }
+            if (m_marker1Comparison == YAD) { axis1 = m_marker1->worldAxis(Marker::Y); break; }
+            if (m_marker1Comparison == ZAD) { axis1 = m_marker1->worldAxis(Marker::Z); break; }
             break;
         }
         while (true)
         {
-            if (m_marker2Comparison == XAD) { axis2 = m_marker2->GetWorldAxis(Marker::X); break; }
-            if (m_marker2Comparison == YAD) { axis2 = m_marker2->GetWorldAxis(Marker::Y); break; }
-            if (m_marker2Comparison == ZAD) { axis2 = m_marker2->GetWorldAxis(Marker::Z); break; }
+            if (m_marker2Comparison == XAD) { axis2 = m_marker2->worldAxis(Marker::X); break; }
+            if (m_marker2Comparison == YAD) { axis2 = m_marker2->worldAxis(Marker::Y); break; }
+            if (m_marker2Comparison == ZAD) { axis2 = m_marker2->worldAxis(Marker::Z); break; }
             break;
         }
         // for two vectors
@@ -115,43 +115,43 @@ double DataTargetMarkerCompare::calculateError(size_t index)
     {
         if (m_marker1Comparison == XWP && m_marker2Comparison == XWP)
         {
-            double distance = m_marker2->GetWorldPosition().x - m_marker1->GetWorldPosition().x;
+            double distance = m_marker2->worldPosition().x - m_marker1->worldPosition().x;
             m_errorScore = (distance - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == YWP && m_marker2Comparison == YWP)
         {
-            double distance = m_marker2->GetWorldPosition().y - m_marker1->GetWorldPosition().y;
+            double distance = m_marker2->worldPosition().y - m_marker1->worldPosition().y;
             m_errorScore = (distance - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == ZWP && m_marker2Comparison == ZWP)
         {
-            double distance = m_marker2->GetWorldPosition().z - m_marker1->GetWorldPosition().z;
+            double distance = m_marker2->worldPosition().z - m_marker1->worldPosition().z;
             m_errorScore = (distance - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == Distance && m_marker2Comparison == Distance)
         {
-            double distance = (m_marker1->GetWorldPosition() - m_marker2->GetWorldPosition()).Magnitude();
+            double distance = (m_marker1->worldPosition() - m_marker2->worldPosition()).Magnitude();
             m_errorScore = (distance - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == Angle && m_marker2Comparison == Angle)
         {
-            double angle = pgd::FindAngle(m_marker1->GetWorldQuaternion(), m_marker2->GetWorldQuaternion());
+            double angle = pgd::FindAngle(m_marker1->worldQuaternion(), m_marker2->worldQuaternion());
             m_errorScore = (angle - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == LinearVelocity && m_marker2Comparison == LinearVelocity)
         {
-            double linearVelocity = (m_marker1->GetWorldLinearVelocity() - m_marker2->GetWorldLinearVelocity()).Magnitude();
+            double linearVelocity = (m_marker1->worldLinearVelocity() - m_marker2->worldLinearVelocity()).Magnitude();
             m_errorScore = (linearVelocity - m_valueList[size_t(index)]);
             break;
         }
         if (m_marker1Comparison == AngularVelocity && m_marker2Comparison == AngularVelocity)
         {
-            double angularVelocity = (m_marker1->GetWorldAngularVelocity() - m_marker2->GetWorldAngularVelocity()).Magnitude();
+            double angularVelocity = (m_marker1->worldAngularVelocity() - m_marker2->worldAngularVelocity()).Magnitude();
             m_errorScore = (angularVelocity - m_valueList[size_t(index)]);
             break;
         }
@@ -159,13 +159,13 @@ double DataTargetMarkerCompare::calculateError(size_t index)
         switch (m_marker1Comparison)
         {
         case XAD:
-            axis1 = m_marker1->GetWorldAxis(Marker::X);
+            axis1 = m_marker1->worldAxis(Marker::X);
             break;
         case YAD:
-            axis1 = m_marker1->GetWorldAxis(Marker::Y);
+            axis1 = m_marker1->worldAxis(Marker::Y);
             break;
         case ZAD:
-            axis1 = m_marker1->GetWorldAxis(Marker::Z);
+            axis1 = m_marker1->worldAxis(Marker::Z);
             break;
         default:
             break;
@@ -173,13 +173,13 @@ double DataTargetMarkerCompare::calculateError(size_t index)
         switch (m_marker2Comparison)
         {
         case XAD:
-            axis2 = m_marker2->GetWorldAxis(Marker::X);
+            axis2 = m_marker2->worldAxis(Marker::X);
             break;
         case YAD:
-            axis2 = m_marker2->GetWorldAxis(Marker::Y);
+            axis2 = m_marker2->worldAxis(Marker::Y);
             break;
         case ZAD:
-            axis2 = m_marker2->GetWorldAxis(Marker::Z);
+            axis2 = m_marker2->worldAxis(Marker::Z);
             break;
         default:
             break;
