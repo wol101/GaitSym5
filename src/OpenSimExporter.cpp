@@ -652,7 +652,7 @@ void OpenSimExporter::createForceSet()
         {
             if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strap))
             {
-                createPathPointSet(muscle->name(), {twoPointStrap->GetOriginMarker(), twoPointStrap->GetInsertionMarker()});
+                createPathPointSet(muscle->name(), {twoPointStrap->originMarker(), twoPointStrap->insertionMarker()});
                 break;
             }
             if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strap))

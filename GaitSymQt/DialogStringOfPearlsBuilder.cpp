@@ -335,8 +335,8 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
             pathCoordinates.reserve(pointForceList->size());
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
-            originID = twoPointStrap->GetOriginMarker()->name();
-            insertionID = twoPointStrap->GetInsertionMarker()->name();
+            originID = twoPointStrap->originMarker()->name();
+            insertionID = twoPointStrap->insertionMarker()->name();
             break;
         }
 
@@ -520,8 +520,8 @@ void DialogStringOfPearlsBuilder::createMuscles()
         if (i < numPearls) { insertionMarker = m_markerList[i].get(); }
         else { insertionMarker = m_simulation->getMarker(ui->comboBoxInsertionMarkerID->currentText().toStdString()); }
         auto strap = std::make_unique<GaitSym::TwoPointStrap>();
-        strap->SetOrigin(originMarker);
-        strap->SetInsertion(insertionMarker);
+        strap->setOrigin(originMarker);
+        strap->setInsertion(insertionMarker);
         strap->setSimulation(m_simulation);
         std::string strapID = GaitSym::GSUtil::toString("%s_link_strap_%03zu", rootID.c_str(), i);
         strap->setName(strapID);

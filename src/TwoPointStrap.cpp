@@ -76,7 +76,7 @@ TwoPointStrap::TwoPointStrap()
 //    insertion[2] = m_insertion[2];
 //}
 
-void TwoPointStrap::SetOrigin(Marker *originMarker)
+void TwoPointStrap::setOrigin(Marker *originMarker)
 {
     m_originMarker = originMarker;
 //    this->SetOrigin(originMarker->GetBody(), originMarker->GetPosition().data());
@@ -92,7 +92,7 @@ void TwoPointStrap::SetOrigin(Marker *originMarker)
     }
 }
 
-void TwoPointStrap::SetInsertion(Marker *insertionMarker)
+void TwoPointStrap::setInsertion(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
 //    this->SetInsertion(insertionMarker->GetBody(), insertionMarker->GetPosition().data());
@@ -230,7 +230,7 @@ std::string *TwoPointStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" OriginMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetOrigin(originMarker->second.get());
+    this->setOrigin(originMarker->second.get());
     if (findAttribute("InsertionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
     auto insertionMarker = simulation()->markerList()->find(buf);
     if (insertionMarker == simulation()->markerList()->end())
@@ -238,7 +238,7 @@ std::string *TwoPointStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" InsertionMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetInsertion(insertionMarker->second.get());
+    this->setInsertion(insertionMarker->second.get());
 
     setUpstreamObjects({m_originMarker, m_insertionMarker});
     return nullptr;
@@ -253,12 +253,12 @@ void TwoPointStrap::appendToAttributes()
     setAttribute("InsertionMarkerID"s, m_insertionMarker->name());
 }
 
-Marker *TwoPointStrap::GetOriginMarker() const
+Marker *TwoPointStrap::originMarker() const
 {
     return m_originMarker;
 }
 
-Marker *TwoPointStrap::GetInsertionMarker() const
+Marker *TwoPointStrap::insertionMarker() const
 {
     return m_insertionMarker;
 }

@@ -119,8 +119,8 @@ void DialogMuscles::accept() // this catches OK and return/enter
             strap = std::make_unique<GaitSym::TwoPointStrap>();
             GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
             GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-            reinterpret_cast<GaitSym::TwoPointStrap *>(strap.get())->SetOrigin(originMarker);
-            reinterpret_cast<GaitSym::TwoPointStrap *>(strap.get())->SetInsertion(insertionMarker);
+            reinterpret_cast<GaitSym::TwoPointStrap *>(strap.get())->setOrigin(originMarker);
+            reinterpret_cast<GaitSym::TwoPointStrap *>(strap.get())->setInsertion(insertionMarker);
         }
         else
         {

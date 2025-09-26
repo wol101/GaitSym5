@@ -701,8 +701,8 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
 
         if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(twoPointStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(twoPointStrap->GetInsertionMarker());
+            Marker *originMarker = createLocalMarkerCopy(twoPointStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(twoPointStrap->insertionMarker());
             if (!originMarker || !insertionMarker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -710,8 +710,8 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<TwoPointStrap> strap = std::make_unique<TwoPointStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
+            strap->setOrigin(originMarker);
+            strap->setInsertion(insertionMarker);
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
