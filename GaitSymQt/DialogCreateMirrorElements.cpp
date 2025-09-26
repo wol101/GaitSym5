@@ -179,7 +179,7 @@ void DialogCreateMirrorElements::apply()
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
     std::string rootNodeTag = "GAITSYM5"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
+    lastError = m_parseXML.loadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -195,7 +195,7 @@ void DialogCreateMirrorElements::apply()
 
     applyMirrorCreate(fromString, toString, axis);
 
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogCreateMirrorElements::apply"s);
+    std::string newXML = m_parseXML.saveModel("GAITSYM5"s, "Created from DialogCreateMirrorElements::apply"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }

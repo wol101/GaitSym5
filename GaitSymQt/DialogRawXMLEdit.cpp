@@ -483,7 +483,7 @@ void DialogRawXMLEdit::attributeMachineApply()
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
     std::string rootNodeTag = "GAITSYM5"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
+    lastError = m_parseXML.loadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -506,7 +506,7 @@ void DialogRawXMLEdit::attributeMachineApply()
                 tokens[5].toStdString(), tokens[6].toStdString(), tokens[7].toStdString(), tokens[8].toStdString());
     }
 
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogRawXMLEdit::attributeMachineApply"s);
+    std::string newXML = m_parseXML.saveModel("GAITSYM5"s, "Created from DialogRawXMLEdit::attributeMachineApply"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }
@@ -745,7 +745,7 @@ void DialogRawXMLEdit::resetPositions()
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
     std::string rootNodeTag = "GAITSYM5"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
+    lastError = m_parseXML.loadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -773,7 +773,7 @@ void DialogRawXMLEdit::resetPositions()
             quaternion->second = "1 0 0 0"s;
         }
     }
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogRawXMLEdit::resetPositions"s);
+    std::string newXML = m_parseXML.saveModel("GAITSYM5"s, "Created from DialogRawXMLEdit::resetPositions"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }

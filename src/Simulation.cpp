@@ -93,7 +93,7 @@ Simulation::~Simulation()
 std::string *Simulation::LoadModel(const char *buffer, size_t length) // note this requires buffer to be a 0 terminated string of size length + 1
 {
     std::string rootTag;
-    std::string *ptr = m_parseXML.LoadModel(buffer, length, &rootTag);
+    std::string *ptr = m_parseXML.loadModel(buffer, length, &rootTag);
     if (ptr) return ptr;
 
     while(true)
@@ -1029,19 +1029,19 @@ std::string Simulation::SaveToXML()
 {
     m_parseXML.elementList()->clear();
 
-    m_global->saveToAttributes(); m_parseXML.AddElement("GLOBAL"s, m_global->attributeMap());
-    for (auto &&it : m_BodyList) { it.second->saveToAttributes(); m_parseXML.AddElement("BODY"s, it.second->attributeMap()); }
-    for (auto &&it : m_MarkerList) { it.second->saveToAttributes(); m_parseXML.AddElement("MARKER"s, it.second->attributeMap()); }
-    for (auto &&it : m_JointList) { it.second->saveToAttributes(); m_parseXML.AddElement("JOINT"s, it.second->attributeMap()); }
-    for (auto &&it : m_GeomList) { it.second->saveToAttributes(); m_parseXML.AddElement("GEOM"s, it.second->attributeMap()); }
-    for (auto &&it : m_StrapList) { it.second->saveToAttributes(); m_parseXML.AddElement("STRAP"s, it.second->attributeMap()); }
-    for (auto &&it : m_MuscleList) { it.second->saveToAttributes(); m_parseXML.AddElement("MUSCLE"s, it.second->attributeMap()); }
-    for (auto &&it : m_FluidSacList) { it.second->saveToAttributes(); m_parseXML.AddElement("FLUIDSAC"s, it.second->attributeMap()); }
-    for (auto &&it : m_ReporterList) { it.second->saveToAttributes(); m_parseXML.AddElement("REPORTER"s, it.second->attributeMap()); }
-    for (auto &&it : m_ControllerList) { it.second->saveToAttributes(); m_parseXML.AddElement("CONTROLLER"s, it.second->attributeMap()); }
-    for (auto &&it : m_DriverList) { it.second->saveToAttributes(); m_parseXML.AddElement("DRIVER"s, it.second->attributeMap()); }
-    for (auto &&it : m_DataTargetList) { it.second->saveToAttributes(); m_parseXML.AddElement("DATATARGET"s, it.second->attributeMap()); }
-    for (auto &&it : m_LightList) { it.second->saveToAttributes(); m_parseXML.AddElement("LIGHT"s, it.second->attributeMap()); }
+    m_global->saveToAttributes(); m_parseXML.addElement("GLOBAL"s, m_global->attributeMap());
+    for (auto &&it : m_BodyList) { it.second->saveToAttributes(); m_parseXML.addElement("BODY"s, it.second->attributeMap()); }
+    for (auto &&it : m_MarkerList) { it.second->saveToAttributes(); m_parseXML.addElement("MARKER"s, it.second->attributeMap()); }
+    for (auto &&it : m_JointList) { it.second->saveToAttributes(); m_parseXML.addElement("JOINT"s, it.second->attributeMap()); }
+    for (auto &&it : m_GeomList) { it.second->saveToAttributes(); m_parseXML.addElement("GEOM"s, it.second->attributeMap()); }
+    for (auto &&it : m_StrapList) { it.second->saveToAttributes(); m_parseXML.addElement("STRAP"s, it.second->attributeMap()); }
+    for (auto &&it : m_MuscleList) { it.second->saveToAttributes(); m_parseXML.addElement("MUSCLE"s, it.second->attributeMap()); }
+    for (auto &&it : m_FluidSacList) { it.second->saveToAttributes(); m_parseXML.addElement("FLUIDSAC"s, it.second->attributeMap()); }
+    for (auto &&it : m_ReporterList) { it.second->saveToAttributes(); m_parseXML.addElement("REPORTER"s, it.second->attributeMap()); }
+    for (auto &&it : m_ControllerList) { it.second->saveToAttributes(); m_parseXML.addElement("CONTROLLER"s, it.second->attributeMap()); }
+    for (auto &&it : m_DriverList) { it.second->saveToAttributes(); m_parseXML.addElement("DRIVER"s, it.second->attributeMap()); }
+    for (auto &&it : m_DataTargetList) { it.second->saveToAttributes(); m_parseXML.addElement("DATATARGET"s, it.second->attributeMap()); }
+    for (auto &&it : m_LightList) { it.second->saveToAttributes(); m_parseXML.addElement("LIGHT"s, it.second->attributeMap()); }
 
     std::stringstream comment;
     comment << "Simulation Time: " << m_SimulationTime <<
@@ -1049,7 +1049,7 @@ std::string Simulation::SaveToXML()
                " Score: " << CalculateInstantaneousFitness() <<
                " Mechanical Energy: " << m_MechanicalEnergy <<
                " Metabolic Energy: " << m_MetabolicEnergy;
-    return m_parseXML.SaveModel("GAITSYM5"s, comment.str());
+    return m_parseXML.saveModel("GAITSYM5"s, comment.str());
 }
 
 // output the simulation state in an XML format that can be re-read
