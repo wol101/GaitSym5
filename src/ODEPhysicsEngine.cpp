@@ -65,9 +65,9 @@ std::string *ODEPhysicsEngine::initialise(Simulation *theSimulation)
     m_contactGroup = dJointGroupCreate(0);
 
     // set the error handlers
-    dSetMessageHandler(ODEMessageTrap);
-    dSetErrorHandler(ODEMessageTrap);
-    dSetDebugHandler(ODEMessageTrap);
+    dSetMessageHandler(odeMessageTrap);
+    dSetErrorHandler(odeMessageTrap);
+    dSetDebugHandler(odeMessageTrap);
 
     // apply the global values
     Global *global = simulation()->GetGlobal();
@@ -79,17 +79,17 @@ std::string *ODEPhysicsEngine::initialise(Simulation *theSimulation)
     dWorldSetDamping(m_worldID, global->linearDamping(), global->angularDamping());
 
     // create the ODE versions of the main elements
-    CreateBodies();
-    CreateJoints();
-    CreateGeoms();
+    createBodies();
+    createJoints();
+    createGeoms();
 
     // And ODE requires that bodies be moved to their starting positions after joints have been created
-    MoveBodies();
+    moveBodies();
 
     return nullptr;
 }
 
-std::string *ODEPhysicsEngine::CreateBodies()
+std::string *ODEPhysicsEngine::createBodies()
 {
     // first create the bodies
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
@@ -114,7 +114,7 @@ std::string *ODEPhysicsEngine::CreateBodies()
     return nullptr;
 }
 
-std::string *ODEPhysicsEngine::CreateJoints()
+std::string *ODEPhysicsEngine::createJoints()
 {
     for (auto &&iter : *simulation()->GetJointList())
     {
@@ -220,7 +220,7 @@ std::string *ODEPhysicsEngine::CreateJoints()
     return nullptr;
 }
 
-std::string *ODEPhysicsEngine::CreateGeoms()
+std::string *ODEPhysicsEngine::createGeoms()
 {
     for (auto &&iter : *simulation()->GetGeomList())
     {
@@ -372,7 +372,7 @@ std::string *ODEPhysicsEngine::CreateGeoms()
     return nullptr;
 }
 
-std::string *ODEPhysicsEngine::MoveBodies()
+std::string *ODEPhysicsEngine::moveBodies()
 {
     for (auto &&iter : *simulation()->GetBodyList())
     {
@@ -397,7 +397,7 @@ std::string *ODEPhysicsEngine::step()
     // check collisions first
     dJointGroupEmpty(m_contactGroup);
     m_contactFeedbackList.clear();
-    dSpaceCollide(m_spaceID, this, &NearCallback);
+    dSpaceCollide(m_spaceID, this, &nearCallback);
 
     // apply the point forces from the muscles
     for (auto &&iter :  *simulation()->GetMuscleList())
@@ -539,7 +539,7 @@ std::string *ODEPhysicsEngine::step()
 // this is called by dSpaceCollide when two objects in space are
 // potentially colliding.
 
-void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
+void ODEPhysicsEngine::nearCallback(void *data, dGeomID o1, dGeomID o2)
 {
     ODEPhysicsEngine *s = reinterpret_cast<ODEPhysicsEngine *>(data);
     Geom *g1 = reinterpret_cast<Geom *>(dGeomGetData(o1));
@@ -654,7 +654,7 @@ void ODEPhysicsEngine::NearCallback(void *data, dGeomID o1, dGeomID o2)
     }
 }
 
-void ODEPhysicsEngine::ODEMessageTrap(int num, const char *msg, va_list ap)
+void ODEPhysicsEngine::odeMessageTrap(int num, const char *msg, va_list ap)
 {
     fflush (stderr);
     fflush (stdout);
@@ -682,7 +682,7 @@ void ODEPhysicsEngine::ODEMessageTrap(int num, const char *msg, va_list ap)
     m_messageFlag = true;
 }
 
-bool ODEPhysicsEngine::GetErrorMessage(int *messageNumber, std::string *messageText)
+bool ODEPhysicsEngine::getErrorMessage(int *messageNumber, std::string *messageText)
 {
     bool messageFlag = m_messageFlag;
     m_messageFlag = false;
