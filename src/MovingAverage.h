@@ -28,7 +28,7 @@ public:
     virtual void addNewSample(double x);
     virtual double output();
 
-    void InitialiseBuffer(int window);
+    void initialiseBuffer(int window);
 
     double sum() const;
     double average() const;

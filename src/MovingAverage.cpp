@@ -28,7 +28,7 @@ MovingAverage::MovingAverage(int window)  : Filter()
     m_average = 0;
 }
 
-void MovingAverage::InitialiseBuffer(int window)
+void MovingAverage::initialiseBuffer(int window)
 {
     m_window = window;
     m_buffer.clear();
