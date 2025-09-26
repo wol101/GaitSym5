@@ -46,7 +46,7 @@ void TwoHingeJointDriver::update()
     m_desiredLength = (targetPositionWorld - proximalJointPositionWorld).magnitude();
 
     // now find the zero of the CalculateLengthDifference to get the angle fraction that achieves this length
-    m_angleFraction = GSUtil::zeroin(0, 1, &CalculateLengthDifference, this, m_tolerance);
+    m_angleFraction = GSUtil::zeroin(0, 1, &calculateLengthDifference, this, m_tolerance);
 
     // that sorts out the angles on the distal joints- lets see where that takes us
 #ifndef NDEBUG
@@ -299,7 +299,7 @@ void TwoHingeJointDriver::update()
     }
 }
 
-pgd::Vector3 TwoHingeJointDriver::GetEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations)
+pgd::Vector3 TwoHingeJointDriver::getEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations)
 {
     // returns the Euler angles using marker axes as the basis
 
@@ -412,7 +412,7 @@ void TwoHingeJointDriver::sendData()
 
 // this funtion calculates the distance from the proximal joint to the distal Body Marker
 // dependent on the fraction of the joint limits for the interconnecting hinge joints
-void TwoHingeJointDriver::CalculateLength(double angleFraction)
+void TwoHingeJointDriver::calculateLength(double angleFraction)
 {
     // now calculate the rotations at the joints in a consistent coordinate frame (and this can be the local frame because at contruction nothing is rotated)
     m_distalJointAngle = angleFraction * (m_distalJointRange[1] - m_distalJointRange[0]) + m_distalJointRange[0];
@@ -426,10 +426,10 @@ void TwoHingeJointDriver::CalculateLength(double angleFraction)
 }
 
 // this funtion calculates the difference between the desired length and the length calculated from the angle fraction
-double TwoHingeJointDriver::CalculateLengthDifference(double angleFraction, void *data)
+double TwoHingeJointDriver::calculateLengthDifference(double angleFraction, void *data)
 {
     TwoHingeJointDriver *twoHingeJointController = static_cast<TwoHingeJointDriver *>(data);
-    twoHingeJointController->CalculateLength(angleFraction);
+    twoHingeJointController->calculateLength(angleFraction);
     double lengthError = twoHingeJointController->actualLength() - twoHingeJointController->desiredLength();
     return lengthError;
 }
@@ -496,10 +496,10 @@ std::string TwoHingeJointDriver::dumpToString()
             {
                 double v = double(i) * 0.001;
                 if (i == 1000) v = 1.0; // fix for likely rounding error
-                double le = CalculateLengthDifference(v, this);
+                double le = calculateLengthDifference(v, this);
                 s +=  dumpHelper({v, le});
             }
-            CalculateLength(m_angleFraction); // neeeded because CalculateLengthDifference changes m_distalJointAngle
+            calculateLength(m_angleFraction); // neeeded because CalculateLengthDifference changes m_distalJointAngle
         }
         s += dumpHelper({"Time", "MarkerDistance"s, "DesiredLength"s, "AngleFraction"s, "ProximalAngleFraction1"s,
                          "ProximalJointAngle1"s, "ProximalJointAngle2"s, "DistalJointAngle"s,
@@ -598,7 +598,7 @@ std::string *TwoHingeJointDriver::createFromAttributes()
     // we need to find the best ordering for the distal joint ranges
     // so that we get a monotonically increasing function
     double eps = 1.0 / 1000;
-    int monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+    int monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
     if (monotonic != +1 && monotonic != -1)
     {
         std::string message = "Driver ID=\""s + name() +"\" selected DistalJointRange does not produce a monotonic length change\n"s;
@@ -606,7 +606,7 @@ std::string *TwoHingeJointDriver::createFromAttributes()
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_distalJointRange.x, m_distalJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
         message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
