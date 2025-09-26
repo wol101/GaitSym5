@@ -35,7 +35,7 @@ TwoHingeJointDriver::TwoHingeJointDriver()
 {
 }
 
-void TwoHingeJointDriver::Update()
+void TwoHingeJointDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

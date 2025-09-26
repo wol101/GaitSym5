@@ -62,7 +62,7 @@ void StackedBoxcarDriver::SetHeights(double *Heights)
 }
 
 
-void StackedBoxcarDriver::Update()
+void StackedBoxcarDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

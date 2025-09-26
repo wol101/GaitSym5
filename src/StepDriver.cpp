@@ -33,7 +33,7 @@ StepDriver::~StepDriver()
 // this routine assumes that the time is always greater than or
 // equal to the previously requested time since this greatly speeds
 // up the search since it only ever has to check 2 values
-void StepDriver::Update()
+void StepDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

@@ -181,7 +181,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
     m_CycleTime = 0;
     for (auto &&driver : m_DriverList)
     {
-        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get())) m_CycleTime = std::max(cyclicDriver->GetCycleTime(), m_CycleTime);
+        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get())) m_CycleTime = std::max(cyclicDriver->cycleTime(), m_CycleTime);
         else if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get())) m_CycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_CycleTime);
     }
     return nullptr;
@@ -261,7 +261,7 @@ void Simulation::UpdateSimulation()
     // update the drivers
     for (auto &&it : m_DriverList)
     {
-        it.second->Update();
+        it.second->update();
         it.second->SendData();
     }
     // and the controllers (which are drivers too probably)
@@ -270,7 +270,7 @@ void Simulation::UpdateSimulation()
         auto driver = dynamic_cast<Driver *>(it.second.get());
         if (driver)
         {
-            driver->Update();
+            driver->update();
             driver->SendData();
         }
         if (it.second->lastStepCount() != m_StepCount)

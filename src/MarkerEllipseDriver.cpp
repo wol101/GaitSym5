@@ -77,7 +77,7 @@ void MarkerEllipseDriver::SendData()
     }
 }
 
-void MarkerEllipseDriver::Update()
+void MarkerEllipseDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

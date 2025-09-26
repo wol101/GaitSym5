@@ -35,7 +35,7 @@ ThreeHingeJointDriver::ThreeHingeJointDriver()
 {
 }
 
-void ThreeHingeJointDriver::Update()
+void ThreeHingeJointDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

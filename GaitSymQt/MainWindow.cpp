@@ -1509,7 +1509,7 @@ void MainWindow::menuSaveAs()
         this->setWindowModified(false);
         if (this->m_mode == MainWindow::constructionMode)
         {
-            for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterConstructionMode();
+            for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
             for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
             for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
         }
@@ -1554,7 +1554,7 @@ void MainWindow::menuSave()
     this->setWindowModified(false);
     if (this->m_mode == MainWindow::constructionMode)
     {
-        for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterConstructionMode();
+        for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
         for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
         for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
     }
@@ -2711,7 +2711,7 @@ void MainWindow::enterConstructionMode()
     Q_ASSERT_X(this->m_simulation, "MainWindow::enterConstructionMode", "this->m_simulation undefined");
     Q_ASSERT_X(this->m_stepCount == 0, "MainWindow::enterConstructionMode", "this->m_stepCount not zero");
     this->m_mode = MainWindow::constructionMode;
-    for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterConstructionMode();
+    for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterConstructionMode();
     for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
     for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
     for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();

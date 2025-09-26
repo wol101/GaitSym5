@@ -29,7 +29,7 @@ public:
                     Marker *tegotaeCentre, Marker *tegotaeRim, Marker *errorOutput, Marker *forceDirection,
                     const std::vector<Geom *> &contactGeomList);
 
-    virtual void Update();
+    virtual void update();
     virtual void SendData();
 
     void UpdateReactionForce();

@@ -80,7 +80,7 @@ void TegotaeDriver::SendData()
     }
 }
 
-void TegotaeDriver::Update()
+void TegotaeDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

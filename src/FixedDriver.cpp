@@ -22,7 +22,7 @@ FixedDriver::FixedDriver()
 {
 }
 
-void FixedDriver::Update()
+void FixedDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

@@ -31,7 +31,7 @@ public:
     Drivable *GetTarget(const std::string & name);
     double Clamp(double value);
 
-    virtual void Update() = 0;
+    virtual void update() = 0;
     virtual void SendData();
 
     virtual std::string dumpToString();

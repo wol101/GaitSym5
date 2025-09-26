@@ -27,7 +27,7 @@ CyclicDriver::~CyclicDriver()
 {
 }
 
-void CyclicDriver::Update()
+void CyclicDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());
@@ -139,7 +139,7 @@ void CyclicDriver::setDurationList(const std::vector<double> &durationList)
     m_durationList = durationList;
 }
 
-double CyclicDriver::GetCycleTime() const
+double CyclicDriver::cycleTime() const
 {
     double cycleTime = 0;
     for (auto &&duration : m_durationList)

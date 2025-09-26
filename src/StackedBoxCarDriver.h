@@ -35,7 +35,7 @@ public:
     std::vector<double> *GetWidths() { return &m_Widths; }
     std::vector<double> *GetHeights() { return &m_Heights; }
 
-    virtual void Update();
+    virtual void update();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

@@ -33,7 +33,7 @@ void PIDMuscleLengthController::Initialise(double Kp, double Ki, double Kd)
     m_current_length = 0;
 }
 
-void PIDMuscleLengthController::Update()
+void PIDMuscleLengthController::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->GetStepCount());

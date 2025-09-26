@@ -31,7 +31,7 @@ class ThreeHingeJointDriver : public Driver
 public:
     ThreeHingeJointDriver();
 
-    virtual void Update();
+    virtual void update();
     virtual void SendData();
 
     void CalculateLength(double angleFraction);

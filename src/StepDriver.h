@@ -23,7 +23,7 @@ public:
     StepDriver();
     virtual ~StepDriver();
 
-    virtual void Update();
+    virtual void update();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
