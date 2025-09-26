@@ -41,13 +41,13 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
             q = body->quaternion();
             angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             q = geom->GetWorldQuaternion();
             angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
@@ -75,13 +75,13 @@ double DataTargetQuaternion::calculateError(size_t index, size_t indexNext, doub
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
             q = body->quaternion();
             angle = pgd::FindAngle(interpolatedTarget, q);
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             q = geom->GetWorldQuaternion();
             angle = pgd::FindAngle(interpolatedTarget, q);
@@ -112,12 +112,12 @@ std::string DataTargetQuaternion::dumpToString()
     auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());
     if (lowerBounds != targetTimeList()->end()) valueListIndex = std::distance(targetTimeList()->begin(), lowerBounds);
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    if ((body = dynamic_cast<Body *>(target())) != nullptr)
     {
         q = body->quaternion();
         angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
     }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
+    else if ((geom = dynamic_cast<Geom *>(target())) != nullptr)
     {
         q = geom->GetWorldQuaternion();
         angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
@@ -131,12 +131,12 @@ std::string DataTargetQuaternion::dumpToString()
     return ss.str();
 }
 
-void DataTargetQuaternion::SetTarget(NamedObject *target)
+void DataTargetQuaternion::setTarget(NamedObject *target)
 {
     m_target = target;
 }
 
-NamedObject *DataTargetQuaternion::GetTarget()
+NamedObject *DataTargetQuaternion::target()
 {
     return m_target;
 }

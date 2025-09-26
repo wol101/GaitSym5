@@ -21,8 +21,8 @@ class DataTargetQuaternion : public DataTarget
 public:
     DataTargetQuaternion();
 
-    void SetTarget(NamedObject *target);
-    NamedObject *GetTarget();
+    void setTarget(NamedObject *target);
+    NamedObject *target();
 
     virtual std::string dumpToString() override;
 
