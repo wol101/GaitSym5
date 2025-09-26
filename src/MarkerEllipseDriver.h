@@ -29,7 +29,7 @@ public:
     void Initialise(double omega, double sigma, const pgd::Vector4 &XR, const pgd::Vector4 &YR, double phi, Marker *markerEllipseCentre, Marker *markerEllipseRim, DataTarget *phaseControlInput);
 
     virtual void update();
-    virtual void SendData();
+    virtual void sendData();
 
     virtual std::string dumpToString();
 

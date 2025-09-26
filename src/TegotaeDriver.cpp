@@ -64,19 +64,19 @@ void TegotaeDriver::Initialise(double omega, double sigma, double A, double Apri
 
 }
 
-void TegotaeDriver::SendData()
+void TegotaeDriver::sendData()
 {
     for (auto &&it : *targetList())
     {
-        it.second->ReceiveData(Clamp(m_localErrorVector.x), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_localErrorVector.x), simulation()->GetStepCount());
     }
     for (auto &&it : m_targetList1)
     {
-        it.second->ReceiveData(Clamp(m_localErrorVector.y), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_localErrorVector.y), simulation()->GetStepCount());
     }
     for (auto &&it : m_targetList2)
     {
-        it.second->ReceiveData(Clamp(m_localErrorVector.z), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_localErrorVector.z), simulation()->GetStepCount());
     }
 }
 

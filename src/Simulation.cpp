@@ -262,7 +262,7 @@ void Simulation::UpdateSimulation()
     for (auto &&it : m_DriverList)
     {
         it.second->update();
-        it.second->SendData();
+        it.second->sendData();
     }
     // and the controllers (which are drivers too probably)
     for (auto &&it : m_ControllerList)
@@ -271,7 +271,7 @@ void Simulation::UpdateSimulation()
         if (driver)
         {
             driver->update();
-            driver->SendData();
+            driver->sendData();
         }
         if (it.second->lastStepCount() != m_StepCount)
             std::cerr << "Warning: " << it.first << " controller not updated\n"; // currently cannot stack controllers although this is fixable

@@ -42,7 +42,7 @@ void PIDMuscleLengthController::update()
 
     // in this driver, the length is driven by the upstream driver
     m_setpoint = dataSum();
-    Muscle *muscle = dynamic_cast<Muscle *>(GetTarget(""s));
+    Muscle *muscle = dynamic_cast<Muscle *>(getTarget(""s));
     if (muscle) m_current_length = muscle->GetLength();
     m_error = m_current_length - m_setpoint;
     if (m_previous_error == std::numeric_limits<double>::infinity()) m_previous_error = m_error;
@@ -55,7 +55,7 @@ void PIDMuscleLengthController::update()
 
     // now set the output based on the PID output
     // note that we limit the value to the range
-    setValue(Clamp(m_output));
+    setValue(clamp(m_output));
 }
 
 // this function initialises the data in the object based on the contents
@@ -106,7 +106,7 @@ std::string PIDMuscleLengthController::dumpToString()
 
 Muscle *PIDMuscleLengthController::muscle()
 {
-    return dynamic_cast<Muscle *>(GetTarget(""s));;
+    return dynamic_cast<Muscle *>(getTarget(""s));;
 }
 
 } // namespace GaitSym

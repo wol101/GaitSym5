@@ -52,7 +52,7 @@ void MarkerPositionDriver::update()
         m_index = m_xPositionList.size() - 1;
 
     double x, y, z;
-    if (Interp() == false)
+    if (interp() == false)
     {
         x = m_xPositionList[m_index];
         y = m_yPositionList[m_index];

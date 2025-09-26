@@ -32,7 +32,7 @@ public:
     TwoHingeJointDriver();
 
     virtual void update();
-    virtual void SendData();
+    virtual void sendData();
 
     void CalculateLength(double angleFraction);
     static double CalculateLengthDifference(double angleFraction, void *data);

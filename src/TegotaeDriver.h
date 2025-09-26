@@ -30,7 +30,7 @@ public:
                     const std::vector<Geom *> &contactGeomList);
 
     virtual void update();
-    virtual void SendData();
+    virtual void sendData();
 
     void UpdateReactionForce();
 

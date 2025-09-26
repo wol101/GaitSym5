@@ -393,7 +393,7 @@ pgd::Vector3 TwoHingeJointDriver::GetEulerAngles(const Joint &joint, const Marke
     return pgd::Vector3(angle0, angle1, angle2);
 }
 
-void TwoHingeJointDriver::SendData()
+void TwoHingeJointDriver::sendData()
 {
     // and set the required strap lengths
     for (auto &&it : *targetList())
@@ -405,7 +405,7 @@ void TwoHingeJointDriver::SendData()
         if (localStrap == m_localStrapList.end()) continue;
         double length = localStrap->second->Length();
         // now set the target length
-        pidMuscleLengthController->ReceiveData(Clamp(length), simulation()->GetStepCount());
+        pidMuscleLengthController->receiveData(clamp(length), simulation()->GetStepCount());
     }
 }
 

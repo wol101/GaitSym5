@@ -193,9 +193,9 @@ void DialogDrivers::accept() // this catches OK and return/enter
     {
         std::string name = m_targetComboBoxList[i]->currentText().toStdString();
         GaitSym::Muscle *muscle = m_simulation->GetMuscle(name);
-        if (muscle) { m_outputDriver->AddTarget(muscle); continue; }
+        if (muscle) { m_outputDriver->addTarget(muscle); continue; }
         GaitSym::Controller *controller = m_simulation->GetController(name);
-        if (controller) { m_outputDriver->AddTarget(controller); continue; }
+        if (controller) { m_outputDriver->addTarget(controller); continue; }
     }
 
     m_outputDriver->saveToAttributes();
@@ -299,9 +299,9 @@ void DialogDrivers::lateInitialise()
     m_targetGridLayout->addItem(m_targetGridSpacer, int(targetNames.size()), 0);
     ui->spinBoxTargets->setValue(int(targetNames.size()));
 
-    ui->lineEditMinimum->setValue(m_inputDriver->MinValue());
-    ui->lineEditMaximum->setValue(m_inputDriver->MaxValue());
-    ui->checkBoxInterpolate->setChecked(m_inputDriver->Interp());
+    ui->lineEditMinimum->setValue(m_inputDriver->minValue());
+    ui->lineEditMaximum->setValue(m_inputDriver->maxValue());
+    ui->checkBoxInterpolate->setChecked(m_inputDriver->interp());
 
     while (true)
     {

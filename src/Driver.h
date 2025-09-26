@@ -27,25 +27,25 @@ public:
     Driver();
     virtual ~Driver() ;
 
-    int AddTarget(Drivable *target);
-    Drivable *GetTarget(const std::string & name);
-    double Clamp(double value);
+    int addTarget(Drivable *target);
+    Drivable *getTarget(const std::string & name);
+    double clamp(double value);
 
     virtual void update() = 0;
-    virtual void SendData();
+    virtual void sendData();
 
     virtual std::string dumpToString();
     virtual std::string *createFromAttributes();
     virtual void saveToAttributes();
     virtual void appendToAttributes();
 
-    double MinValue() const;
+    double minValue() const;
     void setMinValue(double MinValue);
 
-    double MaxValue() const;
+    double maxValue() const;
     void setMaxValue(double MaxValue);
 
-    bool Interp() const;
+    bool interp() const;
     void setInterp(bool Interp);
 
     const std::map<std::string, Drivable *> *targetList() const;

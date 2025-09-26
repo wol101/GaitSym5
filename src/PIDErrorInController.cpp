@@ -52,7 +52,7 @@ void PIDErrorInController::update()
 
     // now set the output based on the PID output
     // note that we limit the value to the range
-    setValue(Clamp(m_output));
+    setValue(clamp(m_output));
 }
 
 // this function initialises the data in the object based on the contents

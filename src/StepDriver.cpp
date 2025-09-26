@@ -51,7 +51,7 @@ void StepDriver::update()
         m_index = std::distance(m_changeTimes.begin(), bound) - 1;
     }
 
-    if (Interp() == false)
+    if (interp() == false)
     {
         if (m_index < m_valueList.size())
             setValue(m_valueList[m_index]);

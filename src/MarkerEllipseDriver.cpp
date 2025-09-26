@@ -69,11 +69,11 @@ void MarkerEllipseDriver::Initialise(double omega, double sigma, const pgd::Vect
     m_phaseControlInput = phaseControlInput;
 }
 
-void MarkerEllipseDriver::SendData()
+void MarkerEllipseDriver::sendData()
 {
     for (auto &&it : *targetList())
     {
-        it.second->ReceiveData(Clamp(std::sqrt(SQUARE(m_X) + SQUARE(m_Y))), simulation()->GetStepCount());
+        it.second->receiveData(clamp(std::sqrt(SQUARE(m_X) + SQUARE(m_Y))), simulation()->GetStepCount());
     }
 }
 

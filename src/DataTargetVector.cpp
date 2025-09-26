@@ -39,32 +39,32 @@ double DataTargetVector::calculateError(size_t valueListIndex)
     m_vectorTarget = m_valueList[size_t(valueListIndex)];
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
             m_vectorValue = body->position();
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             m_vectorValue = geom->GetWorldPosition();
             break;
         }
-        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
         {
             m_vectorValue = hingeJoint->anchor();
             break;
         }
-        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(target()))
         {
             m_vectorValue = ballJoint->anchor();
             break;
         }
-        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(target()))
         {
             m_vectorValue = universalJoint->anchor();
             break;
         }
-        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
             m_vectorValue = marker->GetWorldPosition();
             break;
@@ -90,32 +90,32 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
             m_vectorValue = body->position();
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             m_vectorValue = geom->GetWorldPosition();
             break;
         }
-        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
         {
             m_vectorValue = hingeJoint->anchor();
             break;
         }
-        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(target()))
         {
             m_vectorValue = ballJoint->anchor();
             break;
         }
-        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(target()))
         {
             m_vectorValue = universalJoint->anchor();
             break;
         }
-        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
             m_vectorValue = marker->GetWorldPosition();
             break;
@@ -145,12 +145,12 @@ std::string DataTargetVector::dumpToString()
     return s;
 }
 
-void DataTargetVector::SetTarget(NamedObject *target)
+void DataTargetVector::setTarget(NamedObject *target)
 {
     m_target = target;
 }
 
-NamedObject *DataTargetVector::GetTarget()
+NamedObject *DataTargetVector::target()
 {
     return m_target;
 }
