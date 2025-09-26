@@ -19,9 +19,9 @@ class AVIWriter
 public:
     AVIWriter();
     virtual ~AVIWriter();
-    int InitialiseFile(const QString &aviFilename, unsigned int width, unsigned int height, unsigned int fps);
-    int WriteAVI(unsigned int width, unsigned int height, const unsigned char *rgb, int quality);
-    int WriteAVI(const QImage &image, int quality);
+    int initialiseFile(const QString &aviFilename, unsigned int width, unsigned int height, unsigned int fps);
+    int writeAVI(unsigned int width, unsigned int height, uint8_t *rgb, int quality);
+    int writeAVI(const QImage &image, int quality);
 
 private:
     int CloseFile();

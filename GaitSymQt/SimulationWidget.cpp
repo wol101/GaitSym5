@@ -707,7 +707,7 @@ int SimulationWidget::WriteMovieFrame()
     Q_ASSERT(m_aviWriter);
     QImage image = grabFramebuffer();
     if (image.sizeInBytes() == 0) return __LINE__; //should always be OK, but you never know. ;)
-    m_aviWriter->WriteAVI(image, m_aviQuality);
+    m_aviWriter->writeAVI(image, m_aviQuality);
     return 0;
 }
 
@@ -717,8 +717,8 @@ int SimulationWidget::StartAVISave(const QString &filename)
     if (m_aviQuality == 0) return __LINE__; // should always be true
     QImage image = grabFramebuffer();
     if (image.sizeInBytes() == 0) return __LINE__; //should always be OK, but you never know. ;)
-    m_aviWriter->InitialiseFile(filename, static_cast<unsigned int>(image.size().width()), static_cast<unsigned int>(image.size().height()), m_fps);
-    m_aviWriter->WriteAVI(image, m_aviQuality);
+    m_aviWriter->initialiseFile(filename, static_cast<unsigned int>(image.size().width()), static_cast<unsigned int>(image.size().height()), m_fps);
+    m_aviWriter->writeAVI(image, m_aviQuality);
     QDir dir(QFileInfo(filename).path()); // note that the path() function for a QFileInfo gives the parent path which is what is wanted
     QString metadataFileName = dir.absoluteFilePath(QFileInfo(filename).completeBaseName() + Preferences::valueQString("MovieMetadataSuffix", "_metadata") + ".xml");
     QFile metadataFile(metadataFileName);
