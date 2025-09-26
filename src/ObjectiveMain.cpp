@@ -72,9 +72,9 @@ ObjectiveMain::ObjectiveMain(int argc, const char **argv)
     m_argparse.get("--debug"s, &m_debug);
 }
 
-int ObjectiveMain::Run()
+int ObjectiveMain::run()
 {
-    if (ReadModel()) return __LINE__;
+    if (readModel()) return __LINE__;
 
     for (size_t i = 0; i < m_outputList.size(); i++)
     {
@@ -98,14 +98,14 @@ int ObjectiveMain::Run()
         m_simulation->UpdateSimulation();
     }
 
-    if (WriteOutput()) return __LINE__;
+    if (writeOutput()) return __LINE__;
 
     return 0;
 }
 
 // this routine attemps to read the model specification and initialise the simulation
 // it returns zero on success
-int ObjectiveMain::ReadModel()
+int ObjectiveMain::readModel()
 {
     DataFile myFile;
     myFile.setExitOnErrorFlag(true);
@@ -136,7 +136,7 @@ int ObjectiveMain::ReadModel()
 
 // returns 0 if continuing
 // returns 1 if exit requested
-int ObjectiveMain::WriteOutput()
+int ObjectiveMain::writeOutput()
 {
     double score = m_simulation->CalculateInstantaneousFitness();
     std::cerr << "Simulation Time: " << m_simulation->GetTime() <<

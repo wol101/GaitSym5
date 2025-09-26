@@ -47,11 +47,6 @@ public:
 
 private:
 
-//    Body *m_originBody = nullptr;
-//    pgd::Vector3 m_origin;
-//    Body *m_insertionBody = nullptr;
-//    pgd::Vector3 m_insertion;
-
     Marker *m_originMarker = nullptr;
     Marker *m_insertionMarker = nullptr;
 
