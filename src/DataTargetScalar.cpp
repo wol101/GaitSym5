@@ -64,7 +64,7 @@ double DataTargetScalar::calculateErrorScore(double value)
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
             switch (m_dataType)
             {
@@ -125,7 +125,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
             switch (m_dataType)
             {
@@ -174,7 +174,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
         {
             result = hingeJoint->anchor();
             switch (m_dataType)
@@ -215,7 +215,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(target()))
         {
             result = ballJoint->anchor();
             switch (m_dataType)
@@ -253,7 +253,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(target()))
         {
             result = universalJoint->anchor();
             switch (m_dataType)
@@ -291,7 +291,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             switch (m_dataType)
             {
@@ -354,7 +354,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(GetTarget()))
+        if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(target()))
         {
             pgd::Vector3 errorVector;
             switch (m_dataType)
@@ -368,7 +368,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (Driver *driver = dynamic_cast<Driver *>(GetTarget()))
+        if (Driver *driver = dynamic_cast<Driver *>(target()))
         {
             switch (m_dataType)
             {
@@ -380,7 +380,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (GetTarget() == nullptr)
+        if (target() == nullptr)
         {
             switch(m_dataType)
             {
@@ -550,12 +550,12 @@ void DataTargetScalar::appendToAttributes()
     if (m_noTargetList.count(m_dataType) == 0) setAttribute("TargetID"s, m_target->name());
 }
 
-void DataTargetScalar::SetTarget(NamedObject *target)
+void DataTargetScalar::setTarget(NamedObject *target)
 {
     m_target = target;
 }
 
-NamedObject *DataTargetScalar::GetTarget()
+NamedObject *DataTargetScalar::target()
 {
     return m_target;
 }
