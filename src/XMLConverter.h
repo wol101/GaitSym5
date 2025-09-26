@@ -26,14 +26,14 @@ public:
     XMLConverter();
     virtual ~XMLConverter();
 
-    int LoadBaseXMLFile(const char *filename);
-    int LoadBaseXMLString(const char *dataPtr, size_t length);
-    int ApplyGenome(const std::vector<double> &genomeData);
-    void GetFormattedXML(std::string *formattedXML);
+    int loadBaseXMLFile(const char *filename);
+    int loadBaseXMLString(const char *dataPtr, size_t length);
+    int applyGenome(const std::vector<double> &genomeData);
+    void getFormattedXML(std::string *formattedXML);
 
-    const std::string &BaseXMLString() const;
+    const std::string &baseXMLString() const;
 
-    void Clear();
+    void clear();
 
 private:
 
