@@ -165,7 +165,7 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 
     // joints are created with the bodies in construction poses
     // then the bodies are moved to their starting poses
-    for (auto &&it : m_BodyList) it.second->LateInitialisation();
+    for (auto &&it : m_BodyList) it.second->lateInitialisation();
     // and we recalculate the dynamic items with the new muscle positions
     for (auto &&it :  m_MuscleList) it.second->LateInitialisation();
     for (auto &&it : m_FluidSacList) it.second->LateInitialisation();
@@ -307,7 +307,7 @@ void Simulation::UpdateSimulation()
     }
 
     // update the bodies (needed for drag calculations)
-    for (auto &&bodyIter : m_BodyList) { bodyIter.second->ComputeDrag(); }
+    for (auto &&bodyIter : m_BodyList) { bodyIter.second->computeDrag(); }
 
     // output the model state if triggered
     if (m_OutputModelStateAtTime >= 0.0)
@@ -393,7 +393,7 @@ bool Simulation::TestForCatastrophy()
     Body::LimitTestResult p;
     for (auto &&iter1 : m_BodyList)
     {
-        p = iter1.second->TestLimits();
+        p = iter1.second->testLimits();
         switch (p)
         {
         case Body::WithinLimits:

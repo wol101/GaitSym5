@@ -138,9 +138,9 @@ void Muscle::SetStrap(Strap *strap)
     m_Strap = strap;
 }
 
-//int Muscle::SanityCheck(Muscle *otherMuscle, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
+//int Muscle::sanityCheck(Muscle *otherMuscle, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
 //{
-//    return m_Strap->SanityCheck(otherMuscle->m_Strap, axis, sanityCheckLeft, sanityCheckRight);
+//    return m_Strap->sanityCheck(otherMuscle->m_Strap, axis, sanityCheckLeft, sanityCheckRight);
 //}
 
 void Muscle::LateInitialisation()

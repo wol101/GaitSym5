@@ -55,7 +55,7 @@ public:
     const std::vector<pgd::Vector3> *GetPathCoordinates();
     int GetNumWrapSegments();
 
-//    virtual int SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
+//    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

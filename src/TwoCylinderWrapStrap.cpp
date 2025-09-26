@@ -324,14 +324,14 @@ void TwoCylinderWrapStrap::Calculate()
 //    pgd::Quaternion qCylinder2Body(q[0], q[1], q[2], q[3]);
 //    q = dBodyGetPosition(m_Cylinder2Body->GetBodyID());
 //    pgd::Vector3 vCylinder2Body(q[0], q[1], q[2]);
-    pgd::Quaternion qOriginBody = GetOriginMarker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vOriginBody = GetOriginMarker()->GetBody()->GetPosition();
-    pgd::Quaternion qInsertionBody = GetInsertionMarker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vInsertionBody = GetInsertionMarker()->GetBody()->GetPosition();
-    pgd::Quaternion qCylinder1Body = GetCylinder1Marker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vCylinder1Body = GetCylinder1Marker()->GetBody()->GetPosition();
-    pgd::Quaternion qCylinder2Body = GetCylinder2Marker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vCylinder2Body = GetCylinder2Marker()->GetBody()->GetPosition();
+    pgd::Quaternion qOriginBody = GetOriginMarker()->GetBody()->quaternion();
+    pgd::Vector3 vOriginBody = GetOriginMarker()->GetBody()->position();
+    pgd::Quaternion qInsertionBody = GetInsertionMarker()->GetBody()->quaternion();
+    pgd::Vector3 vInsertionBody = GetInsertionMarker()->GetBody()->position();
+    pgd::Quaternion qCylinder1Body = GetCylinder1Marker()->GetBody()->quaternion();
+    pgd::Vector3 vCylinder1Body = GetCylinder1Marker()->GetBody()->position();
+    pgd::Quaternion qCylinder2Body = GetCylinder2Marker()->GetBody()->quaternion();
+    pgd::Vector3 vCylinder2Body = GetCylinder2Marker()->GetBody()->position();
 //    m_originBody->GetQuaternion(&qOriginBody);
 //    m_originBody->GetPosition(&vOriginBody);
 //    m_insertionBody->GetQuaternion(&qInsertionBody);
@@ -981,7 +981,7 @@ const std::vector<pgd::Vector3> *TwoCylinderWrapStrap::GetPathCoordinates()
     return &m_pathCoordinates;
 }
 
-//int TwoCylinderWrapStrap::SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
+//int TwoCylinderWrapStrap::sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
 //{
 //    const double epsilon = 1e-10;
 

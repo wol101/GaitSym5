@@ -443,13 +443,13 @@ void DialogStringOfPearlsBuilder::createBodies()
         position.y = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 1))->value();
         position.z = dynamic_cast<LineEditDouble *>(ui->tableWidget->cellWidget(row, 2))->value();
         auto body = std::make_unique<GaitSym::Body>();
-        body->SetConstructionPosition(position);
-        body->SetInitialPosition(position);
-        body->SetMass(mass, moi, moi, moi, 0, 0, 0);
+        body->setConstructionPosition(position);
+        body->setInitialPosition(position);
+        body->setMass(mass, moi, moi, moi, 0, 0, 0);
         std::string bodyID = GaitSym::GSUtil::ToString("%s_body_%03zu", rootID.c_str(), i);
         body->setName(bodyID);
         body->setSimulation(m_simulation);
-        body->EnterConstructionMode();
+        body->enterConstructionMode();
 
         if (m_properties.size() > 0)
         {

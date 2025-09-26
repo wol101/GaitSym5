@@ -41,7 +41,7 @@ double DataTargetVector::calculateError(size_t valueListIndex)
     {
         if (Body *body = dynamic_cast<Body *>(GetTarget()))
         {
-            m_vectorValue = body->GetPosition();
+            m_vectorValue = body->position();
             break;
         }
         if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
@@ -92,7 +92,7 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
     {
         if (Body *body = dynamic_cast<Body *>(GetTarget()))
         {
-            m_vectorValue = body->GetPosition();
+            m_vectorValue = body->position();
             break;
         }
         if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))

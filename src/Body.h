@@ -27,7 +27,7 @@ public:
 
     Body();
 
-    virtual void LateInitialisation();
+    virtual void lateInitialisation();
 
     SMART_ENUM(LimitTestResult, limitTestResultStrings, limitTestResultCount,
                WithinLimits, XPosError, YPosError, ZPosError, XVelError, YVelError, ZVelError, XAVelError, YAVelError, ZAVelError, NumericalError);
@@ -35,102 +35,101 @@ public:
     SMART_ENUM(DragControl, dragControlStrings, dragControlCount,
                NoDrag, DragCoefficients, DragCylinderX, DragCylinderY, DragCylinderZ);
 
-    void SetConstructionPosition(double x, double y, double z);
-    void SetConstructionPosition(const pgd::Vector3 &constructionPosition);
-    pgd::Vector3 GetConstructionPosition() const;
-    void SetConstructionDensity(double constructionDensity);
-    double GetConstructionDensity() const;
+    void setConstructionPosition(double x, double y, double z);
+    void setConstructionPosition(const pgd::Vector3 &constructionPosition);
+    pgd::Vector3 constructionPosition() const;
+    void setConstructionDensity(double constructionDensity);
+    double constructionDensity() const;
 
-    void SetPosition(double x, double y, double z);
-    void SetQuaternion(double n, double x, double y, double z);
-    void SetPosition(const pgd::Vector3 &position);
-    void SetQuaternion(const pgd::Quaternion &quaternion);
-    std::string *SetPosition(const std::string &buf);
-    std::string *SetQuaternion(const std::string &buf);
-    void SetLinearVelocity(double x, double y, double z);
-    void SetAngularVelocity(double x, double y, double z);
-    void SetLinearVelocity(const pgd::Vector3 &linearVelocity);
-    void SetAngularVelocity(const pgd::Vector3 &angularVelocity);
-    std::string *SetLinearVelocity(const std::string &buf);
-    std::string *SetAngularVelocity(const std::string &buf);
-    void SetPositionDelta(double x, double y, double z);
-    void SetQuaternionDelta(double n, double x, double y, double z);
+    void setPosition(double x, double y, double z);
+    void setQuaternion(double n, double x, double y, double z);
+    void setPosition(const pgd::Vector3 &position);
+    void setQuaternion(const pgd::Quaternion &quaternion);
+    std::string *setPosition(const std::string &buf);
+    std::string *setQuaternion(const std::string &buf);
+    void setLinearVelocity(double x, double y, double z);
+    void setAngularVelocity(double x, double y, double z);
+    void setLinearVelocity(const pgd::Vector3 &linearVelocity);
+    void setAngularVelocity(const pgd::Vector3 &angularVelocity);
+    std::string *setLinearVelocity(const std::string &buf);
+    std::string *setAngularVelocity(const std::string &buf);
+    void setPositionDelta(double x, double y, double z);
+    void setQuaternionDelta(double n, double x, double y, double z);
 
-    void SetMass(double mass);
-    void SetMass(double mass, double ixx, double iyy, double izz, double ixy, double izx, double iyz);
+    void setMass(double mass);
+    void setMass(double mass, double ixx, double iyy, double izz, double ixy, double izx, double iyz);
 
-    void SetPositionLowBound(double x, double y, double z) { m_positionLowBound[0] = x; m_positionLowBound[1] = y; m_positionLowBound[2] = z; }
-    void SetPositionHighBound(double x, double y, double z) { m_positionHighBound[0] = x; m_positionHighBound[1] = y; m_positionHighBound[2] = z; }
-    void SetLinearVelocityLowBound(double x, double y, double z) { m_linearVelocityLowBound[0] = x; m_linearVelocityLowBound[1] = y; m_linearVelocityLowBound[2] = z; }
-    void SetLinearVelocityHighBound(double x, double y, double z) { m_linearVelocityHighBound[0] = x; m_linearVelocityHighBound[1] = y; m_linearVelocityHighBound[2] = z; }
-    void SetAngularVelocityLowBound(double x, double y, double z) { m_angularVelocityLowBound[0] = x; m_angularVelocityLowBound[1] = y; m_angularVelocityLowBound[2] = z; }
-    void SetAngularVelocityHighBound(double x, double y, double z) { m_angularVelocityHighBound[0] = x; m_angularVelocityHighBound[1] = y; m_angularVelocityHighBound[2] = z; }
-    pgd::Vector3 GetPositionLowBound() const { return m_positionLowBound; }
-    pgd::Vector3 GetPositionHighBound() const { return m_positionHighBound; }
-    pgd::Vector3 GetLinearVelocityLowBound() const { return m_linearVelocityLowBound; }
-    pgd::Vector3 GetLinearVelocityHighBound() const { return m_linearVelocityHighBound; }
-    pgd::Vector3 GetAngularVelocityLowBound() const { return m_angularVelocityLowBound; }
-    pgd::Vector3 GetAngularVelocityHighBound() const { return m_angularVelocityHighBound; }
+    void setPositionLowBound(double x, double y, double z) { m_positionLowBound[0] = x; m_positionLowBound[1] = y; m_positionLowBound[2] = z; }
+    void setPositionHighBound(double x, double y, double z) { m_positionHighBound[0] = x; m_positionHighBound[1] = y; m_positionHighBound[2] = z; }
+    void setLinearVelocityLowBound(double x, double y, double z) { m_linearVelocityLowBound[0] = x; m_linearVelocityLowBound[1] = y; m_linearVelocityLowBound[2] = z; }
+    void setLinearVelocityHighBound(double x, double y, double z) { m_linearVelocityHighBound[0] = x; m_linearVelocityHighBound[1] = y; m_linearVelocityHighBound[2] = z; }
+    void setAngularVelocityLowBound(double x, double y, double z) { m_angularVelocityLowBound[0] = x; m_angularVelocityLowBound[1] = y; m_angularVelocityLowBound[2] = z; }
+    void setAngularVelocityHighBound(double x, double y, double z) { m_angularVelocityHighBound[0] = x; m_angularVelocityHighBound[1] = y; m_angularVelocityHighBound[2] = z; }
+    pgd::Vector3 positionLowBound() const { return m_positionLowBound; }
+    pgd::Vector3 positionHighBound() const { return m_positionHighBound; }
+    pgd::Vector3 linearVelocityLowBound() const { return m_linearVelocityLowBound; }
+    pgd::Vector3 linearVelocityHighBound() const { return m_linearVelocityHighBound; }
+    pgd::Vector3 angularVelocityLowBound() const { return m_angularVelocityLowBound; }
+    pgd::Vector3 angularVelocityHighBound() const { return m_angularVelocityHighBound; }
 
-    void SetLinearDamping(double linearDamping);
-    void SetAngularDamping(double angularDamping);
-    void SetLinearDampingThreshold(double linearDampingThreshold);
-    void SetAngularDampingThreshold(double angularDampingThreshold);
-    void SetMaxAngularSpeed(double maxAngularSpeed);
+    void setLinearDamping(double linearDamping);
+    void setAngularDamping(double angularDamping);
+    void setLinearDampingThreshold(double linearDampingThreshold);
+    void setAngularDampingThreshold(double angularDampingThreshold);
+    void setMaxAngularSpeed(double maxAngularSpeed);
 
-    void SetCylinderDragParameters(DragControl dragAxis, double dragFluidDensity, double dragCylinderMin, double dragCylinderMax, double dragCylinderRadius, double dragCylinderCoefficient);
-    void SetDirectDragCoefficients(double linearDragCoefficientX, double linearDragCoefficientY, double linearDragCoefficientZ,
-                                   double rotationalDragCoefficientX, double rotationalDragCoefficientY, double rotationalDragCoefficientZ);
+    void setCylinderDragParameters(DragControl dragAxis, double dragFluidDensity, double dragCylinderMin, double dragCylinderMax, double dragCylinderRadius, double dragCylinderCoefficient);
+    void setDirectDragCoefficients(double linearDragCoefficientX, double linearDragCoefficientY, double linearDragCoefficientZ, double rotationalDragCoefficientX, double rotationalDragCoefficientY, double rotationalDragCoefficientZ);
 
-    pgd::Vector3 GetPosition() const;
-    pgd::Quaternion GetQuaternion() const;
-    pgd::Vector3 GetLinearVelocity() const;
-    pgd::Vector3 GetAngularVelocity() const;
-    void GetPosition(pgd::Vector3 *pos) const;
-    void GetQuaternion(pgd::Quaternion *quat) const;
-    void GetRelativePosition(const Body *rel, pgd::Vector3 *pos) const;
-    void GetRelativeQuaternion(const Body *rel, pgd::Quaternion *quat) const;
-    void GetRelativeLinearVelocity(const Body *rel, pgd::Vector3 *vel) const;
-    void GetRelativeAngularVelocity(const Body *rel, pgd::Vector3 *rVel) const;
-    double GetMass() const;
-    void GetMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const;
-    double GetLinearKineticEnergy();
-    void GetLinearKineticEnergy(pgd::Vector3 *ke);
-    double GetRotationalKineticEnergy();
-    double GetGravitationalPotentialEnergy();
+    pgd::Vector3 position() const;
+    pgd::Quaternion quaternion() const;
+    pgd::Vector3 linearVelocity() const;
+    pgd::Vector3 angularVelocity() const;
+    void getPosition(pgd::Vector3 *pos) const;
+    void getQuaternion(pgd::Quaternion *quat) const;
+    void getRelativePosition(const Body *rel, pgd::Vector3 *pos) const;
+    void getRelativeQuaternion(const Body *rel, pgd::Quaternion *quat) const;
+    void getRelativeLinearVelocity(const Body *rel, pgd::Vector3 *vel) const;
+    void getRelativeAngularVelocity(const Body *rel, pgd::Vector3 *rVel) const;
+    double mass() const;
+    void getMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const;
+    double linearKineticEnergy();
+    void getLinearKineticEnergy(pgd::Vector3 *ke);
+    double rotationalKineticEnergy();
+    double gravitationalPotentialEnergy();
 
-    void SetInitialPosition(double x, double y, double z);
-    void SetInitialQuaternion(double n, double x, double y, double z);
-    void SetInitialPosition(const pgd::Vector3 &position);
-    void SetInitialQuaternion(const pgd::Quaternion &quaternion);
-    pgd::Vector3 GetInitialPosition();
-    pgd::Quaternion GetInitialQuaternion();
+    void setInitialPosition(double x, double y, double z);
+    void setInitialQuaternion(double n, double x, double y, double z);
+    void setInitialPosition(const pgd::Vector3 &position);
+    void setInitialQuaternion(const pgd::Quaternion &quaternion);
+    pgd::Vector3 initialPosition();
+    pgd::Quaternion initialQuaternion();
 
-    LimitTestResult TestLimits();
-//    int SanityCheck(Body *otherBody, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
+    LimitTestResult testLimits();
+//    int sanityCheck(Body *otherBody, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 
-    void EnterConstructionMode();
-    void EnterRunMode();
+    void enterConstructionMode();
+    void enterRunMode();
 
-    void ComputeDrag();
+    void computeDrag();
 
     // Utility
-    static void ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor);
-    static void ParallelAxis(double x, double y, double z, // transformation from centre of mass to new location (m)
+    static void parallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor);
+    static void parallelAxis(double x, double y, double z, // transformation from centre of mass to new location (m)
                              double mass, // mass (kg)
                              double ixx, double iyy, double izz, double ixy, double izx, double iyz, // moments of inertia kgm2
                              double ang, // rotation angle (radians)
                              double ax, double ay, double az, // axis of rotation - must be unit length
                              double *ixxp, double *iyyp, double *izzp, double *ixyp, double *izxp, double *iyzp); // transformed moments of inertia about new coordinate system
 
-    static double GetProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vector3 &vector1, const pgd::Vector3 &vector2);
+    static double getProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vector3 &vector1, const pgd::Vector3 &vector2);
 
-    void SetGraphicFile1(const std::string &graphicFile) { m_graphicFile1 = graphicFile; }
-    std::string GetGraphicFile1() const { return m_graphicFile1; }
-    void SetGraphicFile2(const std::string &graphicFile) { m_graphicFile2 = graphicFile; }
-    std::string GetGraphicFile2() const { return m_graphicFile2; }
-    void SetGraphicFile3(const std::string &graphicFile) { m_graphicFile3 = graphicFile; }
-    std::string GetGraphicFile3() const { return m_graphicFile3; }
+    void setGraphicFile1(const std::string &graphicFile) { m_graphicFile1 = graphicFile; }
+    std::string graphicFile1() const { return m_graphicFile1; }
+    void setGraphicFile2(const std::string &graphicFile) { m_graphicFile2 = graphicFile; }
+    std::string graphicFile2() const { return m_graphicFile2; }
+    void setGraphicFile3(const std::string &graphicFile) { m_graphicFile3 = graphicFile; }
+    std::string graphicFile3() const { return m_graphicFile3; }
 
     virtual std::string dumpToString() override;
     virtual std::string *createFromAttributes() override;

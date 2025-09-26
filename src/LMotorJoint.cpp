@@ -37,7 +37,7 @@ double LMotorJoint::position(int anum)
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->GetWorldPosition()) - pgd::Vector3(body1Marker()->GetWorldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
     // not 100% sure this should be the inverse of the body rotation here
-    if (body1Marker()->GetBody()) relativePositionBody1Marker = pgd::QVRotate(~pgd::Quaternion(body1Marker()->GetBody()->GetQuaternion()), relativePositionWorld);
+    if (body1Marker()->GetBody()) relativePositionBody1Marker = pgd::QVRotate(~pgd::Quaternion(body1Marker()->GetBody()->quaternion()), relativePositionWorld);
     switch (anum)
     {
     case 0:
@@ -59,7 +59,7 @@ void LMotorJoint::getPositions(double *x, double *y, double *z)
     pgd::Vector3 relativePositionWorld = pgd::Vector3(body2Marker()->GetWorldPosition()) - pgd::Vector3(body1Marker()->GetWorldPosition());
     pgd::Vector3 relativePositionBody1Marker(relativePositionWorld);
     // not 100% sure this should be the inverse of the body rotation here
-    if (body1Marker()->GetBody()) relativePositionBody1Marker = pgd::QVRotate(~pgd::Quaternion(body1Marker()->GetBody()->GetQuaternion()), relativePositionWorld);
+    if (body1Marker()->GetBody()) relativePositionBody1Marker = pgd::QVRotate(~pgd::Quaternion(body1Marker()->GetBody()->quaternion()), relativePositionWorld);
     *x = relativePositionBody1Marker.x;
     *y = relativePositionBody1Marker.y;
     *z = relativePositionBody1Marker.z;

@@ -154,9 +154,9 @@ void OpenSimExporter::CreateBodySet()
         XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
         // mesh
         XMLInitiateTag(&m_xmlString, "attached_geometry"s);
-        if (bodyIter.second->GetGraphicFile1().size())
+        if (bodyIter.second->graphicFile1().size())
         {
-            std::string basename = pystring::os::path::basename(bodyIter.second->GetGraphicFile1());
+            std::string basename = pystring::os::path::basename(bodyIter.second->graphicFile1());
             std::string mesh_path = pystring::os::path::join(m_pathToObjFiles, basename);
             XMLInitiateTag(&m_xmlString, "Mesh"s, {{"name"s, m_legalNameMap[bodyIter.second->name()] + "_mesh"s}});
             XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
@@ -176,7 +176,7 @@ void OpenSimExporter::CreateBodySet()
         XMLTerminateTag(&m_xmlString, "WrapObjectSet"s);
         // mass properties
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        bodyIter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        bodyIter.second->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         XMLTagAndContent(&m_xmlString, "mass"s, GSUtil::ToString(mass));
         // pgd::Vector3 referencePosition;
         // for (auto &&jointIter : *m_simulation->GetJointList())
@@ -445,7 +445,7 @@ void OpenSimExporter::CreateJointSet()
         }
         if (parentlessBody)
         {
-            pgd::Vector3 position = bodyIter.second->GetConstructionPosition();
+            pgd::Vector3 position = bodyIter.second->constructionPosition();
             pgd::Vector3 euler(-1.5707963267948966, 0, 0); // all GaitSym bodies are constructed with no rotation, and rotating -90 degrees about the X axis converts from Z up to Y up
             pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
             position = pgd::QVRotate(rotation, position);
@@ -687,7 +687,7 @@ void OpenSimExporter::CreateForceSet()
                 XMLTagAndContent(&m_xmlString, "activation_time_constant"s, "0.015"s);
                 XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.050"s);
                 XMLTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);               
+                XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
 
                 if (m_mocoExport)
                 {

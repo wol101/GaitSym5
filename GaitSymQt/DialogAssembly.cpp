@@ -252,8 +252,8 @@ void DialogAssembly::comboBoxBodyListCurrentIndexChanged(const QString &text)
     GaitSym::Body *body = m_simulation->GetBody(text.toStdString());
     if (body)
     {
-        pgd::Vector3 position(body->GetPosition());
-        pgd::Quaternion quaternion(body->GetQuaternion());
+        pgd::Vector3 position(body->position());
+        pgd::Quaternion quaternion(body->quaternion());
         pgd::Vector3 euler = MakeEulerAnglesFromQ(quaternion);
         ui->lineEditX->setValue(position.x);
         ui->lineEditY->setValue(position.y);

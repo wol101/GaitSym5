@@ -107,12 +107,12 @@ Marker *CylinderWrapStrap::GetCylinderMarker() const
 
 void CylinderWrapStrap::Calculate()
 {
-    pgd::Quaternion qOriginBody = GetOriginMarker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vOriginBody = GetOriginMarker()->GetBody()->GetPosition();
-    pgd::Quaternion qInsertionBody = GetInsertionMarker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vInsertionBody = GetInsertionMarker()->GetBody()->GetPosition();
-    pgd::Quaternion qCylinderBody = GetCylinderMarker()->GetBody()->GetQuaternion();
-    pgd::Vector3 vCylinderBody = GetCylinderMarker()->GetBody()->GetPosition();
+    pgd::Quaternion qOriginBody = GetOriginMarker()->GetBody()->quaternion();
+    pgd::Vector3 vOriginBody = GetOriginMarker()->GetBody()->position();
+    pgd::Quaternion qInsertionBody = GetInsertionMarker()->GetBody()->quaternion();
+    pgd::Vector3 vInsertionBody = GetInsertionMarker()->GetBody()->position();
+    pgd::Quaternion qCylinderBody = GetCylinderMarker()->GetBody()->quaternion();
+    pgd::Vector3 vCylinderBody = GetCylinderMarker()->GetBody()->position();
 
     pgd::Vector3 m_originPosition = GetOriginMarker()->GetPosition();
     pgd::Vector3 m_insertionPosition = GetInsertionMarker()->GetPosition();
@@ -396,7 +396,7 @@ const std::vector<pgd::Vector3> *CylinderWrapStrap::GetPathCoordinates()
 }
 
 
-//int CylinderWrapStrap::SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
+//int CylinderWrapStrap::sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
 //{
 //    const double epsilon = 1e-10;
 

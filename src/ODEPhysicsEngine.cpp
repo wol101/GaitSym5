@@ -99,16 +99,16 @@ std::string *ODEPhysicsEngine::CreateBodies()
         dBodySetData(bodyID, iter.second.get());
         iter.second->setData(bodyID);
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        iter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        iter.second->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         dMass inertialProperties;
         dMassSetParameters(&inertialProperties, mass, 0, 0, 0, ixx, iyy, izz, ixy, izx, iyz);
         dBodySetMass(bodyID, &inertialProperties);
-        pgd::Vector3 constructionPosition = iter.second->GetConstructionPosition();
+        pgd::Vector3 constructionPosition = iter.second->constructionPosition();
         dBodySetPosition(bodyID, constructionPosition.x, constructionPosition.y, constructionPosition.z);
         dBodySetQuaternion(bodyID, zeroRotation.constData());
-        pgd::Vector3 linearVelocity = iter.second->GetLinearVelocity();
+        pgd::Vector3 linearVelocity = iter.second->linearVelocity();
         dBodySetLinearVel(bodyID, linearVelocity.x, linearVelocity.y, linearVelocity.z);
-        pgd::Vector3 angularVelocity = iter.second->GetAngularVelocity();
+        pgd::Vector3 angularVelocity = iter.second->angularVelocity();
         dBodySetAngularVel(bodyID, angularVelocity.x, angularVelocity.y, angularVelocity.z);
     }
     return nullptr;
@@ -377,9 +377,9 @@ std::string *ODEPhysicsEngine::MoveBodies()
     for (auto &&iter : *simulation()->GetBodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
-        pgd::Vector3 position = iter.second->GetPosition();
+        pgd::Vector3 position = iter.second->position();
         dBodySetPosition(bodyID, position.x, position.y, position.z);
-        pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        pgd::Quaternion quaternion = iter.second->quaternion();
         dBodySetQuaternion(bodyID, quaternion.constData());
     }
     for (auto &&iter : *simulation()->GetJointList())
@@ -436,7 +436,7 @@ std::string *ODEPhysicsEngine::Step()
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
         pgd::Vector3 dragTorque = iter.second->dragTorque();
-        iter.second->ComputeDrag();
+        iter.second->computeDrag();
         dBodyAddRelForce(reinterpret_cast<dBodyID>(iter.second->data()), dragForce.x, dragForce.y, dragForce.z);
         dBodyAddRelTorque(reinterpret_cast<dBodyID>(iter.second->data()), dragTorque.x, dragTorque.y, dragTorque.z);
     }
@@ -493,10 +493,10 @@ std::string *ODEPhysicsEngine::Step()
         const double *quaternion = dBodyGetQuaternion(bodyID);
         const double *linearVelocity = dBodyGetLinearVel(bodyID);
         const double *angularVelocity = dBodyGetAngularVel(bodyID);
-        iter.second->SetPosition(position[0], position[1], position[2]);
-        iter.second->SetQuaternion(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
-        iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
-        iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
+        iter.second->setPosition(position[0], position[1], position[2]);
+        iter.second->setQuaternion(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
+        iter.second->setLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
+        iter.second->setAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
     for (auto &&iter : *simulation()->GetJointList())

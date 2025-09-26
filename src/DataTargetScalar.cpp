@@ -69,55 +69,55 @@ double DataTargetScalar::calculateErrorScore(double value)
             switch (m_dataType)
             {
             case Q0:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[0] - value);
                 break;
             case Q1:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[1] - value);
                 break;
             case Q2:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[2] - value);
                 break;
             case Q3:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[3] - value);
                 break;
             case XP:
-                r = body->GetPosition();
+                r = body->position();
                 m_errorScore = (r[0] - value);
                 break;
             case YP:
-                r = body->GetPosition();
+                r = body->position();
                 m_errorScore = (r[1] - value);
                 break;
             case ZP:
-                r = body->GetPosition();
+                r = body->position();
                 m_errorScore = (r[2] - value);
                 break;
             case XV:
-                r = body->GetLinearVelocity();
+                r = body->linearVelocity();
                 m_errorScore = (r[0] - value);
                 break;
             case YV:
-                r = body->GetLinearVelocity();
+                r = body->linearVelocity();
                 m_errorScore = (r[1] - value);
                 break;
             case ZV:
-                r = body->GetLinearVelocity();
+                r = body->linearVelocity();
                 m_errorScore = (r[2] - value);
                 break;
             case XRV:
-                r = body->GetAngularVelocity();
+                r = body->angularVelocity();
                 m_errorScore = (r[0] - value);
                 break;
             case YRV:
-                r = body->GetAngularVelocity();
+                r = body->angularVelocity();
                 m_errorScore = (r[1] - value);
                 break;
             case ZRV:
-                r = body->GetAngularVelocity();
+                r = body->angularVelocity();
                 m_errorScore = (r[2] - value);
                 break;
             default:

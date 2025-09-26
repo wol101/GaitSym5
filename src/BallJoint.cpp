@@ -26,7 +26,7 @@ BallJoint::BallJoint() : Joint()
 pgd::Quaternion BallJoint::calculateQuaternion()
 {
     pgd::Quaternion q;
-    body2Marker()->GetBody()->GetRelativeQuaternion(body1Marker()->GetBody(), &q);
+    body2Marker()->GetBody()->getRelativeQuaternion(body1Marker()->GetBody(), &q);
     return q;
 }
 

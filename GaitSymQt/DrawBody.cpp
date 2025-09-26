@@ -115,7 +115,7 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
 
     m_meshEntity1 = std::make_unique<FacetedObject>();
     m_meshEntity1->setSimulationWidget(simulationWidget);
-    QString filename = QString::fromStdString(m_body->GetGraphicFile1());
+    QString filename = QString::fromStdString(m_body->graphicFile1());
     QString absoluteFilename;
     if (filename.size())
     {
@@ -138,13 +138,13 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
         m_meshEntity1->setBlendColour(m_bodyColour1, 1);
         if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity1->ParsePLYFile(absoluteFilename.toStdString());
         if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity1->ParseOBJFile(absoluteFilename.toStdString());
-        pgd::Vector3 offset = m_body->GetConstructionPosition();
+        pgd::Vector3 offset = m_body->constructionPosition();
         m_meshEntity1->Move(-offset[0], -offset[1], -offset[2]);
     }
 
     m_meshEntity2 = std::make_unique<FacetedObject>();
     m_meshEntity2->setSimulationWidget(simulationWidget);
-    filename = QString::fromStdString(m_body->GetGraphicFile2());
+    filename = QString::fromStdString(m_body->graphicFile2());
     if (filename.size())
     {
         if (QDir::isAbsolutePath(filename))
@@ -166,13 +166,13 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
         m_meshEntity2->setBlendColour(m_bodyColour2, 1);
         if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity2->ParsePLYFile(absoluteFilename.toStdString());
         if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity2->ParseOBJFile(absoluteFilename.toStdString());
-        pgd::Vector3 offset = m_body->GetConstructionPosition();
+        pgd::Vector3 offset = m_body->constructionPosition();
         m_meshEntity2->Move(-offset[0], -offset[1], -offset[2]);
     }
 
     m_meshEntity3 = std::make_unique<FacetedObject>();
     m_meshEntity3->setSimulationWidget(simulationWidget);
-    filename = QString::fromStdString(m_body->GetGraphicFile3());
+    filename = QString::fromStdString(m_body->graphicFile3());
     if (filename.size())
     {
         if (QDir::isAbsolutePath(filename))
@@ -194,7 +194,7 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
         m_meshEntity3->setBlendColour(m_bodyColour3, 1);
         if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity3->ParsePLYFile(absoluteFilename.toStdString());
         if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity3->ParseOBJFile(absoluteFilename.toStdString());
-        pgd::Vector3 offset = m_body->GetConstructionPosition();
+        pgd::Vector3 offset = m_body->constructionPosition();
         m_meshEntity3->Move(-offset[0], -offset[1], -offset[2]);
     }
 
@@ -206,8 +206,8 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
 
 void DrawBody::updateEntityPose()
 {
-    pgd::Quaternion quaternion = m_body->GetQuaternion();
-    pgd::Vector3 position = m_body->GetPosition();
+    pgd::Quaternion quaternion = m_body->quaternion();
+    pgd::Vector3 position = m_body->position();
     SetDisplayRotationFromQuaternion(quaternion);
     SetDisplayPosition(position[0], position[1], position[2]);
     m_axes->SetDisplayScale(m_body->size1(), m_body->size1(), m_body->size1());

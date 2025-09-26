@@ -43,7 +43,7 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
     {
         if (Body *body = dynamic_cast<Body *>(GetTarget()))
         {
-            q = body->GetQuaternion();
+            q = body->quaternion();
             angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
@@ -77,7 +77,7 @@ double DataTargetQuaternion::calculateError(size_t index, size_t indexNext, doub
     {
         if (Body *body = dynamic_cast<Body *>(GetTarget()))
         {
-            q = body->GetQuaternion();
+            q = body->quaternion();
             angle = pgd::FindAngle(interpolatedTarget, q);
             break;
         }
@@ -114,7 +114,7 @@ std::string DataTargetQuaternion::dumpToString()
 
     if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
     {
-        q = body->GetQuaternion();
+        q = body->quaternion();
         angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
     }
     else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)

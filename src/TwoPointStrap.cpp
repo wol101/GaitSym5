@@ -164,7 +164,7 @@ void TwoPointStrap::Calculate()
     }
 }
 
-//int TwoPointStrap::SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
+//int TwoPointStrap::sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
 //{
 //    const double epsilon = DBL_EPSILON;
 

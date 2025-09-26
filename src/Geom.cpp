@@ -62,7 +62,7 @@ pgd::Vector3 Geom::GetWorldPosition() const
         //        pgd::Vector3 p;
         //        dBodyGetRelPointPos(m_body->GetBodyID(), m_position.x, m_position.y, m_position.z, p);
         //        return pgd::Vector3(p[0], p[1], p[2]);
-        pgd::Vector3 bodyWorldPosition = pgd::QVRotate(m_body->GetQuaternion(), m_position) + pgd::Vector3(m_body->GetPosition());
+        pgd::Vector3 bodyWorldPosition = pgd::QVRotate(m_body->quaternion(), m_position) + pgd::Vector3(m_body->position());
         return bodyWorldPosition;
     }
     else
@@ -107,7 +107,7 @@ pgd::Quaternion Geom::GetWorldQuaternion() const
 {
     if (m_body)
     {
-        return m_body->GetQuaternion() * m_quaternion;
+        return m_body->quaternion() * m_quaternion;
     }
     else
     {

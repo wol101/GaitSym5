@@ -143,10 +143,10 @@ std::string *PhysXPhysicsEngine::CreateBodies()
     {
         Body *body = iter.second.get();
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
-        pgd::Vector3 position = body->GetConstructionPosition();
-        pgd::Vector3 linearVelocity = body->GetLinearVelocity();
-        pgd::Vector3 angularVelocity = body->GetAngularVelocity();
+        body->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        pgd::Vector3 position = body->constructionPosition();
+        pgd::Vector3 linearVelocity = body->linearVelocity();
+        pgd::Vector3 angularVelocity = body->angularVelocity();
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(zeroRotation.x, zeroRotation.y, zeroRotation.z, zeroRotation.n));
         physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
         physx::PxMat33 inertialTensor(physx::PxVec3(ixx, ixy, izx), physx::PxVec3(ixy, iyy, iyz), physx::PxVec3(izx, iyz, izz)); // construct from 3 column vectors
@@ -303,8 +303,8 @@ std::string *PhysXPhysicsEngine::MoveBodies()
     for (auto &&iter : *simulation()->GetBodyList())
     {
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
-        pgd::Vector3 position = iter.second->GetPosition();
-        pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        pgd::Vector3 position = iter.second->position();
+        pgd::Quaternion quaternion = iter.second->quaternion();
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
         rigidDynamic->setGlobalPose(transform);
     }
@@ -354,7 +354,7 @@ std::string *PhysXPhysicsEngine::Step()
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
         pgd::Vector3 dragTorque = iter.second->dragTorque();
-        iter.second->ComputeDrag();
+        iter.second->computeDrag();
         Marker marker(iter.second.get());
         pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
         pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
@@ -394,10 +394,10 @@ std::string *PhysXPhysicsEngine::Step()
         physx::PxTransform transform = rigidDynamic->getGlobalPose();
         physx::PxVec3 linearVelocity = rigidDynamic->getLinearVelocity();
         physx::PxVec3 angularVelocity = rigidDynamic->getAngularVelocity();
-        iter.second->SetPosition(transform.p[0], transform.p[1], transform.p[2]);
-        iter.second->SetQuaternion(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-        iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
-        iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
+        iter.second->setPosition(transform.p[0], transform.p[1], transform.p[2]);
+        iter.second->setQuaternion(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
+        iter.second->setLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
+        iter.second->setAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
     for (auto &&iter : *simulation()->GetJointList())

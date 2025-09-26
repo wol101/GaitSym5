@@ -232,7 +232,7 @@ void AMotorJoint::update()
     pgd::MakeAxisAngleFromQ(currentToTarget, &m_deltaAxis.x, &m_deltaAxis.y, &m_deltaAxis.z, &m_deltaAngle);
     if (body1())
     {
-        pgd::Quaternion bodyRotation(body1()->GetQuaternion());
+        pgd::Quaternion bodyRotation(body1()->quaternion());
         m_deltaAxis = pgd::QVRotate(bodyRotation, m_deltaAxis);
     }
     if (m_firstTime) m_lastDeltaAxis = m_deltaAxis;

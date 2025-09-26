@@ -146,7 +146,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
         for (auto &&bodyIter : *groupIter)
         {
             Body *body = bodyIter.second;
-            double mass = body->GetMass();
+            double mass = body->mass();
             if (mass > maxMass)
             {
                 maxMass = mass;
@@ -302,11 +302,11 @@ void MuJoCoPhysicsEngine::XMLTerminateTag(std::string *xmlString, const std::str
 std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
 {
     Body *body = treeBody.body;
-    pgd::Vector3 position = body->GetConstructionPosition();
+    pgd::Vector3 position = body->constructionPosition();
     pgd::Quaternion quaternion(true);
     if (treeBody.parent)
     {
-        pgd::Vector3 parentConstructionPosition = treeBody.parent->body->GetConstructionPosition(); // only need position because construction rotation is always zero
+        pgd::Vector3 parentConstructionPosition = treeBody.parent->body->constructionPosition(); // only need position because construction rotation is always zero
         position = position - parentConstructionPosition;
     }
     std::map<std::string, std::string> attributes;
@@ -317,7 +317,7 @@ std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
     XMLInitiateTag(&m_mjXML, "geom", {{"type"s, "sphere"s}, {"size"s, ".1"s}}, true); // this is just a CM marker for debugging
 
     double mass, ixx, iyy, izz, ixy, izx, iyz;
-    body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    body->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
     attributes.clear();
     attributes["pos"s] = GSUtil::ToString(pgd::Vector3());
     attributes["mass"s] = GSUtil::ToString(mass);
@@ -514,10 +514,10 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
                 setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" body not found", bodyName.c_str()));
                 return lastErrorPtr();
             }
-            pgd::Vector3 p = body->GetPosition();
-            pgd::Quaternion q = body->GetQuaternion();
-            pgd::Vector3 v = body->GetLinearVelocity();
-            pgd::Vector3 av = body->GetAngularVelocity();
+            pgd::Vector3 p = body->position();
+            pgd::Quaternion q = body->quaternion();
+            pgd::Vector3 v = body->linearVelocity();
+            pgd::Vector3 av = body->angularVelocity();
             // now set the values in the MuJoCo data structure
             m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
             m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
@@ -630,12 +630,12 @@ std::string *MuJoCoPhysicsEngine::Step()
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
         pgd::Vector3 dragTorque = iter.second->dragTorque();
-        iter.second->ComputeDrag();
+        iter.second->computeDrag();
         Marker marker(iter.second.get());
         pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
         pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
         int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
-        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->GetPosition().constData(), bodyID, qfrc_target.data());
+        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->position().constData(), bodyID, qfrc_target.data());
     }
 
     // copy the accumulated qfrc values to the main data structure
@@ -665,10 +665,10 @@ std::string *MuJoCoPhysicsEngine::Step()
         //     av = marker.GetWorldVector(av);
         //     v = marker.GetWorldVector(v);
         // }
-        body->SetPosition(p);
-        body->SetQuaternion(q);
-        body->SetLinearVelocity(v);
-        body->SetAngularVelocity(av);
+        body->setPosition(p);
+        body->setQuaternion(q);
+        body->setLinearVelocity(v);
+        body->setAngularVelocity(av);
 #ifdef DEBUG_MUJOCO_STEP
         std::cerr << "\nBody Name = " << body->name() << "\n";
         std::cerr << "Body ID = " << bodyID << " Name from ID = " << mj_id2name(m_mjModel, mjOBJ_BODY, bodyID) << "\n";

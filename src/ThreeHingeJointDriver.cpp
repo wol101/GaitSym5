@@ -282,19 +282,19 @@ void ThreeHingeJointDriver::Update()
 //#endif
 
     // now assemble a fake limb that uses the calculated angles
-    m_proximalBody->SetQuaternion(m_proximalJointRotation.n, m_proximalJointRotation.x, m_proximalJointRotation.y, m_proximalJointRotation.z);
+    m_proximalBody->setQuaternion(m_proximalJointRotation.n, m_proximalJointRotation.x, m_proximalJointRotation.y, m_proximalJointRotation.z);
     pgd::Quaternion qIntermediateBody = m_intermediateJointRotation * m_proximalJointRotation;
-    m_intermediateBody->SetQuaternion(qIntermediateBody.n, qIntermediateBody.x, qIntermediateBody.y, qIntermediateBody.z);
+    m_intermediateBody->setQuaternion(qIntermediateBody.n, qIntermediateBody.x, qIntermediateBody.y, qIntermediateBody.z);
     pgd::Quaternion qDistalBody = m_distalJointRotation * qIntermediateBody;
-    m_distalBody->SetQuaternion(qDistalBody.n, qDistalBody.x, qDistalBody.y, qDistalBody.z);
+    m_distalBody->setQuaternion(qDistalBody.n, qDistalBody.x, qDistalBody.y, qDistalBody.z);
 
     // and move them around so the markers line up
     pgd::Vector3 negDelta = m_proximalJointMarker1->GetWorldPosition() - m_proximalJointMarker2->GetWorldPosition();
-    m_proximalBody->SetPositionDelta(negDelta.x, negDelta.y, negDelta.z);
+    m_proximalBody->setPositionDelta(negDelta.x, negDelta.y, negDelta.z);
     negDelta = m_intermediateJointMarker1->GetWorldPosition() - m_intermediateJointMarker2->GetWorldPosition();
-    m_intermediateBody->SetPositionDelta(negDelta.x, negDelta.y, negDelta.z);
+    m_intermediateBody->setPositionDelta(negDelta.x, negDelta.y, negDelta.z);
     negDelta = m_distalJointMarker1->GetWorldPosition() - m_distalJointMarker2->GetWorldPosition();
-    m_distalBody->SetPositionDelta(negDelta.x, negDelta.y, negDelta.z);
+    m_distalBody->setPositionDelta(negDelta.x, negDelta.y, negDelta.z);
 
     // and calculate all the straps
     for (auto &&it : m_localStrapList)

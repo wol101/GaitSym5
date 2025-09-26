@@ -1348,7 +1348,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     bool meshPathChanged = false;
     for (auto &&iter : *this->m_simulation->GetBodyList())
     {
-        std::vector<std::string> meshNames = {iter.second->GetGraphicFile1(), iter.second->GetGraphicFile2(), iter.second->GetGraphicFile3()};
+        std::vector<std::string> meshNames = {iter.second->graphicFile1(), iter.second->graphicFile2(), iter.second->graphicFile3()};
         for (size_t nameIndex = 0;  nameIndex < meshNames.size(); nameIndex++)
         {
             auto &&meshName = meshNames[nameIndex];
@@ -1379,13 +1379,13 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
                         switch (nameIndex)
                         {
                         case 0:
-                            iter.second->SetGraphicFile1(newFileInfo.fileName().toStdString());
+                            iter.second->setGraphicFile1(newFileInfo.fileName().toStdString());
                             break;
                         case 1:
-                            iter.second->SetGraphicFile2(newFileInfo.fileName().toStdString());
+                            iter.second->setGraphicFile2(newFileInfo.fileName().toStdString());
                             break;
                         case 2:
-                            iter.second->SetGraphicFile3(newFileInfo.fileName().toStdString());
+                            iter.second->setGraphicFile3(newFileInfo.fileName().toStdString());
                             break;
                         default:
                             qDebug() << "Error IN MainWindow::menuOpen(): invalid nameIndex = " << nameIndex;
@@ -1475,7 +1475,7 @@ void MainWindow::menuSaveAs()
     {
         if (this->m_mode == MainWindow::constructionMode) // need to put everything into run mode to save properly
         {
-            for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterRunMode();
+            for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
             for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
             for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
             for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
@@ -1486,15 +1486,15 @@ void MainWindow::menuSaveAs()
         QString meshPath, relativeMeshPath;
         for (auto &&it : *this->m_simulation->GetBodyList())
         {
-            meshPath = QString::fromStdString(it.second->GetGraphicFile1());
+            meshPath = QString::fromStdString(it.second->graphicFile1());
             relativeMeshPath = currentDir.relativeFilePath(meshPath);
-            it.second->SetGraphicFile1(relativeMeshPath.toStdString());
-            meshPath = QString::fromStdString(it.second->GetGraphicFile2());
+            it.second->setGraphicFile1(relativeMeshPath.toStdString());
+            meshPath = QString::fromStdString(it.second->graphicFile2());
             relativeMeshPath = currentDir.relativeFilePath(meshPath);
-            it.second->SetGraphicFile2(relativeMeshPath.toStdString());
-            meshPath = QString::fromStdString(it.second->GetGraphicFile3());
+            it.second->setGraphicFile2(relativeMeshPath.toStdString());
+            meshPath = QString::fromStdString(it.second->graphicFile3());
             relativeMeshPath = currentDir.relativeFilePath(meshPath);
-            it.second->SetGraphicFile3(relativeMeshPath.toStdString());
+            it.second->setGraphicFile3(relativeMeshPath.toStdString());
         }
         this->m_simulation->SetOutputModelStateFile(fileName.toStdString());
         this->m_simulation->OutputProgramState();
@@ -1527,7 +1527,7 @@ void MainWindow::menuSave()
     if (this->m_noName) return;
     if (this->m_mode == MainWindow::constructionMode) // need to put everything into run mode to save properly
     {
-        for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterRunMode();
+        for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
         for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
         for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
         for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();
@@ -1537,15 +1537,15 @@ void MainWindow::menuSave()
     QString meshPath, relativeMeshPath;
     for (auto &&it : *this->m_simulation->GetBodyList())
     {
-        meshPath = QString::fromStdString(it.second->GetGraphicFile1());
+        meshPath = QString::fromStdString(it.second->graphicFile1());
         relativeMeshPath = currentDir.relativeFilePath(meshPath);
-        it.second->SetGraphicFile1(relativeMeshPath.toStdString());
-        meshPath = QString::fromStdString(it.second->GetGraphicFile2());
+        it.second->setGraphicFile1(relativeMeshPath.toStdString());
+        meshPath = QString::fromStdString(it.second->graphicFile2());
         relativeMeshPath = currentDir.relativeFilePath(meshPath);
-        it.second->SetGraphicFile2(relativeMeshPath.toStdString());
-        meshPath = QString::fromStdString(it.second->GetGraphicFile3());
+        it.second->setGraphicFile2(relativeMeshPath.toStdString());
+        meshPath = QString::fromStdString(it.second->graphicFile3());
         relativeMeshPath = currentDir.relativeFilePath(meshPath);
-        it.second->SetGraphicFile3(relativeMeshPath.toStdString());
+        it.second->setGraphicFile3(relativeMeshPath.toStdString());
     }
     this->setStatusString(fileName + QString(" saving"), 2);
     this->m_simulation->SetOutputModelStateFile(fileName.toStdString());
@@ -1592,7 +1592,7 @@ void MainWindow::menuExportOpenSim()
                 QDir newDir(currentDir.absoluteFilePath("osim_meshes"));
                 currentDir.mkdir("osim_meshes");
                 openSimExporter.setPathToObjFiles("osim_meshes");
-                temp.WriteOBJFile(newDir.absoluteFilePath(QString::fromStdString(body->GetGraphicFile1())).toStdString());
+                temp.WriteOBJFile(newDir.absoluteFilePath(QString::fromStdString(body->graphicFile1())).toStdString());
             }
         }
         openSimExporter.Process(m_simulation);
@@ -2120,8 +2120,8 @@ void MainWindow::menuImportMeshes()
             // now create the body
             std::unique_ptr<GaitSym::Body> body = std::make_unique<GaitSym::Body>(/*this->m_simulation->GetWorldID()*/);
             body->setSimulation(this->m_simulation);
-            body->SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
-            body->SetGraphicFile1(meshFileName);
+            body->setConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
+            body->setGraphicFile1(meshFileName);
 
             // get a unique file name
             auto bodyList = this->m_simulation->GetBodyList();
@@ -2161,15 +2161,15 @@ void MainWindow::menuImportMeshes()
             double mass, ixx, iyy, izz, ixy, izx, iyz;
             pgd::Vector3 centreOfMass;
             pgd::Matrix3x3 inertialTensor;
-            double density = body->GetConstructionDensity();
+            double density = body->constructionDensity();
             bool clockwise = false;
             pgd::Vector3 translation;
             mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
             std::string massError/* = GaitSym::Body::MassCheck(&mass)*/; // FIX_ME
             if (massError.size() == 0)
             {
-                body->SetConstructionPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
-                body->SetPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
+                body->setConstructionPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
+                body->setPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
                 // now recalculate the inertial tensor arount the centre of mass
                 translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
                 mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
@@ -2178,13 +2178,13 @@ void MainWindow::menuImportMeshes()
             {
                 QMessageBox::warning(this, tr("Calculate Mass Properties: %1").arg(meshFileName.c_str()), tr("Calculated mass properties are invalid so using defaults:\n%1").arg(massError.c_str()));
                 pgd::Vector3 boundingBoxCentre = (pgd::Vector3(mesh->upperBound()) + pgd::Vector3(mesh->lowerBound())) / 2;
-                body->SetConstructionPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
-                body->SetPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
+                body->setConstructionPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
+                body->setPosition(boundingBoxCentre.x, boundingBoxCentre.y, boundingBoxCentre.z);
                 mass = 1;
                 inertialTensor.SetInertia(1, 1, 1, 0, 0, 0);
             }
             inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
-            body->SetMass(mass, ixx, iyy, izz, ixy, izx, iyz);
+            body->setMass(mass, ixx, iyy, izz, ixy, izx, iyz);
 
             // set the default properties
             body->setSize1(Preferences::valueDouble("BodyAxesSize"));
@@ -2352,9 +2352,9 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
     pgd::Quaternion originalOrientation;
     if (body)
     {
-        originalContructionPosition = body->GetConstructionPosition();
-        originalPosition = body->GetPosition();
-        originalOrientation = body->GetQuaternion();
+        originalContructionPosition = body->constructionPosition();
+        originalPosition = body->position();
+        originalOrientation = body->quaternion();
     }
     int status = dialogBodyBuilder.exec();
     if (status == QDialog::Accepted)
@@ -2362,7 +2362,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
         if (!body) // this is the create body option so there will be no dependencies
         {
             std::unique_ptr<GaitSym::Body> newBody = dialogBodyBuilder.outputBody();
-            newBody->LateInitialisation();
+            newBody->lateInitialisation();
             std::string newBodyName = newBody->name();
             // insert the new centre of mass marker unless it already exists
             std::string cmMarkerName = newBodyName + "_CM_Marker"s;
@@ -2389,7 +2389,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
         else // this is an edit so things may have moved and we need to deal with that
         {
             this->setStatusString(QString("Body edited: %1").arg(QString::fromStdString(body->name())), 1);
-            pgd::Vector3 deltaPosition = pgd::Vector3(body->GetConstructionPosition()) - originalContructionPosition;
+            pgd::Vector3 deltaPosition = pgd::Vector3(body->constructionPosition()) - originalContructionPosition;
             if (Preferences::valueBool("DialogBodyBuilderMoveMarkers", false) == false) // need to compensate the move in construction position
             {
                 for (auto &&it : *this->m_simulation->GetMarkerList())
@@ -2694,7 +2694,7 @@ void MainWindow::enterRunMode()
 {
     Q_ASSERT_X(this->m_simulation, "MainWindow::enterRunMode", "this->m_simulation undefined");
     this->m_mode = MainWindow::runMode;
-    for (auto &&it : *this->m_simulation->GetBodyList()) it.second->EnterRunMode();
+    for (auto &&it : *this->m_simulation->GetBodyList()) it.second->enterRunMode();
     for (auto &&it : *this->m_simulation->GetMuscleList()) it.second->LateInitialisation();
     for (auto &&it : *this->m_simulation->GetFluidSacList()) it.second->LateInitialisation();
     for (auto &&it : *this->m_simulation->GetJointList()) it.second->LateInitialisation();

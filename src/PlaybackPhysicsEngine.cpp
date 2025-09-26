@@ -173,8 +173,8 @@ std::string *PlaybackPhysicsEngine::Step()
     {
         // currently only setting positions
         Pose *pose = &m_poses[bodyIter.first][index];
-        bodyIter.second->SetPosition(pose->p);
-        bodyIter.second->SetQuaternion(pose->q);
+        bodyIter.second->setPosition(pose->p);
+        bodyIter.second->setQuaternion(pose->q);
     }
 
     return nullptr;
