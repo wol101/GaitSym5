@@ -127,12 +127,12 @@ void DialogMuscles::accept() // this catches OK and return/enter
             strap =  std::make_unique<GaitSym::NPointStrap>();
             GaitSym::Marker *originMarker = markerList->at(ui->comboBoxOriginMarker->currentText().toStdString()).get();
             GaitSym::Marker *insertionMarker = markerList->at(ui->comboBoxInsertionMarker->currentText().toStdString()).get();
-            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->SetOrigin(originMarker);
-            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->SetInsertion(insertionMarker);
+            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->setOrigin(originMarker);
+            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->setInsertion(insertionMarker);
             std::vector<GaitSym::Marker *>viaPointMarkerList;
             viaPointMarkerList.reserve(size_t(ui->spinBoxNViaPoints->value()));
             for (int i = 0; i < ui->spinBoxNViaPoints->value(); i++) viaPointMarkerList.push_back(markerList->at(m_viaPointComboBoxList[i]->currentText().toStdString()).get());
-            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->SetViaPoints(&viaPointMarkerList);
+            reinterpret_cast<GaitSym::NPointStrap *>(strap.get())->setViaPoints(&viaPointMarkerList);
         }
     }
     else if (strapTab == "Cylinder")

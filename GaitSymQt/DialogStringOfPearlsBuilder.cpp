@@ -347,8 +347,8 @@ void DialogStringOfPearlsBuilder::importPathFromMuscle()
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             for (size_t i = 2; i < pointForceList->size(); i++) pathCoordinates.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));
             pathCoordinates.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
-            originID = nPointStrap->GetOriginMarker()->name();
-            insertionID = nPointStrap->GetInsertionMarker()->name();
+            originID = nPointStrap->originMarker()->name();
+            insertionID = nPointStrap->insertionMarker()->name();
             break;
         }
 

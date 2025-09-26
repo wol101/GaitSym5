@@ -254,7 +254,7 @@ void FluidSac::triangleVertices(size_t triangleIndex, double vertices[9]) const
     vertices[8] = m_vertexList[tri->v2].z;
 }
 
-void FluidSac::LateInitialisation()
+void FluidSac::lateInitialisation()
 {
     this->calculateVolume();
     // m_lastSacVolume = m_sacVolume;

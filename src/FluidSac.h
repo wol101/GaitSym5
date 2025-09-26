@@ -45,7 +45,7 @@ public:
     virtual void calculateVolume();
     virtual void calculatePressure() = 0;
     virtual void calculateLoadsOnMarkers();
-    virtual void LateInitialisation();
+    virtual void lateInitialisation();
 
     double sacVolume() const;
     double dotSacVolume() const;

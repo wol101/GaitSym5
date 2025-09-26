@@ -21,7 +21,7 @@ public:
     FluidSacIdealGas();
 
     virtual void calculatePressure();
-    virtual void LateInitialisation();
+    virtual void lateInitialisation();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

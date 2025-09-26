@@ -167,8 +167,8 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
     // then the bodies are moved to their starting poses
     for (auto &&it : m_BodyList) it.second->lateInitialisation();
     // and we recalculate the dynamic items with the new muscle positions
-    for (auto &&it :  m_MuscleList) it.second->LateInitialisation();
-    for (auto &&it : m_FluidSacList) it.second->LateInitialisation();
+    for (auto &&it :  m_MuscleList) it.second->lateInitialisation();
+    for (auto &&it : m_FluidSacList) it.second->lateInitialisation();
     // and some joints require things to be done after the bodies are moved to their start positions
     for (auto &&it :  m_JointList) it.second->lateInitialisation();
 
@@ -330,13 +330,13 @@ void Simulation::UpdateSimulation()
     // now the muscle straps are invalid because the bodies have moved so they need recalculating
     for (auto &&iter1 : m_MuscleList)
     {
-        iter1.second->CalculateStrap();
+        iter1.second->calculateStrap();
     }
 
     // calculate the energies
     for (auto &&iter1 : m_MuscleList)
     {
-        m_MechanicalEnergy += iter1.second->GetPower() * m_global->stepSize();
+        m_MechanicalEnergy += iter1.second->power() * m_global->stepSize();
         m_MetabolicEnergy += iter1.second->metabolicPower() * m_global->stepSize();
     }
     m_MetabolicEnergy += m_global->BMR() * m_global->stepSize();
@@ -1194,7 +1194,7 @@ void Simulation::DumpObjects()
     for (auto &&it : m_MuscleList)
     {
         DumpObject(it.second.get());
-        DumpObject(it.second->GetStrap());
+        DumpObject(it.second->strap());
     }
 }
 
@@ -1257,7 +1257,7 @@ void Simulation::setKinematicsFile(const std::string &newKinematicsFile)
             return;
         }
         m_physicsEngine->step();
-        for (auto &&muscleIt : m_MuscleList) { muscleIt.second->CalculateStrap(); }
+        for (auto &&muscleIt : m_MuscleList) { muscleIt.second->calculateStrap(); }
     }
 }
 

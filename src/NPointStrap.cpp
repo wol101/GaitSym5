@@ -27,7 +27,7 @@ NPointStrap::NPointStrap(): Strap()
 {
 }
 
-void NPointStrap::SetOrigin(Marker *originMarker)
+void NPointStrap::setOrigin(Marker *originMarker)
 {
     m_originMarker = originMarker;
 //    this->SetOrigin(originMarker->GetBody(), originMarker->GetPosition().data());
@@ -43,7 +43,7 @@ void NPointStrap::SetOrigin(Marker *originMarker)
     }
 }
 
-void NPointStrap::SetInsertion(Marker *insertionMarker)
+void NPointStrap::setInsertion(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
 //    this->SetInsertion(insertionMarker->GetBody(), insertionMarker->GetPosition().data());
@@ -59,47 +59,47 @@ void NPointStrap::SetInsertion(Marker *insertionMarker)
     }
 }
 
-void NPointStrap::SetViaPoints(std::vector<Marker *> *viaPointMarkerList)
+void NPointStrap::setViaPoints(std::vector<Marker *> *viaPointMarkerList)
 {
-    m_ViaBodyList.clear();
-    m_ViaPointList.clear();
-    m_ViaPointMarkerList.clear();
+    m_viaBodyList.clear();
+    m_viaPointList.clear();
+    m_viaPointMarkerList.clear();
     GetPointForceList()->reserve(viaPointMarkerList->size() + 2);
-    m_ViaBodyList.reserve(viaPointMarkerList->size());
-    m_ViaPointList.reserve(viaPointMarkerList->size());
-    m_ViaPointMarkerList.reserve(viaPointMarkerList->size());
+    m_viaBodyList.reserve(viaPointMarkerList->size());
+    m_viaPointList.reserve(viaPointMarkerList->size());
+    m_viaPointMarkerList.reserve(viaPointMarkerList->size());
     for (size_t i = 0; i < viaPointMarkerList->size(); i++)
     {
         std::unique_ptr<PointForce> viaPointForce = std::make_unique<PointForce>();
         viaPointForce->body = viaPointMarkerList->at(i)->body();
-        m_ViaBodyList.push_back(viaPointForce->body);
-        m_ViaPointList.push_back(viaPointMarkerList->at(i)->position());
-        m_ViaPointMarkerList.push_back(viaPointMarkerList->at(i));
+        m_viaBodyList.push_back(viaPointForce->body);
+        m_viaPointList.push_back(viaPointMarkerList->at(i)->position());
+        m_viaPointMarkerList.push_back(viaPointMarkerList->at(i));
         GetPointForceList()->push_back(std::move(viaPointForce));
     }
 }
 
-const std::vector<pgd::Vector3> *NPointStrap::GetViaPoints() const
+const std::vector<pgd::Vector3> *NPointStrap::viaPoints() const
 {
-    return &m_ViaPointList;
+    return &m_viaPointList;
 }
 
-const std::vector<Body *> *NPointStrap::GetViaPointBodies() const
+const std::vector<Body *> *NPointStrap::viaPointBodies() const
 {
-    return &m_ViaBodyList;
+    return &m_viaBodyList;
 }
 
-const std::vector<Marker *> *NPointStrap::GetViaPointMarkers() const
+const std::vector<Marker *> *NPointStrap::viaPointMarkers() const
 {
-    return &m_ViaPointMarkerList;
+    return &m_viaPointMarkerList;
 }
 
-Marker *NPointStrap::GetOriginMarker() const
+Marker *NPointStrap::originMarker() const
 {
     return m_originMarker;
 }
 
-Marker *NPointStrap::GetInsertionMarker() const
+Marker *NPointStrap::insertionMarker() const
 {
     return m_insertionMarker;
 }
@@ -120,9 +120,9 @@ void NPointStrap::calculate()
     theInsertion->point[0] = insertion.x;
     theInsertion->point[1] = insertion.y;
     theInsertion->point[2] = insertion.z;
-    for (i = 0; i < m_ViaPointMarkerList.size(); i++)
+    for (i = 0; i < m_viaPointMarkerList.size(); i++)
     {
-        v = m_ViaPointMarkerList[i]->worldPosition();
+        v = m_viaPointMarkerList[i]->worldPosition();
         (*GetPointForceList())[i + 2]->point[0] = v.x;
         (*GetPointForceList())[i + 2]->point[1] = v.y;
         (*GetPointForceList())[i + 2]->point[2] = v.z;
@@ -213,7 +213,7 @@ std::string *NPointStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" OriginMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetOrigin(originMarker->second.get());
+    this->setOrigin(originMarker->second.get());
     if (findAttribute("InsertionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
     auto insertionMarker = simulation()->GetMarkerList()->find(buf);
     if (insertionMarker == simulation()->GetMarkerList()->end())
@@ -221,7 +221,7 @@ std::string *NPointStrap::createFromAttributes()
         setLastError("STRAP ID=\""s + name() +"\" InsertionMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetInsertion(insertionMarker->second.get());
+    this->setInsertion(insertionMarker->second.get());
 
     if (findAttribute("ViaPointMarkerIDList"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> result;
@@ -243,7 +243,7 @@ std::string *NPointStrap::createFromAttributes()
         }
         viaPointMarkerList.push_back(viaPointMarker->second.get());
     }
-    this->SetViaPoints(&viaPointMarkerList);
+    this->setViaPoints(&viaPointMarkerList);
 
     std::vector<NamedObject *> upstreamObjects;
     upstreamObjects.reserve(viaPointMarkerList.size() + 2);
@@ -261,8 +261,8 @@ void NPointStrap::appendToAttributes()
     setAttribute("OriginMarkerID"s, m_originMarker->name());
     setAttribute("InsertionMarkerID"s, m_insertionMarker->name());
     std::vector<std::string> markerNames;
-    markerNames.reserve(m_ViaPointMarkerList.size());
-    for (size_t i = 0; i < m_ViaPointMarkerList.size(); i++) markerNames.push_back(m_ViaPointMarkerList[i]->name());
+    markerNames.reserve(m_viaPointMarkerList.size());
+    for (size_t i = 0; i < m_viaPointMarkerList.size(); i++) markerNames.push_back(m_viaPointMarkerList[i]->name());
     std::string viaPointMarkerList = pystring::join(" "s, markerNames);
     setAttribute("ViaPointMarkerIDList"s, viaPointMarkerList);
 }

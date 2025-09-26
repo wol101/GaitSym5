@@ -659,10 +659,10 @@ std::string *TwoHingeJointDriver::createFromAttributes()
 
         if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(nPointStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(nPointStrap->GetInsertionMarker());
+            Marker *originMarker = createLocalMarkerCopy(nPointStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(nPointStrap->insertionMarker());
             std::vector<Marker *> viaPointList;
-            for (auto &&it : *nPointStrap->GetViaPointMarkers()) viaPointList.push_back(createLocalMarkerCopy(it));
+            for (auto &&it : *nPointStrap->viaPointMarkers()) viaPointList.push_back(createLocalMarkerCopy(it));
             if (!originMarker || !insertionMarker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -670,9 +670,9 @@ std::string *TwoHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<NPointStrap> strap = std::make_unique<NPointStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
-            strap->SetViaPoints(&viaPointList);
+            strap->setOrigin(originMarker);
+            strap->setInsertion(insertionMarker);
+            strap->setViaPoints(&viaPointList);
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }

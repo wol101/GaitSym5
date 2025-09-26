@@ -43,7 +43,7 @@ void FluidSacIdealGas::calculatePressure()
     setPressure((m_amountOfSubstance * m_R * m_temperature / sacVolume()) - m_externalPressure);
 }
 
-void FluidSacIdealGas::LateInitialisation()
+void FluidSacIdealGas::lateInitialisation()
 {
     this->calculateVolume();
     if (m_amountOfSubstance < 0)
@@ -51,7 +51,7 @@ void FluidSacIdealGas::LateInitialisation()
         setPressure(0);
         m_amountOfSubstance = sacVolume() * (pressure() + m_externalPressure) / (m_R * m_temperature);
     }
-    FluidSac::LateInitialisation();
+    FluidSac::lateInitialisation();
 }
 
 std::string *FluidSacIdealGas::createFromAttributes()

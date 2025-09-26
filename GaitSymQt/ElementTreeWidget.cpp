@@ -661,7 +661,7 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
             else if (column == 2)
             {
                 it->second->setDump((item->checkState(column) == Qt::Checked));
-                it->second->GetStrap()->setDump((item->checkState(column) == Qt::Checked));
+                it->second->strap()->setDump((item->checkState(column) == Qt::Checked));
             }
         }
     }

@@ -634,7 +634,7 @@ void OpenSimExporter::CreateForceSet()
     for (auto &&muscleIter : *m_simulation->GetMuscleList())
     {
         Muscle *muscle = muscleIter.second.get();
-        Strap *strap = muscleIter.second->GetStrap();
+        Strap *strap = muscleIter.second->strap();
         if (m_mocoExport) { XMLInitiateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
         else { XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
         XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
@@ -658,9 +658,9 @@ void OpenSimExporter::CreateForceSet()
             if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strap))
             {
                 std::vector<const Marker *> markerList;
-                markerList.push_back(nPointStrap->GetOriginMarker());
-                for (auto &&markerIter : *nPointStrap->GetViaPointMarkers()) { markerList.push_back(markerIter); }
-                markerList.push_back(nPointStrap->GetInsertionMarker());
+                markerList.push_back(nPointStrap->originMarker());
+                for (auto &&markerIter : *nPointStrap->viaPointMarkers()) { markerList.push_back(markerIter); }
+                markerList.push_back(nPointStrap->insertionMarker());
                 CreatePathPointSet(muscle->name(), markerList);
                 break;
             }
