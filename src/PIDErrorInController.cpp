@@ -20,7 +20,7 @@ PIDErrorInController::PIDErrorInController()
 {
 }
 
-void PIDErrorInController::Initialise(double Kp, double Ki, double Kd)
+void PIDErrorInController::initialise(double Kp, double Ki, double Kd)
 {
     m_Kp = Kp;
     m_Ki = Ki;
@@ -69,7 +69,7 @@ std::string *PIDErrorInController::createFromAttributes()
     double Ki = GSUtil::toDouble(buf);
     if (findAttribute("Kd"s, &buf) == nullptr) return lastErrorPtr();
     double Kd = GSUtil::toDouble(buf);
-    Initialise(Kp, Ki, Kd);
+    initialise(Kp, Ki, Kd);
     return nullptr;
 }
 
