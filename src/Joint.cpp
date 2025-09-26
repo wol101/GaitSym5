@@ -100,8 +100,8 @@ std::string *Joint::createFromAttributes()
     this->setBody1Marker(marker1Iterator->second.get());
     this->setBody2Marker(marker2Iterator->second.get());
 
-    if (findAttribute("CFM"s, &buf)) m_CFM = GSUtil::toDouble(buf);
-    if (findAttribute("ERP"s, &buf)) m_ERP = GSUtil::toDouble(buf);
+    if (findAttribute("CFM"s, &buf)) m_cfm = GSUtil::toDouble(buf);
+    if (findAttribute("ERP"s, &buf)) m_erp = GSUtil::toDouble(buf);
 
     setUpstreamObjects({m_body1Marker, m_body2Marker});
     return nullptr;
@@ -124,50 +124,50 @@ void Joint::appendToAttributes()
     setAttribute("Type", type());
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
-    if (m_CFM >= 0) setAttribute("CFM"s, *GSUtil::toString(m_CFM, &buf));
-    if (m_ERP >= 0) setAttribute("ERP"s, *GSUtil::toString(m_ERP, &buf));
+    if (m_cfm >= 0) setAttribute("CFM"s, *GSUtil::toString(m_cfm, &buf));
+    if (m_erp >= 0) setAttribute("ERP"s, *GSUtil::toString(m_erp, &buf));
 }
 
 double Joint::CFM() const
 {
-    return m_CFM;
+    return m_cfm;
 }
 
 void Joint::setCFM(double CFM)
 {
-    m_CFM = CFM;
+    m_cfm = CFM;
 }
 
 double Joint::ERP() const
 {
-    return m_ERP;
+    return m_erp;
 }
 
 void Joint::setERP(double ERP)
 {
-    m_ERP = ERP;
+    m_erp = ERP;
 }
 
-pgd::Vector3 Joint::GetWorldDistance() const
+pgd::Vector3 Joint::worldDistance() const
 {
     pgd::Vector3 result = m_body2Marker->GetWorldPosition() - m_body1Marker->GetWorldPosition();
     return result;
 }
 
-pgd::Quaternion Joint::GetWorldRotation() const
+pgd::Quaternion Joint::worldRotation() const
 {
     pgd::Quaternion result = pgd::FindRotation(m_body1Marker->GetWorldQuaternion(), m_body2Marker->GetWorldQuaternion());
     // pgd::Quaternion result2 = pgd::FindRotation(m_body1Marker->GetBody()->GetQuaternion(), m_body2Marker->GetBody()->GetQuaternion()); // just checking that using the marker gives the same result as usning the body
     return result;
 }
 
-pgd::Vector3 Joint::GetWorldLinearVelocity() const
+pgd::Vector3 Joint::worldLinearVelocity() const
 {
     pgd::Vector3 result = m_body2Marker->GetWorldLinearVelocity() - m_body1Marker->GetWorldLinearVelocity();
     return result;
 }
 
-pgd::Vector3 Joint::GetWorldAngularVelocity() const
+pgd::Vector3 Joint::worldAngularVelocity() const
 {
     pgd::Vector3 result = m_body2Marker->GetWorldAngularVelocity() - m_body1Marker->GetWorldAngularVelocity();
     return result;

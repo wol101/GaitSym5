@@ -551,10 +551,10 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
                 setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
                 return lastErrorPtr();
             }
-            pgd::Quaternion rotation = joint->GetWorldRotation();
+            pgd::Quaternion rotation = joint->worldRotation();
             pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
             pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
-            pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->GetWorldAngularVelocity());
+            pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->worldAngularVelocity());
             m_mjData->qpos[jnt_qposadr] = eulerAngles.x;
             m_mjData->qvel[jnt_dofadr] = angularVelocity.x;
             break;
@@ -574,8 +574,8 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
                 setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
                 return lastErrorPtr();
             }
-            pgd::Quaternion q = joint->GetWorldRotation();
-            pgd::Vector3 av = joint->GetWorldAngularVelocity();
+            pgd::Quaternion q = joint->worldRotation();
+            pgd::Vector3 av = joint->worldAngularVelocity();
             // now set the values in the MuJoCo data structure
             m_mjData->qpos[jnt_qposadr + 0] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
             m_mjData->qvel[jnt_dofadr + 0] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
