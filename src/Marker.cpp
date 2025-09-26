@@ -83,7 +83,7 @@ std::string *Marker::setPosition(const std::string &buf)
         return nullptr;
     }
 
-    Body *theBody = simulation()->GetBody(tokens[0]);
+    Body *theBody = simulation()->getBody(tokens[0]);
     if (!theBody)
     {
         setLastError("Marker ID=\""s + name() +"\" Position=\""s + buf + "\" body not found"s);
@@ -131,7 +131,7 @@ std::string *Marker::setPosition(const std::string &body, double x, double y, do
         return nullptr;
     }
 
-    Body *theBody = simulation()->GetBody(body);
+    Body *theBody = simulation()->getBody(body);
     if (!theBody)
     {
         setLastError("Marker ID=\""s + name() +"\" Position=\""s + body + "\" body not found"s);
@@ -222,7 +222,7 @@ std::string *Marker::setQuaternion(const std::string &buf)
         return nullptr;
     }
 
-    Body *theBody = simulation()->GetBody(tokens[0]);
+    Body *theBody = simulation()->getBody(tokens[0]);
     if (!theBody)
     {
         setLastError("Marker ID=\""s + name() +"\" Quaternion=\""s + buf + "\" body not found"s);
@@ -271,7 +271,7 @@ std::string *Marker::setQuaternion(const std::string &body, double qs0, double q
         return nullptr;
     }
 
-    Body *theBody = simulation()->GetBody(body);
+    Body *theBody = simulation()->getBody(body);
     if (!theBody)
     {
         setLastError("Marker ID=\""s + name() +"\" Quaternion=\""s + body + "\" body not found"s);
@@ -572,7 +572,7 @@ std::string Marker::dumpToString()
     pgd::Vector3 p = worldPosition();
     pgd::Quaternion q = worldQuaternion();
 
-    ss << simulation()->GetTime() << "\t" << p.x << "\t" << p.y << "\t" << p.z <<
+    ss << simulation()->simulationTime() << "\t" << p.x << "\t" << p.y << "\t" << p.z <<
           "\t" << q.n << "\t" << q.x << "\t" << q.y << "\t" << q.z << "\n";
     return ss.str();
 }
@@ -590,8 +590,8 @@ std::string *Marker::createFromAttributes()
     if (findAttribute("BodyID"s, &buf) == nullptr) return lastErrorPtr();
     if (buf != "World"s)
     {
-        auto it = simulation()->GetBodyList()->find(buf);
-        if (it == simulation()->GetBodyList()->end())
+        auto it = simulation()->bodyList()->find(buf);
+        if (it == simulation()->bodyList()->end())
         {
             setLastError("Marker ID=\""s + name() +"\" BodyID=\""s + buf + "\" not found"s);
             return lastErrorPtr();

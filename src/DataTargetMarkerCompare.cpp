@@ -205,14 +205,14 @@ std::string *DataTargetMarkerCompare::createFromAttributes()
 
     std::string buf;
     if (findAttribute("Marker1ID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *marker1 = simulation()->GetMarker(buf);
+    Marker *marker1 = simulation()->getMarker(buf);
     if (!marker1)
     {
         setLastError("DataTargetMarkerCompare ID=\""s + name() +"\" Marker1 not found "s + buf);
         return lastErrorPtr();
     }
     if (findAttribute("Marker2ID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *marker2 = simulation()->GetMarker(buf);
+    Marker *marker2 = simulation()->getMarker(buf);
     if (!marker2)
     {
         setLastError("DataTargetMarkerCompare ID=\""s + name() +"\" Marker2 not found "s + buf);

@@ -68,7 +68,7 @@ double DataTarget::positiveFunction(double v)
 // returns true when matchScore value is valid
 bool DataTarget::calculateMatchValue(double time, double *matchScore)
 {
-    m_index = size_t(0.5 + time / simulation()->GetTimeIncrement());
+    m_index = size_t(0.5 + time / simulation()->global()->stepSize());
     switch (m_interpolationType)
     {
     case Punctuated:
@@ -131,7 +131,7 @@ bool DataTarget::calculateMatchValue(double time, double *matchScore)
     }
     if (m_value < m_abortBelow || m_value > m_abortAbove)
     {
-        simulation()->SetDataTargetAbort(name());
+        simulation()->setDataTargetAbort(name());
         m_value += m_abortBonus;
     }
     *matchScore = m_value;
@@ -182,7 +182,7 @@ std::string DataTarget::dumpToString()
         setFirstDump(false);
         s += dumpHelper({"time"s, "index"s, "raw_error", "positive_error", "score"s});
     }
-    s += dumpHelper({simulation()->GetTime(), double(m_index), m_rawError, m_positiveError, m_value});
+    s += dumpHelper({simulation()->simulationTime(), double(m_index), m_rawError, m_positiveError, m_value});
     return s;
 }
 
@@ -224,7 +224,7 @@ std::string *DataTarget::createFromAttributes()
     }
     m_targetTimeIndexList.clear();
     m_targetTimeIndexList.reserve(m_targetTimeList.size());
-    for (auto &&iter : m_targetTimeList) m_targetTimeIndexList.push_back(size_t(0.5 + iter / simulation()->GetTimeIncrement()));
+    for (auto &&iter : m_targetTimeList) m_targetTimeIndexList.push_back(size_t(0.5 + iter / simulation()->global()->stepSize()));
 
     if (findAttribute("MatchType"s, &buf) == nullptr) return lastErrorPtr();
     size_t matchTypeIndex;

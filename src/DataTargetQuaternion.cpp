@@ -109,7 +109,7 @@ std::string DataTargetQuaternion::dumpToString()
     pgd::Quaternion q;
 
     size_t valueListIndex = 0;
-    auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());
+    auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->simulationTime());
     if (lowerBounds != targetTimeList()->end()) valueListIndex = std::distance(targetTimeList()->begin(), lowerBounds);
 
     if ((body = dynamic_cast<Body *>(target())) != nullptr)
@@ -123,7 +123,7 @@ std::string DataTargetQuaternion::dumpToString()
         angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
     }
 
-    ss << simulation()->GetTime() <<
+    ss << simulation()->simulationTime() <<
           "\t" << m_qValueList[size_t(valueListIndex)].n << "\t" << m_qValueList[size_t(valueListIndex)].x << "\t" << m_qValueList[size_t(valueListIndex)].y << "\t" << m_qValueList[size_t(valueListIndex)].z <<
           "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] <<
           "\t" << angle <<
@@ -155,12 +155,12 @@ std::string *DataTargetQuaternion::createFromAttributes()
     if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
     for (bool once = true; once; once = false)
     {
-        auto iterBody = simulation()->GetBodyList()->find(buf);
-        if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
-        auto iterGeom = simulation()->GetGeomList()->find(buf);
-        if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
-        auto iterMarker = simulation()->GetMarkerList()->find(buf);
-        if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
+        auto iterBody = simulation()->bodyList()->find(buf);
+        if (iterBody != simulation()->bodyList()->end()) { m_target = iterBody->second.get(); break; }
+        auto iterGeom = simulation()->geomList()->find(buf);
+        if (iterGeom != simulation()->geomList()->end()) { m_target = iterGeom->second.get(); break; }
+        auto iterMarker = simulation()->markerList()->find(buf);
+        if (iterMarker != simulation()->markerList()->end()) { m_target = iterMarker->second.get(); break; }
     }
     if (!m_target)
     {

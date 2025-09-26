@@ -36,9 +36,9 @@ void PIDErrorInController::initialise(double Kp, double Ki, double Kd)
 void PIDErrorInController::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
-    m_dt = simulation()->GetTimeIncrement();
+    m_dt = simulation()->global()->stepSize();
 
     // in this driver, the error is driven by the upstream driver
     m_error = dataSum();
@@ -92,7 +92,7 @@ std::string PIDErrorInController::dumpToString()
         setFirstDump(false);
         s = dumpHelper({"Time", "Kp"s, "Ki"s, "Kd"s, "previous_error"s, "error"s, "integral"s, "derivative"s, "output"s, "dt"s, "value"s});
     }
-    s += dumpHelper({simulation()->GetTime(), m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, value()});
+    s += dumpHelper({simulation()->simulationTime(), m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, value()});
     return s;
 }
 

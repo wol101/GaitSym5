@@ -135,7 +135,7 @@ void AMotorJoint::updateDynamicFriction()
     pgd::Vector3 axis;
     double deltaAngle;
     pgd::makeAxisAngleFromQ(m_lastToCurrent, &axis.x, &axis.y, &axis.z, &deltaAngle);
-    double angularVelocity = deltaAngle / simulation()->GetTimeIncrement();  // note this value will not necessarily have the correct sign
+    double angularVelocity = deltaAngle / simulation()->global()->stepSize();  // note this value will not necessarily have the correct sign
     double maxTorque = m_dynamicFrictionIntercept + m_dynamicFrictionSlope * std::fabs(angularVelocity);
     setMaxTorque(maxTorque);
 }
@@ -242,7 +242,7 @@ void AMotorJoint::update()
         m_deltaAngle = -m_deltaAngle;
     }
     m_targetVelocity = m_deltaAngle * m_targetAngleGain;
-    if (m_targetVelocity * simulation()->GetTimeIncrement() > m_deltaAngle) m_targetVelocity = 0.5 * m_deltaAngle / simulation()->GetTimeIncrement();
+    if (m_targetVelocity * simulation()->global()->stepSize() > m_deltaAngle) m_targetVelocity = 0.5 * m_deltaAngle / simulation()->global()->stepSize();
 
     m_firstTime = false;
 }
@@ -313,7 +313,7 @@ std::string AMotorJoint::dumpToString()
     pgd::Vector3 lastToCurrentAxis;
     double deltaAngle;
     pgd::makeAxisAngleFromQ(m_lastToCurrent, &lastToCurrentAxis.x, &lastToCurrentAxis.y, &lastToCurrentAxis.z, &deltaAngle);
-    double angularVelocity = deltaAngle / simulation()->GetTimeIncrement(); // note this value will not necessarily have the correct sign
+    double angularVelocity = deltaAngle / simulation()->global()->stepSize(); // note this value will not necessarily have the correct sign
 
     pgd::Vector3 axis;
     // dJointGetAMotorAxis(JointID(), 0, axis); // get the world axis orientation

@@ -78,14 +78,14 @@ int ObjectiveMain::run()
 
     for (size_t i = 0; i < m_outputList.size(); i++)
     {
-        if (m_simulation->GetBodyList()->find(m_outputList[i]) != m_simulation->GetBodyList()->end()) (*m_simulation->GetBodyList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetMuscleList()->find(m_outputList[i]) != m_simulation->GetMuscleList()->end()) (*m_simulation->GetMuscleList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetStrapList()->find(m_outputList[i]) != m_simulation->GetStrapList()->end()) (*m_simulation->GetStrapList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetGeomList()->find(m_outputList[i]) != m_simulation->GetGeomList()->end()) (*m_simulation->GetGeomList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetJointList()->find(m_outputList[i]) != m_simulation->GetJointList()->end()) (*m_simulation->GetJointList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetDriverList()->find(m_outputList[i]) != m_simulation->GetDriverList()->end()) (*m_simulation->GetDriverList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetDataTargetList()->find(m_outputList[i]) != m_simulation->GetDataTargetList()->end()) (*m_simulation->GetDataTargetList())[m_outputList[i]]->setDump(true);
-        if (m_simulation->GetReporterList()->find(m_outputList[i]) != m_simulation->GetReporterList()->end()) (*m_simulation->GetReporterList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->bodyList()->find(m_outputList[i]) != m_simulation->bodyList()->end()) (*m_simulation->bodyList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->muscleList()->find(m_outputList[i]) != m_simulation->muscleList()->end()) (*m_simulation->muscleList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->strapList()->find(m_outputList[i]) != m_simulation->strapList()->end()) (*m_simulation->strapList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->geomList()->find(m_outputList[i]) != m_simulation->geomList()->end()) (*m_simulation->geomList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->jointList()->find(m_outputList[i]) != m_simulation->jointList()->end()) (*m_simulation->jointList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->driverList()->find(m_outputList[i]) != m_simulation->driverList()->end()) (*m_simulation->driverList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->dataTargetList()->find(m_outputList[i]) != m_simulation->dataTargetList()->end()) (*m_simulation->dataTargetList())[m_outputList[i]]->setDump(true);
+        if (m_simulation->reporterList()->find(m_outputList[i]) != m_simulation->reporterList()->end()) (*m_simulation->reporterList())[m_outputList[i]]->setDump(true);
     }
 
     double startTime = GSUtil::systemTime();
@@ -93,9 +93,9 @@ int ObjectiveMain::run()
     while(m_runTimeLimit <= 0 || m_simulationTime <= m_runTimeLimit)
     {
         m_simulationTime = GSUtil::systemTime() - startTime;
-        if (m_simulation->ShouldQuit()) break;
-        if (m_simulation->TestForCatastrophy()) break;
-        m_simulation->UpdateSimulation();
+        if (m_simulation->shouldQuit()) break;
+        if (m_simulation->testForCatastrophy()) break;
+        m_simulation->updateSimulation();
     }
 
     if (writeOutput()) return __LINE__;
@@ -116,12 +116,12 @@ int ObjectiveMain::readModel()
 
     // create the simulation object
     m_simulation = std::make_unique<Simulation>();
-    if (m_outputModelStateFilename.size()) m_simulation->SetOutputModelStateFile(m_outputModelStateFilename);
-    if (m_outputModelStateAtTime >= 0) m_simulation->SetOutputModelStateAtTime(m_outputModelStateAtTime);
-    if (m_outputModelStateAtCycle >= 0) m_simulation->SetOutputModelStateAtCycle(m_outputModelStateAtCycle);
+    if (m_outputModelStateFilename.size()) m_simulation->setOutputModelStateFile(m_outputModelStateFilename);
+    if (m_outputModelStateAtTime >= 0) m_simulation->setOutputModelStateAtTime(m_outputModelStateAtTime);
+    if (m_outputModelStateAtCycle >= 0) m_simulation->setOutputModelStateAtCycle(m_outputModelStateAtCycle);
 
     if (m_debug) std::cerr << "Loading model\n";
-    if (m_simulation->LoadModel(myFile.rawData(), myFile.size()))
+    if (m_simulation->loadModel(myFile.rawData(), myFile.size()))
     {
         m_simulation.reset();
         return 1;
@@ -129,7 +129,7 @@ int ObjectiveMain::readModel()
     if (m_debug) std::cerr << "Success\n";
 
     // late initialisation options
-    if (m_simulationTimeLimit >= 0) m_simulation->SetTimeLimit(m_simulationTimeLimit);
+    if (m_simulationTimeLimit >= 0) m_simulation->global()->setTimeLimit(m_simulationTimeLimit);
 
     return 0;
 }
@@ -138,12 +138,12 @@ int ObjectiveMain::readModel()
 // returns 1 if exit requested
 int ObjectiveMain::writeOutput()
 {
-    double score = m_simulation->CalculateInstantaneousFitness();
-    std::cerr << "Simulation Time: " << m_simulation->GetTime() <<
-                 " Steps: " << m_simulation->GetStepCount() <<
+    double score = m_simulation->calculateInstantaneousFitness();
+    std::cerr << "Simulation Time: " << m_simulation->simulationTime() <<
+                 " Steps: " << m_simulation->stepCount() <<
                  " Score: " << score <<
-                 " Mechanical Energy: " << m_simulation->GetMechanicalEnergy() <<
-                 " Metabolic Energy: " << m_simulation->GetMetabolicEnergy() <<
+                 " Mechanical Energy: " << m_simulation->mechanicalEnergy() <<
+                 " Metabolic Energy: " << m_simulation->metabolicEnergy() <<
                  " CPUTimeSimulation: " << m_simulationTime <<
                  "\n";
 

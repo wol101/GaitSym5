@@ -751,7 +751,7 @@ int SimulationWidget::StartAVISave(const QString &filename)
         a.setAttribute("orthographicProjection", m_orthographicProjection);
         a.setAttribute("movieSkip",  Preferences::valueInt("MovieSkip"));
         a.setAttribute("trackingOffset", Preferences::valueDouble("TrackingOffset"));
-        a.setAttribute("simulationStep", m_simulation ? m_simulation->GetTimeIncrement() : 0.0);
+        a.setAttribute("simulationStep", m_simulation ? m_simulation->global()->stepSize() : 0.0);
         a.setAttribute("simulationFile", m_mainWindow ? m_mainWindow->configFile().canonicalFilePath() : "");
         doc.appendChild(a);
         QTextStream stream(&metadataFile);
@@ -1016,7 +1016,7 @@ bool SimulationWidget::DeleteDrawBody(const std::string &bodyName)
 void SimulationWidget::drawModel()
 {
     if (!m_simulation) return;
-    auto bodyList = m_simulation->GetBodyList();
+    auto bodyList = m_simulation->bodyList();
     auto drawBodyMapIter = m_drawBodyMap.begin();
     while (drawBodyMapIter != m_drawBodyMap.end())
     {
@@ -1048,7 +1048,7 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-    auto jointList = m_simulation->GetJointList();
+    auto jointList = m_simulation->jointList();
     auto drawJointMapIter = m_drawJointMap.begin();
     while (drawJointMapIter != m_drawJointMap.end())
     {
@@ -1076,7 +1076,7 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-    auto geomList = m_simulation->GetGeomList();
+    auto geomList = m_simulation->geomList();
     auto drawGeomMapIter = m_drawGeomMap.begin();
     while (drawGeomMapIter != m_drawGeomMap.end())
     {
@@ -1104,7 +1104,7 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     auto drawMarkerMapIter = m_drawMarkerMap.begin();
     while (drawMarkerMapIter != m_drawMarkerMap.end())
     {
@@ -1132,7 +1132,7 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-    auto dataTargetList = m_simulation->GetDataTargetList();
+    auto dataTargetList = m_simulation->dataTargetList();
     auto drawDataTargetMapIter = m_drawDataTargetMap.begin();
     while (drawDataTargetMapIter != m_drawDataTargetMap.end())
     {
@@ -1160,7 +1160,7 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-    auto muscleList = m_simulation->GetMuscleList();
+    auto muscleList = m_simulation->muscleList();
     auto drawMuscleMapIter = m_drawMuscleMap.begin();
     while (drawMuscleMapIter != m_drawMuscleMap.end())
     {
@@ -1187,7 +1187,7 @@ void SimulationWidget::drawModel()
         it->second->Draw();
     }
 
-    auto fluidSacList = m_simulation->GetFluidSacList();
+    auto fluidSacList = m_simulation->fluidSacList();
     auto drawFluidSacMapIter = m_drawFluidSacMap.begin();
     while (drawFluidSacMapIter != m_drawFluidSacMap.end())
     {
@@ -1227,7 +1227,7 @@ void SimulationWidget::drawModel()
 void SimulationWidget::SetupLights()
 {
     m_lightGroup = threepp::Group::create();
-    for (auto &&baseLight : *m_simulation->GetlightList())
+    for (auto &&baseLight : *m_simulation->lightList())
     {
         while (true)
         {

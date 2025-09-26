@@ -56,75 +56,68 @@ public:
     SMART_ENUM(AxisType, axisTypeStrings, axisTypeCount, XAxis, YAxis, ZAxis);
 //    enum AxisType { XAxis, YAxis, ZAxis };
 
-    std::string *LoadModel(const char *buffer, size_t length);  // load parameters from the XML configuration file
-    void UpdateSimulation(void);     // called at each iteration through simulation
+    std::string *loadModel(const char *buffer, size_t length);  // load parameters from the XML configuration file
+    void updateSimulation(void);     // called at each iteration through simulation
 
     // get hold of various variables
 
-    double GetTime(void) { return m_SimulationTime; }
-    double GetTimeIncrement(void) { return m_global->stepSize(); }
-    long long GetStepCount(void) { return m_StepCount; }
-    double GetMechanicalEnergy(void) { return m_MechanicalEnergy; }
-    double GetMetabolicEnergy(void) { return m_MetabolicEnergy; }
-    double GetTimeLimit(void) { return m_global->timeLimit(); }
-    double GetMetabolicEnergyLimit(void) { return m_global->metabolicEnergyLimit(); }
-    double GetMechanicalEnergyLimit(void) { return m_global->mechanicalEnergyLimit(); }
-    Body *GetBody(const std::string &name);
-    Joint *GetJoint(const std::string &name);
-    Geom *GetGeom(const std::string &name);
-    Muscle *GetMuscle(const std::string &name);
-    Strap *GetStrap(const std::string &name);
-    FluidSac *GetFluidSac(const std::string &name);
-    Driver *GetDriver(const std::string &name);
-    DataTarget *GetDataTarget(const std::string &name);
-    Marker *GetMarker(const std::string &name);
-    Reporter *GetReporter(const std::string &name);
-    Controller *GetController(const std::string &name);
-    Light *GetLight(const std::string &name);
-    bool GetOutputModelStateOccured() { return m_OutputModelStateOccured; }
+    double simulationTime(void) { return m_simulationTime; }
+    int64_t stepCount(void) { return m_stepCount; }
+    double mechanicalEnergy(void) { return m_mechanicalEnergy; }
+    double metabolicEnergy(void) { return m_metabolicEnergy; }
+    Body *getBody(const std::string &name);
+    Joint *getJoint(const std::string &name);
+    Geom *getGeom(const std::string &name);
+    Muscle *getMuscle(const std::string &name);
+    Strap *getStrap(const std::string &name);
+    FluidSac *getFluidSac(const std::string &name);
+    Driver *getDriver(const std::string &name);
+    DataTarget *getDataTarget(const std::string &name);
+    Marker *getMarker(const std::string &name);
+    Reporter *getReporter(const std::string &name);
+    Controller *getController(const std::string &name);
+    Light *getLight(const std::string &name);
+    bool outputModelStateOccured() { return m_outputModelStateOccured; }
 
-    void SetTimeLimit(double timeLimit) { m_global->setTimeLimit(timeLimit); }
-    void SetMetabolicEnergyLimit(double energyLimit) { m_global->setMetabolicEnergyLimit(energyLimit); }
-    void SetMechanicalEnergyLimit(double energyLimit) { m_global->setMechanicalEnergyLimit(energyLimit); }
-    void SetOutputModelStateAtTime(double outputModelStateAtTime) { m_OutputModelStateAtTime = outputModelStateAtTime; }
-    void SetOutputModelStateAtCycle(double outputModelStateAtCycle) { m_OutputModelStateAtCycle = outputModelStateAtCycle; }
-    void SetOutputModelStateFile(const std::string &filename);
+    void setOutputModelStateAtTime(double outputModelStateAtTime) { m_outputModelStateAtTime = outputModelStateAtTime; }
+    void setOutputModelStateAtCycle(double outputModelStateAtCycle) { m_outputModelStateAtCycle = outputModelStateAtCycle; }
+    void setOutputModelStateFile(const std::string &filename);
 
     // get hold of the internal lists (HANDLE WITH CARE)
-    std::map<std::string, std::unique_ptr<Body>> *GetBodyList() { return &m_BodyList; }
-    std::map<std::string, std::unique_ptr<Joint>> *GetJointList() { return &m_JointList; }
-    std::map<std::string, std::unique_ptr<Geom>> *GetGeomList() { return &m_GeomList; }
-    std::map<std::string, std::unique_ptr<Muscle>> *GetMuscleList() { return &m_MuscleList; }
-    std::map<std::string, std::unique_ptr<Strap>> *GetStrapList() { return &m_StrapList; }
-    std::map<std::string, std::unique_ptr<FluidSac>> *GetFluidSacList() { return &m_FluidSacList; }
-    std::map<std::string, std::unique_ptr<Driver>> *GetDriverList() { return &m_DriverList; }
-    std::map<std::string, std::unique_ptr<DataTarget>> *GetDataTargetList() { return &m_DataTargetList; }
-    std::map<std::string, std::unique_ptr<Marker>> *GetMarkerList() { return &m_MarkerList; }
-    std::map<std::string, std::unique_ptr<Reporter>> *GetReporterList() { return &m_ReporterList; }
-    std::map<std::string, std::unique_ptr<Controller>> *GetControllerList() { return &m_ControllerList; }
-    std::map<std::string, std::unique_ptr<Light>> *GetlightList() { return &m_LightList; }
-    std::vector<std::unique_ptr<Contact>> *GetContactList() { return &m_ContactList; }
+    std::map<std::string, std::unique_ptr<Body>> *bodyList() { return &m_bodyList; }
+    std::map<std::string, std::unique_ptr<Joint>> *jointList() { return &m_jointList; }
+    std::map<std::string, std::unique_ptr<Geom>> *geomList() { return &m_geomList; }
+    std::map<std::string, std::unique_ptr<Muscle>> *muscleList() { return &m_muscleList; }
+    std::map<std::string, std::unique_ptr<Strap>> *strapList() { return &m_strapList; }
+    std::map<std::string, std::unique_ptr<FluidSac>> *fluidSacList() { return &m_fluidSacList; }
+    std::map<std::string, std::unique_ptr<Driver>> *driverList() { return &m_driverList; }
+    std::map<std::string, std::unique_ptr<DataTarget>> *dataTargetList() { return &m_dataTargetList; }
+    std::map<std::string, std::unique_ptr<Marker>> *markerList() { return &m_markerList; }
+    std::map<std::string, std::unique_ptr<Reporter>> *reporterList() { return &m_reporterList; }
+    std::map<std::string, std::unique_ptr<Controller>> *controllerList() { return &m_controllerList; }
+    std::map<std::string, std::unique_ptr<Light>> *lightList() { return &m_lightList; }
+    std::vector<std::unique_ptr<Contact>> *contactList() { return &m_contactList; }
 
-    std::vector<std::string> GetNameList() const;
-    std::set<std::string> GetNameSet() const;
-    std::vector<NamedObject *> GetObjectList() const;
-    NamedObject *GetNamedObject(const std::string &name) const;
-    bool DeleteNamedObject(const std::string &name);
+    std::vector<std::string> nameList() const;
+    std::set<std::string> nameSet() const;
+    std::vector<NamedObject *> objectList() const;
+    NamedObject *getNamedObject(const std::string &name) const;
+    bool deleteNamedObject(const std::string &name);
 
-    bool HasAssembly();
+    bool hasAssembly();
 
     // fitness related values
-    bool TestForCatastrophy();
-    double CalculateInstantaneousFitness();
-    bool ShouldQuit();
-    void SetContactAbort(const std::string &contactID) { m_ContactAbort = true;  m_ContactAbortList.push_back(contactID); }
-    void SetDataTargetAbort(const std::string &dataTargetID) { m_DataTargetAbort = true; m_DataTargetAbortList.push_back(dataTargetID); }
+    bool testForCatastrophy();
+    double calculateInstantaneousFitness();
+    bool shouldQuit();
+    void setContactAbort(const std::string &contactID) { m_contactAbort = true;  m_contactAbortList.push_back(contactID); }
+    void setDataTargetAbort(const std::string &dataTargetID) { m_dataTargetAbort = true; m_dataTargetAbortList.push_back(dataTargetID); }
 
-    std::string SaveToXML();
-    void OutputProgramState();
+    std::string saveToXML();
+    void outputProgramState();
 
-    Global *GetGlobal();
-    void SetGlobal(std::unique_ptr<Global> &&global);
+    Global *global();
+    void setGlobal(std::unique_ptr<Global> &&global);
 
     PhysicsEngine *physicsEngine() const;
     void resetPhysicsEngine();
@@ -136,82 +129,71 @@ public:
 
 private:
 
-    std::string *ParseGlobal(const ParseXML::XMLElement *node);
-    std::string *ParseBody(const ParseXML::XMLElement *node);
-    std::string *ParseGeom(const ParseXML::XMLElement *node);
-    std::string *ParseJoint(const ParseXML::XMLElement *node);
-    std::string *ParseMuscle(const ParseXML::XMLElement *node);
-    std::string *ParseStrap(const ParseXML::XMLElement *node);
-    std::string *ParseMarker(const ParseXML::XMLElement *node);
-    std::string *ParseFluidSac(const ParseXML::XMLElement *node);
-    std::string *ParseDriver(const ParseXML::XMLElement *node);
-    std::string *ParseDataTarget(const ParseXML::XMLElement *node);
-    std::string *ParseReporter(const ParseXML::XMLElement *node);
-    std::string *ParseController(const ParseXML::XMLElement *node);
-    std::string *ParseLight(const ParseXML::XMLElement *node);
+    std::string *parseGlobal(const ParseXML::XMLElement *node);
+    std::string *parseBody(const ParseXML::XMLElement *node);
+    std::string *parseGeom(const ParseXML::XMLElement *node);
+    std::string *parseJoint(const ParseXML::XMLElement *node);
+    std::string *parseMuscle(const ParseXML::XMLElement *node);
+    std::string *parseStrap(const ParseXML::XMLElement *node);
+    std::string *parseMarker(const ParseXML::XMLElement *node);
+    std::string *parseFluidSac(const ParseXML::XMLElement *node);
+    std::string *parseDriver(const ParseXML::XMLElement *node);
+    std::string *parseDataTarget(const ParseXML::XMLElement *node);
+    std::string *parseReporter(const ParseXML::XMLElement *node);
+    std::string *parseController(const ParseXML::XMLElement *node);
+    std::string *parseLight(const ParseXML::XMLElement *node);
 
-    void DumpObjects();
-    void DumpObject(NamedObject *namedObject);
+    void dumpObjects();
+    void dumpObject(NamedObject *namedObject);
 
     ParseXML m_parseXML;
     std::unique_ptr<Global> m_global;
 
    // these are the internal lists that are all owners of their respective objects
-    std::map<std::string, std::unique_ptr<Body>> m_BodyList;
-    std::map<std::string, std::unique_ptr<Joint>> m_JointList;
-    std::map<std::string, std::unique_ptr<Geom>> m_GeomList;
-    std::map<std::string, std::unique_ptr<Muscle>> m_MuscleList;
-    std::map<std::string, std::unique_ptr<Strap>> m_StrapList;
-    std::map<std::string, std::unique_ptr<FluidSac>> m_FluidSacList;
-    std::map<std::string, std::unique_ptr<Driver>> m_DriverList;
-    std::map<std::string, std::unique_ptr<DataTarget>> m_DataTargetList;
-    std::map<std::string, std::unique_ptr<Marker>> m_MarkerList;
-    std::map<std::string, std::unique_ptr<Reporter>> m_ReporterList;
-    std::map<std::string, std::unique_ptr<Controller>> m_ControllerList;
-    std::map<std::string, std::unique_ptr<Light>> m_LightList;
+    std::map<std::string, std::unique_ptr<Body>> m_bodyList;
+    std::map<std::string, std::unique_ptr<Joint>> m_jointList;
+    std::map<std::string, std::unique_ptr<Geom>> m_geomList;
+    std::map<std::string, std::unique_ptr<Muscle>> m_muscleList;
+    std::map<std::string, std::unique_ptr<Strap>> m_strapList;
+    std::map<std::string, std::unique_ptr<FluidSac>> m_fluidSacList;
+    std::map<std::string, std::unique_ptr<Driver>> m_driverList;
+    std::map<std::string, std::unique_ptr<DataTarget>> m_dataTargetList;
+    std::map<std::string, std::unique_ptr<Marker>> m_markerList;
+    std::map<std::string, std::unique_ptr<Reporter>> m_reporterList;
+    std::map<std::string, std::unique_ptr<Controller>> m_controllerList;
+    std::map<std::string, std::unique_ptr<Light>> m_lightList;
 
     // this is a list of contacts that are active at the current time step
-    std::vector<std::unique_ptr<Contact>> m_ContactList;
+    std::vector<std::unique_ptr<Contact>> m_contactList;
 
     // keep track of simulation time
-    double m_SimulationTime = 0; // current time
-    int64_t m_StepCount = 0; // number of steps taken
-    double m_CycleTime = 0;
+    double m_simulationTime = 0; // current time
+    int64_t m_stepCount = 0; // number of steps taken
+    double m_cycleTime = 0;
 
     // and calculated energy
-    double m_MechanicalEnergy = 0;
-    double m_MetabolicEnergy = 0;
+    double m_mechanicalEnergy = 0;
+    double m_metabolicEnergy = 0;
 
     // FitnessType
-    double m_TargetMatchMiniMaxFitness = 0;
-    double m_TargetMatchMaxiMinFitness = 0;
+    double m_targetMatchMiniMaxFitness = 0;
+    double m_targetMatchMaxiMinFitness = 0;
 
     // some control values
-    bool m_OutputModelStateOccured = false;
-    bool m_AbortAfterModelStateOutput = false;
-    double m_OutputModelStateAtTime = -1;
-    double m_OutputModelStateAtCycle = -1;
-    std::string m_OutputModelStateFile;
-    int m_SimulationError = false;
-    bool m_OutputKinematicsFirstTimeFlag = false;
-    bool m_DataTargetAbort = false;
-    bool m_ContactAbort = false;
-    std::vector<std::string> m_DataTargetAbortList;
-    std::vector<std::string> m_ContactAbortList;
+    bool m_outputModelStateOccured = false;
+    bool m_abortAfterModelStateOutput = false;
+    double m_outputModelStateAtTime = -1;
+    double m_outputModelStateAtCycle = -1;
+    std::string m_outputModelStateFile;
+    int m_simulationError = false;
+    bool m_dataTargetAbort = false;
+    bool m_contactAbort = false;
+    std::vector<std::string> m_dataTargetAbortList;
+    std::vector<std::string> m_contactAbortList;
     int m_numericalErrorCount = 0;
 
     // for fitness calculations
-    double m_TargetMatchFitness = 0;
-
-    // values for energy partition
-    double m_PositiveMechanicalWork = 0;
-    double m_NegativeMechanicalWork = 0;
-    double m_PositiveContractileWork = 0;
-    double m_NegativeContractileWork = 0;
-    double m_PositiveSerialElasticWork = 0;
-    double m_NegativeSerialElasticWork = 0;
-    double m_PositiveParallelElasticWork = 0;
-    double m_NegativeParallelElasticWork = 0;
+    double m_targetMatchFitness = 0;
 
     // values for dump output
     std::string m_dumpExtension = {".tab"};

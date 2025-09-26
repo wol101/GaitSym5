@@ -176,7 +176,7 @@ std::string Geom::dumpToString()
 
     pgd::Vector3 p = m_geomMarker->worldPosition();
     pgd::Quaternion q = m_geomMarker->worldQuaternion();
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" << m_contactList.size();
+    ss << simulation()->simulationTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" << m_contactList.size();
     std::string body1, body2;
     for (auto &&iter : m_contactList)
     {
@@ -219,8 +219,8 @@ std::string *Geom::createFromAttributes()
     m_type = buf;
 
     if (findAttribute("MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto it = simulation()->GetMarkerList()->find(buf);
-    if (it == simulation()->GetMarkerList()->end())
+    auto it = simulation()->markerList()->find(buf);
+    if (it == simulation()->markerList()->end())
     {
         setLastError("GEOM ID=\""s + name() +"\" Marker not found"s);
         return lastErrorPtr();
@@ -228,7 +228,7 @@ std::string *Geom::createFromAttributes()
     this->setGeomMarker(it->second.get());
 
     // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
-    double stepSize = simulation()->GetTimeIncrement();
+    double stepSize = simulation()->global()->stepSize();
     while (true)
     {
         if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
@@ -305,7 +305,7 @@ std::string *Geom::createFromAttributes()
         pystring::split(buf, geomNames);
         for (size_t i = 0; i < geomNames.size(); i++)
         {
-            Geom *geom = simulation()->GetGeom(geomNames[i]);
+            Geom *geom = simulation()->getGeom(geomNames[i]);
             if (!geom)
             {
                 setLastError("GEOM ID=\""s + name() + "ExcludeList geom "s + geomNames[i] + " missing"s);

@@ -109,7 +109,7 @@ std::string TorqueReporter::dumpToString()
     pgd::Vector3 axisBasedTorque = R * totalTorque;
     pgd::Vector3 axisBasedMomentArm = R * momentArm;
 
-    ss << simulation()->GetTime() << "\t" << tension << "\t"
+    ss << simulation()->simulationTime() << "\t" << tension << "\t"
        << totalTorque.x << "\t" << totalTorque.y << "\t" << totalTorque.z << "\t"
        << bodyTorque[0] << "\t" << bodyTorque[1] << "\t" << bodyTorque[2] << "\t"
        << axisBasedTorque.x << "\t" << axisBasedTorque.y << "\t" << axisBasedTorque.z << "\t"

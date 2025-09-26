@@ -93,7 +93,7 @@ std::string DampedSpringMuscle::dumpToString()
         setFirstDump(false);
         ss << "Time\tact\ttension\tlength\tvelocity\tPMECH\n";
     }
-    ss << simulation()->GetTime() << "\t" << m_activation <<
+    ss << simulation()->simulationTime() << "\t" << m_activation <<
           "\t" << strap()->Tension() << "\t" << strap()->Length() << "\t" << strap()->Velocity() <<
           "\t" << strap()->Velocity() * strap()->Tension() <<
           "\n";

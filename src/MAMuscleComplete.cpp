@@ -179,7 +179,7 @@ void MAMuscleComplete::updateActivation()
     else if (activation > 1) activation = 1;
     m_stim = activation;
 
-    m_params.timeIncrement = simulation()->GetTimeIncrement();
+    m_params.timeIncrement = simulation()->global()->stepSize();
     if (m_activationKinetics || m_activationRate != 0)
     {
         if (m_params.alpha == -1) // special case for first run through if I just want disable rate
@@ -795,7 +795,7 @@ std::string MAMuscleComplete::dumpToString()
         setFirstDump(false);
         ss << "Time\tm_Stim\talpha\tlen\tv\tlastlpe\tfce\tlpe\tfpe\tlse\tfse\tvce\tvse\ttargetFce\tf0\terr\tESE\tEPE\tPSE\tPPE\tPCE\ttension\tlength\tvelocity\tPMECH\tPMET\n";
     }
-    ss << simulation()->GetTime() << "\t" <<
+    ss << simulation()->simulationTime() << "\t" <<
           m_stim << "\t" << m_params.alpha << "\t" << m_params.len << "\t" << m_params.v << "\t" << m_params.lastlpe << "\t" <<
           m_params.fce << "\t" << m_params.lpe << "\t" << m_params.fpe << "\t" << m_params.lse << "\t" << m_params.fse << "\t" <<
           m_params.vce << "\t" << m_params.vse << "\t" << m_params.targetFce << "\t" << m_params.f0 << "\t" << m_params.err << "\t" <<

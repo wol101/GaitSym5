@@ -73,14 +73,14 @@ void MarkerEllipseDriver::sendData()
 {
     for (auto &&it : *targetList())
     {
-        it.second->receiveData(clamp(std::sqrt(SQUARE(m_x) + SQUARE(m_y))), simulation()->GetStepCount());
+        it.second->receiveData(clamp(std::sqrt(SQUARE(m_x) + SQUARE(m_y))), simulation()->stepCount());
     }
 }
 
 void MarkerEllipseDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
     if (m_omegaDriver) m_omega = m_omegaDriver->value();
     if (m_sigmaDriver) m_sigma = m_sigmaDriver->value();
@@ -101,11 +101,11 @@ void MarkerEllipseDriver::update()
     else
     {
         // we need to do something to correct for the phase
-        m_valueChangeDirection = detectSignChange(m_phaseControlInput->calculateError(simulation()->GetTime()));
+        m_valueChangeDirection = detectSignChange(m_phaseControlInput->calculateError(simulation()->simulationTime()));
         if (m_valueChangeDirection != 0)
         {
-            m_halfPeriod = simulation()->GetTime() - m_lastPhaseChangeTime;
-            m_lastPhaseChangeTime = simulation()->GetTime();
+            m_halfPeriod = simulation()->simulationTime() - m_lastPhaseChangeTime;
+            m_lastPhaseChangeTime = simulation()->simulationTime();
             m_phiDot = std::clamp(M_PI / (m_halfPeriod * m_periodMultiplier), 0.0, m_maxPhiDot); // this copes with halfPeriod of zero since divide by zero is +/- infinity
             // but we need to tweak m_phiDot to get the phase relationship eventually
             if (m_valueChangeDirection > 0) m_wantedPhi = std::fmod(2 * M_PI + std::fmod(M_PI_2 + m_phaseOffset, 2 * M_PI), 2 * M_PI);
@@ -117,7 +117,7 @@ void MarkerEllipseDriver::update()
     }
 
     // update m_phi depending on m_phi_dot values
-    m_phi = std::fmod(2 * M_PI + std::fmod(m_phi + m_phiDot * simulation()->GetTimeIncrement(), 2 * M_PI), 2 * M_PI); // do fmod twice to get a value from 0 to 2pi
+    m_phi = std::fmod(2 * M_PI + std::fmod(m_phi + m_phiDot * simulation()->global()->stepSize(), 2 * M_PI), 2 * M_PI); // do fmod twice to get a value from 0 to 2pi
 
     while (true)
     {
@@ -267,7 +267,7 @@ std::string MarkerEllipseDriver::dumpToString()
         break;
     }
 
-    s += dumpHelper({simulation()->GetTime(), m_omega, m_sigma, m_phaseOffset, xr, yr, m_x, m_y, m_phi, m_phiDot, m_wantedPhi, m_delPhi, m_lastPhaseChangeTime, m_halfPeriod, double(m_valueChangeDirection)});
+    s += dumpHelper({simulation()->simulationTime(), m_omega, m_sigma, m_phaseOffset, xr, yr, m_x, m_y, m_phi, m_phiDot, m_wantedPhi, m_delPhi, m_lastPhaseChangeTime, m_halfPeriod, double(m_valueChangeDirection)});
     return s;
 }
 
@@ -391,14 +391,14 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     phi = GSUtil::toDouble(buf);
 
     if (findAttribute("CentreMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *markerEllipseCentre = simulation()->GetMarker(buf);
+    Marker *markerEllipseCentre = simulation()->getMarker(buf);
     if (!markerEllipseCentre)
     {
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" CentreMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("RimMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *markerEllipseRim = simulation()->GetMarker(buf);
+    Marker *markerEllipseRim = simulation()->getMarker(buf);
     if (!markerEllipseRim)
     {
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" RimMarkerID marker not found \""s + buf + "\"");
@@ -410,7 +410,7 @@ std::string *MarkerEllipseDriver::createFromAttributes()
         return lastErrorPtr();
     }
     if (findAttribute("PhaseControlInputID"s, &buf) == nullptr) return lastErrorPtr();
-    DataTarget *phaseControlInput = simulation()->GetDataTarget(buf);
+    DataTarget *phaseControlInput = simulation()->getDataTarget(buf);
     if (!phaseControlInput)
     {
         setLastError("PhaseControlInputID ID=\""s + name() + "\" PhaseControlInputID data target not found \""s + buf + "\"");
@@ -424,7 +424,7 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     Initialise(omega, sigma, xrV, yrV, phi, markerEllipseCentre, markerEllipseRim, phaseControlInput);
 
     if (findAttribute("LowPassFrequency"s, &buf) == nullptr) return lastErrorPtr();
-    m_butterworthFilter.calculateCoefficients(GSUtil::toDouble(buf), 1.0 / simulation()->GetTimeIncrement());
+    m_butterworthFilter.calculateCoefficients(GSUtil::toDouble(buf), 1.0 / simulation()->global()->stepSize());
     if (findAttribute("PhaseOffset"s, &buf) == nullptr) return lastErrorPtr();
     m_phaseOffset = GSUtil::toDouble(buf);
     if (findAttribute("MaxPhiDot"s, &buf) == nullptr) return lastErrorPtr();
@@ -434,61 +434,61 @@ std::string *MarkerEllipseDriver::createFromAttributes()
 
     if (findAttribute("OmegaDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" OmegaDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_omegaDriver = driver;
     }
     if (findAttribute("SigmaDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" SigmaDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_sigmaDriver = driver;
     }
     if (findAttribute("xrDriver0ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_xrDriver0 = driver;
     }
     if (findAttribute("yrDriver0ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_yrDriver0 = driver;
     }
     if (findAttribute("xrDriver1ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_xrDriver1 = driver;
     }
     if (findAttribute("yrDriver1ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_yrDriver1 = driver;
     }
     if (findAttribute("xrDrive2rID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_xrDriver2 = driver;
     }
     if (findAttribute("yrDriver2ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_yrDriver2 = driver;
     }
     if (findAttribute("xrDriver3ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_xrDriver3 = driver;
     }
     if (findAttribute("yrDriver3ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_yrDriver3 = driver;
     }

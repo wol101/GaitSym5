@@ -90,7 +90,7 @@ Simulation::~Simulation()
 }
 
 //----------------------------------------------------------------------------
-std::string *Simulation::LoadModel(const char *buffer, size_t length) // note this requires buffer to be a 0 terminated string of size length + 1
+std::string *Simulation::loadModel(const char *buffer, size_t length) // note this requires buffer to be a 0 terminated string of size length + 1
 {
     std::string rootTag;
     std::string *ptr = m_parseXML.loadModel(buffer, length, &rootTag);
@@ -131,19 +131,19 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
         for (auto it = unprocessedList.begin(); it != unprocessedList.end();)
         {
             lastErrorPtr()->clear();
-            if ((*it)->tag == "GLOBAL"s) ParseGlobal(*it);
-            else if ((*it)->tag == "BODY"s) ParseBody(*it);
-            else if ((*it)->tag == "JOINT"s) ParseJoint(*it);
-            else if ((*it)->tag == "GEOM"s) ParseGeom(*it);
-            else if ((*it)->tag == "STRAP"s) ParseStrap(*it);
-            else if ((*it)->tag == "MUSCLE"s) ParseMuscle(*it);
-            else if ((*it)->tag == "DRIVER"s) ParseDriver(*it);
-            else if ((*it)->tag == "DATATARGET"s) ParseDataTarget(*it);
-            else if ((*it)->tag == "MARKER"s) ParseMarker(*it);
-            else if ((*it)->tag == "REPORTER"s) ParseReporter(*it);
-            else if ((*it)->tag == "CONTROLLER"s) ParseController(*it);
-            else if ((*it)->tag == "FLUIDSAC"s) ParseFluidSac(*it);
-            else if ((*it)->tag == "LIGHT"s) ParseLight(*it);
+            if ((*it)->tag == "GLOBAL"s) parseGlobal(*it);
+            else if ((*it)->tag == "BODY"s) parseBody(*it);
+            else if ((*it)->tag == "JOINT"s) parseJoint(*it);
+            else if ((*it)->tag == "GEOM"s) parseGeom(*it);
+            else if ((*it)->tag == "STRAP"s) parseStrap(*it);
+            else if ((*it)->tag == "MUSCLE"s) parseMuscle(*it);
+            else if ((*it)->tag == "DRIVER"s) parseDriver(*it);
+            else if ((*it)->tag == "DATATARGET"s) parseDataTarget(*it);
+            else if ((*it)->tag == "MARKER"s) parseMarker(*it);
+            else if ((*it)->tag == "REPORTER"s) parseReporter(*it);
+            else if ((*it)->tag == "CONTROLLER"s) parseController(*it);
+            else if ((*it)->tag == "FLUIDSAC"s) parseFluidSac(*it);
+            else if ((*it)->tag == "LIGHT"s) parseLight(*it);
             if (lastErrorPtr()->size())
             {
                 errorList.push_back(*lastErrorPtr());
@@ -165,12 +165,12 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
 
     // joints are created with the bodies in construction poses
     // then the bodies are moved to their starting poses
-    for (auto &&it : m_BodyList) it.second->lateInitialisation();
+    for (auto &&it : m_bodyList) it.second->lateInitialisation();
     // and we recalculate the dynamic items with the new muscle positions
-    for (auto &&it :  m_MuscleList) it.second->lateInitialisation();
-    for (auto &&it : m_FluidSacList) it.second->lateInitialisation();
+    for (auto &&it :  m_muscleList) it.second->lateInitialisation();
+    for (auto &&it : m_fluidSacList) it.second->lateInitialisation();
     // and some joints require things to be done after the bodies are moved to their start positions
-    for (auto &&it :  m_JointList) it.second->lateInitialisation();
+    for (auto &&it :  m_jointList) it.second->lateInitialisation();
 
     // and we need to set the cycle time
     // currently just using the maximum value but some sort of fuzzy lowest common multiple might be better
@@ -178,18 +178,18 @@ std::string *Simulation::LoadModel(const char *buffer, size_t length) // note th
     // using std::lcm from numeric with accumulate so it works on a container (a std::set makes sense for longer lists perhas)
     // std::vector<int> v{4, 6, 10};
     // auto lcm = std::accumulate(v.begin(), v.end(), 1, [](auto & a, auto & b) { return std::lcm(a, b); });
-    m_CycleTime = 0;
-    for (auto &&driver : m_DriverList)
+    m_cycleTime = 0;
+    for (auto &&driver : m_driverList)
     {
-        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get())) m_CycleTime = std::max(cyclicDriver->cycleTime(), m_CycleTime);
-        else if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get())) m_CycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_CycleTime);
+        if (CyclicDriver *cyclicDriver = dynamic_cast<CyclicDriver*>(driver.second.get())) m_cycleTime = std::max(cyclicDriver->cycleTime(), m_cycleTime);
+        else if (StackedBoxcarDriver *stackedBoxcarDriver = dynamic_cast<StackedBoxcarDriver*>(driver.second.get())) m_cycleTime = std::max(stackedBoxcarDriver->GetCycleTime(), m_cycleTime);
     }
     return nullptr;
 }
 
 
 //----------------------------------------------------------------------------
-void Simulation::UpdateSimulation()
+void Simulation::updateSimulation()
 {
     std::string *err = nullptr;
     if (!m_physicsEngine)
@@ -203,7 +203,7 @@ void Simulation::UpdateSimulation()
                 if (err)
                 {
                     std::cerr << "Error: unable to initialise ODEPhysicsEngine\n" << *err << "\n";
-                    m_SimulationError = true;
+                    m_simulationError = true;
                     return;
                 }
                 break;
@@ -215,7 +215,7 @@ void Simulation::UpdateSimulation()
                 if (err)
                 {
                     std::cerr << "Error: unable to initialise PhysXPhysicsEngine\n" << *err << "\n";
-                    m_SimulationError = true;
+                    m_simulationError = true;
                     return;
                 }
                 break;
@@ -227,7 +227,7 @@ void Simulation::UpdateSimulation()
                 if (err)
                 {
                     std::cerr << "Error: unable to initialise MuJoCoPhysicsEngine\n" << *err << "\n";
-                    m_SimulationError = true;
+                    m_simulationError = true;
                     return;
                 }
                 break;
@@ -238,34 +238,34 @@ void Simulation::UpdateSimulation()
     // start by updating the scores
     double minScore = std::numeric_limits<double>::infinity();
     double maxScore = -std::numeric_limits<double>::infinity();
-    for (auto &&it : m_DataTargetList)
+    for (auto &&it : m_dataTargetList)
     {
         double matchScore;
-        bool matchScoreValid = it.second->calculateMatchValue(m_SimulationTime, &matchScore);
+        bool matchScoreValid = it.second->calculateMatchValue(m_simulationTime, &matchScore);
         if (matchScoreValid)
         {
-            m_TargetMatchFitness += matchScore;
+            m_targetMatchFitness += matchScore;
             if (matchScore < minScore) minScore = matchScore;
             if (matchScore > maxScore) maxScore = matchScore;
         }
     }
-    if (minScore < std::numeric_limits<double>::infinity()) m_TargetMatchMaxiMinFitness += minScore;
-    if (maxScore > -std::numeric_limits<double>::infinity()) m_TargetMatchMiniMaxFitness += maxScore;
+    if (minScore < std::numeric_limits<double>::infinity()) m_targetMatchMaxiMinFitness += minScore;
+    if (maxScore > -std::numeric_limits<double>::infinity()) m_targetMatchMiniMaxFitness += maxScore;
 
     // now start the actual simulation
 
     // clear the contacts from the geoms and in the master list
-    for (auto &&geomIter : m_GeomList) { geomIter.second->clearContacts(); }
-    m_ContactList.clear();
+    for (auto &&geomIter : m_geomList) { geomIter.second->clearContacts(); }
+    m_contactList.clear();
 
     // update the drivers
-    for (auto &&it : m_DriverList)
+    for (auto &&it : m_driverList)
     {
         it.second->update();
         it.second->sendData();
     }
     // and the controllers (which are drivers too probably)
-    for (auto &&it : m_ControllerList)
+    for (auto &&it : m_controllerList)
     {
         auto driver = dynamic_cast<Driver *>(it.second.get());
         if (driver)
@@ -273,12 +273,12 @@ void Simulation::UpdateSimulation()
             driver->update();
             driver->sendData();
         }
-        if (it.second->lastStepCount() != m_StepCount)
+        if (it.second->lastStepCount() != m_stepCount)
             std::cerr << "Warning: " << it.first << " controller not updated\n"; // currently cannot stack controllers although this is fixable
     }
 
     // update the muscles
-    for (auto iter1 = m_MuscleList.begin(); iter1 != m_MuscleList.end(); /* no increment */ )
+    for (auto iter1 = m_muscleList.begin(); iter1 != m_muscleList.end(); /* no increment */ )
     {
         // muscle straps are valid at this point so they do not need recaulculating
         iter1->second->updateActivation();
@@ -288,7 +288,7 @@ void Simulation::UpdateSimulation()
         {
             if (dampedSpringMuscle->shouldBreak())
             {
-                iter1 = m_MuscleList.erase(iter1); // erase returns the next iterator [but m_MuscleList.erase(iter1++) would also work and is compatible with older C++ compilers]
+                iter1 = m_muscleList.erase(iter1); // erase returns the next iterator [but m_MuscleList.erase(iter1++) would also work and is compatible with older C++ compilers]
                 continue;
             }
         }
@@ -296,10 +296,10 @@ void Simulation::UpdateSimulation()
     }
 
     // update the joints (needed for motors, end stops and stress calculations)
-    for (auto &&jointIter : m_JointList) jointIter.second->update();
+    for (auto &&jointIter : m_jointList) jointIter.second->update();
 
     // update the fluid sacs
-    for (auto fsIter = m_FluidSacList.begin(); fsIter != m_FluidSacList.end(); fsIter++)
+    for (auto fsIter = m_fluidSacList.begin(); fsIter != m_fluidSacList.end(); fsIter++)
     {
         fsIter->second->calculateVolume();
         fsIter->second->calculatePressure();
@@ -307,45 +307,45 @@ void Simulation::UpdateSimulation()
     }
 
     // update the bodies (needed for drag calculations)
-    for (auto &&bodyIter : m_BodyList) { bodyIter.second->computeDrag(); }
+    for (auto &&bodyIter : m_bodyList) { bodyIter.second->computeDrag(); }
 
     // output the model state if triggered
-    if (m_OutputModelStateAtTime >= 0.0)
+    if (m_outputModelStateAtTime >= 0.0)
     {
-        if (m_SimulationTime >= m_OutputModelStateAtTime)
+        if (m_simulationTime >= m_outputModelStateAtTime)
         {
-            OutputProgramState();
-            m_OutputModelStateAtTime = -1;
+            outputProgramState();
+            m_outputModelStateAtTime = -1;
         }
     }
-    else if (m_OutputModelStateAtCycle >= 0 && m_CycleTime >= 0 && m_SimulationTime >= m_CycleTime * m_OutputModelStateAtCycle)
+    else if (m_outputModelStateAtCycle >= 0 && m_cycleTime >= 0 && m_simulationTime >= m_cycleTime * m_outputModelStateAtCycle)
     {
-        OutputProgramState();
-        m_OutputModelStateAtCycle = -1;
+        outputProgramState();
+        m_outputModelStateAtCycle = -1;
     }
 
     // run the simulation
     m_physicsEngine->step();
 
     // now the muscle straps are invalid because the bodies have moved so they need recalculating
-    for (auto &&iter1 : m_MuscleList)
+    for (auto &&iter1 : m_muscleList)
     {
         iter1.second->calculateStrap();
     }
 
     // calculate the energies
-    for (auto &&iter1 : m_MuscleList)
+    for (auto &&iter1 : m_muscleList)
     {
-        m_MechanicalEnergy += iter1.second->power() * m_global->stepSize();
-        m_MetabolicEnergy += iter1.second->metabolicPower() * m_global->stepSize();
+        m_mechanicalEnergy += iter1.second->power() * m_global->stepSize();
+        m_metabolicEnergy += iter1.second->metabolicPower() * m_global->stepSize();
     }
-    m_MetabolicEnergy += m_global->BMR() * m_global->stepSize();
+    m_metabolicEnergy += m_global->BMR() * m_global->stepSize();
 
     // update any contact force dependent drivers (because only after the simulation is the force valid
     // update the footprint indicator
-    if (m_ContactList.size() > 0)
+    if (m_contactList.size() > 0)
     {
-        for (auto &&it : m_DriverList)
+        for (auto &&it : m_driverList)
         {
             if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(it.second.get())) tegotaeDriver->UpdateReactionForce();
         }
@@ -353,45 +353,45 @@ void Simulation::UpdateSimulation()
 
     // all reporting is done after a simulation step
 
-    DumpObjects();
+    dumpObjects();
 
     // update the time counter
-    m_SimulationTime += m_global->stepSize();
+    m_simulationTime += m_global->stepSize();
 
     // update the step counter
-    m_StepCount++;
+    m_stepCount++;
 }
 
 //----------------------------------------------------------------------------
-bool Simulation::TestForCatastrophy()
+bool Simulation::testForCatastrophy()
 {
     // check for simulation error
-    if (m_SimulationError)
+    if (m_simulationError)
     {
-        std::cerr << "Failed due to simulation error " << m_SimulationError << "\n";
+        std::cerr << "Failed due to simulation error " << m_simulationError << "\n";
         return true;
     }
 
     // check for contact abort
-    if (m_ContactAbort)
+    if (m_contactAbort)
     {
         std::cerr << "Failed due to contact abort\n";
-        for (auto &&it: m_ContactAbortList) { std::cerr << it << "\n"; }
+        for (auto &&it: m_contactAbortList) { std::cerr << it << "\n"; }
         return true;
     }
 
     // check for data target abort
-    if (m_DataTargetAbort)
+    if (m_dataTargetAbort)
     {
         std::cerr << "Failed due to DataTarget abort\n";
-        for (auto &&it: m_DataTargetAbortList) { std::cerr << it << "\n"; }
+        for (auto &&it: m_dataTargetAbortList) { std::cerr << it << "\n"; }
         return true;
     }
 
     // check that all bodies meet velocity and stop conditions
 
     Body::LimitTestResult p;
-    for (auto &&iter1 : m_BodyList)
+    for (auto &&iter1 : m_bodyList)
     {
         p = iter1.second->testLimits();
         switch (p)
@@ -423,7 +423,7 @@ bool Simulation::TestForCatastrophy()
         }
     }
 
-    for (auto &&iter3 : m_JointList)
+    for (auto &&iter3 : m_jointList)
     {
 
         if (auto j = dynamic_cast<HingeJoint *>(iter3.second.get()))
@@ -452,7 +452,7 @@ bool Simulation::TestForCatastrophy()
     }
 
     // and test the reporters for stop conditions
-    for (auto &&reporterIter : m_ReporterList)
+    for (auto &&reporterIter : m_reporterList)
     {
         if (reporterIter.second->shouldAbort())
         {
@@ -461,7 +461,7 @@ bool Simulation::TestForCatastrophy()
         }
     }
 
-    if (m_OutputModelStateOccured && m_AbortAfterModelStateOutput)
+    if (m_outputModelStateOccured && m_abortAfterModelStateOutput)
     {
         std::cerr << "Abort because ModelState successfully written\n";
         return true;
@@ -472,23 +472,23 @@ bool Simulation::TestForCatastrophy()
 
 
 //----------------------------------------------------------------------------
-double Simulation::CalculateInstantaneousFitness()
+double Simulation::calculateInstantaneousFitness()
 {
     switch (m_global->fitnessType())
     {
     case Global::TargetSum:
-        return m_TargetMatchFitness;
+        return m_targetMatchFitness;
 
     case Global::TargetMiniMax:
-        return m_TargetMatchMiniMaxFitness;
+        return m_targetMatchMiniMaxFitness;
 
     case Global::TargetMaxiMin:
-        return m_TargetMatchMaxiMinFitness;
+        return m_targetMatchMaxiMinFitness;
     }
     return 0;
 }
 
-std::string *Simulation::ParseGlobal(const ParseXML::XMLElement *node)
+std::string *Simulation::parseGlobal(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Global> global = std::make_unique<Global>();
     global->setSimulation(this);
@@ -499,11 +499,11 @@ std::string *Simulation::ParseGlobal(const ParseXML::XMLElement *node)
         setLastError(*errorMessage);
         return lastErrorPtr();
     }
-    this->SetGlobal(std::move(global));
+    this->setGlobal(std::move(global));
     return nullptr;
 }
 
-std::string *Simulation::ParseBody(const ParseXML::XMLElement *node)
+std::string *Simulation::parseBody(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Body> body = std::make_unique<Body>();
     body->setSimulation(this);
@@ -514,11 +514,11 @@ std::string *Simulation::ParseBody(const ParseXML::XMLElement *node)
         setLastError(*errorMessage);
         return lastErrorPtr();
     }
-    m_BodyList[body->name()] = std::move(body);
+    m_bodyList[body->name()] = std::move(body);
     return nullptr;
 }
 
-std::string *Simulation::ParseMarker(const ParseXML::XMLElement *node)
+std::string *Simulation::parseMarker(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Marker> marker = std::make_unique<Marker>(nullptr);
     marker->setSimulation(this);
@@ -529,11 +529,11 @@ std::string *Simulation::ParseMarker(const ParseXML::XMLElement *node)
         setLastError(*errorMessage);
         return lastErrorPtr();
     }
-    m_MarkerList[marker->name()] = std::move(marker);
+    m_markerList[marker->name()] = std::move(marker);
     return nullptr;
 }
 
-std::string *Simulation::ParseJoint(const ParseXML::XMLElement *node)
+std::string *Simulation::parseJoint(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Joint> joint;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -589,7 +589,7 @@ std::string *Simulation::ParseJoint(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseJoint Type=\"" + buf + "\" not recognised");
+        setLastError("Simulation::parseJoint Type=\"" + buf + "\" not recognised");
         return lastErrorPtr();
     }
 
@@ -598,16 +598,16 @@ std::string *Simulation::ParseJoint(const ParseXML::XMLElement *node)
         setLastError(*errorMessage);
         return lastErrorPtr();
     }
-    m_JointList[joint->name()] = std::move(joint);
+    m_jointList[joint->name()] = std::move(joint);
     return nullptr;
 }
 
-std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
+std::string *Simulation::parseGeom(const ParseXML::XMLElement *node)
 {
     // GEOMs require a valid GLOBAL to get step size
     if (!m_global)
     {
-        setLastError("Simulation::ParseGeom requires a valid GLOBAL"s);
+        setLastError("Simulation::parseGeom requires a valid GLOBAL"s);
         return lastErrorPtr();
     }
     std::unique_ptr<Geom> geom;
@@ -663,7 +663,7 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseGeom Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseGeom Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -673,11 +673,11 @@ std::string *Simulation::ParseGeom(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_GeomList[geom->name()] = std::move(geom);
+    m_geomList[geom->name()] = std::move(geom);
     return nullptr;
 }
 
-std::string *Simulation::ParseMuscle(const ParseXML::XMLElement *node)
+std::string *Simulation::parseMuscle(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Muscle> muscle;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -712,7 +712,7 @@ std::string *Simulation::ParseMuscle(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseMuscle Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseMuscle Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -722,11 +722,11 @@ std::string *Simulation::ParseMuscle(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_MuscleList[muscle->name()] = std::move(muscle);
+    m_muscleList[muscle->name()] = std::move(muscle);
     return nullptr;
 }
 
-std::string *Simulation::ParseStrap(const ParseXML::XMLElement *node)
+std::string *Simulation::parseStrap(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Strap> strap;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -768,7 +768,7 @@ std::string *Simulation::ParseStrap(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseStrap Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseStrap Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -778,11 +778,11 @@ std::string *Simulation::ParseStrap(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_StrapList[strap->name()] = std::move(strap);
+    m_strapList[strap->name()] = std::move(strap);
     return nullptr;
 }
 
-std::string *Simulation::ParseFluidSac(const ParseXML::XMLElement *node)
+std::string *Simulation::parseFluidSac(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<FluidSac> fluidSac;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -803,7 +803,7 @@ std::string *Simulation::ParseFluidSac(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseFluidSac Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseFluidSac Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -813,11 +813,11 @@ std::string *Simulation::ParseFluidSac(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_FluidSacList[fluidSac->name()] = std::move(fluidSac);
+    m_fluidSacList[fluidSac->name()] = std::move(fluidSac);
     return nullptr;
 }
 
-std::string *Simulation::ParseDriver(const ParseXML::XMLElement *node)
+std::string *Simulation::parseDriver(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Driver> driver;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -860,7 +860,7 @@ std::string *Simulation::ParseDriver(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseDriver Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseDriver Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -873,12 +873,12 @@ std::string *Simulation::ParseDriver(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_DriverList[driver->name()] = std::move(driver);
+    m_driverList[driver->name()] = std::move(driver);
     return nullptr;
 }
 
 
-std::string *Simulation::ParseDataTarget(const ParseXML::XMLElement *node)
+std::string *Simulation::parseDataTarget(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<DataTarget> dataTarget;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -901,7 +901,7 @@ std::string *Simulation::ParseDataTarget(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseDataTarget Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseDataTarget Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -914,12 +914,12 @@ std::string *Simulation::ParseDataTarget(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_DataTargetList[dataTarget->name()] = std::move(dataTarget);
+    m_dataTargetList[dataTarget->name()] = std::move(dataTarget);
     return nullptr;
 
 }
 
-std::string *Simulation::ParseReporter(const ParseXML::XMLElement *node)
+std::string *Simulation::parseReporter(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Reporter> reporter;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -930,7 +930,7 @@ std::string *Simulation::ParseReporter(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseReporter Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseReporter Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -943,11 +943,11 @@ std::string *Simulation::ParseReporter(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_ReporterList[reporter->name()] = std::move(reporter);
+    m_reporterList[reporter->name()] = std::move(reporter);
     return nullptr;
 }
 
-std::string *Simulation::ParseController(const ParseXML::XMLElement *node)
+std::string *Simulation::parseController(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Controller> controller;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -962,7 +962,7 @@ std::string *Simulation::ParseController(const ParseXML::XMLElement *node)
     }
     else
     {
-        setLastError("Simulation::ParseController Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseController Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -975,11 +975,11 @@ std::string *Simulation::ParseController(const ParseXML::XMLElement *node)
         return lastErrorPtr();
     }
 
-    m_ControllerList[controller->name()] = std::move(controller);
+    m_controllerList[controller->name()] = std::move(controller);
     return nullptr;
 }
 
-std::string *Simulation::ParseLight(const ParseXML::XMLElement *node)
+std::string *Simulation::parseLight(const ParseXML::XMLElement *node)
 {
     std::unique_ptr<Light> light;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
@@ -1006,7 +1006,7 @@ std::string *Simulation::ParseLight(const ParseXML::XMLElement *node)
             light = std::make_unique<PointLight>();
             break;
         }
-        setLastError("Simulation::ParseLight Type=\""s + buf + "\" not recognised"s);
+        setLastError("Simulation::parseLight Type=\""s + buf + "\" not recognised"s);
         return lastErrorPtr();
     }
 
@@ -1020,185 +1020,185 @@ std::string *Simulation::ParseLight(const ParseXML::XMLElement *node)
     }
 
 
-    m_LightList[light->name()] = std::move(light);
+    m_lightList[light->name()] = std::move(light);
     return nullptr;
 }
 
 // save the current model state to XML
-std::string Simulation::SaveToXML()
+std::string Simulation::saveToXML()
 {
     m_parseXML.elementList()->clear();
 
     m_global->saveToAttributes(); m_parseXML.addElement("GLOBAL"s, m_global->attributeMap());
-    for (auto &&it : m_BodyList) { it.second->saveToAttributes(); m_parseXML.addElement("BODY"s, it.second->attributeMap()); }
-    for (auto &&it : m_MarkerList) { it.second->saveToAttributes(); m_parseXML.addElement("MARKER"s, it.second->attributeMap()); }
-    for (auto &&it : m_JointList) { it.second->saveToAttributes(); m_parseXML.addElement("JOINT"s, it.second->attributeMap()); }
-    for (auto &&it : m_GeomList) { it.second->saveToAttributes(); m_parseXML.addElement("GEOM"s, it.second->attributeMap()); }
-    for (auto &&it : m_StrapList) { it.second->saveToAttributes(); m_parseXML.addElement("STRAP"s, it.second->attributeMap()); }
-    for (auto &&it : m_MuscleList) { it.second->saveToAttributes(); m_parseXML.addElement("MUSCLE"s, it.second->attributeMap()); }
-    for (auto &&it : m_FluidSacList) { it.second->saveToAttributes(); m_parseXML.addElement("FLUIDSAC"s, it.second->attributeMap()); }
-    for (auto &&it : m_ReporterList) { it.second->saveToAttributes(); m_parseXML.addElement("REPORTER"s, it.second->attributeMap()); }
-    for (auto &&it : m_ControllerList) { it.second->saveToAttributes(); m_parseXML.addElement("CONTROLLER"s, it.second->attributeMap()); }
-    for (auto &&it : m_DriverList) { it.second->saveToAttributes(); m_parseXML.addElement("DRIVER"s, it.second->attributeMap()); }
-    for (auto &&it : m_DataTargetList) { it.second->saveToAttributes(); m_parseXML.addElement("DATATARGET"s, it.second->attributeMap()); }
-    for (auto &&it : m_LightList) { it.second->saveToAttributes(); m_parseXML.addElement("LIGHT"s, it.second->attributeMap()); }
+    for (auto &&it : m_bodyList) { it.second->saveToAttributes(); m_parseXML.addElement("BODY"s, it.second->attributeMap()); }
+    for (auto &&it : m_markerList) { it.second->saveToAttributes(); m_parseXML.addElement("MARKER"s, it.second->attributeMap()); }
+    for (auto &&it : m_jointList) { it.second->saveToAttributes(); m_parseXML.addElement("JOINT"s, it.second->attributeMap()); }
+    for (auto &&it : m_geomList) { it.second->saveToAttributes(); m_parseXML.addElement("GEOM"s, it.second->attributeMap()); }
+    for (auto &&it : m_strapList) { it.second->saveToAttributes(); m_parseXML.addElement("STRAP"s, it.second->attributeMap()); }
+    for (auto &&it : m_muscleList) { it.second->saveToAttributes(); m_parseXML.addElement("MUSCLE"s, it.second->attributeMap()); }
+    for (auto &&it : m_fluidSacList) { it.second->saveToAttributes(); m_parseXML.addElement("FLUIDSAC"s, it.second->attributeMap()); }
+    for (auto &&it : m_reporterList) { it.second->saveToAttributes(); m_parseXML.addElement("REPORTER"s, it.second->attributeMap()); }
+    for (auto &&it : m_controllerList) { it.second->saveToAttributes(); m_parseXML.addElement("CONTROLLER"s, it.second->attributeMap()); }
+    for (auto &&it : m_driverList) { it.second->saveToAttributes(); m_parseXML.addElement("DRIVER"s, it.second->attributeMap()); }
+    for (auto &&it : m_dataTargetList) { it.second->saveToAttributes(); m_parseXML.addElement("DATATARGET"s, it.second->attributeMap()); }
+    for (auto &&it : m_lightList) { it.second->saveToAttributes(); m_parseXML.addElement("LIGHT"s, it.second->attributeMap()); }
 
     std::stringstream comment;
-    comment << "Simulation Time: " << m_SimulationTime <<
-               " Steps: " << m_StepCount <<
-               " Score: " << CalculateInstantaneousFitness() <<
-               " Mechanical Energy: " << m_MechanicalEnergy <<
-               " Metabolic Energy: " << m_MetabolicEnergy;
+    comment << "Simulation Time: " << m_simulationTime <<
+               " Steps: " << m_stepCount <<
+               " Score: " << calculateInstantaneousFitness() <<
+               " Mechanical Energy: " << m_mechanicalEnergy <<
+               " Metabolic Energy: " << m_metabolicEnergy;
     return m_parseXML.saveModel("GAITSYM5"s, comment.str());
 }
 
 // output the simulation state in an XML format that can be re-read
-void Simulation::OutputProgramState()
+void Simulation::outputProgramState()
 {
-    std::string xmlString = SaveToXML();
+    std::string xmlString = saveToXML();
     DataFile outputFile;
     outputFile.setRawData(xmlString.c_str(), xmlString.size());
-    outputFile.writeFile(m_OutputModelStateFile);
+    outputFile.writeFile(m_outputModelStateFile);
 }
 
-void Simulation::SetOutputModelStateFile(const std::string &filename)
+void Simulation::setOutputModelStateFile(const std::string &filename)
 {
-    m_OutputModelStateFile = filename;
+    m_outputModelStateFile = filename;
 }
 
-void Simulation::SetGlobal(std::unique_ptr<Global> &&global)
+void Simulation::setGlobal(std::unique_ptr<Global> &&global)
 {
     m_global = std::move(global);
 }
 
-bool Simulation::ShouldQuit()
+bool Simulation::shouldQuit()
 {
-    if (m_global->timeLimit() > 0 && m_SimulationTime > m_global->timeLimit()) return true;
-    if (m_global->mechanicalEnergyLimit() > 0 && m_MechanicalEnergy > m_global->mechanicalEnergyLimit()) return true;
-    if (m_global->metabolicEnergyLimit() > 0 && m_MetabolicEnergy > m_global->metabolicEnergyLimit()) return true;
+    if (m_global->timeLimit() > 0 && m_simulationTime > m_global->timeLimit()) return true;
+    if (m_global->mechanicalEnergyLimit() > 0 && m_mechanicalEnergy > m_global->mechanicalEnergyLimit()) return true;
+    if (m_global->metabolicEnergyLimit() > 0 && m_metabolicEnergy > m_global->metabolicEnergyLimit()) return true;
     return false;
 }
 
-Body *Simulation::GetBody(const std::string &name)
+Body *Simulation::getBody(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_BodyList.find(name);
-    if (iter != m_BodyList.end()) return iter->second.get();
+    auto iter = m_bodyList.find(name);
+    if (iter != m_bodyList.end()) return iter->second.get();
     return nullptr;
 }
 
-Joint *Simulation::GetJoint(const std::string &name)
+Joint *Simulation::getJoint(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_JointList.find(name);
-    if (iter != m_JointList.end()) return iter->second.get();
+    auto iter = m_jointList.find(name);
+    if (iter != m_jointList.end()) return iter->second.get();
     return nullptr;
 }
 
-Geom *Simulation::GetGeom(const std::string &name)
+Geom *Simulation::getGeom(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_GeomList.find(name);
-    if (iter != m_GeomList.end()) return iter->second.get();
+    auto iter = m_geomList.find(name);
+    if (iter != m_geomList.end()) return iter->second.get();
     return nullptr;
 }
 
-Muscle *Simulation::GetMuscle(const std::string &name)
+Muscle *Simulation::getMuscle(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_MuscleList.find(name);
-    if (iter != m_MuscleList.end()) return iter->second.get();
+    auto iter = m_muscleList.find(name);
+    if (iter != m_muscleList.end()) return iter->second.get();
     return nullptr;
 }
 
-Strap *Simulation::GetStrap(const std::string &name)
+Strap *Simulation::getStrap(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_StrapList.find(name);
-    if (iter != m_StrapList.end()) return iter->second.get();
+    auto iter = m_strapList.find(name);
+    if (iter != m_strapList.end()) return iter->second.get();
     return nullptr;
 }
 
-FluidSac *Simulation::GetFluidSac(const std::string &name)
+FluidSac *Simulation::getFluidSac(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_FluidSacList.find(name);
-    if (iter != m_FluidSacList.end()) return iter->second.get();
+    auto iter = m_fluidSacList.find(name);
+    if (iter != m_fluidSacList.end()) return iter->second.get();
     return nullptr;
 }
 
-Driver *Simulation::GetDriver(const std::string &name)
+Driver *Simulation::getDriver(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_DriverList.find(name);
-    if (iter != m_DriverList.end()) return iter->second.get();
+    auto iter = m_driverList.find(name);
+    if (iter != m_driverList.end()) return iter->second.get();
     return nullptr;
 }
 
-DataTarget *Simulation::GetDataTarget(const std::string &name)
+DataTarget *Simulation::getDataTarget(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_DataTargetList.find(name);
-    if (iter != m_DataTargetList.end()) return iter->second.get();
+    auto iter = m_dataTargetList.find(name);
+    if (iter != m_dataTargetList.end()) return iter->second.get();
     return nullptr;
 }
 
-Marker *Simulation::GetMarker(const std::string &name)
+Marker *Simulation::getMarker(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_MarkerList.find(name);
-    if (iter != m_MarkerList.end()) return iter->second.get();
+    auto iter = m_markerList.find(name);
+    if (iter != m_markerList.end()) return iter->second.get();
     return nullptr;
 }
 
-Reporter *Simulation::GetReporter(const std::string &name)
+Reporter *Simulation::getReporter(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_ReporterList.find(name);
-    if (iter != m_ReporterList.end()) return iter->second.get();
+    auto iter = m_reporterList.find(name);
+    if (iter != m_reporterList.end()) return iter->second.get();
     return nullptr;
 }
 
-Controller *Simulation::GetController(const std::string &name)
+Controller *Simulation::getController(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_ControllerList.find(name);
-    if (iter != m_ControllerList.end()) return iter->second.get();
+    auto iter = m_controllerList.find(name);
+    if (iter != m_controllerList.end()) return iter->second.get();
     return nullptr;
 }
 
-Light *Simulation::GetLight(const std::string &name)
+Light *Simulation::getLight(const std::string &name)
 {
     // use find to allow null return if name not found
-    auto iter = m_LightList.find(name);
-    if (iter != m_LightList.end()) return iter->second.get();
+    auto iter = m_lightList.find(name);
+    if (iter != m_lightList.end()) return iter->second.get();
     return nullptr;
 }
 
-Global *Simulation::GetGlobal()
+Global *Simulation::global()
 {
     return m_global.get();
 }
 
-void Simulation::DumpObjects()
+void Simulation::dumpObjects()
 {
-    for (auto &&it : m_BodyList) DumpObject(it.second.get());
-    for (auto &&it : m_MarkerList) DumpObject(it.second.get());
-    for (auto &&it : m_JointList) DumpObject(it.second.get());
-    for (auto &&it : m_GeomList) DumpObject(it.second.get());
-    for (auto &&it : m_FluidSacList) DumpObject(it.second.get());
-    for (auto &&it : m_DriverList) DumpObject(it.second.get());
-    for (auto &&it : m_DataTargetList) DumpObject(it.second.get());
-    for (auto &&it : m_ReporterList) DumpObject(it.second.get());
-    for (auto &&it : m_ControllerList) DumpObject(it.second.get());
-    for (auto &&it : m_MuscleList)
+    for (auto &&it : m_bodyList) dumpObject(it.second.get());
+    for (auto &&it : m_markerList) dumpObject(it.second.get());
+    for (auto &&it : m_jointList) dumpObject(it.second.get());
+    for (auto &&it : m_geomList) dumpObject(it.second.get());
+    for (auto &&it : m_fluidSacList) dumpObject(it.second.get());
+    for (auto &&it : m_driverList) dumpObject(it.second.get());
+    for (auto &&it : m_dataTargetList) dumpObject(it.second.get());
+    for (auto &&it : m_reporterList) dumpObject(it.second.get());
+    for (auto &&it : m_controllerList) dumpObject(it.second.get());
+    for (auto &&it : m_muscleList)
     {
-        DumpObject(it.second.get());
-        DumpObject(it.second->strap());
+        dumpObject(it.second.get());
+        dumpObject(it.second->strap());
     }
 }
 
-void Simulation::DumpObject(NamedObject *namedObject)
+void Simulation::dumpObject(NamedObject *namedObject)
 {
     if (namedObject->dump())
     {
@@ -1253,11 +1253,11 @@ void Simulation::setKinematicsFile(const std::string &newKinematicsFile)
         if (err)
         {
             std::cerr << "Error: unable to initialise PlaybackPhysicsEngine\n" << *err << "\n";
-            m_SimulationError = true;
+            m_simulationError = true;
             return;
         }
         m_physicsEngine->step();
-        for (auto &&muscleIt : m_MuscleList) { muscleIt.second->calculateStrap(); }
+        for (auto &&muscleIt : m_muscleList) { muscleIt.second->calculateStrap(); }
     }
 }
 
@@ -1269,69 +1269,69 @@ PhysicsEngine* Simulation::physicsEngine() const
 void Simulation::resetPhysicsEngine()
 {
     m_physicsEngine.reset();
-    m_SimulationTime = 0;
+    m_simulationTime = 0;
 }
 
-std::vector<std::string> Simulation::GetNameList() const
+std::vector<std::string> Simulation::nameList() const
 {
     std::vector<std::string> output;
-    size_t size = m_BodyList.size() +
-                  m_JointList.size() +
-                  m_GeomList.size() +
-                  m_MuscleList.size() +
-                  m_StrapList.size() +
-                  m_FluidSacList.size() +
-                  m_DriverList.size() +
-                  m_DataTargetList.size() +
-                  m_MarkerList.size() +
-                  m_ReporterList.size() +
-                  m_ControllerList.size();
+    size_t size = m_bodyList.size() +
+                  m_jointList.size() +
+                  m_geomList.size() +
+                  m_muscleList.size() +
+                  m_strapList.size() +
+                  m_fluidSacList.size() +
+                  m_driverList.size() +
+                  m_dataTargetList.size() +
+                  m_markerList.size() +
+                  m_reporterList.size() +
+                  m_controllerList.size();
     output.reserve(size);
-    for (auto &&it : m_BodyList) output.push_back(it.first);
-    for (auto &&it : m_JointList) output.push_back(it.first);
-    for (auto &&it : m_GeomList) output.push_back(it.first);
-    for (auto &&it : m_MuscleList) output.push_back(it.first);
-    for (auto &&it : m_StrapList) output.push_back(it.first);
-    for (auto &&it : m_FluidSacList) output.push_back(it.first);
-    for (auto &&it : m_DriverList) output.push_back(it.first);
-    for (auto &&it : m_DataTargetList) output.push_back(it.first);
-    for (auto &&it : m_MarkerList) output.push_back(it.first);
-    for (auto &&it : m_ReporterList) output.push_back(it.first);
-    for (auto &&it : m_ControllerList) output.push_back(it.first);
+    for (auto &&it : m_bodyList) output.push_back(it.first);
+    for (auto &&it : m_jointList) output.push_back(it.first);
+    for (auto &&it : m_geomList) output.push_back(it.first);
+    for (auto &&it : m_muscleList) output.push_back(it.first);
+    for (auto &&it : m_strapList) output.push_back(it.first);
+    for (auto &&it : m_fluidSacList) output.push_back(it.first);
+    for (auto &&it : m_driverList) output.push_back(it.first);
+    for (auto &&it : m_dataTargetList) output.push_back(it.first);
+    for (auto &&it : m_markerList) output.push_back(it.first);
+    for (auto &&it : m_reporterList) output.push_back(it.first);
+    for (auto &&it : m_controllerList) output.push_back(it.first);
     return output;
 }
 
-std::set<std::string> Simulation::GetNameSet() const
+std::set<std::string> Simulation::nameSet() const
 {
     std::set<std::string> output;
-    for (auto &&it : m_BodyList) output.insert(it.first);
-    for (auto &&it : m_JointList) output.insert(it.first);
-    for (auto &&it : m_GeomList) output.insert(it.first);
-    for (auto &&it : m_MuscleList) output.insert(it.first);
-    for (auto &&it : m_StrapList) output.insert(it.first);
-    for (auto &&it : m_FluidSacList) output.insert(it.first);
-    for (auto &&it : m_DriverList) output.insert(it.first);
-    for (auto &&it : m_DataTargetList) output.insert(it.first);
-    for (auto &&it : m_MarkerList) output.insert(it.first);
-    for (auto &&it : m_ReporterList) output.insert(it.first);
-    for (auto &&it : m_ControllerList) output.insert(it.first);
+    for (auto &&it : m_bodyList) output.insert(it.first);
+    for (auto &&it : m_jointList) output.insert(it.first);
+    for (auto &&it : m_geomList) output.insert(it.first);
+    for (auto &&it : m_muscleList) output.insert(it.first);
+    for (auto &&it : m_strapList) output.insert(it.first);
+    for (auto &&it : m_fluidSacList) output.insert(it.first);
+    for (auto &&it : m_driverList) output.insert(it.first);
+    for (auto &&it : m_dataTargetList) output.insert(it.first);
+    for (auto &&it : m_markerList) output.insert(it.first);
+    for (auto &&it : m_reporterList) output.insert(it.first);
+    for (auto &&it : m_controllerList) output.insert(it.first);
     return output;
 }
 
-std::vector<NamedObject *> Simulation::GetObjectList() const
+std::vector<NamedObject *> Simulation::objectList() const
 {
     std::vector<NamedObject *> output;
-    size_t size = m_BodyList.size() +
-                  m_JointList.size() +
-                  m_GeomList.size() +
-                  m_MuscleList.size() +
-                  m_StrapList.size() +
-                  m_FluidSacList.size() +
-                  m_DriverList.size() +
-                  m_DataTargetList.size() +
-                  m_MarkerList.size() +
-                  m_ReporterList.size() +
-                  m_ControllerList.size();
+    size_t size = m_bodyList.size() +
+                  m_jointList.size() +
+                  m_geomList.size() +
+                  m_muscleList.size() +
+                  m_strapList.size() +
+                  m_fluidSacList.size() +
+                  m_driverList.size() +
+                  m_dataTargetList.size() +
+                  m_markerList.size() +
+                  m_reporterList.size() +
+                  m_controllerList.size();
     output.reserve(size);
     // note: the order is important for resolving dependencies
     // bodies depend on nothing
@@ -1345,55 +1345,55 @@ std::vector<NamedObject *> Simulation::GetObjectList() const
     // drivers depend on controllers, muscles and other drivables
     // data targets can depend on almost anything
     // reporters can depend on almost anything
-    for (auto &&it : m_BodyList) output.push_back(it.second.get());
-    for (auto &&it : m_MarkerList) output.push_back(it.second.get());
-    for (auto &&it : m_JointList) output.push_back(it.second.get());
-    for (auto &&it : m_GeomList) output.push_back(it.second.get());
-    for (auto &&it : m_StrapList) output.push_back(it.second.get());
-    for (auto &&it : m_MuscleList) output.push_back(it.second.get());
-    for (auto &&it : m_FluidSacList) output.push_back(it.second.get());
-    for (auto &&it : m_ControllerList) output.push_back(it.second.get());
-    for (auto &&it : m_DriverList) output.push_back(it.second.get());
-    for (auto &&it : m_DataTargetList) output.push_back(it.second.get());
-    for (auto &&it : m_ReporterList) output.push_back(it.second.get());
+    for (auto &&it : m_bodyList) output.push_back(it.second.get());
+    for (auto &&it : m_markerList) output.push_back(it.second.get());
+    for (auto &&it : m_jointList) output.push_back(it.second.get());
+    for (auto &&it : m_geomList) output.push_back(it.second.get());
+    for (auto &&it : m_strapList) output.push_back(it.second.get());
+    for (auto &&it : m_muscleList) output.push_back(it.second.get());
+    for (auto &&it : m_fluidSacList) output.push_back(it.second.get());
+    for (auto &&it : m_controllerList) output.push_back(it.second.get());
+    for (auto &&it : m_driverList) output.push_back(it.second.get());
+    for (auto &&it : m_dataTargetList) output.push_back(it.second.get());
+    for (auto &&it : m_reporterList) output.push_back(it.second.get());
     return output;
 }
 
-NamedObject *Simulation::GetNamedObject(const std::string &name) const
+NamedObject *Simulation::getNamedObject(const std::string &name) const
 {
-    auto BodyListIt = m_BodyList.find(name); if (BodyListIt != m_BodyList.end()) return BodyListIt->second.get();
-    auto JointListIt = m_JointList.find(name); if (JointListIt != m_JointList.end()) return JointListIt->second.get();
-    auto GeomListIt = m_GeomList.find(name); if (GeomListIt != m_GeomList.end()) return GeomListIt->second.get();
-    auto MuscleListIt = m_MuscleList.find(name); if (MuscleListIt != m_MuscleList.end()) return MuscleListIt->second.get();
-    auto StrapListIt = m_StrapList.find(name); if (StrapListIt != m_StrapList.end()) return StrapListIt->second.get();
-    auto FluidSacListIt = m_FluidSacList.find(name); if (FluidSacListIt != m_FluidSacList.end()) return FluidSacListIt->second.get();
-    auto DriverListIt = m_DriverList.find(name); if (DriverListIt != m_DriverList.end()) return DriverListIt->second.get();
-    auto DataTargetListIt = m_DataTargetList.find(name); if (DataTargetListIt != m_DataTargetList.end()) return DataTargetListIt->second.get();
-    auto MarkerListIt = m_MarkerList.find(name); if (MarkerListIt != m_MarkerList.end()) return MarkerListIt->second.get();
-    auto ReporterListIt = m_ReporterList.find(name); if (ReporterListIt != m_ReporterList.end()) return ReporterListIt->second.get();
-    auto ControllerListIt = m_ControllerList.find(name); if (ControllerListIt != m_ControllerList.end()) return ControllerListIt->second.get();
+    auto BodyListIt = m_bodyList.find(name); if (BodyListIt != m_bodyList.end()) return BodyListIt->second.get();
+    auto JointListIt = m_jointList.find(name); if (JointListIt != m_jointList.end()) return JointListIt->second.get();
+    auto GeomListIt = m_geomList.find(name); if (GeomListIt != m_geomList.end()) return GeomListIt->second.get();
+    auto MuscleListIt = m_muscleList.find(name); if (MuscleListIt != m_muscleList.end()) return MuscleListIt->second.get();
+    auto StrapListIt = m_strapList.find(name); if (StrapListIt != m_strapList.end()) return StrapListIt->second.get();
+    auto FluidSacListIt = m_fluidSacList.find(name); if (FluidSacListIt != m_fluidSacList.end()) return FluidSacListIt->second.get();
+    auto DriverListIt = m_driverList.find(name); if (DriverListIt != m_driverList.end()) return DriverListIt->second.get();
+    auto DataTargetListIt = m_dataTargetList.find(name); if (DataTargetListIt != m_dataTargetList.end()) return DataTargetListIt->second.get();
+    auto MarkerListIt = m_markerList.find(name); if (MarkerListIt != m_markerList.end()) return MarkerListIt->second.get();
+    auto ReporterListIt = m_reporterList.find(name); if (ReporterListIt != m_reporterList.end()) return ReporterListIt->second.get();
+    auto ControllerListIt = m_controllerList.find(name); if (ControllerListIt != m_controllerList.end()) return ControllerListIt->second.get();
     return nullptr;
 }
 
-bool Simulation::DeleteNamedObject(const std::string &name)
+bool Simulation::deleteNamedObject(const std::string &name)
 {
-    auto BodyListIt = m_BodyList.find(name); if (BodyListIt != m_BodyList.end()) { m_BodyList.erase(BodyListIt); return true; }
-    auto JointListIt = m_JointList.find(name); if (JointListIt != m_JointList.end()) { m_JointList.erase(JointListIt); return true; }
-    auto GeomListIt = m_GeomList.find(name); if (GeomListIt != m_GeomList.end()) { m_GeomList.erase(GeomListIt); return true; }
-    auto MuscleListIt = m_MuscleList.find(name); if (MuscleListIt != m_MuscleList.end()) { m_MuscleList.erase(MuscleListIt); return true; }
-    auto StrapListIt = m_StrapList.find(name); if (StrapListIt != m_StrapList.end()) { m_StrapList.erase(StrapListIt); return true; }
-    auto FluidSacListIt = m_FluidSacList.find(name); if (FluidSacListIt != m_FluidSacList.end()) { m_FluidSacList.erase(FluidSacListIt); return true; }
-    auto DriverListIt = m_DriverList.find(name); if (DriverListIt != m_DriverList.end()) { m_DriverList.erase(DriverListIt); return true; }
-    auto DataTargetListIt = m_DataTargetList.find(name); if (DataTargetListIt != m_DataTargetList.end()) { m_DataTargetList.erase(DataTargetListIt); return true; }
-    auto MarkerListIt = m_MarkerList.find(name); if (MarkerListIt != m_MarkerList.end()) { m_MarkerList.erase(MarkerListIt); return true; }
-    auto ReporterListIt = m_ReporterList.find(name); if (ReporterListIt != m_ReporterList.end()) { m_ReporterList.erase(ReporterListIt); return true; }
-    auto ControllerListIt = m_ControllerList.find(name); if (ControllerListIt != m_ControllerList.end()) { m_ControllerList.erase(ControllerListIt); return true; }
+    auto BodyListIt = m_bodyList.find(name); if (BodyListIt != m_bodyList.end()) { m_bodyList.erase(BodyListIt); return true; }
+    auto JointListIt = m_jointList.find(name); if (JointListIt != m_jointList.end()) { m_jointList.erase(JointListIt); return true; }
+    auto GeomListIt = m_geomList.find(name); if (GeomListIt != m_geomList.end()) { m_geomList.erase(GeomListIt); return true; }
+    auto MuscleListIt = m_muscleList.find(name); if (MuscleListIt != m_muscleList.end()) { m_muscleList.erase(MuscleListIt); return true; }
+    auto StrapListIt = m_strapList.find(name); if (StrapListIt != m_strapList.end()) { m_strapList.erase(StrapListIt); return true; }
+    auto FluidSacListIt = m_fluidSacList.find(name); if (FluidSacListIt != m_fluidSacList.end()) { m_fluidSacList.erase(FluidSacListIt); return true; }
+    auto DriverListIt = m_driverList.find(name); if (DriverListIt != m_driverList.end()) { m_driverList.erase(DriverListIt); return true; }
+    auto DataTargetListIt = m_dataTargetList.find(name); if (DataTargetListIt != m_dataTargetList.end()) { m_dataTargetList.erase(DataTargetListIt); return true; }
+    auto MarkerListIt = m_markerList.find(name); if (MarkerListIt != m_markerList.end()) { m_markerList.erase(MarkerListIt); return true; }
+    auto ReporterListIt = m_reporterList.find(name); if (ReporterListIt != m_reporterList.end()) { m_reporterList.erase(ReporterListIt); return true; }
+    auto ControllerListIt = m_controllerList.find(name); if (ControllerListIt != m_controllerList.end()) { m_controllerList.erase(ControllerListIt); return true; }
     return false;
 }
 
-bool Simulation::HasAssembly()
+bool Simulation::hasAssembly()
 {
-    for (auto && it : m_JointList)
+    for (auto && it : m_jointList)
     {
         if (it.second->group() == "assembly"s) return true;
     }

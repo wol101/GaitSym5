@@ -36,9 +36,9 @@ void PIDMuscleLengthController::initialise(double Kp, double Ki, double Kd)
 void PIDMuscleLengthController::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
-    m_dt = simulation()->GetTimeIncrement();
+    m_dt = simulation()->global()->stepSize();
 
     // in this driver, the length is driven by the upstream driver
     m_setpoint = dataSum();
@@ -100,7 +100,7 @@ std::string PIDMuscleLengthController::dumpToString()
         setFirstDump(false);
         s = dumpHelper({"Time", "setpoint"s, "Kp"s, "Ki"s, "Kd"s, "previous_error"s, "error"s, "integral"s, "derivative"s, "output"s, "dt"s, "current_length"s, "value"s});
     }
-    s += dumpHelper({simulation()->GetTime(), m_setpoint, m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, m_current_length, value()});
+    s += dumpHelper({simulation()->simulationTime(), m_setpoint, m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, m_current_length, value()});
     return s;
 }
 

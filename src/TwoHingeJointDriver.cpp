@@ -38,7 +38,7 @@ TwoHingeJointDriver::TwoHingeJointDriver()
 void TwoHingeJointDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
     // set the desired distance
     pgd::Vector3 proximalJointPositionWorld = m_proximalJoint->body1Marker()->worldPosition();
@@ -405,7 +405,7 @@ void TwoHingeJointDriver::sendData()
         if (localStrap == m_localStrapList.end()) continue;
         double length = localStrap->second->Length();
         // now set the target length
-        pidMuscleLengthController->receiveData(clamp(length), simulation()->GetStepCount());
+        pidMuscleLengthController->receiveData(clamp(length), simulation()->stepCount());
     }
 }
 
@@ -512,7 +512,7 @@ std::string TwoHingeJointDriver::dumpToString()
     pgd::Vector3 m_distalJointMarker1Position = m_distalJointMarker1->worldPosition();
     pgd::Vector3 m_distalBodyMarkerLocalPosition = m_distalBodyMarkerLocal->worldPosition();
     double markerDistance = (m_distalBodyMarker->worldPosition() - m_proximalJoint->body1Marker()->worldPosition()).magnitude();
-    s += dumpHelper({simulation()->GetTime(), markerDistance, m_desiredLength, m_angleFraction, m_proximalAngleFraction1,
+    s += dumpHelper({simulation()->simulationTime(), markerDistance, m_desiredLength, m_angleFraction, m_proximalAngleFraction1,
                      m_proximalJointAngle1, m_proximalJointAngle2, m_distalJointAngle,
                      m_proximalJointMarker1Position.x, m_proximalJointMarker1Position.y, m_proximalJointMarker1Position.z,
                      m_distalJointMarker1Position.x, m_distalJointMarker1Position.y, m_distalJointMarker1Position.z,
@@ -529,30 +529,30 @@ std::string *TwoHingeJointDriver::createFromAttributes()
     if (Driver::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    m_targetMarker = simulation()->GetMarker(buf);
+    m_targetMarker = simulation()->getMarker(buf);
     if (!m_targetMarker)
     {
         setLastError("TwoHingeJointDriver ID=\""s + name() + "\" TargetMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("DistalBodyMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    m_distalBodyMarker = simulation()->GetMarker(buf);
+    m_distalBodyMarker = simulation()->getMarker(buf);
     if (!m_distalBodyMarker)
     {
         setLastError("TwoHingeJointDriver ID=\""s + name() + "\" DistalBodyMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("ProximalJointID"s, &buf) == nullptr) return lastErrorPtr();
-    m_proximalJoint = dynamic_cast<HingeJoint *>(simulation()->GetJoint(buf));
-    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<UniversalJoint *>(simulation()->GetJoint(buf));
-    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<BallJoint *>(simulation()->GetJoint(buf));
+    m_proximalJoint = dynamic_cast<HingeJoint *>(simulation()->getJoint(buf));
+    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<UniversalJoint *>(simulation()->getJoint(buf));
+    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<BallJoint *>(simulation()->getJoint(buf));
     if (!m_proximalJoint)
     {
         setLastError("TwoHingeJointDriver ID=\""s + name() + "\" ProximalJointID joint not found or not Hinge, Universal or Ball \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("DistalJointID"s, &buf) == nullptr) return lastErrorPtr();
-    m_distalJoint = dynamic_cast<HingeJoint *>(simulation()->GetJoint(buf));
+    m_distalJoint = dynamic_cast<HingeJoint *>(simulation()->getJoint(buf));
     if (!m_distalJoint)
     {
         setLastError("TwoHingeJointDriver ID=\""s + name() + "\" DistalJointID joint not found \""s + buf + "\"");

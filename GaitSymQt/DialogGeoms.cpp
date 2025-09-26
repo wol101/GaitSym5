@@ -91,7 +91,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogGeoms::accept()";
 
-    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->markerList();
     QString strapTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     while (true)
     {
@@ -157,7 +157,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());
     m_outputGeom->setSimulation(m_simulation);
     m_outputGeom->setGeomMarker(markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get());
-    m_outputGeom->setSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->GetTimeIncrement());
+    m_outputGeom->setSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->global()->stepSize());
     m_outputGeom->setContactMu(ui->lineEditMu->value());
     m_outputGeom->setContactRho(ui->lineEditRho->value());
     m_outputGeom->setContactBounce(ui->lineEditBounce->value());
@@ -167,7 +167,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
     excludedGeoms->clear();
     if (ui->spinBoxNExcludedGeoms->value())
     {
-        auto geomList = m_simulation->GetGeomList();
+        auto geomList = m_simulation->geomList();
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
         {
             GaitSym::Geom *geom = geomList->at(m_excludedGeomComboBoxList[i]->currentText().toStdString()).get();
@@ -234,7 +234,7 @@ void DialogGeoms::lateInitialise()
 
     // set the marker lists
     QStringList markerIDs;
-    for (auto &&it : *m_simulation->GetMarkerList()) markerIDs.append(QString::fromStdString(it.first));
+    for (auto &&it : *m_simulation->markerList()) markerIDs.append(QString::fromStdString(it.first));
     ui->comboBoxGeomMarker->addItems(markerIDs);
 
     // now set some sensible defaults
@@ -267,7 +267,7 @@ void DialogGeoms::lateInitialise()
     if (!m_inputGeom)
     {
         // set default new name
-        auto nameSet = simulation()->GetNameSet();
+        auto nameSet = simulation()->nameSet();
         ui->lineEditGeomID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -302,7 +302,7 @@ void DialogGeoms::lateInitialise()
     if (excludeList->size())
     {
         QStringList geomIDs;
-        for (auto &&it : *m_simulation->GetGeomList()) geomIDs.append(QString::fromStdString(it.first));
+        for (auto &&it : *m_simulation->geomList()) geomIDs.append(QString::fromStdString(it.first));
         const QSignalBlocker blocker(ui->spinBoxNExcludedGeoms);
         ui->spinBoxNExcludedGeoms->setValue(int(excludeList->size()));
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
@@ -385,7 +385,7 @@ void DialogGeoms::spinBoxChanged(const QString &/*text*/)
     {
         // get the lists in the right formats
         QStringList geomIDs;
-        for (auto &&it : *m_simulation->GetGeomList()) geomIDs.append(QString::fromStdString(it.first));
+        for (auto &&it : *m_simulation->geomList()) geomIDs.append(QString::fromStdString(it.first));
 
         // store the current values in the list
         QVector<QString> oldValues(m_excludedGeomComboBoxList.size());

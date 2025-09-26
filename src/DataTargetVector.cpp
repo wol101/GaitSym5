@@ -141,7 +141,7 @@ std::string DataTargetVector::dumpToString()
         setFirstDump(false);
         s += dumpHelper({"time"s, "index"s, "raw_error", "positive_error", "score"s, "vector_value_x"s, "vector_value_y"s, "vector_value_z"s, "vector_target_x"s, "vector_target_y"s, "vector_target_z"s, "vector_error_x"s, "vector_error_y"s, "vector_error_z"s});
     }
-    s += dumpHelper({simulation()->GetTime(), double(index()), rawError(), positiveError(), value(), m_vectorValue.x, m_vectorValue.y, m_vectorValue.z, m_vectorTarget.x, m_vectorTarget.y, m_vectorTarget.z, m_vectorError.x, m_vectorError.y, m_vectorError.z});
+    s += dumpHelper({simulation()->simulationTime(), double(index()), rawError(), positiveError(), value(), m_vectorValue.x, m_vectorValue.y, m_vectorValue.z, m_vectorTarget.x, m_vectorTarget.y, m_vectorTarget.z, m_vectorError.x, m_vectorError.y, m_vectorError.z});
     return s;
 }
 
@@ -169,14 +169,14 @@ std::string *DataTargetVector::createFromAttributes()
     if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
     for (bool once = true; once; once = false)
     {
-        auto iterBody = simulation()->GetBodyList()->find(buf);
-        if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
-        auto iterJoint = simulation()->GetJointList()->find(buf);
-        if (iterJoint != simulation()->GetJointList()->end()) { m_target = iterJoint->second.get(); break; }
-        auto iterGeom = simulation()->GetGeomList()->find(buf);
-        if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
-        auto iterMarker = simulation()->GetMarkerList()->find(buf);
-        if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
+        auto iterBody = simulation()->bodyList()->find(buf);
+        if (iterBody != simulation()->bodyList()->end()) { m_target = iterBody->second.get(); break; }
+        auto iterJoint = simulation()->jointList()->find(buf);
+        if (iterJoint != simulation()->jointList()->end()) { m_target = iterJoint->second.get(); break; }
+        auto iterGeom = simulation()->geomList()->find(buf);
+        if (iterGeom != simulation()->geomList()->end()) { m_target = iterGeom->second.get(); break; }
+        auto iterMarker = simulation()->markerList()->find(buf);
+        if (iterMarker != simulation()->markerList()->end()) { m_target = iterMarker->second.get(); break; }
     }
     if (!m_target)
     {

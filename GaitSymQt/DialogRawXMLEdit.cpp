@@ -782,7 +782,7 @@ std::string *DialogRawXMLEdit::validate()
 {
     GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
-    std::string *errorMessage = simulation.LoadModel(editFileData.constData(), editFileData.size());
+    std::string *errorMessage = simulation.loadModel(editFileData.constData(), editFileData.size());
     if (errorMessage)
     {
         m_lastError = *errorMessage;

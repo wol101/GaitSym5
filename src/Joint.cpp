@@ -63,15 +63,15 @@ std::string *Joint::createFromAttributes()
     m_type = buf;
 
     if (findAttribute("Body1MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto marker1Iterator = simulation()->GetMarkerList()->find(buf);
-    if (marker1Iterator == simulation()->GetMarkerList()->end())
+    auto marker1Iterator = simulation()->markerList()->find(buf);
+    if (marker1Iterator == simulation()->markerList()->end())
     {
         setLastError("Joint ID=\""s + name() +"\" Body1Marker not found"s);
         return lastErrorPtr();
     }
     if (findAttribute("Body2MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto marker2Iterator = simulation()->GetMarkerList()->find(buf);
-    if (marker2Iterator == simulation()->GetMarkerList()->end())
+    auto marker2Iterator = simulation()->markerList()->find(buf);
+    if (marker2Iterator == simulation()->markerList()->end())
     {
         setLastError("Joint ID=\""s + name() +"\" Body2Marker not found"s);
         return lastErrorPtr();

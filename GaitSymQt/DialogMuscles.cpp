@@ -109,7 +109,7 @@ DialogMuscles::~DialogMuscles()
 void DialogMuscles::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogMuscles::accept()";
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     QString strapTab = ui->tabWidgetStrap->tabText(ui->tabWidgetStrap->currentIndex());
     std::unique_ptr<GaitSym::Strap> strap;
     if (strapTab == "N-Point")
@@ -351,7 +351,7 @@ void DialogMuscles::lateInitialise()
     Q_ASSERT_X(m_simulation, "DialogMuscles::lateInitialise", "m_simulation undefined");
 
     // get the lists in the right formats
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     QStringList markerIDs;
     for (auto it = markerList->begin(); it != markerList->end(); it++)
         markerIDs.append(QString::fromStdString(it->first));
@@ -438,7 +438,7 @@ void DialogMuscles::lateInitialise()
     if (!m_inputMuscle)
     {
         // set default new name
-        auto nameSet = m_simulation->GetNameSet();
+        auto nameSet = m_simulation->nameSet();
         ui->lineEditMuscleID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Muscle%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -603,7 +603,7 @@ void DialogMuscles::spinBoxChanged(const QString &/*text*/)
     if (this->sender() == ui->spinBoxNViaPoints)
     {
         // get the lists in the right formats
-        auto markerList = m_simulation->GetMarkerList();
+        auto markerList = m_simulation->markerList();
         QStringList markerIDs;
         for (auto it = markerList->begin(); it != markerList->end(); it++) markerIDs.append(QString::fromStdString(it->first));
 
@@ -643,7 +643,7 @@ void DialogMuscles::spinBoxChanged(const QString &/*text*/)
     if (this->sender() == ui->spinBoxNTorqueMarkers)
     {
         // get the lists in the right formats
-        auto markerList = m_simulation->GetMarkerList();
+        auto markerList = m_simulation->markerList();
         QStringList markerIDs;
         for (auto it = markerList->begin(); it != markerList->end(); it++) markerIDs.append(QString::fromStdString(it->first));
 

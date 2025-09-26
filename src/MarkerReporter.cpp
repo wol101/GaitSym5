@@ -28,7 +28,7 @@ std::string *MarkerReporter::createFromAttributes()
     markerList.reserve(result.size());
     for (size_t i = 0; i < result.size(); i++)
     {
-        Marker *marker = simulation()->GetMarker(result[i]);
+        Marker *marker = simulation()->getMarker(result[i]);
         if (!marker)
         {
             setLastError("REPORTER ID=\""s + name() +"\" marker \""s + result[i] +"\" not found"s);
@@ -98,7 +98,7 @@ std::string MarkerReporter::dumpToString()
         s = pystring::join("\t"s, sList) + "\n"s;
         sList.clear();
     }
-    double time = simulation()->GetTime();
+    double time = simulation()->simulationTime();
     int64_t index = std::lower_bound(m_reportTimes.begin(), m_reportTimes.end(), time) - m_reportTimes.begin(); // this is an index for the time >= playbackTime
     if (index > m_lastReportIndex)
     {

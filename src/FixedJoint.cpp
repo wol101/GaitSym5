@@ -408,7 +408,7 @@ void FixedJoint::setWindow(size_t window)
 void FixedJoint::setCutoffFrequency(double cutoffFrequency)
 {
     m_cutoffFrequency = cutoffFrequency;
-    double samplingFrequency = 1.0 / simulation()->GetTimeIncrement();
+    double samplingFrequency = 1.0 / simulation()->global()->stepSize();
 //    m_minStressButterworth = new ButterworthFilter(cutoffFrequency, samplingFrequency);
 //    m_maxStressButterworth = new ButterworthFilter(cutoffFrequency, samplingFrequency);
     m_lowPassType = Butterworth2ndOrderLowPass;
@@ -665,14 +665,14 @@ void FixedJoint::calculatePixmap()
         m_pixMap.resize(m_nx * m_ny * 4);
     }
 
-    if (m_lastDisplayTime != simulation()->GetTime())
+    if (m_lastDisplayTime != simulation()->simulationTime())
     {
-        m_lastDisplayTime = simulation()->GetTime();
+        m_lastDisplayTime = simulation()->simulationTime();
         size_t backgroundColourIndex4 = 0;
         size_t foregroundColourIndex4 = 255 * 4;
         unsigned char *stiffnessPtr = m_stiffness.data();
         size_t i = 0;
-        if (simulation()->GetTime() <= 0) // set texture from stiffness bitmap (0 or 1)
+        if (simulation()->simulationTime() <= 0) // set texture from stiffness bitmap (0 or 1)
         {
             for (size_t iy = 0; iy < m_ny; iy++)
             {
@@ -761,7 +761,7 @@ void FixedJoint::calculatePixmap()
 
 bool FixedJoint::calculatePixmapNeeded()
 {
-    if (m_stressCalculationType == none || !simulation() || m_lastDisplayTime == simulation()->GetTime()) return false;
+    if (m_stressCalculationType == none || !simulation() || m_lastDisplayTime == simulation()->simulationTime()) return false;
     return true;
 }
 

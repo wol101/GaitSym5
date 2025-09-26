@@ -139,13 +139,13 @@ void DialogStringOfPearlsBuilder::lateInitialise()
     Q_ASSERT_X(m_simulation, "DialogStringOfPearlsBuilder::lateInitialise", "m_simulation undefined");
 
     // fill the muscle combobox
-    auto muscleList = m_simulation->GetMuscleList();
+    auto muscleList = m_simulation->muscleList();
     QStringList muscleIDs;
     for (auto && it : *muscleList) { muscleIDs.append(QString::fromStdString(it.first)); }
     ui->comboBoxImportFromMuscle->addItems(muscleIDs);
 
     // fill the marker comboboxes
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     QStringList markerIDs;
     for (auto && it : *markerList) { markerIDs.append(QString::fromStdString(it.first)); }
     ui->comboBoxOriginMarkerID->addItems(markerIDs);
@@ -237,7 +237,7 @@ void DialogStringOfPearlsBuilder::lateInitialise()
 
 
     // set default new name
-    auto nameSet = m_simulation->GetNameSet();
+    auto nameSet = m_simulation->nameSet();
     ui->lineEditRootID->addStrings(nameSet);
     int initialNameCount = 0;
     QString initialName = QString("StringOfPearls%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -320,7 +320,7 @@ std::vector<std::unique_ptr<GaitSym::Body> > *DialogStringOfPearlsBuilder::bodyL
 void DialogStringOfPearlsBuilder::importPathFromMuscle()
 {
     std::string muscleID = ui->comboBoxImportFromMuscle->currentText().toStdString();
-    GaitSym::Muscle *muscle = m_simulation->GetMuscle(muscleID);
+    GaitSym::Muscle *muscle = m_simulation->getMuscle(muscleID);
     if (!muscle) return;
     GaitSym::Strap *strap = muscle->strap();
 
@@ -512,13 +512,13 @@ void DialogStringOfPearlsBuilder::createMuscles()
 {
     std::string rootID = ui->lineEditRootID->text().toStdString();
     int numPearls = ui->spinBoxNumberOfPearls->value();
-    GaitSym::Marker *originMarker = m_simulation->GetMarker(ui->comboBoxOriginMarkerID->currentText().toStdString());
+    GaitSym::Marker *originMarker = m_simulation->getMarker(ui->comboBoxOriginMarkerID->currentText().toStdString());
     GaitSym::Marker *insertionMarker = nullptr;
     std::unique_ptr<GaitSym::Muscle> outputMuscle;
     for (size_t i = 0; i < numPearls + 1; ++i)
     {
         if (i < numPearls) { insertionMarker = m_markerList[i].get(); }
-        else { insertionMarker = m_simulation->GetMarker(ui->comboBoxInsertionMarkerID->currentText().toStdString()); }
+        else { insertionMarker = m_simulation->getMarker(ui->comboBoxInsertionMarkerID->currentText().toStdString()); }
         auto strap = std::make_unique<GaitSym::TwoPointStrap>();
         strap->SetOrigin(originMarker);
         strap->SetInsertion(insertionMarker);

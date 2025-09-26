@@ -30,7 +30,7 @@ std::string *Muscle::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("StrapID"s, &buf) == nullptr) return lastErrorPtr();
-    auto strapList = simulation()->GetStrapList();
+    auto strapList = simulation()->strapList();
     auto it = strapList->find(buf);
     if (it == strapList->end())
     {

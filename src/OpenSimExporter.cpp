@@ -49,7 +49,7 @@ void OpenSimExporter::process(Simulation *simulation)
     m_xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"s;
 
     // create the name mappings
-    for (auto &&nameIter : m_simulation->GetNameList())
+    for (auto &&nameIter : m_simulation->nameList())
     {
         std::string legalName;
         char c = nameIter[0];
@@ -123,7 +123,7 @@ void OpenSimExporter::process(Simulation *simulation)
     // but we now need to convert gravity to the opensim Y up coordinate system
     pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
     pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-    pgd::Vector3 gravity = pgd::qVRotate(rotation, m_simulation->GetGlobal()->gravity());
+    pgd::Vector3 gravity = pgd::qVRotate(rotation, m_simulation->global()->gravity());
     xmlTagAndContent(&m_xmlString, "gravity"s, GSUtil::toString(gravity));
 
     createBodySet();
@@ -143,7 +143,7 @@ void OpenSimExporter::createBodySet()
     xmlInitiateTag(&m_xmlString, "BodySet"s, {{"name"s, "bodyset"s}});
     xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&bodyIter : *m_simulation->GetBodyList())
+    for (auto &&bodyIter : *m_simulation->bodyList())
     {
         xmlInitiateTag(&m_xmlString, "Body"s, {{"name"s, m_legalNameMap[bodyIter.second->name()]}});
 
@@ -200,7 +200,7 @@ void OpenSimExporter::createJointSet()
     xmlInitiateTag(&m_xmlString, "JointSet"s, {{"name"s, "jointset"s}});
     xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&jointIter : *m_simulation->GetJointList())
+    for (auto &&jointIter : *m_simulation->jointList())
     {
         if (const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(jointIter.second.get()))
         {
@@ -432,10 +432,10 @@ void OpenSimExporter::createJointSet()
     }
 
     // now handle any free joints for parentless bodies
-    for (auto &&bodyIter : *m_simulation->GetBodyList())
+    for (auto &&bodyIter : *m_simulation->bodyList())
     {
         bool parentlessBody = true;
-        for (auto &&jointIter : *m_simulation->GetJointList())
+        for (auto &&jointIter : *m_simulation->jointList())
         {
             if (jointIter.second->body2() == bodyIter.second.get())
             {
@@ -631,7 +631,7 @@ void OpenSimExporter::createForceSet()
     xmlInitiateTag(&m_xmlString, "ForceSet"s, {{"name"s, "forceset"s}});
     xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&muscleIter : *m_simulation->GetMuscleList())
+    for (auto &&muscleIter : *m_simulation->muscleList())
     {
         Muscle *muscle = muscleIter.second.get();
         Strap *strap = muscleIter.second->strap();
@@ -725,7 +725,7 @@ void OpenSimExporter::createForceSet()
     }
 
     // we need to add the coordinate limit forces here so the joint limits are enforced
-    for (auto &&jointIter : *m_simulation->GetJointList())
+    for (auto &&jointIter : *m_simulation->jointList())
     {
         while (true)
         {
@@ -736,9 +736,9 @@ void OpenSimExporter::createForceSet()
                 xmlTagAndContent(&m_xmlString, "coordinate"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s);
                 xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
                 double stopSpring = hingeJoint->stopSpring();
-                if (stopSpring < 0) { stopSpring = m_simulation->GetGlobal()->springConstant(); }
+                if (stopSpring < 0) { stopSpring = m_simulation->global()->springConstant(); }
                 double stopDamp = hingeJoint->stopDamp();
-                if (stopDamp < 0) { stopDamp = m_simulation->GetGlobal()->dampingConstant(); }
+                if (stopDamp < 0) { stopDamp = m_simulation->global()->dampingConstant(); }
                 xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                 xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
                 xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
@@ -812,9 +812,9 @@ void OpenSimExporter::createForceSet()
     // we assume that the only forces we want are between the contacts and the floor
     // first get the name of the floor geom
     std::string floorName;
-    for (auto &&geomIter : *m_simulation->GetGeomList()) { if (dynamic_cast<PlaneGeom *>(geomIter.second.get())) { floorName = geomIter.first; } }
+    for (auto &&geomIter : *m_simulation->geomList()) { if (dynamic_cast<PlaneGeom *>(geomIter.second.get())) { floorName = geomIter.first; } }
     // now create all the forces
-    for (auto &&geomIter : *m_simulation->GetGeomList())
+    for (auto &&geomIter : *m_simulation->geomList())
     {
         Geom *geom = geomIter.second.get();
         while (true)
@@ -898,7 +898,7 @@ void OpenSimExporter::createMarkerSet()
     xmlInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
     xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&markerIter : *m_simulation->GetMarkerList())
+    for (auto &&markerIter : *m_simulation->markerList())
     {
         Marker *marker = markerIter.second.get();
         xmlInitiateTag(&m_xmlString, "Marker"s, {{"name"s,  m_legalNameMap[marker->name()]}});
@@ -919,7 +919,7 @@ void OpenSimExporter::createContactGeometrySet()
     xmlInitiateTag(&m_xmlString, "ContactGeometrySet"s, {{"name"s, "contactgeometryset"s}});
     xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&geomIter : *m_simulation->GetGeomList())
+    for (auto &&geomIter : *m_simulation->geomList())
     {
         Geom *geom = geomIter.second.get();
         while (true)

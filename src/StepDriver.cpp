@@ -36,8 +36,8 @@ StepDriver::~StepDriver()
 void StepDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
-    double time = simulation()->GetTime();
+    setLastStepCount(simulation()->stepCount());
+    double time = simulation()->simulationTime();
 
     // this is an optimisation that assumes this routine gets called a lot of times with the same index
     // which it usually does because the integration step size is small

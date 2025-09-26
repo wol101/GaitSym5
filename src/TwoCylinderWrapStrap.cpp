@@ -385,7 +385,7 @@ void TwoCylinderWrapStrap::calculate()
                     &m_pathCoordinates, &m_wrapStatus);
     if (m_wrapStatus == -1) {
         std::cerr << "Warning: wrapping impossible in \"" << name() << "\" - attachment inside cylinder\n"; }
-    if (Length() >= 0 && simulation() && simulation()->GetTimeIncrement() > 0) setVelocity((length - Length()) / simulation()->GetTimeIncrement());
+    if (Length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - Length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 
@@ -1066,32 +1066,32 @@ std::string *TwoCylinderWrapStrap::createFromAttributes()
     std::string buf;
 
     if (findAttribute("OriginMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto originMarker = simulation()->GetMarkerList()->find(buf);
-    if (originMarker == simulation()->GetMarkerList()->end())
+    auto originMarker = simulation()->markerList()->find(buf);
+    if (originMarker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" OriginMarker not found"s);
         return lastErrorPtr();
     }
     this->SetOrigin(originMarker->second.get());
     if (findAttribute("InsertionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto insertionMarker = simulation()->GetMarkerList()->find(buf);
-    if (insertionMarker == simulation()->GetMarkerList()->end())
+    auto insertionMarker = simulation()->markerList()->find(buf);
+    if (insertionMarker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" InsertionMarker not found"s);
         return lastErrorPtr();
     }
     this->SetInsertion(insertionMarker->second.get());
     if (findAttribute("Cylinder1MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto cylinder1Marker = simulation()->GetMarkerList()->find(buf);
-    if (cylinder1Marker == simulation()->GetMarkerList()->end())
+    auto cylinder1Marker = simulation()->markerList()->find(buf);
+    if (cylinder1Marker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" Cylinder1Marker not found"s);
         return lastErrorPtr();
     }
     this->SetCylinder1(cylinder1Marker->second.get());
     if (findAttribute("Cylinder2MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto cylinder2Marker = simulation()->GetMarkerList()->find(buf);
-    if (cylinder2Marker == simulation()->GetMarkerList()->end())
+    auto cylinder2Marker = simulation()->markerList()->find(buf);
+    if (cylinder2Marker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" Cylinder2Marker not found"s);
         return lastErrorPtr();

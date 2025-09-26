@@ -385,16 +385,16 @@ double DataTargetScalar::calculateErrorScore(double value)
             switch(m_dataType)
             {
             case MetabolicEnergy:
-                m_errorScore = (simulation()->GetMetabolicEnergy() - value);
+                m_errorScore = (simulation()->metabolicEnergy() - value);
                 break;
             case MechanicalEnergy:
-                m_errorScore = (simulation()->GetMechanicalEnergy() - value);
+                m_errorScore = (simulation()->mechanicalEnergy() - value);
                 break;
             case Time:
-                m_errorScore = (simulation()->GetTime() - value);
+                m_errorScore = (simulation()->simulationTime() - value);
                 break;
             case DeltaTime:
-                m_errorScore = (simulation()->GetTimeIncrement() - value);
+                m_errorScore = (simulation()->global()->stepSize() - value);
                 break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
@@ -500,16 +500,16 @@ std::string *DataTargetScalar::createFromAttributes()
         if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
         for (bool once = true; once; once = false)
         {
-            auto iterBody = simulation()->GetBodyList()->find(buf);
-            if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
-            auto iterJoint = simulation()->GetJointList()->find(buf);
-            if (iterJoint != simulation()->GetJointList()->end()) { m_target = iterJoint->second.get(); break; }
-            auto iterGeom = simulation()->GetGeomList()->find(buf);
-            if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
-            auto iterMarker = simulation()->GetMarkerList()->find(buf);
-            if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
-            auto iterDriver = simulation()->GetDriverList()->find(buf);
-            if (iterDriver != simulation()->GetDriverList()->end()) { m_target = iterDriver->second.get(); break; }
+            auto iterBody = simulation()->bodyList()->find(buf);
+            if (iterBody != simulation()->bodyList()->end()) { m_target = iterBody->second.get(); break; }
+            auto iterJoint = simulation()->jointList()->find(buf);
+            if (iterJoint != simulation()->jointList()->end()) { m_target = iterJoint->second.get(); break; }
+            auto iterGeom = simulation()->geomList()->find(buf);
+            if (iterGeom != simulation()->geomList()->end()) { m_target = iterGeom->second.get(); break; }
+            auto iterMarker = simulation()->markerList()->find(buf);
+            if (iterMarker != simulation()->markerList()->end()) { m_target = iterMarker->second.get(); break; }
+            auto iterDriver = simulation()->driverList()->find(buf);
+            if (iterDriver != simulation()->driverList()->end()) { m_target = iterDriver->second.get(); break; }
         }
         if (!m_target)
         {

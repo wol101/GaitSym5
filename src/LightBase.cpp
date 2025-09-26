@@ -83,8 +83,8 @@ std::string *DirectionalLight::createFromAttributes()
     m_distance = float(GSUtil::toDouble(buf));
 
     if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto positionMarker = simulation()->GetMarkerList()->find(buf);
-    if (positionMarker == simulation()->GetMarkerList()->end())
+    auto positionMarker = simulation()->markerList()->find(buf);
+    if (positionMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
@@ -92,8 +92,8 @@ std::string *DirectionalLight::createFromAttributes()
     m_positionMarker = positionMarker->second.get();
 
     if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto targetMarker = simulation()->GetMarkerList()->find(buf);
-    if (targetMarker == simulation()->GetMarkerList()->end())
+    auto targetMarker = simulation()->markerList()->find(buf);
+    if (targetMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" TargetMarkerID not found"s);
         return lastErrorPtr();
@@ -238,8 +238,8 @@ std::string *SpotLight::createFromAttributes()
     m_distance = float(GSUtil::toDouble(buf));
 
     if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto positionMarker = simulation()->GetMarkerList()->find(buf);
-    if (positionMarker == simulation()->GetMarkerList()->end())
+    auto positionMarker = simulation()->markerList()->find(buf);
+    if (positionMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
@@ -247,8 +247,8 @@ std::string *SpotLight::createFromAttributes()
     m_positionMarker = positionMarker->second.get();
 
     if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto targetMarker = simulation()->GetMarkerList()->find(buf);
-    if (targetMarker == simulation()->GetMarkerList()->end())
+    auto targetMarker = simulation()->markerList()->find(buf);
+    if (targetMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" TargetMarkerID not found"s);
         return lastErrorPtr();
@@ -394,8 +394,8 @@ std::string *PointLight::createFromAttributes()
     m_distance = float(GSUtil::toDouble(buf));
 
     if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto positionMarker = simulation()->GetMarkerList()->find(buf);
-    if (positionMarker == simulation()->GetMarkerList()->end())
+    auto positionMarker = simulation()->markerList()->find(buf);
+    if (positionMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();

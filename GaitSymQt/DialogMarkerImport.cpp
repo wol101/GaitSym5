@@ -204,7 +204,7 @@ int DialogMarkerImport::ImportMarkers()
     for (size_t i = startLine; i < lines.size(); i++)
     {
         if (GaitSym::GSUtil::splitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
-        if (!ui->checkBoxAllowOverwrite->isChecked() && m_simulation->GetMarker(tokens[0]))
+        if (!ui->checkBoxAllowOverwrite->isChecked() && m_simulation->getMarker(tokens[0]))
         {
             errorCount++;
             ui->plainTextEditLog->appendPlainText(QString("Error: '%1' already exists.\n").arg(QString::fromStdString(tokens[0])));
@@ -219,7 +219,7 @@ int DialogMarkerImport::ImportMarkers()
         GaitSym::Body *body = nullptr;
         if (tokens[1] != "World"s)
         {
-            body = m_simulation->GetBody(tokens[1]);
+            body = m_simulation->getBody(tokens[1]);
             if (!body && ui->checkBoxIgnoreMissingBodies->isChecked() == false)
             {
                 errorCount++;

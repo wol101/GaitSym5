@@ -192,9 +192,9 @@ void DialogDrivers::accept() // this catches OK and return/enter
     for (int i = 0; i < m_targetComboBoxList.size(); i++)
     {
         std::string name = m_targetComboBoxList[i]->currentText().toStdString();
-        GaitSym::Muscle *muscle = m_simulation->GetMuscle(name);
+        GaitSym::Muscle *muscle = m_simulation->getMuscle(name);
         if (muscle) { m_outputDriver->addTarget(muscle); continue; }
-        GaitSym::Controller *controller = m_simulation->GetController(name);
+        GaitSym::Controller *controller = m_simulation->getController(name);
         if (controller) { m_outputDriver->addTarget(controller); continue; }
     }
 
@@ -222,9 +222,9 @@ void DialogDrivers::lateInitialise()
     const QSignalBlocker blocker4(ui->spinBoxBoxcarStackSize);
 
     // set the lists
-    for (auto it = m_simulation->GetMuscleList()->begin(); it != m_simulation->GetMuscleList()->end(); it++)
+    for (auto it = m_simulation->muscleList()->begin(); it != m_simulation->muscleList()->end(); it++)
         m_drivableIDs.append(QString::fromStdString(it->first));
-    for (auto it = m_simulation->GetControllerList()->begin(); it != m_simulation->GetControllerList()->end(); it++)
+    for (auto it = m_simulation->controllerList()->begin(); it != m_simulation->controllerList()->end(); it++)
         m_drivableIDs.append(QString::fromStdString(it->first));
     QStringList tabNames;
     for (int i = 0; i < ui->tabWidget->count(); i++) tabNames.push_back(ui->tabWidget->tabText(i));
@@ -259,7 +259,7 @@ void DialogDrivers::lateInitialise()
 
     if (!m_inputDriver)
     {
-        auto nameSet = m_simulation->GetNameSet();
+        auto nameSet = m_simulation->nameSet();
         ui->lineEditDriverID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Driver%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));

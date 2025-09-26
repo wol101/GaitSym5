@@ -48,7 +48,7 @@ void Driver::sendData()
 {
     for (auto &&it : m_targetList)
     {
-        it.second->receiveData(clamp(m_value), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_value), simulation()->stepCount());
     }
 }
 
@@ -76,7 +76,7 @@ std::string Driver::dumpToString()
         setFirstDump(false);
         ss << "Name\tTime\tValue\n";
     }
-    ss << name() << "\t" << simulation()->GetTime() << "\t" << value() << "\n";
+    ss << name() << "\t" << simulation()->simulationTime() << "\t" << value() << "\n";
     return ss.str();
 }
 
@@ -104,16 +104,16 @@ std::string *Driver::createFromAttributes()
     upstreamObjects.reserve(targetNames.size());
     for (size_t i = 0; i < targetNames.size(); i++)
     {
-        auto muscleIter = simulation()->GetMuscleList()->find(targetNames[i]);
-        if (muscleIter != simulation()->GetMuscleList()->end())
+        auto muscleIter = simulation()->muscleList()->find(targetNames[i]);
+        if (muscleIter != simulation()->muscleList()->end())
         {
             this->addTarget(muscleIter->second.get());
             upstreamObjects.push_back(muscleIter->second.get());
         }
         else
         {
-            auto controllerIter = simulation()->GetControllerList()->find(targetNames[i]);
-            if (controllerIter != simulation()->GetControllerList()->end())
+            auto controllerIter = simulation()->controllerList()->find(targetNames[i]);
+            if (controllerIter != simulation()->controllerList()->end())
             {
                 this->addTarget(controllerIter->second.get());
                 upstreamObjects.push_back(controllerIter->second.get());

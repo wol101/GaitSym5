@@ -25,7 +25,7 @@ FixedDriver::FixedDriver()
 void FixedDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 }
 
 void FixedDriver::multiplyValue(double mod)

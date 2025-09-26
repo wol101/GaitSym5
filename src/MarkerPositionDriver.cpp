@@ -33,9 +33,9 @@ MarkerPositionDriver::~MarkerPositionDriver()
 void MarkerPositionDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
-    double time = simulation()->GetTime();
+    double time = simulation()->simulationTime();
 
     // this is an optimisation that assumes this routine gets called a lot of times with the same index
     // which it usually does because the integration step size is small
@@ -143,8 +143,8 @@ std::string *MarkerPositionDriver::createFromAttributes()
     upstreamObjects.reserve(targetNames.size());
     for (size_t i = 0; i < targetNames.size(); i++)
     {
-        auto markerIter = simulation()->GetMarkerList()->find(targetNames[i]);
-        if (markerIter != simulation()->GetMarkerList()->end())
+        auto markerIter = simulation()->markerList()->find(targetNames[i]);
+        if (markerIter != simulation()->markerList()->end())
         {
             m_targetMarkerList.push_back(markerIter->second.get());
             upstreamObjects.push_back(markerIter->second.get());
@@ -162,7 +162,7 @@ std::string *MarkerPositionDriver::createFromAttributes()
     }
     else
     {
-        Marker *marker = simulation()->GetMarker(buf);
+        Marker *marker = simulation()->getMarker(buf);
         if (marker) { m_referenceMarker = marker; }
         else
         {

@@ -118,7 +118,7 @@ std::string *PlaybackPhysicsEngine::readOSIMBodyKinematicsFile()
 
     pgd::Vector3 euler(1.5707963267948966, 0, 0); // rotating +90 degrees about the X axis converts from Y up to Z up
     pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-    for (auto &&bodyIt : *simulation()->GetBodyList())
+    for (auto &&bodyIt : *simulation()->bodyList())
     {
         // check the names are OK
         std::string body = bodyIt.first;
@@ -160,7 +160,7 @@ std::string *PlaybackPhysicsEngine::readOSIMBodyKinematicsFile()
 std::string *PlaybackPhysicsEngine::step()
 {
     // start by sorting out the time
-    double time = simulation()->GetTime();
+    double time = simulation()->simulationTime();
     // gaitsym always starts from zero but recorded kinematic data might not
     double playbackTime = m_times[0] + time;
     // now get the index
@@ -169,7 +169,7 @@ std::string *PlaybackPhysicsEngine::step()
     if (index >= m_times.size()) { index = m_times.size() - 1; }
 
     // update the objects with the new data
-    for (auto &&bodyIter : *simulation()->GetBodyList())
+    for (auto &&bodyIter : *simulation()->bodyList())
     {
         // currently only setting positions
         Pose *pose = &m_poses[bodyIter.first][index];

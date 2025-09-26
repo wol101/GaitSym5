@@ -162,7 +162,7 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
             if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
@@ -186,7 +186,7 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "RX"s, "RY"s, "RZ"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
             if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
@@ -218,7 +218,7 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R"s, "AX"s, "AY"s, "AZ"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
             if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
@@ -251,7 +251,7 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "QN"s, "QX"s, "QY"s, "QZ"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
             if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
@@ -281,7 +281,7 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R1C1"s, "R1C2"s, "R1C3"s, "R2C1"s, "R2C2"s, "R2C3"s, "R3C1"s, "R3C2"s, "R3C3"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
             if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
@@ -315,7 +315,7 @@ int DialogMarkerExport::ExportMarkers()
         return __LINE__;
     }
 
-    ui->plainTextEditLog->appendPlainText(QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName));
+    ui->plainTextEditLog->appendPlainText(QString("%1 markers written to '%2'.\n").arg(m_simulation->markerList()->size()).arg(fileName));
     // QMessageBox::information(this, "Marker Export Results", QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName), QMessageBox::Ok);
     return 0;
 }

@@ -64,7 +64,7 @@ void DialogJoints::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogJoints::accept()";
 
-    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->markerList();
     QString tab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if (tab == "Hinge")
     {
@@ -289,7 +289,7 @@ void DialogJoints::lateInitialise()
     Q_ASSERT_X(m_simulation, "DialogJoints::lateInitialise", "m_simulation undefined");
 
     // get the lists in the right formats
-    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->markerList();
     QStringList markerIDs;
     for (auto it = markerList->begin(); it != markerList->end(); it++)
         markerIDs.append(QString::fromStdString(it->first));
@@ -318,7 +318,7 @@ void DialogJoints::lateInitialise()
     if (!m_inputJoint)
     {
         // set default new name
-        auto nameSet = simulation()->GetNameSet();
+        auto nameSet = simulation()->nameSet();
         ui->lineEditJointID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Joint%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -461,7 +461,7 @@ void DialogJoints::updateActivation()
     QString textCopy = ui->lineEditJointID->text();
     int pos = ui->lineEditJointID->cursorPosition();
     if (ui->lineEditJointID->validator()->validate(textCopy, pos) != QValidator::Acceptable) okEnable = false;
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
 
     if (markerList->count(ui->comboBoxMarker1->currentText().toStdString()) == 0
             || markerList->count(ui->comboBoxMarker2->currentText().toStdString()) == 0) okEnable = false;

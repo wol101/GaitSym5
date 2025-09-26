@@ -136,7 +136,7 @@ std::string *MagicStrap::createFromAttributes()
     }
     for (size_t i = 0; i < result.size(); i++)
     {
-        auto marker = simulation()->GetMarker(result[i]);
+        auto marker = simulation()->getMarker(result[i]);
         if (!marker)
         {
             setLastError("STRAP ID=\""s + name() +"\" marker \""s + result[i] +"\" not found"s);
@@ -199,7 +199,7 @@ std::string MagicStrap::dumpToString()
                 s += "\n"s;
             }
             items.clear();
-            items.push_back(GSUtil::toString(simulation()->GetTime()));
+            items.push_back(GSUtil::toString(simulation()->simulationTime()));
             for (auto &&it : *GetPointForceList())
             {
                 if (it->body) { items.push_back(it->body->name()); }
@@ -236,7 +236,7 @@ std::string MagicStrap::dumpToString()
                 s += "\n"s;
             }
             items.clear();
-            items.push_back(GSUtil::toString(simulation()->GetTime()));
+            items.push_back(GSUtil::toString(simulation()->simulationTime()));
             for (size_t i = 0; i < m_markerList.size(); ++i)
             {
                 if (m_markerList[i]->body()) { items.push_back(m_markerList[i]->body()->name()); }

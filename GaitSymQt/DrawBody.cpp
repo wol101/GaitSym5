@@ -105,8 +105,8 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
     m_bodyColour3.setAlphaF(qreal(m_body->colour3().alpha()));
 
     m_meshSearchPath.clear();
-    for (size_t i = 0; i < m_body->simulation()->GetGlobal()->meshSearchPath()->size(); i++)
-        m_meshSearchPath.append(QString::fromStdString(m_body->simulation()->GetGlobal()->meshSearchPath()->at(i)));
+    for (size_t i = 0; i < m_body->simulation()->global()->meshSearchPath()->size(); i++)
+        m_meshSearchPath.append(QString::fromStdString(m_body->simulation()->global()->meshSearchPath()->at(i)));
     m_bodyAxesSize = m_body->size1();
 
     // add the axes

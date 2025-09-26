@@ -30,13 +30,13 @@ CyclicDriver::~CyclicDriver()
 void CyclicDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
     // account for phase
     // m_PhaseDelay is a relative value (0 to 1) but the time offset needs to be positive
     double cycleTime = m_changeTimes[m_changeTimes.size() - 2];
     double timeOffset = cycleTime * m_PhaseDelay;
-    double time = simulation()->GetTime() + timeOffset;
+    double time = simulation()->simulationTime() + timeOffset;
     time = std::fmod(time, cycleTime);
 
     if (m_index > m_changeTimes.size() - 2) // this should probably never happen

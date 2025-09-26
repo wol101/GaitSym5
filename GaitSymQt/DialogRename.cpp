@@ -142,7 +142,7 @@ std::string *DialogRename::validate()
 {
     GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
-    std::string *errorMessage = simulation.LoadModel(editFileData.constData(), size_t(editFileData.size()));
+    std::string *errorMessage = simulation.loadModel(editFileData.constData(), size_t(editFileData.size()));
     if (errorMessage)
     {
         m_lastError = *errorMessage;

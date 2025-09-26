@@ -92,7 +92,7 @@ std::string *Body::setPosition(const std::string &buf)
 
     if (tokens.size() == 1) // it must be a marker
     {
-        Marker *marker = simulation()->GetMarker(tokens[0]);
+        Marker *marker = simulation()->getMarker(tokens[0]);
         if (marker == nullptr)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" marker not found"s);
@@ -105,8 +105,8 @@ std::string *Body::setPosition(const std::string &buf)
 
     if (tokens.size() == 2) // two marker definition
     {
-        Marker *marker1 = simulation()->GetMarker(tokens[0]);
-        Marker *marker2 = simulation()->GetMarker(tokens[1]);
+        Marker *marker1 = simulation()->getMarker(tokens[0]);
+        Marker *marker2 = simulation()->getMarker(tokens[1]);
         if (marker1 == nullptr || marker2 == nullptr)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" markers not found"s);
@@ -140,7 +140,7 @@ std::string *Body::setPosition(const std::string &buf)
 
     if (tokens.size() == 4)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
@@ -167,7 +167,7 @@ std::string *Body::setPosition(const std::string &buf)
     }
     if (tokens.size() == 7)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (!theBody)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" reference body not found"s);
@@ -205,7 +205,7 @@ std::string *Body::setQuaternion(const std::string &buf)
 
     if (tokens.size() == 1) // it must be a marker
     {
-        Marker *marker = simulation()->GetMarker(tokens[0]);
+        Marker *marker = simulation()->getMarker(tokens[0]);
         if (marker == nullptr)
         {
             setLastError("Body ID=\""s + name() +"\" Quaternion=\""s + buf + "\" Cannot find marker"s);
@@ -225,7 +225,7 @@ std::string *Body::setQuaternion(const std::string &buf)
 
     if (tokens.size() == 5)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
@@ -276,7 +276,7 @@ std::string *Body::setLinearVelocity(const std::string &buf)
 
     if (tokens.size() == 4)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
@@ -346,7 +346,7 @@ double Body::rotationalKineticEnergy()
 double Body::gravitationalPotentialEnergy()
 {
     // gravitational PE = mgh
-    pgd::Vector3 g = simulation()->GetGlobal()->gravity();
+    pgd::Vector3 g = simulation()->global()->gravity();
     double gravitationalPotentialEnergy = -1 * m_mass * (g[0]*m_currentPosition[0] + g[1]*m_currentPosition[1] + g[2]*m_currentPosition[2]);
     return gravitationalPotentialEnergy;
 }
@@ -377,7 +377,7 @@ std::string *Body::setAngularVelocity(const std::string &buf)
 
     if (tokens.size() == 4)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
@@ -594,7 +594,7 @@ std::string Body::dumpToString()
     pgd::Vector3 ke;
     getLinearKineticEnergy(&ke);
 
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
+    ss << simulation()->simulationTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
           "\t" << v[0] << "\t" << v[1] << "\t" << v[2] <<
           "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] <<
           "\t" << rv[0] << "\t" << rv[1] << "\t" << rv[2] <<

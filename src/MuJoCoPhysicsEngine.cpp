@@ -83,9 +83,9 @@ std::string *MuJoCoPhysicsEngine::initialise(Simulation *theSimulation)
 std::string *MuJoCoPhysicsEngine::createConnectedGroups()
 {
     std::map<std::string, Body *> untestedBodies;
-    for (auto &&iter : *simulation()->GetBodyList()) { untestedBodies[iter.first] = iter.second.get(); }
+    for (auto &&iter : *simulation()->bodyList()) { untestedBodies[iter.first] = iter.second.get(); }
     std::map<std::string, Joint *> untestedJoints;
-    for (auto &&iter : *simulation()->GetJointList()) { untestedJoints[iter.first] = iter.second.get(); }
+    for (auto &&iter : *simulation()->jointList()) { untestedJoints[iter.first] = iter.second.get(); }
 
     while (untestedBodies.size())
     {
@@ -162,10 +162,10 @@ std::string *MuJoCoPhysicsEngine::createTree()
         m_jointLoopDetector.clear();
         m_jointLoopDetector.insert(m_rootTreeBodyList[i].body);
         m_jointsLeftToInclude.clear();
-        m_jointsLeftToInclude.reserve(simulation()->GetJointList()->size());
-        for (auto &&iter : *simulation()->GetJointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
+        m_jointsLeftToInclude.reserve(simulation()->jointList()->size());
+        for (auto &&iter : *simulation()->jointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
         m_bodiesLeftToInclude.clear();
-        m_bodiesLeftToInclude.reserve(simulation()->GetBodyList()->size());
+        m_bodiesLeftToInclude.reserve(simulation()->bodyList()->size());
         m_bodiesLeftToInclude.push_back(&m_rootTreeBodyList[i]);
         while (m_bodiesLeftToInclude.size())
         {
@@ -238,13 +238,13 @@ std::string *MuJoCoPhysicsEngine::createTree()
 
     // set some options
     xmlInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
-    xmlInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::toString(simulation()->GetGlobal()->stepSize())}}, true);
+    xmlInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::toString(simulation()->global()->stepSize())}}, true);
 
     // create the world body
     xmlInitiateTag(&m_mjXML, "worldbody"s);
 
     // create any geoms attached to world
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
         if (iter.second->body() == nullptr)
         {
@@ -327,7 +327,7 @@ std::string *MuJoCoPhysicsEngine::createBody(const TreeBody &treeBody)
     std::string *err = createJoint(treeBody.jointToParent);
     if (err) return err;
 
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
         if (iter.second->body() == body)
         {
@@ -508,7 +508,7 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
             std::cerr << "Velocity = " << GSUtil::toString(v) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::toString(av) << "\n";
 #endif
-            Body *body = simulation()->GetBody(bodyName);
+            Body *body = simulation()->getBody(bodyName);
             if (!body)
             {
                 setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" body not found", bodyName.c_str()));
@@ -545,7 +545,7 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
             std::cerr << "Euler Angles = " << GSUtil::toString(eulerAngles) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::toString(angularVelocity) << "\n";
 #endif
-            Joint *joint = simulation()->GetJoint(jointName);
+            Joint *joint = simulation()->getJoint(jointName);
             if (!joint)
             {
                 setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
@@ -568,7 +568,7 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
             std::cerr << "Quaternion = " << GSUtil::toString(q) << "\n";
             std::cerr << "Angular Velocity = " << GSUtil::toString(av) << "\n";
 #endif
-            Joint *joint = simulation()->GetJoint(jointName);
+            Joint *joint = simulation()->getJoint(jointName);
             if (!joint)
             {
                 setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
@@ -594,7 +594,7 @@ std::string *MuJoCoPhysicsEngine::step()
     // choices are to apply the forces and torques to the bodies directly using xfrc_applied
     // or to convert to qfrc_applied using mj_applyFT
     std::vector<double> qfrc_target(m_mjModel->nv);
-    for (auto &&iter :  *simulation()->GetMuscleList())
+    for (auto &&iter :  *simulation()->muscleList())
     {
         std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->pointForceList();
         double tension = iter.second->tension();
@@ -611,7 +611,7 @@ std::string *MuJoCoPhysicsEngine::step()
     }
 
     // apply the point forces from the  fluid sacs
-    for (auto &&iter : *simulation()->GetFluidSacList())
+    for (auto &&iter : *simulation()->fluidSacList())
     {
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
@@ -625,7 +625,7 @@ std::string *MuJoCoPhysicsEngine::step()
     }
 
     // apply the forces from the drag
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
@@ -679,7 +679,7 @@ std::string *MuJoCoPhysicsEngine::step()
 #endif
     }
 
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -764,7 +764,7 @@ std::string *MuJoCoPhysicsEngine::step()
         }
     }
 
-    simulation()->GetContactList()->clear();
+    simulation()->contactList()->clear();
     // double timeStep =simulation()->GetGlobal()->StepSize();
     // for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     // {

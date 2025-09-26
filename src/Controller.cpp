@@ -28,7 +28,7 @@ std::string Controller::dumpToString()
         setFirstDump(false);
         ss << "Time\tValue\tDriverSum\n";
     }
-    ss << simulation()->GetTime() << "\t" << value() << "\t" << dataSum() << "\n";
+    ss << simulation()->simulationTime() << "\t" << value() << "\t" << dataSum() << "\n";
     return ss.str();
 }
 

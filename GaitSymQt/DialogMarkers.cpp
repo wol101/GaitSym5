@@ -94,7 +94,7 @@ void DialogMarkers::accept() // this catches OK and return/enter
     markerPtr->setSimulation(m_simulation);
     if (ui->comboBoxBodyID->currentText() != "World")
     {
-        markerPtr->setBody(m_simulation->GetBodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
+        markerPtr->setBody(m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
 
         pgd::Vector3 pos;
         pos[0] = ui->lineEditPositionX->value();
@@ -180,13 +180,13 @@ void DialogMarkers::closeEvent(QCloseEvent *event)
 void DialogMarkers::lateInitialise()
 {
     Q_ASSERT_X(m_simulation, "DialogMarkers::lateInitialise", "simulation undefined");
-    auto bodyList = m_simulation->GetBodyList();
+    auto bodyList = m_simulation->bodyList();
     QStringList bodyIDs;
     bodyIDs.append("World");
     for (auto it = bodyList->begin(); it != bodyList->end(); it++) bodyIDs.append(QString::fromStdString(it->first));
     ui->comboBoxBodyID->addItems(bodyIDs);
     ui->comboBoxBodyID->setCurrentText("World");
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     QStringList markerIDs;
     for (auto it = markerList->begin(); it != markerList->end(); it++) markerIDs.append(QString::fromStdString(it->first));
     ui->comboBoxPositionMarker1->addItems(markerIDs);
@@ -201,7 +201,7 @@ void DialogMarkers::lateInitialise()
     pgd::Vector3 position(double(m_cursor3DPosition.x()), double(m_cursor3DPosition.y()), double(m_cursor3DPosition.z()));
     if (!m_inputMarker)
     {
-        auto nameSet = simulation()->GetNameSet();
+        auto nameSet = simulation()->nameSet();
         ui->lineEditMarkerID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Marker%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -236,7 +236,7 @@ void DialogMarkers::lateInitialise()
 void DialogMarkers::calculatePosition()
 {
     double fraction = ui->lineEditFraction->value();
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 2) return;
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
@@ -264,7 +264,7 @@ void DialogMarkers::calculatePosition()
 
 void DialogMarkers::calculatePositionCopyMarker1()
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 1) return;
     GaitSym::Marker *marker = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
 
@@ -282,7 +282,7 @@ void DialogMarkers::calculatePositionCopyMarker1()
 
 void DialogMarkers::calculatePositionCopyMarker2()
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 1) return;
     GaitSym::Marker *marker = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
@@ -301,7 +301,7 @@ void DialogMarkers::calculatePositionCopyMarker2()
 // this calculates the rotation that maps the X axis to the direction from marker 1 to marker 2
 void DialogMarkers::calculateOrientation2Marker()
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 2) return;
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxOrientation2Marker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxOrientation2Marker2->currentText().toStdString()).get();
@@ -325,7 +325,7 @@ void DialogMarkers::calculateOrientation2Marker()
 // the y axis is normal to the other
 void DialogMarkers::calculateOrientation3Marker()
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 3) return;
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxOrientation3Marker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxOrientation3Marker2->currentText().toStdString()).get();
@@ -355,7 +355,7 @@ void DialogMarkers::calculateOrientation3Marker()
 
 void DialogMarkers::calculateMirrorMarker()
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 1) return;
     GaitSym::Marker *marker = markerList->at(ui->comboBoxMirrorMarker->currentText().toStdString()).get();
 
@@ -485,7 +485,7 @@ void DialogMarkers::lineEditIDTextChanged(const QString & /* text */)
 void DialogMarkers::lineEditFractionTextChanged(const QString & /* text */)
 {
     double fraction = ui->lineEditFraction->value();
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 2) return;
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
@@ -500,7 +500,7 @@ void DialogMarkers::lineEditFractionTextChanged(const QString & /* text */)
 void DialogMarkers::lineEditDistanceTextChanged(const QString & /* text */)
 {
     double distance = ui->lineEditDistance->value();
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 2) return;
     GaitSym::Marker *marker1 = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
     GaitSym::Marker *marker2 = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
@@ -598,7 +598,7 @@ void DialogMarkers::lineEditQuaternionTextChanged(const QString & /*text*/)
 void DialogMarkers::positionMarkerChanged(const QString & /* text */)
 {
     double fraction = ui->lineEditFraction->value();
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
      if (markerList->size() < 2) return;
     if (markerList->find(ui->comboBoxPositionMarker1->currentText().toStdString()) == markerList->end()) return;
     if (markerList->find(ui->comboBoxPositionMarker2->currentText().toStdString()) == markerList->end()) return;
@@ -614,7 +614,7 @@ void DialogMarkers::positionMarkerChanged(const QString & /* text */)
 
 void DialogMarkers::orientation2MarkerChanged(const QString & /* text */)
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 2) return;
     GaitSym::Marker *marker1, *marker2;
     pgd::Vector3 v2;
@@ -637,7 +637,7 @@ disable_button:
 
 void DialogMarkers::orientation3MarkerChanged(const QString & /* text */)
 {
-    auto markerList = m_simulation->GetMarkerList();
+    auto markerList = m_simulation->markerList();
     if (markerList->size() < 3) return;
     GaitSym::Marker *marker1, *marker2, *marker3;
     pgd::Vector3 v1, v2;

@@ -29,7 +29,7 @@ void FluidSac::calculateVolume()
 {
     for (size_t i = 0; i < m_markerList.size(); i++) m_vertexList[i] = m_markerList[i]->worldPosition();
     double currentVolume = volumeOfMesh(m_triangleList, m_vertexList);
-    double deltaT = simulation()->GetTimeIncrement() / 1e-6;
+    double deltaT = simulation()->global()->stepSize() / 1e-6;
     std::vector<pgd::Vector3> deltaList(m_markerList.size());
     for (size_t i = 0; i < m_markerList.size(); i++) deltaList[i] = m_markerList[i]->worldLinearVelocity() * deltaT; // using the marker velocities gives a semi-implicit solution which should be more stable
     std::vector<pgd::Vector3> vertexList1 = m_vertexList;
@@ -282,8 +282,8 @@ std::string *FluidSac::createFromAttributes()
     m_markerList.reserve(markerNames.size());
     for (size_t i = 0; i < markerNames.size(); i++)
     {
-        auto it = this->simulation()->GetMarkerList()->find(markerNames[i]);
-        if (it == this->simulation()->GetMarkerList()->end())
+        auto it = this->simulation()->markerList()->find(markerNames[i]);
+        if (it == this->simulation()->markerList()->end())
         {
             setLastError("FLUIDSAC ID=\""s + name() +"\" Marker ID=\""s + markerNames[i] + "\" not found"s);
             return lastErrorPtr();
@@ -366,7 +366,7 @@ std::string FluidSac::dumpToString()
         }
         ss << "\n";
     }
-    ss << simulation()->GetTime() << "\t" << m_sacVolume << "\t" << m_pressure << "\t" << m_pointForceList.size();
+    ss << simulation()->simulationTime() << "\t" << m_sacVolume << "\t" << m_pressure << "\t" << m_pointForceList.size();
     for (size_t i = 0; i < m_pointForceList.size(); i++)
     {
         ss << "\t" << m_pointForceList[i].body->name() << "\t" << m_pointForceList[i].point[0] << "\t" << m_pointForceList[i].point[1] << "\t" << m_pointForceList[i].point[2] << "\t" <<

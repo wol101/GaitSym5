@@ -288,7 +288,7 @@ void LMotorJoint::update()
 {
     double position0, position1, position2, delPosition;
     getPositions(&position0, &position1, &position2);
-    double time = simulation()->GetTime();
+    double time = simulation()->simulationTime();
     switch (m_numAxes)
     {
     case 1:

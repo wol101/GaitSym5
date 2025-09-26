@@ -133,7 +133,7 @@ void TwoPointStrap::calculate()
 
     // calculate the length and velocity
     double length = std::sqrt(line[0]*line[0] + line[1]*line[1] + line[2]*line[2]);
-    if (Length() >= 0 && simulation() && simulation()->GetTimeIncrement() > 0) setVelocity((length - Length()) / simulation()->GetTimeIncrement());
+    if (Length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - Length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 
@@ -224,16 +224,16 @@ std::string *TwoPointStrap::createFromAttributes()
     std::string buf;
 
     if (findAttribute("OriginMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto originMarker = simulation()->GetMarkerList()->find(buf);
-    if (originMarker == simulation()->GetMarkerList()->end())
+    auto originMarker = simulation()->markerList()->find(buf);
+    if (originMarker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" OriginMarker not found"s);
         return lastErrorPtr();
     }
     this->SetOrigin(originMarker->second.get());
     if (findAttribute("InsertionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto insertionMarker = simulation()->GetMarkerList()->find(buf);
-    if (insertionMarker == simulation()->GetMarkerList()->end())
+    auto insertionMarker = simulation()->markerList()->find(buf);
+    if (insertionMarker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" InsertionMarker not found"s);
         return lastErrorPtr();

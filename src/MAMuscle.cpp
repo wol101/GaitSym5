@@ -208,7 +208,7 @@ std::string MAMuscle::dumpToString()
         setFirstDump(false);
         ss << "Time\tVMax\tF0\tK\tAlpha\tFCE\tLCE\tVCE\tPMECH\tPMET\n";
     }
-    ss << simulation()->GetTime() << "\t" << m_vMax << "\t" << m_f0 << "\t" << m_k << "\t" << m_alpha <<
+    ss << simulation()->simulationTime() << "\t" << m_vMax << "\t" << m_f0 << "\t" << m_k << "\t" << m_alpha <<
           "\t" << strap()->Tension() << "\t" << strap()->Length() << "\t" << strap()->Velocity() <<
           "\t" << strap()->Velocity() * strap()->Tension() << "\t" << metabolicPower() <<
           "\n";

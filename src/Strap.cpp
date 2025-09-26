@@ -47,8 +47,8 @@ std::string *Strap::createFromAttributes()
             m_torqueMarkerList.reserve(result.size());
             for (auto &&it: result)
             {
-                auto torqueMarker = simulation()->GetMarkerList()->find(it);
-                if (torqueMarker == simulation()->GetMarkerList()->end())
+                auto torqueMarker = simulation()->markerList()->find(it);
+                if (torqueMarker == simulation()->markerList()->end())
                 {
                     setLastError("STRAP ID=\""s + name() +"\" torque marker \""s + it +"\" not found"s);
                     return lastErrorPtr();
@@ -211,7 +211,7 @@ std::string Strap::dumpToString()
         for (auto &&it : m_torqueMarkerList) ss << "\tMarker\tWTX\tWTY\tWTZ\tMTX\tMTY\tMTZ\tWMAX\tWMAY\tWMAZ\tMMAX\tMMAY\tMMAZ";
         ss << "\n";
     }
-    ss << simulation()->GetTime() << "\t" << Length();
+    ss << simulation()->simulationTime() << "\t" << Length();
     for (auto &&it: m_pointForceList)
     {
         ss << "\t" << it->body->name() << "\t" <<

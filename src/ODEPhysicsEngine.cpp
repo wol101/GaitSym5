@@ -70,7 +70,7 @@ std::string *ODEPhysicsEngine::initialise(Simulation *theSimulation)
     dSetDebugHandler(odeMessageTrap);
 
     // apply the global values
-    Global *global = simulation()->GetGlobal();
+    Global *global = simulation()->global();
     dWorldSetGravity(m_worldID, global->gravity().x, global->gravity().y, global->gravity().z);
     dWorldSetERP(m_worldID, global->ERP());
     dWorldSetCFM(m_worldID, global->CFM());
@@ -93,7 +93,7 @@ std::string *ODEPhysicsEngine::createBodies()
 {
     // first create the bodies
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         dBodyID bodyID = dBodyCreate(m_worldID);
         dBodySetData(bodyID, iter.second.get());
@@ -116,7 +116,7 @@ std::string *ODEPhysicsEngine::createBodies()
 
 std::string *ODEPhysicsEngine::createJoints()
 {
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -144,7 +144,7 @@ std::string *ODEPhysicsEngine::createJoints()
                 dJointSetHingeParam(jointID, dParamHiStop, hiStop);
                 double springConstant = hingeJoint->stopSpring();
                 double dampingConstant = hingeJoint->stopDamp();
-                double integrationStep = simulation()->GetTimeIncrement();
+                double integrationStep = simulation()->global()->stepSize();
                 if (springConstant >= std::numeric_limits<double>::epsilon() && dampingConstant >= std::numeric_limits<double>::epsilon())
                 {
                     double ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
@@ -222,7 +222,7 @@ std::string *ODEPhysicsEngine::createJoints()
 
 std::string *ODEPhysicsEngine::createGeoms()
 {
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
         while (true)
         {
@@ -374,7 +374,7 @@ std::string *ODEPhysicsEngine::createGeoms()
 
 std::string *ODEPhysicsEngine::moveBodies()
 {
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
         pgd::Vector3 position = iter.second->position();
@@ -382,7 +382,7 @@ std::string *ODEPhysicsEngine::moveBodies()
         pgd::Quaternion quaternion = iter.second->quaternion();
         dBodySetQuaternion(bodyID, quaternion.constData());
     }
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         if (auto fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
         {
@@ -400,7 +400,7 @@ std::string *ODEPhysicsEngine::step()
     dSpaceCollide(m_spaceID, this, &nearCallback);
 
     // apply the point forces from the muscles
-    for (auto &&iter :  *simulation()->GetMuscleList())
+    for (auto &&iter :  *simulation()->muscleList())
     {
         std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->pointForceList();
         double tension = iter.second->tension();
@@ -417,7 +417,7 @@ std::string *ODEPhysicsEngine::step()
     }
 
     // apply the point forces from the  fluid sacs
-    for (auto &&iter : *simulation()->GetFluidSacList())
+    for (auto &&iter : *simulation()->fluidSacList())
     {
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
@@ -431,7 +431,7 @@ std::string *ODEPhysicsEngine::step()
     }
 
     // apply the forces from the drag
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
@@ -474,19 +474,19 @@ std::string *ODEPhysicsEngine::step()
     }
 
     // run the simulation
-    switch (simulation()->GetGlobal()->stepType())
+    switch (simulation()->global()->stepType())
     {
     case Global::World:
-        dWorldStep(m_worldID, simulation()->GetGlobal()->stepSize());
+        dWorldStep(m_worldID, simulation()->global()->stepSize());
         break;
 
     case Global::Quick:
-        dWorldQuickStep(m_worldID, simulation()->GetGlobal()->stepSize());
+        dWorldQuickStep(m_worldID, simulation()->global()->stepSize());
         break;
     }
 
     // update the objects with the new data
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         dBodyID bodyID = reinterpret_cast<dBodyID>(iter.second->data());
         const double *position = dBodyGetPosition(bodyID);
@@ -499,7 +499,7 @@ std::string *ODEPhysicsEngine::step()
         iter.second->setAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -524,9 +524,9 @@ std::string *ODEPhysicsEngine::step()
         }
     }
 
-    for (size_t i = 0; i < simulation()->GetContactList()->size(); i++)
+    for (size_t i = 0; i < simulation()->contactList()->size(); i++)
     {
-        Contact *contact = simulation()->GetContactList()->at(i).get();
+        Contact *contact = simulation()->contactList()->at(i).get();
         dJointID jointID = reinterpret_cast<dJointID>(contact->data());
         dJointFeedback *jointFeedback = dJointGetFeedback(jointID);
         contact->setForce(pgd::Vector3(jointFeedback->f1));
@@ -552,12 +552,12 @@ void ODEPhysicsEngine::nearCallback(void *data, dGeomID o1, dGeomID o2)
         return; // it is never useful for two contacts on the same body to collide [I'm not sure if this every happens - FIX ME - set up a test]
     }
 
-    if (s->simulation()->GetGlobal()->allowConnectedCollisions() == false)
+    if (s->simulation()->global()->allowConnectedCollisions() == false)
     {
         if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact)) return;
     }
 
-    if (s->simulation()->GetGlobal()->allowInternalCollisions() == false)
+    if (s->simulation()->global()->allowInternalCollisions() == false)
     {
         if (g1->geomLocation() == g2->geomLocation()) return;
     }
@@ -623,8 +623,8 @@ void ODEPhysicsEngine::nearCallback(void *data, dGeomID o1, dGeomID o2)
     {
         for (size_t i = 0; i < size_t(numc); i++)
         {
-            if (g1->abort()) s->simulation()->SetContactAbort(g1->name());
-            if (g2->abort()) s->simulation()->SetContactAbort(g2->name());
+            if (g1->abort()) s->simulation()->setContactAbort(g1->name());
+            if (g2->abort()) s->simulation()->setContactAbort(g2->name());
             dJointID c;
             if (g1->adhesion() == false && g2->adhesion() == false)
             {
@@ -640,7 +640,7 @@ void ODEPhysicsEngine::nearCallback(void *data, dGeomID o1, dGeomID o2)
                 g2->addContact(myContact.get());
                 myContact->setBody1(g1->body());
                 myContact->setBody2(g2->body());
-                s->simulation()->GetContactList()->push_back(std::move(myContact));
+                s->simulation()->contactList()->push_back(std::move(myContact));
                 s->contactFeedbackList()->push_back(std::move(jointFeedback));
             }
             else

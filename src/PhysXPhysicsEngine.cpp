@@ -85,8 +85,8 @@ std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
     // and a kinetic energy threshold below which the simulation may put objects to sleep.
     // For normal physical environments, a good choice is the approximate speed of an object falling under gravity for one second.
 
-    m_defaultLength = simulation()->GetGlobal()->defaultLength();
-    m_defaultSpeed = simulation()->GetGlobal()->defaultSpeed();
+    m_defaultLength = simulation()->global()->defaultLength();
+    m_defaultSpeed = simulation()->global()->defaultSpeed();
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale(m_defaultLength, m_defaultSpeed), m_recordMemoryAllocations, m_pvd);
     if (!m_physics)
     {
@@ -97,7 +97,7 @@ std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
     PxInitExtensions(*m_physics, m_pvd);
 
     physx::PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
-    pgd::Vector3 gravity = simulation()->GetGlobal()->gravity();
+    pgd::Vector3 gravity = simulation()->global()->gravity();
     sceneDesc.gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
     physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
@@ -139,7 +139,7 @@ std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
 std::string *PhysXPhysicsEngine::createBodies()
 {
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         Body *body = iter.second.get();
         double mass, ixx, iyy, izz, ixy, izx, iyz;
@@ -166,7 +166,7 @@ std::string *PhysXPhysicsEngine::createBodies()
 
 std::string *PhysXPhysicsEngine::createJoints()
 {
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -227,7 +227,7 @@ std::string *PhysXPhysicsEngine::createJoints()
 
 std::string *PhysXPhysicsEngine::createGeoms()
 {
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
         while (true)
         {
@@ -300,7 +300,7 @@ std::string *PhysXPhysicsEngine::createGeoms()
 
 std::string *PhysXPhysicsEngine::moveBodies()
 {
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
         pgd::Vector3 position = iter.second->position();
@@ -317,7 +317,7 @@ std::string *PhysXPhysicsEngine::step()
     g_contactReportCallback.contactData()->clear();
 
     // apply the point forces from the muscles
-    for (auto &&iter :  *simulation()->GetMuscleList())
+    for (auto &&iter :  *simulation()->muscleList())
     {
         std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->pointForceList();
         double tension = iter.second->tension();
@@ -334,7 +334,7 @@ std::string *PhysXPhysicsEngine::step()
     }
 
     // apply the point forces from the  fluid sacs
-    for (auto &&iter : *simulation()->GetFluidSacList())
+    for (auto &&iter : *simulation()->fluidSacList())
     {
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
@@ -349,7 +349,7 @@ std::string *PhysXPhysicsEngine::step()
     }
 
     // apply the forces from the drag
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
@@ -364,7 +364,7 @@ std::string *PhysXPhysicsEngine::step()
     }
 
     // run the simulation
-    m_scene->simulate(simulation()->GetGlobal()->stepSize());
+    m_scene->simulate(simulation()->global()->stepSize());
     m_scene->fetchResults(true);
 
 #ifdef QT_DEBUG
@@ -388,7 +388,7 @@ std::string *PhysXPhysicsEngine::step()
 #endif
 
     // update the objects with the new data
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
         physx::PxTransform transform = rigidDynamic->getGlobalPose();
@@ -400,7 +400,7 @@ std::string *PhysXPhysicsEngine::step()
         iter.second->setAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -442,8 +442,8 @@ std::string *PhysXPhysicsEngine::step()
         }
     }
 
-    simulation()->GetContactList()->clear();
-    double timeStep =simulation()->GetGlobal()->stepSize();
+    simulation()->contactList()->clear();
+    double timeStep =simulation()->global()->stepSize();
     for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     {
         physx::PxActor *actors[2];
@@ -465,7 +465,7 @@ std::string *PhysXPhysicsEngine::step()
             geom2->addContact(myContact.get());
             myContact->setBody1(geom1->body());
             myContact->setBody2(geom2->body());
-            simulation()->GetContactList()->push_back(std::move(myContact));
+            simulation()->contactList()->push_back(std::move(myContact));
         }
     }
 

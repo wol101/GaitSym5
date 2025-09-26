@@ -87,7 +87,7 @@ void DialogBodyBuilder::lateInitialise()
     {
         QString name("World"); // World always exists
         ui->lineEditID->addString(name);
-        auto nameSet = m_simulation->GetNameSet();
+        auto nameSet = m_simulation->nameSet();
         ui->lineEditID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -190,13 +190,13 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     std::string head, tail;
     pystring::os::path::split(head, tail, ui->lineEditMesh1->text().toStdString());
     bodyPtr->setGraphicFile1(tail);
-    m_simulation->GetGlobal()->meshSearchPathAddToFront(head);
+    m_simulation->global()->meshSearchPathAddToFront(head);
     pystring::os::path::split(head, tail, ui->lineEditMesh2->text().toStdString());
     bodyPtr->setGraphicFile2(tail);
-    m_simulation->GetGlobal()->meshSearchPathAddToFront(head);
+    m_simulation->global()->meshSearchPathAddToFront(head);
     pystring::os::path::split(head, tail, ui->lineEditMesh3->text().toStdString());
     bodyPtr->setGraphicFile3(tail);
-    m_simulation->GetGlobal()->meshSearchPathAddToFront(head);
+    m_simulation->global()->meshSearchPathAddToFront(head);
     bodyPtr->setSimulation(m_simulation);
 
     double mass = ui->lineEditMass->value();
@@ -467,7 +467,7 @@ std::string DialogBodyBuilder::findCompletePath(const std::string &filename)
     std::string completePath;
     if (m_simulation)
     {
-        auto searchPath = m_simulation->GetGlobal()->meshSearchPath();
+        auto searchPath = m_simulation->global()->meshSearchPath();
         for (auto &&it : *searchPath)
         {
             completePath = pystring::os::path::join(it, filename);

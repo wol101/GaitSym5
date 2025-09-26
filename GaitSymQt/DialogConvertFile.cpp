@@ -177,7 +177,7 @@ void DialogConvertFile::doConversion()
                 return;
             }
             GaitSym::Simulation simulation;
-            err = simulation.LoadModel(xml.data(), xml.size());
+            err = simulation.loadModel(xml.data(), xml.size());
             if (err)
             {
                 log(QString("WARNING\nWARNING: \"%1\" converted but fails validation.\nWARNING%s").arg(ui->lineEditOutputFile->text()).arg(QString::fromStdString(*err)));

@@ -65,12 +65,12 @@ void StackedBoxcarDriver::SetHeights(double *Heights)
 void StackedBoxcarDriver::update()
 {
     assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    setLastStepCount(simulation()->stepCount());
 
     double output = 0;
     double offTime;
     // get a normalised cycle time (value from 0 to 1)
-    double time = simulation()->GetTime();
+    double time = simulation()->simulationTime();
     double normalisedCycleTime = (time / m_CycleTime) - floor(time / m_CycleTime);
 
     for (size_t i = 0; i < m_StackSize; i++)
