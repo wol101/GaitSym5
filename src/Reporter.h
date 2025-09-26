@@ -22,7 +22,7 @@ class Reporter : public NamedObject
 public:
     Reporter();
 
-    virtual bool ShouldAbort() { return false; }
+    virtual bool shouldAbort() { return false; }
 
     virtual std::string *createFromAttributes();
     virtual void saveToAttributes();

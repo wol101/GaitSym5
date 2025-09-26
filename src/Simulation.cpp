@@ -454,7 +454,7 @@ bool Simulation::TestForCatastrophy()
     // and test the reporters for stop conditions
     for (auto &&reporterIter : m_ReporterList)
     {
-        if (reporterIter.second->ShouldAbort())
+        if (reporterIter.second->shouldAbort())
         {
             std::cerr << "Failed due to Reporter Abort in: " << reporterIter.second->name() << "\n";
             return true;
