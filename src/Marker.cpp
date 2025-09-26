@@ -369,7 +369,7 @@ void Marker::getBasis(pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z) const
     z->z = m.e33;
 }
 
-pgd::Matrix3x3  Marker::getBasis() const
+pgd::Matrix3x3  Marker::basis() const
 {
     pgd::Matrix3x3 m(this->quaternion());
     return m;
@@ -434,7 +434,7 @@ pgd::Quaternion Marker::worldQuaternion(const pgd::Quaternion &localQuaternion) 
 
 pgd::Quaternion Marker::quaternion(const pgd::Quaternion &worldQuaternion) const
 {
-    return (~worldQuaternion()) * worldQuaternion;
+    return (~Marker::worldQuaternion()) * worldQuaternion;
 }
 
 pgd::Vector3 Marker::position(const Body &body, const pgd::Vector3 &worldCoordinates)
@@ -508,7 +508,7 @@ pgd::Vector3 Marker::linearVelocity() const
 
 pgd::Vector3 Marker::angularVelocity() const
 {
-    pgd::Vector3 worldAngularVelocity = worldAngularVelocity();
+    pgd::Vector3 worldAngularVelocity = Marker::worldAngularVelocity();
     return vector(worldAngularVelocity);
 }
 

@@ -1222,7 +1222,7 @@ void MainWindow::moveExistingMarker(const QString &s, const QVector3D &p)
 {
     auto markerIt = m_simulation->GetMarkerList()->find(s.toStdString());
     if (markerIt == m_simulation->GetMarkerList()->end()) return;
-    markerIt->second->SetWorldPosition(double(p.x()), double(p.y()), double(p.z()));
+    markerIt->second->setWorldPosition(double(p.x()), double(p.y()), double(p.z()));
     markerIt->second->setRedraw(true);
     std::vector<GaitSym::NamedObject *> objectList = m_simulation->GetObjectList();
     for (auto &&it : objectList)
@@ -2395,7 +2395,7 @@ void MainWindow::menuCreateEditBody(GaitSym::Body *body)
                 for (auto &&it : *this->m_simulation->GetMarkerList())
                 {
                     if (it.second->body() == body)
-                        it.second->OffsetPosition(-deltaPosition.x, -deltaPosition.y, -deltaPosition.z);
+                        it.second->offsetPosition(-deltaPosition.x, -deltaPosition.y, -deltaPosition.z);
                 }
             }
             // and handle the CM marker if it exists

@@ -84,7 +84,7 @@ std::string *Joint::createFromAttributes()
 
     // these checks use the construction positions and rotations (body rotations are always zero at construction)
     pgd::Vector3 distanceVector = marker2Iterator->second->constructionPosition() - marker1Iterator->second->constructionPosition();
-    pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->GetQuaternion(), marker2Iterator->second->GetQuaternion());
+    pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->quaternion(), marker2Iterator->second->quaternion());
     double testEpsilon = std::numeric_limits<double>::epsilon() * 100.0;
     if (distanceVector.Magnitude2() > testEpsilon)
     {

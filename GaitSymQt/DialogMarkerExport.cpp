@@ -171,7 +171,7 @@ int DialogMarkerExport::ExportMarkers()
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
             else { pOutput = markerIt.second->worldPosition(); }
             line.push_back(GaitSym::GSUtil::toString(pOutput.x));
             line.push_back(GaitSym::GSUtil::toString(pOutput.y));
@@ -195,12 +195,12 @@ int DialogMarkerExport::ExportMarkers()
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
             else { pOutput = markerIt.second->worldPosition(); }
             line.push_back(GaitSym::GSUtil::toString(pOutput.x));
             line.push_back(GaitSym::GSUtil::toString(pOutput.y));
             line.push_back(GaitSym::GSUtil::toString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
             pgd::Vector3 euler;
             if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::MakeEulerAnglesFromQRadian(qOutput);
@@ -227,12 +227,12 @@ int DialogMarkerExport::ExportMarkers()
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
             else { pOutput = markerIt.second->worldPosition(); }
             line.push_back(GaitSym::GSUtil::toString(pOutput.x));
             line.push_back(GaitSym::GSUtil::toString(pOutput.y));
             line.push_back(GaitSym::GSUtil::toString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
             double xa, ya, za, angle;
             pgd::MakeAxisAngleFromQ(qOutput, &xa, &ya, &za, &angle);
@@ -260,12 +260,12 @@ int DialogMarkerExport::ExportMarkers()
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
             else { pOutput = markerIt.second->worldPosition(); }
             line.push_back(GaitSym::GSUtil::toString(pOutput.x));
             line.push_back(GaitSym::GSUtil::toString(pOutput.y));
             line.push_back(GaitSym::GSUtil::toString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
             line.push_back(GaitSym::GSUtil::toString(qOutput.n));
             line.push_back(GaitSym::GSUtil::toString(qOutput.x));
@@ -290,12 +290,12 @@ int DialogMarkerExport::ExportMarkers()
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
             else { pOutput = markerIt.second->worldPosition(); }
             line.push_back(GaitSym::GSUtil::toString(pOutput.x));
             line.push_back(GaitSym::GSUtil::toString(pOutput.y));
             line.push_back(GaitSym::GSUtil::toString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
             else { qOutput = markerIt.second->worldQuaternion(); }
             pgd::Matrix3x3 matrix = MakeMFromQ(qOutput);
             for (size_t i =0; i < 9; i++)
