@@ -75,10 +75,10 @@ public:
 
  private:
 
-    std::string *CreateBodies();
-    std::string *CreateJoints();
-    std::string *CreateGeoms();
-    std::string *MoveBodies();
+    std::string *createBodies();
+    std::string *createJoints();
+    std::string *createGeoms();
+    std::string *moveBodies();
 
     // Simulation variables
     physx::PxFoundation *m_foundation = nullptr;

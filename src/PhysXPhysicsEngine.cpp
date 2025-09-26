@@ -126,17 +126,17 @@ std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
     m_scene->addActor(*m_world);
 
     // create the PhysX versions of the main elements
-    CreateBodies();
-    CreateJoints();
-    CreateGeoms();
+    createBodies();
+    createJoints();
+    createGeoms();
 
     // And PhysX requires that bodies be moved to their starting positions after joints have been created
-    MoveBodies();
+    moveBodies();
 
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::CreateBodies()
+std::string *PhysXPhysicsEngine::createBodies()
 {
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
     for (auto &&iter : *simulation()->GetBodyList())
@@ -164,7 +164,7 @@ std::string *PhysXPhysicsEngine::CreateBodies()
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::CreateJoints()
+std::string *PhysXPhysicsEngine::createJoints()
 {
     for (auto &&iter : *simulation()->GetJointList())
     {
@@ -225,7 +225,7 @@ std::string *PhysXPhysicsEngine::CreateJoints()
 }
 
 
-std::string *PhysXPhysicsEngine::CreateGeoms()
+std::string *PhysXPhysicsEngine::createGeoms()
 {
     for (auto &&iter : *simulation()->GetGeomList())
     {
@@ -298,7 +298,7 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::MoveBodies()
+std::string *PhysXPhysicsEngine::moveBodies()
 {
     for (auto &&iter : *simulation()->GetBodyList())
     {
