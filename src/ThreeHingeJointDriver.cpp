@@ -46,7 +46,7 @@ void ThreeHingeJointDriver::update()
     m_desiredLength = (targetPositionWorld - proximalJointPositionWorld).magnitude();
 
     // now find the zero of the CalculateLengthDifference to get the angle fraction that achieves this length
-    m_angleFraction = GSUtil::zeroin(0, 1, &CalculateLengthDifference, this, m_tolerance);
+    m_angleFraction = GSUtil::zeroin(0, 1, &calculateLengthDifference, this, m_tolerance);
 
     // that sorts out the angles on the intermediate and distal joints - lets see where that takes us
 #ifndef NDEBUG
@@ -304,7 +304,7 @@ void ThreeHingeJointDriver::update()
     }
 }
 
-pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations)
+pgd::Vector3 ThreeHingeJointDriver::getEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations)
 {
     // returns the Euler angles using marker axes as the basis
 
@@ -417,7 +417,7 @@ void ThreeHingeJointDriver::sendData()
 
 // this funtion calculates the distance from the proximal joint to the distal Body Marker
 // dependent on the fraction of the joint limits for the interconnecting hinge joints
-void ThreeHingeJointDriver::CalculateLength(double angleFraction)
+void ThreeHingeJointDriver::calculateLength(double angleFraction)
 {
     // now calculate the rotations at the joints in a consistent coordinate frame (and this can be the local frame because at contruction nothing is rotated)
     m_intermediateJointAngle = std::pow(angleFraction, m_intermediateJointAngleGamma) * (m_intermediateJointRange[1] - m_intermediateJointRange[0]) + m_intermediateJointRange[0];
@@ -434,10 +434,10 @@ void ThreeHingeJointDriver::CalculateLength(double angleFraction)
 }
 
 // this funtion calculates the difference between the desired length and the length calculated from the angle fraction
-double ThreeHingeJointDriver::CalculateLengthDifference(double angleFraction, void *data)
+double ThreeHingeJointDriver::calculateLengthDifference(double angleFraction, void *data)
 {
     ThreeHingeJointDriver *threeHingeJointController = static_cast<ThreeHingeJointDriver *>(data);
-    threeHingeJointController->CalculateLength(angleFraction);
+    threeHingeJointController->calculateLength(angleFraction);
     double lengthError = threeHingeJointController->actualLength() - threeHingeJointController->desiredLength();
     return lengthError;
 }
@@ -504,10 +504,10 @@ std::string ThreeHingeJointDriver::dumpToString()
             for (int i = 0; i < nSteps; i++)
             {
                 double angleFraction = double(i) / nSteps;
-                CalculateLength(angleFraction);
+                calculateLength(angleFraction);
                 s +=  dumpHelper({angleFraction, m_intermediateJointAngle, m_distalJointAngle, m_actualLength});
             }
-            CalculateLength(m_angleFraction); // neeeded because CalculateLengthDifference changes m_intermediateJointAngle and m_distalJointAngle
+            calculateLength(m_angleFraction); // neeeded because CalculateLengthDifference changes m_intermediateJointAngle and m_distalJointAngle
         }
         s += dumpHelper({"Time"s, "MarkerDistance"s, "DesiredLength"s, "AngleFraction"s, "ProximalAngleFraction1"s,
                          "ProximalJointAngle1"s, "ProximalJointAngle2"s, "IntermediateJointAngle"s, "DistalJointAngle"s,
@@ -628,7 +628,7 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
     // we need to find the best ordering for the intermediate and distal joint ranges
     // so that we get a monotonically increasing function
     double eps = 1.0 / 1000;
-    int monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+    int monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
     if (monotonic != +1 && monotonic != -1)
     {
         std::string message = "Driver ID=\""s + name() +"\" selected IntermediateJointRange and DistalJointRange do not produce a monotonic length change\n"s;
@@ -637,19 +637,19 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_intermediateJointRange.x, m_intermediateJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
         message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
         message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_distalJointRange.x, m_distalJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
         message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
         message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_intermediateJointRange.x, m_intermediateJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
         message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
         message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails"s;
