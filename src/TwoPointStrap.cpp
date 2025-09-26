@@ -133,14 +133,14 @@ void TwoPointStrap::calculate()
 
     // calculate the length and velocity
     double length = std::sqrt(line[0]*line[0] + line[1]*line[1] + line[2]*line[2]);
-    if (length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - length()) / simulation()->global()->stepSize());
+    if (this->length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - this->length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 
     // normalise the direction vector
-    line[0] /= length();
-    line[1] /= length();
-    line[2] /= length();
+    line[0] /= this->length();
+    line[1] /= this->length();
+    line[2] /= this->length();
 
     theOrigin->vector[0] = line[0];
     theOrigin->vector[1] = line[1];

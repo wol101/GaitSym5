@@ -29,42 +29,6 @@ TwoCylinderWrapStrap::~TwoCylinderWrapStrap()
 {
 }
 
-//void TwoCylinderWrapStrap::SetOrigin(Body *body, const pgd::Vector3 point)
-//{
-//    m_originBody = body;
-//    m_originPosition.x = point[0];
-//    m_originPosition.y = point[1];
-//    m_originPosition.z = point[2];
-//    if (GetPointForceList()->size() == 0)
-//    {
-//        std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
-//        origin->body = m_originBody;
-//        GetPointForceList()->push_back(std::move(origin));
-//    }
-//    else
-//    {
-//        GetPointForceList()->at(0)->body = m_originBody;
-//    }
-//}
-
-//void TwoCylinderWrapStrap::SetInsertion(Body *body, const pgd::Vector3 point)
-//{
-//    m_insertionBody = body;
-//    m_insertionPosition.x = point[0];
-//    m_insertionPosition.y = point[1];
-//    m_insertionPosition.z = point[2];
-//    if (GetPointForceList()->size() <= 1)
-//    {
-//        std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
-//        insertion->body = m_insertionBody;
-//        GetPointForceList()->push_back(std::move(insertion));
-//    }
-//    else
-//    {
-//        GetPointForceList()->at(1)->body = m_insertionBody;
-//    }
-//}
-
 void TwoCylinderWrapStrap::setOrigin(Marker *originMarker)
 {
     m_originMarker = originMarker;
@@ -84,7 +48,6 @@ void TwoCylinderWrapStrap::setOrigin(Marker *originMarker)
 void TwoCylinderWrapStrap::setInsertion(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
-//    this->SetInsertion(insertionMarker->GetBody(), insertionMarker->GetPosition().data());
     if (pointForceList()->size() <= 1)
     {
         std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
@@ -97,152 +60,45 @@ void TwoCylinderWrapStrap::setInsertion(Marker *insertionMarker)
     }
 }
 
-//void TwoCylinderWrapStrap::SetCylinder1Body(Body *body)
-//{
-//    m_cylinder1Body = body;
-//    if (GetPointForceList()->size() <= 2)
-//    {
-//        std::unique_ptr<PointForce> cylinder1 = std::make_unique<PointForce>();
-//        cylinder1->body = m_cylinder1Body;
-//        GetPointForceList()->push_back(std::move(cylinder1));
-//    }
-//    else
-//    {
-//        GetPointForceList()->at(2)->body = m_cylinder1Body;
-//    }
-//}
-
 void TwoCylinderWrapStrap::setCylinder1Radius(double radius)
 {
     m_cylinder1Radius = radius;
 }
 
-//void TwoCylinderWrapStrap::SetCylinder1Position(double x, double y, double z)
-//{
-//    m_cylinder1Position.x = x;
-//    m_cylinder1Position.y = y;
-//    m_cylinder1Position.z = z;
-//}
-
-//void TwoCylinderWrapStrap::GetCylinder1(const Body **body, pgd::Vector3 position, double *radius, pgd::Quaternion q) const
-//{
-//    *body = m_cylinder1Body;
-//    position[0] = m_cylinder1Position.x;
-//    position[1] = m_cylinder1Position.y;
-//    position[2] = m_cylinder1Position.z;
-//    *radius = m_cylinder1Radius;
-//    q[0] = m_cylinderQuaternion.n;
-//    q[1] = m_cylinderQuaternion.x;
-//    q[2] = m_cylinderQuaternion.y;
-//    q[3] = m_cylinderQuaternion.z;
-//}
-
 void TwoCylinderWrapStrap::setCylinder1Marker(Marker *cylinder1Marker)
 {
     m_cylinder1Marker = cylinder1Marker;
-//    this->SetCylinder1Body(cylinder1Marker->GetBody());
-//    pgd::Vector3 pos = cylinder1Marker->GetPosition();  // Cylinder Position is set in Body relative coordinates
-//    this->SetCylinder1Position(pos.x, pos.y, pos.z);
-//    pgd::Vector3 axis = cylinder1Marker->GetAxis(Marker::Axis::X);  // Cylinder Axis is set in Body relative coordinates
-//    this->SetCylinderAxis(axis.x, axis.y, axis.z);
     if (pointForceList()->size() <= 2)
     {
         std::unique_ptr<PointForce> cylinder1 = std::make_unique<PointForce>();
-        cylinder1->body = cylinder1Marker()->body();
+        cylinder1->body = m_cylinder1Marker->body();
         pointForceList()->push_back(std::move(cylinder1));
     }
     else
     {
-        pointForceList()->at(2)->body = cylinder1Marker()->body();
+        pointForceList()->at(2)->body = m_cylinder1Marker->body();
     }
 }
 
 void TwoCylinderWrapStrap::setCylinder2Marker(Marker *cylinder2Marker)
 {
     m_cylinder2Marker = cylinder2Marker;
-//    this->SetCylinder2Body(cylinder2Marker->GetBody());
-//    pgd::Vector3 pos = cylinder2Marker->GetPosition();  // Cylinder Position is set in Body relative coordinates
-//    this->SetCylinder2Position(pos.x, pos.y, pos.z);
     if (pointForceList()->size() <= 3)
     {
         std::unique_ptr<PointForce> cylinder2 = std::make_unique<PointForce>();
-        cylinder2->body = cylinder2Marker()->body();
+        cylinder2->body = m_cylinder2Marker->body();
         pointForceList()->push_back(std::move(cylinder2));
     }
     else
     {
-        pointForceList()->at(2)->body = cylinder2Marker()->body();
+        pointForceList()->at(2)->body = m_cylinder2Marker->body();
     }
 }
-
-//void TwoCylinderWrapStrap::SetCylinderAxis(double x, double y, double z)
-//{
-//    pgd::Vector3 v2(x, y, z); // this is the target direction
-//    pgd::Vector3 v1(0, 0, 1); // and this is the Z axis we need to rotate
-
-////    this is easy to explain but quite slow
-////    // cross product will get us the rotation axis
-////    pgd::Vector3 axis = v1 ^ v2;
-////
-////    // Use atan2 for a better angle.  If you use only cos or sin, you only get
-////    // half the possible angles, and you can end up with rotations that flip around near
-////    // the poles.
-////
-////    // cos angle obtained from dot product formula
-////    // cos(a) = (s . e) / (||s|| ||e||)
-////    double cosAng = v1 * v2; // (s . e)
-////    double ls = v1.Magnitude();
-////    ls = 1. / ls; // 1 / ||s||
-////    double le = v2.Magnitude();
-////    le = 1. / le; // 1 / ||e||
-////    cosAng = cosAng * ls * le;
-////
-////    // sin angle obtained from cross product formula
-////    // sin(a) = ||(s X e)|| / (||s|| ||e||)
-////    double sinAng = axis.Magnitude(); // ||(s X e)||;
-////    sinAng = sinAng * ls * le;
-////    double angle = atan2(sinAng, cosAng); // rotations are in radians.
-////
-////    m_CylinderQuaternion = pgd::MakeQFromAxis(axis.x, axis.y, axis.z, angle);
-//    m_cylinderQuaternion = pgd::FindRotation(v1, v2);
-//}
-
-
-//void TwoCylinderWrapStrap::SetCylinderQuaternion(double q0, double q1, double q2, double q3)
-//{
-//    m_cylinderQuaternion.n = q0;
-//    m_cylinderQuaternion.x = q1;
-//    m_cylinderQuaternion.y = q2;
-//    m_cylinderQuaternion.z = q3;
-//    m_cylinderQuaternion.Normalize(); // this is the safest option
-//}
-
-//void TwoCylinderWrapStrap::SetCylinder2Body(Body *body)
-//{
-//    m_cylinder2Body = body;
-//    if (GetPointForceList()->size() <= 3)
-//    {
-//        std::unique_ptr<PointForce> cylinder2 = std::make_unique<PointForce>();
-//        cylinder2->body = m_cylinder2Body;
-//        GetPointForceList()->push_back(std::move(cylinder2));
-//    }
-//    else
-//    {
-//        GetPointForceList()->at(2)->body = m_cylinder2Body;
-//    }
-//}
 
 void  TwoCylinderWrapStrap::setCylinder2Radius(double radius)
 {
     m_cylinder2Radius = radius;
 }
-
-//void TwoCylinderWrapStrap::SetCylinder2Position(double x, double y, double z)
-//{
-//    m_cylinder2Position.x = x;
-//    m_cylinder2Position.y = y;
-//    m_cylinder2Position.z = z;
-//}
 
 void TwoCylinderWrapStrap::setNumWrapSegments(int numWrapSegments)
 {
@@ -250,34 +106,6 @@ void TwoCylinderWrapStrap::setNumWrapSegments(int numWrapSegments)
     m_pathCoordinates.reserve(size_t(m_numWrapSegments) * 2 + 6);
 }
 
-//void TwoCylinderWrapStrap::GetCylinder2(const Body **body, pgd::Vector3 position, double *radius, pgd::Quaternion q) const
-//{
-//    *body = m_cylinder2Body;
-//    position[0] = m_cylinder2Position.x;
-//    position[1] = m_cylinder2Position.y;
-//    position[2] = m_cylinder2Position.z;
-//    *radius = m_cylinder2Radius;
-//    q[0] = m_cylinderQuaternion.n;
-//    q[1] = m_cylinderQuaternion.x;
-//    q[2] = m_cylinderQuaternion.y;
-//    q[3] = m_cylinderQuaternion.z;
-//}
-
-//void TwoCylinderWrapStrap::GetOrigin(const Body **body, pgd::Vector3 pos) const
-//{
-//    *body = m_originBody;
-//    pos[0] = m_originPosition.x;
-//    pos[1] = m_originPosition.y;
-//    pos[2] = m_originPosition.z;
-//}
-
-//void TwoCylinderWrapStrap::GetInsertion(const Body **body, pgd::Vector3 pos) const
-//{
-//    *body = m_insertionBody;
-//    pos[0] = m_insertionPosition.x;
-//    pos[1] = m_insertionPosition.y;
-//    pos[2] = m_insertionPosition.z;
-//}
 
 Marker *TwoCylinderWrapStrap::originMarker() const
 {
@@ -306,24 +134,6 @@ int TwoCylinderWrapStrap::numWrapSegments()
 
 void TwoCylinderWrapStrap::calculate()
 {
-    // get the necessary body orientations and positions
-//    const double *q;
-//    q = dBodyGetQuaternion(m_OriginBody->GetBodyID());
-//    pgd::Quaternion qOriginBody(q[0], q[1], q[2], q[3]);
-//    q = dBodyGetPosition(m_OriginBody->GetBodyID());
-//    pgd::Vector3 vOriginBody(q[0], q[1], q[2]);
-//    q = dBodyGetQuaternion(m_InsertionBody->GetBodyID());
-//    pgd::Quaternion qInsertionBody(q[0], q[1], q[2], q[3]);
-//    q = dBodyGetPosition(m_InsertionBody->GetBodyID());
-//    pgd::Vector3 vInsertionBody(q[0], q[1], q[2]);
-//    q = dBodyGetQuaternion(m_Cylinder1Body->GetBodyID());
-//    pgd::Quaternion qCylinder1Body(q[0], q[1], q[2], q[3]);
-//    q = dBodyGetPosition(m_Cylinder1Body->GetBodyID());
-//    pgd::Vector3 vCylinder1Body(q[0], q[1], q[2]);
-//    q = dBodyGetQuaternion(m_Cylinder2Body->GetBodyID());
-//    pgd::Quaternion qCylinder2Body(q[0], q[1], q[2], q[3]);
-//    q = dBodyGetPosition(m_Cylinder2Body->GetBodyID());
-//    pgd::Vector3 vCylinder2Body(q[0], q[1], q[2]);
     pgd::Quaternion qOriginBody = originMarker()->body()->quaternion();
     pgd::Vector3 vOriginBody = originMarker()->body()->position();
     pgd::Quaternion qInsertionBody = insertionMarker()->body()->quaternion();
@@ -332,14 +142,6 @@ void TwoCylinderWrapStrap::calculate()
     pgd::Vector3 vCylinder1Body = cylinder1Marker()->body()->position();
     pgd::Quaternion qCylinder2Body = cylinder2Marker()->body()->quaternion();
     pgd::Vector3 vCylinder2Body = cylinder2Marker()->body()->position();
-//    m_originBody->GetQuaternion(&qOriginBody);
-//    m_originBody->position(&vOriginBody);
-//    m_insertionBody->GetQuaternion(&qInsertionBody);
-//    m_insertionBody->position(&vInsertionBody);
-//    m_cylinder1Body->GetQuaternion(&qCylinder1Body);
-//    m_cylinder1Body->position(&vCylinder1Body);
-//    m_cylinder2Body->GetQuaternion(&qCylinder2Body);
-//    m_cylinder2Body->position(&vCylinder2Body);
 
     pgd::Vector3 m_originPosition = originMarker()->position();
     pgd::Vector3 m_insertionPosition = insertionMarker()->position();
@@ -383,9 +185,8 @@ void TwoCylinderWrapStrap::calculate()
                     theOriginForce, theInsertionForce, theCylinder1Force, theCylinder1ForcePosition,
                     theCylinder2Force, theCylinder2ForcePosition, &length,
                     &m_pathCoordinates, &m_wrapStatus);
-    if (m_wrapStatus == -1) {
-        std::cerr << "Warning: wrapping impossible in \"" << name() << "\" - attachment inside cylinder\n"; }
-    if (length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - length()) / simulation()->global()->stepSize());
+    if (m_wrapStatus == -1) { std::cerr << "Warning: wrapping impossible in \"" << name() << "\" - attachment inside cylinder\n"; }
+    if (this->length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - this->length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 

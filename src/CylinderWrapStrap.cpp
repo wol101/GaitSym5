@@ -158,7 +158,7 @@ void CylinderWrapStrap::calculate()
                                 &length, &m_pathCoordinates);
     if (m_wrapStatus == -1) {
         std::cerr << "Warning: wrapping impossible in \"" << name() << "\" - attachment inside cylinder\n"; }
-    if (length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - length()) / simulation()->global()->stepSize());
+    if (this->length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - this->length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 
