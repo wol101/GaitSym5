@@ -82,7 +82,7 @@ void TegotaeDriver::sendData()
 
 void TegotaeDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
+    assert(simulation()->stepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->stepCount());
 
     if (m_omegaDriver) m_omega = m_omegaDriver->value();

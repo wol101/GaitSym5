@@ -35,7 +35,7 @@ void PIDErrorInController::initialise(double Kp, double Ki, double Kd)
 
 void PIDErrorInController::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
+    assert(simulation()->stepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->stepCount());
 
     m_dt = simulation()->global()->stepSize();

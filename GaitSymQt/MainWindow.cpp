@@ -232,27 +232,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     layoutSpacing(this);
 
     // connect the ViewControlWidget to the GLWidget
-    connect(ui->widgetViewFrame, SIGNAL(EmitCameraVec(double, double, double)), m_simulationWidget, SLOT(SetCameraVec(double, double, double)));
+    connect(ui->widgetViewFrame, SIGNAL(emitCameraVec(double, double, double)), m_simulationWidget, SLOT(setCameraVec(double, double, double)));
 
     // connect the SimulationWindow to the MainWindow
-    connect(m_simulationWidget, SIGNAL(EmitStatusString(const QString &, int)), this, SLOT(setStatusString(const QString &, int)));
-    connect(m_simulationWidget, SIGNAL(EmitCOI(float, float, float)), this, SLOT(setUICOI(float, float, float)));
-    connect(m_simulationWidget, SIGNAL(EmitFoV(float)), this, SLOT(setUIFoV(float)));
-    connect(m_simulationWidget, SIGNAL(EmitCreateMarkerRequest()), this, SLOT(menuCreateMarker()));
-    connect(m_simulationWidget, SIGNAL(EmitEditMarkerRequest(const QString &)), this, SLOT(editExistingMarker(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitMoveMarkerRequest(const QString &, const QVector3D &)), this, SLOT(moveExistingMarker(const QString &, const QVector3D &)));
-    connect(m_simulationWidget, SIGNAL(EmitEditBodyRequest(const QString &)), this, SLOT(editExistingBody(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitEditGeomRequest(const QString &)), this, SLOT(editExistingGeom(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitEditJointRequest(const QString &)), this, SLOT(editExistingJoint(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitEditMuscleRequest(const QString &)), this, SLOT(editExistingMuscle(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitDeleteBodyRequest(const QString &)), this, SLOT(deleteExistingBody(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitDeleteGeomRequest(const QString &)), this, SLOT(deleteExistingGeom(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitDeleteJointRequest(const QString &)), this, SLOT(deleteExistingJoint(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitDeleteMarkerRequest(const QString &)), this, SLOT(deleteExistingMarker(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitDeleteMuscleRequest(const QString &)), this, SLOT(deleteExistingMuscle(const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitInfoRequest(const QString &, const QString &)), this, SLOT(elementInfo(const QString &, const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitHideRequest(const QString &, const QString &)), this, SLOT(elementHide(const QString &, const QString &)));
-    connect(m_simulationWidget, SIGNAL(EmitResize(int, int)), this, SLOT(reportOpenGLSize(int, int)));
+    connect(m_simulationWidget, SIGNAL(emitStatusString(const QString &, int)), this, SLOT(setStatusString(const QString &, int)));
+    connect(m_simulationWidget, SIGNAL(emitCOI(float, float, float)), this, SLOT(setUICOI(float, float, float)));
+    connect(m_simulationWidget, SIGNAL(emitFoV(float)), this, SLOT(setUIFoV(float)));
+    connect(m_simulationWidget, SIGNAL(emitCreateMarkerRequest()), this, SLOT(menuCreateMarker()));
+    connect(m_simulationWidget, SIGNAL(emitEditMarkerRequest(const QString &)), this, SLOT(editExistingMarker(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitMoveMarkerRequest(const QString &, const QVector3D &)), this, SLOT(moveExistingMarker(const QString &, const QVector3D &)));
+    connect(m_simulationWidget, SIGNAL(emitEditBodyRequest(const QString &)), this, SLOT(editExistingBody(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitEditGeomRequest(const QString &)), this, SLOT(editExistingGeom(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitEditJointRequest(const QString &)), this, SLOT(editExistingJoint(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitEditMuscleRequest(const QString &)), this, SLOT(editExistingMuscle(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitDeleteBodyRequest(const QString &)), this, SLOT(deleteExistingBody(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitDeleteGeomRequest(const QString &)), this, SLOT(deleteExistingGeom(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitDeleteJointRequest(const QString &)), this, SLOT(deleteExistingJoint(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitDeleteMarkerRequest(const QString &)), this, SLOT(deleteExistingMarker(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitDeleteMuscleRequest(const QString &)), this, SLOT(deleteExistingMuscle(const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitInfoRequest(const QString &, const QString &)), this, SLOT(elementInfo(const QString &, const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitHideRequest(const QString &, const QString &)), this, SLOT(elementHide(const QString &, const QString &)));
+    connect(m_simulationWidget, SIGNAL(emitResize(int, int)), this, SLOT(reportOpenGLSize(int, int)));
 
     // the treeWidgetElements needs to know about this window
     ui->treeWidgetElements->setMainWindow(this);

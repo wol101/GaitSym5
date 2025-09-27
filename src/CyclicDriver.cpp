@@ -29,7 +29,7 @@ CyclicDriver::~CyclicDriver()
 
 void CyclicDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
+    assert(simulation()->stepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->stepCount());
 
     // account for phase

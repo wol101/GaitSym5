@@ -209,7 +209,7 @@ void FluidSac::areaCentroidNormal(const pgd::Vector3 &v0, const pgd::Vector3 &v1
     pgd::Vector3 normal2;
     areaCentroidNormal(v0, v2, v3, &area2, &centroid2, &normal2);
     // check normals
-    assert(normal1.Dot(normal2) > 0.9999999999);
+    assert(normal1.dot(normal2) > 0.9999999999);
     *normal = normal1;
     *area = area1 + area2;
     *centroid = (centroid1 * area1 + centroid2 * area2) / *area;

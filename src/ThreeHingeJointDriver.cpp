@@ -37,7 +37,7 @@ ThreeHingeJointDriver::ThreeHingeJointDriver()
 
 void ThreeHingeJointDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
+    assert(simulation()->stepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->stepCount());
 
     // set the desired distance
@@ -51,7 +51,7 @@ void ThreeHingeJointDriver::update()
     // that sorts out the angles on the intermediate and distal joints - lets see where that takes us
 #ifndef NDEBUG
     double testAngleFraction = m_angleFraction;
-    CalculateLength(m_angleFraction); // not mormally needed because zeroin will have called this with the returned angleFraction as its last operation
+    calculateLength(m_angleFraction); // not mormally needed because zeroin will have called this with the returned angleFraction as its last operation
     if (std::abs(testAngleFraction - m_angleFraction) >= std::numeric_limits<double>::epsilon())
         std::cerr << "Warning zeroin calculated m_angleFraction does not match\n";
 #endif
@@ -658,9 +658,9 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
         return lastErrorPtr();
     }
 #ifndef NDEBUG
-    CalculateLength(0);
+    calculateLength(0);
     double minLength = m_actualLength;
-    CalculateLength(1);
+    calculateLength(1);
     double maxLength = m_actualLength;
     std::cerr << "Driver ID=\"" << name() << "\" minLength=" << minLength << " maxLength=" << maxLength << "\n";
 #endif

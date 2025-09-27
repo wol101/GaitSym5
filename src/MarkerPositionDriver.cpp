@@ -32,7 +32,7 @@ MarkerPositionDriver::~MarkerPositionDriver()
 
 void MarkerPositionDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
+    assert(simulation()->stepCount() == lastStepCount() + 1);
     setLastStepCount(simulation()->stepCount());
 
     double time = simulation()->simulationTime();
