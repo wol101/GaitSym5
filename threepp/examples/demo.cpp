@@ -1,16 +1,17 @@
 
+#include "threepp/canvas/Monitor.hpp"
 #include "threepp/extras/imgui/ImguiContext.hpp"
 #include "threepp/threepp.hpp"
 
 using namespace threepp;
 
 
-struct MyGui: ImguiContext {
+struct MyGui final: ImguiContext {
 
     bool colorChanged = false;
 
     explicit MyGui(const Canvas& canvas, const MeshBasicMaterial& m)
-        : ImguiContext(canvas.windowPtr()) {
+        : ImguiContext(canvas) {
         colorBuf_[0] = m.color.r;
         colorBuf_[1] = m.color.g;
         colorBuf_[2] = m.color.b;
@@ -120,7 +121,7 @@ int main() {
     HUD hud(canvas.size());
     FontLoader fontLoader;
     const auto font1 = fontLoader.defaultFont();
-    const auto font2 = *fontLoader.load("data/fonts/helvetiker_regular.typeface.json");
+    const auto font2 = *fontLoader.load(std::string(DATA_FOLDER) + "/fonts/helvetiker_regular.typeface.json");
 
     TextGeometry::Options opts1(font1, 40 * monitor::contentScale().first);
     auto hudText1 = Text2D(opts1, "Hello World!");
@@ -145,7 +146,7 @@ int main() {
     });
 
     MyGui ui(canvas, *planeMaterial);
-    ui.makeDpiAware();
+
 
     Clock clock;
     canvas.animate([&]() {

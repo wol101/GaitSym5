@@ -556,6 +556,10 @@ set(PROJECT_SOURCES
     ../threepp/src/threepp/utils/LoadGlad.cpp
     ../threepp/generated/threepp/EmbeddedFonts.cpp
     ../threepp/generated/threepp/renderers/shaders/ShaderChunk.cpp
+    ../threepp/src/threepp/math/Interpolant.cpp
+    ../threepp/src/threepp/math/Lut.cpp
+    ../threepp/src/threepp/objects/TextNode.cpp
+    ../threepp/src/threepp/utils/ImageUtils.cpp
 
     ../pystring/pystring.cpp
 

@@ -61,7 +61,7 @@ int main() {
     camera.position.z = -5;
 
     AudioListener listener;
-    PositionalAudio audio(listener, "data/sounds/376737_Skullbeatz___Bad_Cat_Maste.mp3");
+    PositionalAudio audio(listener, std::string(DATA_FOLDER) + "/sounds/376737_Skullbeatz___Bad_Cat_Maste.mp3");
     audio.setLooping(true);
     audio.play();
 
@@ -76,9 +76,9 @@ int main() {
     std::array<float, 3> audioPos{};
     bool play = audio.isPlaying();
     float volume = listener.getMasterVolume();
-    ImguiFunctionalContext ui(canvas.windowPtr(), [&] {
+    ImguiFunctionalContext ui(canvas, [&] {
         ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
-        ImGui::SetNextWindowSize({230, 0}, 0);
+        ImGui::SetNextWindowSize({230 * ui.dpiScale(), 0}, 0);
         ImGui::Begin("Audio settings");
         ImGui::SliderFloat("Volume", &volume, 0.f, 1.f);
         if (ImGui::IsItemEdited()) {

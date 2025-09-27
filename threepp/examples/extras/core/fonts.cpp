@@ -9,10 +9,10 @@ using namespace threepp;
 
 namespace {
 
-    struct MyUI: public ImguiContext {
+    class MyUI: public ImguiContext {
 
     public:
-        explicit MyUI(void* ptr): ImguiContext(ptr) {}
+        explicit MyUI(const Canvas& canvas): ImguiContext(canvas) {}
 
         [[nodiscard]] bool newSelection() const {
             return lastSelectedIndex != selectedIndex;
@@ -87,7 +87,7 @@ namespace {
 int main() {
 
     std::string displayText = "threepp!";
-    std::filesystem::path fontPath{"data/fonts"};
+    std::filesystem::path fontPath{std::string(DATA_FOLDER) + "/fonts"};
 
     Canvas canvas("Fonts", {{"aa", 8}});
     GLRenderer renderer(canvas.size());
@@ -137,7 +137,7 @@ int main() {
     });
 
 
-    MyUI ui(canvas.windowPtr());
+    MyUI ui(canvas);
 
     canvas.animate([&]() {
         renderer.render(*scene, *camera);

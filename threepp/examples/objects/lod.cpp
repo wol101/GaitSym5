@@ -19,9 +19,9 @@ int main() {
     LOD lod1;
     scene.add(lod1);
 
-    float radius = 0.5;
     auto material = MeshBasicMaterial::create({{"wireframe", true}});
     for (int z = 0; z <= 5; z++) {
+        constexpr float radius = 0.5f;
         int detail = 6 - z;
         auto obj = Mesh::create(IcosahedronGeometry::create(radius, detail), material);
         lod1.addLevel(obj, static_cast<float>(z));
@@ -43,7 +43,7 @@ int main() {
 
     HUD hud(canvas.size());
     FontLoader fontLoader;
-    const auto font = *fontLoader.load("data/fonts/gentilis_bold.typeface.json");
+    const auto font = *fontLoader.load(std::string(DATA_FOLDER) + "/fonts/gentilis_bold.typeface.json");
 
     TextGeometry::Options opts(font, 20, 5);
 

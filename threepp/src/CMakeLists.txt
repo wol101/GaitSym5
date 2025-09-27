@@ -5,6 +5,15 @@ set(publicHeaders
         "threepp/constants.hpp"
         "threepp/threepp.hpp"
 
+        "threepp/animation/AnimationAction.hpp"
+        "threepp/animation/AnimationClip.hpp"
+        "threepp/animation/AnimationMixer.hpp"
+        "threepp/animation/AnimationUtils.hpp"
+        "threepp/animation/KeyframeTrack.hpp"
+
+        "threepp/animation/tracks/VectorKeyframeTrack.hpp"
+        "threepp/animation/tracks/QuaternionKeyframeTrack.hpp"
+
         "threepp/canvas/Canvas.hpp"
         "threepp/canvas/Monitor.hpp"
         "threepp/canvas/WindowSize.hpp"
@@ -129,6 +138,7 @@ set(publicHeaders
         "threepp/math/float_view.hpp"
         "threepp/math/Frustum.hpp"
         "threepp/math/ImprovedNoise.hpp"
+        "threepp/math/Interpolant.hpp"
         "threepp/math/Line3.hpp"
         "threepp/math/Lut.hpp"
         "threepp/math/MathUtils.hpp"
@@ -164,6 +174,7 @@ set(publicHeaders
         "threepp/objects/Points.hpp"
         "threepp/objects/Reflector.hpp"
         "threepp/objects/Text.hpp"
+        "threepp/objects/TextNode.hpp"
         "threepp/objects/Water.hpp"
 
         "threepp/textures/CubeTexture.hpp"
@@ -210,6 +221,9 @@ endforeach ()
 
 set(privateHeaders
 
+        "threepp/animation/PropertyBinding.hpp"
+        "threepp/animation/PropertyMixer.hpp"
+
         "threepp/materials/MeshDistanceMaterial.hpp"
 
         "threepp/renderers/GLCubeRenderTarget.hpp"
@@ -241,6 +255,15 @@ set(privateHeaders
 )
 
 set(sources
+
+        "external/pugixml/pugixml.cpp"
+
+        "threepp/animation/AnimationAction.cpp"
+        "threepp/animation/AnimationClip.cpp"
+        "threepp/animation/AnimationMixer.cpp"
+        "threepp/animation/KeyframeTrack.cpp"
+        "threepp/animation/PropertyBinding.cpp"
+        "threepp/animation/PropertyMixer.cpp"
 
         "threepp/cameras/Camera.cpp"
         "threepp/cameras/PerspectiveCamera.cpp"
@@ -341,7 +364,9 @@ set(sources
         "threepp/math/Euler.cpp"
         "threepp/math/Frustum.cpp"
         "threepp/math/ImprovedNoise.cpp"
+        "threepp/math/Interpolant.cpp"
         "threepp/math/Line3.cpp"
+        "threepp/math/Lut.cpp"
         "threepp/math/MathUtils.cpp"
         "threepp/math/Matrix3.cpp"
         "threepp/math/Matrix4.cpp"
@@ -386,12 +411,14 @@ set(sources
         "threepp/objects/Sky.cpp"
         "threepp/objects/Sprite.cpp"
         "threepp/objects/Reflector.cpp"
+        "threepp/objects/TextNode.cpp"
         "threepp/objects/Water.cpp"
 
         "threepp/textures/Texture.cpp"
         "threepp/textures/DataTexture3D.cpp"
 
         "threepp/utils/BufferGeometryUtils.cpp"
+        "threepp/utils/ImageUtils.cpp"
         "threepp/utils/StringUtils.cpp"
         "threepp/utils/TaskManager.cpp"
 
@@ -430,7 +457,6 @@ if (THREEPP_WITH_SVG)
 
     list(APPEND sources
             "threepp/loaders/SVGLoader.cpp"
-            "external/pugixml/pugixml.cpp"
     )
 endif ()
 
@@ -476,15 +502,21 @@ These can be installed on Ubuntu systems via sudo apt install libxinerama-dev li
         set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
         set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
         set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
-        set(GLFW_LIBRARY_TYPE "OBJECT" CACHE STRING "" FORCE)
+        if (BUILD_SHARED_LIBS)
+            set(GLFW_LIBRARY_TYPE "SHARED" CACHE STRING "" FORCE)
+        else()
+            set(GLFW_LIBRARY_TYPE "OBJECT" CACHE STRING "" FORCE)
+        endif()
         add_subdirectory("external/glfw")
 
         # Hide glfw's symbols when building a shared lib
         if (BUILD_SHARED_LIBS)
             set_property(TARGET glfw PROPERTY C_VISIBILITY_PRESET hidden)
+        else ()
+            list(APPEND sources $<TARGET_OBJECTS:glfw>)
         endif ()
 
-        list(APPEND sources $<TARGET_OBJECTS:glfw>)
+
     endif ()
 endif ()
 
@@ -521,12 +553,18 @@ target_include_directories(threepp
         "${generatedSourcesDir}"
         "${CMAKE_CURRENT_SOURCE_DIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/external/earcut"
-        "${CMAKE_CURRENT_SOURCE_DIR}/external/miniaudio"
         "${CMAKE_CURRENT_SOURCE_DIR}/external/nlohmann"
-        "${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml"
         "${CMAKE_CURRENT_SOURCE_DIR}/external/quickhull"
         "${CMAKE_CURRENT_SOURCE_DIR}/external/stb"
+        "${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml"
 )
+
+if (THREEPP_WITH_AUDIO)
+    target_include_directories(threepp
+            PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/external/miniaudio"
+    )
+endif ()
 
 if (NOT DEFINED EMSCRIPTEN)
 
@@ -535,8 +573,8 @@ if (NOT DEFINED EMSCRIPTEN)
             "${CMAKE_CURRENT_SOURCE_DIR}/external/glad"
     )
 
-    if (THREEPP_USE_EXTERNAL_GLFW)
-        target_link_libraries(threepp PRIVATE glfw::glfw)
+    if (THREEPP_USE_EXTERNAL_GLFW OR BUILD_SHARED_LIBS)
+        target_link_libraries(threepp PRIVATE glfw)
     else ()
         target_include_directories(threepp PRIVATE BEFORE SYSTEM "external/glfw/include")
         if (APPLE)

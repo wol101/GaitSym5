@@ -6,10 +6,10 @@ using namespace threepp;
 
 namespace {
 
-    struct MyUI: public ImguiContext {
+    class MyUI: public ImguiContext {
 
     public:
-        explicit MyUI(void* ptr): ImguiContext(ptr) {}
+        explicit MyUI(const Canvas& canvas): ImguiContext(canvas) {}
 
         [[nodiscard]] bool newSelection() const {
             return lastSelectedIndex != selectedIndex;
@@ -25,7 +25,7 @@ namespace {
             lastSelectedIndex = selectedIndex;
 
             ImGui::SetNextWindowPos({}, 0, {});
-            ImGui::SetNextWindowSize({250, 0}, 0);
+            ImGui::SetNextWindowSize({250 * dpiScale(), 0}, 0);
 
             ImGui::Begin("SVGLoader");
 
@@ -55,7 +55,7 @@ namespace {
     auto loadSvg(const std::string& name = "tiger.svg") {
 
         SVGLoader loader;
-        auto svgData = loader.load("data/models/svg/" + name);
+        auto svgData = loader.load(std::string(DATA_FOLDER) + "/models/svg/" + name);
 
         auto svg = Group::create();
         svg->name = std::filesystem::path(name).stem().string();
@@ -150,7 +150,7 @@ int main() {
 
     OrbitControls controls{*camera, canvas};
 
-    MyUI ui(canvas.windowPtr());
+    MyUI ui(canvas);
 
     IOCapture capture{};
     capture.preventMouseEvent = [] {

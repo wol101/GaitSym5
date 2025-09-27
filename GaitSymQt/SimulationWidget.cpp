@@ -129,8 +129,8 @@ void SimulationWidget::paintGL()
     m_orthographicCamera->right = halfViewWidth;
     m_orthographicCamera->top = halfViewHeight;
     m_orthographicCamera->bottom = -halfViewHeight;
-    m_orthographicCamera->near = m_frontClip;
-    m_orthographicCamera->far = m_backClip;
+    m_orthographicCamera->nearPlane = m_frontClip;
+    m_orthographicCamera->farPlane = m_backClip;
     m_orthographicCamera->position = eye;
     m_orthographicCamera->up = up;
     m_orthographicCamera->lookAt(centre);
@@ -138,8 +138,8 @@ void SimulationWidget::paintGL()
     // m_orthographicCamera->updateMatrixWorld(true);
     m_perspectiveCamera->fov = m_fieldOfView;
     m_perspectiveCamera->aspect = aspectRatio;
-    m_perspectiveCamera->near = m_frontClip;
-    m_perspectiveCamera->far = m_backClip;
+    m_perspectiveCamera->nearPlane = m_frontClip;
+    m_perspectiveCamera->farPlane = m_backClip;
     m_perspectiveCamera->position = eye;
     m_perspectiveCamera->up = up;
     m_perspectiveCamera->lookAt(centre);
@@ -1250,8 +1250,8 @@ void SimulationWidget::setupLights()
                 auto targetObj = threepp::Object3D::create();
                 targetObj->position = target;
                 light->setTarget(*targetObj);
-                light->shadow->camera->as<threepp::OrthographicCamera>()->near = directional->distance() / directional->minDistanceMultiplier();
-                light->shadow->camera->as<threepp::OrthographicCamera>()->far = directional->distance();
+                light->shadow->camera->as<threepp::OrthographicCamera>()->nearPlane = directional->distance() / directional->minDistanceMultiplier();
+                light->shadow->camera->as<threepp::OrthographicCamera>()->farPlane = directional->distance();
                 light->shadow->camera->as<threepp::OrthographicCamera>()->top = directional->height() / 2;
                 light->shadow->camera->as<threepp::OrthographicCamera>()->bottom = -directional->height() / 2;
                 light->shadow->camera->as<threepp::OrthographicCamera>()->left = -directional->width() / 2;
@@ -1276,8 +1276,8 @@ void SimulationWidget::setupLights()
                 auto targetObj = threepp::Object3D::create();
                 targetObj->position = target;
                 light->setTarget(*targetObj);
-                light->shadow->camera->as<threepp::PerspectiveCamera>()->near = spot->distance() / spot->minDistanceMultiplier();
-                light->shadow->camera->as<threepp::PerspectiveCamera>()->far = spot->distance();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->nearPlane = spot->distance() / spot->minDistanceMultiplier();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->farPlane = spot->distance();
                 light->shadow->camera->updateProjectionMatrix();
                 // light->shadow->camera->updateMatrixWorld();
                 m_lightGroup->add(light);
@@ -1293,8 +1293,8 @@ void SimulationWidget::setupLights()
                 light->castShadow = point->castShadow();
                 light->shadow->mapSize.set(point->mapWidth(), point->mapHeight());
                 light->position = position;
-                light->shadow->camera->as<threepp::PerspectiveCamera>()->near = point->distance() / point->minDistanceMultiplier();
-                light->shadow->camera->as<threepp::PerspectiveCamera>()->far = point->distance();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->nearPlane = point->distance() / point->minDistanceMultiplier();
+                light->shadow->camera->as<threepp::PerspectiveCamera>()->farPlane = point->distance();
                 light->shadow->camera->updateProjectionMatrix();
                 // light->shadow->camera->updateMatrixWorld();
                 m_lightGroup->add(light);

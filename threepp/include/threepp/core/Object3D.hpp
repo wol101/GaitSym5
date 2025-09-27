@@ -3,6 +3,7 @@
 #ifndef THREEPP_OBJECT3D_HPP
 #define THREEPP_OBJECT3D_HPP
 
+
 #include "threepp/math/Euler.hpp"
 #include "threepp/math/Matrix3.hpp"
 #include "threepp/math/Matrix4.hpp"
@@ -26,6 +27,7 @@ namespace threepp {
     struct Intersection;
     class Object3D;
     class BufferGeometry;
+    class AnimationClip;
 
     typedef std::function<void(void*, Object3D*, Camera*, BufferGeometry*, Material*, std::optional<GeometryGroup>)> RenderCallback;
 
@@ -101,6 +103,8 @@ namespace threepp {
         unsigned int renderOrder = 0;
 
         std::unordered_map<std::string, std::any> userData;
+
+        std::vector<std::shared_ptr<AnimationClip>> animations;
 
         std::optional<RenderCallback> onBeforeRender;
         std::optional<RenderCallback> onAfterRender;
