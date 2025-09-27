@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 #endif
 
     // read in the Preferences file
-    Preferences::Read();
+    Preferences::read();
 
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setRenderableType(QSurfaceFormat::OpenGL);

@@ -88,7 +88,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
 
     if (GaitSym::SphereGeom *sphereGeom = dynamic_cast<GaitSym::SphereGeom *>(m_geom))
     {
-        m_facetedObject = std::make_unique<FacetedSphere>(sphereGeom->radius(), FacetedSphere::EstimateLevel(m_geomSegments), m_geomColor1, 1);
+        m_facetedObject = std::make_unique<FacetedSphere>(sphereGeom->radius(), FacetedSphere::estimateLevel(m_geomSegments), m_geomColor1, 1);
         m_facetedObject->setSimulationWidget(simulationWidget);
         m_facetedObjectList.push_back(m_facetedObject.get());
         return;
@@ -133,8 +133,8 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
             m_facetedObject2->setSimulationWidget(simulationWidget);
             m_facetedObject2->setWireframe(true);
             m_facetedObject->setCastShadow(false);
-            m_facetedObject2->ReverseWinding();
-            m_facetedObject2->Move(0, 0, -planeDepth);
+            m_facetedObject2->reverseWinding();
+            m_facetedObject2->move(0, 0, -planeDepth);
             m_facetedObjectList.push_back(m_facetedObject2.get());
         }
         return;
@@ -148,7 +148,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         std::vector<int> *triangles = convexGeom->triangles();
         std::vector<double> *vertices = convexGeom->vertices();
         double triangleVertices[9];
-        m_facetedObject->AllocateMemory(triangles->size() / 3);
+        m_facetedObject->allocateMemory(triangles->size() / 3);
         for (size_t i = 0; i < triangles->size(); )
         {
             triangleVertices[0] = (*vertices)[(*triangles)[i] * 3];
@@ -163,7 +163,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
             triangleVertices[7] = (*vertices)[(*triangles)[i] * 3 + 1];
             triangleVertices[8] = (*vertices)[(*triangles)[i] * 3 + 2];
             i++;
-            m_facetedObject->AddTriangle(triangleVertices);
+            m_facetedObject->addTriangle(triangleVertices);
         }
         m_facetedObjectList.push_back(m_facetedObject.get());
         return;
@@ -177,7 +177,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
         std::vector<int> *triangles = trimeshGeom->triangles();
         std::vector<double> *vertices = trimeshGeom->vertices();
         double triangleVertices[9];
-        m_facetedObject->AllocateMemory(triangles->size() / 3);
+        m_facetedObject->allocateMemory(triangles->size() / 3);
         for (size_t i = 0; i < triangles->size(); )
         {
             triangleVertices[0] = (*vertices)[(*triangles)[i] * 3];
@@ -192,7 +192,7 @@ void DrawGeom::initialise(SimulationWidget *simulationWidget)
             triangleVertices[7] = (*vertices)[(*triangles)[i] * 3 + 1];
             triangleVertices[8] = (*vertices)[(*triangles)[i] * 3 + 2];
             i++;
-            m_facetedObject->AddTriangle(triangleVertices);
+            m_facetedObject->addTriangle(triangleVertices);
         }
         m_facetedObjectList.push_back(m_facetedObject.get());
         return;
@@ -206,14 +206,14 @@ void DrawGeom::updateEntityPose()
     GaitSym::Marker *marker = m_geom->geomMarker();
     pgd::Quaternion q = marker->worldQuaternion();
     pgd::Vector3 p = marker->worldPosition();
-    SetDisplayRotationFromQuaternion(q.data());
-    SetDisplayPosition(p.x, p.y, p.z);
+    setDisplayRotationFromQuaternion(q.data());
+    setDisplayPosition(p.x, p.y, p.z);
 }
 
-void DrawGeom::Draw()
+void DrawGeom::draw()
 {
-    if (m_facetedObject) m_facetedObject->Draw();
-    if (m_facetedObject2) m_facetedObject2->Draw();
+    if (m_facetedObject) m_facetedObject->draw();
+    if (m_facetedObject2) m_facetedObject2->draw();
     m_geom->setRedraw(false);
 }
 

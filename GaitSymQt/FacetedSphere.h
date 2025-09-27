@@ -19,13 +19,13 @@ class FacetedSphere: public FacetedObject
 public:
     FacetedSphere(double radius, size_t maxlevels, const QColor &blendColour, double blendFraction);
 
-    static size_t EstimateLevel(size_t requestedFaces, size_t *actualFaces = nullptr);
+    static size_t estimateLevel(size_t requestedFaces, size_t *actualFaces = nullptr);
 
-    virtual void WritePOVRay(std::ostringstream &theString);
+    virtual void writePOVRay(std::ostringstream &theString);
 
 private:
-    size_t m_Level;
-    double m_Radius;
+    size_t m_level;
+    double m_radius;
 };
 
 #endif

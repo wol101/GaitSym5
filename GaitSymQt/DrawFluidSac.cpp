@@ -63,12 +63,12 @@ void DrawFluidSac::initialise(SimulationWidget *simulationWidget)
     m_facetedObject = std::make_unique<FacetedObject>();
     m_facetedObject->setSimulationWidget(simulationWidget);
     m_facetedObject->setBlendColour(m_fluidSacColour, 1);
-    m_facetedObject->AllocateMemory(m_fluidSac->numTriangles());
+    m_facetedObject->allocateMemory(m_fluidSac->numTriangles());
     double vertices[9];
     for (size_t i = 0; i < m_fluidSac->numTriangles(); i++)
     {
         m_fluidSac->triangleVertices(i, vertices);
-        m_facetedObject->AddTriangle(vertices);
+        m_facetedObject->addTriangle(vertices);
     }
 //    qDebug() << "DrawFluidSac " << facetedObject->GetNumTriangles() << " triangles created\n";
 
@@ -129,12 +129,12 @@ void DrawFluidSac::setFluidSac(GaitSym::FluidSac *fluidSac)
     m_fluidSac = fluidSac;
 }
 
-void DrawFluidSac::Draw()
+void DrawFluidSac::draw()
 {
-    m_facetedObject->Draw();
+    m_facetedObject->draw();
     for (size_t i = 0; i < m_facetedObjectForceList.size(); i++)
     {
-        m_facetedObjectForceList.at(i)->Draw();
+        m_facetedObjectForceList.at(i)->draw();
     }
     m_fluidSac->setRedraw(false);
 }

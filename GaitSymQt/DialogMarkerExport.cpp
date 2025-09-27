@@ -37,7 +37,7 @@ DialogMarkerExport::DialogMarkerExport(QWidget *parent) :
 
     ui->lineEditFileName->setPathType(LineEditPath::FileForSave);
 
-    SetUIElementsFromPreferences();
+    setUIElementsFromPreferences();
 
     EnableWidgets();
 
@@ -52,8 +52,8 @@ DialogMarkerExport::~DialogMarkerExport()
 void DialogMarkerExport::processButtonClicked() // this catches OK and return/enter
 {
     qDebug() << "DialogMarkerExportGeometry::applyButtonClicked()";
-    ExportMarkers();
-    SaveUIElementsToPreferences();
+    exportMarkers();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerExportGeometry", saveGeometry());
 }
 
@@ -67,7 +67,7 @@ void DialogMarkerExport::reject() // this catches cancel, close and escape key
 void DialogMarkerExport::closeEvent(QCloseEvent *event)
 {
     qDebug() << "DialogMarkerExportGeometry::closeEvent()";
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerExportGeometry", saveGeometry());
     QDialog::closeEvent(event);
 }
@@ -77,7 +77,7 @@ void DialogMarkerExport::setSimulation(GaitSym::Simulation *simulation)
     m_simulation = simulation;
 }
 
-void DialogMarkerExport::SetUIElementsFromPreferences()
+void DialogMarkerExport::setUIElementsFromPreferences()
 {
     int formatOption = Preferences::valueInt("DialogMarkerExportFormatOption");
     switch (formatOption)
@@ -119,7 +119,7 @@ void DialogMarkerExport::SetUIElementsFromPreferences()
     ui->lineEditFileName->setText(Preferences::valueQString("DialogMarkerExportFileName"));
 }
 
-void DialogMarkerExport::SaveUIElementsToPreferences()
+void DialogMarkerExport::saveUIElementsToPreferences()
 {
     int formatOption = 0;
     if (ui->radioButtonPositionOnly->isChecked()) formatOption = 0;
@@ -143,7 +143,7 @@ void DialogMarkerExport::SaveUIElementsToPreferences()
     Preferences::insert("DialogMarkerExportFileName", ui->lineEditFileName->text());
 }
 
-int DialogMarkerExport::ExportMarkers()
+int DialogMarkerExport::exportMarkers()
 {
     std::vector<std::string> lines;
     pgd::Vector3 pOutput;

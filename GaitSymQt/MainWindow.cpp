@@ -648,7 +648,7 @@ void MainWindow::writeSettings()
     Preferences::insert("MainWindowSplitter1State", ui->splitter1->saveState());
     Preferences::insert("MainWindowSplitter2State", ui->splitter2->saveState());
     Preferences::insert("ElementTreeHeaderState", ui->treeWidgetElements->header()->saveState());
-    Preferences::Write();
+    Preferences::write();
 }
 
 
@@ -1450,7 +1450,7 @@ void MainWindow::menuOpen(const QString &fileName, const QByteArray *fileData)
     this->handleTracking();
 
     this->updateEnable();
-    Preferences::Write();
+    Preferences::write();
 }
 
 void MainWindow::menuRestart()
@@ -1513,7 +1513,7 @@ void MainWindow::menuSaveAs()
             for (auto &&it : *this->m_simulation->muscleList()) it.second->lateInitialisation();
             for (auto &&it : *this->m_simulation->fluidSacList()) it.second->lateInitialisation();
         }
-        Preferences::Write();
+        Preferences::write();
         this->updateEnable();
     }
     else
@@ -1558,7 +1558,7 @@ void MainWindow::menuSave()
         for (auto &&it : *this->m_simulation->muscleList()) it.second->lateInitialisation();
         for (auto &&it : *this->m_simulation->fluidSacList()) it.second->lateInitialisation();
     }
-    Preferences::Write();
+    Preferences::write();
     this->updateEnable();
 }
 
@@ -1586,13 +1586,13 @@ void MainWindow::menuExportOpenSim()
             if (it.second->meshEntity1() && body)
             {
                 FacetedObject temp;
-                temp.AddFacetedObject(it.second->meshEntity1(), false, true); // body meshes have already been moved so their origin is the centre of mass
+                temp.addFacetedObject(it.second->meshEntity1(), false, true); // body meshes have already been moved so their origin is the centre of mass
                 QFileInfo info(fileName);
                 QDir currentDir(info.absolutePath());
                 QDir newDir(currentDir.absoluteFilePath("osim_meshes"));
                 currentDir.mkdir("osim_meshes");
                 openSimExporter.setPathToObjFiles("osim_meshes");
-                temp.WriteOBJFile(newDir.absoluteFilePath(QString::fromStdString(body->graphicFile1())).toStdString());
+                temp.writeOBJFile(newDir.absoluteFilePath(QString::fromStdString(body->graphicFile1())).toStdString());
             }
         }
         openSimExporter.process(m_simulation);
@@ -1867,7 +1867,7 @@ void MainWindow::menuSaveDefaultView()
     Preferences::insert("DefaultCameraUpZ", this->m_simulationWidget->upZ());
     Preferences::insert("DefaultCameraBackClip", this->m_simulationWidget->backClip());
     Preferences::insert("DefaultCameraFrontClip", this->m_simulationWidget->frontClip());
-    Preferences::Write();
+    Preferences::write();
 }
 
 void MainWindow::menu640x480()
@@ -2111,7 +2111,7 @@ void MainWindow::menuImportMeshes()
             // first check that this is a valid mesh
             std::string meshFileName = it.toStdString();
             std::unique_ptr<FacetedObject> mesh = std::make_unique<FacetedObject>();
-            if (mesh->ParseMeshFile(meshFileName))
+            if (mesh->parseMeshFile(meshFileName))
             {
                 errorList.push_back("Error parsing "s + meshFileName);
                 continue;
@@ -2164,7 +2164,7 @@ void MainWindow::menuImportMeshes()
             double density = body->constructionDensity();
             bool clockwise = false;
             pgd::Vector3 translation;
-            mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+            mesh->calculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
             std::string massError/* = GaitSym::Body::MassCheck(&mass)*/; // FIX_ME
             if (massError.size() == 0)
             {
@@ -2172,7 +2172,7 @@ void MainWindow::menuImportMeshes()
                 body->setPosition(centreOfMass[0], centreOfMass[1], centreOfMass[2]);
                 // now recalculate the inertial tensor arount the centre of mass
                 translation.set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
-                mesh->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+                mesh->calculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
             }
             else
             {
@@ -3087,7 +3087,7 @@ void MainWindow::elementHide(const QString &elementType, const QString &elementN
 
 void MainWindow::menuClearMeshCache()
 {
-    FacetedObject::ClearMeshStore();
+    FacetedObject::clearMeshStore();
     this->log("Mesh cache cleared");
     this->ui->statusBar->showMessage("Mesh cache cleared");
 }

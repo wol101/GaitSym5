@@ -71,9 +71,9 @@ SimulationWidget::SimulationWidget()
     m_cursor3DNudge = Preferences::valueFloat("CursorNudge");
 
     m_cursor3D = std::make_unique<FacetedObject>();
-    m_cursor3D->ReadFromResource(":/objects/cursor.tri");
+    m_cursor3D->readFromResource(":/objects/cursor.tri");
     m_globalAxes = std::make_unique<FacetedObject>();
-    m_globalAxes->ReadFromResource(":/objects/global_axes.tri");
+    m_globalAxes->readFromResource(":/objects/global_axes.tri");
     m_trackball = std::make_unique<Trackball>();
 
     m_shadows = Preferences::valueBool("DisplayAsWireframe");
@@ -174,16 +174,16 @@ void SimulationWidget::paintGL()
 
         // the 3d cursor
         // qDebug() << "Cursor " << m_cursor3DPosition.x() << " " << m_cursor3DPosition.y() << " " << m_cursor3DPosition.z();
-        m_cursor3D->SetDisplayPosition(double(m_cursor3DPosition.x()), double(m_cursor3DPosition.y()), double(m_cursor3DPosition.z()));
-        m_cursor3D->SetDisplayScale(double(m_cursorRadius), double(m_cursorRadius), double(m_cursorRadius));
+        m_cursor3D->setDisplayPosition(double(m_cursor3DPosition.x()), double(m_cursor3DPosition.y()), double(m_cursor3DPosition.z()));
+        m_cursor3D->setDisplayScale(double(m_cursorRadius), double(m_cursorRadius), double(m_cursorRadius));
         m_cursor3D->setSimulationWidget(this);
-        m_cursor3D->Draw();
+        m_cursor3D->draw();
 
         // the global axes
-        m_globalAxes->SetDisplayPosition(0, 0, 0);
-        m_globalAxes->SetDisplayScale(double(m_axesScale), double(m_axesScale), double(m_axesScale));
+        m_globalAxes->setDisplayPosition(0, 0, 0);
+        m_globalAxes->setDisplayScale(double(m_axesScale), double(m_axesScale), double(m_axesScale));
         m_globalAxes->setSimulationWidget(this);
-        m_globalAxes->Draw();
+        m_globalAxes->draw();
     }
 
 
@@ -787,16 +787,16 @@ int SimulationWidget::WriteCADFrame(const QString &pathname)
     {
         for (auto &&facetedObjectIter : drawableIter->facetedObjectList())
         {
-            if (facetedObjectIter->GetVertexList().size())
+            if (facetedObjectIter->vertexList().size())
             {
                 QString numberedFilename = QString("mesh%1.obj").arg(meshCount, 6, 10, QChar('0'));
-                facetedObjectIter->WriteOBJFile(numberedFilename.toStdString());
+                facetedObjectIter->writeOBJFile(numberedFilename.toStdString());
                 meshCount++;
             }
         }
     }
     QString numberedFilename = QString("mesh%1.obj").arg(meshCount, 6, 10, QChar('0'));
-    m_globalAxes->WriteOBJFile(numberedFilename.toStdString());
+    m_globalAxes->writeOBJFile(numberedFilename.toStdString());
     meshCount++;
 
     QDir::setCurrent(workingFolder);
@@ -956,14 +956,14 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     {
         for (auto &&facetedObjectIter : drawableIter->facetedObjectList())
         {
-            if (facetedObjectIter->GetVertexList().size() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().magnitude2() != 0)
+            if (facetedObjectIter->vertexList().size() && facetedObjectIter->visible() && facetedObjectIter->boundingBoxSize().magnitude2() != 0)
             {
-                facetedObjectIter->WriteUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
+                facetedObjectIter->writeUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
                 meshCount++;
             }
         }
     }
-    m_globalAxes->WriteUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
+    m_globalAxes->writeUSDFile(usdStream, GaitSym::GSUtil::toString("mesh%05d", meshCount));
     meshCount++;
 
     usdStream <<
@@ -1045,7 +1045,7 @@ void SimulationWidget::drawModel()
         it->second->meshEntity1()->setVisible(m_drawBodyMesh1 && iter.second->visible());
         it->second->meshEntity2()->setVisible(m_drawBodyMesh2 && iter.second->visible());
         it->second->meshEntity3()->setVisible(m_drawBodyMesh3 && iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     auto jointList = m_simulation->jointList();
@@ -1073,7 +1073,7 @@ void SimulationWidget::drawModel()
         it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     auto geomList = m_simulation->geomList();
@@ -1101,7 +1101,7 @@ void SimulationWidget::drawModel()
         it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     auto markerList = m_simulation->markerList();
@@ -1129,7 +1129,7 @@ void SimulationWidget::drawModel()
         it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     auto dataTargetList = m_simulation->dataTargetList();
@@ -1157,7 +1157,7 @@ void SimulationWidget::drawModel()
         it->second->setScene(m_scene);
         it->second->updateEntityPose();
         it->second->setVisible(iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     auto muscleList = m_simulation->muscleList();
@@ -1184,7 +1184,7 @@ void SimulationWidget::drawModel()
         }
         it->second->setScene(m_scene);
         it->second->setVisible(iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     auto fluidSacList = m_simulation->fluidSacList();
@@ -1211,7 +1211,7 @@ void SimulationWidget::drawModel()
         }
         it->second->setScene(m_scene);
         it->second->setVisible(iter.second->visible());
-        it->second->Draw();
+        it->second->draw();
     }
 
     m_drawables.clear();
@@ -1381,7 +1381,7 @@ bool SimulationWidget::intersectModel(float winX, float winY)
 
             intersectionCoordList.clear();
             intersectionIndexList.clear();
-            hit = facetedObjectIter->FindIntersection(origin, vectorNorm, &intersectionCoordList, &intersectionIndexList);
+            hit = facetedObjectIter->findIntersection(origin, vectorNorm, &intersectionCoordList, &intersectionIndexList);
             if (hit)
             {
                 for (size_t i = 0; i < intersectionCoordList.size(); i++)
@@ -1422,7 +1422,7 @@ bool SimulationWidget::intersectModel(float winX, float winY)
 
         intersectionCoordList.clear();
         intersectionIndexList.clear();
-        hit = facetedObjectIter->FindIntersection(origin, vectorNorm, &intersectionCoordList, &intersectionIndexList);
+        hit = facetedObjectIter->findIntersection(origin, vectorNorm, &intersectionCoordList, &intersectionIndexList);
         if (hit)
         {
             for (size_t i = 0; i < intersectionCoordList.size(); i++)

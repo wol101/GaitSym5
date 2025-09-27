@@ -38,9 +38,9 @@ DialogMarkerImport::DialogMarkerImport(QWidget *parent) :
 
     ui->lineEditFileName->setPathType(LineEditPath::FileForOpen);
 
-    SetUIElementsFromPreferences();
+    setUIElementsFromPreferences();
 
-    EnableWidgets();
+    enableWidgets();
 
     restoreGeometry(Preferences::valueQByteArray("DialogMarkerImportGeometry"));
 }
@@ -54,14 +54,14 @@ void DialogMarkerImport::processButtonClicked() // this catches OK and return/en
 {
     qDebug() << "DialogMarkerImport::applyButtonClicked()";
     ImportMarkers();
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerImportGeometry", saveGeometry());
 }
 
 void DialogMarkerImport::applyButtonClicked() // this catches cancel, close and escape key
 {
     qDebug() << "DialogMarkerImport::closeButtonClicked()";
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerImportGeometry", saveGeometry());
     QDialog::accept();
 }
@@ -76,7 +76,7 @@ void DialogMarkerImport::reject() // this catches cancel, close and escape key
 void DialogMarkerImport::closeEvent(QCloseEvent *event)
 {
     qDebug() << "DialogMarkerImportGeometry::closeEvent()";
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerImportGeometry", saveGeometry());
     QDialog::closeEvent(event);
 }
@@ -96,7 +96,7 @@ void DialogMarkerImport::setSimulation(GaitSym::Simulation *simulation)
     m_simulation = simulation;
 }
 
-void DialogMarkerImport::SetUIElementsFromPreferences()
+void DialogMarkerImport::setUIElementsFromPreferences()
 {
     int formatOption = Preferences::valueInt("DialogMarkerImportFormatOption");
     switch (formatOption)
@@ -140,7 +140,7 @@ void DialogMarkerImport::SetUIElementsFromPreferences()
     ui->lineEditFileName->setText(Preferences::valueQString("DialogMarkerImportFileName"));
 }
 
-void DialogMarkerImport::SaveUIElementsToPreferences()
+void DialogMarkerImport::saveUIElementsToPreferences()
 {
     int formatOption = 0;
     if (ui->radioButtonPositionOnly->isChecked()) formatOption = 0;
@@ -299,7 +299,7 @@ int DialogMarkerImport::ImportMarkers()
     return 0;
 }
 
-void DialogMarkerImport::EnableWidgets()
+void DialogMarkerImport::enableWidgets()
 {
     bool fileAvailable = QFileInfo(ui->lineEditFileName->text()).isFile();
     ui->pushButtonProcess->setEnabled(fileAvailable);
@@ -308,6 +308,6 @@ void DialogMarkerImport::EnableWidgets()
 
 void DialogMarkerImport::fileNameTextChanged(const QString &text)
 {
-    EnableWidgets();
+    enableWidgets();
 }
 #

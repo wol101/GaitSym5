@@ -24,7 +24,7 @@ FacetedCappedCylinder::FacetedCappedCylinder(double l, double r, size_t capped_c
     sa = std::sin(a);
     ca = std::cos(a);
 
-    AllocateMemory((n) * 2 + (n / 4) * (n) * 4);
+    allocateMemory((n) * 2 + (n / 4) * (n) * 4);
     std::vector<pgd::Vector3> triangleStrip;
     triangleStrip.reserve(2 * (n + 1));
     pgd::Vector3 vec;
@@ -47,7 +47,7 @@ FacetedCappedCylinder::FacetedCappedCylinder(double l, double r, size_t capped_c
         nz = sa * ny + ca * nz;
         ny = tmp;
     }
-    AddTriangleStrip(triangleStrip);
+    addTriangleStrip(triangleStrip);
 
     // draw first cylinder cap
     start_nx = 0;
@@ -81,7 +81,7 @@ FacetedCappedCylinder::FacetedCappedCylinder(double l, double r, size_t capped_c
             nz2 = sa * ny2 + ca * nz2;
             ny2 = tmp;
         }
-        AddTriangleStrip(triangleStrip);
+        addTriangleStrip(triangleStrip);
         start_nx = start_nx2;
         start_ny = start_ny2;
     }
@@ -118,7 +118,7 @@ FacetedCappedCylinder::FacetedCappedCylinder(double l, double r, size_t capped_c
             nz2 = sa * ny2 + ca * nz2;
             ny2 = tmp;
         }
-        AddTriangleStrip(triangleStrip);
+        addTriangleStrip(triangleStrip);
         start_nx = start_nx2;
         start_ny = start_ny2;
     }
@@ -126,7 +126,7 @@ FacetedCappedCylinder::FacetedCappedCylinder(double l, double r, size_t capped_c
 //    qDebug() << "FacetedCappedCylinder " << GetNumTriangles() << " triangles created\n";
 }
 
-void FacetedCappedCylinder::AddTriangleStrip(std::vector<pgd::Vector3> &triangleStrip)
+void FacetedCappedCylinder::addTriangleStrip(std::vector<pgd::Vector3> &triangleStrip)
 {
     double triangle[9];
 
@@ -156,7 +156,7 @@ void FacetedCappedCylinder::AddTriangleStrip(std::vector<pgd::Vector3> &triangle
             triangle[4] = triangleStrip[i].y;
             triangle[5] = triangleStrip[i].z;
         }
-        AddTriangle(triangle);
+        addTriangle(triangle);
     }
 }
 

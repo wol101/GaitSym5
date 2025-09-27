@@ -20,7 +20,7 @@ public:
     FacetedCappedCylinder(double l, double r, size_t capped_cylinder_quality, const QColor &blendColour, double blendFraction);
 
 private:
-    void AddTriangleStrip(std::vector<pgd::Vector3> &triangleStrip);
+    void addTriangleStrip(std::vector<pgd::Vector3> &triangleStrip);
 
 };
 

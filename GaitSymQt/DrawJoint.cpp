@@ -163,8 +163,8 @@ void DrawJoint::updateEntityPose()
     GaitSym::Marker *marker = m_joint->body1Marker();
     pgd::Quaternion q = marker->worldQuaternion();
     pgd::Vector3 p = marker->worldPosition();
-    SetDisplayRotationFromQuaternion(q.data());
-    SetDisplayPosition(p.x, p.y, p.z);
+    setDisplayRotationFromQuaternion(q.data());
+    setDisplayPosition(p.x, p.y, p.z);
     if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
         if (fixedJoint->calculatePixmapNeeded() /*&& m_facetedObject1->texture()*/)
@@ -178,11 +178,11 @@ void DrawJoint::updateEntityPose()
     }
 }
 
-void DrawJoint::Draw()
+void DrawJoint::draw()
 {
-    if (m_facetedObject1.get()) m_facetedObject1->Draw();
-    if (m_facetedObject2.get()) m_facetedObject2->Draw();
-    if (m_facetedObject3.get()) m_facetedObject3->Draw();
+    if (m_facetedObject1.get()) m_facetedObject1->draw();
+    if (m_facetedObject2.get()) m_facetedObject2->draw();
+    if (m_facetedObject3.get()) m_facetedObject3->draw();
     m_joint->setRedraw(false);
 }
 

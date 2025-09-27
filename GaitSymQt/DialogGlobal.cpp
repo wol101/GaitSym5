@@ -80,7 +80,7 @@ void DialogGlobal::accept() // this catches OK and return/enter
         double damping_constant = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double cfm, erp;
-        ConvertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
+        convertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
         m_outputGlobal->setCFM(cfm);
         m_outputGlobal->setERP(erp);
         m_outputGlobal->setSpringConstant(spring_constant);
@@ -92,7 +92,7 @@ void DialogGlobal::accept() // this catches OK and return/enter
         double erp = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double spring_constant, damping_constant;
-        ConvertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
+        convertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
         m_outputGlobal->setCFM(cfm);
         m_outputGlobal->setERP(erp);
         m_outputGlobal->setSpringConstant(spring_constant);
@@ -248,7 +248,7 @@ void DialogGlobal::checkBoxSpringDampingStateChanged(int /* state */)
         double erp = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double spring_constant, damping_constant;
-        ConvertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
+        convertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
         ui->lineEditCFM->setValue(spring_constant);
         ui->lineEditERP->setValue(damping_constant);
     }
@@ -260,13 +260,13 @@ void DialogGlobal::checkBoxSpringDampingStateChanged(int /* state */)
         double damping_constant = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double cfm, erp;
-        ConvertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
+        convertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
         ui->lineEditCFM->setValue(cfm);
         ui->lineEditERP->setValue(erp);
     }
 }
 
-void DialogGlobal::ConvertToCFMERP(double spring_constant, double damping_constant, double integration_stepsize, double *cfm, double *erp)
+void DialogGlobal::convertToCFMERP(double spring_constant, double damping_constant, double integration_stepsize, double *cfm, double *erp)
 {
     // naive version could cause divide by zero errors
     // *erp = (integration_stepsize * spring_constant) / ((integration_stepsize * spring_constant) + damping_constant);
@@ -285,7 +285,7 @@ void DialogGlobal::ConvertToCFMERP(double spring_constant, double damping_consta
     return;
 }
 
-void DialogGlobal::ConvertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize, double *spring_constant, double *damping_constant)
+void DialogGlobal::convertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize, double *spring_constant, double *damping_constant)
 {
     // naive version could cause divide by zero errors
     // *spring_constant = erp / (cfm * integration_stepsize);

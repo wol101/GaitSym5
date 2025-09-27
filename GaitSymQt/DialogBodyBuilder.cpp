@@ -337,14 +337,14 @@ void DialogBodyBuilder::calculate()
     double mass;
     pgd::Vector3 centreOfMass;
     pgd::Matrix3x3 inertialTensor;
-    m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+    m_referenceObject->calculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
     ui->lineEditMass->setValue(mass);
     ui->lineEditX->setValue(centreOfMass[0]);
     ui->lineEditY->setValue(centreOfMass[1]);
     ui->lineEditZ->setValue(centreOfMass[2]);
     // now recalculate the inertial tensor arount the centre of mass
     translation.set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
-    m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+    m_referenceObject->calculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
     double ixx, iyy, izz, ixy, izx, iyz;
     inertialTensor.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
     ui->lineEditI11->setValue(ixx);
@@ -374,7 +374,7 @@ void DialogBodyBuilder::lineEditMeshActivated(LineEditPath *lineEdit)
             }
             else
             {
-                int err = m_mesh1.ParseMeshFile(lineEdit->text().toStdString());
+                int err = m_mesh1.parseMeshFile(lineEdit->text().toStdString());
                 if (err) m_referenceObject = nullptr;
                 else m_referenceObject = &m_mesh1;
             }
@@ -388,7 +388,7 @@ void DialogBodyBuilder::lineEditMeshActivated(LineEditPath *lineEdit)
             }
             else
             {
-                int err = m_mesh2.ParseMeshFile(lineEdit->text().toStdString());
+                int err = m_mesh2.parseMeshFile(lineEdit->text().toStdString());
                 if (err) m_referenceObject = nullptr;
                 else m_referenceObject = &m_mesh2;
             }
@@ -402,7 +402,7 @@ void DialogBodyBuilder::lineEditMeshActivated(LineEditPath *lineEdit)
             }
             else
             {
-                int err = m_mesh3.ParseMeshFile(lineEdit->text().toStdString());
+                int err = m_mesh3.parseMeshFile(lineEdit->text().toStdString());
                 if (err) m_referenceObject = nullptr;
                 else m_referenceObject = &m_mesh3;
             }

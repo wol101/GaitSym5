@@ -47,18 +47,18 @@
 typedef struct
 {
     double  x, y, z;
-} point;
+} Point;
 
 typedef struct
 {
-    point     pt[3];    /* Vertices of triangle */
+    Point     pt[3];    /* Vertices of triangle */
     double    area;     /* Unused; might be used for adaptive subdivision */
-} triangle;
+} Triangle;
 
 typedef struct
 {
     size_t   npoly;    /* # of polygons in object */
-    triangle *poly;     /* Polygons in no particular order */
+    Triangle *poly;     /* Polygons in no particular order */
 } object;
 
 /* Six equidistant points lying on the unit sphere */
@@ -70,15 +70,15 @@ typedef struct
 #define ZMIN  {  0,  0, -1 }    /* -Z */
 
 /* Forward declarations */
-static point *normalize( point *p );
-static point *midpoint( point *a, point *b );
+static Point *normalize( Point *p );
+static Point *midpoint( Point *a, Point *b );
 
 FacetedSphere::FacetedSphere(double radius, size_t maxlevels, const QColor &blendColour, double blendFraction)
 {
     setBlendColour(blendColour, blendFraction);
 
     /* Vertices of a unit octahedron */
-    triangle octahedron[] =
+    Triangle octahedron[] =
     {
         {{ XPLUS, ZPLUS, YPLUS }, 0.0},
         {{ YPLUS, ZPLUS, XMIN  }, 0.0},
@@ -101,14 +101,14 @@ FacetedSphere::FacetedSphere(double radius, size_t maxlevels, const QColor &blen
     size_t     i, level;
 
     if (maxlevels < 1) maxlevels = 1;
-    m_Level = maxlevels;
-    m_Radius = radius;
+    m_level = maxlevels;
+    m_radius = radius;
 
 #ifdef COUNTERCLOCKWISE
     /* Reverse order of points in each triangle */
     for (i = 0; i < oct.npoly; i++)
     {
-        point tmp;
+        Point tmp;
         tmp = oct.poly[i].pt[0];
         oct.poly[i].pt[0] = oct.poly[i].pt[2];
         oct.poly[i].pt[2] = tmp;
@@ -130,7 +130,7 @@ FacetedSphere::FacetedSphere(double radius, size_t maxlevels, const QColor &blen
         newObject->npoly = oldObject->npoly * 4;
 
         /* Allocate 4* the number of points in the current approximation */
-        newObject->poly  = static_cast<triangle *>(malloc(newObject->npoly * sizeof(triangle)));
+        newObject->poly  = static_cast<Triangle *>(malloc(newObject->npoly * sizeof(Triangle)));
         if (newObject->poly == nullptr)
         {
             fprintf(stderr, "FacetedSphere: Out of memory on subdivision level %zu\n", level);
@@ -158,9 +158,9 @@ FacetedSphere::FacetedSphere(double radius, size_t maxlevels, const QColor &blen
             */
         for (i = 0; i < oldObject->npoly; i++)
         {
-            triangle *oldt = &oldObject->poly[i];
-            triangle *newt = &newObject->poly[i * 4];
-            point a, b, c;
+            Triangle *oldt = &oldObject->poly[i];
+            Triangle *newt = &newObject->poly[i * 4];
+            Point a, b, c;
 
             a = *normalize(midpoint(&oldt->pt[0], &oldt->pt[2]));
             b = *normalize(midpoint(&oldt->pt[0], &oldt->pt[1]));
@@ -201,7 +201,7 @@ FacetedSphere::FacetedSphere(double radius, size_t maxlevels, const QColor &blen
 
     // add the faces to the Faceted Object
     double vertex[9];
-    AllocateMemory(oldObject->npoly);
+    allocateMemory(oldObject->npoly);
     for (i = 0; i < oldObject->npoly; i++)
     {
         vertex[0] = oldObject->poly[i].pt[0].x;
@@ -213,23 +213,23 @@ FacetedSphere::FacetedSphere(double radius, size_t maxlevels, const QColor &blen
         vertex[6] = oldObject->poly[i].pt[2].x;
         vertex[7] = oldObject->poly[i].pt[2].y;
         vertex[8] = oldObject->poly[i].pt[2].z;
-        AddTriangle(vertex);
+        addTriangle(vertex);
     }
 
     free(oldObject->poly);
     free(oldObject);
 
-    Scale(radius, radius, radius);
+    scale(radius, radius, radius);
 
 //    qDebug() << "FacetedSphere " << GetNumTriangles() << " triangles created\n";
 }
 
 // write the object out as a POVRay string
-void FacetedSphere::WritePOVRay(std::ostringstream &theString)
+void FacetedSphere::writePOVRay(std::ostringstream &theString)
 {
     theString << "object {\n";
     theString << "  sphere {\n";
-    theString << "    <" << GetDisplayPosition()[0] << "," << GetDisplayPosition()[1] << "," << GetDisplayPosition()[2] << ">, " << m_Radius << "\n";
+    theString << "    <" << displayPosition()[0] << "," << displayPosition()[1] << "," << displayPosition()[2] << ">, " << m_radius << "\n";
 
     // now colour
     theString << "    pigment {\n";
@@ -240,7 +240,7 @@ void FacetedSphere::WritePOVRay(std::ostringstream &theString)
     theString << "}\n\n";
 }
 
-size_t FacetedSphere::EstimateLevel(size_t requestedFaces, size_t *actualFaces)
+size_t FacetedSphere::estimateLevel(size_t requestedFaces, size_t *actualFaces)
 {
     requestedFaces = std::clamp<size_t>(requestedFaces, 8, 65536);
     // basic octohedron has 8 faces (level 1)
@@ -253,10 +253,10 @@ size_t FacetedSphere::EstimateLevel(size_t requestedFaces, size_t *actualFaces)
     return level;
 }
 
-/* Normalize a point p */
-point *normalize(point *p)
+/* Normalize a Point p */
+Point *normalize(Point *p)
 {
-    static point r;
+    static Point r;
     double mag;
 
     r = *p;
@@ -273,9 +273,9 @@ point *normalize(point *p)
 }
 
 /* Return the average of two points */
-point *midpoint(point *a, point *b)
+Point *midpoint(Point *a, Point *b)
 {
-    static point r;
+    static Point r;
 
     r.x = (a->x + b->x) * 0.5;
     r.y = (a->y + b->y) * 0.5;

@@ -151,7 +151,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             entryWidget->setValue(item.value.toInt());
             gridLayout->addWidget(entryWidget, row, 1);
             settingsWidget.widget = entryWidget;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         if (type == QMetaType::Double)
@@ -163,7 +163,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             entryWidget->setValue(item.value.toDouble());
             gridLayout->addWidget(entryWidget, row, 1);
             settingsWidget.widget = entryWidget;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         if (type == QMetaType::Float)
@@ -175,7 +175,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             entryWidget->setValue(item.value.toDouble());
             gridLayout->addWidget(entryWidget, row, 1);
             settingsWidget.widget = entryWidget;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         if (type == QMetaType::QString)
@@ -185,7 +185,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             entryWidget->setText(QString("%1").arg(item.value.toString()));
             gridLayout->addWidget(entryWidget, row, 1);
             settingsWidget.widget = entryWidget;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
             // this adds an extra context menu to the line edit
             entryWidget->setContextMenuPolicy(Qt::CustomContextMenu);
             QObject::connect(entryWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(menuRequestPath(QPoint)));
@@ -200,7 +200,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
 //            QSpacerItem *horizSpacer = new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum);
 //            gridLayout->addItem(horizSpacer, row, 2);
             settingsWidget.widget = checkBox;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         if (type == QMetaType::QColor)
@@ -213,7 +213,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             connect(pushButton, SIGNAL(clicked()), this, SLOT(colourButtonClicked()));
             gridLayout->addWidget(pushButton, row, 1);
             settingsWidget.widget = pushButton;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         if (type == QMetaType::QFont)
@@ -227,7 +227,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             connect(pushButton, SIGNAL(clicked()), this, SLOT(fontButtonClicked()));
             gridLayout->addWidget(pushButton, row, 1);
             settingsWidget.widget = pushButton;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         if (type == QMetaType::QVector2D)
@@ -246,7 +246,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             y->setValue(double(v.y()));
             nestedGridLayout->addWidget(y, 1, 0);
             settingsWidget.widget = nestedWidget;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
 
         }
 
@@ -269,7 +269,7 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
             z->setValue(double(v.z()));
             nestedGridLayout->addWidget(z, 2, 0);
             settingsWidget.widget = nestedWidget;
-            m_SettingsWidgetList.append(settingsWidget);
+            m_settingsWidgetList.append(settingsWidget);
         }
 
         row++;
@@ -288,10 +288,10 @@ void DialogPreferences::initialiseTab(const QString &tabName, const QVector<Sett
 
 void DialogPreferences::update()
 {
-    for (int i = 0; i < m_SettingsWidgetList.size(); i++)
+    for (int i = 0; i < m_settingsWidgetList.size(); i++)
     {
-        SettingsItem item = m_SettingsWidgetList[i].item;
-        QWidget *widget = m_SettingsWidgetList[i].widget;
+        SettingsItem item = m_settingsWidgetList[i].item;
+        QWidget *widget = m_settingsWidgetList[i].widget;
 
         QMetaType::Type type = static_cast<QMetaType::Type>(item.type);
         if (type == QMetaType::Int) item.value = dynamic_cast<QSpinBox *>(widget)->value();
@@ -331,15 +331,15 @@ void DialogPreferences::colourButtonClicked()
     const QString COLOUR_STYLE("QPushButton { background-color : %1; color : %2; border: 4px solid %3; }");
     int i;
     QPushButton *pushButton = dynamic_cast<QPushButton *>(QObject::sender());
-    for (i = 0; i < m_SettingsWidgetList.size(); i++)
-        if (m_SettingsWidgetList[i].widget == pushButton) break;
-    if (i >= m_SettingsWidgetList.size()) return;
+    for (i = 0; i < m_settingsWidgetList.size(); i++)
+        if (m_settingsWidgetList[i].widget == pushButton) break;
+    if (i >= m_settingsWidgetList.size()) return;
 
-    QColor colour = QColorDialog::getColor(qvariant_cast<QColor>(m_SettingsWidgetList[i].item.value), this, "Select Color", QColorDialog::ShowAlphaChannel /*| QColorDialog::DontUseNativeDialog*/);
+    QColor colour = QColorDialog::getColor(qvariant_cast<QColor>(m_settingsWidgetList[i].item.value), this, "Select Color", QColorDialog::ShowAlphaChannel /*| QColorDialog::DontUseNativeDialog*/);
     if (colour.isValid())
     {
         pushButton->setStyleSheet(COLOUR_STYLE.arg(colour.name()).arg(getIdealTextColour(colour).name()).arg(getAlphaColourHint(colour).name()));
-        m_SettingsWidgetList[i].item.value = colour;
+        m_settingsWidgetList[i].item.value = colour;
     }
 }
 
@@ -347,19 +347,19 @@ void DialogPreferences::fontButtonClicked()
 {
     int i;
     QPushButton *pushButton = dynamic_cast<QPushButton *>(QObject::sender());
-    for (i = 0; i < m_SettingsWidgetList.size(); i++)
-        if (m_SettingsWidgetList[i].widget == pushButton) break;
-    if (i >= m_SettingsWidgetList.size()) return;
+    for (i = 0; i < m_settingsWidgetList.size(); i++)
+        if (m_settingsWidgetList[i].widget == pushButton) break;
+    if (i >= m_settingsWidgetList.size()) return;
 
     QFont oldFont;
-    oldFont.fromString(m_SettingsWidgetList[i].item.value.toString());
+    oldFont.fromString(m_settingsWidgetList[i].item.value.toString());
     bool ok;
     QFont newFont = QFontDialog::getFont(&ok, oldFont);
     if (ok)
     {
         pushButton->setFont(newFont);
         pushButton->setText(newFont.family() + QString(" %1 point").arg(newFont.pointSize()));
-        m_SettingsWidgetList[i].item.value = newFont;
+        m_settingsWidgetList[i].item.value = newFont;
     }
 }
 
@@ -391,12 +391,12 @@ void DialogPreferences::importButtonClicked()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Import Settings File"), lastImportedFile, tr("Exported Settings Files (*.xml);;Any File (*.* *)"), nullptr);
     if (fileName.isNull() == false)
     {
-        Preferences::setSettings(Preferences::Import(fileName));
+        Preferences::setSettings(Preferences::importFromFile(fileName));
         Preferences::insert("PreferencesLastExportedFile", fileName);
-        for (int i = 0; i < m_SettingsWidgetList.size(); i++)
+        for (int i = 0; i < m_settingsWidgetList.size(); i++)
         {
-            SettingsItem item = m_SettingsWidgetList[i].item;
-            QWidget *widget = m_SettingsWidgetList[i].widget;
+            SettingsItem item = m_settingsWidgetList[i].item;
+            QWidget *widget = m_settingsWidgetList[i].widget;
             QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());
             if (type == QMetaType::Int) dynamic_cast<QSpinBox *>(widget)->setValue(Preferences::valueInt(item.key));
             if (type == QMetaType::Double) dynamic_cast<QLineEdit *>(widget)->setText(Preferences::valueQString(item.key));
@@ -431,7 +431,7 @@ void DialogPreferences::exportButtonClicked()
     if (fileName.isNull() == false)
     {
         Preferences::insert("PreferencesLastExportedFile", fileName);
-        Preferences::Export(fileName, Preferences::settings());
+        Preferences::export(fileName, Preferences::settings());
     }
 }
 
@@ -445,11 +445,11 @@ void DialogPreferences::defaultsButtonClicked()
     int ret = msgBox.exec();
     if (ret == QMessageBox::Ok)
     {
-        for (int i = 0; i < m_SettingsWidgetList.size(); i++)
+        for (int i = 0; i < m_settingsWidgetList.size(); i++)
         {
-            Preferences::setSettings(Preferences::ImportDefaults());
-            SettingsItem item = m_SettingsWidgetList[i].item;
-            QWidget *widget = m_SettingsWidgetList[i].widget;
+            Preferences::setSettings(Preferences::importDefaults());
+            SettingsItem item = m_settingsWidgetList[i].item;
+            QWidget *widget = m_settingsWidgetList[i].widget;
             QMetaType::Type type = static_cast<QMetaType::Type>(item.value.typeId());
             if (type == QMetaType::Int) dynamic_cast<QSpinBox *>(widget)->setValue(Preferences::valueInt(item.key));
             if (type == QMetaType::Double) dynamic_cast<LineEditDouble *>(widget)->setText(Preferences::valueQString(item.key));

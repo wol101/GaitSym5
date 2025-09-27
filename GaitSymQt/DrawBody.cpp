@@ -136,10 +136,10 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
             }
         }
         m_meshEntity1->setBlendColour(m_bodyColour1, 1);
-        if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity1->ParsePLYFile(absoluteFilename.toStdString());
-        if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity1->ParseOBJFile(absoluteFilename.toStdString());
+        if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity1->parsePLYFile(absoluteFilename.toStdString());
+        if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity1->parseOBJFile(absoluteFilename.toStdString());
         pgd::Vector3 offset = m_body->constructionPosition();
-        m_meshEntity1->Move(-offset[0], -offset[1], -offset[2]);
+        m_meshEntity1->move(-offset[0], -offset[1], -offset[2]);
     }
 
     m_meshEntity2 = std::make_unique<FacetedObject>();
@@ -164,10 +164,10 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
             }
         }
         m_meshEntity2->setBlendColour(m_bodyColour2, 1);
-        if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity2->ParsePLYFile(absoluteFilename.toStdString());
-        if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity2->ParseOBJFile(absoluteFilename.toStdString());
+        if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity2->parsePLYFile(absoluteFilename.toStdString());
+        if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity2->parseOBJFile(absoluteFilename.toStdString());
         pgd::Vector3 offset = m_body->constructionPosition();
-        m_meshEntity2->Move(-offset[0], -offset[1], -offset[2]);
+        m_meshEntity2->move(-offset[0], -offset[1], -offset[2]);
     }
 
     m_meshEntity3 = std::make_unique<FacetedObject>();
@@ -192,10 +192,10 @@ void DrawBody::initialise(SimulationWidget *simulationWidget)
             }
         }
         m_meshEntity3->setBlendColour(m_bodyColour3, 1);
-        if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity3->ParsePLYFile(absoluteFilename.toStdString());
-        if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity3->ParseOBJFile(absoluteFilename.toStdString());
+        if (absoluteFilename.endsWith(".ply", Qt::CaseInsensitive)) m_meshEntity3->parsePLYFile(absoluteFilename.toStdString());
+        if (absoluteFilename.endsWith(".obj", Qt::CaseInsensitive)) m_meshEntity3->parseOBJFile(absoluteFilename.toStdString());
         pgd::Vector3 offset = m_body->constructionPosition();
-        m_meshEntity3->Move(-offset[0], -offset[1], -offset[2]);
+        m_meshEntity3->move(-offset[0], -offset[1], -offset[2]);
     }
 
     m_facetedObjectList.push_back(m_axes.get());
@@ -208,40 +208,40 @@ void DrawBody::updateEntityPose()
 {
     pgd::Quaternion quaternion = m_body->quaternion();
     pgd::Vector3 position = m_body->position();
-    SetDisplayRotationFromQuaternion(quaternion);
-    SetDisplayPosition(position[0], position[1], position[2]);
-    m_axes->SetDisplayScale(m_body->size1(), m_body->size1(), m_body->size1());
+    setDisplayRotationFromQuaternion(quaternion);
+    setDisplayPosition(position[0], position[1], position[2]);
+    m_axes->setDisplayScale(m_body->size1(), m_body->size1(), m_body->size1());
 }
 
-void DrawBody::Draw()
+void DrawBody::draw()
 {
-    m_axes->Draw();
-    if (m_meshEntity1->GetNumTriangles())
+    m_axes->draw();
+    if (m_meshEntity1->numTriangles())
     {
         m_bodyColour1.setRedF(qreal(m_body->colour1().r()));
         m_bodyColour1.setGreenF(qreal(m_body->colour1().g()));
         m_bodyColour1.setBlueF(qreal(m_body->colour1().b()));
         m_bodyColour1.setAlphaF(qreal(m_body->colour1().alpha()));
         m_meshEntity1->setBlendColour(m_bodyColour1, m_body->size2());
-        m_meshEntity1->Draw();
+        m_meshEntity1->draw();
     }
-    if (m_meshEntity2->GetNumTriangles())
+    if (m_meshEntity2->numTriangles())
     {
         m_bodyColour2.setRedF(qreal(m_body->colour2().r()));
         m_bodyColour2.setGreenF(qreal(m_body->colour2().g()));
         m_bodyColour2.setBlueF(qreal(m_body->colour2().b()));
         m_bodyColour2.setAlphaF(qreal(m_body->colour2().alpha()));
         m_meshEntity2->setBlendColour(m_bodyColour2, m_body->size2());
-        m_meshEntity2->Draw();
+        m_meshEntity2->draw();
     }
-    if (m_meshEntity3->GetNumTriangles())
+    if (m_meshEntity3->numTriangles())
     {
         m_bodyColour3.setRedF(qreal(m_body->colour3().r()));
         m_bodyColour3.setGreenF(qreal(m_body->colour3().g()));
         m_bodyColour3.setBlueF(qreal(m_body->colour3().b()));
         m_bodyColour3.setAlphaF(qreal(m_body->colour3().alpha()));
         m_meshEntity3->setBlendColour(m_bodyColour3, m_body->size2());
-        m_meshEntity3->Draw();
+        m_meshEntity3->draw();
     }
     m_body->setRedraw(false);
 }

@@ -206,12 +206,12 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     case FixedCylinder:
     case AreaCylinder:
     case VolumeCylinder:
-        Cylinder();
+        cylinder();
         break;
     case FixedFusiform:
     case AreaFusiform:
     case VolumeFusiform:
-        Fusiform();
+        fusiform();
         break;
     }
 
@@ -238,20 +238,20 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
     return;
 }
 
-void DrawMuscle::Draw()
+void DrawMuscle::draw()
 {
-    if (m_facetedObject1.get()) m_facetedObject1->Draw();
-    if (m_facetedObject2.get()) m_facetedObject2->Draw();
-    if (m_facetedObject3.get()) m_facetedObject3->Draw();
+    if (m_facetedObject1.get()) m_facetedObject1->draw();
+    if (m_facetedObject2.get()) m_facetedObject2->draw();
+    if (m_facetedObject3.get()) m_facetedObject3->draw();
     for (size_t i = 0; i < m_facetedObjectForceList.size(); i++)
     {
-        m_facetedObjectForceList.at(i)->Draw();
+        m_facetedObjectForceList.at(i)->draw();
     }
     m_muscle->setRedraw(false);
     m_muscle->strap()->setRedraw(false);
 }
 
-void DrawMuscle::Cylinder()
+void DrawMuscle::cylinder()
 {
     if (m_polyline.size() < 2) return;
     double radius;
@@ -316,7 +316,7 @@ void DrawMuscle::Cylinder()
 }
 
 
-void DrawMuscle::Fusiform()
+void DrawMuscle::fusiform()
 {
     std::vector<pgd::Vector3> vertexList;
     std::vector<std::array<float, 3>> vertexColours;

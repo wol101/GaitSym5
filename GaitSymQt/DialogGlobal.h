@@ -42,9 +42,9 @@ protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    static void ConvertToCFMERP(double spring_constant, double damping_constant,
+    static void convertToCFMERP(double spring_constant, double damping_constant,
                                 double integration_stepsize, double *cfm, double *erp);
-    static void ConvertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize,
+    static void convertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize,
                                                    double *spring_constant, double *damping_constant);
     void updateUI(const GaitSym::Global *globalPtr);
     void initialiseDefaultGlobal();

@@ -30,7 +30,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
     m_OZ = oz;
     m_Sides = sides;
 
-    AllocateMemory(sides * 4);
+    allocateMemory(sides * 4);
 
     size_t i;
     double theta = 2 * M_PI / sides;
@@ -107,7 +107,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(1, i + 2);
                 //face->SetVertex(2, 2);
             }
-            AddTriangle(triangle);
+            addTriangle(triangle);
         }
 
         // sides
@@ -127,7 +127,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(0, i + 2);
                 //face->SetVertex(1, i + 2 + sides);
                 //face->SetVertex(2, i + 3 + sides);
-                AddTriangle(triangle);
+                addTriangle(triangle);
                 triangle[0] = vertexList[i + 3 + sides].x;
                 triangle[1] = vertexList[i + 3 + sides].y;
                 triangle[2] = vertexList[i + 3 + sides].z;
@@ -140,7 +140,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(0, i + 3 + sides);
                 //face->SetVertex(1, i + 3);
                 //face->SetVertex(2, i + 2);
-                AddTriangle(triangle);
+                addTriangle(triangle);
             }
             else
             {
@@ -156,7 +156,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(0, i + 2);
                 //face->SetVertex(1, i + 2 + sides);
                 //face->SetVertex(2, 2 + sides);
-                AddTriangle(triangle);
+                addTriangle(triangle);
                 triangle[0] = vertexList[2 + sides].x;
                 triangle[1] = vertexList[2 + sides].y;
                 triangle[2] = vertexList[2 + sides].z;
@@ -169,7 +169,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(0, 2 + sides);
                 //face->SetVertex(1, 2);
                 //face->SetVertex(2, i + 2);
-                AddTriangle(triangle);
+                addTriangle(triangle);
             }
         }
 
@@ -206,7 +206,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(1, 2 + sides);
                 //face->SetVertex(2, i + 2 + sides);
             }
-            AddTriangle(triangle);
+            addTriangle(triangle);
         }
 
     }
@@ -256,7 +256,7 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(1, i + 2);
                 //face->SetVertex(2, 2);
             }
-            AddTriangle(triangle);
+            addTriangle(triangle);
         }
 
 
@@ -293,35 +293,35 @@ FacetedConicSegment::FacetedConicSegment(double l, double r1, double r2, size_t 
                 //face->SetVertex(1, 1);
                 //face->SetVertex(2, 2);
             }
-            AddTriangle(triangle);
+            addTriangle(triangle);
         }
 
     }
 
     // but this code creates a shape with clockwise winding and we want the anticlockwise default
-    ReverseWinding();
+    reverseWinding();
 
 //    qDebug() << "FacetedConicSegment " << GetNumTriangles() << " triangles created\n";
 }
 
 // write the object out as a POVRay string
-void FacetedConicSegment::WritePOVRay(std::ostringstream &theString)
+void FacetedConicSegment::writePOVRay(std::ostringstream &theString)
 {
     bool drawDisc = false;
     if (m_Length / ((m_R1 + m_R2) / 2) < 0.001) drawDisc = true;
 
     pgd::Vector3 prel, p;
     prel.set(m_OX, m_OY, m_OZ);
-    p = GetDisplayRotation() * prel;
-    double bpx = p[0] + GetDisplayPosition()[0];
-    double bpy = p[1] + GetDisplayPosition()[1];
-    double bpz = p[2] + GetDisplayPosition()[2];
+    p = displayRotation() * prel;
+    double bpx = p[0] + displayPosition()[0];
+    double bpy = p[1] + displayPosition()[1];
+    double bpz = p[2] + displayPosition()[2];
 
     prel.set(m_OX, m_OY, m_OZ + m_Length);
-    p = GetDisplayRotation() * prel;
-    double cpx = p[0] + GetDisplayPosition()[0];
-    double cpy = p[1] + GetDisplayPosition()[1];
-    double cpz = p[2] + GetDisplayPosition()[2];
+    p = displayRotation() * prel;
+    double cpx = p[0] + displayPosition()[0];
+    double cpy = p[1] + displayPosition()[1];
+    double cpz = p[2] + displayPosition()[2];
 
     if ((std::isfinite(bpx) && std::isfinite(bpy) && std::isfinite(bpz) && std::isfinite(cpx) && std::isfinite(cpy) && std::isfinite(cpz)) == false) return;
 

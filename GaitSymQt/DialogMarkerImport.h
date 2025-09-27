@@ -46,10 +46,10 @@ private:
     std::vector<std::unique_ptr<GaitSym::Marker>> *m_markerList = nullptr;
     std::set<std::string> m_addedNames;
 
-    void SetUIElementsFromPreferences();
-    void SaveUIElementsToPreferences();
+    void setUIElementsFromPreferences();
+    void saveUIElementsToPreferences();
 
-    void EnableWidgets();
+    void enableWidgets();
 };
 
 #endif // DIALOGMARKERIMPORT_H

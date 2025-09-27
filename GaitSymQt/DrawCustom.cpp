@@ -21,9 +21,9 @@ void DrawCustom::initialise(SimulationWidget * /*simulationWidget*/)
 {
 }
 
-void DrawCustom::Draw()
+void DrawCustom::draw()
 {
-    for (auto &&it : m_facetedObjectList) it->Draw();
+    for (auto &&it : m_facetedObjectList) it->draw();
 }
 
 void DrawCustom::addFacetedObject(std::unique_ptr<FacetedObject> &&facetedObject)

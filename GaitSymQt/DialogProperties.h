@@ -55,7 +55,7 @@ private:
 
     QMap<QString, SettingsItem> m_inputSettingsItems;
     QMap<QString, SettingsItem> m_outputSettingsItems;
-    QList<SettingsWidget> m_SettingsWidgetList;
+    QList<SettingsWidget> m_settingsWidgetList;
 
 };
 

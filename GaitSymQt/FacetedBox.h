@@ -21,8 +21,8 @@ public:
     FacetedBox(double lx, double ly, double lz, const QColor &blendColour, double blendFraction);
 
 private:
-    void AddTriangleStrip(std::vector<pgd::Vector3> &triangleStrip);
-    void AddTriangleFan(std::vector<pgd::Vector3> &triangleFan);
+    void addTriangleStrip(std::vector<pgd::Vector3> &triangleStrip);
+    void addTriangleFan(std::vector<pgd::Vector3> &triangleFan);
 
 };
 

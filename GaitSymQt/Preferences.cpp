@@ -24,14 +24,14 @@ const QString Preferences::organizationName("AnimalSimulationLaboratory");
 QSettings Preferences::m_qtSettings(QSettings::IniFormat, QSettings::UserScope, Preferences::getOrganizationName(), Preferences::getApplicationName());
 QMap<QString, SettingsItem> Preferences::m_settings;
 
-void Preferences::Write()
+void Preferences::write()
 {
     qDebug() << "Writing preferences to \"" << fileName() << "\"\n";
-    Preferences::setQtValue("XML", ExportData(m_settings));
+    Preferences::setQtValue("XML", exportData(m_settings));
     Preferences::sync();
 }
 
-void Preferences::Read()
+void Preferences::read()
 {
     qDebug() << "Reading preferences from \"" << fileName() << "\"\n";
     QByteArray xmlData = Preferences::qtValue("XML", QByteArray()).toByteArray();
@@ -68,7 +68,7 @@ void Preferences::Read()
     }
 }
 
-void Preferences::Export(const QString &filename, const QMap<QString, SettingsItem> &settings)
+void Preferences::export(const QString &filename, const QMap<QString, SettingsItem> &settings)
 {
     QByteArray xmlData = ExportData(settings);
     QFile file(filename);
@@ -83,7 +83,7 @@ void Preferences::Export(const QString &filename, const QMap<QString, SettingsIt
     file.close();
 }
 
-QByteArray Preferences::ExportData(const QMap<QString, SettingsItem> &settings)
+QByteArray Preferences::exportData(const QMap<QString, SettingsItem> &settings)
 {
     QDomDocument doc("GaitSym5Preferences");
     doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
@@ -151,7 +151,7 @@ QByteArray Preferences::ExportData(const QMap<QString, SettingsItem> &settings)
     return doc.toByteArray(4);
 }
 
-QMap<QString, SettingsItem> Preferences::Import(const QString &filename)
+QMap<QString, SettingsItem> Preferences::import(const QString &filename)
 {
     QMap<QString, SettingsItem> settings;
     QFile file(filename);
@@ -310,7 +310,7 @@ QMap<QString, SettingsItem> Preferences::ParseQDomElement(const QDomElement &doc
 
 QMap<QString, SettingsItem> Preferences::ImportDefaults()
 {
-    QMap<QString, SettingsItem> settings = Import(":/preferences/default_values.xml");
+    QMap<QString, SettingsItem> settings = import(":/preferences/default_values.xml");
     return settings;
 }
 

@@ -40,24 +40,24 @@ Drawable::~Drawable()
 //#endif
 }
 
-void Drawable::SetDisplayPosition(double x, double y, double z)
+void Drawable::setDisplayPosition(double x, double y, double z)
 {
-    for (auto &&iter : m_facetedObjectList) iter->SetDisplayPosition(x, y, z);
+    for (auto &&iter : m_facetedObjectList) iter->setDisplayPosition(x, y, z);
 }
 
-void Drawable::SetDisplayScale(double x, double y, double z)
+void Drawable::setDisplayScale(double x, double y, double z)
 {
-    for (auto &&iter : m_facetedObjectList) iter->SetDisplayScale(x, y, z);
+    for (auto &&iter : m_facetedObjectList) iter->setDisplayScale(x, y, z);
 }
 
-void Drawable::SetDisplayRotation(const pgd::Matrix3x3 &R)
+void Drawable::setDisplayRotation(const pgd::Matrix3x3 &R)
 {
-    for (auto &&iter : m_facetedObjectList) iter->SetDisplayRotation(R);
+    for (auto &&iter : m_facetedObjectList) iter->setDisplayRotation(R);
 }
 
-void Drawable::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
+void Drawable::setDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
-    for (auto &&iter : m_facetedObjectList) iter->SetDisplayRotationFromQuaternion(q);
+    for (auto &&iter : m_facetedObjectList) iter->setDisplayRotationFromQuaternion(q);
 }
 
 void Drawable::setVisible(bool visible)

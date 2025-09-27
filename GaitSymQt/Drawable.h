@@ -27,14 +27,14 @@ public:
     virtual ~Drawable();
 
     virtual void initialise(SimulationWidget *simulationWidget) = 0;
-    virtual void Draw() = 0;
+    virtual void draw() = 0;
     virtual std::string name() = 0;
     std::string className() const;
 
-    void SetDisplayPosition(double x, double y, double z);
-    void SetDisplayScale(double x, double y, double z);
-    void SetDisplayRotation(const pgd::Matrix3x3 &R);
-    void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
+    void setDisplayPosition(double x, double y, double z);
+    void setDisplayScale(double x, double y, double z);
+    void setDisplayRotation(const pgd::Matrix3x3 &R);
+    void setDisplayRotationFromQuaternion(const pgd::Quaternion &q);
     void setVisible(bool visible);
 
     const std::vector<FacetedObject *> &facetedObjectList() const;

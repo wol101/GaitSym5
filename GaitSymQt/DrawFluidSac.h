@@ -28,7 +28,7 @@ public:
     ~DrawFluidSac();
 
     virtual void initialise(SimulationWidget *simulationWidget);
-    virtual void Draw();
+    virtual void draw();
     virtual std::string name();
 
     GaitSym::FluidSac *fluidSac() const;

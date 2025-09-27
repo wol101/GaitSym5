@@ -60,11 +60,11 @@ FacetedObject::~FacetedObject()
 
 
 // utility front end to try and parse different sorts of mesh files
-int FacetedObject::ParseMeshFile(const std::string &filename)
+int FacetedObject::parseMeshFile(const std::string &filename)
 {
     std::string lowercase = pystring::lower(filename);
-    if (pystring::endswith(lowercase, ".obj"s)) return ParseOBJFile(filename);
-    if (pystring::endswith(lowercase, ".ply"s)) return ParsePLYFile(filename);
+    if (pystring::endswith(lowercase, ".obj"s)) return parseOBJFile(filename);
+    if (pystring::endswith(lowercase, ".ply"s)) return parsePLYFile(filename);
     return __LINE__;
 }
 
@@ -72,7 +72,7 @@ int FacetedObject::ParseMeshFile(const std::string &filename)
 // returns 0 on success
 // this tries to be quite fast and not very flexible
 // it might be worth rewriting to use std::from_char and std::to_char
-int FacetedObject::ParseOBJFile(const std::string &filename)
+int FacetedObject::parseOBJFile(const std::string &filename)
 {
     m_filename = filename;
     MeshStoreObject *meshStoreObject = m_meshStore.getMesh(filename);
@@ -157,7 +157,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
             if (pystring::startswith(line, "mtllib "s))
             {
                 std::string materialsFile = pystring::os::path::join(pystring::os::path::dirname(filename), line.substr("mtllib "s.size(), std::string::npos));
-                if (ParseOBJMaterialFile(materialsFile, &materialMap))
+                if (parseOBJMaterialFile(materialsFile, &materialMap))
                 {
                     qDebug() << "Error reading material file \"" << materialsFile.c_str() << "\"";
                 }
@@ -427,7 +427,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
         }
         else
         {
-            ComputeFaceNormal(vertexList[it.vertex[0]].data(), vertexList[it.vertex[1]].data(), vertexList[it.vertex[2]].data(), normal.data());
+            computeFaceNormal(vertexList[it.vertex[0]].data(), vertexList[it.vertex[1]].data(), vertexList[it.vertex[2]].data(), normal.data());
             m_normalList.push_back(normal.x);
             m_normalList.push_back(normal.y);
             m_normalList.push_back(normal.z);
@@ -475,7 +475,7 @@ int FacetedObject::ParseOBJFile(const std::string &filename)
     return 0;
 }
 
-int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<std::string, OBJMaterial> *materialMap)
+int FacetedObject::parseOBJMaterialFile(const std::string &filename, std::map<std::string, OBJMaterial> *materialMap)
 {
     GaitSym::DataFile materialsFile;
     if (materialsFile.readFile(filename))
@@ -574,7 +574,7 @@ int FacetedObject::ParseOBJMaterialFile(const std::string &filename, std::map<st
     return 0;
 }
 
-int FacetedObject::ParsePLYFile(const std::string &filename)
+int FacetedObject::parsePLYFile(const std::string &filename)
 {
     m_filename = filename;
     MeshStoreObject *meshStoreObject = m_meshStore.getMesh(filename);
@@ -698,7 +698,7 @@ int FacetedObject::ParsePLYFile(const std::string &filename)
         if (colours) qDebug() << "\tRead " << colours->count << " total vertex colours " << "\n";
         if (faces) qDebug() << "\tRead " << faces->count << " total faces " << "\n";
 
-        AllocateMemory(faces->count);
+        allocateMemory(faces->count);
         if (vertices->t == tinyply::Type::FLOAT32)
         {
             int32_t *vertexIndexPtr = reinterpret_cast<int32_t *>(faces->buffer.get());
@@ -709,7 +709,7 @@ int FacetedObject::ParsePLYFile(const std::string &filename)
                 for (size_t j = 0; j < 3; j++) (&triangle[0])[j] = double((&vertexPtr[3 * vertexIndexPtr[i * 3 + 0]])[j]);
                 for (size_t j = 0; j < 3; j++) (&triangle[3])[j] = double((&vertexPtr[3 * vertexIndexPtr[i * 3 + 1]])[j]);
                 for (size_t j = 0; j < 3; j++) (&triangle[6])[j] = double((&vertexPtr[3 * vertexIndexPtr[i * 3 + 2]])[j]);
-                AddTriangle(triangle);
+                addTriangle(triangle);
 //                qDebug("Triangle %d (%d,%d,%d)", i, vertexIndexPtr[i * 3 + 0], vertexIndexPtr[i * 3 + 1], vertexIndexPtr[i * 3 + 2]);
 
             }
@@ -724,7 +724,7 @@ int FacetedObject::ParsePLYFile(const std::string &filename)
                 std::copy_n(&triangle[0], 3, &vertexPtr[3 * vertexIndexPtr[i * 3 + 0]]);
                 std::copy_n(&triangle[3], 3, &vertexPtr[3 * vertexIndexPtr[i * 3 + 1]]);
                 std::copy_n(&triangle[6], 3, &vertexPtr[3 * vertexIndexPtr[i * 3 + 2]]);
-                AddTriangle(triangle);
+                addTriangle(triangle);
             }
         }
 
@@ -739,7 +739,7 @@ int FacetedObject::ParsePLYFile(const std::string &filename)
     return 0;
 }
 
-int FacetedObject::ReadFromMemory(const char *data, size_t len, bool binary, const std::string &meshName)
+int FacetedObject::readFromMemory(const char *data, size_t len, bool binary, const std::string &meshName)
 {
     m_filename = meshName;
     MeshStoreObject *meshStoreObject = m_meshStore.getMesh(meshName);
@@ -833,7 +833,7 @@ int FacetedObject::ReadFromMemory(const char *data, size_t len, bool binary, con
     return 0;
 }
 
-void FacetedObject::SaveToMemory(std::vector<char> *data, bool binary)
+void FacetedObject::saveToMemory(std::vector<char> *data, bool binary)
 {
     if (binary)
     {
@@ -898,7 +898,7 @@ void FacetedObject::SaveToMemory(std::vector<char> *data, bool binary)
     }
 }
 
-int FacetedObject::ReadFromResource(const QString &resourceName)
+int FacetedObject::readFromResource(const QString &resourceName)
 {
     m_filename = resourceName.toStdString();
     MeshStoreObject *meshStoreObject = m_meshStore.getMesh(resourceName.toStdString());
@@ -957,7 +957,7 @@ int FacetedObject::ReadFromResource(const QString &resourceName)
     return 0;
 }
 
-void FacetedObject::Draw()
+void FacetedObject::draw()
 {
     if (m_vertexList.size() == 0) return;
     if (!m_mesh)
@@ -1018,10 +1018,10 @@ void FacetedObject::Draw()
 }
 
 // Write a FacetedObject out as a POVRay file
-void FacetedObject::WritePOVRay(std::string filename)
+void FacetedObject::writePOVRay(std::string filename)
 {
     std::ostringstream objData;
-    WritePOVRay(objData);
+    writePOVRay(objData);
     try
     {
         std::ofstream f;
@@ -1043,7 +1043,7 @@ void FacetedObject::WritePOVRay(std::string filename)
 
 // write the object out as a POVRay string
 // currently assumes all faces are triangles (call Triangulate if conversion is necessary)
-void FacetedObject::WritePOVRay(std::ostringstream &theString)
+void FacetedObject::writePOVRay(std::ostringstream &theString)
 {
     size_t i, j;
     pgd::Vector3 prel, p, result;
@@ -1079,10 +1079,10 @@ void FacetedObject::WritePOVRay(std::ostringstream &theString)
 }
 
 // Write a FacetedObject out as an OBJ file
-void FacetedObject::WriteOBJFile(std::string filename)
+void FacetedObject::writeOBJFile(std::string filename)
 {
     std::ostringstream objData;
-    WriteOBJFile(objData);
+    writeOBJFile(objData);
     try
     {
         std::ofstream f;
@@ -1101,57 +1101,67 @@ void FacetedObject::WriteOBJFile(std::string filename)
     }
 }
 
-const pgd::Vector3 &FacetedObject::GetDisplayPosition() const
+const pgd::Vector3 &FacetedObject::displayPosition() const
 {
     return m_displayPosition;
 }
 
-const pgd::Matrix3x3 &FacetedObject::GetDisplayRotation() const
+const pgd::Matrix3x3 &FacetedObject::displayRotation() const
 {
     return m_displayRotation;
 }
 
-const pgd::Vector3 &FacetedObject::GetDisplayScale() const
+const pgd::Vector3 &FacetedObject::displayScale() const
 {
     return m_displayScale;
 }
 
-const double *FacetedObject::GetVertex(size_t i) const
+const double *FacetedObject::vertex(size_t i) const
 {
     return &m_vertexList.at(3 * i);
 }
 
-const double *FacetedObject::GetNormal(size_t i) const
+const double *FacetedObject::normal(size_t i) const
 {
     return &m_normalList.at(3 * i);
 }
 
-const std::vector<double> &FacetedObject::GetVertexList() const
+const float *FacetedObject::colour(size_t i) const
+{
+    return &m_colourList.at(3 * i);
+}
+
+const double *FacetedObject::uv(size_t i) const
+{
+    return &m_uvList.at(3 * i);
+}
+
+const std::vector<double> &FacetedObject::vertexList() const
 {
     return m_vertexList;
 }
 
-const std::vector<double> &FacetedObject::GetNormalList() const
+const std::vector<double> &FacetedObject::normalList() const
 {
     return m_normalList;
 }
 
-const std::vector<float> &FacetedObject::GetColourList() const
+const std::vector<float> &FacetedObject::colourList() const
 {
     return m_colourList;
 }
 
-const std::vector<double> &FacetedObject::GetUVList() const
+const std::vector<double> &FacetedObject::uvList() const
 {
     return m_uvList;
 }
 
-size_t FacetedObject::GetNumTriangles() const
+size_t FacetedObject::numTriangles() const
 {
     return m_vertexList.size() / 9;
 }
 
-const double *FacetedObject::GetTriangle(size_t i) const
+const double *FacetedObject::triangle(size_t i) const
 {
     return &m_vertexList.at(9 * i);
 }
@@ -1185,7 +1195,7 @@ pgd::Vector3 FacetedObject::lowerBound() const
 }
 
 // Write a FacetedObject out as a OBJ
-void FacetedObject::WriteOBJFile(std::ostringstream &out)
+void FacetedObject::writeOBJFile(std::ostringstream &out)
 {
     size_t i, j;
     pgd::Vector3 prel, result;
@@ -1203,7 +1213,7 @@ void FacetedObject::WriteOBJFile(std::ostringstream &out)
                 prel[0] = m_vertexList[i * 9 + j * 3];
                 prel[1] = m_vertexList[i * 9 + j * 3 + 1];
                 prel[2] = m_vertexList[i * 9 + j * 3 + 2];
-                ApplyDisplayTransformation(prel, &result);
+                applyDisplayTransformation(prel, &result);
                 out << "v " << result[0] << " " << result[1] << " " << result[2] << "\n";
             }
 
@@ -1226,7 +1236,7 @@ void FacetedObject::WriteOBJFile(std::ostringstream &out)
                 prel[0] = m_vertexList[i * 9 + j * 3];
                 prel[1] = m_vertexList[i * 9 + j * 3 + 1];
                 prel[2] = m_vertexList[i * 9 + j * 3 + 2];
-                ApplyDisplayTransformation(prel, &result);
+                applyDisplayTransformation(prel, &result);
                 out << "v " << result[0] << " " << result[1] << " " << result[2] << "\n";
             }
         }
@@ -1248,7 +1258,7 @@ void FacetedObject::WriteOBJFile(std::ostringstream &out)
 }
 
 // Write a FacetedObject out as a USD file
-void FacetedObject::WriteUSDFile(std::ostringstream &out, const std::string &name)
+void FacetedObject::writeUSDFile(std::ostringstream &out, const std::string &name)
 {
     // add the preamble
     out << "def Xform \"" << name << "_xform\" (kind = \"component\")\n";
@@ -1256,8 +1266,8 @@ void FacetedObject::WriteUSDFile(std::ostringstream &out, const std::string &nam
 
     // create the extent string
     pgd::Vector3 lb, ub;
-    ApplyDisplayTransformation(m_lowerBound, &lb);
-    ApplyDisplayTransformation(m_upperBound, &ub);
+    applyDisplayTransformation(m_lowerBound, &lb);
+    applyDisplayTransformation(m_upperBound, &ub);
     std::vector<char> buffer(512);
     size_t l = std::snprintf(buffer.data(), buffer.size(), "(%g,%g,%g),(%g,%g,%g)", lb.x, lb.y, lb.z, ub.x, ub.y, ub.z);
     std::string extent(buffer.data(), l);
@@ -1334,14 +1344,14 @@ void FacetedObject::WriteUSDFile(std::ostringstream &out, const std::string &nam
                 v1.x = m_vertexList[(it.second[i] + j) * 3]; // qDebug() << (it.second[i] + j) * 3;
                 v1.y = m_vertexList[(it.second[i] + j) * 3 + 1]; // qDebug() << (it.second[i] + j) * 3 + 1;
                 v1.z = m_vertexList[(it.second[i] + j) * 3 + 2]; // qDebug() << (it.second[i] + j) * 3 + 2;
-                ApplyDisplayTransformation(v1, &v2);
+                applyDisplayTransformation(v1, &v2);
                 std::snprintf(buffer.data(), buffer.size(), "(%g,%g,%g),", v2.x, v2.y, v2.z);
                 for (char *ptr = buffer.data(); *ptr != 0; ptr++) { points.push_back(*ptr); }
 
                 v1.x = m_normalList[(it.second[i] + j) * 3];
                 v1.y = m_normalList[(it.second[i] + j) * 3 + 1];
                 v1.z = m_normalList[(it.second[i] + j) * 3 + 2];
-                ApplyDisplayTransformation(v1, &v2);
+                applyDisplayTransformation(v1, &v2);
                 std::snprintf(buffer.data(), buffer.size(), "(%g,%g,%g),", v2.x, v2.y, v2.z);
                 for (char *ptr = buffer.data(); *ptr != 0; ptr++) { normals.push_back(*ptr); }
             }
@@ -1383,7 +1393,7 @@ void FacetedObject::WriteUSDFile(std::ostringstream &out, const std::string &nam
 // Nx = Ay * Bz - Az * By
 // Ny = Az * Bx - Ax * Bz
 // Nz = Ax * By - Ay * Bx
-void FacetedObject::ComputeFaceNormal(const double *v1, const double *v2, const double *v3, double normal[3])
+void FacetedObject::computeFaceNormal(const double *v1, const double *v2, const double *v3, double normal[3])
 {
     double a[3], b[3];
 
@@ -1415,7 +1425,7 @@ void FacetedObject::ComputeFaceNormal(const double *v1, const double *v2, const 
 
 // move the object
 // note this must be used before the first Draw() call
-void FacetedObject::Move(double x, double y, double z)
+void FacetedObject::move(double x, double y, double z)
 {
     if (x == 0.0 && y == 0.0 && z == 0.0) return;
     for (size_t i = 0; i < m_vertexList.size() / 3; i++)
@@ -1434,7 +1444,7 @@ void FacetedObject::Move(double x, double y, double z)
 
 // scale the object
 // note this must be used before the first Draw() call
-void FacetedObject::Scale(double x, double y, double z)
+void FacetedObject::scale(double x, double y, double z)
 {
     if (x == 1.0 && y == 1.0 && z == 1.0) return;
     for (size_t i = 0; i < m_vertexList.size() / 3; i++)
@@ -1453,7 +1463,7 @@ void FacetedObject::Scale(double x, double y, double z)
 
 // rotate the object
 // note this must be used before the first Draw() call
-void FacetedObject::Rotate(double x, double y, double z, double angleDegrees)
+void FacetedObject::rotate(double x, double y, double z, double angleDegrees)
 {
     Q_ASSERT_X(x != 0 || y != 0 || z != 0, "Axis must be non-zero", "FacetedObject::Rotate");
     if (angleDegrees == 0) return;
@@ -1477,10 +1487,10 @@ void FacetedObject::Rotate(double x, double y, double z, double angleDegrees)
 }
 
 
-// this routine triangulates the polygon and calls AddTriangle to do the actual data adding
+// this routine triangulates the polygon and calls addTriangle to do the actual data adding
 // vertices are a packed list of floating point numbers
 // x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4
-void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const double *normals, const double *UVs)
+void FacetedObject::addPolygon(const double *vertices, size_t nSides, const double *normals, const double *UVs)
 {
     if (UVs == nullptr)
     {
@@ -1488,7 +1498,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
         {
             // calculate the normals
             double triNormal[9];
-            ComputeFaceNormal(vertices, vertices + 3, vertices + 6, triNormal);
+            computeFaceNormal(vertices, vertices + 3, vertices + 6, triNormal);
             for (size_t i = 3; i < 9; i++) triNormal[i] = triNormal[i % 3];
             // add faces as triangles
             double triangle[9];
@@ -1503,7 +1513,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
                 triangle[6] = vertices[(j * 3)];
                 triangle[7] = vertices[(j * 3) + 1];
                 triangle[8] = vertices[(j * 3) + 2];
-                AddTriangle(triangle, triNormal, nullptr);
+                addTriangle(triangle, triNormal, nullptr);
             }
         }
         else
@@ -1531,7 +1541,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
                 triNormal[6] = normals[(j * 3)];
                 triNormal[7] = normals[(j * 3) + 1];
                 triNormal[8] = normals[(j * 3) + 2];
-                AddTriangle(triangle, triNormal, nullptr);
+                addTriangle(triangle, triNormal, nullptr);
             }
         }
     }
@@ -1542,7 +1552,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
             // calculate the normals
             double triNormal[9];
             double triUVs[6];
-            ComputeFaceNormal(vertices, vertices + 3, vertices + 6, triNormal);
+            computeFaceNormal(vertices, vertices + 3, vertices + 6, triNormal);
             for (size_t i = 3; i < 9; i++) triNormal[i] = triNormal[i % 3];
             // add faces as triangles
             double triangle[9];
@@ -1563,7 +1573,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
                 triUVs[3] = UVs[(j - 1) * 2 + 1];
                 triUVs[4] = UVs[(j * 2)];
                 triUVs[5] = UVs[(j * 2) + 1];
-                AddTriangle(triangle, triNormal, triUVs);
+                addTriangle(triangle, triNormal, triUVs);
             }
         }
         else
@@ -1598,7 +1608,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
                 triUVs[3] = UVs[(j - 1) * 2 + 1];
                 triUVs[4] = UVs[(j * 2)];
                 triUVs[5] = UVs[(j * 2) + 1];
-                AddTriangle(triangle, triNormal, triUVs);
+                addTriangle(triangle, triNormal, triUVs);
             }
         }
     }
@@ -1610,7 +1620,7 @@ void FacetedObject::AddPolygon(const double *vertices, size_t nSides, const doub
 // it gets called by add polygon
 // vertices is a packed list of floating point numbers
 // x1, y1, z1, x2, y2, z2, x3, y3, z3
-void FacetedObject::AddTriangle(const double *vertices, const double *normals, const double *UVs)
+void FacetedObject::addTriangle(const double *vertices, const double *normals, const double *UVs)
 {
     Q_ASSERT_X(m_vertexList.capacity() - m_vertexList.size() >= 9, "FacetedObject::AddTriangle", "Warning: not enough triangle space reserved");
     pgd::Vector3 vertex;
@@ -1637,7 +1647,7 @@ void FacetedObject::AddTriangle(const double *vertices, const double *normals, c
     {
         // calculate the normals
         double normal[3];
-        ComputeFaceNormal(vertices, vertices + 3, vertices + 6, normal);
+        computeFaceNormal(vertices, vertices + 3, vertices + 6, normal);
         for (size_t i = 0; i < 9; i++) m_normalList.push_back(normal[i % 3]);
     }
     if (UVs)
@@ -1655,7 +1665,7 @@ void FacetedObject::AddTriangle(const double *vertices, const double *normals, c
 // this routine triangulates the polygon and calls AddTriangle to do the actual data adding
 // vertices are a packed list of floating point numbers
 // x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4
-void FacetedObject::AddPolygon(const float *floatVertices, size_t nSides, const float *floatNormals, const float *floatUVs)
+void FacetedObject::addPolygon(const float *floatVertices, size_t nSides, const float *floatNormals, const float *floatUVs)
 {
     if (floatUVs == nullptr)
     {
@@ -1668,11 +1678,11 @@ void FacetedObject::AddPolygon(const float *floatVertices, size_t nSides, const 
             std::vector<double> normals;
             normals.reserve(nVertices);
             for (size_t i = 0; i < nVertices; i++) normals.push_back(double(floatNormals[i]));
-            AddPolygon(doubleVertices.data(), nSides, normals.data(), nullptr);
+            addPolygon(doubleVertices.data(), nSides, normals.data(), nullptr);
         }
         else
         {
-            AddPolygon(doubleVertices.data(), nSides, nullptr, nullptr);
+            addPolygon(doubleVertices.data(), nSides, nullptr, nullptr);
         }
     }
     else
@@ -1690,11 +1700,11 @@ void FacetedObject::AddPolygon(const float *floatVertices, size_t nSides, const 
             std::vector<double> normals;
             normals.reserve(nVertices);
             for (size_t i = 0; i < nVertices; i++) normals.push_back(double(floatNormals[i]));
-            AddPolygon(doubleVertices.data(), nSides, normals.data(), doubleUVs.data());
+            addPolygon(doubleVertices.data(), nSides, normals.data(), doubleUVs.data());
         }
         else
         {
-            AddPolygon(doubleVertices.data(), nSides, nullptr, doubleUVs.data());
+            addPolygon(doubleVertices.data(), nSides, nullptr, doubleUVs.data());
         }
     }
 }
@@ -1703,7 +1713,7 @@ void FacetedObject::AddPolygon(const float *floatVertices, size_t nSides, const 
 // this is just a convenience function to allow AddTraingles to be called with floats rather than doubles
 // vertices is a packed list of floating point numbers
 // x1, y1, z1, x2, y2, z2, x3, y3, z3
-void FacetedObject::AddTriangle(const float *floatVertices, const float *floatNormals, const float *floatUVs)
+void FacetedObject::addTriangle(const float *floatVertices, const float *floatNormals, const float *floatUVs)
 {
     if (floatUVs == nullptr)
     {
@@ -1713,11 +1723,11 @@ void FacetedObject::AddTriangle(const float *floatVertices, const float *floatNo
         {
             double normals[9];
             for (int i = 0; i < 9; i++) normals[i] = double(floatNormals[i]);
-            AddTriangle(vertices, normals, nullptr);
+            addTriangle(vertices, normals, nullptr);
         }
         else
         {
-            AddTriangle(vertices, nullptr, nullptr);
+            addTriangle(vertices, nullptr, nullptr);
         }
     }
     else
@@ -1730,18 +1740,18 @@ void FacetedObject::AddTriangle(const float *floatVertices, const float *floatNo
         {
             double normals[9];
             for (int i = 0; i < 9; i++) normals[i] = double(floatNormals[i]);
-            AddTriangle(vertices, normals, UVs);
+            addTriangle(vertices, normals, UVs);
         }
         else
         {
-            AddTriangle(vertices, nullptr, UVs);
+            addTriangle(vertices, nullptr, UVs);
         }
     }
 }
 
 // this routine handles the memory allocation
 // allocation is the number of vertices to store
-void FacetedObject::AllocateMemory(size_t numTriangles)
+void FacetedObject::allocateMemory(size_t numTriangles)
 {
 //    qDebug() << "Allocated " << numTriangles << " triangles\n";
     m_vertexList.reserve(numTriangles * 9);
@@ -1765,7 +1775,7 @@ void FacetedObject::AllocateMemory(size_t numTriangles)
 // the mass properties are calculated around the world origin
 // these can be moved to around the centroid if wanted using the parallel axes rules
 
-void FacetedObject::CalculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor)
+void FacetedObject::calculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor)
 {
     // assumes anticlockwise winding unless clockwise is set
     unsigned int triangles = static_cast<unsigned int>((m_vertexList.size() / 3) / 3);
@@ -1991,7 +2001,7 @@ void FacetedObject::CalculateMassProperties(double density, bool clockwise, cons
 }
 
 // reverse the face winding
-void FacetedObject::ReverseWinding()
+void FacetedObject::reverseWinding()
 {
     double t;
     size_t numTriangles = (m_vertexList.size() / 3) / 3;
@@ -2009,9 +2019,9 @@ void FacetedObject::ReverseWinding()
 }
 
 // add the faces from one faceted object to another
-// useDirectAccess version does not use AddTriangle
+// useDirectAccess version does not use addTriangle
 // there is probably no good reason currently not to use useDirectAccess
-void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDisplayRotation, bool useDirectAccess)
+void FacetedObject::addFacetedObject(const FacetedObject *object, bool useDisplayRotation, bool useDirectAccess)
 {
     if (useDirectAccess)
     {
@@ -2025,14 +2035,14 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
         {
             for (size_t i = 0; i < object->m_vertexList.size(); i += 3)
             {
-                ApplyDisplayTransformation(&object->m_vertexList[i], reinterpret_cast<pgd::Vector3 *>(&m_vertexList[i + offset]));
-                ApplyDisplayRotation(&object->m_normalList[i], reinterpret_cast<pgd::Vector3 *>(&m_normalList[i + offset]));
+                applyDisplayTransformation(&object->m_vertexList[i], reinterpret_cast<pgd::Vector3 *>(&m_vertexList[i + offset]));
+                applyDisplayRotation(&object->m_normalList[i], reinterpret_cast<pgd::Vector3 *>(&m_normalList[i + offset]));
             }
             for (size_t i = 0; i < object->m_colourList.size(); i++) m_colourList[i + offset] = object->m_colourList[i];
             for (size_t i = 0; i < object->m_uvList.size(); i++) m_uvList[i + offsetUV] = object->m_uvList[i];
             pgd::Vector3 lower, upper;
-            ApplyDisplayTransformation(m_lowerBound, &lower);
-            ApplyDisplayTransformation(m_upperBound, &upper);
+            applyDisplayTransformation(m_lowerBound, &lower);
+            applyDisplayTransformation(m_upperBound, &upper);
             if (lower.x < m_lowerBound[0]) m_lowerBound[0] = lower.x;
             if (lower.y < m_lowerBound[1]) m_lowerBound[1] = lower.y;
             if (lower.z < m_lowerBound[2]) m_lowerBound[2] = lower.z;
@@ -2059,7 +2069,7 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
     }
     else
     {
-        size_t numTriangles = object->GetNumTriangles();
+        size_t numTriangles = object->numTriangles();
         const double *triangle;
         const double *p1;
         double *p2;
@@ -2070,7 +2080,7 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
         {
             for (size_t i = 0; i < numTriangles; i++)
             {
-                triangle = object->GetTriangle(i);
+                triangle = object->triangle(i);
                 for (int j = 0; j < 3; j++)
                 {
                     p1 = triangle + 3 * j;
@@ -2083,15 +2093,15 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
                     p2[1] = v1r[1] + m_displayPosition[1];
                     p2[2] = v1r[2] + m_displayPosition[2];
                 }
-                AddTriangle(triangle2);
+                addTriangle(triangle2);
             }
         }
         else
         {
             for (size_t i = 0; i < numTriangles; i++)
             {
-                triangle = object->GetTriangle(i);
-                AddTriangle(triangle);
+                triangle = object->triangle(i);
+                addTriangle(triangle);
             }
         }
     }
@@ -2103,7 +2113,7 @@ void FacetedObject::AddFacetedObject(const FacetedObject *object, bool useDispla
 // the normalList is 9 times the number of triangles
 // the colourList is 9 times the number of triangles
 // the uvList is 6 times the number of triangles
-void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<float> *colourList, const std::vector<double> *uvList)
+void FacetedObject::rawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<float> *colourList, const std::vector<double> *uvList)
 {
     if (vertexList)
     {
@@ -2125,10 +2135,10 @@ void FacetedObject::RawAppend(const std::vector<double> *vertexList, const std::
         m_uvList.reserve(m_uvList.size() + uvList->size());
         m_uvList.insert(m_uvList.end(), uvList->begin(), uvList->end());
     }
-    UpdateBoundingBox();
+    updateBoundingBox();
 }
 
-void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList)
+void FacetedObject::rawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList)
 {
     if (vertexList)
     {
@@ -2150,10 +2160,10 @@ void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexLi
         m_uvList.reserve(m_uvList.size() + uvList->size() * 2);
         for (auto &&i : *uvList) { for (auto &&j : i) { m_uvList.push_back(j); } }
     }
-    UpdateBoundingBox();
+    updateBoundingBox();
 }
 
-void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList)
+void FacetedObject::rawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList)
 {
     if (vertexList)
     {
@@ -2175,10 +2185,10 @@ void FacetedObject::RawAppend(const std::vector<std::array<double, 3>> *vertexLi
         m_uvList.reserve(m_uvList.size() + uvList->size() * 2);
         for (auto &&i : *uvList) { for (auto &&j : i) { m_uvList.push_back(j); } }
     }
-    UpdateBoundingBox();
+    updateBoundingBox();
 }
 
-void FacetedObject::UpdateBoundingBox()
+void FacetedObject::updateBoundingBox()
 {
     m_lowerBound = {std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
     m_upperBound = {-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
@@ -2204,7 +2214,7 @@ void FacetedObject::UpdateBoundingBox()
 // is a fast method for calculating the intersection of a ray and a triangle in three dimensions without needing
 // precomputation of the plane equation of the plane containing the triangle.
 
-bool FacetedObject::RayIntersectsTriangle(const pgd::Vector3 &rayOrigin,
+bool FacetedObject::rayIntersectsTriangle(const pgd::Vector3 &rayOrigin,
                                           const pgd::Vector3 &rayVector,
                                           const pgd::Vector3 &vertex0,
                                           const pgd::Vector3 &vertex1,
@@ -2246,7 +2256,7 @@ bool FacetedObject::RayIntersectsTriangle(const pgd::Vector3 &rayOrigin,
 // from "Graphics Gems", Academic Press, 1990
 
 #define HITBOUNDINBOX_NUMDIM  3
-bool FacetedObject::HitBoundingBox(const double minB[HITBOUNDINBOX_NUMDIM], const double maxB[HITBOUNDINBOX_NUMDIM],      /*box */
+bool FacetedObject::hitBoundingBox(const double minB[HITBOUNDINBOX_NUMDIM], const double maxB[HITBOUNDINBOX_NUMDIM],      /*box */
                                    const double rayOrigin[HITBOUNDINBOX_NUMDIM], const double rayVector[HITBOUNDINBOX_NUMDIM],     /*ray */
                                    double coord[HITBOUNDINBOX_NUMDIM])                                                    /* hit point */
 {
@@ -2329,13 +2339,13 @@ bool FacetedObject::HitBoundingBox(const double minB[HITBOUNDINBOX_NUMDIM], cons
 }
 
 // this routine works in model coordinates and rayVector must be unit length
-int FacetedObject::FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Vector3 &rayVector, std::vector<pgd::Vector3> *intersectionCoordList, std::vector<size_t> *intersectionIndexList) const
+int FacetedObject::findIntersection(const pgd::Vector3 &rayOrigin, const pgd::Vector3 &rayVector, std::vector<pgd::Vector3> *intersectionCoordList, std::vector<size_t> *intersectionIndexList) const
 {
     if (!m_visible || !m_vertexList.size()) return 0;
 
     // first check bounding box
     double coord[3];
-    bool bbHit = HitBoundingBox(m_lowerBound.constData(), m_upperBound.constData(), rayOrigin.constData(), rayVector.constData(), coord);
+    bool bbHit = hitBoundingBox(m_lowerBound.constData(), m_upperBound.constData(), rayOrigin.constData(), rayVector.constData(), coord);
     if (!bbHit) return 0;
 
     // now loop through the triangles
@@ -2359,7 +2369,7 @@ int FacetedObject::FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Ve
             }
         }
 #else
-        triHit = RayIntersectsTriangle(rayOrigin, rayVector, &m_vertexList[i], &m_vertexList[i + 3], &m_vertexList[i + 6], &outIntersectionPoint);
+        triHit = rayIntersectsTriangle(rayOrigin, rayVector, &m_vertexList[i], &m_vertexList[i + 3], &m_vertexList[i + 6], &outIntersectionPoint);
         if (triHit)
         {
             hitCount++;
@@ -2372,18 +2382,18 @@ int FacetedObject::FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Ve
     return hitCount;
 }
 
-void FacetedObject::ApplyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec)
+void FacetedObject::applyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec)
 {
     pgd::Vector3 scaled(inVec.x * m_displayScale[0], inVec.y * m_displayScale[1], inVec.z * m_displayScale[2]);
     *outVec = (m_displayRotation * scaled) + m_displayPosition;
 }
 
-void FacetedObject::ApplyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec)
+void FacetedObject::applyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec)
 {
     *outVec = m_displayRotation * inVec;
 }
 
-void FacetedObject::SetDisplayPosition(double x, double y, double z)
+void FacetedObject::setDisplayPosition(double x, double y, double z)
 {
     m_displayPosition[0] = x;
     m_displayPosition[1] = y;
@@ -2391,7 +2401,7 @@ void FacetedObject::SetDisplayPosition(double x, double y, double z)
     m_modelValid = false;
 }
 
-void FacetedObject::SetDisplayScale(double x, double y, double z)
+void FacetedObject::setDisplayScale(double x, double y, double z)
 {
     m_displayScale[0] = x;
     m_displayScale[1] = y;
@@ -2399,19 +2409,19 @@ void FacetedObject::SetDisplayScale(double x, double y, double z)
     m_modelValid = false;
 }
 
-void FacetedObject::SetDisplayPosition(const pgd::Vector3 &displayPosition)
+void FacetedObject::setDisplayPosition(const pgd::Vector3 &displayPosition)
 {
     m_displayPosition = displayPosition;
     m_modelValid = false;
 }
 
-void FacetedObject::SetDisplayScale(const pgd::Vector3 &displayScale)
+void FacetedObject::setDisplayScale(const pgd::Vector3 &displayScale)
 {
     m_displayScale = displayScale;
     m_modelValid = false;
 }
 
-void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 &R)
+void FacetedObject::setDisplayRotation(const pgd::Matrix3x3 &R)
 {
     m_displayRotation = R;
     m_displayQuaternion = pgd::makeQfromM(R);
@@ -2419,14 +2429,14 @@ void FacetedObject::SetDisplayRotation(const pgd::Matrix3x3 &R)
 }
 
 // pgd::Quaternion q [ w, x, y, z ], where w is the real part and (x, y, z) form the vector part.
-void FacetedObject::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
+void FacetedObject::setDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
     m_displayQuaternion = q;
     m_displayRotation = pgd::makeMFromQ(q);
     m_modelValid = false;
 }
 
-void FacetedObject::ClearMeshStore()
+void FacetedObject::clearMeshStore()
 {
     m_meshStore.clear();
 }
