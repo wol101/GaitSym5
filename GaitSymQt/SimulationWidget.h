@@ -2,7 +2,6 @@
 #define SIMULATIONWIDGET_H
 
 #include "DrawDataTarget.h"
-#include "StrokeFont.h"
 #include "IntersectionHits.h"
 #include "DrawBody.h"
 #include "DrawJoint.h"
@@ -49,8 +48,8 @@ public:
     float cameraDistance() const;
     void setCameraDistance(float cameraDistance);
 
-    float FOV() const;
-    void setFOV(float FOV);
+    float fieldOfView() const;
+    void setFieldOfView(float fieldOfView);
 
     float cameraVecX() const;
     void setCameraVecX(float cameraVecX);
@@ -61,14 +60,14 @@ public:
     float cameraVecZ() const;
     void setCameraVecZ(float cameraVecZ);
 
-    float COIx() const;
-    void setCOIx(float COIx);
+    float centreOfInterestX() const;
+    void setCentreOfInterestX(float centreOfInterestX);
 
-    float COIy() const;
-    void setCOIy(float COIy);
+    float centreOfInterestY() const;
+    void setCentreOfInterestY(float centreOfInterestY);
 
-    float COIz() const;
-    void setCOIz(float COIz);
+    float centreOfInterestZ() const;
+    void setCentreOfInterestZ(float centreOfInterestZ);
 
     float frontClip() const;
     void setFrontClip(float frontClip);
@@ -103,18 +102,18 @@ public:
     bool halfTransparency() const;
     void setHalfTransparency(bool halfTransparency);
 
-    int WriteStillFrame(const QString &filename);
-    int WriteMovieFrame();
-    int WriteCADFrame(const QString &pathname);
-    int WriteUSDFrame(const QString &pathname);
-    int StartAVISave(const QString &filename);
-    int StopAVISave();
+    int writeStillFrame(const QString &filename);
+    int writeMovieFrame();
+    int writeCADFrame(const QString &pathname);
+    int writeUSDFrame(const QString &pathname);
+    int startAVISave(const QString &filename);
+    int stopAVISave();
 
 //    void AddExtraObjectToDraw(const std::string &name, std::shared_ptr<FacetedObject> object);
 //    size_t DeleteExtraObjectToDraw(const std::string &name);
 //    std::shared_ptr<FacetedObject> GetExtraObjectToDraw(const std::string &name);
 
-    bool DeleteDrawBody(const std::string &bodyName);
+    bool deleteDrawBody(const std::string &bodyName);
 
     AVIWriter *aviWriter() const;
 
@@ -133,56 +132,56 @@ public:
     QMatrix4x4 proj() const;
     QMatrix4x4 view() const;
 
-    bool getDrawBodyMesh1() const;
+    bool drawBodyMesh1() const;
     void setDrawBodyMesh1(bool drawBodyMesh1);
 
-    bool getDrawBodyMesh2() const;
+    bool drawBodyMesh2() const;
     void setDrawBodyMesh2(bool drawBodyMesh2);
 
-    bool getDrawBodyMesh3() const;
+    bool drawBodyMesh3() const;
     void setDrawBodyMesh3(bool drawBodyMesh3);
 
-    const IntersectionHits *getClosestHit() const;
+    const IntersectionHits *closestHit() const;
 
-    QString getLastMenuItem() const;
+    QString lastMenuItem() const;
 
-    std::map<std::string, std::unique_ptr<DrawBody>> *getDrawBodyMap();
-    std::map<std::string, std::unique_ptr<DrawJoint>> *getDrawJointMap();
-    std::map<std::string, std::unique_ptr<DrawGeom>> *getDrawGeomMap();
-    std::map<std::string, std::unique_ptr<DrawMuscle>> *getDrawMuscleMap();
-    std::map<std::string, std::unique_ptr<DrawFluidSac>> *getDrawFluidSacMap();
-    std::map<std::string, std::unique_ptr<DrawMarker>> *getDrawMarkerMap();
-    std::map<std::string, std::unique_ptr<DrawDataTarget>> *getDrawDataTargetMap();
+    std::map<std::string, std::unique_ptr<DrawBody>> *drawBodyMap();
+    std::map<std::string, std::unique_ptr<DrawJoint>> *drawJointMap();
+    std::map<std::string, std::unique_ptr<DrawGeom>> *drawGeomMap();
+    std::map<std::string, std::unique_ptr<DrawMuscle>> *drawMuscleMap();
+    std::map<std::string, std::unique_ptr<DrawFluidSac>> *drawFluidSacMap();
+    std::map<std::string, std::unique_ptr<DrawMarker>> *drawMarkerMap();
+    std::map<std::string, std::unique_ptr<DrawDataTarget>> *drawDataTargetMap();
 
     bool shadows() const;
     void setShadows(bool newShadows);
 
 public slots:
-    void SetCameraVec(float x, float y, float z);
-    void SetCameraVec(double x, double y, double z);
+    void setCameraVec(float x, float y, float z);
+    void setCameraVec(double x, double y, double z);
     void menuRequest(const QPoint &pos);
 
 signals:
-    void EmitStatusString(const QString &s, int logLevel);
-    void EmitCOI(float x, float y, float z);
-    void EmitFoV(float v);
-    void EmitCreateMarkerRequest();
-    void EmitEditMarkerRequest(const QString &s);
-    void EmitMoveMarkerRequest(const QString &s, const QVector3D &p);
-    void EmitEditBodyRequest(const QString &s);
-    void EmitEditGeomRequest(const QString &s);
-    void EmitEditJointRequest(const QString &s);
-    void EmitEditMuscleRequest(const QString &s);
-//    void EmitEditFluidSacRequest(const QString &s);
-    void EmitDeleteMarkerRequest(const QString &s);
-    void EmitDeleteBodyRequest(const QString &s);
-    void EmitDeleteGeomRequest(const QString &s);
-    void EmitDeleteJointRequest(const QString &s);
-    void EmitDeleteMuscleRequest(const QString &s);
-//    void EmitDeleteFluidSacRequest(const QString &s);
-    void EmitInfoRequest(const QString &elementType, const QString &elementName);
-    void EmitHideRequest(const QString &elementType, const QString &elementName);
-    void EmitResize(int width, int height);
+    void emitStatusString(const QString &s, int logLevel);
+    void emitCOI(float x, float y, float z);
+    void emitFoV(float v);
+    void emitCreateMarkerRequest();
+    void emitEditMarkerRequest(const QString &s);
+    void emitMoveMarkerRequest(const QString &s, const QVector3D &p);
+    void emitEditBodyRequest(const QString &s);
+    void emitEditGeomRequest(const QString &s);
+    void emitEditJointRequest(const QString &s);
+    void emitEditMuscleRequest(const QString &s);
+//    void emitEditFluidSacRequest(const QString &s);
+    void emitDeleteMarkerRequest(const QString &s);
+    void emitDeleteBodyRequest(const QString &s);
+    void emitDeleteGeomRequest(const QString &s);
+    void emitDeleteJointRequest(const QString &s);
+    void emitDeleteMuscleRequest(const QString &s);
+//    void emitDeleteFluidSacRequest(const QString &s);
+    void emitInfoRequest(const QString &elementType, const QString &elementName);
+    void emitHideRequest(const QString &elementType, const QString &elementName);
+    void emitResize(int width, int height);
 
 protected:
     virtual void initializeGL() Q_DECL_OVERRIDE;
@@ -195,7 +194,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    void SetupLights();
+    void setupLights();
     void drawModel();
     bool intersectModel(float winX, float winY);
 
@@ -211,9 +210,9 @@ private:
 
     bool m_orthographicProjection = true;
     float m_cameraDistance = 50;
-    float m_FOV = 5;
+    float m_fieldOfView = 5;
     float m_cameraVecX = 0, m_cameraVecY = 1, m_cameraVecZ = 0;
-    float m_COIx = 0, m_COIy = 0, m_COIz = 0;
+    float m_centreOfInterestX = 0, m_centreOfInterestY = 0, m_centreOfInterestZ = 0;
     float m_frontClip = 1;
     float m_backClip = 1000;
     float m_upX = 0, m_upY = 0, m_upZ = 1;
@@ -260,10 +259,6 @@ private:
     bool m_drawBodyMesh1 = true;
     bool m_drawBodyMesh2 = false;
     bool m_drawBodyMesh3 = false;
-
-    StrokeFont m_StrokeFont;
-    GLuint m_LineBuffer;
-    GLuint m_LineColourBuffer;
 
     bool m_moveMarkerMode = false;
     std::string m_moveMarkerName;

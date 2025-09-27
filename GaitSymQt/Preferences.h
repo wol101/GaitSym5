@@ -45,11 +45,11 @@ public:
     static void read();
     static void write();
 
-    static void export(const QString &filename, const QMap<QString, SettingsItem> &settings);
+    static void exportToFile(const QString &filename, const QMap<QString, SettingsItem> &settings);
     static QByteArray exportData(const QMap<QString, SettingsItem> &settings);
-    static QMap<QString, SettingsItem> import(const QString &filename);
-    static QMap<QString, SettingsItem> ImportData(const QByteArray &xmlData);
-    static QMap<QString, SettingsItem> ImportDefaults();
+    static QMap<QString, SettingsItem> importFromFile(const QString &filename);
+    static QMap<QString, SettingsItem> importData(const QByteArray &xmlData);
+    static QMap<QString, SettingsItem> importDefaults();
 
     static const SettingsItem settingsItem(const QString &key);
     static const QVariant valueQVariant(const QString &key);
@@ -102,7 +102,7 @@ private:
     static const QString applicationName;
     static const QString organizationName;
 
-    static QMap<QString, SettingsItem> ParseQDomElement(const QDomElement &docElem);
+    static QMap<QString, SettingsItem> parseQDomElement(const QDomElement &docElem);
 
     static void setQtValue(const QString &key, const QVariant &value);
     static QVariant qtValue(const QString &key, const QVariant &defaultValue);

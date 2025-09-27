@@ -315,7 +315,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         switch (ret)
         {
         case QMessageBox::Ok:
-            if (m_movieFlag) { m_simulationWidget->StopAVISave(); }
+            if (m_movieFlag) { m_simulationWidget->stopAVISave(); }
             writeSettings();
             QMainWindow::closeEvent(event);
             break;
@@ -330,7 +330,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
-        if (m_movieFlag) { m_simulationWidget->StopAVISave(); }
+        if (m_movieFlag) { m_simulationWidget->stopAVISave(); }
         writeSettings();
         QMainWindow::closeEvent(event);
     }
@@ -364,12 +364,12 @@ void MainWindow::processOneThing()
                 m_stepFlag = false;
                 m_timer->stop();
             }
-            m_simulationWidget->getDrawMuscleMap()->clear(); // force a redraw of all muscles
-            m_simulationWidget->getDrawFluidSacMap()->clear(); // force a redraw of all fluid sacs
+            m_simulationWidget->drawMuscleMap()->clear(); // force a redraw of all muscles
+            m_simulationWidget->drawFluidSacMap()->clear(); // force a redraw of all fluid sacs
             m_simulationWidget->update();
             if (m_movieFlag)
             {
-                m_simulationWidget->WriteMovieFrame();
+                m_simulationWidget->writeMovieFrame();
             }
             if (m_saveOBJFileSequenceFlag)
             {
@@ -380,10 +380,10 @@ void MainWindow::processOneThing()
                 switch (m_objFileFormat)
                 {
                 case obj:
-                    m_simulationWidget->WriteCADFrame(path);
+                    m_simulationWidget->writeCADFrame(path);
                     break;
                 case usda:
-                    m_simulationWidget->WriteUSDFrame(path);
+                    m_simulationWidget->writeUSDFrame(path);
                     break;
                 }
             }
@@ -444,17 +444,17 @@ void MainWindow::handleTracking()
         pgd::Vector3 position = marker->worldPosition();
         if (ui->radioButtonTrackingX->isChecked())
         {
-            m_simulationWidget->setCOIx(float(position.x + ui->doubleSpinBoxTrackingOffset->value()));
+            m_simulationWidget->setCentreOfInterestX(float(position.x + ui->doubleSpinBoxTrackingOffset->value()));
             ui->doubleSpinBoxCOIX->setValue(position.x + ui->doubleSpinBoxTrackingOffset->value());
         }
         if (ui->radioButtonTrackingY->isChecked())
         {
-            m_simulationWidget->setCOIy(float(position.y + ui->doubleSpinBoxTrackingOffset->value()));
+            m_simulationWidget->setCentreOfInterestY(float(position.y + ui->doubleSpinBoxTrackingOffset->value()));
             ui->doubleSpinBoxCOIY->setValue(position.y + ui->doubleSpinBoxTrackingOffset->value());
         }
         if (ui->radioButtonTrackingZ->isChecked())
         {
-            m_simulationWidget->setCOIz(float(position.z + ui->doubleSpinBoxTrackingOffset->value()));
+            m_simulationWidget->setCentreOfInterestZ(float(position.z + ui->doubleSpinBoxTrackingOffset->value()));
             ui->doubleSpinBoxCOIZ->setValue(position.z + ui->doubleSpinBoxTrackingOffset->value());
         }
         m_simulationWidget->update();
@@ -478,7 +478,7 @@ void MainWindow::spinboxDistanceChanged(double v)
 void MainWindow::spinboxFoVChanged(double v)
 {
     Preferences::insert("CameraFoV", v);
-    m_simulationWidget->setFOV(float(v));
+    m_simulationWidget->setFieldOfView(float(v));
     m_simulationWidget->update();
 }
 
@@ -486,7 +486,7 @@ void MainWindow::spinboxFoVChanged(double v)
 void MainWindow::spinboxCOIXChanged(double v)
 {
     Preferences::insert("CameraCOIX", v);
-    m_simulationWidget->setCOIx(float(v));
+    m_simulationWidget->setCentreOfInterestX(float(v));
     m_simulationWidget->update();
 }
 
@@ -494,7 +494,7 @@ void MainWindow::spinboxCOIXChanged(double v)
 void MainWindow::spinboxCOIYChanged(double v)
 {
     Preferences::insert("CameraCOIY", v);
-    m_simulationWidget->setCOIy(float(v));
+    m_simulationWidget->setCentreOfInterestY(float(v));
     m_simulationWidget->update();
 }
 
@@ -502,7 +502,7 @@ void MainWindow::spinboxCOIYChanged(double v)
 void MainWindow::spinboxCOIZChanged(double v)
 {
     Preferences::insert("CameraCOIZ", v);
-    m_simulationWidget->setCOIz(float(v));
+    m_simulationWidget->setCentreOfInterestZ(float(v));
     m_simulationWidget->update();
 }
 
@@ -590,13 +590,13 @@ void MainWindow::spinboxFPSChanged(double v)
 void MainWindow::setInterfaceValues()
 {
     m_simulationWidget->setCameraDistance(float(Preferences::valueDouble("CameraDistance")));
-    m_simulationWidget->setFOV(float(Preferences::valueDouble("CameraFoV")));
+    m_simulationWidget->setFieldOfView(float(Preferences::valueDouble("CameraFoV")));
     m_simulationWidget->setCameraVecX(float(Preferences::valueDouble("CameraVecX")));
     m_simulationWidget->setCameraVecY(float(Preferences::valueDouble("CameraVecY")));
     m_simulationWidget->setCameraVecZ(float(Preferences::valueDouble("CameraVecZ")));
-    m_simulationWidget->setCOIx(float(Preferences::valueDouble("CameraCOIX")));
-    m_simulationWidget->setCOIy(float(Preferences::valueDouble("CameraCOIY")));
-    m_simulationWidget->setCOIz(float(Preferences::valueDouble("CameraCOIZ")));
+    m_simulationWidget->setCentreOfInterestX(float(Preferences::valueDouble("CameraCOIX")));
+    m_simulationWidget->setCentreOfInterestY(float(Preferences::valueDouble("CameraCOIY")));
+    m_simulationWidget->setCentreOfInterestZ(float(Preferences::valueDouble("CameraCOIZ")));
     m_simulationWidget->setFrontClip(float(Preferences::valueDouble("CameraFrontClip")));
     m_simulationWidget->setBackClip(float(Preferences::valueDouble("CameraBackClip")));
     m_simulationWidget->setUpX(float(Preferences::valueDouble("CameraUpX")));
@@ -1580,7 +1580,7 @@ void MainWindow::menuExportOpenSim()
         setStatusString(QString("Exporting \"%1\"").arg(fileName), 1);
         GaitSym::OpenSimExporter openSimExporter;
         openSimExporter.setMocoExport(Preferences::valueBool("OpenSimMocoExport", false));
-        for (auto &&it : *m_simulationWidget->getDrawBodyMap())
+        for (auto &&it : *m_simulationWidget->drawBodyMap())
         {
             GaitSym::Body *body = m_simulation->getBody(it.first);
             if (it.second->meshEntity1() && body)
@@ -1704,7 +1704,7 @@ void MainWindow::snapshot()
         count = numberString.toInt() + 1;
     }
     QString filename = dir.absoluteFilePath(QString("Snapshot%1.png").arg(count, 5, 10, QChar('0')));
-    if (this->m_simulationWidget->WriteStillFrame(filename))
+    if (this->m_simulationWidget->writeStillFrame(filename))
     {
         QMessageBox::warning(this, "Snapshot Error", QString("Could not write '%1'\n").arg(filename));
         return;
@@ -1722,7 +1722,7 @@ void MainWindow::objSnapshot()
     {
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         this->setStatusString(QString("Writing to \"%1\"").arg(folder), 1);
-        if (this->m_simulationWidget->WriteCADFrame(folder))
+        if (this->m_simulationWidget->writeCADFrame(folder))
         {
             this->setStatusString(QString("Error: Folder '%1' write fail\n").arg(folder), 0);
             return;
@@ -1750,7 +1750,7 @@ void MainWindow::usdSnapshot()
     {
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         this->setStatusString(QString("Writing \"%1\"").arg(filename), 1);
-        if (this->m_simulationWidget->WriteUSDFrame(filename))
+        if (this->m_simulationWidget->writeUSDFrame(filename))
         {
             QMessageBox::warning(this, "Snapshot Error", QString("Could not write '%1'\n").arg(filename));
             return;
@@ -1771,7 +1771,7 @@ void MainWindow::menuRecordMovie()
         if (fileName.isNull() == false)
         {
             this->m_movieFlag = true;
-            this->m_simulationWidget->StartAVISave(fileName);
+            this->m_simulationWidget->startAVISave(fileName);
         }
         else
         {
@@ -1834,13 +1834,13 @@ void MainWindow::menuLoadDefaultView()
     this->ui->doubleSpinBoxTrackingOffset->setValue(Preferences::valueDouble("DefaultTrackingOffset"));
 
     this->m_simulationWidget->setCameraDistance(float(Preferences::valueDouble("DefaultCameraDistance")));
-    this->m_simulationWidget->setFOV(float(Preferences::valueDouble("DefaultCameraFoV")));
+    this->m_simulationWidget->setFieldOfView(float(Preferences::valueDouble("DefaultCameraFoV")));
     this->m_simulationWidget->setCameraVecX(float(Preferences::valueDouble("DefaultCameraVecX")));
     this->m_simulationWidget->setCameraVecY(float(Preferences::valueDouble("DefaultCameraVecY")));
     this->m_simulationWidget->setCameraVecZ(float(Preferences::valueDouble("DefaultCameraVecZ")));
-    this->m_simulationWidget->setCOIx(float(Preferences::valueDouble("DefaultCameraCOIX")));
-    this->m_simulationWidget->setCOIy(float(Preferences::valueDouble("DefaultCameraCOIY")));
-    this->m_simulationWidget->setCOIz(float(Preferences::valueDouble("DefaultCameraCOIZ")));
+    this->m_simulationWidget->setCentreOfInterestX(float(Preferences::valueDouble("DefaultCameraCOIX")));
+    this->m_simulationWidget->setCentreOfInterestY(float(Preferences::valueDouble("DefaultCameraCOIY")));
+    this->m_simulationWidget->setCentreOfInterestZ(float(Preferences::valueDouble("DefaultCameraCOIZ")));
     this->m_simulationWidget->setUpX(float(Preferences::valueDouble("DefaultCameraUpX")));
     this->m_simulationWidget->setUpY(float(Preferences::valueDouble("DefaultCameraUpY")));
     this->m_simulationWidget->setUpZ(float(Preferences::valueDouble("DefaultCameraUpZ")));
@@ -1855,10 +1855,10 @@ void MainWindow::menuSaveDefaultView()
     Preferences::insert("DefaultTrackingOffset", this->ui->doubleSpinBoxTrackingOffset->value());
 
     Preferences::insert("DefaultCameraDistance", this->m_simulationWidget->cameraDistance());
-    Preferences::insert("DefaultCameraFoV", this->m_simulationWidget->FOV());
-    Preferences::insert("DefaultCameraCOIX", this->m_simulationWidget->COIx());
-    Preferences::insert("DefaultCameraCOIY", this->m_simulationWidget->COIy());
-    Preferences::insert("DefaultCameraCOIZ", this->m_simulationWidget->COIz());
+    Preferences::insert("DefaultCameraFoV", this->m_simulationWidget->fieldOfView());
+    Preferences::insert("DefaultCameraCOIX", this->m_simulationWidget->centreOfInterestX());
+    Preferences::insert("DefaultCameraCOIY", this->m_simulationWidget->centreOfInterestY());
+    Preferences::insert("DefaultCameraCOIZ", this->m_simulationWidget->centreOfInterestZ());
     Preferences::insert("DefaultCameraVecX", this->m_simulationWidget->cameraVecX());
     Preferences::insert("DefaultCameraVecY", this->m_simulationWidget->cameraVecY());
     Preferences::insert("DefaultCameraVecZ", this->m_simulationWidget->cameraVecZ());
@@ -1994,7 +1994,7 @@ void MainWindow::buttonDisplayShadows()
 void MainWindow::menuStopAVISave()
 {
     this->m_movieFlag = false;
-    this->m_simulationWidget->StopAVISave();
+    this->m_simulationWidget->stopAVISave();
 }
 
 void MainWindow::menuStartOBJSequenceSave()
@@ -2450,9 +2450,9 @@ void MainWindow::menuCreateEditMarker(GaitSym::Marker *marker)
     dialogMarkers.setInputMarker(marker);
     dialogMarkers.setSimulation(this->m_simulation);
     dialogMarkers.lateInitialise();
-    if (sender() == this->m_simulationWidget && this->m_simulationWidget->getLastMenuItem() != tr("Edit Marker..."))
+    if (sender() == this->m_simulationWidget && this->m_simulationWidget->lastMenuItem() != tr("Edit Marker..."))
     {
-        auto closestHit = this->m_simulationWidget->getClosestHit();
+        auto closestHit = this->m_simulationWidget->closestHit();
         if (closestHit)
         {
             pgd::Vector3 location = closestHit->worldLocation();
@@ -2701,8 +2701,8 @@ void MainWindow::enterRunMode()
     this->ui->actionRunMode->setChecked(true);
     this->ui->actionConstructionMode->setChecked(false);
     this->updateEnable();
-    this->m_simulationWidget->getDrawMuscleMap()->clear(); // force a redraw of all muscles
-    this->m_simulationWidget->getDrawFluidSacMap()->clear(); // force a redraw of all fluid sacs
+    this->m_simulationWidget->drawMuscleMap()->clear(); // force a redraw of all muscles
+    this->m_simulationWidget->drawFluidSacMap()->clear(); // force a redraw of all fluid sacs
     this->m_simulationWidget->update();
 }
 
@@ -2718,8 +2718,8 @@ void MainWindow::enterConstructionMode()
     this->ui->actionRunMode->setChecked(false);
     this->ui->actionConstructionMode->setChecked(true);
     this->updateEnable();
-    this->m_simulationWidget->getDrawMuscleMap()->clear(); // force a redraw of all muscles
-    this->m_simulationWidget->getDrawFluidSacMap()->clear(); // force a redraw of all fluid sacs
+    this->m_simulationWidget->drawMuscleMap()->clear(); // force a redraw of all muscles
+    this->m_simulationWidget->drawFluidSacMap()->clear(); // force a redraw of all fluid sacs
     this->m_simulationWidget->update();
 }
 
@@ -2854,13 +2854,13 @@ void MainWindow::menuResetView()
     this->ui->doubleSpinBoxTrackingOffset->setValue(Preferences::valueDouble("ResetTrackingOffset"));
 
     this->m_simulationWidget->setCameraDistance(float(Preferences::valueDouble("ResetCameraDistance")));
-    this->m_simulationWidget->setFOV(float(Preferences::valueDouble("ResetCameraFoV")));
+    this->m_simulationWidget->setFieldOfView(float(Preferences::valueDouble("ResetCameraFoV")));
     this->m_simulationWidget->setCameraVecX(float(Preferences::valueDouble("ResetCameraVecX")));
     this->m_simulationWidget->setCameraVecY(float(Preferences::valueDouble("ResetCameraVecY")));
     this->m_simulationWidget->setCameraVecZ(float(Preferences::valueDouble("ResetCameraVecZ")));
-    this->m_simulationWidget->setCOIx(float(Preferences::valueDouble("ResetCameraCOIX")));
-    this->m_simulationWidget->setCOIy(float(Preferences::valueDouble("ResetCameraCOIY")));
-    this->m_simulationWidget->setCOIz(float(Preferences::valueDouble("ResetCameraCOIZ")));
+    this->m_simulationWidget->setCentreOfInterestX(float(Preferences::valueDouble("ResetCameraCOIX")));
+    this->m_simulationWidget->setCentreOfInterestY(float(Preferences::valueDouble("ResetCameraCOIY")));
+    this->m_simulationWidget->setCentreOfInterestZ(float(Preferences::valueDouble("ResetCameraCOIZ")));
     this->m_simulationWidget->setUpX(float(Preferences::valueDouble("ResetCameraUpX")));
     this->m_simulationWidget->setUpY(float(Preferences::valueDouble("ResetCameraUpY")));
     this->m_simulationWidget->setUpZ(float(Preferences::valueDouble("ResetCameraUpZ")));

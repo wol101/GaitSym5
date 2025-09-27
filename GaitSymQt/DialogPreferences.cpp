@@ -431,7 +431,7 @@ void DialogPreferences::exportButtonClicked()
     if (fileName.isNull() == false)
     {
         Preferences::insert("PreferencesLastExportedFile", fileName);
-        Preferences::export(fileName, Preferences::settings());
+        Preferences::exportToFile(fileName, Preferences::settings());
     }
 }
 

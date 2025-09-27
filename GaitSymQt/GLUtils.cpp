@@ -26,19 +26,19 @@ StrokeFont *GLUtils::m_strokeFont = nullptr;
 void
 GLUtils::drawAxes(float x, float y, float z, float ox, float oy, float oz)
 {
-    m_strokeFont->SetRGBA(1, 0, 0, 1);
-    m_strokeFont->AddLine(x + ox, oy, oz, ox, oy, oz);
-    m_strokeFont->SetRGBA(0, 1, 0, 1);
-    m_strokeFont->AddLine(ox, y + oy, oz, ox, oy, oz);
-    m_strokeFont->SetRGBA(0, 0, 1, 1);
-    m_strokeFont->AddLine(ox, oy, z + oz, ox, oy, oz);
+    m_strokeFont->setRGBA(1, 0, 0, 1);
+    m_strokeFont->addLine(x + ox, oy, oz, ox, oy, oz);
+    m_strokeFont->setRGBA(0, 1, 0, 1);
+    m_strokeFont->addLine(ox, y + oy, oz, ox, oy, oz);
+    m_strokeFont->setRGBA(0, 0, 1, 1);
+    m_strokeFont->addLine(ox, oy, z + oz, ox, oy, oz);
 }
 
 // write some 3D text at specified location x, y, z
 void GLUtils::outputText(float x, float y, float z, char *text, float size, const float *matrix, const float *translation)
 {
-    m_strokeFont->SetZ(z);
-    m_strokeFont->StrokeString(
+    m_strokeFont->setZ(z);
+    m_strokeFont->strokeString(
         text,          /* character string */
         int(strlen(text)),  /* number of characters to draw */
         x,             /* x coordinate of bottom left of character */
@@ -52,12 +52,12 @@ void GLUtils::outputText(float x, float y, float z, char *text, float size, cons
 
 void GLUtils::drawLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2)
 {
-    m_strokeFont->AddLine(ix1, iy1, iz1, ix2, iy2, iz2);
+    m_strokeFont->addLine(ix1, iy1, iz1, ix2, iy2, iz2);
 }
 
 void GLUtils::setDrawColour(float r, float g, float b, float a)
 {
-    m_strokeFont->SetRGBA(r, g, b, a);
+    m_strokeFont->setRGBA(r, g, b, a);
 }
 
 StrokeFont *GLUtils::strokeFont()

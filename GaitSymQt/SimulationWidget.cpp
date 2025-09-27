@@ -120,10 +120,10 @@ void SimulationWidget::paintGL()
     if (!m_perspectiveCamera) { m_perspectiveCamera = threepp::PerspectiveCamera::create(); }
 
     float aspectRatio = windowSize.aspect();
-    threepp::Vector3 eye(m_COIx - m_cameraVecX * m_cameraDistance, m_COIy - m_cameraVecY * m_cameraDistance, m_COIz - m_cameraVecZ * m_cameraDistance);
-    threepp::Vector3 centre(m_COIx, m_COIy, m_COIz);
+    threepp::Vector3 eye(m_centreOfInterestX - m_cameraVecX * m_cameraDistance, m_centreOfInterestY - m_cameraVecY * m_cameraDistance, m_centreOfInterestZ - m_cameraVecZ * m_cameraDistance);
+    threepp::Vector3 centre(m_centreOfInterestX, m_centreOfInterestY, m_centreOfInterestZ);
     threepp::Vector3 up(m_upX, m_upY, m_upZ);
-    float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+    float halfViewHeight = std::sin(pgd::DegToRad(m_fieldOfView) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
     float halfViewWidth = halfViewHeight * aspectRatio;
     m_orthographicCamera->left = -halfViewWidth;
     m_orthographicCamera->right = halfViewWidth;
@@ -136,7 +136,7 @@ void SimulationWidget::paintGL()
     m_orthographicCamera->lookAt(centre);
     m_orthographicCamera->updateProjectionMatrix();
     // m_orthographicCamera->updateMatrixWorld(true);
-    m_perspectiveCamera->fov = m_FOV;
+    m_perspectiveCamera->fov = m_fieldOfView;
     m_perspectiveCamera->aspect = aspectRatio;
     m_perspectiveCamera->near = m_frontClip;
     m_perspectiveCamera->far = m_backClip;
@@ -164,7 +164,7 @@ void SimulationWidget::paintGL()
     // some lights
     if (m_simulation && !m_lightGroup)
     {
-        SetupLights();
+        setupLights();
     }
 
     // draw things to the scene
@@ -212,7 +212,7 @@ void SimulationWidget::resizeGL(int width, int height)
     // all the camera resize code is in paintGL because we need to recalculate anyway
     int openGLWidth = devicePixelRatio() * width;
     int openGLHeight = devicePixelRatio() * height;
-    emit EmitResize(openGLWidth, openGLHeight);
+    emit emitResize(openGLWidth, openGLHeight);
 }
 
 void SimulationWidget::mousePressEvent(QMouseEvent *event)
@@ -227,7 +227,7 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
     if (m_moveMarkerMode)
     {
         m_moveMarkerMode = false;
-        if (event->modifiers() == Qt::NoModifier) emit EmitMoveMarkerRequest(QString::fromStdString(m_moveMarkerName), m_cursor3DPosition);
+        if (event->modifiers() == Qt::NoModifier) emit emitMoveMarkerRequest(QString::fromStdString(m_moveMarkerName), m_cursor3DPosition);
         return;
     }
 
@@ -240,11 +240,11 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
             else trackballRadius = int(float(height()) / 2.2f);
             m_trackballStartCameraVec = QVector3D(m_cameraVecX, m_cameraVecY, m_cameraVecZ);
             m_trackballStartUp = QVector3D(m_upX, m_upY, m_upZ);
-            m_trackball->StartTrackball(event->pos().x(), event->pos().y(), width() / 2, height() / 2, trackballRadius,
+            m_trackball->startTrackball(event->pos().x(), event->pos().y(), width() / 2, height() / 2, trackballRadius,
                                         pgd::Vector3(double(m_trackballStartUp.x()), double(m_trackballStartUp.y()), double(m_trackballStartUp.z())),
                                         pgd::Vector3(double(-m_trackballStartCameraVec.x()), double(-m_trackballStartCameraVec.y()), double(-m_trackballStartCameraVec.z())));
             m_trackballFlag = true;
-            emit EmitStatusString(tr("Rotate"), 2);
+            emit emitStatusString(tr("Rotate"), 2);
             update();
             break;
         }
@@ -253,11 +253,10 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
             // detect the collision point of the mouse click
             if (m_hits.size() > 0)
             {
-                auto closestHit = getClosestHit();
-                m_cursor3DPosition = QVector3D(float(closestHit->worldLocation().x), float(closestHit->worldLocation().y), float(closestHit->worldLocation().z));
+                m_cursor3DPosition = QVector3D(float(closestHit()->worldLocation().x), float(closestHit()->worldLocation().y), float(closestHit()->worldLocation().z));
                 QClipboard *clipboard = QApplication::clipboard();
                 clipboard->setText(QString("%1\t%2\t%3").arg(double(m_cursor3DPosition.x())).arg(double(m_cursor3DPosition.y())).arg(double(m_cursor3DPosition.z())), QClipboard::Clipboard);
-                emit EmitStatusString(QString("3D Cursor %1\t%2\t%3").arg(double(m_cursor3DPosition.x())).arg(double(m_cursor3DPosition.y())).arg(double(m_cursor3DPosition.z())), 2);
+                emit emitStatusString(QString("3D Cursor %1\t%2\t%3").arg(double(m_cursor3DPosition.x())).arg(double(m_cursor3DPosition.y())).arg(double(m_cursor3DPosition.z())), 2);
                 update();
             }
             break;
@@ -265,7 +264,7 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
 
         if ((event->buttons() & Qt::MiddleButton && event->modifiers() == Qt::NoModifier) || (event->buttons() & Qt::LeftButton && event->modifiers() & Qt::AltModifier))
         {
-            m_panStartCOI = QVector3D(m_COIx, m_COIy, m_COIz);
+            m_panStartCOI = QVector3D(m_centreOfInterestX, m_centreOfInterestY, m_centreOfInterestZ);
             m_projectPanMatrix = m_proj * m_view; // model would be identity so mvpMatrix isn't needed
             bool invertible;
             m_unprojectPanMatrix = m_projectPanMatrix.inverted(&invertible); // we need the unproject matrix
@@ -278,8 +277,7 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
             // detect the collision point of the mouse click
             if (m_hits.size() > 0)
             {
-                auto closestHit = getClosestHit();
-                m_panStartPoint = QVector3D(float(closestHit->worldLocation().x), float(closestHit->worldLocation().y), float(closestHit->worldLocation().z));
+                m_panStartPoint = QVector3D(float(closestHit()->worldLocation().x), float(closestHit()->worldLocation().y), float(closestHit()->worldLocation().z));
                 QVector3D screenStartPoint = m_projectPanMatrix.map(m_panStartPoint);
                 m_panStartScreenPoint.setZ(screenStartPoint.z());
             }
@@ -291,7 +289,7 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
                 // now unproject this point to get the pan start point
                 m_panStartPoint = m_unprojectPanMatrix.map(m_panStartScreenPoint);
             }
-            emit EmitStatusString(tr("Pan"), 2);
+            emit emitStatusString(tr("Pan"), 2);
             update();
             break;
         }
@@ -299,15 +297,14 @@ void SimulationWidget::mousePressEvent(QMouseEvent *event)
         {
             if (m_hits.size() > 0)
             {
-                auto closestHit = getClosestHit();
-                QVector3D worldIntersection = QVector3D(float(closestHit->worldLocation().x), float(closestHit->worldLocation().y), float(closestHit->worldLocation().z));
-                m_COIx = worldIntersection.x();
-                m_COIy = worldIntersection.y();
-                m_COIz = worldIntersection.z();
+                QVector3D worldIntersection = QVector3D(float(closestHit()->worldLocation().x), float(closestHit()->worldLocation().y), float(closestHit()->worldLocation().z));
+                m_centreOfInterestX = worldIntersection.x();
+                m_centreOfInterestY = worldIntersection.y();
+                m_centreOfInterestZ = worldIntersection.z();
                 QClipboard *clipboard = QApplication::clipboard();
                 clipboard->setText(QString("%1\t%2\t%3").arg(double(worldIntersection.x())).arg(double(worldIntersection.y())).arg(double(worldIntersection.z())), QClipboard::Clipboard);
-                emit EmitStatusString(QString("Centre of Interest %1\t%2\t%3").arg(double(worldIntersection.x())).arg(double(worldIntersection.y())).arg(double(worldIntersection.z())), 2);
-                emit EmitCOI(worldIntersection.x(), worldIntersection.y(), worldIntersection.z());
+                emit emitStatusString(QString("Centre of Interest %1\t%2\t%3").arg(double(worldIntersection.x())).arg(double(worldIntersection.y())).arg(double(worldIntersection.z())), 2);
+                emit emitCOI(worldIntersection.x(), worldIntersection.y(), worldIntersection.z());
                 update();
             }
             break;
@@ -331,9 +328,8 @@ void SimulationWidget::mouseMoveEvent(QMouseEvent *event)
             GLfloat winX = (GLfloat(event->pos().x()) / GLfloat(width())) * 2 - 1;
             GLfloat winY = -1 * ((GLfloat(event->pos().y()) / GLfloat(height())) * 2 - 1);
             intersectModel(winX, winY);
-            auto closestHit = getClosestHit();
-            if (!closestHit) return;
-            m_cursor3DPosition = QVector3D(float(closestHit->worldLocation().x), float(closestHit->worldLocation().y), float(closestHit->worldLocation().z));
+            if (!closestHit()) return;
+            m_cursor3DPosition = QVector3D(float(closestHit()->worldLocation().x), float(closestHit()->worldLocation().y), float(closestHit()->worldLocation().z));
             update();
             return;
         }
@@ -350,7 +346,7 @@ void SimulationWidget::mouseMoveEvent(QMouseEvent *event)
             if (m_trackballFlag)
             {
                 pgd::Quaternion pgdRotation;
-                m_trackball->RollTrackballToClick(event->pos().x(), event->pos().y(), &pgdRotation);
+                m_trackball->rollTrackballToClick(event->pos().x(), event->pos().y(), &pgdRotation);
                 QQuaternion rotation(float(pgdRotation.n), float(pgdRotation.x), float(pgdRotation.y), float(pgdRotation.z));
                 rotation = rotation.conjugated();
                 QVector3D newCameraVec = rotation * m_trackballStartCameraVec;
@@ -362,7 +358,7 @@ void SimulationWidget::mouseMoveEvent(QMouseEvent *event)
                 m_upY = newUp.y();
                 m_upZ = newUp.z();
                 update();
-                emit EmitStatusString(QString("Camera %1 %2 %3 Up %4 %5 %6").arg(double(m_cameraVecX)).arg(double(m_cameraVecY)).arg(double(m_cameraVecZ)).arg(double(m_upX)).arg(double(m_upY)).arg(double(m_upZ)), 2);
+                emit emitStatusString(QString("Camera %1 %2 %3 Up %4 %5 %6").arg(double(m_cameraVecX)).arg(double(m_cameraVecY)).arg(double(m_cameraVecZ)).arg(double(m_upX)).arg(double(m_upY)).arg(double(m_upZ)), 2);
             }
             break;
         }
@@ -374,12 +370,12 @@ void SimulationWidget::mouseMoveEvent(QMouseEvent *event)
                 GLfloat winY = -1 * ((GLfloat(event->pos().y()) / GLfloat(height())) * 2 - 1);
                 QVector3D screenPoint(winX, winY, m_panStartScreenPoint.z());
                 QVector3D panCurrentPoint = m_unprojectPanMatrix.map(screenPoint);
-                m_COIx = m_panStartCOI.x() - (panCurrentPoint.x() - m_panStartPoint.x());
-                m_COIy = m_panStartCOI.y() - (panCurrentPoint.y() - m_panStartPoint.y());
-                m_COIz = m_panStartCOI.z() - (panCurrentPoint.z() - m_panStartPoint.z());
+                m_centreOfInterestX = m_panStartCOI.x() - (panCurrentPoint.x() - m_panStartPoint.x());
+                m_centreOfInterestY = m_panStartCOI.y() - (panCurrentPoint.y() - m_panStartPoint.y());
+                m_centreOfInterestZ = m_panStartCOI.z() - (panCurrentPoint.z() - m_panStartPoint.z());
                 // qDebug() << "panCurrentPoint=" << panCurrentPoint;
-                emit EmitStatusString(QString("COI %1 %2 %3").arg(double(m_COIx)).arg(double(m_COIy)).arg(double(m_COIz)), 2);
-                emit EmitCOI(m_COIx, m_COIy, m_COIz);
+                emit emitStatusString(QString("COI %1 %2 %3").arg(double(m_centreOfInterestX)).arg(double(m_centreOfInterestY)).arg(double(m_centreOfInterestZ)), 2);
+                emit emitCOI(m_centreOfInterestX, m_centreOfInterestY, m_centreOfInterestZ);
                 update();
             }
             break;
@@ -400,13 +396,13 @@ void SimulationWidget::wheelEvent(QWheelEvent *event)
     // assume each ratchet of the wheel gives a score of 120 (8 * 15 degrees)
     float sensitivity = 2400;
     float scale = 1.0f + float(event->angleDelta().y()) / sensitivity;
-    m_FOV *= scale;
-    if (m_FOV > 170) m_FOV = 170;
-    else if (m_FOV < 0.001f) m_FOV = 0.001f;
+    m_fieldOfView *= scale;
+    if (m_fieldOfView > 170) m_fieldOfView = 170;
+    else if (m_fieldOfView < 0.001f) m_fieldOfView = 0.001f;
     update();
 
-    emit EmitStatusString(QString("FOV %1").arg(double(m_FOV)), 2);
-    emit EmitFoV(m_FOV);
+    emit emitStatusString(QString("FOV %1").arg(double(m_fieldOfView)), 2);
+    emit emitFoV(m_fieldOfView);
 }
 
 // handle key presses
@@ -452,7 +448,7 @@ void SimulationWidget::keyPressEvent(QKeyEvent *event)
         m_cursor3DPosition = newPosition;
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(QString("%1\t%2\t%3").arg(double(newPosition.x())).arg(double(newPosition.y())).arg(double(newPosition.z())), QClipboard::Clipboard);
-        emit EmitStatusString(QString("3D Cursor %1\t%2\t%3").arg(double(newPosition.x())).arg(double(newPosition.y())).arg(double(newPosition.z())), 2);
+        emit emitStatusString(QString("3D Cursor %1\t%2\t%3").arg(double(newPosition.x())).arg(double(newPosition.y())).arg(double(newPosition.z())), 2);
         update();
     }
 }
@@ -465,7 +461,7 @@ void SimulationWidget::menuRequest(const QPoint &pos)
     menu.addAction(tr("Centre View"));
     menu.addSeparator();
 
-    Drawable *drawable = getClosestHit()->drawable();
+    Drawable *drawable = closestHit()->drawable();
     std::string name;
     if (drawable)
     {
@@ -531,78 +527,77 @@ void SimulationWidget::menuRequest(const QPoint &pos)
         m_lastMenuItem = action->text();
         if (action->text() == tr("Centre View"))
         {
-            auto closestHit = getClosestHit();
-            m_COIx = float(closestHit->worldLocation().x);
-            m_COIy = float(closestHit->worldLocation().y);
-            m_COIz = float(closestHit->worldLocation().z);
+            m_centreOfInterestX = float(closestHit()->worldLocation().x);
+            m_centreOfInterestY = float(closestHit()->worldLocation().y);
+            m_centreOfInterestZ = float(closestHit()->worldLocation().z);
             QClipboard *clipboard = QApplication::clipboard();
-            clipboard->setText(QString("%1\t%2\t%3").arg(double(m_COIx)).arg(double(m_COIy)).arg(double(m_COIz)), QClipboard::Clipboard);
-            emit EmitStatusString(QString("Centre of Interest %1\t%2\t%3").arg(double(m_COIx)).arg(double(m_COIy)).arg(double(m_COIz)), 2);
-            emit EmitCOI(m_COIx, m_COIy, m_COIz);
+            clipboard->setText(QString("%1\t%2\t%3").arg(double(m_centreOfInterestX)).arg(double(m_centreOfInterestY)).arg(double(m_centreOfInterestZ)), QClipboard::Clipboard);
+            emit emitStatusString(QString("Centre of Interest %1\t%2\t%3").arg(double(m_centreOfInterestX)).arg(double(m_centreOfInterestY)).arg(double(m_centreOfInterestZ)), 2);
+            emit emitCOI(m_centreOfInterestX, m_centreOfInterestY, m_centreOfInterestZ);
             update();
             break;
         }
         if (action->text() == tr("Create Marker..."))
         {
-            emit EmitCreateMarkerRequest();
+            emit emitCreateMarkerRequest();
             break;
         }
         if (action->text() == tr("Edit Marker..."))
         {
-            emit EmitEditMarkerRequest(QString::fromStdString(name));
+            emit emitEditMarkerRequest(QString::fromStdString(name));
             break;
         }
         if (action->text() == tr("Edit Body..."))
         {
-            emit EmitEditBodyRequest(QString::fromStdString(name));
+            emit emitEditBodyRequest(QString::fromStdString(name));
             break;
         }
         if (action->text() == tr("Edit Geom..."))
         {
-            emit EmitEditGeomRequest(QString::fromStdString(name));
+            emit emitEditGeomRequest(QString::fromStdString(name));
         }
         if (action->text() == tr("Edit Joint..."))
         {
-            emit EmitEditJointRequest(QString::fromStdString(name));
+            emit emitEditJointRequest(QString::fromStdString(name));
             break;
         }
         if (action->text() == tr("Edit Muscle..."))
         {
-            emit EmitEditMuscleRequest(QString::fromStdString(name));
+            emit emitEditMuscleRequest(QString::fromStdString(name));
             break;
         }
 //        if (action->text() == tr("Edit Fluid Sac..."))
 //        {
-//            emit EmitEditFluidSacRequest(QString::fromStdString(name)));
+//            emit emitEditFluidSacRequest(QString::fromStdString(name)));
 //            break;
 //        }
         if (action->text() == tr("Delete Marker..."))
         {
-            emit EmitDeleteMarkerRequest(QString::fromStdString(name));
+            emit emitDeleteMarkerRequest(QString::fromStdString(name));
             break;
         }
         if (action->text() == tr("Delete Body..."))
         {
-            emit EmitDeleteBodyRequest(QString::fromStdString(name));
+            emit emitDeleteBodyRequest(QString::fromStdString(name));
             break;
         }
         if (action->text() == tr("Delete Geom..."))
         {
-            emit EmitDeleteGeomRequest(QString::fromStdString(name));
+            emit emitDeleteGeomRequest(QString::fromStdString(name));
         }
         if (action->text() == tr("Delete Joint..."))
         {
-            emit EmitDeleteJointRequest(QString::fromStdString(name));
+            emit emitDeleteJointRequest(QString::fromStdString(name));
             break;
         }
         if (action->text() == tr("Delete Muscle..."))
         {
-            emit EmitDeleteMuscleRequest(QString::fromStdString(name));
+            emit emitDeleteMuscleRequest(QString::fromStdString(name));
             break;
         }
 //        if (action->text() == tr("Delete Fluid Sac..."))
 //        {
-//            emit EmitDeleteFluidSacRequest(QString::fromStdString(name));
+//            emit emitDeleteFluidSacRequest(QString::fromStdString(name));
 //            break;
 //        }
         if (action->text() == tr("Move Marker"))
@@ -615,13 +610,13 @@ void SimulationWidget::menuRequest(const QPoint &pos)
         {
             QStringList tokens = action->text().split(" ");
             if (tokens.size())
-                emit EmitInfoRequest(tokens[1], QString::fromStdString(name));
+                emit emitInfoRequest(tokens[1], QString::fromStdString(name));
         }
         if (action->text().startsWith("Hide"))
         {
             QStringList tokens = action->text().split(" ");
             if (tokens.size())
-                emit EmitHideRequest(tokens[1], QString::fromStdString(name));
+                emit emitHideRequest(tokens[1], QString::fromStdString(name));
         }
         break;
     }
@@ -694,7 +689,7 @@ void SimulationWidget::setCursorColour(const QColor &cursorColour)
 }
 
 // write the current frame out to a file
-int SimulationWidget::WriteStillFrame(const QString &filename)
+int SimulationWidget::writeStillFrame(const QString &filename)
 {
     QImage image = grabFramebuffer();
     if (image.save(filename) == false) return __LINE__;
@@ -702,7 +697,7 @@ int SimulationWidget::WriteStillFrame(const QString &filename)
 }
 
 // write the current frame out to a file
-int SimulationWidget::WriteMovieFrame()
+int SimulationWidget::writeMovieFrame()
 {
     Q_ASSERT(m_aviWriter);
     QImage image = grabFramebuffer();
@@ -711,7 +706,7 @@ int SimulationWidget::WriteMovieFrame()
     return 0;
 }
 
-int SimulationWidget::StartAVISave(const QString &filename)
+int SimulationWidget::startAVISave(const QString &filename)
 {
     m_aviWriter = std::make_unique<AVIWriter>();
     if (m_aviQuality == 0) return __LINE__; // should always be true
@@ -736,12 +731,12 @@ int SimulationWidget::StartAVISave(const QString &filename)
         a.setAttribute("fps", m_fps);
         a.setAttribute("aviQuality", m_aviQuality);
         a.setAttribute("cameraDistance", m_cameraDistance);
-        a.setAttribute("FOV", m_FOV);
+        a.setAttribute("FOV", m_fieldOfView);
         a.setAttribute("frontClip", m_frontClip);
         a.setAttribute("backClip", m_backClip);
-        a.setAttribute("COIx", m_COIx);
-        a.setAttribute("COIy", m_COIy);
-        a.setAttribute("COIz", m_COIz);
+        a.setAttribute("COIx", m_centreOfInterestX);
+        a.setAttribute("COIy", m_centreOfInterestY);
+        a.setAttribute("COIz", m_centreOfInterestZ);
         a.setAttribute("upX", m_upX);
         a.setAttribute("upY", m_upY);
         a.setAttribute("upZ", m_upZ);
@@ -761,7 +756,7 @@ int SimulationWidget::StartAVISave(const QString &filename)
     return 0;
 }
 
-int SimulationWidget::StopAVISave()
+int SimulationWidget::stopAVISave()
 {
     if (!m_aviWriter) return __LINE__;
     m_aviWriter.reset(nullptr);
@@ -769,7 +764,7 @@ int SimulationWidget::StopAVISave()
 }
 
 // write the scene as a series of OBJ files in a folder
-int SimulationWidget::WriteCADFrame(const QString &pathname)
+int SimulationWidget::writeCADFrame(const QString &pathname)
 {
     QString workingFolder = QDir::currentPath();
     if (QDir(pathname).exists() == false)
@@ -804,7 +799,7 @@ int SimulationWidget::WriteCADFrame(const QString &pathname)
 }
 
 // write the scene to a USDA file
-int SimulationWidget::WriteUSDFrame(const QString &pathname)
+int SimulationWidget::writeUSDFrame(const QString &pathname)
 {
     std::ostringstream usdStream;
 
@@ -821,7 +816,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     "{\n";
 
     pgd::Vector3 cameraVector(m_cameraVecX, m_cameraVecY, m_cameraVecZ);
-    pgd::Vector3 centre(m_COIx, m_COIy, m_COIz);
+    pgd::Vector3 centre(m_centreOfInterestX, m_centreOfInterestY, m_centreOfInterestZ);
     pgd::Vector3 eye =  centre - m_cameraDistance * cameraVector;
     std::string translate = GaitSym::GSUtil::toString("(%g,%g,%g)", eye.x, eye.y, eye.z);
 
@@ -849,7 +844,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     float sensorWidth = 36; // 35mm film standard
     float sensorHeight = sensorWidth / aspectRatio;
     std::string clippingRange = GaitSym::GSUtil::toString("(%g,%g)", m_frontClip, m_backClip);
-    std::string focalLength = GaitSym::GSUtil::toString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_FOV) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
+    std::string focalLength = GaitSym::GSUtil::toString("%g", sensorHeight / (2 * std::tan(pgd::DegToRad(m_fieldOfView) / 2))); // FOV_angle = 2 * atan((sensorHeight / 2) / focalLength) [height because that is what gluPerspective uses]
     std::string focusDistance = GaitSym::GSUtil::toString("%g", m_cameraDistance);
     std::string verticalAperture = GaitSym::GSUtil::toString("%g", sensorHeight);
     std::string horizontalAperture = GaitSym::GSUtil::toString("%g", sensorWidth);
@@ -858,7 +853,7 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     {
         // for orthographic, the sensor width is the field width * 10 and focal length and distance are not used [the x10 is a cm/mm bit of wierdness in omniverse/usd even though gaitsym units are generally m)
         // if the camera is switched back to perspective in omniverse, then the horizontal aperture needs to go back to 36 for the views to match
-        float halfViewHeight = std::sin(pgd::DegToRad(m_FOV) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
+        float halfViewHeight = std::sin(pgd::DegToRad(m_fieldOfView) / 2.0f) * m_cameraDistance; // because in gluPerspective the FoV refers to the height of the view (not width or diagonal)
         float halfViewWidth = halfViewHeight * aspectRatio;
         verticalAperture = GaitSym::GSUtil::toString("%g", halfViewHeight * 20);
         horizontalAperture = GaitSym::GSUtil::toString("%g", halfViewWidth * 20);
@@ -979,12 +974,12 @@ int SimulationWidget::WriteUSDFrame(const QString &pathname)
     return 0;
 }
 
-void SimulationWidget::SetCameraVec(double x, double y, double z)
+void SimulationWidget::setCameraVec(double x, double y, double z)
 {
-    SetCameraVec(float(x), float(y), float(z));
+    setCameraVec(float(x), float(y), float(z));
 }
 
-void SimulationWidget::SetCameraVec(float x, float y, float z)
+void SimulationWidget::setCameraVec(float x, float y, float z)
 {
     m_cameraVecX = x;
     m_cameraVecY = y;
@@ -1004,7 +999,7 @@ void SimulationWidget::SetCameraVec(float x, float y, float z)
     update();
 }
 
-bool SimulationWidget::DeleteDrawBody(const std::string &bodyName)
+bool SimulationWidget::deleteDrawBody(const std::string &bodyName)
 {
     auto drawBodyMapIter = m_drawBodyMap.find(bodyName);
     if (drawBodyMapIter == m_drawBodyMap.end()) return false;
@@ -1224,7 +1219,7 @@ void SimulationWidget::drawModel()
     for (auto &&it : m_drawFluidSacMap) m_drawables.push_back(it.second.get());
 }
 
-void SimulationWidget::SetupLights()
+void SimulationWidget::setupLights()
 {
     m_lightGroup = threepp::Group::create();
     for (auto &&baseLight : *m_simulation->lightList())
@@ -1311,13 +1306,13 @@ void SimulationWidget::SetupLights()
     m_scene->add(m_lightGroup);
 }
 
-const IntersectionHits *SimulationWidget::getClosestHit() const
+const IntersectionHits *SimulationWidget::closestHit() const
 {
     if (m_hits.size() == 0) return nullptr;
     return m_hits[m_hitsIndexByZ[0]].get();
 }
 
-bool SimulationWidget::getDrawBodyMesh3() const
+bool SimulationWidget::drawBodyMesh3() const
 {
     return m_drawBodyMesh3;
 }
@@ -1327,7 +1322,7 @@ void SimulationWidget::setDrawBodyMesh3(bool drawBodyMesh3)
     m_drawBodyMesh3 = drawBodyMesh3;
 }
 
-bool SimulationWidget::getDrawBodyMesh2() const
+bool SimulationWidget::drawBodyMesh2() const
 {
     return m_drawBodyMesh2;
 }
@@ -1337,7 +1332,7 @@ void SimulationWidget::setDrawBodyMesh2(bool drawBodyMesh2)
     m_drawBodyMesh2 = drawBodyMesh2;
 }
 
-bool SimulationWidget::getDrawBodyMesh1() const
+bool SimulationWidget::drawBodyMesh1() const
 {
     return m_drawBodyMesh1;
 }
@@ -1491,42 +1486,42 @@ void SimulationWidget::setShadows(bool newShadows)
     m_shadows = newShadows;
 }
 
-std::map<std::string, std::unique_ptr<DrawDataTarget>> *SimulationWidget::getDrawDataTargetMap()
+std::map<std::string, std::unique_ptr<DrawDataTarget>> *SimulationWidget::drawDataTargetMap()
 {
     return &m_drawDataTargetMap;
 }
 
-std::map<std::string, std::unique_ptr<DrawMarker>> *SimulationWidget::getDrawMarkerMap()
+std::map<std::string, std::unique_ptr<DrawMarker>> *SimulationWidget::drawMarkerMap()
 {
     return &m_drawMarkerMap;
 }
 
-std::map<std::string, std::unique_ptr<DrawFluidSac>> *SimulationWidget::getDrawFluidSacMap()
+std::map<std::string, std::unique_ptr<DrawFluidSac>> *SimulationWidget::drawFluidSacMap()
 {
     return &m_drawFluidSacMap;
 }
 
-std::map<std::string, std::unique_ptr<DrawMuscle>> *SimulationWidget::getDrawMuscleMap()
+std::map<std::string, std::unique_ptr<DrawMuscle>> *SimulationWidget::drawMuscleMap()
 {
     return &m_drawMuscleMap;
 }
 
-std::map<std::string, std::unique_ptr<DrawGeom>> *SimulationWidget::getDrawGeomMap()
+std::map<std::string, std::unique_ptr<DrawGeom>> *SimulationWidget::drawGeomMap()
 {
     return &m_drawGeomMap;
 }
 
-std::map<std::string, std::unique_ptr<DrawJoint>> *SimulationWidget::getDrawJointMap()
+std::map<std::string, std::unique_ptr<DrawJoint>> *SimulationWidget::drawJointMap()
 {
     return &m_drawJointMap;
 }
 
-std::map<std::string, std::unique_ptr<DrawBody>> *SimulationWidget::getDrawBodyMap()
+std::map<std::string, std::unique_ptr<DrawBody>> *SimulationWidget::drawBodyMap()
 {
     return &m_drawBodyMap;
 }
 
-QString SimulationWidget::getLastMenuItem() const
+QString SimulationWidget::lastMenuItem() const
 {
     return m_lastMenuItem;
 }
@@ -1677,14 +1672,14 @@ void SimulationWidget::setCameraDistance(float cameraDistance)
     m_cameraDistance = cameraDistance;
 }
 
-float SimulationWidget::FOV() const
+float SimulationWidget::fieldOfView() const
 {
-    return m_FOV;
+    return m_fieldOfView;
 }
 
-void SimulationWidget::setFOV(float FOV)
+void SimulationWidget::setFieldOfView(float fieldOfView)
 {
-    m_FOV = FOV;
+    m_fieldOfView = fieldOfView;
 }
 
 float SimulationWidget::cameraVecX() const
@@ -1717,34 +1712,34 @@ void SimulationWidget::setCameraVecZ(float cameraVecZ)
     m_cameraVecZ = cameraVecZ;
 }
 
-float SimulationWidget::COIx() const
+float SimulationWidget::centreOfInterestX() const
 {
-    return m_COIx;
+    return m_centreOfInterestX;
 }
 
-void SimulationWidget::setCOIx(float COIx)
+void SimulationWidget::setCentreOfInterestX(float centreOfInterestX)
 {
-    m_COIx = COIx;
+    m_centreOfInterestX = centreOfInterestX;
 }
 
-float SimulationWidget::COIy() const
+float SimulationWidget::centreOfInterestY() const
 {
-    return m_COIy;
+    return m_centreOfInterestY;
 }
 
-void SimulationWidget::setCOIy(float COIy)
+void SimulationWidget::setCentreOfInterestY(float centreOfInterestY)
 {
-    m_COIy = COIy;
+    m_centreOfInterestY = centreOfInterestY;
 }
 
-float SimulationWidget::COIz() const
+float SimulationWidget::centreOfInterestZ() const
 {
-    return m_COIz;
+    return m_centreOfInterestZ;
 }
 
-void SimulationWidget::setCOIz(float COIz)
+void SimulationWidget::setCentreOfInterestZ(float centreOfInterestZ)
 {
-    m_COIz = COIz;
+    m_centreOfInterestZ = centreOfInterestZ;
 }
 
 float SimulationWidget::frontClip() const
