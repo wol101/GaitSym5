@@ -141,31 +141,31 @@ bool DataFile::readFile(const std::string &name)
     size_t max_read_block = 256LL * 256LL * 256LL * 64LL;
     int error;
 
-    m_PathName = name;
+    m_pathName = name;
 
-    if (m_FileData) delete [] m_FileData;
-    m_FileData = nullptr;
+    if (m_fileData) delete [] m_fileData;
+    m_fileData = nullptr;
 
     error = stat(name.c_str(), &fileStat);
-    if (error && m_ExitOnErrorFlag)
+    if (error && m_exitOnErrorFlag)
     {
         std::cerr << "Error: DataFile::ReadFile(" << name << ") - Cannot stat file\n";
         exit(1);
     }
     if (error) return true;
-    m_FileData = new char[size_t(fileStat.st_size) + 1];
-    if (m_FileData == nullptr && m_ExitOnErrorFlag)
+    m_fileData = new char[size_t(fileStat.st_size) + 1];
+    if (m_fileData == nullptr && m_exitOnErrorFlag)
     {
-        std::cerr << "Error: DataFile::ReadFile(" << name << ") - Cannot allocate m_FileData\n";
+        std::cerr << "Error: DataFile::ReadFile(" << name << ") - Cannot allocate m_fileData\n";
         exit(1);
     }
-    if (m_FileData == nullptr) return true;
-    m_Index = m_FileData;
-    m_Size = size_t(fileStat.st_size);
-    m_FileData[m_Size] = 0;
+    if (m_fileData == nullptr) return true;
+    m_index = m_fileData;
+    m_size = size_t(fileStat.st_size);
+    m_fileData[m_size] = 0;
 
     in = fopen(name.c_str(), "rb");
-    if (in == nullptr && m_ExitOnErrorFlag)
+    if (in == nullptr && m_exitOnErrorFlag)
     {
         std::cerr << "Error: DataFile::ReadFile(" << name << ") - Cannot open file\n";
         exit(1);
@@ -176,8 +176,8 @@ bool DataFile::readFile(const std::string &name)
         read_block = (size_t(fileStat.st_size) - index);
         if (read_block > max_read_block) read_block = max_read_block;
         count = read_block;
-        count = fread(m_FileData + index, count, 1, in);
-        if (count != 1 && m_ExitOnErrorFlag)
+        count = fread(m_fileData + index, count, 1, in);
+        if (count != 1 && m_exitOnErrorFlag)
         {
             std::cerr << "Error: DataFile::ReadFile(" << name << ") - Cannot read file\n";
             exit(1);
@@ -205,7 +205,7 @@ bool DataFile::writeFile(const std::string &name, bool binary)
 
     if (out == nullptr)
     {
-        if (m_ExitOnErrorFlag)
+        if (m_exitOnErrorFlag)
         {
             std::cerr << "Error: DataFile::WriteFile(" << name << ") - Cannot open file\n";
             exit(1);
@@ -214,12 +214,12 @@ bool DataFile::writeFile(const std::string &name, bool binary)
     }
 
     // write file
-    if (binary) count = fwrite(m_FileData, m_Size - 1, 1, out);
-    else count = fwrite(m_FileData, strlen(m_FileData), 1, out);
+    if (binary) count = fwrite(m_fileData, m_size - 1, 1, out);
+    else count = fwrite(m_fileData, strlen(m_fileData), 1, out);
 
     if (count != 1)
     {
-        if (m_ExitOnErrorFlag)
+        if (m_exitOnErrorFlag)
         {
             std::cerr << "Error: DataFile::WriteFile(" << name << ") - Cannot write file\n";
             exit(1);
@@ -229,7 +229,7 @@ bool DataFile::writeFile(const std::string &name, bool binary)
 
     if (fclose(out))
     {
-        if (m_ExitOnErrorFlag)
+        if (m_exitOnErrorFlag)
         {
             std::cerr << "Error: DataFile::WriteFile(" << name << ") - Cannot close file\n";
             exit(1);
@@ -269,7 +269,7 @@ bool DataFile::readFile(const std::wstring &name)
     m_fileData = new char[size_t(fileStat.st_size) + 1];
     if (m_fileData == nullptr && m_exitOnErrorFlag)
     {
-        std::wcerr << L"Error: DataFile::ReadFile(" << name << L") - Cannot allocate m_FileData\n";
+        std::wcerr << L"Error: DataFile::ReadFile(" << name << L") - Cannot allocate m_fileData\n";
         exit(1);
     }
     if (m_fileData == nullptr) return true;

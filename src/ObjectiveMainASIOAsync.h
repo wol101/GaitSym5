@@ -202,7 +202,7 @@ class ObjectiveMainASIOAsync
 public:
     ObjectiveMainASIOAsync(int argc, const char **argv);
 
-    int Run();
+    int run();
 
     static std::string encode(const std::string &input);
     static std::string decode(const std::string &input);
@@ -237,10 +237,10 @@ private:
         double score;
     };
 
-    int ReadGenome(std::string host, uint16_t port, std::string *rawMessage);
-    int ReadXML(std::string host, uint16_t port, std::string *rawMessage);
-    int WriteOutput(std::string host, uint16_t port, uint64_t evolveIdentifier, uint32_t runID, double score);
-    void DoSimulation(const char *xmlPtr, size_t xmlLen, double *score, double *computeTime);
+    int readGenome(std::string host, uint16_t port, std::string *rawMessage);
+    int readXML(std::string host, uint16_t port, std::string *rawMessage);
+    int writeOutput(std::string host, uint16_t port, uint64_t evolveIdentifier, uint32_t runID, double score);
+    void doSimulation(const char *xmlPtr, size_t xmlLen, double *score, double *computeTime);
 
     std::vector<std::string> m_outputList;
 

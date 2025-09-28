@@ -31,7 +31,7 @@ int main(int argc, const char **argv)
 {
     py_initialize();
     GaitSym::ObjectiveMain objectiveMain(argc, argv);
-    objectiveMain.Run();
+    objectiveMain.run();
     py_finalize();
 }
 #endif

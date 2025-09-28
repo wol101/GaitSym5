@@ -42,7 +42,7 @@ int main(int argc, const char **argv)
 {
     py_initialize();
     GaitSym::ObjectiveMainASIOAsync objectiveMain(argc, argv);
-    objectiveMain.Run();
+    objectiveMain.run();
     py_finalize();
     return 0;
 }
@@ -54,44 +54,44 @@ ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
 {
     std::string compileDate(__DATE__);
     std::string compileTime(__TIME__);
-    m_argparse.Initialise(argc, argv, "ObjectiveMainASIOAsync command line interface to GaitSym2019 build "s + compileDate + " "s + compileTime, 0, 0);
-    m_argparse.AddArgument("-sc"s, "--score"s, "Score filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-ms"s, "--modelState"s, "Model state filename"s, ""s, 1, false, ArgParse::String);
-    m_argparse.AddArgument("-rt"s, "--runTimeLimit"s, "Run time limit"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-st"s, "--simulationTimeLimit"s, "Simulation time limit"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
-    m_argparse.AddArgument("-de"s, "--debug"s, "Turn debugging on"s);
+    m_argparse.initialise(argc, argv, "ObjectiveMainASIOAsync command line interface to GaitSym2019 build "s + compileDate + " "s + compileTime, 0, 0);
+    m_argparse.addArgument("-sc"s, "--score"s, "Score filename"s, ""s, 1, false, ArgParse::String);
+    m_argparse.addArgument("-ms"s, "--modelState"s, "Model state filename"s, ""s, 1, false, ArgParse::String);
+    m_argparse.addArgument("-rt"s, "--runTimeLimit"s, "Run time limit"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-st"s, "--simulationTimeLimit"s, "Simulation time limit"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
+    m_argparse.addArgument("-de"s, "--debug"s, "Turn debugging on"s);
 
-    m_argparse.AddArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
+    m_argparse.addArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
 
-    m_argparse.AddArgument("-ho"s, "--host"s, "Host and port"s, "127.0.0.1:8086"s, 1, true, ArgParse::String);
+    m_argparse.addArgument("-ho"s, "--host"s, "Host and port"s, "127.0.0.1:8086"s, 1, true, ArgParse::String);
 
-    int err = m_argparse.Parse();
+    int err = m_argparse.parse();
     if (err)
     {
-        m_argparse.Usage();
+        m_argparse.usage();
         exit(1);
     }
 
-    m_argparse.Get("--outputList"s, &m_outputList);
-    m_argparse.Get("--runTimeLimit"s, &m_runTimeLimit);
-    m_argparse.Get("--outputModelStateAtTime"s, &m_outputModelStateAtTime);
-    m_argparse.Get("--outputModelStateAtCycle"s, &m_outputModelStateAtCycle);
-    m_argparse.Get("--simulationTimeLimit"s, &m_simulationTimeLimit);
-    m_argparse.Get("--config"s, &m_configFilename);
-    m_argparse.Get("--score"s, &m_scoreFilename);
-    m_argparse.Get("--modelState"s, &m_outputModelStateFilename);
-    m_argparse.Get("--debug"s, &m_debug);
+    m_argparse.get("--outputList"s, &m_outputList);
+    m_argparse.get("--runTimeLimit"s, &m_runTimeLimit);
+    m_argparse.get("--outputModelStateAtTime"s, &m_outputModelStateAtTime);
+    m_argparse.get("--outputModelStateAtCycle"s, &m_outputModelStateAtCycle);
+    m_argparse.get("--simulationTimeLimit"s, &m_simulationTimeLimit);
+    m_argparse.get("--config"s, &m_configFilename);
+    m_argparse.get("--score"s, &m_scoreFilename);
+    m_argparse.get("--modelState"s, &m_outputModelStateFilename);
+    m_argparse.get("--debug"s, &m_debug);
 
     std::string rawHost;
     std::vector<std::string> result;
-    m_argparse.Get("--host"s, &rawHost);
+    m_argparse.get("--host"s, &rawHost);
     pystring::split(rawHost, result, ":"s);
     if (result.size() == 2)
     {
         m_host = result[0];
-        m_port = uint16_t(GSUtil::Int(result[1]));
+        m_port = uint16_t(GSUtil::toInt(result[1]));
     }
     else
     {
@@ -107,9 +107,9 @@ ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
     m_distrib = std::uniform_real_distribution<double>(0.5, 1.5);
 }
 
-int ObjectiveMainASIOAsync::Run()
+int ObjectiveMainASIOAsync::run()
 {
-    double startTime = GSUtil::GetTime();
+    double startTime = GSUtil::systemTime();
     double runTime = 0;
     double computeTime = 0;
     int status = 0;
@@ -120,26 +120,26 @@ int ObjectiveMainASIOAsync::Run()
         uint32_t runID = std::numeric_limits<uint32_t>::max() - 1;
         uint64_t evolveIdentifier = 0;
         std::string xmlCopy;
-        if (m_lastGenomeValid && m_XMLConverter.BaseXMLString().size())
+        if (m_lastGenomeValid && m_XMLConverter.baseXMLString().size())
         {
             runID = reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->runID;
             evolveIdentifier = reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->evolveIdentifier;
             if (m_debug) std::cerr <<  "Run runID = " << runID << " evolveIdentifier = " << evolveIdentifier << "\n";
             std::vector<double> data(reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->payload.genome, reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->payload.genome + reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->genomeLength);
-            m_XMLConverter.ApplyGenome(data);
-            m_XMLConverter.GetFormattedXML(&xmlCopy);
+            m_XMLConverter.applyGenome(data);
+            m_XMLConverter.getFormattedXML(&xmlCopy);
         }
         m_statusDoSimulation = __LINE__;
-        std::thread simulationThread(&ObjectiveMainASIOAsync::DoSimulation, this, xmlCopy.data(), xmlCopy.size(), &score, &computeTime);
+        std::thread simulationThread(&ObjectiveMainASIOAsync::doSimulation, this, xmlCopy.data(), xmlCopy.size(), &score, &computeTime);
 
         // while the simulation is running send off the last result and get the new task
         if (m_scoreToSend)
         {
-            status = WriteOutput(m_host, m_port, m_lastEvolveIdentifier, m_lastRunID, m_lastScore);
+            status = writeOutput(m_host, m_port, m_lastEvolveIdentifier, m_lastRunID, m_lastScore);
             if (status && m_debug) std::cerr << "Failed to write output score\n";
             m_scoreToSend = false;
         }
-        status = ReadGenome(m_host, m_port, &m_lastGenomeDataMessageRaw);
+        status = readGenome(m_host, m_port, &m_lastGenomeDataMessageRaw);
         if (status) m_lastGenomeValid = false;
         else m_lastGenomeValid = true;
         if (m_lastGenomeValid)
@@ -147,12 +147,12 @@ int ObjectiveMainASIOAsync::Run()
             if (!hashEqual(m_hash.data(), reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->md5, m_hash.size()))
             {
                 std::string rawMessage;
-                ReadXML(m_host, m_port, &rawMessage);
+                readXML(m_host, m_port, &rawMessage);
                 if (hashEqual(reinterpret_cast<const DataMessage *>(rawMessage.data())->md5, reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->md5, m_hash.size())
                         && reinterpret_cast<const DataMessage *>(rawMessage.data())->evolveIdentifier == reinterpret_cast<const DataMessage *>(m_lastGenomeDataMessageRaw.data())->evolveIdentifier)
                 {
                     for (size_t i = 0; i < m_hash.size(); i++) { m_hash[i] = reinterpret_cast<const DataMessage *>(rawMessage.data())->md5[i]; }
-                    m_XMLConverter.LoadBaseXMLString(reinterpret_cast<const DataMessage *>(rawMessage.data())->payload.xml, reinterpret_cast<const DataMessage *>(rawMessage.data())->xmlLength);
+                    m_XMLConverter.loadBaseXMLString(reinterpret_cast<const DataMessage *>(rawMessage.data())->payload.xml, reinterpret_cast<const DataMessage *>(rawMessage.data())->xmlLength);
                 }
                 else
                 {
@@ -178,7 +178,7 @@ int ObjectiveMainASIOAsync::Run()
             m_lastEvolveIdentifier = 0;
         }
 
-        runTime = GSUtil::GetTime() - startTime;
+        runTime = GSUtil::systemTime() - startTime;
         double housekeeping = runTime - computeTime;
         double utilisation = computeTime / runTime;
         std::cerr << "runTime: " << runTime << " computeTime: " << computeTime << " housekeeping: " << housekeeping << " utilisation: " << utilisation * 100.0 << "%\n";
@@ -186,7 +186,7 @@ int ObjectiveMainASIOAsync::Run()
     return 0;
 }
 
-void ObjectiveMainASIOAsync::DoSimulation(const char *xmlPtr, size_t xmlLen, double *score, double *computeTime)
+void ObjectiveMainASIOAsync::doSimulation(const char *xmlPtr, size_t xmlLen, double *score, double *computeTime)
 {
     if (xmlLen == 0)
     {
@@ -195,7 +195,7 @@ void ObjectiveMainASIOAsync::DoSimulation(const char *xmlPtr, size_t xmlLen, dou
     }
     m_statusDoSimulation = 0;
 
-    double startTime = GSUtil::GetTime();
+    double startTime = GSUtil::systemTime();
 
     // std::ofstream of("c:/scratch/output.log");
     // of << xmlPtr;
@@ -203,47 +203,47 @@ void ObjectiveMainASIOAsync::DoSimulation(const char *xmlPtr, size_t xmlLen, dou
 
     // create the simulation object locally so delete happens before the next one is create otherwise we get problems with ODE error tracking
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>();
-    if (m_outputModelStateFilename.size()) simulation->SetOutputModelStateFile(m_outputModelStateFilename);
-    if (m_outputModelStateAtTime >= 0) simulation->SetOutputModelStateAtTime(m_outputModelStateAtTime);
-    if (m_outputModelStateAtCycle >= 0) simulation->SetOutputModelStateAtCycle(m_outputModelStateAtCycle);
+    if (m_outputModelStateFilename.size()) simulation->setOutputModelStateFile(m_outputModelStateFilename);
+    if (m_outputModelStateAtTime >= 0) simulation->setOutputModelStateAtTime(m_outputModelStateAtTime);
+    if (m_outputModelStateAtCycle >= 0) simulation->setOutputModelStateAtCycle(m_outputModelStateAtCycle);
 
-    if (simulation->LoadModel(xmlPtr, xmlLen))
+    if (simulation->loadModel(xmlPtr, xmlLen))
     {
         m_statusDoSimulation = __LINE__;
         return;
     }
 
     // late initialisation options
-    if (m_simulationTimeLimit >= 0) simulation->SetTimeLimit(m_simulationTimeLimit);
+    if (m_simulationTimeLimit >= 0) simulation->setTimeLimit(m_simulationTimeLimit);
     for (size_t i = 0; i < m_outputList.size(); i++)
     {
-        if (simulation->GetBodyList()->find(m_outputList[i]) != simulation->GetBodyList()->end()) (*simulation->GetBodyList())[m_outputList[i]]->setDump(true);
-        if (simulation->GetMuscleList()->find(m_outputList[i]) != simulation->GetMuscleList()->end()) (*simulation->GetMuscleList())[m_outputList[i]]->setDump(true);
-        if (simulation->GetGeomList()->find(m_outputList[i]) != simulation->GetGeomList()->end()) (*simulation->GetGeomList())[m_outputList[i]]->setDump(true);
-        if (simulation->GetJointList()->find(m_outputList[i]) != simulation->GetJointList()->end()) (*simulation->GetJointList())[m_outputList[i]]->setDump(true);
-        if (simulation->GetDriverList()->find(m_outputList[i]) != simulation->GetDriverList()->end()) (*simulation->GetDriverList())[m_outputList[i]]->setDump(true);
-        if (simulation->GetDataTargetList()->find(m_outputList[i]) != simulation->GetDataTargetList()->end()) (*simulation->GetDataTargetList())[m_outputList[i]]->setDump(true);
-        if (simulation->GetReporterList()->find(m_outputList[i]) != simulation->GetReporterList()->end()) (*simulation->GetReporterList())[m_outputList[i]]->setDump(true);
+        if (simulation->bodyList()->find(m_outputList[i]) != simulation->bodyList()->end()) (*simulation->bodyList())[m_outputList[i]]->setDump(true);
+        if (simulation->muscleList()->find(m_outputList[i]) != simulation->muscleList()->end()) (*simulation->muscleList())[m_outputList[i]]->setDump(true);
+        if (simulation->geomList()->find(m_outputList[i]) != simulation->geomList()->end()) (*simulation->geomList())[m_outputList[i]]->setDump(true);
+        if (simulation->jointList()->find(m_outputList[i]) != simulation->jointList()->end()) (*simulation->jointList())[m_outputList[i]]->setDump(true);
+        if (simulation->driverList()->find(m_outputList[i]) != simulation->driverList()->end()) (*simulation->driverList())[m_outputList[i]]->setDump(true);
+        if (simulation->dataTargetList()->find(m_outputList[i]) != simulation->dataTargetList()->end()) (*simulation->dataTargetList())[m_outputList[i]]->setDump(true);
+        if (simulation->reporterList()->find(m_outputList[i]) != simulation->reporterList()->end()) (*simulation->reporterList())[m_outputList[i]]->setDump(true);
     }
 
-    while (simulation->ShouldQuit() == false)
+    while (simulation->shouldQuit() == false)
     {
-        simulation->UpdateSimulation();
-        if (simulation->TestForCatastrophy()) break;
+        simulation->updateSimulation();
+        if (simulation->testForCatastrophy()) break;
     }
-    *score = simulation->CalculateInstantaneousFitness();
-    std::cerr << "Simulation Time: " << simulation->GetTime() <<
-                 " Steps: " << simulation->GetStepCount() <<
+    *score = simulation->calculateInstantaneousFitness();
+    std::cerr << "Simulation Time: " << simulation->simulationTime() <<
+                 " Steps: " << simulation->stepCount() <<
                  " Score: " << *score <<
-                 " Mechanical Energy: " << simulation->GetMechanicalEnergy() <<
-                 " Metabolic Energy: " << simulation->GetMetabolicEnergy() <<
+                 " Mechanical Energy: " << simulation->mechanicalEnergy() <<
+                 " Metabolic Energy: " << simulation->metabolicEnergy() <<
                  "\n";
-    *computeTime += (GSUtil::GetTime() - startTime);
+    *computeTime += (GSUtil::systemTime() - startTime);
 }
 
 // this routine attemps to read the model specification and initialise the simulation
 // it returns zero on success
-int ObjectiveMainASIOAsync::ReadGenome(std::string host, uint16_t port, std::string *rawMessage)
+int ObjectiveMainASIOAsync::readGenome(std::string host, uint16_t port, std::string *rawMessage)
 {
     if (m_debug) std::cerr <<  "ReadGenome  host " << host << " port " << port << "\n";
 
@@ -316,7 +316,7 @@ int ObjectiveMainASIOAsync::ReadGenome(std::string host, uint16_t port, std::str
     return 0;
 }
 
-int ObjectiveMainASIOAsync::ReadXML(std::string host, uint16_t port, std::string *rawMessage)
+int ObjectiveMainASIOAsync::readXML(std::string host, uint16_t port, std::string *rawMessage)
 {
     if (m_debug) std::cerr <<  "ReadXML host " << host << " port " << port << "\n";
 
@@ -382,7 +382,7 @@ int ObjectiveMainASIOAsync::ReadXML(std::string host, uint16_t port, std::string
 
 // returns 0 if continuing
 // returns 1 if exit requested
-int ObjectiveMainASIOAsync::WriteOutput(std::string host, uint16_t port, uint64_t evolveIdentifier, uint32_t runID, double score)
+int ObjectiveMainASIOAsync::writeOutput(std::string host, uint16_t port, uint64_t evolveIdentifier, uint32_t runID, double score)
 {
     m_timeout = std::chrono::milliseconds(int(100000 * m_distrib(m_gen)));
     try

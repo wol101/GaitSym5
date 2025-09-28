@@ -79,6 +79,9 @@ public:
     Light *getLight(const std::string &name);
     bool outputModelStateOccured() { return m_outputModelStateOccured; }
 
+    void setTimeLimit(double timeLimit) { m_global->setTimeLimit(timeLimit); }
+    void setMetabolicEnergyLimit(double energyLimit) { m_global->setMetabolicEnergyLimit(energyLimit); }
+    void setMechanicalEnergyLimit(double energyLimit) { m_global->setMechanicalEnergyLimit(energyLimit); }
     void setOutputModelStateAtTime(double outputModelStateAtTime) { m_outputModelStateAtTime = outputModelStateAtTime; }
     void setOutputModelStateAtCycle(double outputModelStateAtCycle) { m_outputModelStateAtCycle = outputModelStateAtCycle; }
     void setOutputModelStateFile(const std::string &filename);
