@@ -48,6 +48,31 @@ int main(int argc, const char **argv)
 }
 #endif
 
+#if defined(USE_ASIO_ASYNC_MPI)
+#include <mpi.h>
+int main(int argc, const char **argv)
+{
+    int debug = 0;
+    int mpiCommSize = -1;
+    int mpiCommRank = -1;
+    int rc = MPI_Init(&argc, &argv);
+    if (debug > 0) std::cerr << "MPI_Init " << rc << "\n";
+    rc = MPI_Comm_size(MPI_COMM_WORLD, &mpiCommSize); // this is the total number of MPI instances being run
+    rc = MPI_Comm_rank(MPI_COMM_WORLD, &mpiCommRank); // this is the rank number of the current instance [0 to mpiCommSize-1] with 0 often used to run some sort of server process
+    if (debug > 0) std::cout << "Size " << mpiCommSize << " Rank " << mpiCommRank << "\n";
+
+    py_initialize();
+    GaitSym::ObjectiveMainASIOAsync objectiveMain(argc, argv);
+    objectiveMain.run();
+    py_finalize();
+
+    rc = MPI_Finalize();
+    if (debug > 0) std::cerr << "MPI_Finalize " << rc << "\n";
+    return 0;
+}
+#endif
+
+
 namespace GaitSym {
 
 ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
