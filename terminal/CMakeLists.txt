@@ -795,7 +795,7 @@ if (HOST_NAME STREQUAL "submitter.itservices.manchester.ac.uk")
     target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
     target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
 #    target_link_libraries(gaitsym5_asio_mpi PRIVATE -static Threads::Threads dl)
-elseif (HOST_NAME STREQUAL "login1.csf3.man.alces.network") # cannot build static executables on csf3 but they are not needed
+elseif (HOST_NAME MATCHES ".*csf3.man.alces.network$") # cannot build static executables on csf3 but they are not needed
     target_link_libraries(gaitsym5 PRIVATE )
     target_link_libraries(gaitsym5_asio PRIVATE )
 #    target_link_libraries(gaitsym5_asio_mpi PRIVATE )
