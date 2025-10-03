@@ -8,34 +8,34 @@
 #
 
 # extras added by hand
-*.ui     text
-*.pro    text
-*.m      text
-*.rc     text
-*.qrc    text
-*.jsx    text
-*.glsl   text
-*.cs     text
-*.cmake  text
-*.htm    text
-*.html   text
-*.applescript text
+*.ui     text eol=lf
+*.pro    text eol=lf
+*.m      text eol=lf
+*.rc     text eol=lf 
+*.qrc    text eol=lf
+*.jsx    text eol=lf
+*.glsl   text eol=lf
+*.cs     text eol=lf
+*.cmake  text eol=lf
+*.htm    text eol=lf
+*.html   text eol=lf
+*.applescript text eol=lf
 *.icns   binary
 *.blend  binary
 *.mtl    binary
 *.tri    binary
 
 # Sources
-*.c     text diff=cpp
-*.cc    text diff=cpp
-*.cxx   text diff=cpp
-*.cpp   text diff=cpp
-*.cpi   text diff=cpp
-*.c++   text diff=cpp
-*.hpp   text diff=cpp
-*.h     text diff=cpp
-*.h++   text diff=cpp
-*.hh    text diff=cpp
+*.c     text eol=lf diff=cpp
+*.cc    text eol=lf diff=cpp
+*.cxx   text eol=lf diff=cpp
+*.cpp   text eol=lf diff=cpp
+*.cpi   text eol=lf diff=cpp
+*.c++   text eol=lf diff=cpp
+*.hpp   text eol=lf diff=cpp
+*.h     text eol=lf diff=cpp
+*.h++   text eol=lf diff=cpp
+*.hh    text eol=lf diff=cpp
 
 # Compiled Object files
 *.slo   binary
@@ -65,13 +65,13 @@
 
 # Source files
 # ============
-*.pxd    text diff=python
-*.py     text diff=python
-*.py3    text diff=python
-*.pyw    text diff=python
-*.pyx    text diff=python
-*.pyz    text diff=python
-*.pyi    text diff=python
+*.pxd    text eol=lf diff=python
+*.py     text eol=lf diff=python
+*.py3    text eol=lf diff=python
+*.pyw    text eol=lf diff=python
+*.pyx    text eol=lf diff=python
+*.pyz    text eol=lf diff=python
+*.pyi    text eol=lf diff=python
 
 # Binary files
 # ============
@@ -92,29 +92,29 @@
 # (among others).
 
 # Documents
-*.bibtex   text diff=bibtex
-*.doc      diff=astextplain
-*.DOC      diff=astextplain
-*.docx     diff=astextplain
-*.DOCX     diff=astextplain
-*.dot      diff=astextplain
-*.DOT      diff=astextplain
-*.pdf      diff=astextplain
-*.PDF      diff=astextplain
-*.rtf      diff=astextplain
-*.RTF      diff=astextplain
-*.md       text diff=markdown
-*.mdx      text diff=markdown
-*.tex      text diff=tex
-*.adoc     text
-*.textile  text
-*.mustache text
-*.csv      text
-*.tab      text
-*.tsv      text
-*.txt      text
-*.sql      text
-*.epub     diff=astextplain
+*.bibtex   text eol=lf diff=bibtex
+*.doc      binary diff=astextplain
+*.DOC      binary diff=astextplain
+*.docx     binary diff=astextplain
+*.DOCX     binary diff=astextplain
+*.dot      binary diff=astextplain
+*.DOT      binary diff=astextplain
+*.pdf      binary diff=astextplain
+*.PDF      binary diff=astextplain
+*.rtf      ext eol=lf diff=astextplain
+*.RTF      dext eol=lf iff=astextplain
+*.md       text eol=lf diff=markdown
+*.mdx      text eol=lf diff=markdown
+*.tex      text eol=lf diff=tex
+*.adoc     text eol=lf
+*.textile  text eol=lf
+*.mustache text eol=lf
+*.csv      text eol=lf
+*.tab      text eol=lf
+*.tsv      text eol=lf
+*.txt      text eol=lf
+*.sql      text eol=lf
+*.epub     text eol=lf diff=astextplain
 
 # Graphics
 *.png      binary
@@ -125,7 +125,7 @@
 *.tiff     binary
 *.ico      binary
 # SVG treated as text by default.
-*.svg      text
+*.svg      text eol=lf
 # If you want to treat it as binary,
 # use the following line instead.
 # *.svg    binary
@@ -147,11 +147,11 @@
 *.ps1      text eol=crlf
 
 # Serialisation
-*.json     text
-*.toml     text
-*.xml      text
-*.yaml     text
-*.yml      text
+*.json     text eol=lf
+*.toml     text eol=lf
+*.xml      text eol=lf
+*.yaml     text eol=lf
+*.yml      text eol=lf
 
 # Archives
 *.7z       binary
@@ -175,7 +175,7 @@
 *.zst      binary
 
 # Text files where line endings should be preserved
-*.patch    -text
+*.patch    text eol=lf
 
 #
 # Exclude files from exporting
