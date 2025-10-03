@@ -341,6 +341,8 @@ void Global::appendToAttributes()
     setAttribute("TimeLimit", *GSUtil::toString(m_timeLimit, &buf));
     setAttribute("NumericalErrorsScore", *GSUtil::toString(m_numericalErrorsScore, &buf));
     setAttribute("PermittedNumericalErrors", *GSUtil::toString(m_permittedNumericalErrors, &buf));
+    setAttribute("DefaultLength", *GSUtil::toString(m_defaultLength, &buf));
+    setAttribute("DefaultSpeed", *GSUtil::toString(m_defaultSpeed, &buf));
 
     std::vector<std::string> encodedMeshSearchPath;
     for (size_t i = 0; i < m_meshSearchPath.size(); i++) encodedMeshSearchPath.push_back(percentEncode(m_meshSearchPath[i], "%:"s));

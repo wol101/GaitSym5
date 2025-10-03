@@ -880,6 +880,12 @@ std::string *Simulation::parseDriver(const ParseXML::XMLElement *node)
 
 std::string *Simulation::parseDataTarget(const ParseXML::XMLElement *node)
 {
+    // DATATARGETs require a valid GLOBAL to get step size
+    if (!m_global)
+    {
+        setLastError("Simulation::parseDataTarget requires a valid GLOBAL"s);
+        return lastErrorPtr();
+    }
     std::unique_ptr<DataTarget> dataTarget;
     std::string buf = NamedObject::searchNames(node->attributes, "Type"s);
     std::string *errorMessage = nullptr;
