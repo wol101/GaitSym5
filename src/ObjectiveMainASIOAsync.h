@@ -21,6 +21,7 @@
 #include <random>
 #include <deque>
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <iostream>
 #include <system_error>
@@ -47,18 +48,23 @@ public:
     void connect(const std::string& host, const std::string& service, std::chrono::steady_clock::duration timeout)
     {
         // Resolve the host name and service to a list of endpoints.
-        asio::ip::tcp::tcp::resolver::results_type endpoints = asio::ip::tcp::tcp::resolver(m_ioContext).resolve(host, service);
-
-//        for (auto endpoint = endpoints.begin(); endpoint != endpoints.end(); endpoint++)
-//        {
-//            std::cerr << std::distance(endpoints.begin(), endpoint) << " endpoint->endpoint().address() " << endpoint->endpoint().address() << "\n";
-//            std::cerr << std::distance(endpoints.begin(), endpoint) << " endpoint->endpoint().port() " << endpoint->endpoint().port() << "\n";
-//        }
+        auto endpointsIter = m_dnsCache.find(host);
+        if (endpointsIter == m_dnsCache.end())
+        {
+            asio::ip::tcp::tcp::resolver::results_type endpoints = asio::ip::tcp::tcp::resolver(m_ioContext).resolve(host, service);
+            auto result = m_dnsCache.emplace(host, endpoints); // using emplace returns a std::pair<iterator, bool>, where bool is true if the element was newly inserted, false if it already existed.
+            endpointsIter = result.first;
+            // for (auto endpoint = endpoints.begin(); endpoint != endpoints.end(); endpoint++)
+            // {
+            //     std::cerr << std::distance(endpoints.begin(), endpoint) << " endpoint->endpoint().address() " << endpoint->endpoint().address() << "\n";
+            //     std::cerr << std::distance(endpoints.begin(), endpoint) << " endpoint->endpoint().port() " << endpoint->endpoint().port() << "\n";
+            // }
+        }
 
         // Start the asynchronous operation itself.
         // Uses std::bind to allow a member function to act as a callback.
         m_resultError = {};
-        asio::async_connect(m_socket, endpoints, std::bind(&AsioClient::connectHandler, this, std::placeholders::_1, std::placeholders::_2));
+        asio::async_connect(m_socket, endpointsIter->second, std::bind(&AsioClient::connectHandler, this, std::placeholders::_1, std::placeholders::_2));
 
         // Run the operation until it completes, or until the timeout.
         run(timeout);
@@ -195,6 +201,8 @@ private:
 
     asio::error_code m_resultError = {};
     std::size_t m_resultN = 0;
+
+    std::unordered_map<std::string, asio::ip::tcp::tcp::resolver::results_type> m_dnsCache;
 };
 
 class ObjectiveMainASIOAsync
