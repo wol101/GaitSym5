@@ -130,9 +130,19 @@ void DialogGeoms::accept() // this catches OK and return/enter
             std::string triangleIndicesString = ui->plainTextEditTriangleIndicesConvex->toPlainText().toStdString();
             std::vector<int> *triangles = convexGeom->triangles();
             GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
+            if (convexGeom->indexStart()) { for (size_t i = 0; i < triangles->size(); i++) { (*triangles)[i] -= convexGeom->indexStart(); } }
             std::string verticesString = ui->plainTextEditVerticesConvex->toPlainText().toStdString();
             std::vector<double> *vertices = convexGeom->vertices();
             GaitSym::GSUtil::toDouble(verticesString, vertices);
+            if (ui->checkBoxGlobalMeshConvex->isChecked()) // need to convert the vertices into marker based coordinates
+            {
+                GaitSym::Marker *marker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
+                for (size_t i = 0; i < vertices->size(); i += 3)
+                {
+                    pgd::Vector3 markerBasedPosition = marker->position(pgd::Vector3(vertices->data() + i));
+                    std::copy_n(markerBasedPosition.data(), 3, vertices->begin() + i);
+                }
+            }
             m_outputGeom = std::move(convexGeom);
             break;
         }
@@ -144,9 +154,19 @@ void DialogGeoms::accept() // this catches OK and return/enter
             std::string triangleIndicesString = ui->plainTextEditTriangleIndicesTrimesh->toPlainText().toStdString();
             std::vector<int> *triangles = trimeshGeom->triangles();
             GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
+            if (trimeshGeom->indexStart()) { for (size_t i = 0; i < triangles->size(); i++) { (*triangles)[i] -= trimeshGeom->indexStart(); } }
             std::string verticesString = ui->plainTextEditVerticesTrimesh->toPlainText().toStdString();
             std::vector<double> *vertices = trimeshGeom->vertices();
             GaitSym::GSUtil::toDouble(verticesString, vertices);
+            if (ui->checkBoxGlobalMeshTrimesh->isChecked()) // need to convert the vertices into marker based coordinates
+            {
+                GaitSym::Marker *marker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
+                for (size_t i = 0; i < vertices->size(); i += 3)
+                {
+                    pgd::Vector3 markerBasedPosition = marker->position(pgd::Vector3(vertices->data() + i));
+                    std::copy_n(markerBasedPosition.data(), 3, vertices->begin() + i);
+                }
+            }
             m_outputGeom = std::move(trimeshGeom);
             break;
         }
