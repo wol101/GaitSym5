@@ -51,6 +51,7 @@
 #include <QOpenGLExtraFunctions>
 #include <QPainter>
 #include <QDateTime>
+#include <QQuaternion>
 
 #include <cmath>
 #include <numeric>
