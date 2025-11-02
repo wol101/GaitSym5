@@ -29,6 +29,7 @@ public:
     void setSpringConstant(double k) { m_springConstant = k; } // value is in N/m2 (this is the Young's Modulus)
     void setUnloadedLength(double l) { m_unloadedLength = l; } // value is in m
     void setArea(double a) { m_area = a; } // value is in m2
+    void setOverideActivation(bool newOverideActivation);
     void setBreakingStrain(double breakingStrain) { m_breakingStrain = breakingStrain; } // value is strain
     double damping() { return m_damping; } // value is in N/m2
     double springConstant() { return m_springConstant; } // value is in N/m2
@@ -36,6 +37,7 @@ public:
     double area() { return m_area; } // value is in m2
     double breakingStrain() { return m_breakingStrain; } // value is strain
     double elasticEnergy();
+    bool overideActivation() const;
 
     virtual void updateActivation();
     virtual double activation() { return m_activation; }
@@ -48,6 +50,7 @@ public:
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
+
 private:
 
     double m_damping = 0;
@@ -55,7 +58,8 @@ private:
     double m_unloadedLength = 0;
     double m_area = 1;
     double m_breakingStrain = 0;
-    double m_activation = 1.0; // spring usefully default to activated
+    double m_activation = 0.0;
+    bool m_overideActivation = true;
 };
 
 }

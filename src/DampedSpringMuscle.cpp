@@ -42,7 +42,9 @@ double DampedSpringMuscle::elasticEnergy()
 // activation is used as a linear multiplier
 void DampedSpringMuscle::updateActivation()
 {
-    m_activation = dataSum();
+    if (m_overideActivation) { m_activation = 1.0; }
+    else
+    { m_activation = dataSum(); }
 
     // calculate strain
     double elasticStrain = (strap()->length() - m_unloadedLength) / m_unloadedLength;
@@ -127,6 +129,16 @@ std::string *DampedSpringMuscle::createFromAttributes()
     setAttribute("Area"s, *GSUtil::toString(m_area, &buf));
     setAttribute("DampingConstant"s, *GSUtil::toString(m_damping, &buf));
     setAttribute("BreakingStrain"s, *GSUtil::toString(m_breakingStrain, &buf));
+}
+
+bool DampedSpringMuscle::overideActivation() const
+{
+    return m_overideActivation;
+}
+
+void DampedSpringMuscle::setOverideActivation(bool newOverideActivation)
+{
+    m_overideActivation = newOverideActivation;
 }
 
 } // namespace GaitSym
