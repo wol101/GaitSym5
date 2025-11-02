@@ -97,9 +97,9 @@ void DialogMarkers::accept() // this catches OK and return/enter
         markerPtr->setBody(m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get());
 
         pgd::Vector3 pos;
-        pos[0] = ui->lineEditPositionX->value();
-        pos[1] = ui->lineEditPositionY->value();
-        pos[2] = ui->lineEditPositionZ->value();
+        pos[0] = ui->lineEditWorldPositionX->value();
+        pos[1] = ui->lineEditWorldPositionY->value();
+        pos[2] = ui->lineEditWorldPositionZ->value();
         markerPtr->setWorldPosition(pos[0], pos[1], pos[2]);
 
         double ex = ui->lineEditEulerX->value();
@@ -111,9 +111,9 @@ void DialogMarkers::accept() // this catches OK and return/enter
     else     // world marker
     {
         pgd::Vector3 pos;
-        pos[0] = ui->lineEditPositionX->value();
-        pos[1] = ui->lineEditPositionY->value();
-        pos[2] = ui->lineEditPositionZ->value();
+        pos[0] = ui->lineEditWorldPositionX->value();
+        pos[1] = ui->lineEditWorldPositionY->value();
+        pos[2] = ui->lineEditWorldPositionZ->value();
         markerPtr->setPosition(pos[0], pos[1], pos[2]);
 
         double ex = ui->lineEditEulerX->value();
@@ -223,9 +223,9 @@ void DialogMarkers::lateInitialise()
         eulerAngles = pgd::makeEulerAnglesFromQ(q);
         position = m_inputMarker->worldPosition();
     }
-    ui->lineEditPositionX->setValue(position.x);
-    ui->lineEditPositionY->setValue(position.y);
-    ui->lineEditPositionZ->setValue(position.z);
+    ui->lineEditWorldPositionX->setValue(position.x);
+    ui->lineEditWorldPositionY->setValue(position.y);
+    ui->lineEditWorldPositionZ->setValue(position.z);
     ui->lineEditEulerX->setValue(eulerAngles.x);
     ui->lineEditEulerY->setValue(eulerAngles.y);
     ui->lineEditEulerZ->setValue(eulerAngles.z);
@@ -244,9 +244,9 @@ void DialogMarkers::calculatePosition()
     pgd::Vector3 p1 = marker1->worldPosition();
     pgd::Vector3 p2 = marker2->worldPosition();
     pgd::Vector3 p = p1 + (p2 - p1) * fraction;
-    ui->lineEditPositionX->setValue(p.x);
-    ui->lineEditPositionY->setValue(p.y);
-    ui->lineEditPositionZ->setValue(p.z);
+    ui->lineEditWorldPositionX->setValue(p.x);
+    ui->lineEditWorldPositionY->setValue(p.y);
+    ui->lineEditWorldPositionZ->setValue(p.z);
 
     pgd::Quaternion q1 = marker1->worldQuaternion();
     pgd::Quaternion q2 = marker2->worldQuaternion();
@@ -269,9 +269,9 @@ void DialogMarkers::calculatePositionCopyMarker1()
     GaitSym::Marker *marker = markerList->at(ui->comboBoxPositionMarker1->currentText().toStdString()).get();
 
     pgd::Vector3 p = marker->worldPosition();
-    ui->lineEditPositionX->setValue(p.x);
-    ui->lineEditPositionY->setValue(p.y);
-    ui->lineEditPositionZ->setValue(p.z);
+    ui->lineEditWorldPositionX->setValue(p.x);
+    ui->lineEditWorldPositionY->setValue(p.y);
+    ui->lineEditWorldPositionZ->setValue(p.z);
 
     pgd::Quaternion q = marker->worldQuaternion();
     pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
@@ -287,9 +287,9 @@ void DialogMarkers::calculatePositionCopyMarker2()
     GaitSym::Marker *marker = markerList->at(ui->comboBoxPositionMarker2->currentText().toStdString()).get();
 
     pgd::Vector3 p = marker->worldPosition();
-    ui->lineEditPositionX->setValue(p.x);
-    ui->lineEditPositionY->setValue(p.y);
-    ui->lineEditPositionZ->setValue(p.z);
+    ui->lineEditWorldPositionX->setValue(p.x);
+    ui->lineEditWorldPositionY->setValue(p.y);
+    ui->lineEditWorldPositionZ->setValue(p.z);
 
     pgd::Quaternion q = marker->worldQuaternion();
     pgd::Vector3 e = pgd::makeEulerAnglesFromQ(q);
@@ -370,9 +370,9 @@ void DialogMarkers::calculateMirrorMarker()
                                                                0, 1, 0,
                                                                0, 0, -1);
     pgd::Vector3 p = m * marker->worldPosition();
-    ui->lineEditPositionX->setValue(p.x);
-    ui->lineEditPositionY->setValue(p.y);
-    ui->lineEditPositionZ->setValue(p.z);
+    ui->lineEditWorldPositionX->setValue(p.x);
+    ui->lineEditWorldPositionY->setValue(p.y);
+    ui->lineEditWorldPositionZ->setValue(p.z);
 
     // you cannot mirror a marker orientation ('cos chirality)
     // so I can only mirror 2 axes and I have to recalculate the 3rd
@@ -463,9 +463,9 @@ void DialogMarkers::importMatrix()
 
 void DialogMarkers::copy3DCursorPosition()
 {
-    ui->lineEditPositionX->setValue(double(m_cursor3DPosition[0]));
-    ui->lineEditPositionY->setValue(double(m_cursor3DPosition[1]));
-    ui->lineEditPositionZ->setValue(double(m_cursor3DPosition[2]));
+    ui->lineEditWorldPositionX->setValue(double(m_cursor3DPosition[0]));
+    ui->lineEditWorldPositionY->setValue(double(m_cursor3DPosition[1]));
+    ui->lineEditWorldPositionZ->setValue(double(m_cursor3DPosition[2]));
 }
 
 void DialogMarkers::setCursor3DPosition(const QVector3D &cursor3DPosition)
@@ -736,9 +736,9 @@ void DialogMarkers::properties()
 
 void DialogMarkers::overrideStartPosition(const pgd::Vector3 &position)
 {
-    ui->lineEditPositionX->setValue(position.x);
-    ui->lineEditPositionY->setValue(position.y);
-    ui->lineEditPositionZ->setValue(position.z);
+    ui->lineEditWorldPositionX->setValue(position.x);
+    ui->lineEditWorldPositionY->setValue(position.y);
+    ui->lineEditWorldPositionZ->setValue(position.z);
 }
 
 void DialogMarkers::overrideStartBody(const std::string &name)

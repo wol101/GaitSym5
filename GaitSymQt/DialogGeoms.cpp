@@ -131,6 +131,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
             std::vector<int> *triangles = convexGeom->triangles();
             GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
             if (convexGeom->indexStart()) { for (size_t i = 0; i < triangles->size(); i++) { (*triangles)[i] -= convexGeom->indexStart(); } }
+            if (convexGeom->reverseWinding()) { for (size_t i = 0; i < triangles->size(); i += 3) { std::swap(triangles[i], triangles[i + 2]); } }
             std::string verticesString = ui->plainTextEditVerticesConvex->toPlainText().toStdString();
             std::vector<double> *vertices = convexGeom->vertices();
             GaitSym::GSUtil::toDouble(verticesString, vertices);
@@ -155,6 +156,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
             std::vector<int> *triangles = trimeshGeom->triangles();
             GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
             if (trimeshGeom->indexStart()) { for (size_t i = 0; i < triangles->size(); i++) { (*triangles)[i] -= trimeshGeom->indexStart(); } }
+            if (trimeshGeom->reverseWinding()) { for (size_t i = 0; i < triangles->size(); i += 3) { std::swap(triangles[i], triangles[i + 2]); } }
             std::string verticesString = ui->plainTextEditVerticesTrimesh->toPlainText().toStdString();
             std::vector<double> *vertices = trimeshGeom->vertices();
             GaitSym::GSUtil::toDouble(verticesString, vertices);

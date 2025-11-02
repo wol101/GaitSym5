@@ -649,6 +649,7 @@ set(PROJECT_SOURCES
     ../src/SphereGeom.cpp
     ../src/StackedBoxCarDriver.cpp
     ../src/StepDriver.cpp
+    ../src/StringOfPearlsStrap.cpp
     ../src/Strap.cpp
     ../src/TegotaeDriver.cpp
     ../src/ThreeHingeJointDriver.cpp
@@ -808,6 +809,7 @@ set(PROJECT_SOURCES
     ../src/SphereGeom.h
     ../src/StackedBoxCarDriver.h
     ../src/StepDriver.h
+    ../src/StringOfPearlsStrap.h
     ../src/Strap.h
     ../src/TegotaeDriver.h
     ../src/ThreeHingeJointDriver.h
