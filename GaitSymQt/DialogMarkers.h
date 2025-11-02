@@ -65,6 +65,9 @@ public slots:
     void orientation3MarkerChanged(const QString &text);
     void labelAxisAngleMenuRequest(const QPoint &pos);
 
+    void worldPositionChanged();
+    void bodyPositionEdited();
+
 protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 

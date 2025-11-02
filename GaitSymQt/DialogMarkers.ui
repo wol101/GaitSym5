@@ -977,6 +977,15 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="1">
+       <widget class="LineEditDouble" name="lineEditBodyPositionX"/>
+      </item>
+      <item row="3" column="2">
+       <widget class="LineEditDouble" name="lineEditBodyPositionY"/>
+      </item>
+      <item row="3" column="3">
+       <widget class="LineEditDouble" name="lineEditBodyPositionZ"/>
+      </item>
       <item row="4" column="2">
        <widget class="LineEditDouble" name="lineEditEulerY"/>
       </item>
@@ -1006,13 +1015,24 @@
   <tabstop>lineEditWorldPositionX</tabstop>
   <tabstop>lineEditWorldPositionY</tabstop>
   <tabstop>lineEditWorldPositionZ</tabstop>
+  <tabstop>lineEditBodyPositionX</tabstop>
+  <tabstop>lineEditBodyPositionY</tabstop>
+  <tabstop>lineEditBodyPositionZ</tabstop>
   <tabstop>lineEditEulerX</tabstop>
   <tabstop>lineEditEulerY</tabstop>
   <tabstop>lineEditEulerZ</tabstop>
   <tabstop>comboBoxPositionMarker1</tabstop>
   <tabstop>comboBoxPositionMarker2</tabstop>
   <tabstop>lineEditFraction</tabstop>
+  <tabstop>lineEditDistance</tabstop>
+  <tabstop>pushButtonCopyMarker1</tabstop>
+  <tabstop>pushButtonCopyMarker2</tabstop>
   <tabstop>pushButtonCalculatePosition</tabstop>
+  <tabstop>comboBoxMirrorMarker</tabstop>
+  <tabstop>radioButtonX</tabstop>
+  <tabstop>radioButtonY</tabstop>
+  <tabstop>radioButtonZ</tabstop>
+  <tabstop>pushButtonCalculateMirrorMarker</tabstop>
   <tabstop>comboBoxOrientation2Marker1</tabstop>
   <tabstop>comboBoxOrientation2Marker2</tabstop>
   <tabstop>pushButtonCalculateOrientation2Marker</tabstop>
@@ -1020,11 +1040,31 @@
   <tabstop>comboBoxOrientation3Marker2</tabstop>
   <tabstop>comboBoxOrientation3Marker3</tabstop>
   <tabstop>pushButtonCalculateOrientation3Marker</tabstop>
-  <tabstop>comboBoxMirrorMarker</tabstop>
-  <tabstop>radioButtonX</tabstop>
-  <tabstop>radioButtonY</tabstop>
-  <tabstop>radioButtonZ</tabstop>
-  <tabstop>pushButtonCalculateMirrorMarker</tabstop>
+  <tabstop>lineEditEulerXAppend</tabstop>
+  <tabstop>lineEditEulerYAppend</tabstop>
+  <tabstop>lineEditEulerZAppend</tabstop>
+  <tabstop>lineEditAngle</tabstop>
+  <tabstop>lineEditAxisX</tabstop>
+  <tabstop>lineEditAxisY</tabstop>
+  <tabstop>lineEditAxisZ</tabstop>
+  <tabstop>lineEditQuaternionN</tabstop>
+  <tabstop>lineEditQuaternionX</tabstop>
+  <tabstop>lineEditQuaternionY</tabstop>
+  <tabstop>lineEditQuaternionZ</tabstop>
+  <tabstop>pushButtonCalculatorImport</tabstop>
+  <tabstop>pushButtonCalculatorCalculate</tabstop>
+  <tabstop>lineEditMatrixr1c1</tabstop>
+  <tabstop>lineEditMatrixr1c2</tabstop>
+  <tabstop>lineEditMatrixr1c3</tabstop>
+  <tabstop>lineEditMatrixr2c1</tabstop>
+  <tabstop>lineEditMatrixr2c2</tabstop>
+  <tabstop>lineEditMatrixr2c3</tabstop>
+  <tabstop>lineEditMatrixr3c1</tabstop>
+  <tabstop>lineEditMatrixr3c2</tabstop>
+  <tabstop>lineEditMatrixr3c3</tabstop>
+  <tabstop>pushButtonMatrixImport</tabstop>
+  <tabstop>pushButtonMatrixCalculate</tabstop>
+  <tabstop>pushButtonProperties</tabstop>
   <tabstop>pushButton3DCursor</tabstop>
   <tabstop>pushButtonOK</tabstop>
   <tabstop>pushButtonCancel</tabstop>

@@ -73,6 +73,14 @@ DialogMarkers::DialogMarkers(QWidget *parent) :
     connect(ui->comboBoxOrientation3Marker2, &QComboBox::currentTextChanged, this, &DialogMarkers::orientation3MarkerChanged);
     connect(ui->comboBoxOrientation3Marker3, &QComboBox::currentTextChanged, this, &DialogMarkers::orientation3MarkerChanged);
 
+    // this bit means that the body position gets updated but does not cause a circular update
+    connect(ui->lineEditWorldPositionX, &LineEditDouble::textChanged, this, &DialogMarkers::worldPositionChanged);
+    connect(ui->lineEditWorldPositionY, &LineEditDouble::textChanged, this, &DialogMarkers::worldPositionChanged);
+    connect(ui->lineEditWorldPositionZ, &LineEditDouble::textChanged, this, &DialogMarkers::worldPositionChanged);
+    connect(ui->lineEditBodyPositionX, &LineEditDouble::textEdited, this, &DialogMarkers::bodyPositionEdited);
+    connect(ui->lineEditBodyPositionY, &LineEditDouble::textEdited, this, &DialogMarkers::bodyPositionEdited);
+    connect(ui->lineEditBodyPositionZ, &LineEditDouble::textEdited, this, &DialogMarkers::bodyPositionEdited);
+
     ui->labelAxisAngle->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->labelAxisAngle, &QLabel::customContextMenuRequested, this, &DialogMarkers::labelAxisAngleMenuRequest);
 }
@@ -665,6 +673,42 @@ enable_button:
 disable_button:
     ui->pushButtonCalculateOrientation3Marker->setEnabled(false);
     return;
+}
+
+void DialogMarkers::worldPositionChanged()
+{
+    GaitSym::Body *body = m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get();
+    if (body == 0)
+    {
+        ui->lineEditBodyPositionX->setText(ui->lineEditWorldPositionX->text());
+        ui->lineEditBodyPositionY->setText(ui->lineEditWorldPositionY->text());
+        ui->lineEditBodyPositionZ->setText(ui->lineEditWorldPositionZ->text());
+        return;
+    }
+    pgd::Vector3 worldPosition(ui->lineEditWorldPositionX->value(), ui->lineEditWorldPositionY->value(), ui->lineEditWorldPositionZ->value());
+    GaitSym::Marker marker(body);
+    pgd::Vector3 bodyPosition = marker.position(worldPosition);
+    ui->lineEditBodyPositionX->setValue(bodyPosition.x);
+    ui->lineEditBodyPositionY->setValue(bodyPosition.y);
+    ui->lineEditBodyPositionZ->setValue(bodyPosition.z);
+}
+
+void DialogMarkers::bodyPositionEdited()
+{
+    GaitSym::Body *body = m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get();
+    if (body == 0)
+    {
+        ui->lineEditWorldPositionX->setText(ui->lineEditBodyPositionX->text());
+        ui->lineEditWorldPositionY->setText(ui->lineEditBodyPositionY->text());
+        ui->lineEditWorldPositionZ->setText(ui->lineEditBodyPositionZ->text());
+        return;
+    }
+    pgd::Vector3 bodyPosition(ui->lineEditBodyPositionX->value(), ui->lineEditBodyPositionY->value(), ui->lineEditBodyPositionZ->value());
+    GaitSym::Marker marker(body);
+    pgd::Vector3 worldPosition = marker.worldPosition(bodyPosition);
+    ui->lineEditBodyPositionX->setValue(worldPosition.x);
+    ui->lineEditBodyPositionY->setValue(worldPosition.y);
+    ui->lineEditBodyPositionZ->setValue(worldPosition.z);
 }
 
 void DialogMarkers::labelAxisAngleMenuRequest(const QPoint &pos)
