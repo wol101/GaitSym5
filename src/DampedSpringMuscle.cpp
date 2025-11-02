@@ -110,7 +110,7 @@ std::string *DampedSpringMuscle::createFromAttributes()
     this->setSpringConstant(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("Area"s, &buf) == nullptr) return lastErrorPtr();
     this->setArea(GSUtil::toDouble(buf.c_str()));
-    if (findAttribute("Damping"s, &buf) == nullptr) return lastErrorPtr();
+    if (findAttribute("DampingConstant"s, &buf) == nullptr) return lastErrorPtr();
     this->setDamping(GSUtil::toDouble(buf.c_str()));
     if (findAttribute("BreakingStrain"s, &buf) == nullptr) return lastErrorPtr();
     this->setBreakingStrain(GSUtil::toDouble(buf.c_str()));
@@ -125,7 +125,7 @@ std::string *DampedSpringMuscle::createFromAttributes()
     setAttribute("UnloadedLength"s, *GSUtil::toString(m_unloadedLength, &buf));
     setAttribute("SpringConstant"s, *GSUtil::toString(m_springConstant, &buf));
     setAttribute("Area"s, *GSUtil::toString(m_area, &buf));
-    setAttribute("Damping"s, *GSUtil::toString(m_damping, &buf));
+    setAttribute("DampingConstant"s, *GSUtil::toString(m_damping, &buf));
     setAttribute("BreakingStrain"s, *GSUtil::toString(m_breakingStrain, &buf));
 }
 

@@ -55,7 +55,7 @@ private:
     double m_unloadedLength = 0;
     double m_area = 1;
     double m_breakingStrain = 0;
-    double m_activation = 0;
+    double m_activation = 1.0; // spring usefully default to activated
 };
 
 }

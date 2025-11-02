@@ -464,6 +464,14 @@ void DialogStringOfPearlsBuilder::createBodies()
             if (m_properties.count("BodyColour3"))
                 body->setColour3(qvariant_cast<QColor>(m_properties["BodyColour3"].value).name(QColor::HexArgb).toStdString());
         }
+        else
+        {
+            body->setSize1(0);
+            body->setSize2(0);
+            body->setColour1("#00000000"s);
+            body->setColour2("#00000000"s);
+            body->setColour3("#00000000"s);
+        }
 
         m_bodyList.push_back(std::move(body));
     }
