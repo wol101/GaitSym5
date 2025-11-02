@@ -209,6 +209,7 @@ inline static double *toDouble(const std::string &buf, int n, double *d)
 
 inline static std::vector<double> *toDouble(const std::string &buf, std::vector<double> *d)
 {
+    d->clear();
     const char *cptr = buf.data();
     char *ptr = nullptr;
     double v;
@@ -268,6 +269,7 @@ inline static int *toInt(const std::string &buf, int n, int *d)
 
 inline static std::vector<int> *toInt(const std::string &buf, std::vector<int> *d)
 {
+    d->clear();
     const char *cptr = buf.data();
     char *ptr = nullptr;
     int v;

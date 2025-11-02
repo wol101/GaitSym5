@@ -73,7 +73,8 @@ DialogMarkers::DialogMarkers(QWidget *parent) :
     connect(ui->comboBoxOrientation3Marker2, &QComboBox::currentTextChanged, this, &DialogMarkers::orientation3MarkerChanged);
     connect(ui->comboBoxOrientation3Marker3, &QComboBox::currentTextChanged, this, &DialogMarkers::orientation3MarkerChanged);
 
-    // this bit means that the body position gets updated but does not cause a circular update
+    // this bit means that when the position gets updated all the required fields change but circular references are avoided
+    connect(ui->comboBoxBodyID, &QComboBox::currentTextChanged, this, &DialogMarkers::worldPositionChanged);
     connect(ui->lineEditWorldPositionX, &LineEditDouble::textChanged, this, &DialogMarkers::worldPositionChanged);
     connect(ui->lineEditWorldPositionY, &LineEditDouble::textChanged, this, &DialogMarkers::worldPositionChanged);
     connect(ui->lineEditWorldPositionZ, &LineEditDouble::textChanged, this, &DialogMarkers::worldPositionChanged);
@@ -677,14 +678,14 @@ disable_button:
 
 void DialogMarkers::worldPositionChanged()
 {
-    GaitSym::Body *body = m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get();
-    if (body == 0)
+    if (ui->comboBoxBodyID->currentText() == "World")
     {
         ui->lineEditBodyPositionX->setText(ui->lineEditWorldPositionX->text());
         ui->lineEditBodyPositionY->setText(ui->lineEditWorldPositionY->text());
         ui->lineEditBodyPositionZ->setText(ui->lineEditWorldPositionZ->text());
         return;
     }
+    GaitSym::Body *body = m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get();
     pgd::Vector3 worldPosition(ui->lineEditWorldPositionX->value(), ui->lineEditWorldPositionY->value(), ui->lineEditWorldPositionZ->value());
     GaitSym::Marker marker(body);
     pgd::Vector3 bodyPosition = marker.position(worldPosition);
@@ -695,20 +696,24 @@ void DialogMarkers::worldPositionChanged()
 
 void DialogMarkers::bodyPositionEdited()
 {
-    GaitSym::Body *body = m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get();
-    if (body == 0)
+    const QSignalBlocker blocker1(ui->lineEditWorldPositionX);
+    const QSignalBlocker blocker2(ui->lineEditWorldPositionY);
+    const QSignalBlocker blocker3(ui->lineEditWorldPositionZ);
+
+    if (ui->comboBoxBodyID->currentText() == "World")
     {
         ui->lineEditWorldPositionX->setText(ui->lineEditBodyPositionX->text());
         ui->lineEditWorldPositionY->setText(ui->lineEditBodyPositionY->text());
         ui->lineEditWorldPositionZ->setText(ui->lineEditBodyPositionZ->text());
         return;
     }
+    GaitSym::Body *body = m_simulation->bodyList()->at(ui->comboBoxBodyID->currentText().toStdString()).get();
     pgd::Vector3 bodyPosition(ui->lineEditBodyPositionX->value(), ui->lineEditBodyPositionY->value(), ui->lineEditBodyPositionZ->value());
     GaitSym::Marker marker(body);
     pgd::Vector3 worldPosition = marker.worldPosition(bodyPosition);
-    ui->lineEditBodyPositionX->setValue(worldPosition.x);
-    ui->lineEditBodyPositionY->setValue(worldPosition.y);
-    ui->lineEditBodyPositionZ->setValue(worldPosition.z);
+    ui->lineEditWorldPositionX->setValue(worldPosition.x);
+    ui->lineEditWorldPositionY->setValue(worldPosition.y);
+    ui->lineEditWorldPositionZ->setValue(worldPosition.z);
 }
 
 void DialogMarkers::labelAxisAngleMenuRequest(const QPoint &pos)
