@@ -214,9 +214,20 @@ void DialogStringOfPearlsBuilder::lateInitialise()
     ui->lineEditDamping->setBottom(0);
     ui->lineEditDamping->setValue(1);
 
+    ui->lineEditPearlRadius->setBottom(std::numeric_limits<double>::min());
     ui->lineEditPearlRadius->setValue(1);
     ui->lineEditPearlMass->setValue(1);
     ui->spinBoxNumberOfPearls->setValue(1);
+    ui->lineEditPearlSpring->setBottom(std::numeric_limits<double>::min());
+    ui->lineEditPearlSpring->setValue(Preferences::valueDouble("GlobalDefaultSpringConstant"));
+    ui->lineEditPearlDamp->setBottom(std::numeric_limits<double>::min());
+    ui->lineEditPearlDamp->setValue(Preferences::valueDouble("GlobalDefaultDampingConstant"));
+    ui->lineEditPearlMass->setBottom(-1);
+    ui->lineEditPearlMu->setValue(0);
+    ui->lineEditPearlRho->setBottom(-1);
+    ui->lineEditPearlRho->setValue(-1);
+
+
 
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->setRowCount(3);
@@ -496,6 +507,10 @@ void DialogStringOfPearlsBuilder::createGeoms()
         sphereGeom->setGeomMarker(marker.get());
         sphereGeom->setSimulation(m_simulation);
         sphereGeom->setUpstreamObjects( { marker.get() } );
+        sphereGeom->setSpringDamp(ui->lineEditPearlSpring->value(), ui->lineEditPearlDamp->value(), m_simulation->global()->stepSize());
+        sphereGeom->setContactMu(ui->lineEditPearlMu->value());
+        sphereGeom->setContactRho(ui->lineEditPearlRho->value());
+        sphereGeom->setContactBounce(ui->lineEditPearlBounce->value());
 
         if (m_properties.size() > 0)
         {
@@ -509,6 +524,10 @@ void DialogStringOfPearlsBuilder::createGeoms()
                 sphereGeom->setSize2(m_properties["GeomSize2"].value.toDouble());
             if (m_properties.count("GeomSize3"))
                 sphereGeom->setSize3(m_properties["GeomSize3"].value.toDouble());
+        }
+        else
+        {
+            sphereGeom->setColour1(GaitSym::Colour(145, 92, 140, 255));
         }
 
         m_markerList.push_back(std::move(marker));
@@ -643,6 +662,14 @@ void DialogStringOfPearlsBuilder::createMuscles()
                 outputMuscle->setSize1(m_properties["StrapForceRadius"].value.toDouble());
             if (m_properties.count("StrapForceScale"))
                 outputMuscle->setSize2(m_properties["StrapForceScale"].value.toDouble());
+        }
+        else
+        {
+            outputMuscle->strap()->setColour1(GaitSym::Colour("lightseagreen"));
+            outputMuscle->setColour1(GaitSym::Colour("lightseagreen"));
+            outputMuscle->strap()->setSize1(ui->lineEditPearlRadius->value() / 2);
+            outputMuscle->setSize1((ui->lineEditPearlRadius->value() / 2) * 1.1);
+            outputMuscle->setSize2(100);
         }
 
         m_strapList.push_back(std::move(strap));

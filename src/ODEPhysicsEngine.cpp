@@ -353,12 +353,12 @@ std::string *ODEPhysicsEngine::createGeoms()
                 int numVertices = trimeshGeom->vertices()->size() / 3;
                 int numTriangles = trimeshGeom->triangles()->size() / 3;
 
-                dTriMeshDataID m_TriMeshDataID = dGeomTriMeshDataCreate();
-                dGeomTriMeshDataBuildDouble(m_TriMeshDataID,
+                dTriMeshDataID triMeshDataID = dGeomTriMeshDataCreate();
+                dGeomTriMeshDataBuildDouble(triMeshDataID,
                                             vertices, 3 * sizeof(double), numVertices,
                                             triIndexes, 3 * numTriangles, 3 * sizeof(int));
 
-                geomID =  dCreateTriMesh(m_spaceID, m_TriMeshDataID, 0, 0, 0);
+                geomID =  dCreateTriMesh(m_spaceID, triMeshDataID, 0, 0, 0);
                 dGeomSetData(geomID, trimeshGeom);
                 iter.second->setData(geomID);
                 dBodyID bodyID = reinterpret_cast<dBodyID>(trimeshGeom->body()->data());
