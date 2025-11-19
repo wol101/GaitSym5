@@ -1,8 +1,0 @@
-Bootstrap: docker
-From: ubuntu:24.04
-
-%post
-    apt-get update && apt-get install -y build-essential
-
-%runscript
-    echo "Container ready. Run your C++ compiler commands inside."
