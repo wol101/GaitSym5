@@ -485,10 +485,12 @@ std::string *FixedJoint::createFromAttributes()
             break;
         case FixedJoint::Butterworth2ndOrderLowPass:
             if (findAttribute("CutoffFrequency"s, &buf) == nullptr) return lastErrorPtr();
+            if (!simulation()->global()) { setLastError("Joint ID=\""s + name() +"\" unable to set CutoffFrequency"s); return lastErrorPtr(); }
             this->setCutoffFrequency(GSUtil::toDouble(buf));
             break;
         case FixedJoint::MovingAverageLowPass:
             if (findAttribute("Window"s, &buf) == nullptr) return lastErrorPtr();
+            if (!simulation()->global()) { setLastError("Joint ID=\""s + name() +"\" unable to set Window"s); return lastErrorPtr(); }
             this->setWindow(GSUtil::toInt(buf));
             break;
         }

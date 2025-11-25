@@ -180,7 +180,7 @@ void DialogConvertFile::doConversion()
             err = simulation.loadModel(xml.data(), xml.size());
             if (err)
             {
-                log(QString("WARNING\nWARNING: \"%1\" converted but fails validation.\nWARNING%s").arg(ui->lineEditOutputFile->text()).arg(QString::fromStdString(*err)));
+                log(QString("WARNING\nWARNING: \"%1\" converted but fails validation.\nWARNING%2").arg(ui->lineEditOutputFile->text()).arg(QString::fromStdString(*err)));
             }
             break;
         }
