@@ -17,6 +17,7 @@
 #include "Geom.h"
 #include "HingeJoint.h"
 #include "BallJoint.h"
+#include "FixedJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
@@ -195,8 +196,7 @@ std::string *PhysXPhysicsEngine::createJoints()
                 m_jointMap[iter.first] = revolute;
                 break;
             }
-            break;
-            if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(iter.second.get()))
+            if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
             {
                 Marker *marker1 = ballJoint->body1Marker();
                 Marker *marker2 = ballJoint->body2Marker();
@@ -215,10 +215,32 @@ std::string *PhysXPhysicsEngine::createJoints()
                 // physx::PxReal zLimitAngle = physx::PxPi/2; // The limit angle from the Z-axis of the constraint frame
                 // spherical->setLimitCone(physx::PxJointLimitCone(yLimitAngle, zLimitAngle)); // there is also a soft version PxJointLimitCone(PxReal yLimitAngle, PxReal zLimitAngle, const PxSpring &spring)
                 // spherical->setSphericalJointFlag(physx::PxSphericalJointFlag::eLIMIT_ENABLED, true);
-                spherical->userData = spherical;
+                spherical->userData = ballJoint;
                 m_jointMap[iter.first] = spherical;
                 break;
             }
+            if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
+            {
+                Marker *marker1 = fixedJoint->body1Marker();
+                Marker *marker2 = fixedJoint->body2Marker();
+                pgd::Vector3 p1 = marker1->position();
+                pgd::Vector3 p2 = marker2->position();
+                pgd::Quaternion q1 = marker1->quaternion();
+                pgd::Quaternion q2 = marker2->quaternion();
+                physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
+                physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
+                physx::PxRigidActor *actor0 = m_bodyMap[fixedJoint->body1()->name()];
+                physx::PxRigidActor *actor1 = m_bodyMap[fixedJoint->body2()->name()];
+                physx::PxFixedJoint *fixed = PxFixedJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
+                fixed->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+
+                // fixed->setBreakForce(1000.0f, 1000.0f); // joint breaks if exceeded [setBreakForce(PxReal force, PxReal torque)]
+                fixed->userData = fixedJoint;
+                m_jointMap[iter.first] = fixed;
+                break;
+            }
+            std::cerr << "Unsupported JOINT type \"" << iter.second.get()->type();
+            break;
         }
     }
     return nullptr;
@@ -292,8 +314,8 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 shape->release();
                 break;
             }
-            break;
-        }
+            std::cerr << "Unsupported GEOM type \"" << iter.second.get()->type();
+            break;        }
     }
     return nullptr;
 }

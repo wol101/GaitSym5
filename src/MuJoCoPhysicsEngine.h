@@ -70,6 +70,7 @@ private:
 
     std::string m_mjXML;
     std::string m_mjXMLSensors;
+    std::string m_mjXMLActuators;
 
     std::vector<TreeBody> m_rootTreeBodyList;
     std::multiset<Body *> m_jointLoopDetector;

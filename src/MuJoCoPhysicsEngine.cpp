@@ -17,6 +17,7 @@
 #include "Geom.h"
 #include "HingeJoint.h"
 #include "BallJoint.h"
+#include "FixedJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
@@ -261,6 +262,10 @@ std::string *MuJoCoPhysicsEngine::createTree()
 
     xmlTerminateTag(&m_mjXML, "worldbody"s);
 
+    xmlInitiateTag(&m_mjXML, "actuator"s);
+    m_mjXML.append(m_mjXMLActuators);
+    xmlTerminateTag(&m_mjXML, "actuator"s);
+
     xmlInitiateTag(&m_mjXML, "sensor"s);
     m_mjXML.append(m_mjXMLSensors);
     xmlTerminateTag(&m_mjXML, "sensor"s);
@@ -415,14 +420,55 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
             // we also need sensors to get reaction forces and torques
             attributes.clear();
-            attributes["name"s] = ballJoint->name() + "_ballquat"s;
+            attributes["name"s] = ballJoint->name() + "_jointpos"s;
             attributes["joint"s] = ballJoint->name();
-            xmlInitiateTag(&m_mjXMLSensors, "ballquat"s, attributes, true);
-            attributes["name"s] = ballJoint->name() + "_ballangvel"s;
-            xmlInitiateTag(&m_mjXMLSensors, "ballangvel"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            attributes["name"s] = ballJoint->name() + "_jointvel"s;
+            xmlInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
             attributes.clear();
+            attributes["name"s] = ballJoint->name() + "_force"s;
+            attributes["site"s] = ballJoint->name() + "_site"s;
+            xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            attributes["name"s] = ballJoint->name() + "_torque"s;
+            xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
             break;
         }
+        if (const FixedJoint *fixedJoint = dynamic_cast<const FixedJoint *>(joint)) // this is emulated with a 6 DoF joint that is locked
+        {
+            Marker *marker2 = fixedJoint->body2Marker();
+            pgd::Vector3 p2 = marker2->position();
+            attributes["name"s] = fixedJoint->name();
+            attributes["type"s] = "free"s;
+            attributes["pos"s] = GSUtil::toString(p2);
+            xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            // put a site on the joint
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_site"s;
+            attributes["pos"s] = GSUtil::toString(p2);
+            xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
+            // we also need sensors to get reaction forces and torques
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_jointpos"s;
+            attributes["joint"s] = fixedJoint->name();
+            xmlInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            attributes["name"s] = fixedJoint->name() + "_jointvel"s;
+            xmlInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_force"s;
+            attributes["site"s] = fixedJoint->name() + "_site"s;
+            xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            attributes["name"s] = fixedJoint->name() + "_torque"s;
+            xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+            // and this joint needs to be locked
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_actuator"s;
+            attributes["joint"s] = fixedJoint->name();
+            attributes["kp"s] = "1000"s;
+            attributes["ctrl"s] = "0 0 0 1 0 0 0"s; // position then quaternion
+            xmlInitiateTag(&m_mjXMLActuators, "position"s, attributes, true);
+            break;
+        }
+        std::cerr << "Unsupported JOINT type \"" << joint->type();
         break;
     }
     return nullptr;
@@ -463,6 +509,7 @@ std::string *MuJoCoPhysicsEngine::createGeom(const Geom *geom)
             xmlInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
+        std::cerr << "Unsupported GEOM type \"" << geom->type();
         break;
     }
     return nullptr;
