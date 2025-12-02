@@ -38,6 +38,8 @@ DialogAbout::DialogAbout(QWidget *parent) :
     buildType = "Debug";
 #endif
 
+    QString exePath = QCoreApplication::applicationFilePath();
+
     QString buildInformation = QSysInfo::buildAbi();
 
     QVersionNumber libraryVersionNumber = QLibraryInfo::version();
@@ -59,7 +61,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
     const char *p = reinterpret_cast<const char *>(ctx.functions()->glGetString(GL_VERSION));
     std::string glVersionString = (p ? p : "");
 
-    QString descriptor = QString("%1\n%2\n%3\n%4\n%5").arg(buildDate, buildType, glVersionString.c_str(), buildInformation, libraryString);
+    QString descriptor = QString("%1\n%2\n%3\n%4\n%5\n%6").arg(exePath, buildDate, buildType, glVersionString.c_str(), buildInformation, libraryString);
     ui->labelDescriptor->setText(descriptor);
 }
 

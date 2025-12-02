@@ -308,6 +308,7 @@ void DrawMuscle::cylinder()
             }
             break;
         }
+        qDebug() << "Error in DrawMuscle::cylinder: Unsupported MUSCLE type";
         break;
     }
     m_facetedObject1 = std::make_unique<FacetedPolyline>(&m_polyline, radius, m_strapNumSegments, m_strapColor, 1, false);
@@ -321,76 +322,98 @@ void DrawMuscle::fusiform()
     std::vector<pgd::Vector3> vertexList;
     std::vector<std::array<float, 3>> vertexColours;
     std::vector<double> radiusList;
+    double unloadedLength = 0;
+    double currentLength = 0;
+    double unloadedArea = 0;
     while (true)
     {
         if (GaitSym::MAMuscle *maMuscle = dynamic_cast<GaitSym::MAMuscle *>(m_muscle))
         {
-            // shape is a volume of rotation about the x axis of y=(a/2)(cos(x)+1) from -pi to +pi
-            // volume is integral(pi*(a/2)(cos(x)+1)^2) which is (3*pi^2*a^2)/4
-            // so a = (2*sqrt(volume))/(sqrt(3)*pi)
-            double volume, a;
-            switch (m_muscleDrawStyle)
-            {
-            case VolumeFusiform:
-                volume = 2 * M_PI * maMuscle->pca() * maMuscle->fibreLength() /  maMuscle->length();
-                a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
-                break;
-            case AreaFusiform:
-                volume = 2 * M_PI * maMuscle->pca();
-                a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
-                break;
-            case FixedFusiform:
-                a = m_strapRadius;
-                break;
-            default:
-                assert(false);
-                break;
-            }
-
-            double delta = maMuscle->length() / m_strapNumSections;
-            double distance = 0;
-            for (size_t i = 0; i < m_polyline.size() - 1; i++)
-            {
-                pgd::Vector3 vec = m_polyline[i + 1] - m_polyline[i];
-                double vecLen = vec.magnitude();
-                if (vecLen <= delta)
-                {
-                    vertexList.push_back(m_polyline[i]);
-                    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-                    double x = (distance / maMuscle->length()) * ( 2 * M_PI) - M_PI;
-                    double radius = (a/2) * (std::cos(x)+1);
-                    radiusList.push_back(radius);
-                    distance += vecLen;
-                    continue;
-                }
-                size_t subdivisions = int(std::ceil(vecLen / delta));
-                double newDelta = vecLen / subdivisions;
-                pgd::Vector3 newVec = vec / subdivisions;
-                for (size_t j = 0; j < subdivisions; j++)
-                {
-                    vertexList.push_back(m_polyline[i] + j * newVec);
-                    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-                    double x = (distance / maMuscle->length()) * ( 2 * M_PI) - M_PI;
-                    double radius = (a/2) * (std::cos(x)+1);
-                    radiusList.push_back(radius);
-                    distance += newDelta;
-                }
-            }
-            vertexList.push_back(m_polyline.back());
-            vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
-            double x = (distance / maMuscle->length()) * ( 2 * M_PI) - M_PI;
-            double radius = (a/2) * (std::cos(x)+1);
-            radiusList.push_back(radius);
-            m_facetedObject1 = std::make_unique<FacetedPolyCone>(vertexList, vertexColours, radiusList, m_strapNumSegments, m_strapColor, 1.0);
-            m_facetedObject1->setSimulationWidget(m_simulationWidget);
-            m_facetedObjectList.push_back(m_facetedObject1.get());
+            unloadedLength = maMuscle->fibreLength();
+            currentLength = maMuscle->length();
+            unloadedArea = maMuscle->pca();
             break;
         }
-
-        qDebug() << "Error in DrawMuscle::initialise: Unsupported MUSCLE type";
+        if (GaitSym::MAMuscleComplete *maMuscleComplete = dynamic_cast<GaitSym::MAMuscleComplete *>(m_muscle))
+        {
+            unloadedLength = maMuscleComplete->fibreLength();
+            currentLength = maMuscleComplete->length();
+            unloadedArea = maMuscleComplete->pca();
+            break;
+        }
+        if (GaitSym::DampedSpringMuscle *dampedSpringMuscle = dynamic_cast<GaitSym::DampedSpringMuscle *>(m_muscle))
+        {
+            unloadedLength = dampedSpringMuscle->unloadedLength();
+            currentLength = dampedSpringMuscle->length();
+            unloadedArea = dampedSpringMuscle->area();
+            break;
+        }
+        qDebug() << "Error in DrawMuscle::fusiform: Unsupported MUSCLE type";
         break;
     }
+    if (unloadedLength <= 0 || currentLength <= 0 || unloadedArea <= 0) return;
+
+    // shape is a volume of rotation about the x axis of y=(a/2)(cos(x)+1) from -pi to +pi
+    // volume is integral(pi*(a/2)(cos(x)+1)^2) which is (3*pi^2*a^2)/4
+    // so a = (2*sqrt(volume))/(sqrt(3)*pi)
+    double volume, a;
+    switch (m_muscleDrawStyle)
+    {
+    case VolumeFusiform:
+        volume = 2 * M_PI * unloadedArea * unloadedLength /  currentLength;
+        a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
+        break;
+    case AreaFusiform:
+        volume = 2 * M_PI * unloadedArea;
+        a = (2*sqrt(volume))/(std::sqrt(3)*M_PI);
+        break;
+    case FixedFusiform:
+        a = m_strapRadius;
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
+    double delta = currentLength / m_strapNumSections;
+    double distance = 0;
+    for (size_t i = 0; i < m_polyline.size() - 1; i++)
+    {
+        pgd::Vector3 vec = m_polyline[i + 1] - m_polyline[i];
+        double vecLen = vec.magnitude();
+        if (vecLen <= delta)
+        {
+            vertexList.push_back(m_polyline[i]);
+            vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
+            double x = (distance / currentLength) * ( 2 * M_PI) - M_PI;
+            double radius = (a/2) * (std::cos(x)+1);
+            radiusList.push_back(radius);
+            distance += vecLen;
+            continue;
+        }
+        size_t subdivisions = int(std::ceil(vecLen / delta));
+        double newDelta = vecLen / subdivisions;
+        pgd::Vector3 newVec = vec / subdivisions;
+        for (size_t j = 0; j < subdivisions; j++)
+        {
+            vertexList.push_back(m_polyline[i] + j * newVec);
+            vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
+            double x = (distance / currentLength) * ( 2 * M_PI) - M_PI;
+            double radius = (a/2) * (std::cos(x)+1);
+            radiusList.push_back(radius);
+            distance += newDelta;
+        }
+    }
+    vertexList.push_back(m_polyline.back());
+    vertexColours.push_back({m_strapColor.redF(), m_strapColor.greenF(), m_strapColor.blueF()});
+    double x = (distance / currentLength) * ( 2 * M_PI) - M_PI;
+    double radius = (a/2) * (std::cos(x)+1);
+    radiusList.push_back(radius);
+    m_facetedObject1 = std::make_unique<FacetedPolyCone>(vertexList, vertexColours, radiusList, m_strapNumSegments, m_strapColor, 1.0);
+    m_facetedObject1->setSimulationWidget(m_simulationWidget);
+    m_facetedObjectList.push_back(m_facetedObject1.get());
 }
+
 
 std::string DrawMuscle::name()
 {
