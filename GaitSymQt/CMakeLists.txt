@@ -44,6 +44,9 @@ endif()
 # glextrusion definitions
 add_compile_definitions(TRIANGLE_GENERATOR __GLE_DOUBLE)
 
+# Qt defines
+add_compile_definitions(QT_IS_AVAILABLE)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS OpenGL)

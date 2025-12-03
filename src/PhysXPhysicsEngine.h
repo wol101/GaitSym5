@@ -88,8 +88,8 @@ public:
     physx::PxPvd *m_pvd = nullptr;
     physx::PxRigidStatic *m_world = nullptr;
 
-    float m_defaultLength = 1.0f;
-    float m_defaultSpeed = 10.0f;
+    double m_defaultLength = 1.0;
+    double m_defaultSpeed = 10.0;
     bool m_recordMemoryAllocations = false;
 
     std::map<std::string, physx::PxRigidDynamic*> m_bodyMap;

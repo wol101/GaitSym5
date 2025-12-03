@@ -100,9 +100,17 @@ std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
     physx::PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
     pgd::Vector3 gravity = simulation()->global()->gravity();
     sceneDesc.gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
-    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
     physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
-    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
+    if (numCores == 0)
+    {
+        setLastError("Error: PhysXPhysicsEngine error in getNbPhysicalCores"s);
+        return lastErrorPtr();
+    }
+    physx::PxU32 coresToUse = 1;
+#ifdef QT_IS_AVAILABLE
+    if (numCores > 1) { coresToUse = numCores - 1; } // only use multiple threads in the GUI version
+#endif
+    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(coresToUse);
     sceneDesc.cpuDispatcher	= m_dispatcher;
     sceneDesc.filterShader	= contactReportFilterShader;
     sceneDesc.simulationEventCallback = &g_contactReportCallback;
