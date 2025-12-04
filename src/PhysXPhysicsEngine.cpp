@@ -276,7 +276,7 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 }
                 else
                 {
-                    physx::PxReal restitution = -1 * sphereGeom->contactSpringConstant();
+                    physx::PxReal restitution = 0;
                     physx::PxReal damping = sphereGeom->contactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                     material->setDamping(damping);
@@ -284,6 +284,8 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
+                shape->setContactOffset(0.01); // start to get a collision effect when still 0.01 metre away
+                shape->setRestOffset(0.0); // rest separation distance - because less than the setContactOffset
                 physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
                 shape->setLocalPose(transform);
                 shape->userData = sphereGeom;
@@ -306,7 +308,7 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 }
                 else
                 {
-                    physx::PxReal restitution = -1 * planeGeom->contactSpringConstant();
+                    physx::PxReal restitution = 0;
                     physx::PxReal damping = planeGeom->contactDampingConstant();
                     material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
                     material->setDamping(damping);
