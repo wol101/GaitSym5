@@ -58,7 +58,7 @@ std::string *ODEPhysicsEngine::initialise(Simulation *theSimulation)
     std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
-    // initialise the ODE world
+    // initialise the Open Dynamics Engine (ODE) world
     dInitODE();
     m_worldID = dWorldCreate();
     m_spaceID = dHashSpaceCreate(nullptr); // FIX ME hash space is a compromise but this should probably be user controlled
@@ -71,11 +71,25 @@ std::string *ODEPhysicsEngine::initialise(Simulation *theSimulation)
 
     // apply the global values
     Global *global = simulation()->global();
-    dWorldSetGravity(m_worldID, global->gravity().x, global->gravity().y, global->gravity().z);
+
+    // these 4 values are key to getting stable simulations
+    // ERP (Error Reduction Parameter), which controls how much penetration error is corrected per timestep
+    // CFM (Constraint Force Mixing) is a softening parameter in ODE. It prevents instability by allowing constraints to act like stiff springs rather than unbreakable rules. Use small values for stability without losing realism.
+    // ContactMaxCorrectingVel acts as a safety clamp on ERP-driven corrections (should not be zero, but low values e.g 0.1 help stacking)
+    // ContactSurfaceLayer adds a thin tolerance layer around objects to improve contact stability and simulation robustness. Too small causes jitter, too large causes visible gaps
+
+    // In single-precision ODE simulations, ERP is typically set between 0.1 and 0.8 (default ≈ 0.2), while CFM (Constraint Force Mixing) is usually a very small positive number, often around 1e‑5 to 1e‑9.
+    // In double‑precision ODE simulations, ERP is still typically set between 0.1 and 0.8 (default ≈ 0.2), while CFM (Constraint Force Mixing) can safely be chosen much smaller than in single precision—commonly 1e‑7 to 1e‑12. Double precision allows you to use smaller CFM values without them underflowing to zero, which improves realism while maintaining stability.
+    // For double precision ODE simulations, start with ERP ≈ 0.2 and CFM ≈ 1e‑9, then tune based on stability vs. realism. Double precision lets you use much smaller CFM values than single precision, which improves accuracy without risking underflow.
+
+    // ContactMaxCorrectingVel and ContactSurfaceLayer values need to be set depending on the scale of the simulation and typical velocities.
+
     dWorldSetERP(m_worldID, global->ERP());
     dWorldSetCFM(m_worldID, global->CFM());
-    dWorldSetContactMaxCorrectingVel(m_worldID, global->contactMaxCorrectingVel());
-    dWorldSetContactSurfaceLayer(m_worldID, global->contactSurfaceLayer());
+    dWorldSetContactMaxCorrectingVel(m_worldID, global->contactMaxCorrectingVel()); // this is the maximum corrective velocity if contacts overlap (if not set, or too large then the simulations tend to explode)
+    dWorldSetContactSurfaceLayer(m_worldID, global->contactSurfaceLayer()); // this is the distance around an object used for contact detection. If too large, objects can appear to float rather than contact. If too small you can get instability.
+
+    dWorldSetGravity(m_worldID, global->gravity().x, global->gravity().y, global->gravity().z);
     dWorldSetDamping(m_worldID, global->linearDamping(), global->angularDamping());
 
     // create the ODE versions of the main elements

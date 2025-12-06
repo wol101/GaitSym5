@@ -108,7 +108,7 @@ std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
     }
     physx::PxU32 coresToUse = 1;
 #ifdef QT_IS_AVAILABLE
-    if (numCores > 1) { coresToUse = numCores - 1; } // only use multiple threads in the GUI version
+    // if (numCores > 1) { coresToUse = numCores - 1; } // only use multiple threads in the GUI version
 #endif
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(coresToUse);
     sceneDesc.cpuDispatcher	= m_dispatcher;
@@ -269,23 +269,16 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 physx::PxReal staticFriction = sphereGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (sphereGeom->contactBounce() > 0)
-                {
-                    physx::PxReal restitution = sphereGeom->contactBounce();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                }
-                else
-                {
-                    physx::PxReal restitution = 0;
-                    physx::PxReal damping = sphereGeom->contactDampingConstant();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setDamping(damping);
-                }
+                physx::PxReal damping = sphereGeom->contactDampingConstant();
+                physx::PxReal restitution = sphereGeom->contactBounce();
+                material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                material->setDamping(damping);
+
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
-                shape->setContactOffset(0.01); // start to get a collision effect when still 0.01 metre away
-                shape->setRestOffset(0.0); // rest separation distance - because less than the setContactOffset
+                shape->setContactOffset(simulation()->global()->contactSurfaceLayer()); // start to get a collision effect when still some distance away
+                shape->setRestOffset(0.0); // rest separation distance - because less than the ContactOffset this gives some softness to collisions
                 physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
                 shape->setLocalPose(transform);
                 shape->userData = sphereGeom;
@@ -301,18 +294,11 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 physx::PxReal staticFriction = planeGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (planeGeom->contactBounce() > 0)
-                {
-                    physx::PxReal restitution = planeGeom->contactBounce();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                }
-                else
-                {
-                    physx::PxReal restitution = 0;
-                    physx::PxReal damping = planeGeom->contactDampingConstant();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setDamping(damping);
-                }
+                physx::PxReal damping = planeGeom->contactDampingConstant();
+                physx::PxReal restitution = planeGeom->contactBounce();
+                material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                material->setDamping(damping);
+
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxPlaneGeometry(), *material, isExclusive, shapeFlags);
@@ -325,7 +311,8 @@ std::string *PhysXPhysicsEngine::createGeoms()
                 break;
             }
             std::cerr << "Unsupported GEOM type \"" << iter.second.get()->type();
-            break;        }
+            break;
+        }
     }
     return nullptr;
 }
