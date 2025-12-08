@@ -266,6 +266,10 @@ std::string *MuJoCoPhysicsEngine::createTree()
     m_mjXML.append(m_mjXMLActuators);
     xmlTerminateTag(&m_mjXML, "actuator"s);
 
+    xmlInitiateTag(&m_mjXML, "equality"s);
+    m_mjXML.append(m_mjXMLEqualities);
+    xmlTerminateTag(&m_mjXML, "equality"s);
+
     xmlInitiateTag(&m_mjXML, "sensor"s);
     m_mjXML.append(m_mjXMLSensors);
     xmlTerminateTag(&m_mjXML, "sensor"s);
@@ -385,6 +389,9 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             pgd::Vector2 reversedStops(-stops[1], -stops[0]);
             attributes["range"s] = GSUtil::toString(reversedStops);
             xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_site"s;
@@ -403,6 +410,7 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_torque"s;
             xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+ */
             break;
         }
         if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(joint))
@@ -413,6 +421,9 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             attributes["type"s] = "ball"s;
             attributes["pos"s] = GSUtil::toString(p2);
             xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = ballJoint->name() + "_site"s;
@@ -431,6 +442,7 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
             attributes["name"s] = ballJoint->name() + "_torque"s;
             xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+ */
             break;
         }
         if (const FixedJoint *fixedJoint = dynamic_cast<const FixedJoint *>(joint)) // this is emulated with a 6 DoF joint that is locked
@@ -438,9 +450,15 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             Marker *marker2 = fixedJoint->body2Marker();
             pgd::Vector3 p2 = marker2->position();
             attributes["name"s] = fixedJoint->name();
-            attributes["type"s] = "free"s;
+            attributes["type"s] = "slide"s; // fixed joint type does not exist in current MuJoCo so use a slider joint and fix the position by restricting the range
             attributes["pos"s] = GSUtil::toString(p2);
+            attributes["axis"s] = "0 0 1";
+            attributes["range"s] = "0 1e-10";
+            attributes["limited"s] = "true";
             xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = fixedJoint->name() + "_site"s;
@@ -459,13 +477,7 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
             attributes["name"s] = fixedJoint->name() + "_torque"s;
             xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
-            // and this joint needs to be locked
-            attributes.clear();
-            attributes["name"s] = fixedJoint->name() + "_actuator"s;
-            attributes["joint"s] = fixedJoint->name();
-            attributes["kp"s] = "1000"s;
-            attributes["ctrl"s] = "0 0 0 1 0 0 0"s; // position then quaternion
-            xmlInitiateTag(&m_mjXMLActuators, "position"s, attributes, true);
+ */
             break;
         }
         std::cerr << "Unsupported JOINT type \"" << joint->type();
@@ -739,6 +751,9 @@ std::string *MuJoCoPhysicsEngine::step()
                 // int jnt_dofadr = m_mjModel->jnt_dofadr[jointID]; // not used
                 pgd::Vector3 anchor(m_mjData->xanchor[jointID * 3 + 0], m_mjData->xanchor[jointID * 3 + 1], m_mjData->xanchor[jointID * 3 + 2]);
                 pgd::Vector3 axis(m_mjData->xaxis[jointID * 3 + 0], m_mjData->xaxis[jointID * 3 + 1], m_mjData->xaxis[jointID * 3 + 2]);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
                 // a hinge joint only has 1 dof
                 // pgd::Vector3 constraintTorque(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 0], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 1], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 2]);
                 // pgd::Vector3 constraintForce(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 4], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 5], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 6]);
@@ -772,6 +787,7 @@ std::string *MuJoCoPhysicsEngine::step()
                 Marker marker(iter.second.get()->body1());
                 hingeJoint->setForce(marker.worldVector(jointforce));
                 hingeJoint->setTorque(marker.worldVector(jointtorque));
+ */
                 break;
             }
             if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
@@ -779,6 +795,9 @@ std::string *MuJoCoPhysicsEngine::step()
                 int jointID = mj_name2id(m_mjModel, mjOBJ_JOINT, ballJoint->name().c_str());
                 int jnt_type = m_mjModel->jnt_type[jointID];
                 assert(jnt_type == mjJNT_HINGE);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
                 // int jnt_qposadr = m_mjModel->jnt_qposadr[jointID]; // not used
                 // int jnt_dofadr = m_mjModel->jnt_dofadr[jointID]; // not used
                 pgd::Vector3 anchor(m_mjData->xanchor[jointID * 3 + 0], m_mjData->xanchor[jointID * 3 + 1], m_mjData->xanchor[jointID * 3 + 2]);
@@ -805,7 +824,13 @@ std::string *MuJoCoPhysicsEngine::step()
                 // pgd::Vector3 jointtorque(jointtorqueSensorPtr[0], jointtorqueSensorPtr[1], jointtorqueSensorPtr[2]);
                 // FIX ME
                 // ballJoint->setAnchor(anchor); // this probably doesn't change
+ */
                 break;
+            }
+            if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
+            {
+                // since this is not a real joitn I suspect there is no way of getting any useful information
+                // I probably need to fix it using motors or somesuch
             }
             break;
         }
