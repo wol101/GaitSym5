@@ -386,9 +386,9 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             attributes["type"s] = "hinge"s;
             attributes["axis"s] = GSUtil::toString(axis2);
             attributes["pos"s] = GSUtil::toString(p2);
-            // attributes["limited"s] = GSUtil::toString(true);
-            // pgd::Vector2 reversedStops(-stops[1], -stops[0]);
-            // attributes["range"s] = GSUtil::toString(reversedStops);
+            attributes["limited"s] = GSUtil::toString(true);
+            pgd::Vector2 reversedStops(-stops[1], -stops[0]);
+            attributes["range"s] = GSUtil::toString(reversedStops);
             xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
 /* I should be able to get this data directly from the qfrc_constraint array via:
  * adr = model.jnt_dofadr[hinge_id]
