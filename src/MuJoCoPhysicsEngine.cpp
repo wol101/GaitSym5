@@ -54,7 +54,7 @@ std::string *MuJoCoPhysicsEngine::initialise(Simulation *theSimulation)
     err = createTree();
     if (err) { return err; }
 
-#define DEBUG_MUJOCO_XML
+//#define DEBUG_MUJOCO_XML
 #ifdef DEBUG_MUJOCO_XML
     std::ofstream of("C:\\Scratch\\test.xml");
     of << m_mjXML;
@@ -69,11 +69,12 @@ std::string *MuJoCoPhysicsEngine::initialise(Simulation *theSimulation)
         return lastErrorPtr();
     }
 
-    m_mjData = mj_makeData(m_mjModel);
-    mj_forward(m_mjModel, m_mjData);
+    m_mjData = mj_makeData(m_mjModel); // initialise the simulation state for the model
 
-    // move to start positions
-    moveBodies();
+    // move to start positions (in this case it involves setting the joint starting conditions)
+    if (moveBodies()) return lastErrorPtr();
+
+    mj_forward(m_mjModel, m_mjData); // propagates changes in joint angles to body positions/orientations.
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
     for (auto &&iter : m_rootTreeBodyList) { insertMJBodyIDs(&iter); }
@@ -385,9 +386,9 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             attributes["type"s] = "hinge"s;
             attributes["axis"s] = GSUtil::toString(axis2);
             attributes["pos"s] = GSUtil::toString(p2);
-            attributes["limited"s] = GSUtil::toString(true);
-            pgd::Vector2 reversedStops(-stops[1], -stops[0]);
-            attributes["range"s] = GSUtil::toString(reversedStops);
+            // attributes["limited"s] = GSUtil::toString(true);
+            // pgd::Vector2 reversedStops(-stops[1], -stops[0]);
+            // attributes["range"s] = GSUtil::toString(reversedStops);
             xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
 /* I should be able to get this data directly from the qfrc_constraint array via:
  * adr = model.jnt_dofadr[hinge_id]
@@ -450,7 +451,7 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             Marker *marker2 = fixedJoint->body2Marker();
             pgd::Vector3 p2 = marker2->position();
             attributes["name"s] = fixedJoint->name();
-            attributes["type"s] = "slide"s; // fixed joint type does not exist in current MuJoCo so use a slider joint and fix the position by restricting the range
+            attributes["type"s] = "hinge"s; // fixed joint type does not exist in current MuJoCo so use a hinge joint and fix the position by restricting the range
             attributes["pos"s] = GSUtil::toString(p2);
             attributes["axis"s] = "0 0 1";
             attributes["range"s] = "-1e-10 1e-10"; // cannot set them both to zero
@@ -539,9 +540,9 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
     // mjtNum* qpos;              // position                                         (nq x 1)
     // mjtNum* qvel;              // velocity                                         (nv x 1)
     // the number of values in qpos and qvel varies with the joint type
-    // mjtJoint = mjJNT_FREE has 7 values in qpos and 6 in qvel
+    // mjtJoint = mjJNT_FREE has 7 values in qpos [xyz wxqyqzq] and 6 in qvel [xryrzr xvyvzv]
     // mjtJoint = mjJNT_HINGE has 1 in qpos and 1 in qvel
-    // mjtJoint = mjJNT_BALL has 4 in qpos and 3 in qvel
+    // mjtJoint = mjJNT_BALL has 4 in qpos [wxqyqzq] and 3 in qvel [xryrzr]
     // note: these state values are sticky unless something like mj_resetData is called
 
     for (size_t jointID = 0; jointID < m_mjModel->njnt; jointID++)
@@ -554,7 +555,7 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
         std::string bodyName(mj_id2name(m_mjModel, mjOBJ_BODY, int(jnt_bodyid)));
         switch (jnt_type)
         {
-        case mjJNT_FREE:
+        case mjJNT_FREE: // free bodies are a special case for the root body in the tree so it gets set in world coordinates
         {
 #ifdef DEBUG_MUJOCO_MOVE_BODIES
             pgd::Vector3 p(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2]);
@@ -639,7 +640,8 @@ std::string *MuJoCoPhysicsEngine::moveBodies()
             m_mjData->qpos[jnt_qposadr + 0] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
             m_mjData->qvel[jnt_dofadr + 0] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
             break;
-        }        default:
+        }
+        default:
             setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", jointName.c_str()));
             return lastErrorPtr();
         }
