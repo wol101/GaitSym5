@@ -453,7 +453,7 @@ std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
             attributes["type"s] = "slide"s; // fixed joint type does not exist in current MuJoCo so use a slider joint and fix the position by restricting the range
             attributes["pos"s] = GSUtil::toString(p2);
             attributes["axis"s] = "0 0 1";
-            attributes["range"s] = "0 1e-10";
+            attributes["range"s] = "-1e-10 1e-10"; // cannot set them both to zero
             attributes["limited"s] = "true";
             xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
 /* I should be able to get this data directly from the qfrc_constraint array via:
