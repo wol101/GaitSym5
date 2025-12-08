@@ -29,10 +29,9 @@ using namespace std::string_literals;
 #if defined(USE_CL)
 int main(int argc, const char **argv)
 {
-    py_initialize();
+    py_initialize(); // not bothering with py_finalize() because it can cause problems with py_resetvm in destructors
     GaitSym::ObjectiveMain objectiveMain(argc, argv);
     objectiveMain.run();
-    py_finalize();
 }
 #endif
 

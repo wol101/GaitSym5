@@ -102,7 +102,7 @@ private:
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     // Initialize pocketpy and the default VM.
-    py_initialize();
+    py_initialize(); // not bothering with py_finalize() because it can cause problems with py_resetvm in destructors
 
     // create the window elements
     ui->setupUi(this);
@@ -292,9 +292,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
-    // Finalize pocketpy and free all VMs.
-    PK_API void py_finalize();
-
     m_timer->stop();
 
     if (m_simulation) delete m_simulation;
