@@ -462,7 +462,7 @@ std::string *PhysXPhysicsEngine::step()
     }
 
     simulation()->contactList()->clear();
-    double timeStep =simulation()->global()->stepSize();
+    double timeStep = simulation()->global()->stepSize();
     for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     {
         physx::PxActor *actors[2];
@@ -474,6 +474,10 @@ std::string *PhysXPhysicsEngine::step()
             physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
             physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
             physx::PxShape *shape2 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
+            Geom *shape1UserData = static_cast<Geom *>(shape1->userData);
+            Geom *shape2UserData = static_cast<Geom *>(shape2->userData);
+            if (shape1UserData->abort()) simulation()->setContactAbort(shape1UserData->name());
+            if (shape2UserData->abort()) simulation()->setContactAbort(shape2UserData->name());
             std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
             myContact->setSimulation(simulation());
             myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
