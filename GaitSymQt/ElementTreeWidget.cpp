@@ -117,6 +117,7 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
 {
     if (!m_simulation) return;
     QTreeWidgetItem *item = this->itemAt(pos);
+    if (!item) return;
     QMenu menu(this);
 
     if (item->type() == ELEMENT_ITEM_TYPE)
