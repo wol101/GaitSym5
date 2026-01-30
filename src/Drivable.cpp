@@ -20,7 +20,7 @@ Drivable::~Drivable()
 {
 }
 
-void Drivable::ReceiveData(double receivedData, int64_t receiveDataStepCount)
+void Drivable::receiveData(double receivedData, int64_t receiveDataStepCount)
 {
     if (receiveDataStepCount == m_receiveDataStepCount)
     {

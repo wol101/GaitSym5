@@ -21,8 +21,8 @@ public:
     Filter();
     virtual ~Filter();
 
-    virtual void AddNewSample(double x);
-    virtual double Output();
+    virtual void addNewSample(double x);
+    virtual double output();
 
 
     double xn() const;

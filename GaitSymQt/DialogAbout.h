@@ -1,5 +1,5 @@
 /*
- *  AboutDialog.h
+ *  DialogAbout.h
  *  GaitSymODE2019
  *
  *  Created by Bill Sellers on 08/10/2018.
@@ -12,15 +12,15 @@
 
 #include <QDialog>
 
-namespace Ui { class AboutDialog; }
+namespace Ui { class DialogAbout; }
 
-class AboutDialog : public QDialog
+class DialogAbout : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AboutDialog(QWidget *parent = nullptr);
-    ~AboutDialog();
+    explicit DialogAbout(QWidget *parent = nullptr);
+    ~DialogAbout();
 
 public slots:
     virtual void accept() Q_DECL_OVERRIDE;
@@ -30,7 +30,7 @@ protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    Ui::AboutDialog *ui;
+    Ui::DialogAbout *ui;
 };
 
 #endif // ABOUTDIALOG_H

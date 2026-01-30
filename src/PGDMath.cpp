@@ -40,29 +40,29 @@ pgd::Vector2::Vector2(const double *d)
     y = d[1];
 }
 
-void pgd::Vector2::Set(double xi, double yi)
+void pgd::Vector2::set(double xi, double yi)
 {
     x = xi;
     y = yi;
 }
 
-void pgd::Vector2::Set(const double *xy)
+void pgd::Vector2::set(const double *xy)
 {
     x = xy[0];
     y = xy[1];
 }
 
-double pgd::Vector2::Magnitude(void) const
+double pgd::Vector2::magnitude(void) const
 {
     return std::sqrt(x*x + y*y);
 }
 
-double pgd::Vector2::Magnitude2(void) const
+double pgd::Vector2::magnitude2(void) const
 {
     return (x*x + y*y);
 }
 
-void  pgd::Vector2::Normalize(void)
+void  pgd::Vector2::normalize(void)
 {
     // wis - to cope with very small vectors (quite common) we need to divide by the largest magnitude element
     // to minimise rounding errors. This will make it less good with larger vectors but that's
@@ -96,7 +96,7 @@ void  pgd::Vector2::Normalize(void)
     y /= m;
 }
 
-void  pgd::Vector2::Reverse(void)
+void  pgd::Vector2::reverse(void)
 {
     x = -x;
     y = -y;
@@ -179,12 +179,12 @@ double pgd::operator*(const pgd::Vector2 &u, const pgd::Vector2 &v)
     return (u.x*v.x + u.y*v.y);
 }
 
-double pgd::Dot(const pgd::Vector2 &u, const pgd::Vector2 &v)
+double pgd::dot(const pgd::Vector2 &u, const pgd::Vector2 &v)
 {
     return (u.x*v.x + u.y*v.y);
 }
 
-double pgd::Vector2::Dot(const Vector2 &v) const
+double pgd::Vector2::dot(const Vector2 &v) const
 {
     return (x*v.x + y*v.y);
 }
@@ -204,9 +204,9 @@ pgd::Vector2 pgd::operator/(const pgd::Vector2 &u, double s)
     return pgd::Vector2(u.x/s, u.y/s);
 }
 
-pgd::Vector2 pgd::Normalize(const pgd::Vector2 &u)
+pgd::Vector2 pgd::normalize(const pgd::Vector2 &u)
 {
-    return u / u.Magnitude();
+    return u / u.magnitude();
 }
 
 // less than used for sorting in maps and sets
@@ -237,31 +237,31 @@ pgd::Vector3::Vector3(const double *d)
     z = d[2];
 }
 
-void pgd::Vector3::Set(double xi, double yi, double zi)
+void pgd::Vector3::set(double xi, double yi, double zi)
 {
     x = xi;
     y = yi;
     z = zi;
 }
 
-void pgd::Vector3::Set(const double *xyz)
+void pgd::Vector3::set(const double *xyz)
 {
     x = xyz[0];
     y = xyz[1];
     z = xyz[2];
 }
 
-double pgd::Vector3::Magnitude(void) const
+double pgd::Vector3::magnitude(void) const
 {
     return std::sqrt(x*x + y*y + z*z);
 }
 
-double pgd::Vector3::Magnitude2(void) const
+double pgd::Vector3::magnitude2(void) const
 {
     return (x*x + y*y + z*z);
 }
 
-void  pgd::Vector3::Normalize(void)
+void  pgd::Vector3::normalize(void)
 {
     // wis - to cope with very small vectors (quite common) we need to divide by the largest magnitude element
     // to minimise rounding errors. This will make it less good with larger vectors but that's
@@ -293,7 +293,7 @@ void  pgd::Vector3::Normalize(void)
     z /= m;
 }
 
-void  pgd::Vector3::Reverse(void)
+void  pgd::Vector3::reverse(void)
 {
     x = -x;
     y = -y;
@@ -385,14 +385,14 @@ pgd::Vector3 pgd::operator^(const pgd::Vector3 &u, const pgd::Vector3 &v)
                         u.x*v.y - u.y*v.x );
 }
 
-pgd::Vector3 pgd::Cross(const pgd::Vector3 &u, const pgd::Vector3 &v)
+pgd::Vector3 pgd::cross(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return pgd::Vector3(  u.y*v.z - u.z*v.y,
                         -u.x*v.z + u.z*v.x,
                         u.x*v.y - u.y*v.x );
 }
 
-pgd::Vector3 pgd::Vector3::Cross(const pgd::Vector3 &v) const
+pgd::Vector3 pgd::Vector3::cross(const pgd::Vector3 &v) const
 {
     return pgd::Vector3(  y*v.z - z*v.y,
                         -x*v.z + z*v.x,
@@ -405,12 +405,12 @@ double pgd::operator*(const pgd::Vector3 &u, const pgd::Vector3 &v)
     return (u.x*v.x + u.y*v.y + u.z*v.z);
 }
 
-double pgd::Dot(const pgd::Vector3 &u, const pgd::Vector3 &v)
+double pgd::dot(const pgd::Vector3 &u, const pgd::Vector3 &v)
 {
     return (u.x*v.x + u.y*v.y + u.z*v.z);
 }
 
-double pgd::Vector3::Dot(const pgd::Vector3 &v) const
+double pgd::Vector3::dot(const pgd::Vector3 &v) const
 {
     return (x*v.x + y*v.y + z*v.z);
 }
@@ -431,7 +431,7 @@ pgd::Vector3 pgd::operator/(const pgd::Vector3 &u, double s)
 }
 
 // triple scalar product (u dot (v cross w))
-double pgd::TripleScalarProduct(const pgd::Vector3 &u, const pgd::Vector3 &v, const pgd::Vector3 &w)
+double pgd::tripleScalarProduct(const pgd::Vector3 &u, const pgd::Vector3 &v, const pgd::Vector3 &w)
 {
     return double(  (u.x * ( v.y*w.z - v.z*w.y)) +
                   (u.y * (-v.x*w.z + v.z*w.x)) +
@@ -440,9 +440,9 @@ double pgd::TripleScalarProduct(const pgd::Vector3 &u, const pgd::Vector3 &v, co
 
 }
 
-pgd::Vector3 pgd::Normalize(const pgd::Vector3 &u)
+pgd::Vector3 pgd::normalize(const pgd::Vector3 &u)
 {
-    return u / u.Magnitude();
+    return u / u.magnitude();
 }
 
 // less than used for sorting in maps and sets
@@ -451,7 +451,7 @@ bool pgd::Vector3::operator<(const pgd::Vector3 &rhs) const
     return std::tie(x, y, z) < std::tie(rhs.x, rhs.y, rhs.z);
 }
 
-pgd::Vector3 pgd::PerpendicularVector(const pgd::Vector3 &v)
+pgd::Vector3 pgd::perpendicularVector(const pgd::Vector3 &v)
 {
     pgd::Vector3 result;
     // Finds an arbitrary perpendicular vector to v
@@ -460,7 +460,7 @@ pgd::Vector3 pgd::PerpendicularVector(const pgd::Vector3 &v)
     // 0 = ax + by + cz
 
     // x = y = z = 0 is not an acceptable solution
-    if (v.Magnitude2() < std::numeric_limits<double>::min())
+    if (v.magnitude2() < std::numeric_limits<double>::min())
     {
         return result; // result is zero length
     }
@@ -475,7 +475,7 @@ pgd::Vector3 pgd::PerpendicularVector(const pgd::Vector3 &v)
     // arbitrarily set a = b = 1
     // then the equation simplifies to
     // c = -(x + y)/z
-    result.Set(1, 1, -1.0 * (v.x + v.y) / v.z);
+    result.set(1, 1, -1.0 * (v.x + v.y) / v.z);
     return result;
 }
 
@@ -503,7 +503,7 @@ pgd::Vector4::Vector4(const double *d)
     w = d[3];
 }
 
-void pgd::Vector4::Set(double xi, double yi, double zi, double wi)
+void pgd::Vector4::set(double xi, double yi, double zi, double wi)
 {
     x = xi;
     y = yi;
@@ -511,7 +511,7 @@ void pgd::Vector4::Set(double xi, double yi, double zi, double wi)
     w = wi;
 }
 
-void pgd::Vector4::Set(const double *xyzw)
+void pgd::Vector4::set(const double *xyzw)
 {
     x = xyzw[0];
     y = xyzw[1];
@@ -519,17 +519,17 @@ void pgd::Vector4::Set(const double *xyzw)
     w = xyzw[3];
 }
 
-double pgd::Vector4::Magnitude(void) const
+double pgd::Vector4::magnitude(void) const
 {
     return std::sqrt(x*x + y*y + z*z + w*w);
 }
 
-double pgd::Vector4::Magnitude2(void) const
+double pgd::Vector4::magnitude2(void) const
 {
     return (x*x + y*y + z*z + w*w);
 }
 
-void  pgd::Vector4::Normalize(void)
+void  pgd::Vector4::normalize(void)
 {
     // wis - to cope with very small vectors (quite common) we need to divide by the largest magnitude element
     // to minimise rounding errors. This will make it less good with larger vectors but that's
@@ -566,7 +566,7 @@ void  pgd::Vector4::Normalize(void)
     w /= w;
 }
 
-void  pgd::Vector4::Reverse(void)
+void  pgd::Vector4::reverse(void)
 {
     x = -x;
     y = -y;
@@ -671,9 +671,9 @@ pgd::Vector4 pgd::operator/(const pgd::Vector4 &u, double s)
     return pgd::Vector4(u.x/s, u.y/s, u.z/s, u.w/s);
 }
 
-pgd::Vector4 pgd::Normalize(const pgd::Vector4 &u)
+pgd::Vector4 pgd::normalize(const pgd::Vector4 &u)
 {
-    return u / u.Magnitude();
+    return u / u.magnitude();
 }
 
 // less than used for sorting in maps and sets
@@ -718,7 +718,7 @@ pgd::Quaternion::Quaternion(bool identity)
     }
 }
 
-void pgd::Quaternion::Set(double nn, double xx, double yy, double zz)
+void pgd::Quaternion::set(double nn, double xx, double yy, double zz)
 {
     this->n = nn;
     this->x = xx;
@@ -726,7 +726,7 @@ void pgd::Quaternion::Set(double nn, double xx, double yy, double zz)
     this->z = zz;
 }
 
-void pgd::Quaternion::Set(const double *q_nxyz)
+void pgd::Quaternion::set(const double *q_nxyz)
 {
     n = q_nxyz[0];
     x = q_nxyz[1];
@@ -734,17 +734,17 @@ void pgd::Quaternion::Set(const double *q_nxyz)
     z = q_nxyz[3];
 }
 
-double pgd::Quaternion::Magnitude(void) const
+double pgd::Quaternion::magnitude(void) const
 {
     return std::sqrt(n*n + x*x + y*y + z*z);
 }
 
-pgd::Vector3 pgd::Quaternion::GetVector(void) const
+pgd::Vector3 pgd::Quaternion::vector(void) const
 {
     return pgd::Vector3(x, y, z);
 }
 
-double pgd::Quaternion::GetScalar(void) const
+double pgd::Quaternion::scalar(void) const
 {
     return n;
 }
@@ -875,31 +875,31 @@ bool pgd::Quaternion::operator<(const pgd::Quaternion &rhs) const
     return std::tie(n, x, y, z) < std::tie(rhs.n, rhs.x, rhs.y, rhs.z);
 }
 
-pgd::Quaternion pgd::Conjugate(const pgd::Quaternion &q)
+pgd::Quaternion pgd::conjugate(const pgd::Quaternion &q)
 {
     return pgd::Quaternion(q.n, -q.x, -q.y, -q.z);
 }
 
-double pgd::QGetAngle(const pgd::Quaternion &q)
+double pgd::qGetAngle(const pgd::Quaternion &q)
 {
     if (q.n <= -1) return 0; // 2 * M_PI
     if (q.n >= 1) return 0; // 2 * 0
     return  (2*std::acos(q.n));
 }
 
-pgd::Vector3 pgd::QGetAxis(const pgd::Quaternion &q)
+pgd::Vector3 pgd::qGetAxis(const pgd::Quaternion &q)
 {
-    pgd::Vector3 v = q.GetVector();
-    v.Normalize();
+    pgd::Vector3 v = q.vector();
+    v.normalize();
     return v;
 }
 
-pgd::Quaternion pgd::QRotate(const pgd::Quaternion &q1, const pgd::Quaternion &q2) // so called 'sandwich product'
+pgd::Quaternion pgd::qRotate(const pgd::Quaternion &q1, const pgd::Quaternion &q2) // so called 'sandwich product'
 {
     return  q1*q2*(~q1);
 }
 
-pgd::Vector3 pgd::QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // so called 'sandwich product'
+pgd::Vector3 pgd::qVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // so called 'sandwich product'
 {
 #ifdef EASY_TO_READ
     pgd::Quaternion t;
@@ -938,7 +938,7 @@ pgd::Vector3 pgd::QVRotate(const pgd::Quaternion &q, const pgd::Vector3 &v) // s
 }
 
 // these are extrinsic/global/static Euler XYZ angles
-pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
+pgd::Quaternion pgd::makeQFromEulerAngles(double x, double y, double z)
 {
     pgd::Quaternion  q;
     double   roll = pgd::DegToRad(x);
@@ -969,7 +969,7 @@ pgd::Quaternion pgd::MakeQFromEulerAngles(double x, double y, double z)
 }
 
 // these are extrinsic/global/static Euler XYZ angles
-pgd::Vector3 pgd::MakeEulerAnglesFromQ(const pgd::Quaternion &q)
+pgd::Vector3 pgd::makeEulerAnglesFromQ(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
     double   q00, q11, q22, q33;
@@ -1007,7 +1007,7 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQ(const pgd::Quaternion &q)
 }
 
 // these are extrinsic/global/static Euler XYZ angles
-pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(double roll, double pitch, double yaw)
+pgd::Quaternion pgd::makeQFromEulerAnglesRadian(double roll, double pitch, double yaw)
 {
     pgd::Quaternion  q;
 
@@ -1036,7 +1036,7 @@ pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(double roll, double pitch, doubl
 
 
 // these are extrinsic/global/static Euler XYZ angles
-pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
+pgd::Vector3 pgd::makeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 {
     double   r11, r21, r31, r32, r33, r12, r13;
     double   q00, q11, q22, q33;
@@ -1073,7 +1073,7 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q)
 
 }
 
-pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis)
+pgd::Vector3 pgd::makeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd::Matrix3x3 &basis)
 {
     {
         // returns the Euler angles XYZ using a specified basis
@@ -1094,16 +1094,16 @@ pgd::Vector3 pgd::MakeEulerAnglesFromQRadian(const pgd::Quaternion &q, const pgd
 
         pgd::Matrix3x3 R(q);
         const pgd::Matrix3x3 &A = basis;
-        pgd::Matrix3x3 At = A.Transpose();
+        pgd::Matrix3x3 At = A.transpose();
         pgd::Matrix3x3 Rp = At * R * A;
-        pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(pgd::MakeQfromM(Rp));
+        pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(pgd::makeQfromM(Rp));
 
         return euler;
     }
 }
 
 // these are intrinsic/local/dynamic/moving axis Euler angles
-pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(const pgd::Vector3 &eulerAngles, const std::string &order)
+pgd::Quaternion pgd::makeQFromEulerAnglesRadian(const pgd::Vector3 &eulerAngles, const std::string &order)
 {
     double w, x, y, z;
     double c = std::cos(eulerAngles.x / 2);
@@ -1173,7 +1173,7 @@ pgd::Quaternion pgd::MakeQFromEulerAnglesRadian(const pgd::Vector3 &eulerAngles,
 }
 
 // wis  - added routine to make a pgd::Quaternion from an axis and a rotation angle in radians
-pgd::Quaternion pgd::MakeQFromAxisAngle(double x, double y, double z, double angle, bool fast)
+pgd::Quaternion pgd::makeQFromAxisAngle(double x, double y, double z, double angle, bool fast)
 {
     if (fast)
     {
@@ -1188,7 +1188,7 @@ pgd::Quaternion pgd::MakeQFromAxisAngle(double x, double y, double z, double ang
     {
         pgd::Quaternion  q;
         pgd::Vector3 v(x, y, z);
-        v.Normalize();
+        v.normalize();
         double sin_a = std::sin( angle / 2 );
         double cos_a = std::cos( angle / 2 );
         q.x    = v.x * sin_a;
@@ -1200,7 +1200,7 @@ pgd::Quaternion pgd::MakeQFromAxisAngle(double x, double y, double z, double ang
 }
 
 // wis  - added routine to make a pgd::Quaternion from an axis and a rotation angle in radians
-pgd::Quaternion pgd::MakeQFromAxisAngle(const pgd::Vector3 &axis, double angle, bool fast)
+pgd::Quaternion pgd::makeQFromAxisAngle(const pgd::Vector3 &axis, double angle, bool fast)
 {
     if (fast)
     {
@@ -1214,7 +1214,7 @@ pgd::Quaternion pgd::MakeQFromAxisAngle(const pgd::Vector3 &axis, double angle, 
     else
     {
         pgd::Quaternion  q;
-        pgd::Vector3 v(axis / axis.Magnitude());
+        pgd::Vector3 v(axis / axis.magnitude());
         double sin_a = std::sin( angle / 2 );
         double cos_a = std::cos( angle / 2 );
         q.x    = v.x * sin_a;
@@ -1225,9 +1225,9 @@ pgd::Quaternion pgd::MakeQFromAxisAngle(const pgd::Vector3 &axis, double angle, 
     }
 }
 
-void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, double *xa, double *ya, double *za, double *angle)
+void pgd::makeAxisAngleFromQ(pgd::Quaternion q, double *xa, double *ya, double *za, double *angle)
 {
-    if (q.n > 1) q.Normalize();           // if w > 1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
+    if (q.n > 1) q.normalize();           // if w > 1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
     *angle = 2 * std::acos(q.n);
     double s = std::sqrt(1 - q.n * q.n);  // assuming quaternion normalised then w is less than 1, so term always positive.
     if (s < DBL_EPSILON)                  // test to avoid divide by zero, s is always positive due to sqrt
@@ -1246,9 +1246,9 @@ void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, double *xa, double *ya, double *
     }
 }
 
-void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, pgd::Vector3 *axis, double *angle)
+void pgd::makeAxisAngleFromQ(pgd::Quaternion q, pgd::Vector3 *axis, double *angle)
 {
-    if (q.n > 1) q.Normalize();           // if w > 1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
+    if (q.n > 1) q.normalize();           // if w > 1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
     *angle = 2 * std::acos(q.n);
     double s = std::sqrt(1 - q.n * q.n);  // assuming quaternion normalised then w is less than 1, so term always positive.
     if (s < DBL_EPSILON)                  // test to avoid divide by zero, s is always positive due to sqrt
@@ -1274,7 +1274,7 @@ void pgd::MakeAxisAngleFromQ(pgd::Quaternion q, pgd::Vector3 *axis, double *angl
 // post multiplying both sides by conj(qa) gives:
 // q = qb * conj(qa)
 
-pgd::Quaternion pgd::FindRotation(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
+pgd::Quaternion pgd::findRotation(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
     // // check my algebra
     // pgd::Quaternion result = ((~qa) * qb);
@@ -1287,7 +1287,7 @@ pgd::Quaternion pgd::FindRotation(const pgd::Quaternion &qa, const pgd::Quaterni
     return (qb * (~qa));
 }
 
-double pgd::FindAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
+double pgd::findAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
     double v = qa.n*qb.n + qa.x*qb.x + qa.y*qb.y+ qa.z*qb.z;
     if (v <= -1) return 0; // 2 * M_PI
@@ -1298,14 +1298,14 @@ double pgd::FindAngle(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
     return angle;
 }
 
-pgd::Vector3 pgd::FindAxis(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
+pgd::Vector3 pgd::findAxis(const pgd::Quaternion &qa, const pgd::Quaternion &qb)
 {
-    return QGetAxis((~qa) * qb);
+    return qGetAxis((~qa) * qb);
 }
 
 // this is useful when reading in quaternions since there is inevitable precision loss
 // which means the quaternion will be slightly denormal
-void pgd::Quaternion::Normalize(void)
+void pgd::Quaternion::normalize(void)
 {
     double l = std::sqrt(n*n + x*x + y*y + z*z);
     n /= l;
@@ -1314,7 +1314,7 @@ void pgd::Quaternion::Normalize(void)
     z /= l;
 }
 
-void pgd::Quaternion::Conjugate(void)
+void pgd::Quaternion::conjugate(void)
 {
     x = -x;
     y = -y;
@@ -1323,35 +1323,35 @@ void pgd::Quaternion::Conjugate(void)
 
 // this routine returns the quaternion that rotates v1 to v2 via the shortest path
 // note the vectors do not have to be the same size
-pgd::Quaternion pgd::FindRotation(const pgd::Vector3 &v1, const pgd::Vector3 &v2)
+pgd::Quaternion pgd::findRotation(const pgd::Vector3 &v1, const pgd::Vector3 &v2)
 {
     // classic solutions
     pgd::Quaternion q;
-    q.n = std::sqrt((v1.Magnitude2()) * (v2.Magnitude2())) + Dot(v1, v2); // this effectively halves the rotation angle but denormalises the quaternion
+    q.n = std::sqrt((v1.magnitude2()) * (v2.magnitude2())) + dot(v1, v2); // this effectively halves the rotation angle but denormalises the quaternion
     if (q.n < DBL_EPSILON) // this only occurs if a 180 degree rotation is needed
     {
         pgd::Vector3 perp; // this is a perpendicular vector (v1 dot perp = 0)
         if (fabs(v1.z) > DBL_EPSILON) perp = pgd::Vector3(0, -v1.z, v1.y);
         else perp = pgd::Vector3(-v1.y, v1.x, 0);
-        q = MakeQFromAxisAngle(perp.x, perp.y, perp.z, M_PI);
+        q = makeQFromAxisAngle(perp.x, perp.y, perp.z, M_PI);
     }
     else
     {
-        pgd::Vector3 c = Cross(v1, v2);
+        pgd::Vector3 c = cross(v1, v2);
         q.x = c.x;
         q.y = c.y;
         q.z = c.z;
-        q.Normalize();
+        q.normalize();
     }
     return q;
 }
 
 // project vector v onto vector u
-pgd::Vector3 pgd::Projection(const pgd::Vector3 &v, const pgd::Vector3 &u)
+pgd::Vector3 pgd::projection(const pgd::Vector3 &v, const pgd::Vector3 &u)
 {
     // (v . norm(u) ) norm(u)
-    pgd::Vector3 normU = pgd::Normalize(u);
-    return v.Dot(normU) * normU;
+    pgd::Vector3 normU = pgd::normalize(u);
+    return v.dot(normU) * normU;
 }
 
 //       Decompose the rotation on to 2 parts.
@@ -1363,13 +1363,13 @@ pgd::Vector3 pgd::Projection(const pgd::Vector3 &v, const pgd::Vector3 &u)
 //       has singularity in case of swing_rotation close to 180 degrees rotation.
 //       if the input quaternion is of non-unit length, the outputs are non-unit as well
 //       otherwise, outputs are both unit
-void pgd::SwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist)
+void pgd::qwingTwistDecomposition(const pgd::Quaternion &rotation, const pgd::Vector3 &direction, pgd::Quaternion *swing, pgd::Quaternion *twist)
 {
     pgd::Vector3 ra(rotation.x, rotation.y, rotation.z); // rotation axis
-    pgd::Vector3 p = Projection(ra, direction); // return projection v1 on to v2  (parallel component)
-    twist->Set(rotation.n, p.x, p.y, p.z);
-    twist->Normalize();
-    *swing = rotation * pgd::Conjugate(*twist);
+    pgd::Vector3 p = projection(ra, direction); // return projection v1 on to v2  (parallel component)
+    twist->set(rotation.n, p.x, p.y, p.z);
+    twist->normalize();
+    *swing = rotation * pgd::conjugate(*twist);
 }
 
 pgd::Matrix3x3::Matrix3x3(void)
@@ -1429,7 +1429,7 @@ pgd::Matrix3x3::Matrix3x3(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3
     e33 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[8];
 }
 
-void pgd::Matrix3x3::Set(double r1c1, double r1c2, double r1c3,
+void pgd::Matrix3x3::set(double r1c1, double r1c2, double r1c3,
                          double r2c1, double r2c2, double r2c3,
                          double r3c1, double r3c2, double r3c3)
 {
@@ -1444,7 +1444,7 @@ void pgd::Matrix3x3::Set(double r1c1, double r1c2, double r1c3,
     e33 = r3c3;
 }
 
-void pgd::Matrix3x3::Set(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3)
+void pgd::Matrix3x3::set(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3)
 {
     e11 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[0];
     e12 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[1];
@@ -1457,7 +1457,7 @@ void pgd::Matrix3x3::Set(const double *mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c
     e33 = mat_r1c1r1c2r1c3_r2c1r2c2r2c3_r3c1r3c2r3c3[8];
 }
 
-void pgd::Matrix3x3::SetIdentity()
+void pgd::Matrix3x3::setIdentity()
 {
     e11 = 1;
     e12 = 0;
@@ -1487,7 +1487,7 @@ pgd::Vector3 pgd::Matrix3x3::row1() { return pgd::Vector3(e11, e12, e13); }
 pgd::Vector3 pgd::Matrix3x3::row2() { return pgd::Vector3(e21, e22, e23); }
 pgd::Vector3 pgd::Matrix3x3::row3() { return pgd::Vector3(e31, e32, e33); }
 
-void pgd::Matrix3x3::SetCols(const pgd::Vector3 &x, const pgd::Vector3 &y, const pgd::Vector3 &z)
+void pgd::Matrix3x3::setCols(const pgd::Vector3 &x, const pgd::Vector3 &y, const pgd::Vector3 &z)
 {
     e11 = x.x;
     e21 = x.y;
@@ -1499,7 +1499,7 @@ void pgd::Matrix3x3::SetCols(const pgd::Vector3 &x, const pgd::Vector3 &y, const
     e23 = z.y;
     e33 = z.z;
 }
-void pgd::Matrix3x3::SetRows(const pgd::Vector3 &x, const pgd::Vector3 &y, const pgd::Vector3 &z)
+void pgd::Matrix3x3::setRows(const pgd::Vector3 &x, const pgd::Vector3 &y, const pgd::Vector3 &z)
 {
     e11 = x.x;
     e12 = x.y;
@@ -1544,7 +1544,7 @@ pgd::Matrix3x3::Matrix3x3(const pgd::Quaternion &q)
     e23 = 2.0 * (tmp1 - tmp2)*invs ;
 }
 
-double pgd::Matrix3x3::det(void) const
+double pgd::Matrix3x3::determinant(void) const
 {
     return  e11*e22*e33 -
            e11*e32*e23 +
@@ -1554,12 +1554,12 @@ double pgd::Matrix3x3::det(void) const
            e31*e22*e13;
 }
 
-pgd::Matrix3x3 pgd::Matrix3x3::Transpose(void) const
+pgd::Matrix3x3 pgd::Matrix3x3::transpose(void) const
 {
     return pgd::Matrix3x3(e11,e21,e31,e12,e22,e32,e13,e23,e33);
 }
 
-pgd::Matrix3x3 pgd::Matrix3x3::Inverse(void) const
+pgd::Matrix3x3 pgd::Matrix3x3::inverse(void) const
 {
     double d = e11*e22*e33 -
                e11*e32*e23 +
@@ -1661,14 +1661,14 @@ double pgd::Matrix3x3::operator[](size_t i) const
     return reinterpret_cast<const double *>(&e11)[i];
 }
 
-void pgd::Matrix3x3::SetInertia(double ixx, double iyy, double izz, double ixy, double izx, double iyz)
+void pgd::Matrix3x3::setInertia(double ixx, double iyy, double izz, double ixy, double izx, double iyz)
 {
     e11 = ixx; e12 = ixy; e13 = izx;
     e21 = ixy; e22 = iyy; e23 = iyz;
     e31 = izx; e32 = iyz; e33 = izz;
 }
 
-void pgd::Matrix3x3::GetInertia(double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const
+void pgd::Matrix3x3::getInertia(double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const
 {
     *ixx = e11;       *ixy = e12; *izx = e13;
     /* *ixy = e21; */ *iyy = e22; *iyz = e23;
@@ -1768,7 +1768,7 @@ pgd::Vector3 pgd::operator*(const pgd::Vector3 &u, const pgd::Matrix3x3 &m)
                         u.x*m.e13 + u.y*m.e23 + u.z*m.e33);
 }
 
-pgd::Matrix3x3 pgd::MakeMFromQ(const pgd::Quaternion &q)
+pgd::Matrix3x3 pgd::makeMFromQ(const pgd::Quaternion &q)
 {
     pgd::Matrix3x3 m;
 
@@ -1787,7 +1787,7 @@ pgd::Matrix3x3 pgd::MakeMFromQ(const pgd::Quaternion &q)
     return m;
 }
 
-pgd::Quaternion pgd::MakeQfromM (const pgd::Matrix3x3 &R)
+pgd::Quaternion pgd::makeQfromM (const pgd::Matrix3x3 &R)
 {
     pgd::Quaternion q;
     double tr,s;
@@ -1845,20 +1845,20 @@ pgd::Quaternion pgd::MakeQfromM (const pgd::Matrix3x3 &R)
 // finds the rotation matrix that will transform R1 to R2
 // where R1 and R2 are both rotation matrices
 // works because the transpose of a rotation matrix is the inverse (and quicker to calculate)
-pgd::Matrix3x3 pgd::FindRotation(const pgd::Matrix3x3 &R1, const pgd::Matrix3x3 &R2)
+pgd::Matrix3x3 pgd::findRotation(const pgd::Matrix3x3 &R1, const pgd::Matrix3x3 &R2)
 {
     // theory:
     // X.R1 = R2
     // X.R1.R1' = R2.R1'
     // X = R2.R1'
-    pgd::Matrix3x3 rotMat = R2 * R1.Transpose();
+    pgd::Matrix3x3 rotMat = R2 * R1.transpose();
     return rotMat;
 }
 
 
 // find the closest point to point P on a line defined as origin B and direction M
 // using formulae from www.geometrictools.com
-pgd::Vector3 pgd::ClosestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pgd::Vector3 &M)
+pgd::Vector3 pgd::closestPoint(const pgd::Vector3 &P, const pgd::Vector3 &B, const pgd::Vector3 &M)
 {
     double t0 = (M * (P - B)) / (M * M);
     pgd::Vector3 Q = B + (t0 * M);
@@ -1873,12 +1873,12 @@ pgd::Quaternion pgd::slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, boo
     {
         // Only unit quaternions are valid rotations.
         // Normalize to avoid undefined behavior.
-        v0.Normalize();
-        v1.Normalize();
+        v0.normalize();
+        v1.normalize();
     }
 
     // Compute the cosine of the angle between the two vectors.
-    double dot = v0.GetVector() * v1.GetVector(); // dot product
+    double dot = v0.vector() * v1.vector(); // dot product
 
     const double DOT_THRESHOLD = 0.9995;
     if (dot > DOT_THRESHOLD)
@@ -1887,7 +1887,7 @@ pgd::Quaternion pgd::slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, boo
         // and normalize the result.
 
         pgd::Quaternion result = v0 + t * (v1 - v0);
-        result.Normalize();
+        result.normalize();
         return result;
     }
 
@@ -1906,12 +1906,12 @@ pgd::Quaternion pgd::slerp(pgd::Quaternion v0, pgd::Quaternion v1, double t, boo
     double theta = theta_0*t;    // theta = angle between v0 and result
 
     pgd::Quaternion v2 = v1 - v0*dot;
-    v2.Normalize();              // { v0, v2 } is now an orthonormal basis
+    v2.normalize();              // { v0, v2 } is now an orthonormal basis
 
     return v0*std::cos(theta) + v2*std::sin(theta);
 }
 
-void pgd::QGetBasis(const pgd::Quaternion &q, pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
+void pgd::qGetBasis(const pgd::Quaternion &q, pgd::Vector3 *x, pgd::Vector3 *y, pgd::Vector3 *z)
 {
     pgd::Matrix3x3 m(q);
     x->x = m.e11;

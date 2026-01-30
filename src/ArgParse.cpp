@@ -24,28 +24,28 @@ ArgParse::ArgParse()
 {
 }
 
-void ArgParse::Initialise(int argc, const char **argv, const std::string &appHelpText, size_t maxNumEndArguments, size_t minNumEndArguments)
+void ArgParse::initialise(int argc, const char **argv, const std::string &appHelpText, size_t maxNumEndArguments, size_t minNumEndArguments)
 {
     m_rawArguments.clear();
     for (size_t i = 1; i < size_t(argc); i++) m_rawArguments.push_back(std::string(argv[i]));
     m_appHelpText = appHelpText;
     m_minNumEndArguments = minNumEndArguments;
     m_maxNumEndArguments = maxNumEndArguments;
-    AddArgument("-h"s, "--help"s, "Display help text"s);
-    AddArgument("-v"s, "--verbose"s, "Displays more information"s);
+    addArgument("-h"s, "--help"s, "Display help text"s);
+    addArgument("-v"s, "--verbose"s, "Displays more information"s);
 }
 
-void ArgParse::AddArgument(const std::string &shortName, const std::string &longName, const std::string &helpText)
+void ArgParse::addArgument(const std::string &shortName, const std::string &longName, const std::string &helpText)
 {
-    AddArgument(shortName, longName, helpText, "false"s, 0, 0, false, ArgParse::Bool);
+    addArgument(shortName, longName, helpText, "false"s, 0, 0, false, ArgParse::Bool);
 }
 
-void ArgParse::AddArgument(const std::string &shortName, const std::string &longName, const std::string &helpText, const std::string &defaultValue, size_t numArgs, bool required, ArgType argType)
+void ArgParse::addArgument(const std::string &shortName, const std::string &longName, const std::string &helpText, const std::string &defaultValue, size_t numArgs, bool required, ArgType argType)
 {
-    AddArgument(shortName, longName, helpText, defaultValue, numArgs, numArgs, required, argType);
+    addArgument(shortName, longName, helpText, defaultValue, numArgs, numArgs, required, argType);
 }
 
-void ArgParse::AddArgument(const std::string &shortName, const std::string &longName, const std::string &helpText, const std::string &defaultValue, size_t minArgs, size_t maxArgs, bool required, ArgType argType)
+void ArgParse::addArgument(const std::string &shortName, const std::string &longName, const std::string &helpText, const std::string &defaultValue, size_t minArgs, size_t maxArgs, bool required, ArgType argType)
 {
     if (m_argumentListIndex.count(shortName))
     {
@@ -73,7 +73,7 @@ void ArgParse::AddArgument(const std::string &shortName, const std::string &long
 }
 
 
-int ArgParse::Parse()
+int ArgParse::parse()
 {
     // get the argument locations
     std::vector<std::string> arguments;
@@ -126,7 +126,7 @@ int ArgParse::Parse()
             {
                 for (size_t j = locations[i] + 1; j < locations[i + 1]; j++)
                 {
-                    if (ArgumentsOK(m_rawArguments[j], m_argumentList[it->second]) == false)
+                    if (argumentsOK(m_rawArguments[j], m_argumentList[it->second]) == false)
                     {
                         m_lastError = m_rawArguments[j] + " is wrong type"s;
                         return __LINE__;
@@ -176,14 +176,14 @@ int ArgParse::Parse()
         }
     }
     bool helpFlag = false;
-    Get("--help"s, &helpFlag);
+    get("--help"s, &helpFlag);
     if (helpFlag)
     {
-        Usage();
+        usage();
         exit(1);
     }
     bool verboseFlag = false;
-    Get("--verbose"s, &verboseFlag);
+    get("--verbose"s, &verboseFlag);
     if (verboseFlag)
     {
         for (auto &&it : m_argumentList)
@@ -216,7 +216,7 @@ int ArgParse::Parse()
     return 0;
 }
 
-void ArgParse::Usage()
+void ArgParse::usage()
 {
     if (m_lastError.size())
     {
@@ -340,7 +340,7 @@ void ArgParse::Usage()
     }
 }
 
-bool ArgParse::Get(const std::string &argument, std::vector<std::string> *strings)
+bool ArgParse::get(const std::string &argument, std::vector<std::string> *strings)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
@@ -348,34 +348,34 @@ bool ArgParse::Get(const std::string &argument, std::vector<std::string> *string
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, std::vector<int> *ints)
+bool ArgParse::get(const std::string &argument, std::vector<int> *ints)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
     ints->clear();
-    for (size_t i = 0; i < it->second.size(); i++) ints->push_back(ToInt(it->second[i]));
+    for (size_t i = 0; i < it->second.size(); i++) ints->push_back(toInt(it->second[i]));
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, std::vector<bool> *bools)
+bool ArgParse::get(const std::string &argument, std::vector<bool> *bools)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
     bools->clear();
-    for (size_t i = 0; i < it->second.size(); i++) bools->push_back(ToBool(it->second[i]));
+    for (size_t i = 0; i < it->second.size(); i++) bools->push_back(toBool(it->second[i]));
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, std::vector<double> *doubles)
+bool ArgParse::get(const std::string &argument, std::vector<double> *doubles)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
     doubles->clear();
-    for (size_t i = 0; i < it->second.size(); i++) doubles->push_back(ToDouble(it->second[i]));
+    for (size_t i = 0; i < it->second.size(); i++) doubles->push_back(toDouble(it->second[i]));
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, std::string *s)
+bool ArgParse::get(const std::string &argument, std::string *s)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
@@ -383,96 +383,96 @@ bool ArgParse::Get(const std::string &argument, std::string *s)
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, int *i)
+bool ArgParse::get(const std::string &argument, int *i)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
-    *i = ToInt(it->second[0]);
+    *i = toInt(it->second[0]);
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, bool *b)
+bool ArgParse::get(const std::string &argument, bool *b)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
-    *b = ToBool(it->second[0]);
+    *b = toBool(it->second[0]);
     return true;
 }
 
-bool ArgParse::Get(const std::string &argument, double *d)
+bool ArgParse::get(const std::string &argument, double *d)
 {
     auto it = m_parsedArguments.find(argument);
     if (it == m_parsedArguments.end()) return false;
-    *d = ToDouble(it->second[0]);
+    *d = toDouble(it->second[0]);
     return true;
 }
 
-bool ArgParse::Get(std::vector<std::string> *strings)
+bool ArgParse::get(std::vector<std::string> *strings)
 {
     if (m_endArguments.size() == 0) return false;
     *strings = m_endArguments;
     return true;
 }
 
-bool ArgParse::Get(std::vector<int> *ints)
+bool ArgParse::get(std::vector<int> *ints)
 {
     if (m_endArguments.size() == 0) return false;
     ints->clear();
-    for (size_t i = 0; i < m_endArguments.size(); i++) ints->push_back(ToInt(m_endArguments[i]));
+    for (size_t i = 0; i < m_endArguments.size(); i++) ints->push_back(toInt(m_endArguments[i]));
     return true;
 }
 
-bool ArgParse::Get(std::vector<bool> *bools)
+bool ArgParse::get(std::vector<bool> *bools)
 {
     if (m_endArguments.size() == 0) return false;
     bools->clear();
-    for (size_t i = 0; i < m_endArguments.size(); i++) bools->push_back(ToBool(m_endArguments[i]));
+    for (size_t i = 0; i < m_endArguments.size(); i++) bools->push_back(toBool(m_endArguments[i]));
     return true;
 }
 
-bool ArgParse::Get(std::vector<double> *doubles)
+bool ArgParse::get(std::vector<double> *doubles)
 {
     if (m_endArguments.size() == 0) return false;
     doubles->clear();
-    for (size_t i = 0; i < m_endArguments.size(); i++) doubles->push_back(ToDouble(m_endArguments[i]));
+    for (size_t i = 0; i < m_endArguments.size(); i++) doubles->push_back(toDouble(m_endArguments[i]));
     return true;
 }
 
-bool ArgParse::Get(std::string *s)
+bool ArgParse::get(std::string *s)
 {
     if (m_endArguments.size() == 0) return false;
     *s = m_endArguments[0];
     return true;
 }
 
-bool ArgParse::Get(int *i)
+bool ArgParse::get(int *i)
 {
     if (m_endArguments.size() == 0) return false;
-    *i = ToInt(m_endArguments[0]);
+    *i = toInt(m_endArguments[0]);
     return true;
 }
 
-bool ArgParse::Get(bool *b)
+bool ArgParse::get(bool *b)
 {
     if (m_endArguments.size() == 0) return false;
-    *b = ToBool(m_endArguments[0]);
+    *b = toBool(m_endArguments[0]);
     return true;
 }
 
-bool ArgParse::Get(double *d)
+bool ArgParse::get(double *d)
 {
     if (m_endArguments.size() == 0) return false;
-    *d = ToDouble(m_endArguments[0]);
+    *d = toDouble(m_endArguments[0]);
     return true;
 }
 
-bool ArgParse::IsNumber(const std::string &s)
+bool ArgParse::isNumber(const std::string &s)
 {
     std::regex e("^([+-]?)(?=[0-9]|\\.[0-9])[0-9]*(\\.[0-9]*)?([Ee]([+-]?[0-9]+))?$");
     return std::regex_match (s, e);
 }
 
-bool ArgParse::IsInt(const std::string &s)
+bool ArgParse::isInt(const std::string &s)
 {
     std::regex e("^(?:(0[xX][a-fA-F0-9]+(?:[uU](?:ll|LL|[lL])?|(?:ll|LL|[lL])[uU]?)?)$"           // Hexadecimal
                  "|^([1-9][0-9]*(?:[uU](?:ll|LL|[lL])?|(?:ll|LL|[lL])[uU]?)?)$"                    // Decimal
@@ -480,14 +480,14 @@ bool ArgParse::IsInt(const std::string &s)
     return std::regex_match (s, e);
 }
 
-bool ArgParse::IsBool(const std::string &s)
+bool ArgParse::isBool(const std::string &s)
 {
     std::string lower = pystring::lower(s);
     if (lower == "false"s || lower == "true") return true;
     return false;
 }
 
-int ArgParse::ToBool(const std::string &s)
+int ArgParse::toBool(const std::string &s)
 {
     std::string lower = pystring::lower(s);
     if (lower == "false"s) return 0;
@@ -495,28 +495,28 @@ int ArgParse::ToBool(const std::string &s)
     return -1;
 }
 
-double ArgParse::ToDouble(const std::string &buf)
+double ArgParse::toDouble(const std::string &buf)
 {
     return std::strtod(buf.c_str(), nullptr); // note: not using std::stod because I do not want exceptions to be thrown
 }
 
- int ArgParse::ToInt(const std::string &buf)
+ int ArgParse::toInt(const std::string &buf)
 {
     return int(std::strtol(buf.c_str(), nullptr, 0)); // note: not using std::stoi because I do not want exceptions to be thrown
 }
 
-bool ArgParse::ArgumentsOK(const std::string s, const Argument &a)
+bool ArgParse::argumentsOK(const std::string s, const Argument &a)
 {
     switch (a.argType)
     {
     case ArgType::String:
         return true;
     case ArgType::Int:
-        return IsInt(s);
+        return isInt(s);
     case ArgType::Bool:
-        return IsBool(s);
+        return isBool(s);
     case ArgType::Double:
-        return IsNumber(s);
+        return isNumber(s);
     }
     return false;
 }

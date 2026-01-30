@@ -64,60 +64,60 @@ double DataTargetScalar::calculateErrorScore(double value)
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
             switch (m_dataType)
             {
             case Q0:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[0] - value);
                 break;
             case Q1:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[1] - value);
                 break;
             case Q2:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[2] - value);
                 break;
             case Q3:
-                rq = body->GetQuaternion();
+                rq = body->quaternion();
                 m_errorScore = (rq[3] - value);
                 break;
             case XP:
-                r = body->GetPosition();
+                r = body->position();
                 m_errorScore = (r[0] - value);
                 break;
             case YP:
-                r = body->GetPosition();
+                r = body->position();
                 m_errorScore = (r[1] - value);
                 break;
             case ZP:
-                r = body->GetPosition();
+                r = body->position();
                 m_errorScore = (r[2] - value);
                 break;
             case XV:
-                r = body->GetLinearVelocity();
+                r = body->linearVelocity();
                 m_errorScore = (r[0] - value);
                 break;
             case YV:
-                r = body->GetLinearVelocity();
+                r = body->linearVelocity();
                 m_errorScore = (r[1] - value);
                 break;
             case ZV:
-                r = body->GetLinearVelocity();
+                r = body->linearVelocity();
                 m_errorScore = (r[2] - value);
                 break;
             case XRV:
-                r = body->GetAngularVelocity();
+                r = body->angularVelocity();
                 m_errorScore = (r[0] - value);
                 break;
             case YRV:
-                r = body->GetAngularVelocity();
+                r = body->angularVelocity();
                 m_errorScore = (r[1] - value);
                 break;
             case ZRV:
-                r = body->GetAngularVelocity();
+                r = body->angularVelocity();
                 m_errorScore = (r[2] - value);
                 break;
             default:
@@ -125,48 +125,48 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
             switch (m_dataType)
             {
             case Q0:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.n - value);
                 break;
             case Q1:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.x - value);
                 break;
             case Q2:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.y - value);
                 break;
             case Q3:
-                pq = marker->GetWorldQuaternion();
+                pq = marker->worldQuaternion();
                 m_errorScore = (pq.z - value);
                 break;
             case XP:
-                pv = marker->GetWorldPosition();
+                pv = marker->worldPosition();
                 m_errorScore = (pv.x - value);
                 break;
             case YP:
-                pv = marker->GetWorldPosition();
+                pv = marker->worldPosition();
                 m_errorScore = (pv.y - value);
                 break;
             case ZP:
-                pv = marker->GetWorldPosition();
+                pv = marker->worldPosition();
                 m_errorScore = (pv.z - value);
                 break;
             case XV:
-                pv = marker->GetWorldLinearVelocity();
+                pv = marker->worldLinearVelocity();
                 m_errorScore = (pv.x - value);
                 break;
             case YV:
-                pv = marker->GetWorldLinearVelocity();
+                pv = marker->worldLinearVelocity();
                 m_errorScore = (pv.y - value);
                 break;
             case ZV:
-                pv = marker->GetWorldLinearVelocity();
+                pv = marker->worldLinearVelocity();
                 m_errorScore = (pv.z - value);
                 break;
             default:
@@ -174,7 +174,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
         {
             result = hingeJoint->anchor();
             switch (m_dataType)
@@ -215,7 +215,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(target()))
         {
             result = ballJoint->anchor();
             switch (m_dataType)
@@ -253,7 +253,7 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(target()))
         {
             result = universalJoint->anchor();
             switch (m_dataType)
@@ -291,36 +291,36 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
             switch (m_dataType)
             {
             case Q0:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[0] - value);
                 break;
             case Q1:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[1] - value);
                 break;
             case Q2:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[2] - value);
                 break;
             case Q3:
-                q = geom->GetWorldQuaternion();
+                q = geom->worldQuaternion();
                 m_errorScore = (q[3] - value);
                 break;
             case XP:
-                result = geom->GetWorldPosition();
+                result = geom->worldPosition();
                 m_errorScore = (result[0] - value);
                 break;
             case YP:
-                result = geom->GetWorldPosition();
+                result = geom->worldPosition();
                 m_errorScore = (result[1] - value);
                 break;
             case ZP:
-                result = geom->GetWorldPosition();
+                result = geom->worldPosition();
                 m_errorScore = (result[2] - value);
                 break;
 #ifdef FIX_ME
@@ -354,21 +354,21 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(GetTarget()))
+        if (TegotaeDriver *tegotaeDriver = dynamic_cast<TegotaeDriver *>(target()))
         {
             pgd::Vector3 errorVector;
             switch (m_dataType)
             {
             case DriverError:
                 errorVector = tegotaeDriver->localErrorVector();
-                m_errorScore = errorVector.Magnitude() - value;
+                m_errorScore = errorVector.magnitude() - value;
                 break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
             }
             break;
         }
-        if (Driver *driver = dynamic_cast<Driver *>(GetTarget()))
+        if (Driver *driver = dynamic_cast<Driver *>(target()))
         {
             switch (m_dataType)
             {
@@ -380,21 +380,21 @@ double DataTargetScalar::calculateErrorScore(double value)
             }
             break;
         }
-        if (GetTarget() == nullptr)
+        if (target() == nullptr)
         {
             switch(m_dataType)
             {
             case MetabolicEnergy:
-                m_errorScore = (simulation()->GetMetabolicEnergy() - value);
+                m_errorScore = (simulation()->metabolicEnergy() - value);
                 break;
             case MechanicalEnergy:
-                m_errorScore = (simulation()->GetMechanicalEnergy() - value);
+                m_errorScore = (simulation()->mechanicalEnergy() - value);
                 break;
             case Time:
-                m_errorScore = (simulation()->GetTime() - value);
+                m_errorScore = (simulation()->simulationTime() - value);
                 break;
             case DeltaTime:
-                m_errorScore = (simulation()->GetTimeIncrement() - value);
+                m_errorScore = (simulation()->global()->stepSize() - value);
                 break;
             default:
                 std::cerr << "DataTargetScalar::GetMatchValue error in " << name() << " unknown DataType " << m_dataType << "\n";
@@ -438,7 +438,7 @@ double DataTargetScalar::calculateError(size_t index, size_t indexNext, double t
     if (index >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
     if (indexNext >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
 
-    double value = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time);
+    double value = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)], (*targetTimeList())[indexNext], m_valueList[indexNext], time);
     return calculateErrorScore(value);
 }
 
@@ -500,16 +500,16 @@ std::string *DataTargetScalar::createFromAttributes()
         if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
         for (bool once = true; once; once = false)
         {
-            auto iterBody = simulation()->GetBodyList()->find(buf);
-            if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
-            auto iterJoint = simulation()->GetJointList()->find(buf);
-            if (iterJoint != simulation()->GetJointList()->end()) { m_target = iterJoint->second.get(); break; }
-            auto iterGeom = simulation()->GetGeomList()->find(buf);
-            if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
-            auto iterMarker = simulation()->GetMarkerList()->find(buf);
-            if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
-            auto iterDriver = simulation()->GetDriverList()->find(buf);
-            if (iterDriver != simulation()->GetDriverList()->end()) { m_target = iterDriver->second.get(); break; }
+            auto iterBody = simulation()->bodyList()->find(buf);
+            if (iterBody != simulation()->bodyList()->end()) { m_target = iterBody->second.get(); break; }
+            auto iterJoint = simulation()->jointList()->find(buf);
+            if (iterJoint != simulation()->jointList()->end()) { m_target = iterJoint->second.get(); break; }
+            auto iterGeom = simulation()->geomList()->find(buf);
+            if (iterGeom != simulation()->geomList()->end()) { m_target = iterGeom->second.get(); break; }
+            auto iterMarker = simulation()->markerList()->find(buf);
+            if (iterMarker != simulation()->markerList()->end()) { m_target = iterMarker->second.get(); break; }
+            auto iterDriver = simulation()->driverList()->find(buf);
+            if (iterDriver != simulation()->driverList()->end()) { m_target = iterDriver->second.get(); break; }
         }
         if (!m_target)
         {
@@ -533,7 +533,7 @@ std::string *DataTargetScalar::createFromAttributes()
     }
     m_valueList.clear();
     m_valueList.reserve(targetValuesTokens.size());
-    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::Double(token));
+    for (auto &&token : targetValuesTokens) m_valueList.push_back(GSUtil::toDouble(token));
 
     if (m_target) setUpstreamObjects({m_target});
     return nullptr;
@@ -545,17 +545,17 @@ void DataTargetScalar::appendToAttributes()
     DataTarget::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Scalar"s);
-    setAttribute("TargetValues"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(m_valueList.data(), m_valueList.size(), &buf));
     setAttribute("DataType", dataTypeStrings(m_dataType));
     if (m_noTargetList.count(m_dataType) == 0) setAttribute("TargetID"s, m_target->name());
 }
 
-void DataTargetScalar::SetTarget(NamedObject *target)
+void DataTargetScalar::setTarget(NamedObject *target)
 {
     m_target = target;
 }
 
-NamedObject *DataTargetScalar::GetTarget()
+NamedObject *DataTargetScalar::target()
 {
     return m_target;
 }

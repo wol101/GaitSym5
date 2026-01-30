@@ -24,19 +24,19 @@ const QString Preferences::organizationName("AnimalSimulationLaboratory");
 QSettings Preferences::m_qtSettings(QSettings::IniFormat, QSettings::UserScope, Preferences::getOrganizationName(), Preferences::getApplicationName());
 QMap<QString, SettingsItem> Preferences::m_settings;
 
-void Preferences::Write()
+void Preferences::write()
 {
     qDebug() << "Writing preferences to \"" << fileName() << "\"\n";
-    Preferences::setQtValue("XML", ExportData(m_settings));
+    Preferences::setQtValue("XML", exportData(m_settings));
     Preferences::sync();
 }
 
-void Preferences::Read()
+void Preferences::read()
 {
     qDebug() << "Reading preferences from \"" << fileName() << "\"\n";
     QByteArray xmlData = Preferences::qtValue("XML", QByteArray()).toByteArray();
-    QMap<QString, SettingsItem> defaultSettings = ImportDefaults();
-    m_settings = ImportData(xmlData);
+    QMap<QString, SettingsItem> defaultSettings = importDefaults();
+    m_settings = importData(xmlData);
     if (m_settings.size() == 0) // could use other sorts of error checking here - perhaps a unique code in the settings file that needs to match the subversion
     {
         qDebug() << "Error reading preferences from" << fileName();
@@ -68,9 +68,9 @@ void Preferences::Read()
     }
 }
 
-void Preferences::Export(const QString &filename, const QMap<QString, SettingsItem> &settings)
+void Preferences::exportToFile(const QString &filename, const QMap<QString, SettingsItem> &settings)
 {
-    QByteArray xmlData = ExportData(settings);
+    QByteArray xmlData = exportData(settings);
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly))
     {
@@ -83,7 +83,7 @@ void Preferences::Export(const QString &filename, const QMap<QString, SettingsIt
     file.close();
 }
 
-QByteArray Preferences::ExportData(const QMap<QString, SettingsItem> &settings)
+QByteArray Preferences::exportData(const QMap<QString, SettingsItem> &settings)
 {
     QDomDocument doc("GaitSym5Preferences");
     doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"utf-8\"");
@@ -151,7 +151,7 @@ QByteArray Preferences::ExportData(const QMap<QString, SettingsItem> &settings)
     return doc.toByteArray(4);
 }
 
-QMap<QString, SettingsItem> Preferences::Import(const QString &filename)
+QMap<QString, SettingsItem> Preferences::importFromFile(const QString &filename)
 {
     QMap<QString, SettingsItem> settings;
     QFile file(filename);
@@ -161,7 +161,7 @@ QMap<QString, SettingsItem> Preferences::Import(const QString &filename)
         return settings;
     }
     QByteArray xmlData = file.readAll();
-    settings = ImportData(xmlData);
+    settings = importData(xmlData);
     if (settings.size() == 0)
     {
         qWarning("Unable to parse settings export file: %s", qPrintable(filename));
@@ -170,17 +170,17 @@ QMap<QString, SettingsItem> Preferences::Import(const QString &filename)
     return settings;
 }
 
-QMap<QString, SettingsItem> Preferences::ImportData(const QByteArray &xmlData)
+QMap<QString, SettingsItem> Preferences::importData(const QByteArray &xmlData)
 {
     QMap<QString, SettingsItem> settings;
     QDomDocument doc("GaitSym5Preferences");
     if (!doc.setContent(xmlData)) { return settings; }
     QDomElement docElem = doc.documentElement();
-    settings = ParseQDomElement(docElem);
+    settings = parseQDomElement(docElem);
     return settings;
 }
 
-QMap<QString, SettingsItem> Preferences::ParseQDomElement(const QDomElement &docElem)
+QMap<QString, SettingsItem> Preferences::parseQDomElement(const QDomElement &docElem)
 {
     QMap<QString, SettingsItem> settings;
  // qDebug() << qPrintable(docElem.tagName()) << "\n";
@@ -308,9 +308,9 @@ QMap<QString, SettingsItem> Preferences::ParseQDomElement(const QDomElement &doc
     return settings;
 }
 
-QMap<QString, SettingsItem> Preferences::ImportDefaults()
+QMap<QString, SettingsItem> Preferences::importDefaults()
 {
-    QMap<QString, SettingsItem> settings = Import(":/preferences/default_values.xml");
+    QMap<QString, SettingsItem> settings = importFromFile(":/preferences/default_values.xml");
     return settings;
 }
 

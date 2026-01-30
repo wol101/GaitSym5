@@ -24,12 +24,12 @@ public:
     PlaybackPhysicsEngine();
     virtual ~PlaybackPhysicsEngine();
 
-    virtual std::string *Initialise(Simulation *simulation);
-    virtual std::string *Step();
+    virtual std::string *initialise(Simulation *simulation);
+    virtual std::string *step();
 
 private:
-    std::string *ReadSourceFile();
-    std::string *ReadOSIMBodyKinematicsFile();
+    std::string *readSourceFile();
+    std::string *readOSIMBodyKinematicsFile();
 
     static void readLineStructuredFile(const std::string &filename, std::vector<std::string> *lines, std::vector<std::vector<std::string>> *tokensByLine = nullptr);
     static void readTabDelimitedFile(const std::string &filename, std::vector<std::string> *columnHeadings, std::vector<std::vector<std::string>> *data, std::vector<std::string> *header = nullptr);

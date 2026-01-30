@@ -1,3 +1,4 @@
+#include "threepp/animation/AnimationMixer.hpp"
 #include "threepp/helpers/SkeletonHelper.hpp"
 #include "threepp/loaders/AssimpLoader.hpp"
 #include "threepp/materials/LineBasicMaterial.hpp"
@@ -13,7 +14,7 @@ int main() {
     renderer.shadowMap().type = ShadowMap::PFCSoft;
 
     PerspectiveCamera camera(45, canvas.aspect(), 0.1, 10000);
-    camera.position.set(0, 6, -10);
+    camera.position.set(0, 6, -15);
 
     Scene scene;
     scene.background = Color(0xa0a0a0);
@@ -50,38 +51,21 @@ int main() {
 
     AssimpLoader loader;
 
-    auto soldier = loader.load("data/models/gltf/Soldier.glb");
-    soldier->traverseType<Mesh>([](Mesh& m) {
-        m.receiveShadow = true;
-        m.castShadow = true;
-    });
-    scene.add(soldier);
-    soldier->scale *= 2;
-    soldier->position.x = -2;
+    auto model = loader.load(std::string(DATA_FOLDER) + "/models/gltf/SimpleSkinning.gltf");
+    model->traverseType<SkinnedMesh>([](auto& m) {
 
-    auto skeletonHelperSoldier = SkeletonHelper::create(*soldier);
-    skeletonHelperSoldier->material()->as<LineBasicMaterial>()->linewidth = 2;
-    scene.add(skeletonHelperSoldier);
-
-    //
-
-    auto stormTrooper = loader.load("data/models/collada/stormtrooper/stormtrooper.dae");
-    stormTrooper->traverseType<Mesh>([](Mesh& m) {
         m.receiveShadow = true;
         m.castShadow = true;
 
-        if (auto mat = m.material()->as<MaterialWithMap>()) {
-            mat->map->wrapS = TextureWrapping::Repeat;
-            mat->map->wrapT = TextureWrapping::Repeat;
-        }
     });
-    scene.add(stormTrooper);
-    stormTrooper->scale *= 0.6;
-    stormTrooper->position.x = 2;
+    scene.add(model);
 
-    auto skeletonHelperTrooper = SkeletonHelper::create(*stormTrooper);
-    skeletonHelperTrooper->material()->as<LineBasicMaterial>()->linewidth = 2;
-    scene.add(skeletonHelperTrooper);
+    auto mixer = AnimationMixer(*model);
+    mixer.clipAction(AnimationClip::findByName(model->animations, "Take 01"))->play();
+
+    auto skeletonHelper = SkeletonHelper::create(*model);
+    skeletonHelper->material()->as<LineBasicMaterial>()->linewidth = 2;
+    scene.add(skeletonHelper);
 
     //
 
@@ -97,19 +81,13 @@ int main() {
         renderer.setSize(size);
     });
 
-    auto& soldierBones = skeletonHelperSoldier->getBones();
-    auto& trooperBones = skeletonHelperTrooper->getBones();
 
     Clock clock;
     canvas.animate([&] {
-        renderer.render(scene, camera);
+        const auto dt = clock.getDelta();
 
-        auto time = clock.getElapsedTime();
-        for (auto i = 0; i < soldierBones.size(); i++) {
-            soldierBones[i]->rotation.y = std::sin(time) * 5 / float(soldierBones.size());
-        }
-        for (auto i = 0; i < trooperBones.size(); i++) {
-            trooperBones[i]->rotation.y = std::sin(time) * 5 / float(trooperBones.size());
-        }
+        mixer.update(dt);
+
+        renderer.render(scene, camera);
     });
 }

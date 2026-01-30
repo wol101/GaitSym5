@@ -22,10 +22,10 @@ class FixedDriver : public Driver
 public:
     FixedDriver();
 
-    virtual void Update();
+    virtual void update();
 
-    void MultiplyValue(double mod);
-    void AddValue(double mod);
+    void multiplyValue(double mod);
+    void addValue(double mod);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

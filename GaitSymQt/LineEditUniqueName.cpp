@@ -8,7 +8,7 @@ LineEditUniqueName::LineEditUniqueName(QWidget *parent) :
 {
     m_uniqueNameValidator = new UniqueNameValidator();
     this->setValidator(m_uniqueNameValidator);
-    connect(this, SIGNAL(textChanged(const QString &)), this, SLOT(textChangedSlot(const QString &)));
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChangedSlot(QString)));
 
     m_defaultStyleSheet = this->styleSheet();
     textChangedSlot(QString());

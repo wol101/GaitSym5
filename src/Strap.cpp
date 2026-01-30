@@ -36,7 +36,7 @@ std::string *Strap::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("Length"s, &buf) == nullptr) return lastErrorPtr();
-    this->setLength(GSUtil::Double(buf));
+    this->setLength(GSUtil::toDouble(buf));
 
     if (findAttribute("TorqueMarkerIDList"s, &buf))
     {
@@ -47,8 +47,8 @@ std::string *Strap::createFromAttributes()
             m_torqueMarkerList.reserve(result.size());
             for (auto &&it: result)
             {
-                auto torqueMarker = simulation()->GetMarkerList()->find(it);
-                if (torqueMarker == simulation()->GetMarkerList()->end())
+                auto torqueMarker = simulation()->markerList()->find(it);
+                if (torqueMarker == simulation()->markerList()->end())
                 {
                     setLastError("STRAP ID=\""s + name() +"\" torque marker \""s + it +"\" not found"s);
                     return lastErrorPtr();
@@ -71,7 +71,7 @@ void Strap::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     std::string buf;
-    setAttribute("Length"s, *GSUtil::ToString(m_length, &buf));
+    setAttribute("Length"s, *GSUtil::toString(m_length, &buf));
     std::vector<std::string> markerNames;
     markerNames.reserve(m_torqueMarkerList.size());
     for (auto &&it: m_torqueMarkerList) markerNames.push_back(it->name());
@@ -80,17 +80,17 @@ void Strap::appendToAttributes()
     return;
 }
 
-double Strap::Length() const
+double Strap::length() const
 {
     return m_length;
 }
 
-double Strap::Velocity() const
+double Strap::velocity() const
 {
     return m_velocity;
 }
 
-double Strap::Tension() const
+double Strap::tension() const
 {
     return m_tension;
 }
@@ -120,12 +120,12 @@ void Strap::setVelocity(double Velocity)
     m_velocity = Velocity;
 }
 
-std::vector<std::unique_ptr<PointForce> > *Strap::GetPointForceList()
+std::vector<std::unique_ptr<PointForce> > *Strap::pointForceList()
 {
     return &m_pointForceList;
 }
 
-void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vector3 *markerTorque, pgd::Vector3 *worldMomentArm, pgd::Vector3 *markerMomentArm)
+void Strap::getTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vector3 *markerTorque, pgd::Vector3 *worldMomentArm, pgd::Vector3 *markerMomentArm)
 {
     // Theory:
     // Point = point of force effect
@@ -140,7 +140,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
     pgd::Vector3 torque, point, force, centre;
     pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-    centre = marker.GetWorldPosition();
+    centre = marker.worldPosition();
 
 // These are the same but the second option works even when tension is zero
 //        if (m_Tension > 0)
@@ -164,7 +164,7 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
       {
         for (unsigned int i = 0; i < m_pointForceList.size(); i++)
         {
-            if (m_pointForceList[i]->body == marker.GetBody())
+            if (m_pointForceList[i]->body == marker.body())
             {
                 //Torque = cross(Point - Center, Force)
                 forcePoint = m_pointForceList[i]->point;
@@ -191,9 +191,9 @@ void Strap::GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vect
 
     *worldTorque = totalTorque;
     *worldMomentArm = momentArm;
-    pgd::Quaternion q = marker.GetWorldQuaternion();
-    *markerTorque = pgd::QVRotate(q, *worldTorque);
-    *markerMomentArm = pgd::QVRotate(q, *worldMomentArm);
+    pgd::Quaternion q = marker.worldQuaternion();
+    *markerTorque = pgd::qVRotate(q, *worldTorque);
+    *markerMomentArm = pgd::qVRotate(q, *worldMomentArm);
 }
 
 std::string Strap::dumpToString()
@@ -211,7 +211,7 @@ std::string Strap::dumpToString()
         for (auto &&it : m_torqueMarkerList) ss << "\tMarker\tWTX\tWTY\tWTZ\tMTX\tMTY\tMTZ\tWMAX\tWMAY\tWMAZ\tMMAX\tMMAY\tMMAZ";
         ss << "\n";
     }
-    ss << simulation()->GetTime() << "\t" << Length();
+    ss << simulation()->simulationTime() << "\t" << length();
     for (auto &&it: m_pointForceList)
     {
         ss << "\t" << it->body->name() << "\t" <<
@@ -221,7 +221,7 @@ std::string Strap::dumpToString()
     pgd::Vector3 worldTorque,markerTorque, worldMomentArm, markerMomentArm;
     for (auto &&it: m_torqueMarkerList)
     {
-        GetTorque(*it, &worldTorque, &markerTorque, &worldMomentArm, &markerMomentArm);
+        getTorque(*it, &worldTorque, &markerTorque, &worldMomentArm, &markerMomentArm);
         ss << "\t" << it->name() << "\t" <<
               worldTorque.x << "\t" << worldTorque.y << "\t" << worldTorque.z << "\t" <<
               markerTorque.x << "\t" << markerTorque.y << "\t" << markerTorque.z << "\t" <<

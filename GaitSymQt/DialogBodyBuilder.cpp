@@ -76,7 +76,7 @@ void DialogBodyBuilder::lateInitialise()
     Q_ASSERT_X(m_simulation, "DialogBodyBuilder::lateInitialise", "m_simulation not defined");
 
     GaitSym::Body referenceBody;
-    referenceBody.SetConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
+    referenceBody.setConstructionDensity(Preferences::valueDouble("BodyDensity", 1000.0));
     if (m_inputBody)
     {
         Q_ASSERT_X(m_inputBody, "DialogBodyBuilder::lateInitialise", "m_simulation not defined");
@@ -87,7 +87,7 @@ void DialogBodyBuilder::lateInitialise()
     {
         QString name("World"); // World always exists
         ui->lineEditID->addString(name);
-        auto nameSet = m_simulation->GetNameSet();
+        auto nameSet = m_simulation->nameSet();
         ui->lineEditID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Body%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -103,7 +103,7 @@ void DialogBodyBuilder::lateInitialise()
     if (m_inputBody)
     {
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        m_inputBody->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        m_inputBody->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
         ui->lineEditMass->setValue(mass);
         ui->lineEditI11->setValue(ixx);
         ui->lineEditI22->setValue(iyy);
@@ -111,64 +111,64 @@ void DialogBodyBuilder::lateInitialise()
         ui->lineEditI12->setValue(ixy);
         ui->lineEditI13->setValue(izx);
         ui->lineEditI23->setValue(iyz);
-        ui->lineEditDensity->setValue(m_inputBody->GetConstructionDensity());
-        pgd::Vector3 constructionPosition = m_inputBody->GetConstructionPosition();
+        ui->lineEditDensity->setValue(m_inputBody->constructionDensity());
+        pgd::Vector3 constructionPosition = m_inputBody->constructionPosition();
         ui->lineEditX->setValue(constructionPosition[0]);
         ui->lineEditY->setValue(constructionPosition[1]);
         ui->lineEditZ->setValue(constructionPosition[2]);
-        pgd::Vector3 initialPosition = m_inputBody->GetInitialPosition();
+        pgd::Vector3 initialPosition = m_inputBody->initialPosition();
         ui->lineEditRunX->setValue(initialPosition[0]);
         ui->lineEditRunY->setValue(initialPosition[1]);
         ui->lineEditRunZ->setValue(initialPosition[2]);
-        pgd::Quaternion initialQuaternion = m_inputBody->GetInitialQuaternion();
-        pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQ(pgd::Quaternion(initialQuaternion));
+        pgd::Quaternion initialQuaternion = m_inputBody->initialQuaternion();
+        pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQ(pgd::Quaternion(initialQuaternion));
         ui->lineEditEulerX->setValue(eulerAngles.x);
         ui->lineEditEulerY->setValue(eulerAngles.y);
         ui->lineEditEulerZ->setValue(eulerAngles.z);
-        pgd::Vector3 angularlinear = m_inputBody->GetLinearVelocity();
+        pgd::Vector3 angularlinear = m_inputBody->linearVelocity();
         ui->lineEditVX->setValue(angularlinear[0]);
         ui->lineEditVY->setValue(angularlinear[1]);
         ui->lineEditVZ->setValue(angularlinear[2]);
-        pgd::Vector3 angularVelocity = m_inputBody->GetAngularVelocity();
+        pgd::Vector3 angularVelocity = m_inputBody->angularVelocity();
         ui->lineEditAVX->setValue(angularVelocity[0]);
         ui->lineEditAVY->setValue(angularVelocity[1]);
         ui->lineEditAVZ->setValue(angularVelocity[2]);
-        pgd::Vector3 positionHighBound = m_inputBody->GetPositionHighBound();
+        pgd::Vector3 positionHighBound = m_inputBody->positionHighBound();
         ui->lineEditHighX->setValue(positionHighBound[0]);
         ui->lineEditHighY->setValue(positionHighBound[1]);
         ui->lineEditHighZ->setValue(positionHighBound[2]);
-        pgd::Vector3 positionLowBound = m_inputBody->GetPositionLowBound();
+        pgd::Vector3 positionLowBound = m_inputBody->positionLowBound();
         ui->lineEditLowX->setValue(positionLowBound[0]);
         ui->lineEditLowY->setValue(positionLowBound[1]);
         ui->lineEditLowZ->setValue(positionLowBound[2]);
-        pgd::Vector3 linearVelocityHighBound = m_inputBody->GetLinearVelocityHighBound();
+        pgd::Vector3 linearVelocityHighBound = m_inputBody->linearVelocityHighBound();
         ui->lineEditHighVX->setValue(linearVelocityHighBound[0]);
         ui->lineEditHighVY->setValue(linearVelocityHighBound[1]);
         ui->lineEditHighVZ->setValue(linearVelocityHighBound[2]);
-        pgd::Vector3 linearVelocityLowBound = m_inputBody->GetLinearVelocityLowBound();
+        pgd::Vector3 linearVelocityLowBound = m_inputBody->linearVelocityLowBound();
         ui->lineEditLowVX->setValue(linearVelocityLowBound[0]);
         ui->lineEditLowVY->setValue(linearVelocityLowBound[1]);
         ui->lineEditLowVZ->setValue(linearVelocityLowBound[2]);
-        pgd::Vector3 angularVelocityHighBound = m_inputBody->GetAngularVelocityHighBound();
+        pgd::Vector3 angularVelocityHighBound = m_inputBody->angularVelocityHighBound();
         ui->lineEditHighAVX->setValue(angularVelocityHighBound[0]);
         ui->lineEditHighAVY->setValue(angularVelocityHighBound[1]);
         ui->lineEditHighAVZ->setValue(angularVelocityHighBound[2]);
-        pgd::Vector3 angularVelocityLowBound = m_inputBody->GetAngularVelocityLowBound();
+        pgd::Vector3 angularVelocityLowBound = m_inputBody->angularVelocityLowBound();
         ui->lineEditLowAVX->setValue(angularVelocityLowBound[0]);
         ui->lineEditLowAVY->setValue(angularVelocityLowBound[1]);
         ui->lineEditLowAVZ->setValue(angularVelocityLowBound[2]);
 
-        std::string completePath = DialogBodyBuilder::findCompletePath(m_inputBody->GetGraphicFile1());
+        std::string completePath = DialogBodyBuilder::findCompletePath(m_inputBody->graphicFile1());
         if (completePath.size()) ui->lineEditMesh1->setText(QString::fromStdString(completePath));
-        else ui->lineEditMesh1->setText(QString::fromStdString(m_inputBody->GetGraphicFile1()));
+        else ui->lineEditMesh1->setText(QString::fromStdString(m_inputBody->graphicFile1()));
 
-        completePath = DialogBodyBuilder::findCompletePath(m_inputBody->GetGraphicFile2());
+        completePath = DialogBodyBuilder::findCompletePath(m_inputBody->graphicFile2());
         if (completePath.size()) ui->lineEditMesh2->setText(QString::fromStdString(completePath));
-        else ui->lineEditMesh2->setText(QString::fromStdString(m_inputBody->GetGraphicFile2()));
+        else ui->lineEditMesh2->setText(QString::fromStdString(m_inputBody->graphicFile2()));
 
-        completePath = DialogBodyBuilder::findCompletePath(m_inputBody->GetGraphicFile3());
+        completePath = DialogBodyBuilder::findCompletePath(m_inputBody->graphicFile3());
         if (completePath.size()) ui->lineEditMesh3->setText(QString::fromStdString(completePath));
-        else ui->lineEditMesh3->setText(QString::fromStdString(m_inputBody->GetGraphicFile3()));
+        else ui->lineEditMesh3->setText(QString::fromStdString(m_inputBody->graphicFile3()));
     }
 
     lineEditMeshActivated(ui->lineEditMesh1);
@@ -184,19 +184,19 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     {
         m_outputBody = std::make_unique<GaitSym::Body>(/*m_simulation->GetWorldID()*/);
         bodyPtr = m_outputBody.get();
-        bodyPtr->EnterConstructionMode();
+        bodyPtr->enterConstructionMode();
     }
     bodyPtr->setName(ui->lineEditID->text().toStdString());
     std::string head, tail;
     pystring::os::path::split(head, tail, ui->lineEditMesh1->text().toStdString());
-    bodyPtr->SetGraphicFile1(tail);
-    m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
+    bodyPtr->setGraphicFile1(tail);
+    m_simulation->global()->meshSearchPathAddToFront(head);
     pystring::os::path::split(head, tail, ui->lineEditMesh2->text().toStdString());
-    bodyPtr->SetGraphicFile2(tail);
-    m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
+    bodyPtr->setGraphicFile2(tail);
+    m_simulation->global()->meshSearchPathAddToFront(head);
     pystring::os::path::split(head, tail, ui->lineEditMesh3->text().toStdString());
-    bodyPtr->SetGraphicFile3(tail);
-    m_simulation->GetGlobal()->MeshSearchPathAddToFront(head);
+    bodyPtr->setGraphicFile3(tail);
+    m_simulation->global()->meshSearchPathAddToFront(head);
     bodyPtr->setSimulation(m_simulation);
 
     double mass = ui->lineEditMass->value();
@@ -206,68 +206,68 @@ void DialogBodyBuilder::accept() // this catches OK and return/enter
     double ixy = ui->lineEditI12->value();
     double izx = ui->lineEditI13->value();
     double iyz = ui->lineEditI23->value();
-    bodyPtr->SetMass(mass, ixx, iyy, izz, ixy, izx, iyz);
-    bodyPtr->SetConstructionDensity(ui->lineEditDensity->value());
+    bodyPtr->setMass(mass, ixx, iyy, izz, ixy, izx, iyz);
+    bodyPtr->setConstructionDensity(ui->lineEditDensity->value());
     pgd::Vector3 constructionPosition;
     constructionPosition[0] = ui->lineEditX->value();
     constructionPosition[1] = ui->lineEditY->value();
     constructionPosition[2] = ui->lineEditZ->value();
-    bodyPtr->SetConstructionPosition(constructionPosition[0], constructionPosition[1], constructionPosition[2]);
+    bodyPtr->setConstructionPosition(constructionPosition[0], constructionPosition[1], constructionPosition[2]);
     pgd::Vector3 positionHighBound;
     positionHighBound[0] = ui->lineEditHighX->value();
     positionHighBound[1] = ui->lineEditHighY->value();
     positionHighBound[2] = ui->lineEditHighZ->value();
-    bodyPtr->SetPositionHighBound(positionHighBound[0], positionHighBound[1], positionHighBound[2]);
+    bodyPtr->setPositionHighBound(positionHighBound[0], positionHighBound[1], positionHighBound[2]);
     pgd::Vector3 positionLowBound;
     positionLowBound[0] = ui->lineEditLowX->value();
     positionLowBound[1] = ui->lineEditLowY->value();
     positionLowBound[2] = ui->lineEditLowZ->value();
-    bodyPtr->SetPositionLowBound(positionLowBound[0], positionLowBound[1], positionLowBound[2]);
+    bodyPtr->setPositionLowBound(positionLowBound[0], positionLowBound[1], positionLowBound[2]);
     pgd::Vector3 linearVelocityHighBound;
     linearVelocityHighBound[0] = ui->lineEditHighVX->value();
     linearVelocityHighBound[1] = ui->lineEditHighVY->value();
     linearVelocityHighBound[2] = ui->lineEditHighVZ->value();
-    bodyPtr->SetLinearVelocityHighBound(linearVelocityHighBound[0], linearVelocityHighBound[1], linearVelocityHighBound[2]);
+    bodyPtr->setLinearVelocityHighBound(linearVelocityHighBound[0], linearVelocityHighBound[1], linearVelocityHighBound[2]);
     pgd::Vector3 linearVelocityLowBound;
     linearVelocityLowBound[0] = ui->lineEditLowVX->value();
     linearVelocityLowBound[1] = ui->lineEditLowVY->value();
     linearVelocityLowBound[2] = ui->lineEditLowVZ->value();
-    bodyPtr->SetLinearVelocityLowBound(linearVelocityLowBound[0], linearVelocityLowBound[1], linearVelocityLowBound[2]);
+    bodyPtr->setLinearVelocityLowBound(linearVelocityLowBound[0], linearVelocityLowBound[1], linearVelocityLowBound[2]);
     pgd::Vector3 angularVelocityHighBound;
     angularVelocityHighBound[0] = ui->lineEditHighAVX->value();
     angularVelocityHighBound[1] = ui->lineEditHighAVY->value();
     angularVelocityHighBound[2] = ui->lineEditHighAVZ->value();
-    bodyPtr->SetAngularVelocityHighBound(angularVelocityHighBound[0], angularVelocityHighBound[1], angularVelocityHighBound[2]);
+    bodyPtr->setAngularVelocityHighBound(angularVelocityHighBound[0], angularVelocityHighBound[1], angularVelocityHighBound[2]);
     pgd::Vector3 angularVelocityLowBound;
     angularVelocityLowBound[0] = ui->lineEditLowAVX->value();
     angularVelocityLowBound[1] = ui->lineEditLowAVY->value();
     angularVelocityLowBound[2] = ui->lineEditLowAVZ->value();
-    bodyPtr->SetAngularVelocityLowBound(angularVelocityLowBound[0], angularVelocityLowBound[1], angularVelocityLowBound[2]);
+    bodyPtr->setAngularVelocityLowBound(angularVelocityLowBound[0], angularVelocityLowBound[1], angularVelocityLowBound[2]);
 
     // and because we are in construction mode we set the position to the construction position/quaternion
     // and the initial position to the desired position/quaternion
-    bodyPtr->SetPosition(constructionPosition[0], constructionPosition[1], constructionPosition[2]);
+    bodyPtr->setPosition(constructionPosition[0], constructionPosition[1], constructionPosition[2]);
     pgd::Vector3 initialPosition;
     initialPosition[0] = ui->lineEditRunX->value();
     initialPosition[1] = ui->lineEditRunY->value();
     initialPosition[2] = ui->lineEditRunZ->value();
-    bodyPtr->SetInitialPosition(initialPosition[0], initialPosition[1], initialPosition[2]);
+    bodyPtr->setInitialPosition(initialPosition[0], initialPosition[1], initialPosition[2]);
     double ex = ui->lineEditEulerX->value();
     double ey = ui->lineEditEulerY->value();
     double ez = ui->lineEditEulerZ->value();
-    pgd::Quaternion q = pgd::MakeQFromEulerAngles(ex, ey, ez);
-    bodyPtr->SetInitialQuaternion(q.n, q.x, q.y, q.z);
+    pgd::Quaternion q = pgd::makeQFromEulerAngles(ex, ey, ez);
+    bodyPtr->setInitialQuaternion(q.n, q.x, q.y, q.z);
     // but the velocities can just be set
     pgd::Vector3 linearVelocity;
     linearVelocity[0] = ui->lineEditVX->value();
     linearVelocity[1] = ui->lineEditVY->value();
     linearVelocity[2] = ui->lineEditVZ->value();
-    bodyPtr->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
+    bodyPtr->setLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
     pgd::Vector3 angularVelocity;
     angularVelocity[0] = ui->lineEditAVX->value();
     angularVelocity[1] = ui->lineEditAVY->value();
     angularVelocity[2] = ui->lineEditAVZ->value();
-    bodyPtr->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
+    bodyPtr->setAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
 
     if (m_inputBody)
     {
@@ -337,16 +337,16 @@ void DialogBodyBuilder::calculate()
     double mass;
     pgd::Vector3 centreOfMass;
     pgd::Matrix3x3 inertialTensor;
-    m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+    m_referenceObject->calculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
     ui->lineEditMass->setValue(mass);
     ui->lineEditX->setValue(centreOfMass[0]);
     ui->lineEditY->setValue(centreOfMass[1]);
     ui->lineEditZ->setValue(centreOfMass[2]);
     // now recalculate the inertial tensor arount the centre of mass
-    translation.Set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
-    m_referenceObject->CalculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
+    translation.set(-centreOfMass[0], -centreOfMass[1], -centreOfMass[2]);
+    m_referenceObject->calculateMassProperties(density, clockwise, translation, &mass, &centreOfMass, &inertialTensor);
     double ixx, iyy, izz, ixy, izx, iyz;
-    inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    inertialTensor.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
     ui->lineEditI11->setValue(ixx);
     ui->lineEditI22->setValue(iyy);
     ui->lineEditI33->setValue(izz);
@@ -374,7 +374,7 @@ void DialogBodyBuilder::lineEditMeshActivated(LineEditPath *lineEdit)
             }
             else
             {
-                int err = m_mesh1.ParseMeshFile(lineEdit->text().toStdString());
+                int err = m_mesh1.parseMeshFile(lineEdit->text().toStdString());
                 if (err) m_referenceObject = nullptr;
                 else m_referenceObject = &m_mesh1;
             }
@@ -388,7 +388,7 @@ void DialogBodyBuilder::lineEditMeshActivated(LineEditPath *lineEdit)
             }
             else
             {
-                int err = m_mesh2.ParseMeshFile(lineEdit->text().toStdString());
+                int err = m_mesh2.parseMeshFile(lineEdit->text().toStdString());
                 if (err) m_referenceObject = nullptr;
                 else m_referenceObject = &m_mesh2;
             }
@@ -402,7 +402,7 @@ void DialogBodyBuilder::lineEditMeshActivated(LineEditPath *lineEdit)
             }
             else
             {
-                int err = m_mesh3.ParseMeshFile(lineEdit->text().toStdString());
+                int err = m_mesh3.parseMeshFile(lineEdit->text().toStdString());
                 if (err) m_referenceObject = nullptr;
                 else m_referenceObject = &m_mesh3;
             }
@@ -441,9 +441,9 @@ void DialogBodyBuilder::properties()
     {
         bodyAxesSize.value = m_inputBody->size1();
         bodyBlendFraction.value = m_inputBody->size2();
-        bodyColour1.value = QColor(QString::fromStdString(m_inputBody->colour1().GetHexARGB()));
-        bodyColour2.value = QColor(QString::fromStdString(m_inputBody->colour2().GetHexARGB()));
-        bodyColour3.value = QColor(QString::fromStdString(m_inputBody->colour3().GetHexARGB()));
+        bodyColour1.value = QColor(QString::fromStdString(m_inputBody->colour1().hexARGB()));
+        bodyColour2.value = QColor(QString::fromStdString(m_inputBody->colour2().hexARGB()));
+        bodyColour3.value = QColor(QString::fromStdString(m_inputBody->colour3().hexARGB()));
     }
     m_properties.clear();
     m_properties = { { bodyAxesSize.key, bodyAxesSize },
@@ -467,7 +467,7 @@ std::string DialogBodyBuilder::findCompletePath(const std::string &filename)
     std::string completePath;
     if (m_simulation)
     {
-        auto searchPath = m_simulation->GetGlobal()->MeshSearchPath();
+        auto searchPath = m_simulation->global()->meshSearchPath();
         for (auto &&it : *searchPath)
         {
             completePath = pystring::os::path::join(it, filename);

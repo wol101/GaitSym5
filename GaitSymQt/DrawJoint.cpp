@@ -129,7 +129,7 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
 
     if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
-        if (fixedJoint->GetStressCalculationType() != GaitSym::FixedJoint::none)
+        if (fixedJoint->stressCalculationType() != GaitSym::FixedJoint::none)
         {
             qDebug() << "Debug DrawJoint::initialise:" << m_joint->name().c_str() << " draw not implemented";
             // m_facetedObject1 = std::make_unique<FacetedRect>(fixedJoint->width(), fixedJoint->height(), m_jointColor, 1);
@@ -161,13 +161,13 @@ void DrawJoint::initialise(SimulationWidget *simulationWidget)
 void DrawJoint::updateEntityPose()
 {
     GaitSym::Marker *marker = m_joint->body1Marker();
-    pgd::Quaternion q = marker->GetWorldQuaternion();
-    pgd::Vector3 p = marker->GetWorldPosition();
-    SetDisplayRotationFromQuaternion(q.data());
-    SetDisplayPosition(p.x, p.y, p.z);
+    pgd::Quaternion q = marker->worldQuaternion();
+    pgd::Vector3 p = marker->worldPosition();
+    setDisplayRotationFromQuaternion(q.data());
+    setDisplayPosition(p.x, p.y, p.z);
     if (GaitSym::FixedJoint *fixedJoint = dynamic_cast<GaitSym::FixedJoint *>(m_joint))
     {
-        if (fixedJoint->CalculatePixmapNeeded() /*&& m_facetedObject1->texture()*/)
+        if (fixedJoint->calculatePixmapNeeded() /*&& m_facetedObject1->texture()*/)
         {
             qDebug() << "Debug DrawJoint::updateEntityPose:" << m_joint->name().c_str() << " draw not implemented";
             // fixedJoint->CalculatePixmap();
@@ -178,11 +178,11 @@ void DrawJoint::updateEntityPose()
     }
 }
 
-void DrawJoint::Draw()
+void DrawJoint::draw()
 {
-    if (m_facetedObject1.get()) m_facetedObject1->Draw();
-    if (m_facetedObject2.get()) m_facetedObject2->Draw();
-    if (m_facetedObject3.get()) m_facetedObject3->Draw();
+    if (m_facetedObject1.get()) m_facetedObject1->draw();
+    if (m_facetedObject2.get()) m_facetedObject2->draw();
+    if (m_facetedObject3.get()) m_facetedObject3->draw();
     m_joint->setRedraw(false);
 }
 

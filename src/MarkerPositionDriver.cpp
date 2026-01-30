@@ -30,12 +30,12 @@ MarkerPositionDriver::~MarkerPositionDriver()
 {
 }
 
-void MarkerPositionDriver::Update()
+void MarkerPositionDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
 
-    double time = simulation()->GetTime();
+    double time = simulation()->simulationTime();
 
     // this is an optimisation that assumes this routine gets called a lot of times with the same index
     // which it usually does because the integration step size is small
@@ -52,7 +52,7 @@ void MarkerPositionDriver::Update()
         m_index = m_xPositionList.size() - 1;
 
     double x, y, z;
-    if (Interp() == false)
+    if (interp() == false)
     {
         x = m_xPositionList[m_index];
         y = m_yPositionList[m_index];
@@ -77,15 +77,15 @@ void MarkerPositionDriver::Update()
     {
         for (auto &&it : m_targetMarkerList)
         {
-            it->SetWorldPosition(x, y, z);
+            it->setWorldPosition(x, y, z);
         }
     }
     else
     {
         for (auto &&it : m_targetMarkerList)
         {
-            pgd::Vector3 p = m_referenceMarker->GetWorldPosition(pgd::Vector3(x, y, z));
-            it->SetWorldPosition(p.x, p.y, p.z);
+            pgd::Vector3 p = m_referenceMarker->worldPosition(pgd::Vector3(x, y, z));
+            it->setWorldPosition(p.x, p.y, p.z);
         }
     }
 }
@@ -102,7 +102,7 @@ std::string *MarkerPositionDriver::createFromAttributes()
     buf.reserve(100000);
     if (findAttribute("Times"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> times;
-    GSUtil::Double(buf, &times);
+    GSUtil::toDouble(buf, &times);
     if (times.size() == 0 || times[0] != 0)
     {
         setLastError("Driver ID=\""s + name() +"\" Times[0] must equal zero"s);
@@ -110,13 +110,13 @@ std::string *MarkerPositionDriver::createFromAttributes()
     }
     if (findAttribute("XPositions"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> xPositions;
-    GSUtil::Double(buf, &xPositions);
+    GSUtil::toDouble(buf, &xPositions);
     if (findAttribute("YPositions"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> yPositions;
-    GSUtil::Double(buf, &yPositions);
+    GSUtil::toDouble(buf, &yPositions);
     if (findAttribute("ZPositions"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> zPositions;
-    GSUtil::Double(buf, &zPositions);
+    GSUtil::toDouble(buf, &zPositions);
 
     if (times.size() != xPositions.size() || times.size() != yPositions.size() || times.size() != zPositions.size())
     {
@@ -143,8 +143,8 @@ std::string *MarkerPositionDriver::createFromAttributes()
     upstreamObjects.reserve(targetNames.size());
     for (size_t i = 0; i < targetNames.size(); i++)
     {
-        auto markerIter = simulation()->GetMarkerList()->find(targetNames[i]);
-        if (markerIter != simulation()->GetMarkerList()->end())
+        auto markerIter = simulation()->markerList()->find(targetNames[i]);
+        if (markerIter != simulation()->markerList()->end())
         {
             m_targetMarkerList.push_back(markerIter->second.get());
             upstreamObjects.push_back(markerIter->second.get());
@@ -162,7 +162,7 @@ std::string *MarkerPositionDriver::createFromAttributes()
     }
     else
     {
-        Marker *marker = simulation()->GetMarker(buf);
+        Marker *marker = simulation()->getMarker(buf);
         if (marker) { m_referenceMarker = marker; }
         else
         {
@@ -182,10 +182,10 @@ void MarkerPositionDriver::appendToAttributes()
     std::vector<std::string> stringList;
     stringList.reserve(m_targetMarkerList.size());
     setAttribute("Type"s, "MarkerPosition"s);
-    setAttribute("Times"s, *GSUtil::ToString(m_changeTimes.data(), m_changeTimes.size() - 1, &buf));
-    setAttribute("XPositions"s, *GSUtil::ToString(m_xPositionList.data(), m_xPositionList.size(), &buf));
-    setAttribute("YPositions"s, *GSUtil::ToString(m_yPositionList.data(), m_yPositionList.size(), &buf));
-    setAttribute("ZPositions"s, *GSUtil::ToString(m_zPositionList.data(), m_zPositionList.size(), &buf));
+    setAttribute("Times"s, *GSUtil::toString(m_changeTimes.data(), m_changeTimes.size() - 1, &buf));
+    setAttribute("XPositions"s, *GSUtil::toString(m_xPositionList.data(), m_xPositionList.size(), &buf));
+    setAttribute("YPositions"s, *GSUtil::toString(m_yPositionList.data(), m_yPositionList.size(), &buf));
+    setAttribute("ZPositions"s, *GSUtil::toString(m_zPositionList.data(), m_zPositionList.size(), &buf));
     for (auto &&it : m_targetMarkerList) stringList.push_back(it->name());
     setAttribute("MarkerIDList"s, pystring::join(" "s, stringList));
     if (m_referenceMarker) setAttribute("ReferenceMarkerID"s, m_referenceMarker->name());

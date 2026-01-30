@@ -25,12 +25,12 @@ MarkerEllipseDriver::MarkerEllipseDriver()
 {
 }
 
-void MarkerEllipseDriver::Initialise(double omega, double sigma, const pgd::Vector4 &XR, const pgd::Vector4 &YR, double phi, Marker *markerEllipseCentre, Marker *markerEllipseRim, DataTarget *phaseControlInput)
+void MarkerEllipseDriver::Initialise(double omega, double sigma, const pgd::Vector4 &xr, const pgd::Vector4 &yr, double phi, Marker *markerEllipseCentre, Marker *markerEllipseRim, DataTarget *phaseControlInput)
 {
     m_omega   =   omega;        // rad s-1     intrinsic angular velocity
     m_sigma   =   sigma;        //             gain for the phase correction
-    m_XR      =   XR;           // m           x-direction radius
-    m_YR      =   YR;           // m           y-direction radius
+    m_xr      =   xr;           // m           x-direction radius
+    m_yr      =   yr;           // m           y-direction radius
     m_phi     =   std::fmod(2 * M_PI + std::fmod(phi, 2 * M_PI), 2 * M_PI); // rad initial phase normalised from 0 to 2 pi
     m_markerEllipseCentre = markerEllipseCentre;  // this marker defines the centre position and local coordinate system for the controller
 
@@ -40,58 +40,58 @@ void MarkerEllipseDriver::Initialise(double omega, double sigma, const pgd::Vect
     {
         if (m_phi < M_PI_2)
         {
-            m_X = m_XR[0] * std::cos(m_phi);
-            m_Y = m_YR[0] * std::sin(m_phi);
+            m_x = m_xr[0] * std::cos(m_phi);
+            m_y = m_yr[0] * std::sin(m_phi);
             break;
         }
         if (m_phi < M_PI)
         {
-            m_X = m_XR[1] * std::cos(m_phi);
-            m_Y = m_YR[1] * std::sin(m_phi);
+            m_x = m_xr[1] * std::cos(m_phi);
+            m_y = m_yr[1] * std::sin(m_phi);
             break;
         }
         if (m_phi < 3 * M_PI_2)
         {
-            m_X = m_XR[2] * std::cos(m_phi);
-            m_Y = m_YR[2] * std::sin(m_phi);
+            m_x = m_xr[2] * std::cos(m_phi);
+            m_y = m_yr[2] * std::sin(m_phi);
             break;
         }
-        m_X = m_XR[3] * std::cos(m_phi);
-        m_Y = m_YR[3] * std::sin(m_phi);
+        m_x = m_xr[3] * std::cos(m_phi);
+        m_y = m_yr[3] * std::sin(m_phi);
         break;
     }
 
-    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_markerEllipseCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
+    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_markerEllipseCentre->worldPosition(pgd::Vector3(m_x, m_y, 0));
     m_markerEllipseRim = markerEllipseRim;
-    m_markerEllipseRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_markerEllipseRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    m_markerEllipseRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_markerEllipseRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
     m_phaseControlInput = phaseControlInput;
 }
 
-void MarkerEllipseDriver::SendData()
+void MarkerEllipseDriver::sendData()
 {
     for (auto &&it : *targetList())
     {
-        it.second->ReceiveData(Clamp(std::sqrt(SQUARE(m_X) + SQUARE(m_Y))), simulation()->GetStepCount());
+        it.second->receiveData(clamp(std::sqrt(SQUARE(m_x) + SQUARE(m_y))), simulation()->stepCount());
     }
 }
 
-void MarkerEllipseDriver::Update()
+void MarkerEllipseDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
 
     if (m_omegaDriver) m_omega = m_omegaDriver->value();
     if (m_sigmaDriver) m_sigma = m_sigmaDriver->value();
-    if (m_XRDriver0) m_XR[0] = m_XRDriver0->value();
-    if (m_YRDriver0) m_YR[0] = m_YRDriver0->value();
-    if (m_XRDriver1) m_XR[1] = m_XRDriver1->value();
-    if (m_YRDriver1) m_YR[1] = m_YRDriver1->value();
-    if (m_XRDriver2) m_XR[2] = m_XRDriver2->value();
-    if (m_YRDriver2) m_YR[2] = m_YRDriver2->value();
-    if (m_XRDriver3) m_XR[3] = m_XRDriver3->value();
-    if (m_YRDriver3) m_YR[3] = m_YRDriver3->value();
+    if (m_xrDriver0) m_xr[0] = m_xrDriver0->value();
+    if (m_yrDriver0) m_yr[0] = m_yrDriver0->value();
+    if (m_xrDriver1) m_xr[1] = m_xrDriver1->value();
+    if (m_yrDriver1) m_yr[1] = m_yrDriver1->value();
+    if (m_xrDriver2) m_xr[2] = m_xrDriver2->value();
+    if (m_yrDriver2) m_yr[2] = m_yrDriver2->value();
+    if (m_xrDriver3) m_xr[3] = m_xrDriver3->value();
+    if (m_yrDriver3) m_yr[3] = m_yrDriver3->value();
 
     // main control algorithm
     if (!m_phaseControlInput)
@@ -101,11 +101,11 @@ void MarkerEllipseDriver::Update()
     else
     {
         // we need to do something to correct for the phase
-        m_valueChangeDirection = detectSignChange(m_phaseControlInput->calculateError(simulation()->GetTime()));
+        m_valueChangeDirection = detectSignChange(m_phaseControlInput->calculateError(simulation()->simulationTime()));
         if (m_valueChangeDirection != 0)
         {
-            m_halfPeriod = simulation()->GetTime() - m_lastPhaseChangeTime;
-            m_lastPhaseChangeTime = simulation()->GetTime();
+            m_halfPeriod = simulation()->simulationTime() - m_lastPhaseChangeTime;
+            m_lastPhaseChangeTime = simulation()->simulationTime();
             m_phiDot = std::clamp(M_PI / (m_halfPeriod * m_periodMultiplier), 0.0, m_maxPhiDot); // this copes with halfPeriod of zero since divide by zero is +/- infinity
             // but we need to tweak m_phiDot to get the phase relationship eventually
             if (m_valueChangeDirection > 0) m_wantedPhi = std::fmod(2 * M_PI + std::fmod(M_PI_2 + m_phaseOffset, 2 * M_PI), 2 * M_PI);
@@ -117,46 +117,46 @@ void MarkerEllipseDriver::Update()
     }
 
     // update m_phi depending on m_phi_dot values
-    m_phi = std::fmod(2 * M_PI + std::fmod(m_phi + m_phiDot * simulation()->GetTimeIncrement(), 2 * M_PI), 2 * M_PI); // do fmod twice to get a value from 0 to 2pi
+    m_phi = std::fmod(2 * M_PI + std::fmod(m_phi + m_phiDot * simulation()->global()->stepSize(), 2 * M_PI), 2 * M_PI); // do fmod twice to get a value from 0 to 2pi
 
     while (true)
     {
         if (m_phi < M_PI_2)
         {
-            m_X = m_XR[0] * std::cos(m_phi);
-            m_Y = m_YR[0] * std::sin(m_phi);
+            m_x = m_xr[0] * std::cos(m_phi);
+            m_y = m_yr[0] * std::sin(m_phi);
             break;
         }
         if (m_phi < M_PI)
         {
-            m_X = m_XR[1] * std::cos(m_phi);
-            m_Y = m_YR[1] * std::sin(m_phi);
+            m_x = m_xr[1] * std::cos(m_phi);
+            m_y = m_yr[1] * std::sin(m_phi);
             break;
         }
         if (m_phi < 3 * M_PI_2)
         {
-            m_X = m_XR[2] * std::cos(m_phi);
-            m_Y = m_YR[2] * std::sin(m_phi);
+            m_x = m_xr[2] * std::cos(m_phi);
+            m_y = m_yr[2] * std::sin(m_phi);
             break;
         }
-        m_X = m_XR[3] * std::cos(m_phi);
-        m_Y = m_YR[3] * std::sin(m_phi);
+        m_x = m_xr[3] * std::cos(m_phi);
+        m_y = m_yr[3] * std::sin(m_phi);
         break;
     }
 
     // get the world position of the MarkerEllipse target
-    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_markerEllipseCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
-    m_markerEllipseRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_markerEllipseRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    pgd::Quaternion rimLocalQ = m_markerEllipseCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_markerEllipseCentre->worldPosition(pgd::Vector3(m_x, m_y, 0));
+    m_markerEllipseRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_markerEllipseRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
 
 }
 
 int MarkerEllipseDriver::detectSignChange(double value)
 {
-    double lastValue = m_butterworthFilter.Output();
-    m_butterworthFilter.AddNewSample(value);
-    double delta = m_butterworthFilter.Output() - lastValue;
+    double lastValue = m_butterworthFilter.output();
+    m_butterworthFilter.addNewSample(value);
+    double delta = m_butterworthFilter.output() - lastValue;
 //    std::cerr << "delta = " << delta << "\n";
     if (m_phaseStateIncreasing && delta > 0)
     {
@@ -209,9 +209,9 @@ int MarkerEllipseDriver::detectSignChange(double value)
  *   - the phase matching gain
  * - phaseOffset
  *   - the goal phase offset to the target
- * - XR
+ * - xr
  *   - the current X radius
- * - YR
+ * - yr
  *   - the current Y radius
  * - X
  *   - the current X value (marker local coordinates)
@@ -239,35 +239,35 @@ std::string MarkerEllipseDriver::dumpToString()
     if (firstDump())
     {
         setFirstDump(false);
-        s += dumpHelper({"time", "omega"s, "sigma"s, "phaseOffset"s, "XR"s, "YR"s, "X"s, "Y"s, "phi"s, "phi_dot"s, "wantedPhi"s, "delPhi"s, "lastPhaseChangeTime"s, "halfPeriod"s, "valueChangeDirection"s});
+        s += dumpHelper({"time", "omega"s, "sigma"s, "phaseOffset"s, "xr"s, "yr"s, "X"s, "Y"s, "phi"s, "phi_dot"s, "wantedPhi"s, "delPhi"s, "lastPhaseChangeTime"s, "halfPeriod"s, "valueChangeDirection"s});
     }
-    double XR, YR;
+    double xr, yr;
     while (true)
     {
         if (m_phi < M_PI_2)
         {
-            XR = m_XR[0];
-            YR = m_YR[0];
+            xr = m_xr[0];
+            yr = m_yr[0];
             break;
         }
         if (m_phi < M_PI)
         {
-            XR = m_XR[1];
-            YR = m_YR[1];
+            xr = m_xr[1];
+            yr = m_yr[1];
             break;
         }
         if (m_phi < 3 * M_PI_2)
         {
-            XR = m_XR[2];
-            YR = m_YR[2];
+            xr = m_xr[2];
+            yr = m_yr[2];
             break;
         }
-        XR = m_XR[3];
-        YR = m_YR[3];
+        xr = m_xr[3];
+        yr = m_yr[3];
         break;
     }
 
-    s += dumpHelper({simulation()->GetTime(), m_omega, m_sigma, m_phaseOffset, XR, YR, m_X, m_Y, m_phi, m_phiDot, m_wantedPhi, m_delPhi, m_lastPhaseChangeTime, m_halfPeriod, double(m_valueChangeDirection)});
+    s += dumpHelper({simulation()->simulationTime(), m_omega, m_sigma, m_phaseOffset, xr, yr, m_x, m_y, m_phi, m_phiDot, m_wantedPhi, m_delPhi, m_lastPhaseChangeTime, m_halfPeriod, double(m_valueChangeDirection)});
     return s;
 }
 
@@ -286,24 +286,24 @@ double MarkerEllipseDriver::phi() const
     return m_phi;
 }
 
-double MarkerEllipseDriver::X() const
+double MarkerEllipseDriver::x() const
 {
-    return m_X;
+    return m_x;
 }
 
-double MarkerEllipseDriver::Y() const
+double MarkerEllipseDriver::y() const
 {
-    return m_Y;
+    return m_y;
 }
 
-pgd::Vector4 MarkerEllipseDriver::XR() const
+pgd::Vector4 MarkerEllipseDriver::xr() const
 {
-    return m_XR;
+    return m_xr;
 }
 
-pgd::Vector4 MarkerEllipseDriver::YR() const
+pgd::Vector4 MarkerEllipseDriver::yr() const
 {
-    return m_YR;
+    return m_yr;
 }
 
 double MarkerEllipseDriver::phi_dot() const
@@ -327,9 +327,9 @@ double MarkerEllipseDriver::phi_dot() const
  *   - The initial angular velocity
  * - Sigma="double"
  *   - The phase matching gain
- * - XR="list of doubles"
+ * - xr="list of doubles"
  *   - The X radius for each quadrant (repeated if only 1 value given)
- * - YR="list of doubles"
+ * - yr="list of doubles"
  *   - The Y radius for each quadrant (repeated if only 1 value given)
  * - Phi="double"
  *   - The initial phase angle
@@ -354,22 +354,22 @@ double MarkerEllipseDriver::phi_dot() const
  *   - ID of driver that can change the value of omega
  * - SigmaDriverID
  *   - ID of driver that can change the value of omega
- * - XRDriver0ID
- *   - ID of driver that can change the value of XR in quadrant 0
- * - YRDriver0ID
- *   - ID of driver that can change the value of YR in quadrant 0
- * - XRDriver1ID
- *   - ID of driver that can change the value of XR in quadrant 1
- * - YRDriver1ID
- *   - ID of driver that can change the value of YR in quadrant 1
- * - XRDriver2ID
- *   - ID of driver that can change the value of XR in quadrant 2
- * - YRDriver2ID
- *   - ID of driver that can change the value of YR in quadrant 2
- * - XRDriver3ID
- *   - ID of driver that can change the value of XR in quadrant 3
- * - YRDriver3ID
- *   - ID of driver that can change the value of YR in quadrant 3
+ * - xrDriver0ID
+ *   - ID of driver that can change the value of xr in quadrant 0
+ * - yrDriver0ID
+ *   - ID of driver that can change the value of yr in quadrant 0
+ * - xrDriver1ID
+ *   - ID of driver that can change the value of xr in quadrant 1
+ * - yrDriver1ID
+ *   - ID of driver that can change the value of yr in quadrant 1
+ * - xrDriver2ID
+ *   - ID of driver that can change the value of xr in quadrant 2
+ * - yrDriver2ID
+ *   - ID of driver that can change the value of yr in quadrant 2
+ * - xrDriver3ID
+ *   - ID of driver that can change the value of xr in quadrant 3
+ * - yrDriver3ID
+ *   - ID of driver that can change the value of yr in quadrant 3
  *
  */
 
@@ -378,119 +378,119 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     if (Driver::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     double omega, sigma, phi;
-    std::vector<double> XR, YR;
+    std::vector<double> xr, yr;
     if (findAttribute("Omega"s, &buf) == nullptr) return lastErrorPtr();
-    omega = GSUtil::Double(buf);
+    omega = GSUtil::toDouble(buf);
     if (findAttribute("Sigma"s, &buf) == nullptr) return lastErrorPtr();
-    sigma = GSUtil::Double(buf);
-    if (findAttribute("XR"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, &XR);
-    if (findAttribute("YR"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, &YR);
+    sigma = GSUtil::toDouble(buf);
+    if (findAttribute("xr"s, &buf) == nullptr) return lastErrorPtr();
+    GSUtil::toDouble(buf, &xr);
+    if (findAttribute("yr"s, &buf) == nullptr) return lastErrorPtr();
+    GSUtil::toDouble(buf, &yr);
     if (findAttribute("Phi"s, &buf) == nullptr) return lastErrorPtr();
-    phi = GSUtil::Double(buf);
+    phi = GSUtil::toDouble(buf);
 
     if (findAttribute("CentreMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *markerEllipseCentre = simulation()->GetMarker(buf);
+    Marker *markerEllipseCentre = simulation()->getMarker(buf);
     if (!markerEllipseCentre)
     {
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" CentreMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("RimMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *markerEllipseRim = simulation()->GetMarker(buf);
+    Marker *markerEllipseRim = simulation()->getMarker(buf);
     if (!markerEllipseRim)
     {
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" RimMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
-    if (markerEllipseCentre->GetBody() != markerEllipseRim->GetBody())
+    if (markerEllipseCentre->body() != markerEllipseRim->body())
     {
         setLastError("MarkerEllipseDriver ID=\""s + name() + "\" RimMarkerID marker and CentreMarkerID must have the same BODY\"");
         return lastErrorPtr();
     }
     if (findAttribute("PhaseControlInputID"s, &buf) == nullptr) return lastErrorPtr();
-    DataTarget *phaseControlInput = simulation()->GetDataTarget(buf);
+    DataTarget *phaseControlInput = simulation()->getDataTarget(buf);
     if (!phaseControlInput)
     {
         setLastError("PhaseControlInputID ID=\""s + name() + "\" PhaseControlInputID data target not found \""s + buf + "\"");
         return lastErrorPtr();
     }
-    pgd::Vector4 XRV, YRV;
-    if (XR.size() == 1) XRV.Set(XR[0], XR[0], XR[0], XR[0]);
-    else for (size_t i = 0; i < XR.size(); i++) { XRV[i] = XR[i]; }
-    if (YR.size() == 1) YRV.Set(YR[0], YR[0], YR[0], YR[0]);
-    else for (size_t i = 0; i < YR.size(); i++) { YRV[i] = YR[i]; }
-    Initialise(omega, sigma, XRV, YRV, phi, markerEllipseCentre, markerEllipseRim, phaseControlInput);
+    pgd::Vector4 xrV, yrV;
+    if (xr.size() == 1) xrV.set(xr[0], xr[0], xr[0], xr[0]);
+    else for (size_t i = 0; i < xr.size(); i++) { xrV[i] = xr[i]; }
+    if (yr.size() == 1) yrV.set(yr[0], yr[0], yr[0], yr[0]);
+    else for (size_t i = 0; i < yr.size(); i++) { yrV[i] = yr[i]; }
+    Initialise(omega, sigma, xrV, yrV, phi, markerEllipseCentre, markerEllipseRim, phaseControlInput);
 
     if (findAttribute("LowPassFrequency"s, &buf) == nullptr) return lastErrorPtr();
-    m_butterworthFilter.CalculateCoefficients(GSUtil::Double(buf), 1.0 / simulation()->GetTimeIncrement());
+    m_butterworthFilter.calculateCoefficients(GSUtil::toDouble(buf), 1.0 / simulation()->global()->stepSize());
     if (findAttribute("PhaseOffset"s, &buf) == nullptr) return lastErrorPtr();
-    m_phaseOffset = GSUtil::Double(buf);
+    m_phaseOffset = GSUtil::toDouble(buf);
     if (findAttribute("MaxPhiDot"s, &buf) == nullptr) return lastErrorPtr();
-    m_maxPhiDot = GSUtil::Double(buf);
+    m_maxPhiDot = GSUtil::toDouble(buf);
     if (findAttribute("PeriodMultiplier"s, &buf) == nullptr) return lastErrorPtr();
-    m_periodMultiplier = GSUtil::Double(buf);
+    m_periodMultiplier = GSUtil::toDouble(buf);
 
     if (findAttribute("OmegaDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" OmegaDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_omegaDriver = driver;
     }
     if (findAttribute("SigmaDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" SigmaDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_sigmaDriver = driver;
     }
-    if (findAttribute("XRDriver0ID"s, &buf))
+    if (findAttribute("xrDriver0ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_XRDriver0 = driver;
+        m_xrDriver0 = driver;
     }
-    if (findAttribute("YRDriver0ID"s, &buf))
+    if (findAttribute("yrDriver0ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_YRDriver0 = driver;
+        m_yrDriver0 = driver;
     }
-    if (findAttribute("XRDriver1ID"s, &buf))
+    if (findAttribute("xrDriver1ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_XRDriver1 = driver;
+        m_xrDriver1 = driver;
     }
-    if (findAttribute("YRDriver1ID"s, &buf))
+    if (findAttribute("yrDriver1ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_YRDriver1 = driver;
+        m_yrDriver1 = driver;
     }
-    if (findAttribute("XRDrive2rID"s, &buf))
+    if (findAttribute("xrDrive2rID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_XRDriver2 = driver;
+        m_xrDriver2 = driver;
     }
-    if (findAttribute("YRDriver2ID"s, &buf))
+    if (findAttribute("yrDriver2ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_YRDriver2 = driver;
+        m_yrDriver2 = driver;
     }
-    if (findAttribute("XRDriver3ID"s, &buf))
+    if (findAttribute("xrDriver3ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_XRDriver3 = driver;
+        m_xrDriver3 = driver;
     }
-    if (findAttribute("YRDriver3ID"s, &buf))
+    if (findAttribute("yrDriver3ID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
-        m_YRDriver3 = driver;
+        m_yrDriver3 = driver;
     }
 
 
@@ -500,14 +500,14 @@ std::string *MarkerEllipseDriver::createFromAttributes()
     upstreamObjects.push_back(m_phaseControlInput);
     if (m_omegaDriver) upstreamObjects.push_back(m_omegaDriver);
     if (m_sigmaDriver) upstreamObjects.push_back(m_sigmaDriver);
-    if (m_XRDriver0) upstreamObjects.push_back(m_XRDriver0);
-    if (m_YRDriver0) upstreamObjects.push_back(m_YRDriver0);
-    if (m_XRDriver1) upstreamObjects.push_back(m_XRDriver1);
-    if (m_YRDriver1) upstreamObjects.push_back(m_YRDriver1);
-    if (m_XRDriver2) upstreamObjects.push_back(m_XRDriver2);
-    if (m_YRDriver2) upstreamObjects.push_back(m_YRDriver2);
-    if (m_XRDriver3) upstreamObjects.push_back(m_XRDriver3);
-    if (m_YRDriver3) upstreamObjects.push_back(m_YRDriver3);
+    if (m_xrDriver0) upstreamObjects.push_back(m_xrDriver0);
+    if (m_yrDriver0) upstreamObjects.push_back(m_yrDriver0);
+    if (m_xrDriver1) upstreamObjects.push_back(m_xrDriver1);
+    if (m_yrDriver1) upstreamObjects.push_back(m_yrDriver1);
+    if (m_xrDriver2) upstreamObjects.push_back(m_xrDriver2);
+    if (m_yrDriver2) upstreamObjects.push_back(m_yrDriver2);
+    if (m_xrDriver3) upstreamObjects.push_back(m_xrDriver3);
+    if (m_yrDriver3) upstreamObjects.push_back(m_yrDriver3);
     setUpstreamObjects(std::move(upstreamObjects));
     return nullptr;
 }
@@ -518,28 +518,28 @@ void MarkerEllipseDriver::appendToAttributes()
     Driver::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "MarkerEllipse"s);
-    setAttribute("Omega"s, *GSUtil::ToString(m_omega, &buf));
-    setAttribute("Sigma"s, *GSUtil::ToString(m_sigma, &buf));
-    setAttribute("XR"s, *GSUtil::ToString(m_XR.data(), 4, &buf));
-    setAttribute("YR"s, *GSUtil::ToString(m_YR.data(), 4, &buf));
-    setAttribute("Phi"s, *GSUtil::ToString(m_phi, &buf));
+    setAttribute("Omega"s, *GSUtil::toString(m_omega, &buf));
+    setAttribute("Sigma"s, *GSUtil::toString(m_sigma, &buf));
+    setAttribute("xr"s, *GSUtil::toString(m_xr.data(), 4, &buf));
+    setAttribute("yr"s, *GSUtil::toString(m_yr.data(), 4, &buf));
+    setAttribute("Phi"s, *GSUtil::toString(m_phi, &buf));
     setAttribute("CentreMarkerID"s, m_markerEllipseCentre->name());
     setAttribute("RimMarkerID"s, m_markerEllipseRim->name());
     setAttribute("PhaseControlInputID"s, m_phaseControlInput->name());
-    setAttribute("LowPassFrequency"s, *GSUtil::ToString(m_butterworthFilter.cutoffFrequency(), &buf));
-    setAttribute("PhaseOffset"s, *GSUtil::ToString(m_phaseOffset, &buf));
-    setAttribute("MaxPhiDot"s, *GSUtil::ToString(m_maxPhiDot, &buf));
-    setAttribute("PeriodMultiplier"s, *GSUtil::ToString(m_periodMultiplier, &buf));
+    setAttribute("LowPassFrequency"s, *GSUtil::toString(m_butterworthFilter.cutoffFrequency(), &buf));
+    setAttribute("PhaseOffset"s, *GSUtil::toString(m_phaseOffset, &buf));
+    setAttribute("MaxPhiDot"s, *GSUtil::toString(m_maxPhiDot, &buf));
+    setAttribute("PeriodMultiplier"s, *GSUtil::toString(m_periodMultiplier, &buf));
     if (m_omegaDriver) setAttribute("OmegaDriverID"s, m_omegaDriver->name());
     if (m_sigmaDriver) setAttribute("SigmaDriverID"s, m_sigmaDriver->name());
-    if (m_XRDriver0) setAttribute("XRDriver0ID"s, m_XRDriver0->name());
-    if (m_YRDriver0) setAttribute("YRDriver0ID"s, m_YRDriver0->name());
-    if (m_XRDriver1) setAttribute("XRDriver1ID"s, m_XRDriver1->name());
-    if (m_YRDriver1) setAttribute("YRDriver1ID"s, m_YRDriver1->name());
-    if (m_XRDriver2) setAttribute("XRDriver2ID"s, m_XRDriver2->name());
-    if (m_YRDriver2) setAttribute("YRDriver2ID"s, m_YRDriver2->name());
-    if (m_XRDriver3) setAttribute("XRDriver3ID"s, m_XRDriver3->name());
-    if (m_YRDriver3) setAttribute("YRDriver3ID"s, m_YRDriver3->name());
+    if (m_xrDriver0) setAttribute("xrDriver0ID"s, m_xrDriver0->name());
+    if (m_yrDriver0) setAttribute("yrDriver0ID"s, m_yrDriver0->name());
+    if (m_xrDriver1) setAttribute("xrDriver1ID"s, m_xrDriver1->name());
+    if (m_yrDriver1) setAttribute("yrDriver1ID"s, m_yrDriver1->name());
+    if (m_xrDriver2) setAttribute("xrDriver2ID"s, m_xrDriver2->name());
+    if (m_yrDriver2) setAttribute("yrDriver2ID"s, m_yrDriver2->name());
+    if (m_xrDriver3) setAttribute("xrDriver3ID"s, m_xrDriver3->name());
+    if (m_yrDriver3) setAttribute("yrDriver3ID"s, m_yrDriver3->name());
 }
 } // namespace GaitSym
 

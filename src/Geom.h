@@ -32,55 +32,54 @@ public:
 
     Geom();
 
-    SMART_ENUM(GeomLocation, GeomLocationStrings, GeomLocationCount, environment, body);
-//    enum GeomLocation { environment, body };
+    SMART_ENUM(GeomLocation, GeomLocationStrings, GeomLocationCount, OnEnvironment, OnBody);
 
-    void SetBody(Body *body);
-    Body *GetBody();
+    void setBody(Body *body);
+    Body *body();
 
     // these functions set the geom position relative to its body
-    void SetPosition (double x, double y, double z);
-    void SetQuaternion(double n, double x, double y, double z);
+    void setPosition (double x, double y, double z);
+    void setQuaternion(double n, double x, double y, double z);
 
     // return body local values
-    pgd::Vector3 GetPosition() const;
-    pgd::Quaternion GetQuaternion() const;
+    pgd::Vector3 position() const;
+    pgd::Quaternion quaternion() const;
     // return world values
-    pgd::Vector3 GetWorldPosition() const;
-    pgd::Quaternion GetWorldQuaternion() const;
+    pgd::Vector3 worldPosition() const;
+    pgd::Quaternion worldQuaternion() const;
 
 
-    void SetGeomLocation(GeomLocation l);
-    GeomLocation GetGeomLocation() const;
-    double GetContactSoftCFM() const;
-    double GetContactSoftERP() const;
-    void SetContactMu(double mu);
-    double GetContactMu() const;
-    void SetContactBounce(double bounce);
-    double GetContactBounce() const;
-    void SetContactRho(double rho);
-    double GetContactRho() const;
-    double GetContactSpringConstant() const;
-    double GetContactDampingConstant() const;
+    void setGeomLocation(GeomLocation l);
+    GeomLocation geomLocation() const;
+    double contactSoftCFM() const;
+    double contactSoftERP() const;
+    void setContactMu(double mu);
+    double contactMu() const;
+    void setContactBounce(double bounce);
+    double contactBounce() const;
+    void setContactRho(double rho);
+    double contactRho() const;
+    double contactSpringConstant() const;
+    double contactDampingConstant() const;
 
-    void SetSpringDamp(double springConstant, double dampingConstant, double integrationStep);
-    void SetSpringERP(double springConstant, double ERP, double integrationStep);
-    void SetSpringCFM(double springConstant, double CFM, double integrationStep);
-    void SetCFMERP(double CFM, double ERP, double integrationStep);
-    void SetCFMDamp(double CFM, double dampingConstant, double integrationStep);
-    void SetERPDamp(double ERP, double dampingConstant, double integrationStep);
+    void setSpringDamp(double springConstant, double dampingConstant, double integrationStep);
+    void setSpringERP(double springConstant, double ERP, double integrationStep);
+    void setSpringCFM(double springConstant, double CFM, double integrationStep);
+    void setCFMERP(double CFM, double ERP, double integrationStep);
+    void setCFMDamp(double CFM, double dampingConstant, double integrationStep);
+    void setERPDamp(double ERP, double dampingConstant, double integrationStep);
 
-    void SetAbort(bool abort);
-    bool GetAbort() const;
+    void setAbort(bool abort);
+    bool abort() const;
 
-    void SetAdhesion(bool adhesion);
-    bool GetAdhesion() const;
+    void setAdhesion(bool adhesion);
+    bool adhesion() const;
 
-    void AddContact(Contact *contact);
-    std::vector<Contact *> *GetContactList();
-    void ClearContacts();
+    void addContact(Contact *contact);
+    std::vector<Contact *> *contactList();
+    void clearContacts();
 
-    std::vector<Geom *> *GetExcludeList();
+    std::vector<Geom *> *excludeList();
 
     virtual std::string dumpToString();
     virtual std::string *createFromAttributes();
@@ -95,28 +94,28 @@ public:
 private:
 
     Body *m_body = nullptr;
-    GeomLocation m_GeomLocation = {GeomLocation::environment};
+    GeomLocation m_GeomLocation = {GeomLocation::OnEnvironment};
     pgd::Vector3 m_position;
     pgd::Quaternion m_quaternion;
 
-    double m_CFM = -1;
-    double m_ERP = -1;
-    double m_Mu = -1;
-    double m_Bounce = -1;
-    double m_Rho = -1;
+    double m_cfm = -1;
+    double m_erp = -1;
+    double m_mu = -1;
+    double m_bounce = -1;
+    double m_rho = -1;
 
-    bool m_Abort = false;
-    bool m_Adhesion = false;
+    bool m_abort = false;
+    bool m_adhesion = false;
 
-    std::vector<Contact *> m_ContactList;
+    std::vector<Contact *> m_contactList;
 
     Marker *m_geomMarker = nullptr;
 
-    std::vector<Geom *> m_ExcludeList;
+    std::vector<Geom *> m_excludeList;
 
     // used for XMLSave
-    double m_SpringConstant = 0;
-    double m_DampingConstant = 0;
+    double m_springConstant = 0;
+    double m_dampingConstant = 0;
 
     std::string m_type;
 };

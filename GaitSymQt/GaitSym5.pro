@@ -20,7 +20,7 @@ DEFINES += TRIANGLE_GENERATOR __GLE_DOUBLE
 
 SOURCES += \
     AVIWriter.cpp \
-    AboutDialog.cpp \
+    DialogAbout.cpp \
     BasicXMLSyntaxHighlighter.cpp \
     DialogAssembly.cpp \
     DialogBodyBuilder.cpp \
@@ -70,7 +70,7 @@ SOURCES += \
     Preferences.cpp \
     SimulationWidget.cpp \
     StrokeFont.cpp \
-    TextEditDialog.cpp \
+    DialogRawXMLEdit.cpp \
     TrackBall.cpp \
     UniqueNameValidator.cpp \
     ViewControlWidget.cpp \
@@ -1057,7 +1057,7 @@ SOURCES += \
     ../PhysX/PhysX-105.1-physx-5.3.0/physx/source/physxextensions/src/ExtParticleExt.cpp
 
 HEADERS += \
-    AboutDialog.h \
+    DialogAbout.h \
     AVIWriter.h \
     BasicXMLSyntaxHighlighter.h \
     DialogAssembly.h \
@@ -1108,7 +1108,7 @@ HEADERS += \
     Preferences.h \
     SimulationWidget.h \
     StrokeFont.h \
-    TextEditDialog.h \
+    DialogRawXMLEdit.h \
     TrackBall.h \
     UniqueNameValidator.h \
     ViewControlWidget.h \
@@ -1189,7 +1189,7 @@ HEADERS += \
     ../src/XMLConverter.h
 
 FORMS += \
-    AboutDialog.ui \
+    DialogAbout.ui \
     DialogAssembly.ui \
     DialogBodyBuilder.ui \
     DialogCreateMirrorElements.ui \
@@ -1209,7 +1209,7 @@ FORMS += \
     DialogRename.ui \
     DrawFluidSac.cpp \
     MainWindow.ui \
-    TextEditDialog.ui
+    DialogRawXMLEdit.ui
 
 INCLUDEPATH += \
     ../fast_double_parser \

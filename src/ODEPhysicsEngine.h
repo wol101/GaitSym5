@@ -26,8 +26,8 @@ public:
     ODEPhysicsEngine();
     virtual ~ODEPhysicsEngine();
 
-    virtual std::string *Initialise(Simulation *theSimulation);
-    virtual std::string *Step();
+    virtual std::string *initialise(Simulation *theSimulation);
+    virtual std::string *step();
 
     dWorldID worldID() const;
 
@@ -40,12 +40,12 @@ public:
     std::map<std::string, std::unique_ptr<dJointFeedback>> *jointFeedbackMap();
 
 private:
-    static void NearCallback(void *data, dGeomID o1, dGeomID o2);
+    static void nearCallback(void *data, dGeomID o1, dGeomID o2);
 
-    std::string *CreateBodies();
-    std::string *CreateJoints();
-    std::string *CreateGeoms();
-    std::string *MoveBodies();
+    std::string *createBodies();
+    std::string *createJoints();
+    std::string *createGeoms();
+    std::string *moveBodies();
 
     // Simulation variables
     dWorldID m_worldID;
@@ -53,8 +53,8 @@ private:
     dJointGroupID m_contactGroup;
 
     // error message handling
-    static void ODEMessageTrap(int num, const char *msg, va_list ap);
-    static bool GetErrorMessage(int *messageNumber, std::string *messageText);
+    static void odeMessageTrap(int num, const char *msg, va_list ap);
+    static bool getErrorMessage(int *messageNumber, std::string *messageText);
     static std::string m_messageText;
     static int m_messageNumber;
     static bool m_messageFlag;

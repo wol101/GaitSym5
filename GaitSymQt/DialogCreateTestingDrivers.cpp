@@ -147,7 +147,7 @@ std::string *DialogCreateTestingDrivers::validate()
 {
     GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
-    std::string *errorMessage = simulation.LoadModel(editFileData.constData(), editFileData.size());
+    std::string *errorMessage = simulation.loadModel(editFileData.constData(), editFileData.size());
     if (errorMessage)
     {
         m_lastError = *errorMessage;
@@ -178,7 +178,7 @@ void DialogCreateTestingDrivers::apply()
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
     std::string rootNodeTag = "GAITSYM5"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
+    lastError = m_parseXML.loadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -190,7 +190,7 @@ void DialogCreateTestingDrivers::apply()
 
     applyCreateTestingDrivers(activationTime, activationValue, suffix);
 
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogCreateTestingDrivers::apply"s);
+    std::string newXML = m_parseXML.saveModel("GAITSYM5"s, "Created from DialogCreateTestingDrivers::apply"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }

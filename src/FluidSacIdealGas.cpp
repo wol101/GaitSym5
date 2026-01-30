@@ -43,7 +43,7 @@ void FluidSacIdealGas::calculatePressure()
     setPressure((m_amountOfSubstance * m_R * m_temperature / sacVolume()) - m_externalPressure);
 }
 
-void FluidSacIdealGas::LateInitialisation()
+void FluidSacIdealGas::lateInitialisation()
 {
     this->calculateVolume();
     if (m_amountOfSubstance < 0)
@@ -51,7 +51,7 @@ void FluidSacIdealGas::LateInitialisation()
         setPressure(0);
         m_amountOfSubstance = sacVolume() * (pressure() + m_externalPressure) / (m_R * m_temperature);
     }
-    FluidSac::LateInitialisation();
+    FluidSac::lateInitialisation();
 }
 
 std::string *FluidSacIdealGas::createFromAttributes()
@@ -60,11 +60,11 @@ std::string *FluidSacIdealGas::createFromAttributes()
     std::string buf;
 
     if (findAttribute("AmountOfSubstance"s, &buf) == nullptr) return lastErrorPtr();
-    this->setAmountOfSubstance(GSUtil::Double(buf));
+    this->setAmountOfSubstance(GSUtil::toDouble(buf));
     if (findAttribute("ExternalPressure"s, &buf) == nullptr) return lastErrorPtr();
-    this->setExternalPressure(GSUtil::Double(buf));
+    this->setExternalPressure(GSUtil::toDouble(buf));
     if (findAttribute("Temperature"s, &buf) == nullptr) return lastErrorPtr();
-    this->setTemperature(GSUtil::Double(buf));
+    this->setTemperature(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -74,9 +74,9 @@ void FluidSacIdealGas::appendToAttributes()
     FluidSac::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "IdealGas"s);
-    setAttribute("AmountOfSubstance"s, GSUtil::ToString(m_amountOfSubstance));
-    setAttribute("ExternalPressure"s, GSUtil::ToString(m_externalPressure));
-    setAttribute("Temperature"s, GSUtil::ToString(m_temperature));
+    setAttribute("AmountOfSubstance"s, GSUtil::toString(m_amountOfSubstance));
+    setAttribute("ExternalPressure"s, GSUtil::toString(m_externalPressure));
+    setAttribute("Temperature"s, GSUtil::toString(m_temperature));
 }
 
 double FluidSacIdealGas::temperature() const

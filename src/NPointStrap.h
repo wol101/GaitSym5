@@ -25,45 +25,34 @@ public:
 
     NPointStrap();
 
-//    void SetOrigin(Body *body, const pgd::Vector3 point);
-//    void SetInsertion(Body *body, const pgd::Vector3 point);
-    void SetOrigin(Marker *originMarker);
-    void SetInsertion(Marker *insertionMarker);
+    void setOrigin(Marker *originMarker);
+    void setInsertion(Marker *insertionMarker);
 
-//    void SetViaPoints(std::vector<Body *> *bodyList, std::vector<pgd::Vector3> *pointList);
-    void SetViaPoints(std::vector<Marker *> *viaPointMarkerList);
+    void setViaPoints(std::vector<Marker *> *viaPointMarkerList);
 
-//    void GetOrigin(const Body **body, pgd::Vector3 origin) const;
-//    void GetInsertion(const Body **body, pgd::Vector3 insertion) const;
+    const std::vector<pgd::Vector3> *viaPoints() const;
+    const std::vector<Body *> *viaPointBodies() const;
+    const std::vector<Marker *> *viaPointMarkers() const;
 
-    const std::vector<pgd::Vector3> *GetViaPoints() const;
-    const std::vector<Body *> *GetViaPointBodies() const;
-    const std::vector<Marker *> *GetViaPointMarkers() const;
-
-    Marker *GetOriginMarker() const;
-    Marker *GetInsertionMarker() const;
+    Marker *originMarker() const;
+    Marker *insertionMarker() const;
 
 
-    virtual void Calculate();
+    virtual void calculate();
 
-//    virtual int SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
+//    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
 private:
 
-//    Body *m_originBody = nullptr;
-//    pgd::Vector3 m_origin;
-//    Body *m_insertionBody = nullptr;
-//    pgd::Vector3 m_insertion;
-
     Marker *m_originMarker = nullptr;
     Marker *m_insertionMarker = nullptr;
 
-    std::vector<Body *> m_ViaBodyList;
-    std::vector<pgd::Vector3> m_ViaPointList;
-    std::vector<Marker *> m_ViaPointMarkerList;
+    std::vector<Body *> m_viaBodyList;
+    std::vector<pgd::Vector3> m_viaPointList;
+    std::vector<Marker *> m_viaPointMarkerList;
 };
 
 }

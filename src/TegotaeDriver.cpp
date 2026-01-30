@@ -32,7 +32,7 @@ TegotaeDriver::TegotaeDriver()
 {
 }
 
-void TegotaeDriver::Initialise(double omega, double sigma, double A, double Aprime, double B, double phi,
+void TegotaeDriver::initialise(double omega, double sigma, double A, double Aprime, double B, double phi,
                                Marker *tegotaeCentre, Marker *tegotaeRim, Marker *errorOutput, Marker *forceDirection,
                                const std::vector<Geom *> &contactGeomList)
 {
@@ -56,34 +56,34 @@ void TegotaeDriver::Initialise(double omega, double sigma, double A, double Apri
     if (m_phi < M_PI) m_Y = m_A * std::sin(m_phi); // Y (0<= m_phi < pi)
     else m_Y = m_Aprime * std::sin(m_phi);         // Y (pi<= m_phi < 2pi)
 
-    pgd::Quaternion rimLocalQ = m_tegotaeCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_tegotaeCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
+    pgd::Quaternion rimLocalQ = m_tegotaeCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_tegotaeCentre->worldPosition(pgd::Vector3(m_X, m_Y, 0));
     m_tegotaeRim = tegotaeRim;
-    m_tegotaeRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_tegotaeRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    m_tegotaeRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_tegotaeRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
 
 }
 
-void TegotaeDriver::SendData()
+void TegotaeDriver::sendData()
 {
     for (auto &&it : *targetList())
     {
-        it.second->ReceiveData(Clamp(m_localErrorVector.x), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_localErrorVector.x), simulation()->stepCount());
     }
     for (auto &&it : m_targetList1)
     {
-        it.second->ReceiveData(Clamp(m_localErrorVector.y), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_localErrorVector.y), simulation()->stepCount());
     }
     for (auto &&it : m_targetList2)
     {
-        it.second->ReceiveData(Clamp(m_localErrorVector.z), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_localErrorVector.z), simulation()->stepCount());
     }
 }
 
-void TegotaeDriver::Update()
+void TegotaeDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
 
     if (m_omegaDriver) m_omega = m_omegaDriver->value();
     if (m_sigmaDriver) m_sigma = m_sigmaDriver->value();
@@ -108,20 +108,20 @@ void TegotaeDriver::Update()
     else m_Y = m_Aprime * std::sin(m_phi);         // Y (pi<= m_phi < 2pi)
 
     // get the world position of the Tegotae target
-    pgd::Quaternion rimLocalQ = m_tegotaeCentre->GetQuaternion();
-    pgd::Vector3 rimWorldP = m_tegotaeCentre->GetWorldPosition(pgd::Vector3(m_X, m_Y, 0));
-    m_tegotaeRim->SetQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
-    m_tegotaeRim->SetWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
-    pgd::Vector3 targetDesiredPosition = m_errorOutput->GetWorldPosition();
+    pgd::Quaternion rimLocalQ = m_tegotaeCentre->quaternion();
+    pgd::Vector3 rimWorldP = m_tegotaeCentre->worldPosition(pgd::Vector3(m_X, m_Y, 0));
+    m_tegotaeRim->setQuaternion(rimLocalQ.n, rimLocalQ.x, rimLocalQ.y, rimLocalQ.z);
+    m_tegotaeRim->setWorldPosition(rimWorldP.x ,rimWorldP.y, rimWorldP.z);
+    pgd::Vector3 targetDesiredPosition = m_errorOutput->worldPosition();
     m_worldErrorVector = rimWorldP - targetDesiredPosition;
-    m_localErrorVector = m_tegotaeCentre->GetVector(m_worldErrorVector); // this should mean that the position depends on m_errorOutput but direction depends on m_tegotaeCentre
+    m_localErrorVector = m_tegotaeCentre->vector(m_worldErrorVector); // this should mean that the position depends on m_errorOutput but direction depends on m_tegotaeCentre
 
     // update m_phi depending on m_phi_dot values
-    double deltaT = simulation()->GetTimeIncrement();
+    double deltaT = simulation()->global()->stepSize();
     m_phi = std::fmod(m_phi + m_phi_dot * deltaT, 2 * M_PI);
 }
 
-void TegotaeDriver::UpdateReactionForce()
+void TegotaeDriver::updateReactionForce()
 {
     // N is the ground reaction force (GRF) acting on the leg
     m_N = 0;
@@ -129,13 +129,13 @@ void TegotaeDriver::UpdateReactionForce()
     pgd::Vector3 worldReactionForce;
     for (auto geomIt : m_contactGeomList)
     {
-        std::vector<Contact *> *contactList = geomIt->GetContactList();
+        std::vector<Contact *> *contactList = geomIt->contactList();
         for (unsigned int i = 0; i < contactList->size(); i++)
         {
             // add the force that matches the X direction of the marker
-            worldXAxis = m_forceDirection->GetWorldAxis(Marker::Axis::X);
+            worldXAxis = m_forceDirection->worldAxis(Marker::Axis::X);
             worldReactionForce = contactList->at(i)->force();
-            m_N += pgd::Dot(worldXAxis, worldReactionForce);
+            m_N += pgd::dot(worldXAxis, worldReactionForce);
         }
     }
     if (m_N < 0) m_N = 0;
@@ -155,7 +155,7 @@ std::string TegotaeDriver::dumpToString()
            << "\n";
     }
 
-    ss << simulation()->GetTime() << "\t" << m_omega << "\t" << m_sigma << "\t" << m_A << "\t" << m_Aprime << "\t" << m_B << "\t" <<
+    ss << simulation()->simulationTime() << "\t" << m_omega << "\t" << m_sigma << "\t" << m_A << "\t" << m_Aprime << "\t" << m_B << "\t" <<
           m_X << "\t" << m_Y << "\t" << m_N << "\t" << m_phi << "\t" << m_phi_dot << "\t" <<
           m_localErrorVector.x << "\t" << m_localErrorVector.y << "\t" << m_localErrorVector.z
        << "\n";
@@ -217,49 +217,49 @@ std::string *TegotaeDriver::createFromAttributes()
     std::string buf;
     double omega, sigma, A, Aprime, B, phi;
     if (findAttribute("Omega"s, &buf) == nullptr) return lastErrorPtr();
-    omega = GSUtil::Double(buf);
+    omega = GSUtil::toDouble(buf);
     if (findAttribute("Sigma"s, &buf) == nullptr) return lastErrorPtr();
-    sigma = GSUtil::Double(buf);
+    sigma = GSUtil::toDouble(buf);
     if (findAttribute("A"s, &buf) == nullptr) return lastErrorPtr();
-    A = GSUtil::Double(buf);
+    A = GSUtil::toDouble(buf);
     if (findAttribute("Aprime"s, &buf) == nullptr) return lastErrorPtr();
-    Aprime = GSUtil::Double(buf);
+    Aprime = GSUtil::toDouble(buf);
     if (findAttribute("B"s, &buf) == nullptr) return lastErrorPtr();
-    B = GSUtil::Double(buf);
+    B = GSUtil::toDouble(buf);
     if (findAttribute("Phi"s, &buf) == nullptr) return lastErrorPtr();
-    phi = GSUtil::Double(buf);
+    phi = GSUtil::toDouble(buf);
 
-    if (findAttribute("Mirror"s, &buf)) m_mirror = GSUtil::Double(buf);
-    if (findAttribute("AllowNegativePhiDot"s, &buf)) m_allow_negative_phi_dot = GSUtil::Double(buf);
+    if (findAttribute("Mirror"s, &buf)) m_mirror = GSUtil::toDouble(buf);
+    if (findAttribute("AllowNegativePhiDot"s, &buf)) m_allow_negative_phi_dot = GSUtil::toDouble(buf);
 
     if (findAttribute("CentreMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *tegotaeCentre = simulation()->GetMarker(buf);
+    Marker *tegotaeCentre = simulation()->getMarker(buf);
     if (!tegotaeCentre)
     {
         setLastError("TegotaeDriver ID=\""s + name() + "\" CentreMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("RimMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *tegotaeRim = simulation()->GetMarker(buf);
+    Marker *tegotaeRim = simulation()->getMarker(buf);
     if (!tegotaeRim)
     {
         setLastError("TegotaeDriver ID=\""s + name() + "\" RimMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
-    if (tegotaeCentre->GetBody() != tegotaeRim->GetBody())
+    if (tegotaeCentre->body() != tegotaeRim->body())
     {
         setLastError("TegotaeDriver ID=\""s + name() + "\" RimMarkerID marker and CentreMarkerID must have the same BODY\"");
         return lastErrorPtr();
     }
     if (findAttribute("ErrorOutputMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *errorOutput = simulation()->GetMarker(buf);
+    Marker *errorOutput = simulation()->getMarker(buf);
     if (!errorOutput)
     {
         setLastError("TegotaeDriver ID=\""s + name() + "\" ErrorOutputMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("ForceDirectionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    Marker *forceDirection = simulation()->GetMarker(buf);
+    Marker *forceDirection = simulation()->getMarker(buf);
     if (!forceDirection)
     {
         setLastError("TegotaeDriver ID=\""s + name() + "\" ForceDirectionMarkerID marker not found \""s + buf + "\"");
@@ -277,7 +277,7 @@ std::string *TegotaeDriver::createFromAttributes()
     std::vector <Geom *> contactGeomList;
     for (auto &&it : contactGeomNames)
     {
-        Geom *contactGeom = simulation()->GetGeom(it);
+        Geom *contactGeom = simulation()->getGeom(it);
         if (!contactGeom)
         {
             setLastError("TegotaeDriver ID=\""s + name() + "\" ContactGeomIDList marker not found \""s + it + "\"");
@@ -293,16 +293,16 @@ std::string *TegotaeDriver::createFromAttributes()
     m_targetList1.clear();
     for (size_t i = 0; i < targetNames.size(); i++)
     {
-        auto muscleIter = simulation()->GetMuscleList()->find(targetNames[i]);
-        if (muscleIter != simulation()->GetMuscleList()->end())
+        auto muscleIter = simulation()->muscleList()->find(targetNames[i]);
+        if (muscleIter != simulation()->muscleList()->end())
         {
             m_targetList1[muscleIter->first] = muscleIter->second.get();
             upstreamObjects.push_back(muscleIter->second.get());
         }
         else
         {
-            auto controllerIter = simulation()->GetControllerList()->find(targetNames[i]);
-            if (controllerIter != simulation()->GetControllerList()->end())
+            auto controllerIter = simulation()->controllerList()->find(targetNames[i]);
+            if (controllerIter != simulation()->controllerList()->end())
             {
                 m_targetList1[controllerIter->first] = controllerIter->second.get();
                 upstreamObjects.push_back(controllerIter->second.get());
@@ -320,16 +320,16 @@ std::string *TegotaeDriver::createFromAttributes()
     m_targetList2.clear();
     for (size_t i = 0; i < targetNames.size(); i++)
     {
-        auto muscleIter = simulation()->GetMuscleList()->find(targetNames[i]);
-        if (muscleIter != simulation()->GetMuscleList()->end())
+        auto muscleIter = simulation()->muscleList()->find(targetNames[i]);
+        if (muscleIter != simulation()->muscleList()->end())
         {
             m_targetList2[muscleIter->first] = muscleIter->second.get();
             upstreamObjects.push_back(muscleIter->second.get());
         }
         else
         {
-            auto controllerIter = simulation()->GetControllerList()->find(targetNames[i]);
-            if (controllerIter != simulation()->GetControllerList()->end())
+            auto controllerIter = simulation()->controllerList()->find(targetNames[i]);
+            if (controllerIter != simulation()->controllerList()->end())
             {
                 m_targetList2[controllerIter->first] = controllerIter->second.get();
                 upstreamObjects.push_back(controllerIter->second.get());
@@ -344,36 +344,36 @@ std::string *TegotaeDriver::createFromAttributes()
 
     if (findAttribute("OmegaDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" OmegaDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_omegaDriver = driver;
     }
     if (findAttribute("SigmaDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" SigmaDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_sigmaDriver = driver;
     }
     if (findAttribute("ADriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" ADriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_ADriver = driver;
     }
     if (findAttribute("AprimeDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" AprimeDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_AprimeDriver = driver;
     }
     if (findAttribute("BDriverID"s, &buf))
     {
-        auto driver = simulation()->GetDriver(buf);
+        auto driver = simulation()->getDriver(buf);
         if (!driver) { setLastError("Driver ID=\""s + name() +"\" BDriverID=\""s + buf + "\" not found"s); return lastErrorPtr(); }
         m_BDriver = driver;
     }
 
-    Initialise(omega, sigma, A, Aprime, B, phi, tegotaeCentre, tegotaeRim, errorOutput, forceDirection, contactGeomList);
+    initialise(omega, sigma, A, Aprime, B, phi, tegotaeCentre, tegotaeRim, errorOutput, forceDirection, contactGeomList);
 
     upstreamObjects.push_back(m_tegotaeCentre);
     upstreamObjects.push_back(m_tegotaeRim);
@@ -395,14 +395,14 @@ void TegotaeDriver::appendToAttributes()
     Driver::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Tegotae"s);
-    setAttribute("Omega"s, *GSUtil::ToString(m_omega, &buf));
-    setAttribute("Sigma"s, *GSUtil::ToString(m_sigma, &buf));
-    setAttribute("A"s, *GSUtil::ToString(m_A, &buf));
-    setAttribute("Aprime"s, *GSUtil::ToString(m_Aprime, &buf));
-    setAttribute("B"s, *GSUtil::ToString(m_B, &buf));
-    setAttribute("Phi"s, *GSUtil::ToString(m_phi, &buf));
-    setAttribute("Mirror"s, *GSUtil::ToString(m_mirror, &buf));
-    setAttribute("AllowNegativePhiDot"s, *GSUtil::ToString(m_allow_negative_phi_dot, &buf));
+    setAttribute("Omega"s, *GSUtil::toString(m_omega, &buf));
+    setAttribute("Sigma"s, *GSUtil::toString(m_sigma, &buf));
+    setAttribute("A"s, *GSUtil::toString(m_A, &buf));
+    setAttribute("Aprime"s, *GSUtil::toString(m_Aprime, &buf));
+    setAttribute("B"s, *GSUtil::toString(m_B, &buf));
+    setAttribute("Phi"s, *GSUtil::toString(m_phi, &buf));
+    setAttribute("Mirror"s, *GSUtil::toString(m_mirror, &buf));
+    setAttribute("AllowNegativePhiDot"s, *GSUtil::toString(m_allow_negative_phi_dot, &buf));
     setAttribute("CentreMarkerID"s, m_tegotaeCentre->name());
     setAttribute("RimMarkerID"s, m_tegotaeRim->name());
     setAttribute("ErrorOutputMarkerID"s, m_errorOutput->name());

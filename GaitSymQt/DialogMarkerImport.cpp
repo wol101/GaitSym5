@@ -38,9 +38,9 @@ DialogMarkerImport::DialogMarkerImport(QWidget *parent) :
 
     ui->lineEditFileName->setPathType(LineEditPath::FileForOpen);
 
-    SetUIElementsFromPreferences();
+    setUIElementsFromPreferences();
 
-    EnableWidgets();
+    enableWidgets();
 
     restoreGeometry(Preferences::valueQByteArray("DialogMarkerImportGeometry"));
 }
@@ -54,14 +54,14 @@ void DialogMarkerImport::processButtonClicked() // this catches OK and return/en
 {
     qDebug() << "DialogMarkerImport::applyButtonClicked()";
     ImportMarkers();
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerImportGeometry", saveGeometry());
 }
 
 void DialogMarkerImport::applyButtonClicked() // this catches cancel, close and escape key
 {
     qDebug() << "DialogMarkerImport::closeButtonClicked()";
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerImportGeometry", saveGeometry());
     QDialog::accept();
 }
@@ -76,7 +76,7 @@ void DialogMarkerImport::reject() // this catches cancel, close and escape key
 void DialogMarkerImport::closeEvent(QCloseEvent *event)
 {
     qDebug() << "DialogMarkerImportGeometry::closeEvent()";
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerImportGeometry", saveGeometry());
     QDialog::closeEvent(event);
 }
@@ -96,7 +96,7 @@ void DialogMarkerImport::setSimulation(GaitSym::Simulation *simulation)
     m_simulation = simulation;
 }
 
-void DialogMarkerImport::SetUIElementsFromPreferences()
+void DialogMarkerImport::setUIElementsFromPreferences()
 {
     int formatOption = Preferences::valueInt("DialogMarkerImportFormatOption");
     switch (formatOption)
@@ -140,7 +140,7 @@ void DialogMarkerImport::SetUIElementsFromPreferences()
     ui->lineEditFileName->setText(Preferences::valueQString("DialogMarkerImportFileName"));
 }
 
-void DialogMarkerImport::SaveUIElementsToPreferences()
+void DialogMarkerImport::saveUIElementsToPreferences()
 {
     int formatOption = 0;
     if (ui->radioButtonPositionOnly->isChecked()) formatOption = 0;
@@ -172,7 +172,7 @@ int DialogMarkerImport::ImportMarkers()
     size_t errorCount = 0;
     QString fileName = ui->lineEditFileName->text();
     GaitSym::DataFile dataFile;
-    if (dataFile.ReadFile(fileName.toStdString()))
+    if (dataFile.readFile(fileName.toStdString()))
     {
         errorCount++;
         ui->plainTextEditLog->appendPlainText(QString("Error: Could not read '%1'. No markers imported.\n").arg(fileName));
@@ -194,7 +194,7 @@ int DialogMarkerImport::ImportMarkers()
     std::vector<std::string> tokens;
     std::vector<double> values;
     values.reserve(12);
-    pystring::splitlines(std::string(dataFile.GetRawData(), dataFile.GetSize()), lines);
+    pystring::splitlines(std::string(dataFile.rawData(), dataFile.size()), lines);
     size_t startLine = 0;
     if (ui->checkBoxHeaderRow->isChecked())
     {
@@ -203,8 +203,8 @@ int DialogMarkerImport::ImportMarkers()
     }
     for (size_t i = startLine; i < lines.size(); i++)
     {
-        if (GaitSym::GSUtil::SplitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
-        if (!ui->checkBoxAllowOverwrite->isChecked() && m_simulation->GetMarker(tokens[0]))
+        if (GaitSym::GSUtil::splitGeneric(lines[i], &tokens, separator, quoted, allowEmpty) < 2) continue;
+        if (!ui->checkBoxAllowOverwrite->isChecked() && m_simulation->getMarker(tokens[0]))
         {
             errorCount++;
             ui->plainTextEditLog->appendPlainText(QString("Error: '%1' already exists.\n").arg(QString::fromStdString(tokens[0])));
@@ -219,7 +219,7 @@ int DialogMarkerImport::ImportMarkers()
         GaitSym::Body *body = nullptr;
         if (tokens[1] != "World"s)
         {
-            body = m_simulation->GetBody(tokens[1]);
+            body = m_simulation->getBody(tokens[1]);
             if (!body && ui->checkBoxIgnoreMissingBodies->isChecked() == false)
             {
                 errorCount++;
@@ -231,54 +231,54 @@ int DialogMarkerImport::ImportMarkers()
         m_addedNames.insert(tokens[0]);
         marker->setSimulation(m_simulation);
         marker->setName(tokens[0]);
-        marker->SetBody(body);
+        marker->setBody(body);
         marker->setSize1(Preferences::valueDouble("MarkerSize"));
         values.clear();
-        for (size_t j = 2; j < tokens.size(); j++) values.push_back(GaitSym::GSUtil::Double(tokens[j]));
+        for (size_t j = 2; j < tokens.size(); j++) values.push_back(GaitSym::GSUtil::toDouble(tokens[j]));
         for (size_t j = values.size(); j < 12; j++) values.push_back(0);
         if (ui->radioButtonPositionOnly->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
         }
         else if (ui->radioButtonPositionEuler->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
             if (ui->checkBoxAnglesInRadians->isChecked())
-                qInput = pgd::MakeQFromEulerAnglesRadian(values[3], values[4], values[5]);
+                qInput = pgd::makeQFromEulerAnglesRadian(values[3], values[4], values[5]);
             else
-                qInput = pgd::MakeQFromEulerAngles(values[3], values[4], values[5]);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+                qInput = pgd::makeQFromEulerAngles(values[3], values[4], values[5]);
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         else if (ui->radioButtonPositionAngleAxis->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
             angle = values[3];
             if (!ui->checkBoxAnglesInRadians->isChecked()) angle = pgd::DegToRad(angle);
-            qInput = pgd::MakeQFromAxisAngle(values[4], values[5], values[6], angle);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            qInput = pgd::makeQFromAxisAngle(values[4], values[5], values[6], angle);
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         else if (ui->radioButtonPositionQuaternion->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
-            qInput.Set(values[3], values[4],  values[5], values[6]);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
+            qInput.set(values[3], values[4],  values[5], values[6]);
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         else if (ui->radioButtonPositionMatrix->isChecked())
         {
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetPosition(values[0], values[1], values[2]); }
-            else { marker->SetWorldPosition(values[0], values[1], values[2]); }
-            qInput = pgd::MakeQfromM(pgd::Matrix3x3(values[3], values[4],  values[5],
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setPosition(values[0], values[1], values[2]); }
+            else { marker->setWorldPosition(values[0], values[1], values[2]); }
+            qInput = pgd::makeQfromM(pgd::Matrix3x3(values[3], values[4],  values[5],
                     values[6], values[7],  values[8],
                     values[9], values[10], values[11]));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->SetQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
-            else { marker->SetWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { marker->setQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
+            else { marker->setWorldQuaternion(qInput.n, qInput.x, qInput.y, qInput.z); }
         }
         ui->plainTextEditLog->appendPlainText(QString("Marker '%1' attached to '%2' created.\n").arg(QString::fromStdString(tokens[0])).arg(QString::fromStdString(tokens[1])));
         marker->saveToAttributes();
@@ -299,7 +299,7 @@ int DialogMarkerImport::ImportMarkers()
     return 0;
 }
 
-void DialogMarkerImport::EnableWidgets()
+void DialogMarkerImport::enableWidgets()
 {
     bool fileAvailable = QFileInfo(ui->lineEditFileName->text()).isFile();
     ui->pushButtonProcess->setEnabled(fileAvailable);
@@ -308,6 +308,6 @@ void DialogMarkerImport::EnableWidgets()
 
 void DialogMarkerImport::fileNameTextChanged(const QString &text)
 {
-    EnableWidgets();
+    enableWidgets();
 }
 #

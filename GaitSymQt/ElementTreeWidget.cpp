@@ -117,6 +117,7 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
 {
     if (!m_simulation) return;
     QTreeWidgetItem *item = this->itemAt(pos);
+    if (!item) return;
     QMenu menu(this);
 
     if (item->type() == ELEMENT_ITEM_TYPE)
@@ -137,31 +138,31 @@ void ElementTreeWidget::menuRequest(const QPoint &pos)
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "MARKER")
         {
             QAction *action = menu.addAction(tr("Create New Marker..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->bodyList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "JOINT")
         {
             QAction *action = menu.addAction(tr("Create New Joint..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1 && m_simulation->GetMarkerList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->bodyList()->size() > 1 && m_simulation->markerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "GEOM")
         {
             QAction *action = menu.addAction(tr("Create New Geom..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 0 && m_simulation->GetMarkerList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->bodyList()->size() > 0 && m_simulation->markerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "MUSCLE")
         {
             QAction *action = menu.addAction(tr("Create New Muscle..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetBodyList()->size() > 1 && m_simulation->GetMarkerList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->bodyList()->size() > 1 && m_simulation->markerList()->size() > 0);
             menu.addSeparator();
         }
         if (item->type() == ROOT_ITEM_TYPE && item->data(0, Qt::DisplayRole).toString() == "DRIVER")
         {
             QAction *action = menu.addAction(tr("Create New Driver..."));
-            action->setEnabled(m_simulation != nullptr && m_simulation->GetMuscleList()->size() > 0);
+            action->setEnabled(m_simulation != nullptr && m_simulation->muscleList()->size() > 0);
             menu.addSeparator();
         }
 
@@ -618,8 +619,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     if (!m_simulation) return;
     if (item->parent()->text(0) == QString("BODY"))
     {
-        auto it = m_simulation->GetBodyList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetBodyList()->end())
+        auto it = m_simulation->bodyList()->find(item->text(0).toStdString());
+        if (it != m_simulation->bodyList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -627,8 +628,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("MARKER"))
     {
-        auto it = m_simulation->GetMarkerList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetMarkerList()->end())
+        auto it = m_simulation->markerList()->find(item->text(0).toStdString());
+        if (it != m_simulation->markerList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -636,8 +637,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("JOINT"))
     {
-        auto it = m_simulation->GetJointList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetJointList()->end())
+        auto it = m_simulation->jointList()->find(item->text(0).toStdString());
+        if (it != m_simulation->jointList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -645,8 +646,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("GEOM"))
     {
-        auto it = m_simulation->GetGeomList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetGeomList()->end())
+        auto it = m_simulation->geomList()->find(item->text(0).toStdString());
+        if (it != m_simulation->geomList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -654,21 +655,21 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("MUSCLE"))
     {
-        auto it = m_simulation->GetMuscleList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetMuscleList()->end())
+        auto it = m_simulation->muscleList()->find(item->text(0).toStdString());
+        if (it != m_simulation->muscleList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2)
             {
                 it->second->setDump((item->checkState(column) == Qt::Checked));
-                it->second->GetStrap()->setDump((item->checkState(column) == Qt::Checked));
+                it->second->strap()->setDump((item->checkState(column) == Qt::Checked));
             }
         }
     }
     else if (item->parent()->text(0) == QString("FLUIDSAC"))
     {
-        auto it = m_simulation->GetFluidSacList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetFluidSacList()->end())
+        auto it = m_simulation->fluidSacList()->find(item->text(0).toStdString());
+        if (it != m_simulation->fluidSacList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -676,8 +677,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("DRIVER"))
     {
-        auto it = m_simulation->GetDriverList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetDriverList()->end())
+        auto it = m_simulation->driverList()->find(item->text(0).toStdString());
+        if (it != m_simulation->driverList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -685,8 +686,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("CONTROLLER"))
     {
-        auto it = m_simulation->GetControllerList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetControllerList()->end())
+        auto it = m_simulation->controllerList()->find(item->text(0).toStdString());
+        if (it != m_simulation->controllerList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -694,8 +695,8 @@ void ElementTreeWidget::elementsItemChanged(QTreeWidgetItem *item, int column)
     }
     else if (item->parent()->text(0) == QString("DATATARGET"))
     {
-        auto it = m_simulation->GetDataTargetList()->find(item->text(0).toStdString());
-        if (it != m_simulation->GetDataTargetList()->end())
+        auto it = m_simulation->dataTargetList()->find(item->text(0).toStdString());
+        if (it != m_simulation->dataTargetList()->end())
         {
             if (column == 1) it->second->setVisible((item->checkState(column) == Qt::Checked));
             else if (column == 2) it->second->setDump((item->checkState(column) == Qt::Checked));
@@ -709,15 +710,15 @@ void ElementTreeWidget::fillVisibitilityLists(GaitSym::Simulation *simulation)
     m_simulation = simulation;
     if (m_simulation == nullptr) return;
 
-    auto bodyList = m_simulation->GetBodyList();
-    auto markerList = m_simulation->GetMarkerList();
-    auto jointList = m_simulation->GetJointList();
-    auto geomList = m_simulation->GetGeomList();
-    auto muscleList = m_simulation->GetMuscleList();
-    auto fluidSacList = m_simulation->GetFluidSacList();
-    auto driverList = m_simulation->GetDriverList();
-    auto dataTargetList = m_simulation->GetDataTargetList();
-    auto controllerList = m_simulation->GetControllerList();
+    auto bodyList = m_simulation->bodyList();
+    auto markerList = m_simulation->markerList();
+    auto jointList = m_simulation->jointList();
+    auto geomList = m_simulation->geomList();
+    auto muscleList = m_simulation->muscleList();
+    auto fluidSacList = m_simulation->fluidSacList();
+    auto driverList = m_simulation->driverList();
+    auto dataTargetList = m_simulation->dataTargetList();
+    auto controllerList = m_simulation->controllerList();
 
     this->clearLists();
     for (auto &&iter : *bodyList)

@@ -52,22 +52,22 @@ void DrawMarker::initialise(SimulationWidget *simulationWidget)
     if (!m_marker) return;
     m_facetedObject = std::make_unique<FacetedObject>();
     m_facetedObject->setSimulationWidget(simulationWidget);
-    m_facetedObject->ReadFromResource(":/objects/axes.tri");
+    m_facetedObject->readFromResource(":/objects/axes.tri");
     m_facetedObjectList.push_back(m_facetedObject.get());
 }
 
 void DrawMarker::updateEntityPose()
 {
-    pgd::Vector3 p = m_marker->GetWorldPosition();
-    pgd::Quaternion q = m_marker->GetWorldQuaternion();
-    SetDisplayScale(m_marker->size1(), m_marker->size1(), m_marker->size1());
-    SetDisplayRotationFromQuaternion(q.constData());
-    SetDisplayPosition(p.x, p.y, p.z);
+    pgd::Vector3 p = m_marker->worldPosition();
+    pgd::Quaternion q = m_marker->worldQuaternion();
+    setDisplayScale(m_marker->size1(), m_marker->size1(), m_marker->size1());
+    setDisplayRotationFromQuaternion(q.constData());
+    setDisplayPosition(p.x, p.y, p.z);
 }
 
-void DrawMarker::Draw()
+void DrawMarker::draw()
 {
-    m_facetedObject->Draw();
+    m_facetedObject->draw();
     m_marker->setRedraw(false);
 }
 

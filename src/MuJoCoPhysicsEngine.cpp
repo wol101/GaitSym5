@@ -17,6 +17,7 @@
 #include "Geom.h"
 #include "HingeJoint.h"
 #include "BallJoint.h"
+#include "FixedJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
@@ -41,19 +42,19 @@ MuJoCoPhysicsEngine::~MuJoCoPhysicsEngine()
     if (m_mjModel) mj_deleteModel(m_mjModel);
 }
 
-std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *MuJoCoPhysicsEngine::initialise(Simulation *theSimulation)
 {
-    std::string *err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
     // create the MuJoCo xml versions of the main elements
-    err = CreateConnectedGroups();
+    err = createConnectedGroups();
     if (err) { return err; }
 
-    err = CreateTree();
+    err = createTree();
     if (err) { return err; }
 
-#define DEBUG_MUJOCO_XML
+//#define DEBUG_MUJOCO_XML
 #ifdef DEBUG_MUJOCO_XML
     std::ofstream of("C:\\Scratch\\test.xml");
     of << m_mjXML;
@@ -61,31 +62,32 @@ std::string *MuJoCoPhysicsEngine::Initialise(Simulation *theSimulation)
 #endif
 
     char error[1000] = "";
-    m_mjModel = LoadModelFromString(m_mjXML, error, sizeof(error));
+    m_mjModel = loadModelFromString(m_mjXML, error, sizeof(error));
     if (!m_mjModel)
     {
         setLastError("Error: MuJoCoPhysicsEngine error in LoadModelFromString\n"s + std::string(error));
         return lastErrorPtr();
     }
 
-    m_mjData = mj_makeData(m_mjModel);
-    mj_forward(m_mjModel, m_mjData);
+    m_mjData = mj_makeData(m_mjModel); // initialise the simulation state for the model
 
-    // move to start positions
-    MoveBodies();
+    // move to start positions (in this case it involves setting the joint starting conditions)
+    if (moveBodies()) return lastErrorPtr();
+
+    mj_forward(m_mjModel, m_mjData); // propagates changes in joint angles to body positions/orientations.
 
     // now the mjc body ids have been defined we can put them into the TreeBody tree
-    for (auto &&iter : m_rootTreeBodyList) { InsertMJBodyIDs(&iter); }
+    for (auto &&iter : m_rootTreeBodyList) { insertMJBodyIDs(&iter); }
 
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
+std::string *MuJoCoPhysicsEngine::createConnectedGroups()
 {
     std::map<std::string, Body *> untestedBodies;
-    for (auto &&iter : *simulation()->GetBodyList()) { untestedBodies[iter.first] = iter.second.get(); }
+    for (auto &&iter : *simulation()->bodyList()) { untestedBodies[iter.first] = iter.second.get(); }
     std::map<std::string, Joint *> untestedJoints;
-    for (auto &&iter : *simulation()->GetJointList()) { untestedJoints[iter.first] = iter.second.get(); }
+    for (auto &&iter : *simulation()->jointList()) { untestedJoints[iter.first] = iter.second.get(); }
 
     while (untestedBodies.size())
     {
@@ -136,7 +138,7 @@ std::string *MuJoCoPhysicsEngine::CreateConnectedGroups()
 
 
 
-std::string *MuJoCoPhysicsEngine::CreateTree()
+std::string *MuJoCoPhysicsEngine::createTree()
 {
     // with no hint just assume the biggest body is the root
     for (auto &&groupIter : m_connectedGroups)
@@ -146,7 +148,7 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
         for (auto &&bodyIter : *groupIter)
         {
             Body *body = bodyIter.second;
-            double mass = body->GetMass();
+            double mass = body->mass();
             if (mass > maxMass)
             {
                 maxMass = mass;
@@ -162,10 +164,10 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
         m_jointLoopDetector.clear();
         m_jointLoopDetector.insert(m_rootTreeBodyList[i].body);
         m_jointsLeftToInclude.clear();
-        m_jointsLeftToInclude.reserve(simulation()->GetJointList()->size());
-        for (auto &&iter : *simulation()->GetJointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
+        m_jointsLeftToInclude.reserve(simulation()->jointList()->size());
+        for (auto &&iter : *simulation()->jointList()) { m_jointsLeftToInclude.push_back(iter.second.get()); }
         m_bodiesLeftToInclude.clear();
-        m_bodiesLeftToInclude.reserve(simulation()->GetBodyList()->size());
+        m_bodiesLeftToInclude.reserve(simulation()->bodyList()->size());
         m_bodiesLeftToInclude.push_back(&m_rootTreeBodyList[i]);
         while (m_bodiesLeftToInclude.size())
         {
@@ -199,8 +201,8 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
                 // we have found a link to a child
                 if (m_jointLoopDetector.count(currentBody->body) > 1)
                 {
-                    if (currentBody->body) setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", currentBody->body->name().c_str()));
-                    else setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", "World"));
+                    if (currentBody->body) setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", currentBody->body->name().c_str()));
+                    else setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine error in CreateTree. Trying to add \"%s\" twice", "World"));
                     return lastErrorPtr();
                 }
                 std::unique_ptr<TreeBody> newTreeBody = std::make_unique<TreeBody>();
@@ -234,21 +236,21 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
 #endif
 
     // start building the XML
-    XMLInitiateTag(&m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
+    xmlInitiateTag(&m_mjXML, "mujoco"s, {{"model"s, "GaitSym"s}});
 
     // set some options
-    XMLInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
-    XMLInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::ToString(simulation()->GetGlobal()->StepSize())}}, true);
+    xmlInitiateTag(&m_mjXML, "compiler"s, {{"angle"s, "radian"s}, {"autolimits"s, "true"s}}, true);
+    xmlInitiateTag(&m_mjXML, "option"s, {{"timestep"s, GSUtil::toString(simulation()->global()->stepSize())}}, true);
 
     // create the world body
-    XMLInitiateTag(&m_mjXML, "worldbody"s);
+    xmlInitiateTag(&m_mjXML, "worldbody"s);
 
     // create any geoms attached to world
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
-        if (iter.second->GetBody() == nullptr)
+        if (iter.second->body() == nullptr)
         {
-            std::string *err = CreateGeom(iter.second.get());
+            std::string *err = createGeom(iter.second.get());
             if (err) return err;
         }
     }
@@ -256,21 +258,29 @@ std::string *MuJoCoPhysicsEngine::CreateTree()
     // this creates the whole model recursively
     for (auto &&iter : m_rootTreeBodyList)
     {
-        CreateBody(iter);
+        createBody(iter);
     }
 
-    XMLTerminateTag(&m_mjXML, "worldbody"s);
+    xmlTerminateTag(&m_mjXML, "worldbody"s);
 
-    XMLInitiateTag(&m_mjXML, "sensor"s);
+    xmlInitiateTag(&m_mjXML, "actuator"s);
+    m_mjXML.append(m_mjXMLActuators);
+    xmlTerminateTag(&m_mjXML, "actuator"s);
+
+    xmlInitiateTag(&m_mjXML, "equality"s);
+    m_mjXML.append(m_mjXMLEqualities);
+    xmlTerminateTag(&m_mjXML, "equality"s);
+
+    xmlInitiateTag(&m_mjXML, "sensor"s);
     m_mjXML.append(m_mjXMLSensors);
-    XMLTerminateTag(&m_mjXML, "sensor"s);
+    xmlTerminateTag(&m_mjXML, "sensor"s);
 
-    XMLTerminateTag(&m_mjXML, "mujoco"s);
+    xmlTerminateTag(&m_mjXML, "mujoco"s);
 
     return nullptr;
 }
 
-void MuJoCoPhysicsEngine::InsertMJBodyIDs(TreeBody *treeBody)
+void MuJoCoPhysicsEngine::insertMJBodyIDs(TreeBody *treeBody)
 {
     int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, treeBody->body->name().c_str());
     treeBody->bodyID = bodyID;
@@ -278,11 +288,11 @@ void MuJoCoPhysicsEngine::InsertMJBodyIDs(TreeBody *treeBody)
     if (treeBody->childList.size() == 0) return;
     for (auto &&child : treeBody->childList)
     {
-        InsertMJBodyIDs(child.get());
+        insertMJBodyIDs(child.get());
     }
 }
 
-void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
+void MuJoCoPhysicsEngine::xmlInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes, bool terminate)
 {
     xmlString->append("<"s + tag + " "s);
     for (auto &&iter : attributes)
@@ -294,66 +304,66 @@ void MuJoCoPhysicsEngine::XMLInitiateTag(std::string *xmlString, const std::stri
     else { xmlString->append(">\n"s); }
 }
 
-void MuJoCoPhysicsEngine::XMLTerminateTag(std::string *xmlString, const std::string &tag)
+void MuJoCoPhysicsEngine::xmlTerminateTag(std::string *xmlString, const std::string &tag)
 {
     xmlString->append("</"s + tag + ">\n"s);
 }
 
-std::string *MuJoCoPhysicsEngine::CreateBody(const TreeBody &treeBody)
+std::string *MuJoCoPhysicsEngine::createBody(const TreeBody &treeBody)
 {
     Body *body = treeBody.body;
-    pgd::Vector3 position = body->GetConstructionPosition();
+    pgd::Vector3 position = body->constructionPosition();
     pgd::Quaternion quaternion(true);
     if (treeBody.parent)
     {
-        pgd::Vector3 parentConstructionPosition = treeBody.parent->body->GetConstructionPosition(); // only need position because construction rotation is always zero
+        pgd::Vector3 parentConstructionPosition = treeBody.parent->body->constructionPosition(); // only need position because construction rotation is always zero
         position = position - parentConstructionPosition;
     }
     std::map<std::string, std::string> attributes;
     attributes["name"s] = body->name();
-    attributes["pos"s] = GSUtil::ToString(position);
-    attributes["quat"s] = GSUtil::ToString(quaternion);
-    XMLInitiateTag(&m_mjXML, "body", attributes);
-    XMLInitiateTag(&m_mjXML, "geom", {{"type"s, "sphere"s}, {"size"s, ".1"s}}, true); // this is just a CM marker for debugging
+    attributes["pos"s] = GSUtil::toString(position);
+    attributes["quat"s] = GSUtil::toString(quaternion);
+    xmlInitiateTag(&m_mjXML, "body", attributes);
+    xmlInitiateTag(&m_mjXML, "geom", {{"type"s, "sphere"s}, {"size"s, ".1"s}}, true); // this is just a CM marker for debugging
 
     double mass, ixx, iyy, izz, ixy, izx, iyz;
-    body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    body->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
     attributes.clear();
-    attributes["pos"s] = GSUtil::ToString(pgd::Vector3());
-    attributes["mass"s] = GSUtil::ToString(mass);
-    attributes["fullinertia"s] = GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz);
-    XMLInitiateTag(&m_mjXML, "inertial", attributes, true);
+    attributes["pos"s] = GSUtil::toString(pgd::Vector3());
+    attributes["mass"s] = GSUtil::toString(mass);
+    attributes["fullinertia"s] = GSUtil::toString(std::vector<double>({ixx, iyy, izz, ixy, izx, iyz}));
+    xmlInitiateTag(&m_mjXML, "inertial", attributes, true);
 
-    std::string *err = CreateJoint(treeBody.jointToParent);
+    std::string *err = createJoint(treeBody.jointToParent);
     if (err) return err;
 
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
-        if (iter.second->GetBody() == body)
+        if (iter.second->body() == body)
         {
-            err = CreateGeom(iter.second.get());
+            err = createGeom(iter.second.get());
             if (err) return err;
         }
     }
 
     for (auto &&iter : treeBody.childList)
     {
-        err = CreateBody(*iter);
+        err = createBody(*iter);
         if (err) return err;
     }
 
-    XMLTerminateTag(&m_mjXML, "body");
+    xmlTerminateTag(&m_mjXML, "body");
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
+std::string *MuJoCoPhysicsEngine::createJoint(const Joint *joint)
 {
     std::map<std::string, std::string> attributes;
     if (!joint)
     {
-        attributes["name"s] = GSUtil::ToString("root%02d", m_freeJointCount);
+        attributes["name"s] = GSUtil::toString("root%02d", m_freeJointCount);
         m_freeJointCount++;
-        XMLInitiateTag(&m_mjXML, "freejoint"s, attributes, true);
+        xmlInitiateTag(&m_mjXML, "freejoint"s, attributes, true);
         return nullptr;
     }
 
@@ -364,72 +374,121 @@ std::string *MuJoCoPhysicsEngine::CreateJoint(const Joint *joint)
             // Marker *marker1 = hingeJoint->body1Marker();
             // pgd::Vector3 p1 = marker1->GetPosition();
             // pgd::Vector3 axis1 = marker1->GetAxis(Marker::X);
-            // attributes["axis"s] = GSUtil::ToString(axis1);
-            // attributes["pos"s] = GSUtil::ToString(p1);
+            // attributes["axis"s] = GSUtil::toString(axis1);
+            // attributes["pos"s] = GSUtil::toString(p1);
             Marker *marker2 = hingeJoint->body2Marker();
-            pgd::Vector3 p2 = marker2->GetPosition();
-            pgd::Vector3 axis2 = marker2->GetAxis(Marker::X);
+            pgd::Vector3 p2 = marker2->position();
+            pgd::Vector3 axis2 = marker2->axis(Marker::X);
             pgd::Vector2 stops = hingeJoint->stops();
             // double springConstant = hingeJoint->stopSpring();
             // double dampingConstant = hingeJoint->stopDamp();
             attributes["name"s] = hingeJoint->name();
             attributes["type"s] = "hinge"s;
-            attributes["axis"s] = GSUtil::ToString(axis2);
-            attributes["pos"s] = GSUtil::ToString(p2);
-            attributes["limited"s] = GSUtil::ToString(true);
+            attributes["axis"s] = GSUtil::toString(axis2);
+            attributes["pos"s] = GSUtil::toString(p2);
+            attributes["limited"s] = GSUtil::toString(true);
             pgd::Vector2 reversedStops(-stops[1], -stops[0]);
-            attributes["range"s] = GSUtil::ToString(reversedStops);
-            XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            attributes["range"s] = GSUtil::toString(reversedStops);
+            xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_site"s;
-            attributes["pos"s] = GSUtil::ToString(p2);
-            XMLInitiateTag(&m_mjXML, "site"s, attributes, true);
+            attributes["pos"s] = GSUtil::toString(p2);
+            xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
             // we also need sensors to get reaction forces and torques
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_jointpos"s;
             attributes["joint"s] = hingeJoint->name();
-            XMLInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_jointvel"s;
-            XMLInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
             attributes.clear();
             attributes["name"s] = hingeJoint->name() + "_force"s;
             attributes["site"s] = hingeJoint->name() + "_site"s;
-            XMLInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
             attributes["name"s] = hingeJoint->name() + "_torque"s;
-            XMLInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+ */
             break;
         }
         if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(joint))
         {
             Marker *marker2 = ballJoint->body2Marker();
-            pgd::Vector3 p2 = marker2->GetPosition();
+            pgd::Vector3 p2 = marker2->position();
             attributes["name"s] = ballJoint->name();
             attributes["type"s] = "ball"s;
-            attributes["pos"s] = GSUtil::ToString(p2);
-            XMLInitiateTag(&m_mjXML, "joint"s, attributes, true);
+            attributes["pos"s] = GSUtil::toString(p2);
+            xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
             // put a site on the joint
             attributes.clear();
             attributes["name"s] = ballJoint->name() + "_site"s;
-            attributes["pos"s] = GSUtil::ToString(p2);
-            XMLInitiateTag(&m_mjXML, "site"s, attributes, true);
+            attributes["pos"s] = GSUtil::toString(p2);
+            xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
             // we also need sensors to get reaction forces and torques
             attributes.clear();
-            attributes["name"s] = ballJoint->name() + "_ballquat"s;
+            attributes["name"s] = ballJoint->name() + "_jointpos"s;
             attributes["joint"s] = ballJoint->name();
-            XMLInitiateTag(&m_mjXMLSensors, "ballquat"s, attributes, true);
-            attributes["name"s] = ballJoint->name() + "_ballangvel"s;
-            XMLInitiateTag(&m_mjXMLSensors, "ballangvel"s, attributes, true);
+            xmlInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            attributes["name"s] = ballJoint->name() + "_jointvel"s;
+            xmlInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
             attributes.clear();
+            attributes["name"s] = ballJoint->name() + "_force"s;
+            attributes["site"s] = ballJoint->name() + "_site"s;
+            xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            attributes["name"s] = ballJoint->name() + "_torque"s;
+            xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+ */
             break;
         }
+        if (const FixedJoint *fixedJoint = dynamic_cast<const FixedJoint *>(joint)) // this is emulated with a 6 DoF joint that is locked
+        {
+            Marker *marker2 = fixedJoint->body2Marker();
+            pgd::Vector3 p2 = marker2->position();
+            attributes["name"s] = fixedJoint->name();
+            attributes["type"s] = "hinge"s; // fixed joint type does not exist in current MuJoCo so use a hinge joint and fix the position by restricting the range
+            attributes["pos"s] = GSUtil::toString(p2);
+            attributes["axis"s] = "0 0 1";
+            attributes["range"s] = "-1e-10 1e-10"; // cannot set them both to zero
+            attributes["limited"s] = "true";
+            xmlInitiateTag(&m_mjXML, "joint"s, attributes, true);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
+            // put a site on the joint
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_site"s;
+            attributes["pos"s] = GSUtil::toString(p2);
+            xmlInitiateTag(&m_mjXML, "site"s, attributes, true);
+            // we also need sensors to get reaction forces and torques
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_jointpos"s;
+            attributes["joint"s] = fixedJoint->name();
+            xmlInitiateTag(&m_mjXMLSensors, "jointpos"s, attributes, true);
+            attributes["name"s] = fixedJoint->name() + "_jointvel"s;
+            xmlInitiateTag(&m_mjXMLSensors, "jointvel"s, attributes, true);
+            attributes.clear();
+            attributes["name"s] = fixedJoint->name() + "_force"s;
+            attributes["site"s] = fixedJoint->name() + "_site"s;
+            xmlInitiateTag(&m_mjXMLSensors, "force"s, attributes, true);
+            attributes["name"s] = fixedJoint->name() + "_torque"s;
+            xmlInitiateTag(&m_mjXMLSensors, "torque"s, attributes, true);
+ */
+            break;
+        }
+        std::cerr << "Unsupported JOINT type \"" << joint->type();
         break;
     }
     return nullptr;
 }
 
 
-std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
+std::string *MuJoCoPhysicsEngine::createGeom(const Geom *geom)
 {
     std::map<std::string, std::string> attributes;
     while (true)
@@ -437,38 +496,39 @@ std::string *MuJoCoPhysicsEngine::CreateGeom(const Geom *geom)
         if (const SphereGeom *sphereGeom = dynamic_cast<const SphereGeom *>(geom))
         {
             double radius = sphereGeom->radius();
-            pgd::Vector3 position = sphereGeom->GetPosition();
-            pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
+            pgd::Vector3 position = sphereGeom->position();
+            pgd::Quaternion quaternion = sphereGeom->quaternion();
             // double staticFriction = sphereGeom->GetContactMu();
             // double dynamicFriction = staticFriction;
             // double contactBounce = sphereGeom->GetContactBounce();
             attributes["name"s] = sphereGeom->name();
             attributes["type"s] = "sphere"s;
-            attributes["size"s] = GSUtil::ToString(radius);
-            attributes["pos"s] = GSUtil::ToString(position);
-            attributes["quat"s] = GSUtil::ToString(quaternion);
-            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            attributes["size"s] = GSUtil::toString(radius);
+            attributes["pos"s] = GSUtil::toString(position);
+            attributes["quat"s] = GSUtil::toString(quaternion);
+            xmlInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
         if (const PlaneGeom *planeGeom = dynamic_cast<const PlaneGeom *>(geom))
         {
             Marker *marker = planeGeom->geomMarker();
-            pgd::Vector3 position = marker->GetPosition();
-            pgd::Vector3 zAxis = marker->GetAxis(Marker::Z);
+            pgd::Vector3 position = marker->position();
+            pgd::Vector3 zAxis = marker->axis(Marker::Z);
             attributes["name"s] = planeGeom->name();
             attributes["type"s] = "plane"s;
-            attributes["pos"s] = GSUtil::ToString(position);
-            attributes["zaxis"s] = GSUtil::ToString(zAxis);
-            attributes["size"s] = GSUtil::ToString(pgd::Vector3(1, 1, 1));
-            XMLInitiateTag(&m_mjXML, "geom"s, attributes, true);
+            attributes["pos"s] = GSUtil::toString(position);
+            attributes["zaxis"s] = GSUtil::toString(zAxis);
+            attributes["size"s] = GSUtil::toString(pgd::Vector3(1, 1, 1));
+            xmlInitiateTag(&m_mjXML, "geom"s, attributes, true);
             break;
         }
+        std::cerr << "Unsupported GEOM type \"" << geom->type();
         break;
     }
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::MoveBodies()
+std::string *MuJoCoPhysicsEngine::moveBodies()
 {
     // in mucojo everything is done via the joints
     // these are specified in mjModel as
@@ -480,9 +540,9 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
     // mjtNum* qpos;              // position                                         (nq x 1)
     // mjtNum* qvel;              // velocity                                         (nv x 1)
     // the number of values in qpos and qvel varies with the joint type
-    // mjtJoint = mjJNT_FREE has 7 values in qpos and 6 in qvel
+    // mjtJoint = mjJNT_FREE has 7 values in qpos [xyz wxqyqzq] and 6 in qvel [xryrzr xvyvzv]
     // mjtJoint = mjJNT_HINGE has 1 in qpos and 1 in qvel
-    // mjtJoint = mjJNT_BALL has 4 in qpos and 3 in qvel
+    // mjtJoint = mjJNT_BALL has 4 in qpos [wxqyqzq] and 3 in qvel [xryrzr]
     // note: these state values are sticky unless something like mj_resetData is called
 
     for (size_t jointID = 0; jointID < m_mjModel->njnt; jointID++)
@@ -495,7 +555,7 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
         std::string bodyName(mj_id2name(m_mjModel, mjOBJ_BODY, int(jnt_bodyid)));
         switch (jnt_type)
         {
-        case mjJNT_FREE:
+        case mjJNT_FREE: // free bodies are a special case for the root body in the tree so it gets set in world coordinates
         {
 #ifdef DEBUG_MUJOCO_MOVE_BODIES
             pgd::Vector3 p(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2]);
@@ -503,21 +563,21 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             pgd::Vector3 v(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
             pgd::Vector3 av(m_mjData->qvel[jnt_dofadr + 3], m_mjData->qvel[jnt_dofadr + 4], m_mjData->qvel[jnt_dofadr + 5]);
             std::cerr << "Joint Name = " << jointName << "\n";
-            std::cerr << "Position = " << GSUtil::ToString(p) << "\n";
-            std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
-            std::cerr << "Velocity = " << GSUtil::ToString(v) << "\n";
-            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
+            std::cerr << "Position = " << GSUtil::toString(p) << "\n";
+            std::cerr << "Quaternion = " << GSUtil::toString(q) << "\n";
+            std::cerr << "Velocity = " << GSUtil::toString(v) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::toString(av) << "\n";
 #endif
-            Body *body = simulation()->GetBody(bodyName);
+            Body *body = simulation()->getBody(bodyName);
             if (!body)
             {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" body not found", bodyName.c_str()));
+                setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" body not found", bodyName.c_str()));
                 return lastErrorPtr();
             }
-            pgd::Vector3 p = body->GetPosition();
-            pgd::Quaternion q = body->GetQuaternion();
-            pgd::Vector3 v = body->GetLinearVelocity();
-            pgd::Vector3 av = body->GetAngularVelocity();
+            pgd::Vector3 p = body->position();
+            pgd::Quaternion q = body->quaternion();
+            pgd::Vector3 v = body->linearVelocity();
+            pgd::Vector3 av = body->angularVelocity();
             // now set the values in the MuJoCo data structure
             m_mjData->qpos[jnt_qposadr + 0] = p.x; m_mjData->qpos[jnt_qposadr + 1] = p.y; m_mjData->qpos[jnt_qposadr + 2] = p.z;
             m_mjData->qpos[jnt_qposadr + 3] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
@@ -538,23 +598,23 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             double angle; pgd::Vector3 axis;
             pgd::MakeAxisAngleFromQ(rotation, &axis, &angle);
             std::cerr << "Joint Name = " << jointName << "\n";
-            std::cerr << "Angle = " << GSUtil::ToString(a) << "\n";
-            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
-            std::cerr << "Axis = " << GSUtil::ToString(axis) << " Angle = " << pgd::RadToDeg(angle) << " degrees\n";
-            std::cerr << "Basis = " << GSUtil::ToString(basis) << "\n";
-            std::cerr << "Euler Angles = " << GSUtil::ToString(eulerAngles) << "\n";
-            std::cerr << "Angular Velocity = " << GSUtil::ToString(angularVelocity) << "\n";
+            std::cerr << "Angle = " << GSUtil::toString(a) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::toString(av) << "\n";
+            std::cerr << "Axis = " << GSUtil::toString(axis) << " Angle = " << pgd::RadToDeg(angle) << " degrees\n";
+            std::cerr << "Basis = " << GSUtil::toString(basis) << "\n";
+            std::cerr << "Euler Angles = " << GSUtil::toString(eulerAngles) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::toString(angularVelocity) << "\n";
 #endif
-            Joint *joint = simulation()->GetJoint(jointName);
+            Joint *joint = simulation()->getJoint(jointName);
             if (!joint)
             {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
+                setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
                 return lastErrorPtr();
             }
-            pgd::Quaternion rotation = joint->GetWorldRotation();
-            pgd::Matrix3x3 basis = joint->body1Marker()->GetWorldBasis();
-            pgd::Vector3 eulerAngles = pgd::MakeEulerAnglesFromQRadian(rotation, basis);
-            pgd::Vector3 angularVelocity = joint->body1Marker()->GetVector(joint->GetWorldAngularVelocity());
+            pgd::Quaternion rotation = joint->worldRotation();
+            pgd::Matrix3x3 basis = joint->body1Marker()->worldBasis();
+            pgd::Vector3 eulerAngles = pgd::makeEulerAnglesFromQRadian(rotation, basis);
+            pgd::Vector3 angularVelocity = joint->body1Marker()->vector(joint->worldAngularVelocity());
             m_mjData->qpos[jnt_qposadr] = eulerAngles.x;
             m_mjData->qvel[jnt_dofadr] = angularVelocity.x;
             break;
@@ -565,39 +625,40 @@ std::string *MuJoCoPhysicsEngine::MoveBodies()
             pgd::Quaternion q(m_mjData->qpos[jnt_qposadr + 0], m_mjData->qpos[jnt_qposadr + 1], m_mjData->qpos[jnt_qposadr + 2], m_mjData->qpos[jnt_qposadr + 3]);
             pgd::Vector3 av(m_mjData->qvel[jnt_dofadr + 0], m_mjData->qvel[jnt_dofadr + 1], m_mjData->qvel[jnt_dofadr + 2]);
             std::cerr << "Joint Name = " << jointName << "\n";
-            std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
-            std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
+            std::cerr << "Quaternion = " << GSUtil::toString(q) << "\n";
+            std::cerr << "Angular Velocity = " << GSUtil::toString(av) << "\n";
 #endif
-            Joint *joint = simulation()->GetJoint(jointName);
+            Joint *joint = simulation()->getJoint(jointName);
             if (!joint)
             {
-                setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
+                setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" joint not found", jointName.c_str()));
                 return lastErrorPtr();
             }
-            pgd::Quaternion q = joint->GetWorldRotation();
-            pgd::Vector3 av = joint->GetWorldAngularVelocity();
+            pgd::Quaternion q = joint->worldRotation();
+            pgd::Vector3 av = joint->worldAngularVelocity();
             // now set the values in the MuJoCo data structure
             m_mjData->qpos[jnt_qposadr + 0] = q.n; m_mjData->qpos[jnt_qposadr + 4] = q.x; m_mjData->qpos[jnt_qposadr + 5] = q.y; m_mjData->qpos[jnt_qposadr + 6] = q.z;
             m_mjData->qvel[jnt_dofadr + 0] = av.x; m_mjData->qvel[jnt_dofadr + 4] = av.y; m_mjData->qvel[jnt_dofadr + 5] = av.z;
             break;
-        }        default:
-            setLastError(GSUtil::ToString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", jointName.c_str()));
+        }
+        default:
+            setLastError(GSUtil::toString("Error: MuJoCoPhysicsEngine::MoveBodies \"%s\" unimplmented joint type", jointName.c_str()));
             return lastErrorPtr();
         }
     }
     return nullptr;
 }
 
-std::string *MuJoCoPhysicsEngine::Step()
+std::string *MuJoCoPhysicsEngine::step()
 {
     // apply the point forces from the muscles
     // choices are to apply the forces and torques to the bodies directly using xfrc_applied
     // or to convert to qfrc_applied using mj_applyFT
     std::vector<double> qfrc_target(m_mjModel->nv);
-    for (auto &&iter :  *simulation()->GetMuscleList())
+    for (auto &&iter :  *simulation()->muscleList())
     {
-        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->GetPointForceList();
-        double tension = iter.second->GetTension();
+        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->pointForceList();
+        double tension = iter.second->tension();
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
             const PointForce *pf = pointForceList->at(i).get();
@@ -611,7 +672,7 @@ std::string *MuJoCoPhysicsEngine::Step()
     }
 
     // apply the point forces from the  fluid sacs
-    for (auto &&iter : *simulation()->GetFluidSacList())
+    for (auto &&iter : *simulation()->fluidSacList())
     {
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
@@ -625,17 +686,17 @@ std::string *MuJoCoPhysicsEngine::Step()
     }
 
     // apply the forces from the drag
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
         pgd::Vector3 dragTorque = iter.second->dragTorque();
-        iter.second->ComputeDrag();
+        iter.second->computeDrag();
         Marker marker(iter.second.get());
-        pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
-        pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
+        pgd::Vector3 worldDragForce = marker.worldVector(dragForce);
+        pgd::Vector3 worldDragTorque = marker.worldVector(dragTorque);
         int bodyID = mj_name2id(m_mjModel, mjOBJ_BODY, iter.first.c_str());
-        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->GetPosition().constData(), bodyID, qfrc_target.data());
+        mj_applyFT(m_mjModel, m_mjData, worldDragForce.constData(), worldDragTorque.constData(), iter.second->position().constData(), bodyID, qfrc_target.data());
     }
 
     // copy the accumulated qfrc values to the main data structure
@@ -665,21 +726,21 @@ std::string *MuJoCoPhysicsEngine::Step()
         //     av = marker.GetWorldVector(av);
         //     v = marker.GetWorldVector(v);
         // }
-        body->SetPosition(p);
-        body->SetQuaternion(q);
-        body->SetLinearVelocity(v);
-        body->SetAngularVelocity(av);
+        body->setPosition(p);
+        body->setQuaternion(q);
+        body->setLinearVelocity(v);
+        body->setAngularVelocity(av);
 #ifdef DEBUG_MUJOCO_STEP
         std::cerr << "\nBody Name = " << body->name() << "\n";
         std::cerr << "Body ID = " << bodyID << " Name from ID = " << mj_id2name(m_mjModel, mjOBJ_BODY, bodyID) << "\n";
-        std::cerr << "Position = " << GSUtil::ToString(p) << "\n";
-        std::cerr << "Quaternion = " << GSUtil::ToString(q) << "\n";
-        std::cerr << "Velocity = " << GSUtil::ToString(v) << "\n";
-        std::cerr << "Angular Velocity = " << GSUtil::ToString(av) << "\n";
+        std::cerr << "Position = " << GSUtil::toString(p) << "\n";
+        std::cerr << "Quaternion = " << GSUtil::toString(q) << "\n";
+        std::cerr << "Velocity = " << GSUtil::toString(v) << "\n";
+        std::cerr << "Angular Velocity = " << GSUtil::toString(av) << "\n";
 #endif
     }
 
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -692,6 +753,9 @@ std::string *MuJoCoPhysicsEngine::Step()
                 // int jnt_dofadr = m_mjModel->jnt_dofadr[jointID]; // not used
                 pgd::Vector3 anchor(m_mjData->xanchor[jointID * 3 + 0], m_mjData->xanchor[jointID * 3 + 1], m_mjData->xanchor[jointID * 3 + 2]);
                 pgd::Vector3 axis(m_mjData->xaxis[jointID * 3 + 0], m_mjData->xaxis[jointID * 3 + 1], m_mjData->xaxis[jointID * 3 + 2]);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
                 // a hinge joint only has 1 dof
                 // pgd::Vector3 constraintTorque(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 0], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 1], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 2]);
                 // pgd::Vector3 constraintForce(m_mjData->qfrc_constraint[jnt_dofadr * 3 + 4], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 5], m_mjData->qfrc_constraint[jnt_dofadr * 3 + 6]);
@@ -723,8 +787,9 @@ std::string *MuJoCoPhysicsEngine::Step()
                 hingeJoint->setAngle(angle); // and these should be the same as the internally calculated values
                 hingeJoint->setAngleRate(angleRate); // and these should be the same as the internally calculated values
                 Marker marker(iter.second.get()->body1());
-                hingeJoint->setForce(marker.GetWorldVector(jointforce));
-                hingeJoint->setTorque(marker.GetWorldVector(jointtorque));
+                hingeJoint->setForce(marker.worldVector(jointforce));
+                hingeJoint->setTorque(marker.worldVector(jointtorque));
+ */
                 break;
             }
             if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
@@ -732,6 +797,9 @@ std::string *MuJoCoPhysicsEngine::Step()
                 int jointID = mj_name2id(m_mjModel, mjOBJ_JOINT, ballJoint->name().c_str());
                 int jnt_type = m_mjModel->jnt_type[jointID];
                 assert(jnt_type == mjJNT_HINGE);
+/* I should be able to get this data directly from the qfrc_constraint array via:
+ * adr = model.jnt_dofadr[hinge_id]
+ * reaction = data.qfrc_constraint[adr]
                 // int jnt_qposadr = m_mjModel->jnt_qposadr[jointID]; // not used
                 // int jnt_dofadr = m_mjModel->jnt_dofadr[jointID]; // not used
                 pgd::Vector3 anchor(m_mjData->xanchor[jointID * 3 + 0], m_mjData->xanchor[jointID * 3 + 1], m_mjData->xanchor[jointID * 3 + 2]);
@@ -758,13 +826,19 @@ std::string *MuJoCoPhysicsEngine::Step()
                 // pgd::Vector3 jointtorque(jointtorqueSensorPtr[0], jointtorqueSensorPtr[1], jointtorqueSensorPtr[2]);
                 // FIX ME
                 // ballJoint->setAnchor(anchor); // this probably doesn't change
+ */
                 break;
+            }
+            if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
+            {
+                // since this is not a real joitn I suspect there is no way of getting any useful information
+                // I probably need to fix it using motors or somesuch
             }
             break;
         }
     }
 
-    simulation()->GetContactList()->clear();
+    simulation()->contactList()->clear();
     // double timeStep =simulation()->GetGlobal()->StepSize();
     // for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     // {
@@ -794,7 +868,7 @@ std::string *MuJoCoPhysicsEngine::Step()
 }
 
 
-mjModel *MuJoCoPhysicsEngine::LoadModelFromString(const std::string &xml, char* error, int error_size, mjVFS* vfs)
+mjModel *MuJoCoPhysicsEngine::loadModelFromString(const std::string &xml, char* error, int error_size, mjVFS* vfs)
 {
     // register string resource provider if not registered before
     if (mjp_getResourceProvider("LoadModelFromString:") == nullptr)

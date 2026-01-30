@@ -34,27 +34,27 @@ Geom::Geom()
 
 // these functions set the geom position relative to its body
 // these now use the geom offset functions
-void Geom::SetBody(Body *body)
+void Geom::setBody(Body *body)
 {
     m_body = body;
 }
 
-Body *Geom::GetBody()
+Body *Geom::body()
 {
     return m_body;
 }
 
-void Geom::SetPosition (double x, double y, double z)
+void Geom::setPosition (double x, double y, double z)
 {
-    m_position.Set(x, y, z);
+    m_position.set(x, y, z);
 }
 
-pgd::Vector3 Geom::GetPosition() const
+pgd::Vector3 Geom::position() const
 {
     return m_position;
 }
 
-pgd::Vector3 Geom::GetWorldPosition() const
+pgd::Vector3 Geom::worldPosition() const
 {
     if (m_body)
     {
@@ -62,7 +62,7 @@ pgd::Vector3 Geom::GetWorldPosition() const
         //        pgd::Vector3 p;
         //        dBodyGetRelPointPos(m_body->GetBodyID(), m_position.x, m_position.y, m_position.z, p);
         //        return pgd::Vector3(p[0], p[1], p[2]);
-        pgd::Vector3 bodyWorldPosition = pgd::QVRotate(m_body->GetQuaternion(), m_position) + pgd::Vector3(m_body->GetPosition());
+        pgd::Vector3 bodyWorldPosition = pgd::qVRotate(m_body->quaternion(), m_position) + pgd::Vector3(m_body->position());
         return bodyWorldPosition;
     }
     else
@@ -71,43 +71,43 @@ pgd::Vector3 Geom::GetWorldPosition() const
     }
 }
 
-void Geom::SetQuaternion(double n, double x, double y, double z)
+void Geom::setQuaternion(double n, double x, double y, double z)
 {
-    m_quaternion.Set(n, x, y, z);
+    m_quaternion.set(n, x, y, z);
 }
 
 void Geom::setGeomMarker(Marker *geomMarker)
 {
     m_geomMarker = geomMarker;
-    if (m_geomMarker->GetBody())
+    if (m_geomMarker->body())
     {
-        this->SetGeomLocation(Geom::body);
-        this->SetBody(m_geomMarker->GetBody());
+        this->setGeomLocation(Geom::OnBody);
+        this->setBody(m_geomMarker->body());
     }
     else
     {
-        this->SetBody(nullptr);
-        this->SetGeomLocation(Geom::environment);
+        this->setBody(nullptr);
+        this->setGeomLocation(Geom::OnEnvironment);
 
     }
     if (dynamic_cast<PlaneGeom *>(this)) return; // do not try to place non-placeable geoms
 
-    pgd::Vector3 p = geomMarker->GetPosition();
-    this->SetPosition(p.x, p.y, p.z);
-    pgd::Quaternion q = geomMarker->GetQuaternion();
-    this->SetQuaternion(q.n, q.x, q.y, q.z);
+    pgd::Vector3 p = geomMarker->position();
+    this->setPosition(p.x, p.y, p.z);
+    pgd::Quaternion q = geomMarker->quaternion();
+    this->setQuaternion(q.n, q.x, q.y, q.z);
 }
 
-pgd::Quaternion Geom::GetQuaternion() const
+pgd::Quaternion Geom::quaternion() const
 {
     return m_quaternion;
 }
 
-pgd::Quaternion Geom::GetWorldQuaternion() const
+pgd::Quaternion Geom::worldQuaternion() const
 {
     if (m_body)
     {
-        return m_body->GetQuaternion() * m_quaternion;
+        return m_body->quaternion() * m_quaternion;
     }
     else
     {
@@ -115,52 +115,52 @@ pgd::Quaternion Geom::GetWorldQuaternion() const
     }
 }
 
-void Geom::SetSpringDamp(double springConstant, double dampingConstant, double integrationStep)
+void Geom::setSpringDamp(double springConstant, double dampingConstant, double integrationStep)
 {
-    m_ERP = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
-    m_CFM = 1/(integrationStep * springConstant + dampingConstant);
-    m_SpringConstant = springConstant;
-    m_DampingConstant = springConstant;
+    m_erp = integrationStep * springConstant/(integrationStep * springConstant + dampingConstant);
+    m_cfm = 1/(integrationStep * springConstant + dampingConstant);
+    m_springConstant = springConstant;
+    m_dampingConstant = springConstant;
 }
 
-void Geom::SetSpringERP(double springConstant, double ERP, double integrationStep)
+void Geom::setSpringERP(double springConstant, double ERP, double integrationStep)
 {
-    m_ERP = ERP;
-    m_CFM = ERP / (integrationStep * springConstant);
-    m_SpringConstant = springConstant;
-    m_DampingConstant = (1.0 - m_ERP) / m_CFM;
+    m_erp = ERP;
+    m_cfm = ERP / (integrationStep * springConstant);
+    m_springConstant = springConstant;
+    m_dampingConstant = (1.0 - m_erp) / m_cfm;
 }
 
-void Geom::SetSpringCFM(double springConstant, double CFM, double integrationStep)
+void Geom::setSpringCFM(double springConstant, double CFM, double integrationStep)
 {
-    m_CFM = CFM;
-    m_SpringConstant = springConstant;
-    m_DampingConstant = 1.0 / m_CFM - integrationStep * m_SpringConstant;
-    m_ERP = integrationStep * m_SpringConstant/(integrationStep * m_SpringConstant + m_DampingConstant);
+    m_cfm = CFM;
+    m_springConstant = springConstant;
+    m_dampingConstant = 1.0 / m_cfm - integrationStep * m_springConstant;
+    m_erp = integrationStep * m_springConstant/(integrationStep * m_springConstant + m_dampingConstant);
 }
 
-void Geom::SetCFMERP(double CFM, double ERP, double integrationStep)
+void Geom::setCFMERP(double CFM, double ERP, double integrationStep)
 {
-    m_ERP = ERP;
-    m_CFM = CFM;
-    m_SpringConstant = m_ERP / (m_CFM * integrationStep);
-    m_DampingConstant = (1.0 - m_ERP) / m_CFM;
+    m_erp = ERP;
+    m_cfm = CFM;
+    m_springConstant = m_erp / (m_cfm * integrationStep);
+    m_dampingConstant = (1.0 - m_erp) / m_cfm;
 }
 
-void Geom::SetCFMDamp(double CFM, double dampingConstant, double integrationStep)
+void Geom::setCFMDamp(double CFM, double dampingConstant, double integrationStep)
 {
-    m_CFM = CFM;
-    m_DampingConstant = dampingConstant;
-    m_SpringConstant = (1.0 / m_CFM - m_DampingConstant) / integrationStep;
-    m_ERP = integrationStep * m_SpringConstant/(integrationStep * m_SpringConstant + m_DampingConstant);
+    m_cfm = CFM;
+    m_dampingConstant = dampingConstant;
+    m_springConstant = (1.0 / m_cfm - m_dampingConstant) / integrationStep;
+    m_erp = integrationStep * m_springConstant/(integrationStep * m_springConstant + m_dampingConstant);
 }
 
-void Geom::SetERPDamp(double ERP, double dampingConstant, double integrationStep)
+void Geom::setERPDamp(double ERP, double dampingConstant, double integrationStep)
 {
-    m_ERP = ERP;
-    m_DampingConstant = dampingConstant;
-    m_SpringConstant = m_DampingConstant / (integrationStep / m_ERP - integrationStep);
-    m_CFM = 1.0/(integrationStep * m_SpringConstant + m_DampingConstant);
+    m_erp = ERP;
+    m_dampingConstant = dampingConstant;
+    m_springConstant = m_dampingConstant / (integrationStep / m_erp - integrationStep);
+    m_cfm = 1.0/(integrationStep * m_springConstant + m_dampingConstant);
 }
 
 std::string Geom::dumpToString()
@@ -174,11 +174,11 @@ std::string Geom::dumpToString()
         ss << "Time\tXP\tYP\tZP\tQW\tQX\tQY\tQZ\tNContacts\tBody1\tBody2\tXC\tYC\tZC\tFX\tFY\tFZ\tTX\tTY\tTZ\n";
     }
 
-    pgd::Vector3 p = m_geomMarker->GetWorldPosition();
-    pgd::Quaternion q = m_geomMarker->GetWorldQuaternion();
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" << m_ContactList.size();
+    pgd::Vector3 p = m_geomMarker->worldPosition();
+    pgd::Quaternion q = m_geomMarker->worldQuaternion();
+    ss << simulation()->simulationTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] << "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] << "\t" << m_contactList.size();
     std::string body1, body2;
-    for (auto &&iter : m_ContactList)
+    for (auto &&iter : m_contactList)
     {
         if (iter->body1()) body1 = iter->body1()->name();
         else body1 = "World"s;
@@ -219,8 +219,8 @@ std::string *Geom::createFromAttributes()
     m_type = buf;
 
     if (findAttribute("MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto it = simulation()->GetMarkerList()->find(buf);
-    if (it == simulation()->GetMarkerList()->end())
+    auto it = simulation()->markerList()->find(buf);
+    if (it == simulation()->markerList()->end())
     {
         setLastError("GEOM ID=\""s + name() +"\" Marker not found"s);
         return lastErrorPtr();
@@ -228,55 +228,55 @@ std::string *Geom::createFromAttributes()
     this->setGeomMarker(it->second.get());
 
     // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
-    double stepSize = simulation()->GetTimeIncrement();
+    double stepSize = simulation()->global()->stepSize();
     while (true)
     {
         if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
         {
-            m_ERP = GSUtil::Double(buf);
-            m_CFM = GSUtil::Double(buf2);
-            m_SpringConstant = m_ERP / (m_CFM * stepSize);
-            m_DampingConstant = (1.0 - m_ERP) / m_CFM;
+            m_erp = GSUtil::toDouble(buf);
+            m_cfm = GSUtil::toDouble(buf2);
+            m_springConstant = m_erp / (m_cfm * stepSize);
+            m_dampingConstant = (1.0 - m_erp) / m_cfm;
             break;
         }
         if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
         {
-            m_ERP = GSUtil::Double(buf);
-            m_SpringConstant = GSUtil::Double(buf2);
-            m_DampingConstant = stepSize * (m_SpringConstant / m_ERP - m_SpringConstant);
-            m_CFM = 1.0/(stepSize * m_SpringConstant + m_DampingConstant);
+            m_erp = GSUtil::toDouble(buf);
+            m_springConstant = GSUtil::toDouble(buf2);
+            m_dampingConstant = stepSize * (m_springConstant / m_erp - m_springConstant);
+            m_cfm = 1.0/(stepSize * m_springConstant + m_dampingConstant);
             break;
         }
         if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
         {
-            m_ERP = GSUtil::Double(buf);
-            m_DampingConstant = GSUtil::Double(buf2);
-            m_SpringConstant = m_DampingConstant / (stepSize / m_ERP - stepSize);
-            m_CFM = 1.0/(stepSize * m_SpringConstant + m_DampingConstant);
+            m_erp = GSUtil::toDouble(buf);
+            m_dampingConstant = GSUtil::toDouble(buf2);
+            m_springConstant = m_dampingConstant / (stepSize / m_erp - stepSize);
+            m_cfm = 1.0/(stepSize * m_springConstant + m_dampingConstant);
             break;
         }
         if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
         {
-            m_CFM = GSUtil::Double(buf);
-            m_DampingConstant = GSUtil::Double(buf2);
-            m_SpringConstant = (1.0 / m_CFM - m_DampingConstant) / stepSize;
-            m_ERP = stepSize * m_SpringConstant/(stepSize * m_SpringConstant + m_DampingConstant);
+            m_cfm = GSUtil::toDouble(buf);
+            m_dampingConstant = GSUtil::toDouble(buf2);
+            m_springConstant = (1.0 / m_cfm - m_dampingConstant) / stepSize;
+            m_erp = stepSize * m_springConstant/(stepSize * m_springConstant + m_dampingConstant);
             break;
         }
         if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
         {
-            m_CFM = GSUtil::Double(buf);
-            m_SpringConstant = GSUtil::Double(buf2);
-            m_DampingConstant = 1.0 / m_CFM - stepSize * m_SpringConstant;
-            m_ERP = stepSize * m_SpringConstant/(stepSize * m_SpringConstant + m_DampingConstant);
+            m_cfm = GSUtil::toDouble(buf);
+            m_springConstant = GSUtil::toDouble(buf2);
+            m_dampingConstant = 1.0 / m_cfm - stepSize * m_springConstant;
+            m_erp = stepSize * m_springConstant/(stepSize * m_springConstant + m_dampingConstant);
             break;
         }
         if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
         {
-            m_DampingConstant = GSUtil::Double(buf);
-            m_SpringConstant = GSUtil::Double(buf2);
-            m_CFM = 1.0/(stepSize * m_SpringConstant + m_DampingConstant);
-            m_ERP = stepSize * m_SpringConstant/(stepSize * m_SpringConstant + m_DampingConstant);
+            m_dampingConstant = GSUtil::toDouble(buf);
+            m_springConstant = GSUtil::toDouble(buf2);
+            m_cfm = 1.0/(stepSize * m_springConstant + m_dampingConstant);
+            m_erp = stepSize * m_springConstant/(stepSize * m_springConstant + m_dampingConstant);
             break;
         }
         setLastError("GEOM ID=\""s + name() +"\" 2 of DampingConstant, SpringConstant, CFM, or ERP must be provided"s);
@@ -284,20 +284,20 @@ std::string *Geom::createFromAttributes()
     }
 
     if (findAttribute("Bounce"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetContactBounce(GSUtil::Double(buf));
+    this->setContactBounce(GSUtil::toDouble(buf));
     if (findAttribute("Mu"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetContactMu(GSUtil::Double(buf));
+    this->setContactMu(GSUtil::toDouble(buf));
     if (findAttribute("Abort"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetAbort(GSUtil::Bool(buf));
+    this->setAbort(GSUtil::toBool(buf));
     if (findAttribute("Adhesion"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetAdhesion(GSUtil::Bool(buf));
+    this->setAdhesion(GSUtil::toBool(buf));
 
     if (findAttribute("Rho"s, &buf))
     {
-        this->SetContactRho(GSUtil::Double(buf));
+        this->setContactRho(GSUtil::toDouble(buf));
     }
 
-    m_ExcludeList.clear();
+    m_excludeList.clear();
     std::vector<NamedObject *> upstreamObjects;
     if (findAttribute("ExcludeIDList"s, &buf))
     {
@@ -305,13 +305,13 @@ std::string *Geom::createFromAttributes()
         pystring::split(buf, geomNames);
         for (size_t i = 0; i < geomNames.size(); i++)
         {
-            Geom *geom = simulation()->GetGeom(geomNames[i]);
+            Geom *geom = simulation()->getGeom(geomNames[i]);
             if (!geom)
             {
                 setLastError("GEOM ID=\""s + name() + "ExcludeList geom "s + geomNames[i] + " missing"s);
                 return lastErrorPtr();
             }
-            m_ExcludeList.push_back(geom);
+            m_excludeList.push_back(geom);
             upstreamObjects.push_back(geom);
         }
     }
@@ -337,116 +337,116 @@ void Geom::appendToAttributes()
     std::string buf;
     setAttribute("Type", type());
     setAttribute("MarkerID"s, m_geomMarker->name());
-    setAttribute("SpringConstant"s, *GSUtil::ToString(m_SpringConstant, &buf));
-    setAttribute("DampingConstant"s, *GSUtil::ToString(m_DampingConstant, &buf));
-    setAttribute("Bounce"s, *GSUtil::ToString(m_Bounce, &buf));
-    setAttribute("Mu"s, *GSUtil::ToString(m_Mu, &buf));
-    setAttribute("Rho"s, *GSUtil::ToString(m_Rho, &buf));
-    setAttribute("Abort"s, *GSUtil::ToString(m_Abort, &buf));
-    setAttribute("Adhesion"s, *GSUtil::ToString(m_Adhesion, &buf));
+    setAttribute("SpringConstant"s, *GSUtil::toString(m_springConstant, &buf));
+    setAttribute("DampingConstant"s, *GSUtil::toString(m_dampingConstant, &buf));
+    setAttribute("Bounce"s, *GSUtil::toString(m_bounce, &buf));
+    setAttribute("Mu"s, *GSUtil::toString(m_mu, &buf));
+    setAttribute("Rho"s, *GSUtil::toString(m_rho, &buf));
+    setAttribute("Abort"s, *GSUtil::toString(m_abort, &buf));
+    setAttribute("Adhesion"s, *GSUtil::toString(m_adhesion, &buf));
     std::vector<std::string> geomNames;
-    for (size_t i = 0; i < m_ExcludeList.size(); i++) geomNames.push_back(m_ExcludeList[i]->name());
+    for (size_t i = 0; i < m_excludeList.size(); i++) geomNames.push_back(m_excludeList[i]->name());
     setAttribute("ExcludeIDList"s, pystring::join(" "s, geomNames));
 }
 
-void Geom::SetGeomLocation(GeomLocation geomLocation)
+void Geom::setGeomLocation(GeomLocation geomLocation)
 {
     m_GeomLocation = geomLocation;
 }
 
-Geom::GeomLocation Geom::GetGeomLocation() const
+Geom::GeomLocation Geom::geomLocation() const
 {
     return m_GeomLocation;
 }
 
-double Geom::GetContactSoftCFM() const
+double Geom::contactSoftCFM() const
 {
-    return m_CFM;
+    return m_cfm;
 }
 
-double Geom::GetContactSoftERP() const
+double Geom::contactSoftERP() const
 {
-    return m_ERP;
+    return m_erp;
 }
 
-void Geom::SetContactMu(double mu)
+void Geom::setContactMu(double mu)
 {
-    m_Mu = mu;
+    m_mu = mu;
 }
 
-double Geom::GetContactMu() const
+double Geom::contactMu() const
 {
-    return m_Mu;
+    return m_mu;
 }
 
-void Geom::SetContactBounce(double bounce)
+void Geom::setContactBounce(double bounce)
 {
-    m_Bounce = bounce;
+    m_bounce = bounce;
 }
 
-double Geom::GetContactBounce() const
+double Geom::contactBounce() const
 {
-    return m_Bounce;
+    return m_bounce;
 }
 
-void Geom::SetContactRho(double rho)
+void Geom::setContactRho(double rho)
 {
-    m_Rho = rho;
+    m_rho = rho;
 }
 
-double Geom::GetContactRho() const
+double Geom::contactRho() const
 {
-    return m_Rho;
+    return m_rho;
 }
 
-double Geom::GetContactSpringConstant() const
+double Geom::contactSpringConstant() const
 {
-    return m_SpringConstant;
+    return m_springConstant;
 }
 
-double Geom::GetContactDampingConstant() const
+double Geom::contactDampingConstant() const
 {
-    return m_DampingConstant;
+    return m_dampingConstant;
 }
 
-void Geom::SetAbort(bool abort)
+void Geom::setAbort(bool abort)
 {
-    m_Abort = abort;
+    m_abort = abort;
 }
 
-bool Geom::GetAbort() const
+bool Geom::abort() const
 {
-    return m_Abort;
+    return m_abort;
 }
 
-void Geom::SetAdhesion(bool adhesion)
+void Geom::setAdhesion(bool adhesion)
 {
-    m_Adhesion = adhesion;
+    m_adhesion = adhesion;
 }
 
-bool Geom::GetAdhesion() const
+bool Geom::adhesion() const
 {
-    return m_Adhesion;
+    return m_adhesion;
 }
 
-void Geom::AddContact(Contact *contact)
+void Geom::addContact(Contact *contact)
 {
-    m_ContactList.push_back(contact);
+    m_contactList.push_back(contact);
 }
 
-std::vector<Contact *> *Geom::GetContactList()
+std::vector<Contact *> *Geom::contactList()
 {
-    return &m_ContactList;
+    return &m_contactList;
 }
 
-void Geom::ClearContacts()
+void Geom::clearContacts()
 {
-    m_ContactList.clear();
+    m_contactList.clear();
 }
 
-std::vector<Geom *> *Geom::GetExcludeList()
+std::vector<Geom *> *Geom::excludeList()
 {
-    return &m_ExcludeList;
+    return &m_excludeList;
 }
 
 

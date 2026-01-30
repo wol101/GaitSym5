@@ -26,19 +26,19 @@ std::string *UniversalJoint::createFromAttributes()
     if (Joint::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
-    pgd::Vector3 position = body1Marker()->GetWorldPosition();
+    pgd::Vector3 position = body1Marker()->worldPosition();
     this->setAnchor(position);
     pgd::Vector3 x, y, z;
-    body1Marker()->GetWorldBasis(&x, &y, &z);
+    body1Marker()->getWorldBasis(&x, &y, &z);
     this->setAxis0(x);
     this->setAxis1(y);
     // if (CFM() >= 0) dJointSetUniversalParam (JointID(), dParamCFM, CFM());
     // if (ERP() >= 0) dJointSetUniversalParam (JointID(), dParamERP, ERP());
 
     if (findAttribute("LowStop1"s, &buf) == nullptr) return lastErrorPtr();
-    double loStop1 = GSUtil::GetAngle(buf);
+    double loStop1 = GSUtil::toAngle(buf);
     if (findAttribute("HighStop1"s, &buf) == nullptr) return lastErrorPtr();
-    double hiStop1 = GSUtil::GetAngle(buf);
+    double hiStop1 = GSUtil::toAngle(buf);
     if (loStop1 >= hiStop1)
     {
         setLastError("Universal ID=\""s + name() +"\" LowStop1 >= HighStop1"s);
@@ -47,9 +47,9 @@ std::string *UniversalJoint::createFromAttributes()
     this->setStops0(pgd::Vector2(loStop1, hiStop1));
 
     if (findAttribute("LowStop2"s, &buf) == nullptr) return lastErrorPtr();
-    double loStop2 = GSUtil::GetAngle(buf);
+    double loStop2 = GSUtil::toAngle(buf);
     if (findAttribute("HighStop2"s, &buf) == nullptr) return lastErrorPtr();
-    double hiStop2 = GSUtil::GetAngle(buf);
+    double hiStop2 = GSUtil::toAngle(buf);
     if (loStop2 >= hiStop2)
     {
         setLastError("Universal ID=\""s + name() +"\" LowStop2 >= HighStop2"s);
@@ -59,19 +59,19 @@ std::string *UniversalJoint::createFromAttributes()
 
     if (findAttribute("StopSpring1"s, &buf))
     {
-        this->setStop0Spring(GSUtil::Double(buf));
+        this->setStop0Spring(GSUtil::toDouble(buf));
         if (findAttribute("StopDamp1"s, &buf) == nullptr) return lastErrorPtr();
-        this->setStop0Damp(GSUtil::Double(buf));
+        this->setStop0Damp(GSUtil::toDouble(buf));
     }
     if (findAttribute("StopSpring2"s, &buf))
     {
-        this->setStop1Spring(GSUtil::Double(buf));
+        this->setStop1Spring(GSUtil::toDouble(buf));
         if (findAttribute("StopDamp2"s, &buf) == nullptr) return lastErrorPtr();
-        this->setStop1Damp(GSUtil::Double(buf));
+        this->setStop1Damp(GSUtil::toDouble(buf));
     }
 
-    if (findAttribute("StopBounce1"s, &buf)) this->setStop0Bounce(GSUtil::Double(buf));
-    if (findAttribute("StopBounce2"s, &buf)) this->setStop1Bounce(GSUtil::Double(buf));
+    if (findAttribute("StopBounce1"s, &buf)) this->setStop0Bounce(GSUtil::toDouble(buf));
+    if (findAttribute("StopBounce2"s, &buf)) this->setStop1Bounce(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -81,16 +81,16 @@ void UniversalJoint::appendToAttributes()
     Joint::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Universal"s);
-    setAttribute("LowStop1"s, *GSUtil::ToString(m_stops0[0], &buf));
-    setAttribute("HighStop1"s, *GSUtil::ToString(m_stops0[1], &buf));
-    setAttribute("LowStop2"s, *GSUtil::ToString(m_stops1[0], &buf));
-    setAttribute("HighStop2"s, *GSUtil::ToString(m_stops1[1], &buf));
-    if (m_stop0Spring > 0) setAttribute("StopSpring1"s, *GSUtil::ToString(m_stop0Spring, &buf));
-    if (m_stop0Damp > 0) setAttribute("StopDamp1"s, *GSUtil::ToString(m_stop0Damp, &buf));
-    setAttribute("StopBounce1"s, *GSUtil::ToString(m_stop0Bounce, &buf));
-    if (m_stop1Spring > 0) setAttribute("StopSpring2"s, *GSUtil::ToString(m_stop0Spring, &buf));
-    if (m_stop1Damp > 0) setAttribute("StopDamp2"s, *GSUtil::ToString(m_stop0Damp, &buf));
-    setAttribute("StopBounce2"s, *GSUtil::ToString(m_stop1Bounce, &buf));
+    setAttribute("LowStop1"s, *GSUtil::toString(m_stops0[0], &buf));
+    setAttribute("HighStop1"s, *GSUtil::toString(m_stops0[1], &buf));
+    setAttribute("LowStop2"s, *GSUtil::toString(m_stops1[0], &buf));
+    setAttribute("HighStop2"s, *GSUtil::toString(m_stops1[1], &buf));
+    if (m_stop0Spring > 0) setAttribute("StopSpring1"s, *GSUtil::toString(m_stop0Spring, &buf));
+    if (m_stop0Damp > 0) setAttribute("StopDamp1"s, *GSUtil::toString(m_stop0Damp, &buf));
+    setAttribute("StopBounce1"s, *GSUtil::toString(m_stop0Bounce, &buf));
+    if (m_stop1Spring > 0) setAttribute("StopSpring2"s, *GSUtil::toString(m_stop0Spring, &buf));
+    if (m_stop1Damp > 0) setAttribute("StopDamp2"s, *GSUtil::toString(m_stop0Damp, &buf));
+    setAttribute("StopBounce2"s, *GSUtil::toString(m_stop1Bounce, &buf));
 }
 
 pgd::Vector3 UniversalJoint::axis0() const

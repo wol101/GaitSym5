@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 
+# set some output folders
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/$<CONFIG>/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/$<CONFIG>/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/$<CONFIG>/lib)
+
 # decide whether to use libraries or source code
 set(use_mucojo_src 1)
 set(use_physx_src 1)
@@ -44,6 +49,9 @@ endif()
 # glextrusion definitions
 add_compile_definitions(TRIANGLE_GENERATOR __GLE_DOUBLE)
 
+# Qt defines
+add_compile_definitions(QT_IS_AVAILABLE)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS OpenGL)
@@ -51,8 +59,8 @@ find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 
 set(PROJECT_SOURCES
     ../GaitSymQt/AVIWriter.cpp
-    ../GaitSymQt/AboutDialog.cpp
-    ../GaitSymQt/AboutDialog.ui
+    ../GaitSymQt/DialogAbout.cpp
+    ../GaitSymQt/DialogAbout.ui
     ../GaitSymQt/BasicXMLSyntaxHighlighter.cpp
     ../GaitSymQt/DialogAssembly.cpp
     ../GaitSymQt/DialogAssembly.ui
@@ -90,6 +98,8 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DialogProperties.ui
     ../GaitSymQt/DialogRename.cpp
     ../GaitSymQt/DialogRename.ui
+    ../GaitSymQt/DialogStringOfPearlsBuilder.cpp
+    ../GaitSymQt/DialogStringOfPearlsBuilder.ui
     ../GaitSymQt/DoubleValidator.cpp
     ../GaitSymQt/DrawBody.cpp
     ../GaitSymQt/DrawCustom.cpp
@@ -122,8 +132,8 @@ set(PROJECT_SOURCES
     ../GaitSymQt/Preferences.cpp
     ../GaitSymQt/SimulationWidget.cpp
     ../GaitSymQt/StrokeFont.cpp
-    ../GaitSymQt/TextEditDialog.cpp
-    ../GaitSymQt/TextEditDialog.ui
+    ../GaitSymQt/DialogRawXMLEdit.cpp
+    ../GaitSymQt/DialogRawXMLEdit.ui
     ../GaitSymQt/TrackBall.cpp
     ../GaitSymQt/UniqueNameValidator.cpp
     ../GaitSymQt/ViewControlWidget.cpp
@@ -554,6 +564,10 @@ set(PROJECT_SOURCES
     ../threepp/src/threepp/utils/LoadGlad.cpp
     ../threepp/generated/threepp/EmbeddedFonts.cpp
     ../threepp/generated/threepp/renderers/shaders/ShaderChunk.cpp
+    ../threepp/src/threepp/math/Interpolant.cpp
+    ../threepp/src/threepp/math/Lut.cpp
+    ../threepp/src/threepp/objects/TextNode.cpp
+    ../threepp/src/threepp/utils/ImageUtils.cpp
 
     ../pystring/pystring.cpp
 
@@ -643,6 +657,7 @@ set(PROJECT_SOURCES
     ../src/SphereGeom.cpp
     ../src/StackedBoxCarDriver.cpp
     ../src/StepDriver.cpp
+    ../src/StringOfPearlsStrap.cpp
     ../src/Strap.cpp
     ../src/TegotaeDriver.cpp
     ../src/ThreeHingeJointDriver.cpp
@@ -657,7 +672,7 @@ set(PROJECT_SOURCES
     ../pocketpy-2.0.4/pocketpy.c
 
     ../fast_double_parser/fast_double_parser/fast_double_parser.h
-    ../GaitSymQt/AboutDialog.h
+    ../GaitSymQt/DialogAbout.h
     ../GaitSymQt/AVIWriter.h
     ../GaitSymQt/BasicXMLSyntaxHighlighter.h
     ../GaitSymQt/DialogAssembly.h
@@ -678,6 +693,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/DialogPreferences.h
     ../GaitSymQt/DialogProperties.h
     ../GaitSymQt/DialogRename.h
+    ../GaitSymQt/DialogStringOfPearlsBuilder.h
     ../GaitSymQt/DoubleValidator.h
     ../GaitSymQt/Drawable.h
     ../GaitSymQt/DrawBody.h
@@ -709,7 +725,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/Preferences.h
     ../GaitSymQt/SimulationWidget.h
     ../GaitSymQt/StrokeFont.h
-    ../GaitSymQt/TextEditDialog.h
+    ../GaitSymQt/DialogRawXMLEdit.h
     ../GaitSymQt/TrackBall.h
     ../GaitSymQt/UniqueNameValidator.h
     ../GaitSymQt/ViewControlWidget.h
@@ -801,6 +817,7 @@ set(PROJECT_SOURCES
     ../src/SphereGeom.h
     ../src/StackedBoxCarDriver.h
     ../src/StepDriver.h
+    ../src/StringOfPearlsStrap.h
     ../src/Strap.h
     ../src/TegotaeDriver.h
     ../src/ThreeHingeJointDriver.h
@@ -1097,14 +1114,14 @@ endif()
 
 if(use_physx_src)
     target_link_libraries(GaitSym5 PRIVATE
-        PhysXCharacterKinematic_static.lib
-        PhysXCommon_static.lib
-        PhysXCooking_static.lib
-        PhysXExtensions_static.lib
-        PhysXFoundation_static.lib
-        PhysXPvdSDK_static.lib
-        PhysXVehicle2_static.lib
-        PhysX_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCharacterKinematic_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCommon_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCooking_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXExtensions_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXFoundation_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXPvdSDK_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXVehicle2_static.lib
+        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysX_static.lib
     )
 endif()
 
@@ -1162,39 +1179,39 @@ target_link_libraries(GaitSym5 PRIVATE Qt6::Xml)
 if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release) # for release builds make sure all the dlls are in place
     if (NOT use_mucojo_src)
         add_custom_command(TARGET GaitSym5 POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Release/mujoco.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Release/mujoco.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         )
     endif()
     if (NOT use_physx_src)
         add_custom_command(TARGET GaitSym5 POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         )
     endif()
     add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_CURRENT_BINARY_DIR}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
+        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
     )
 endif()
 
 if (WIN32 AND NOT use_mucojo_src)
     add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Debug/mujoco.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Debug/mujoco.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
 if (WIN32 AND NOT use_physx_src)
     add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
 
 if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
     add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_CURRENT_BINARY_DIR}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
+        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
     )
 endif()
 

@@ -15,8 +15,8 @@ namespace {
         TextureLoader tl;
         auto decalMaterial = MeshPhongMaterial::create();
         decalMaterial->specular = 0x444444;
-        decalMaterial->map = tl.load("data/textures/decal/decal-diffuse.png");
-        decalMaterial->normalMap = tl.load("data/textures/decal/decal-normal.jpg");
+        decalMaterial->map = tl.load(std::string(DATA_FOLDER) + "/textures/decal/decal-diffuse.png");
+        decalMaterial->normalMap = tl.load(std::string(DATA_FOLDER) + "/textures/decal/decal-normal.jpg");
         decalMaterial->normalScale.set(1, 1);
         decalMaterial->shininess = 30;
         decalMaterial->depthTest = true;
@@ -39,9 +39,9 @@ namespace {
             if (mouseDown) {
                 mouseDown = false;
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         }
 
         void onMouseDown(int button, const Vector2& pos) override {
@@ -59,17 +59,17 @@ namespace {
         bool mouseDown = false;
 
         void updateMousePos(Vector2 pos) {
-            auto size = canvas.size();
+            const auto size = canvas.size();
             mouse.x = (pos.x / static_cast<float>(size.width())) * 2 - 1;
             mouse.y = -(pos.y / static_cast<float>(size.height())) * 2 + 1;
         }
     };
 
-    struct MyGui: public ImguiContext {
+    struct MyGui: ImguiContext {
 
         bool clear = false;
 
-        explicit MyGui(const Canvas& canvas): ImguiContext(canvas.windowPtr()) {}
+        explicit MyGui(const Canvas& canvas): ImguiContext(canvas) {}
 
         void onRender() override {
 
@@ -85,14 +85,14 @@ namespace {
 
     void addLights(Scene& scene) {
 
-        auto light = AmbientLight::create(0x443333, 0.8f);
+        const auto light = AmbientLight::create(0x443333, 0.8f);
         scene.add(light);
 
-        auto light2 = DirectionalLight::create(0xffddcc, 1.f);
+        const auto light2 = DirectionalLight::create(0xffddcc, 1.f);
         light2->position.set(1, 0.75, 0.5);
         scene.add(light2);
 
-        auto light3 = DirectionalLight::create(0xccccff, 1.f);
+        const auto light3 = DirectionalLight::create(0xccccff, 1.f);
         light3->position.set(-1, 0.75, -0.5);
         scene.add(light3);
     }
@@ -114,12 +114,12 @@ int main() {
 
     TextureLoader tl;
     AssimpLoader loader;
-    std::filesystem::path folder = "data/models/gltf/LeePerrySmith";
+    std::filesystem::path folder = std::string(DATA_FOLDER) + "/models/gltf/LeePerrySmith";
     auto model = loader.load(folder / "LeePerrySmith.glb");
     Mesh* mesh = nullptr;
     model->traverseType<Mesh>([&](Mesh& _) {
         mesh = &_;
-        auto mat = MeshPhongMaterial::create({{
+        const auto mat = MeshPhongMaterial::create({{
                 {"map", tl.load(folder / "Map-COL.jpg", false)},
                 {"specularMap", tl.load(folder / "Map-SPEC.jpg", false)},
                 {"normalMap", tl.load(folder / "Infinite-Level_02_Tangent_SmoothUV.jpg", false)},
@@ -182,7 +182,7 @@ int main() {
 
             if (click) {
 
-                Vector3 scale = Vector3::ONES() * math::randFloat(0.6f, 1.2f);
+                const auto scale = Vector3::ONES() * math::randFloat(0.6f, 1.2f);
 
                 const auto mat = decalMat->clone<MeshPhongMaterial>();
                 mat->color.randomize();

@@ -18,9 +18,9 @@ class ObjectiveMain
 public:
     ObjectiveMain(int argc, const char **argv);
 
-    int Run();
-    int ReadModel();
-    int WriteOutput();
+    int run();
+    int readModel();
+    int writeOutput();
 
 private:
     std::vector<std::string> m_outputList;
@@ -36,7 +36,7 @@ private:
     std::string m_outputModelStateFilename;
     std::string m_scoreFilename;
 
-    XMLConverter m_XMLConverter;
+    XMLConverter m_xmlConverter;
     ArgParse m_argparse;
     bool m_debug = false;
 };

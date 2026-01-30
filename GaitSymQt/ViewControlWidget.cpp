@@ -195,7 +195,7 @@ void ViewControlWidget::mousePressEvent(QMouseEvent *event)
             if (t > 0) y = sqrt(t);
             else y = 0;
             if (lastY < 0) y = -y;
-            index = FindClosestVertex(vertexData, 114, x, y, z);
+            index = findClosestVertex(vertexData, 114, x, y, z);
             lastX = vertexData[index][0];
             lastY = vertexData[index][1];
             lastZ = vertexData[index][2];
@@ -209,13 +209,13 @@ void ViewControlWidget::mousePressEvent(QMouseEvent *event)
             if (t > 0) z = sqrt(t);
             else z = 0;
             if (lastZ < 0) z = -z;
-            index = FindClosestVertex(vertexData, 114, x, y, z);
+            index = findClosestVertex(vertexData, 114, x, y, z);
             lastX = vertexData[index][0];
             lastY = vertexData[index][1];
             lastZ = vertexData[index][2];
         }
         // send out the new vector from the point to the centre
-        emit EmitCameraVec(-lastX, -lastY, -lastZ);
+        emit emitCameraVec(-lastX, -lastY, -lastZ);
         update();
     }
 }
@@ -240,7 +240,7 @@ void ViewControlWidget::paintEvent (QPaintEvent *)
     qpainter.drawPixmap(x - (blobWidth/2) + 1, y - (blobHeight/2), blobWidth, blobHeight, *blob);
 }
 
-int ViewControlWidget::FindClosestVertex(const double data[][3], int count, double x, double y, double z)
+int ViewControlWidget::findClosestVertex(const double data[][3], int count, double x, double y, double z)
 {
     double minSqDist = std::numeric_limits<double>::max();
     double sqDist, dx, dy, dz;

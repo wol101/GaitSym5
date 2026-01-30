@@ -25,7 +25,7 @@ std::string *Light::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("Intensity"s, &buf) == nullptr) return lastErrorPtr();
-    m_intensity = float(GSUtil::Double(buf));
+    m_intensity = float(GSUtil::toDouble(buf));
     return nullptr;
 }
 
@@ -39,7 +39,7 @@ void Light::saveToAttributes()
 void Light::appendToAttributes()
 {
     NamedObject::appendToAttributes();
-    setAttribute("Intensity"s, GSUtil::ToString(m_intensity));
+    setAttribute("Intensity"s, GSUtil::toString(m_intensity));
 }
 
 float Light::intensity() const
@@ -78,13 +78,13 @@ std::string *DirectionalLight::createFromAttributes()
     if (Light::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
-    m_castShadow = GSUtil::Bool(buf);
+    m_castShadow = GSUtil::toBool(buf);
     if (findAttribute("Distance"s, &buf) == nullptr) return lastErrorPtr();
-    m_distance = float(GSUtil::Double(buf));
+    m_distance = float(GSUtil::toDouble(buf));
 
     if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto positionMarker = simulation()->GetMarkerList()->find(buf);
-    if (positionMarker == simulation()->GetMarkerList()->end())
+    auto positionMarker = simulation()->markerList()->find(buf);
+    if (positionMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
@@ -92,8 +92,8 @@ std::string *DirectionalLight::createFromAttributes()
     m_positionMarker = positionMarker->second.get();
 
     if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto targetMarker = simulation()->GetMarkerList()->find(buf);
-    if (targetMarker == simulation()->GetMarkerList()->end())
+    auto targetMarker = simulation()->markerList()->find(buf);
+    if (targetMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" TargetMarkerID not found"s);
         return lastErrorPtr();
@@ -103,7 +103,7 @@ std::string *DirectionalLight::createFromAttributes()
     if (findAttribute("ShadowMapSize"s, &buf))
     {
         std::vector<int> shadowMap;
-        GSUtil::Int(buf, &shadowMap);
+        GSUtil::toInt(buf, &shadowMap);
         switch (shadowMap.size())
         {
         case 1:
@@ -119,8 +119,8 @@ std::string *DirectionalLight::createFromAttributes()
         }
     }
 
-    if (findAttribute("Width"s, &buf)) { m_width = float(GSUtil::Double(buf)); }
-    if (findAttribute("Height"s, &buf)) { m_height = float(GSUtil::Double(buf)); }
+    if (findAttribute("Width"s, &buf)) { m_width = float(GSUtil::toDouble(buf)); }
+    if (findAttribute("Height"s, &buf)) { m_height = float(GSUtil::toDouble(buf)); }
 
     return nullptr;
 }
@@ -129,14 +129,14 @@ void DirectionalLight::appendToAttributes()
 {
     Light::appendToAttributes();
     setAttribute("Type"s, "Directional"s);
-    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
-    setAttribute("Distance"s, GSUtil::ToString(m_distance));
+    setAttribute("CastsAShadow"s, GSUtil::toString(m_castShadow));
+    setAttribute("Distance"s, GSUtil::toString(m_distance));
     setAttribute("PositionMarkerID"s, m_positionMarker->name());
     setAttribute("TargetMarkerID"s, m_targetMarker->name());
     std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
-    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
-    setAttribute("Width"s, GSUtil::ToString(m_width));
-    setAttribute("Height"s, GSUtil::ToString(m_height));
+    setAttribute("ShadowMapSize"s, GSUtil::toString(shadowMap));
+    setAttribute("Width"s, GSUtil::toString(m_width));
+    setAttribute("Height"s, GSUtil::toString(m_height));
 }
 
 bool DirectionalLight::castShadow() const
@@ -233,13 +233,13 @@ std::string *SpotLight::createFromAttributes()
     if (Light::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
-    m_castShadow = GSUtil::Bool(buf);
+    m_castShadow = GSUtil::toBool(buf);
     if (findAttribute("Distance"s, &buf) == nullptr) return lastErrorPtr();
-    m_distance = float(GSUtil::Double(buf));
+    m_distance = float(GSUtil::toDouble(buf));
 
     if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto positionMarker = simulation()->GetMarkerList()->find(buf);
-    if (positionMarker == simulation()->GetMarkerList()->end())
+    auto positionMarker = simulation()->markerList()->find(buf);
+    if (positionMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
@@ -247,8 +247,8 @@ std::string *SpotLight::createFromAttributes()
     m_positionMarker = positionMarker->second.get();
 
     if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto targetMarker = simulation()->GetMarkerList()->find(buf);
-    if (targetMarker == simulation()->GetMarkerList()->end())
+    auto targetMarker = simulation()->markerList()->find(buf);
+    if (targetMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" TargetMarkerID not found"s);
         return lastErrorPtr();
@@ -258,7 +258,7 @@ std::string *SpotLight::createFromAttributes()
     if (findAttribute("ShadowMapSize"s, &buf))
     {
         std::vector<int> shadowMap;
-        GSUtil::Int(buf, &shadowMap);
+        GSUtil::toInt(buf, &shadowMap);
         switch (shadowMap.size())
         {
         case 1:
@@ -275,8 +275,8 @@ std::string *SpotLight::createFromAttributes()
     }
 
     if (findAttribute("Angle"s, &buf) == nullptr) return lastErrorPtr();
-    m_angle = float(GSUtil::Double(buf));
-    if (findAttribute("Penumbra"s, &buf)) { m_penumbra = float(GSUtil::Double(buf)); }
+    m_angle = float(GSUtil::toDouble(buf));
+    if (findAttribute("Penumbra"s, &buf)) { m_penumbra = float(GSUtil::toDouble(buf)); }
 
     return nullptr;
 }
@@ -285,14 +285,14 @@ void SpotLight::appendToAttributes()
 {
     Light::appendToAttributes();
     setAttribute("Type"s, "Spot"s);
-    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
-    setAttribute("Distance"s, GSUtil::ToString(m_distance));
+    setAttribute("CastsAShadow"s, GSUtil::toString(m_castShadow));
+    setAttribute("Distance"s, GSUtil::toString(m_distance));
     setAttribute("PositionMarkerID"s, m_positionMarker->name());
     setAttribute("TargetMarkerID"s, m_targetMarker->name());
     std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
-    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
-    setAttribute("Angle"s, GSUtil::ToString(m_angle));
-    setAttribute("Penumbra"s, GSUtil::ToString(m_penumbra));
+    setAttribute("ShadowMapSize"s, GSUtil::toString(shadowMap));
+    setAttribute("Angle"s, GSUtil::toString(m_angle));
+    setAttribute("Penumbra"s, GSUtil::toString(m_penumbra));
 }
 
 bool SpotLight::castShadow() const
@@ -389,13 +389,13 @@ std::string *PointLight::createFromAttributes()
     if (Light::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("CastsAShadow"s, &buf) == nullptr) return lastErrorPtr();
-    m_castShadow = GSUtil::Bool(buf);
+    m_castShadow = GSUtil::toBool(buf);
     if (findAttribute("Distance"s, &buf) == nullptr) return lastErrorPtr();
-    m_distance = float(GSUtil::Double(buf));
+    m_distance = float(GSUtil::toDouble(buf));
 
     if (findAttribute("PositionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto positionMarker = simulation()->GetMarkerList()->find(buf);
-    if (positionMarker == simulation()->GetMarkerList()->end())
+    auto positionMarker = simulation()->markerList()->find(buf);
+    if (positionMarker == simulation()->markerList()->end())
     {
         setLastError("LIGHT ID=\""s + name() +"\" PositionMarkerID not found"s);
         return lastErrorPtr();
@@ -405,7 +405,7 @@ std::string *PointLight::createFromAttributes()
     if (findAttribute("ShadowMapSize"s, &buf))
     {
         std::vector<int> shadowMap;
-        GSUtil::Int(buf, &shadowMap);
+        GSUtil::toInt(buf, &shadowMap);
         switch (shadowMap.size())
         {
         case 1:
@@ -428,11 +428,11 @@ void PointLight::appendToAttributes()
 {
     Light::appendToAttributes();
     setAttribute("Type"s, "Point"s);
-    setAttribute("CastsAShadow"s, GSUtil::ToString(m_castShadow));
-    setAttribute("Distance"s, GSUtil::ToString(m_distance));
+    setAttribute("CastsAShadow"s, GSUtil::toString(m_castShadow));
+    setAttribute("Distance"s, GSUtil::toString(m_distance));
     setAttribute("PositionMarkerID"s, m_positionMarker->name());
     std::vector<size_t> shadowMap = {m_mapWidth, m_mapHeight};
-    setAttribute("ShadowMapSize"s, GSUtil::ToString(shadowMap));
+    setAttribute("ShadowMapSize"s, GSUtil::toString(shadowMap));
 }
 
 bool PointLight::castShadow() const

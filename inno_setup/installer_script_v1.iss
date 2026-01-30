@@ -4,6 +4,8 @@
 #define MyAppURL "http://www.animalsimulation.org"
 #define MyAppExeName "GaitSym5.exe"
 
+#define QtBuildFolder "..\GaitSymQt\Release\bin"
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
@@ -34,21 +36,21 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\GaitSym5.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\networkinformation\*"; DestDir: "{app}\networkinformation"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\tls\*"; DestDir: "{app}\tls"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\GaitSym5.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBuildFolder}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBuildFolder}\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\networkinformation\*"; DestDir: "{app}\networkinformation"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\styles\*"; DestDir: "{app}\styles"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\tls\*"; DestDir: "{app}\tls"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#QtBuildFolder}\translations\*"; DestDir: "{app}\translations"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "..\GaitSymQt\build\Desktop_Qt_6_10_0_MSVC2022_64bit-Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+Source: "{#QtBuildFolder}\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

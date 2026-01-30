@@ -28,7 +28,7 @@
 #include "joint_internal.h"
 
 /*
- * Double Ball joint: tries to maintain a fixed distance between two anchor
+ * double Ball joint: tries to maintain a fixed distance between two anchor
  * points.
  */
 

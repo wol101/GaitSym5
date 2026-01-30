@@ -18,7 +18,7 @@ FacetedCheckerboard::FacetedCheckerboard(size_t nx, size_t ny, double cx, double
     double x, y;
     double cx2 = cx / 2.0;
     double cy2 = cy / 2.0;
-    this->AllocateMemory(nx * ny * 2 * 4);
+    this->allocateMemory(nx * ny * 2 * 4);
     for (size_t iy = 0; iy < ny; iy++)
     {
         for (size_t ix = 0; ix < nx; ix++)
@@ -27,27 +27,27 @@ FacetedCheckerboard::FacetedCheckerboard(size_t nx, size_t ny, double cx, double
             y = +(iy * cy + cy2);
             if ((ix % 2 == 0 && iy % 2 == 0) || (ix % 2 == 1 && iy % 2 == 1)) this->setBlendColour(colour1, 0);
             else this->setBlendColour(colour2, 0);
-            this->CentredRect(x, y, cx, cy);
+            this->centredRect(x, y, cx, cy);
             x = -(ix * cx + cx2);
             y = -(iy * cy + cy2);
             if ((ix % 2 == 0 && iy % 2 == 0) || (ix % 2 == 1 && iy % 2 == 1)) this->setBlendColour(colour1, 0);
             else this->setBlendColour(colour2, 0);
-            this->CentredRect(x, y, cx, cy);
+            this->centredRect(x, y, cx, cy);
             x = -(ix * cx + cx2);
             y = +(iy * cy + cy2);
             if ((ix % 2 == 1 && iy % 2 == 0) || (ix % 2 == 0 && iy % 2 == 1)) this->setBlendColour(colour1, 0);
             else this->setBlendColour(colour2, 0);
-            this->CentredRect(x, y, cx, cy);
+            this->centredRect(x, y, cx, cy);
             x = +(ix * cx + cx2);
             y = -(iy * cy + cy2);
             if ((ix % 2 == 1 && iy % 2 == 0) || (ix % 2 == 0 && iy % 2 == 1)) this->setBlendColour(colour1, 0);
             else this->setBlendColour(colour2, 0);
-            this->CentredRect(x, y, cx, cy);
+            this->centredRect(x, y, cx, cy);
         }
     }
 }
 
-void FacetedCheckerboard::CentredRect(double x, double y, double xl, double yl)
+void FacetedCheckerboard::centredRect(double x, double y, double xl, double yl)
 {
     double vertices[12];
     double xl2 = xl / 2.0;
@@ -64,6 +64,6 @@ void FacetedCheckerboard::CentredRect(double x, double y, double xl, double yl)
     vertices[9]  = x - xl2;
     vertices[10] = y + yl2;
     vertices[11] = 0.0;
-    AddPolygon(vertices, 4);
+    addPolygon(vertices, 4);
 }
 

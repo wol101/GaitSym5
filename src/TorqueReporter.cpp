@@ -21,15 +21,15 @@ namespace GaitSym {
 
 TorqueReporter::TorqueReporter()
 {
-    mBody = nullptr;
-    mAxis = pgd::Vector3(1, 0, 0);
+    m_body = nullptr;
+    m_axis = pgd::Vector3(1, 0, 0);
 }
 
 
-void TorqueReporter::SetAxis(double x, double y, double z)
+void TorqueReporter::setAxis(double x, double y, double z)
 {
-    mAxis = pgd::Vector3(x, y, z);
-    mAxis.Normalize();
+    m_axis = pgd::Vector3(x, y, z);
+    m_axis.normalize();
 }
 
 //Theory:
@@ -53,14 +53,14 @@ std::string TorqueReporter::dumpToString()
     }
 
     // sum the torques acting on body 0 of the joint
-    std::vector<std::unique_ptr<PointForce >> *pointForceList = mMuscle->GetPointForceList();
-    double tension = mMuscle->GetTension();
+    std::vector<std::unique_ptr<PointForce >> *pointForceList = m_muscle->pointForceList();
+    double tension = m_muscle->tension();
     pgd::Vector3 torque, point, force, centre;
     pgd::Vector3 forcePoint, forceDirection;
     pgd::Vector3 totalTorque, momentArm;
-    Marker marker(mBody);
-    marker.SetPosition(mPivotPoint.x, mPivotPoint.y, mPivotPoint.z);
-    centre = marker.GetWorldPosition();
+    Marker marker(m_body);
+    marker.setPosition(m_pivotPoint.x, m_pivotPoint.y, m_pivotPoint.z);
+    centre = marker.worldPosition();
 
 // These are the same but the second option works even when tension is zero
 //        if (tension > 0)
@@ -84,7 +84,7 @@ std::string TorqueReporter::dumpToString()
     {
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
-            if ((*pointForceList)[i]->body == mBody)
+            if ((*pointForceList)[i]->body == m_body)
             {
                 //Torque = cross(Point - Center, Force)
                 forcePoint = (*pointForceList)[i]->point;
@@ -100,16 +100,16 @@ std::string TorqueReporter::dumpToString()
 
     // convert to body local coordinates
     pgd::Vector3 bodyTorque, bodyMomentArm;
-    bodyTorque = marker.GetVector(totalTorque);
-    bodyMomentArm = marker.GetVector(momentArm);
+    bodyTorque = marker.vector(totalTorque);
+    bodyMomentArm = marker.vector(momentArm);
 
     // now find the rotation axis specific values
     pgd::Matrix3x3 R;
-    CalculateRotationFromAxis(mAxis.x, mAxis.y, mAxis.z, &R);
+    calculateRotationFromAxis(m_axis.x, m_axis.y, m_axis.z, &R);
     pgd::Vector3 axisBasedTorque = R * totalTorque;
     pgd::Vector3 axisBasedMomentArm = R * momentArm;
 
-    ss << simulation()->GetTime() << "\t" << tension << "\t"
+    ss << simulation()->simulationTime() << "\t" << tension << "\t"
        << totalTorque.x << "\t" << totalTorque.y << "\t" << totalTorque.z << "\t"
        << bodyTorque[0] << "\t" << bodyTorque[1] << "\t" << bodyTorque[2] << "\t"
        << axisBasedTorque.x << "\t" << axisBasedTorque.y << "\t" << axisBasedTorque.z << "\t"
@@ -120,7 +120,7 @@ std::string TorqueReporter::dumpToString()
     return ss.str();
 }
 
-void TorqueReporter::CalculateRotationFromAxis(double x, double y, double z, pgd::Matrix3x3 *R)
+void TorqueReporter::calculateRotationFromAxis(double x, double y, double z, pgd::Matrix3x3 *R)
 {
     // calculate the rotation needed to get the axis pointing the right way
     // axis is assumed to already be normalised

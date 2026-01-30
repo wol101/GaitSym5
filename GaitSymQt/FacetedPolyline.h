@@ -23,12 +23,12 @@ public:
     {
         origin = *theOrigin;
         direction = *theDirection;
-        Normalize();
+        normalize();
     }
 
-    void Normalize()
+    void normalize()
     {
-        direction.Normalize();
+        direction.normalize();
     }
 
     pgd::Vector3 origin;
@@ -53,7 +53,7 @@ public:
         b = bb;
         c = cc;
         d = dd;
-        Normalize();
+        normalize();
     }
     Plane3D(pgd::Vector3 *theOrigin, pgd::Vector3 *theDirection1, pgd::Vector3 *theDirection2)
     {
@@ -62,7 +62,7 @@ public:
         b = normal.y;
         c = normal.z;
         d = (-normal) * *theOrigin;
-        Normalize();
+        normalize();
     }
     Plane3D(pgd::Vector3 *theOrigin, pgd::Vector3 *theNormal)
     {
@@ -72,11 +72,11 @@ public:
         d = (-(*theNormal)) * *theOrigin;
     }
 
-    pgd::Vector3 GetNormal()
+    pgd::Vector3 normal()
     {
         return pgd::Vector3(a, b, c);
     }
-    void Normalize()
+    void normalize()
     {
         double m = 1.0 / sqrt(a * a + b * b + c * c);
         a = a * m;
@@ -96,8 +96,8 @@ class FacetedPolyline: public FacetedObject
 public:
     FacetedPolyline(std::vector<pgd::Vector3> *polyline, double radius, size_t n, const QColor &blendColour, double blendFraction, bool internal);
 
-    void Extrude(std::vector<pgd::Vector3> *polyline, std::vector<pgd::Vector3> *profile);
-    static bool Intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *intersection);
+    void extrude(std::vector<pgd::Vector3> *polyline, std::vector<pgd::Vector3> *profile);
+    static bool intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *intersection);
 };
 
 

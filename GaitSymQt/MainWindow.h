@@ -81,6 +81,7 @@ public slots:
     void menuCreateMarker();
     void menuCreateMuscle();
     void menuCreateMirrorElements();
+    void menuCreateStringOfPearls();
     void menuCreateTestingDrivers();
     void menuLoadDefaultView();
     void menuDeleteAssembly();
@@ -96,6 +97,7 @@ public slots:
     void menuOutputs();
     void menuPreferences();
     void menuRawXMLEditor();
+    void menuRawXMLView();
     void menuRecordMovie();
     void menuRename();
     void menuResetView();

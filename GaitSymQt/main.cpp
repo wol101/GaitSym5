@@ -26,8 +26,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec(dllexport) uint32_t NvOptimusEnablement = 1;
-__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+__declspec(dllexport) uint32_t NvOptimusEnablement = 1; // uint32_t used instead of DWORD
+__declspec(dllexport) uint32_t AmdPowerXpressRequestHighPerformance = 1;  // uint32_t used instead of DWORD
 #ifdef __cplusplus
 }
 #endif
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 #endif
 
     // read in the Preferences file
-    Preferences::Read();
+    Preferences::read();
 
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setRenderableType(QSurfaceFormat::OpenGL);

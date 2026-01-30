@@ -37,12 +37,12 @@ Marker *Joint::body2Marker() const
 
 Body *Joint::body1() const
 {
-    return m_body1Marker->GetBody();
+    return m_body1Marker->body();
 }
 
 Body *Joint::body2() const
 {
-    return m_body2Marker->GetBody();
+    return m_body2Marker->body();
 }
 
 void Joint::setBody2Marker(Marker *body2Marker)
@@ -63,45 +63,45 @@ std::string *Joint::createFromAttributes()
     m_type = buf;
 
     if (findAttribute("Body1MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto marker1Iterator = simulation()->GetMarkerList()->find(buf);
-    if (marker1Iterator == simulation()->GetMarkerList()->end())
+    auto marker1Iterator = simulation()->markerList()->find(buf);
+    if (marker1Iterator == simulation()->markerList()->end())
     {
         setLastError("Joint ID=\""s + name() +"\" Body1Marker not found"s);
         return lastErrorPtr();
     }
     if (findAttribute("Body2MarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto marker2Iterator = simulation()->GetMarkerList()->find(buf);
-    if (marker2Iterator == simulation()->GetMarkerList()->end())
+    auto marker2Iterator = simulation()->markerList()->find(buf);
+    if (marker2Iterator == simulation()->markerList()->end())
     {
         setLastError("Joint ID=\""s + name() +"\" Body2Marker not found"s);
         return lastErrorPtr();
     }
-    if (marker1Iterator->second->GetBody() ==  marker2Iterator->second->GetBody())
+    if (marker1Iterator->second->body() ==  marker2Iterator->second->body())
     {
-        setLastError("Joint ID=\""s + name() +"\" both markers attached to the same body ID=\""s + marker1Iterator->second->GetBody()->name() + "\""s);
+        setLastError("Joint ID=\""s + name() +"\" both markers attached to the same body ID=\""s + marker1Iterator->second->body()->name() + "\""s);
         return lastErrorPtr();
     }
 
     // these checks use the construction positions and rotations (body rotations are always zero at construction)
-    pgd::Vector3 distanceVector = marker2Iterator->second->GetConstructionPosition() - marker1Iterator->second->GetConstructionPosition();
-    pgd::Quaternion rotationQuaternion = pgd::FindRotation(marker1Iterator->second->GetQuaternion(), marker2Iterator->second->GetQuaternion());
+    pgd::Vector3 distanceVector = marker2Iterator->second->constructionPosition() - marker1Iterator->second->constructionPosition();
+    pgd::Quaternion rotationQuaternion = pgd::findRotation(marker1Iterator->second->quaternion(), marker2Iterator->second->quaternion());
     double testEpsilon = std::numeric_limits<double>::epsilon() * 100.0;
-    if (distanceVector.Magnitude2() > testEpsilon)
+    if (distanceVector.magnitude2() > testEpsilon)
     {
-        setLastError(GSUtil::ToString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.Magnitude2(), testEpsilon));
+        setLastError(GSUtil::toString("Joint ID=\"%s\" marker distance is too large: Magnitude2() = %g limit = %g", name().c_str(), distanceVector.magnitude2(), testEpsilon));
         return lastErrorPtr();
     }
-    if (pgd::QGetAngle(rotationQuaternion) > testEpsilon)
+    if (pgd::qGetAngle(rotationQuaternion) > testEpsilon)
     {
-        setLastError(GSUtil::ToString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::QGetAngle(rotationQuaternion), testEpsilon));
+        setLastError(GSUtil::toString("Joint ID=\"%s\" marker rotation is too large: QGetAngle() = %g limit = %g", name().c_str(), pgd::qGetAngle(rotationQuaternion), testEpsilon));
         return lastErrorPtr();
     }
 
     this->setBody1Marker(marker1Iterator->second.get());
     this->setBody2Marker(marker2Iterator->second.get());
 
-    if (findAttribute("CFM"s, &buf)) m_CFM = GSUtil::Double(buf);
-    if (findAttribute("ERP"s, &buf)) m_ERP = GSUtil::Double(buf);
+    if (findAttribute("CFM"s, &buf)) m_cfm = GSUtil::toDouble(buf);
+    if (findAttribute("ERP"s, &buf)) m_erp = GSUtil::toDouble(buf);
 
     setUpstreamObjects({m_body1Marker, m_body2Marker});
     return nullptr;
@@ -124,52 +124,52 @@ void Joint::appendToAttributes()
     setAttribute("Type", type());
     setAttribute("Body1MarkerID"s, body1Marker()->name());
     setAttribute("Body2MarkerID"s, body2Marker()->name());
-    if (m_CFM >= 0) setAttribute("CFM"s, *GSUtil::ToString(m_CFM, &buf));
-    if (m_ERP >= 0) setAttribute("ERP"s, *GSUtil::ToString(m_ERP, &buf));
+    if (m_cfm >= 0) setAttribute("CFM"s, *GSUtil::toString(m_cfm, &buf));
+    if (m_erp >= 0) setAttribute("ERP"s, *GSUtil::toString(m_erp, &buf));
 }
 
 double Joint::CFM() const
 {
-    return m_CFM;
+    return m_cfm;
 }
 
 void Joint::setCFM(double CFM)
 {
-    m_CFM = CFM;
+    m_cfm = CFM;
 }
 
 double Joint::ERP() const
 {
-    return m_ERP;
+    return m_erp;
 }
 
 void Joint::setERP(double ERP)
 {
-    m_ERP = ERP;
+    m_erp = ERP;
 }
 
-pgd::Vector3 Joint::GetWorldDistance() const
+pgd::Vector3 Joint::worldDistance() const
 {
-    pgd::Vector3 result = m_body2Marker->GetWorldPosition() - m_body1Marker->GetWorldPosition();
+    pgd::Vector3 result = m_body2Marker->worldPosition() - m_body1Marker->worldPosition();
     return result;
 }
 
-pgd::Quaternion Joint::GetWorldRotation() const
+pgd::Quaternion Joint::worldRotation() const
 {
-    pgd::Quaternion result = pgd::FindRotation(m_body1Marker->GetWorldQuaternion(), m_body2Marker->GetWorldQuaternion());
+    pgd::Quaternion result = pgd::findRotation(m_body1Marker->worldQuaternion(), m_body2Marker->worldQuaternion());
     // pgd::Quaternion result2 = pgd::FindRotation(m_body1Marker->GetBody()->GetQuaternion(), m_body2Marker->GetBody()->GetQuaternion()); // just checking that using the marker gives the same result as usning the body
     return result;
 }
 
-pgd::Vector3 Joint::GetWorldLinearVelocity() const
+pgd::Vector3 Joint::worldLinearVelocity() const
 {
-    pgd::Vector3 result = m_body2Marker->GetWorldLinearVelocity() - m_body1Marker->GetWorldLinearVelocity();
+    pgd::Vector3 result = m_body2Marker->worldLinearVelocity() - m_body1Marker->worldLinearVelocity();
     return result;
 }
 
-pgd::Vector3 Joint::GetWorldAngularVelocity() const
+pgd::Vector3 Joint::worldAngularVelocity() const
 {
-    pgd::Vector3 result = m_body2Marker->GetWorldAngularVelocity() - m_body1Marker->GetWorldAngularVelocity();
+    pgd::Vector3 result = m_body2Marker->worldAngularVelocity() - m_body1Marker->worldAngularVelocity();
     return result;
 }
 

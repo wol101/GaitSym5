@@ -31,11 +31,11 @@ class TwoHingeJointDriver : public Driver
 public:
     TwoHingeJointDriver();
 
-    virtual void Update();
-    virtual void SendData();
+    virtual void update();
+    virtual void sendData();
 
-    void CalculateLength(double angleFraction);
-    static double CalculateLengthDifference(double angleFraction, void *data);
+    void calculateLength(double angleFraction);
+    static double calculateLengthDifference(double angleFraction, void *data);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -103,7 +103,7 @@ private:
 
     Marker *createLocalMarkerCopy(const Marker *marker);
     static int monotonicTest(double (*f)(double x, void *info), double a, double b, double eps, void *info);
-    static pgd::Vector3 GetEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations);
+    static pgd::Vector3 getEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations);
 
 };
 

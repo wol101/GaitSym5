@@ -27,7 +27,7 @@ public:
 
     BallJoint();
 
-    pgd::Quaternion CalculateQuaternion();
+    pgd::Quaternion calculateQuaternion();
 
 
     virtual std::string dumpToString();

@@ -27,7 +27,7 @@ public:
 
     int TestLimits();
 
-    virtual void Update();
+    virtual void update();
     virtual std::string dumpToString();
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

@@ -23,10 +23,10 @@ public:
     ButterworthFilter();
     ButterworthFilter(double cutoffFrequency, double samplingFrequency);
 
-    virtual void AddNewSample(double x);
-    virtual double Output();
+    virtual void addNewSample(double x);
+    virtual double output();
 
-    void CalculateCoefficients(double cutoffFrequency, double samplingFrequency);
+    void calculateCoefficients(double cutoffFrequency, double samplingFrequency);
 
     double yn() const;
 

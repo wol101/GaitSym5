@@ -35,15 +35,15 @@ XMLConverter::~XMLConverter()
 }
 
 // load the base file for smart substitution file
-int XMLConverter::LoadBaseXMLFile(const char *filename)
+int XMLConverter::loadBaseXMLFile(const char *filename)
 {
     DataFile smartSubstitutionBaseXMLFile;
-    if (smartSubstitutionBaseXMLFile.ReadFile(filename)) return 1;
-    LoadBaseXMLString(smartSubstitutionBaseXMLFile.GetRawData(), smartSubstitutionBaseXMLFile.GetSize());
+    if (smartSubstitutionBaseXMLFile.readFile(filename)) return 1;
+    loadBaseXMLString(smartSubstitutionBaseXMLFile.rawData(), smartSubstitutionBaseXMLFile.size());
     return 0;
 }
 
-void XMLConverter::Clear()
+void XMLConverter::clear()
 {
     m_smartSubstitutionTextComponents.clear();
     m_smartSubstitutionParserText.clear();
@@ -52,7 +52,7 @@ void XMLConverter::Clear()
 }
 
 // load the base XML for smart substitution file
-int XMLConverter::LoadBaseXMLString(const char *dataPtr, size_t length)
+int XMLConverter::loadBaseXMLString(const char *dataPtr, size_t length)
 {
     m_smartSubstitutionTextComponents.clear();
     m_smartSubstitutionParserText.clear();
@@ -88,30 +88,28 @@ int XMLConverter::LoadBaseXMLString(const char *dataPtr, size_t length)
     return 0;
 }
 
-void XMLConverter::GetFormattedXML(std::string *formattedXML)
+void XMLConverter::getFormattedXML(std::string *formattedXML)
 {
     formattedXML->clear();
     formattedXML->reserve(m_smartSubstitutionTextComponentsSize + 32 * m_smartSubstitutionValues.size());
-    char buffer[32];
     for (size_t i = 0; i < m_smartSubstitutionValues.size(); i++)
     {
         formattedXML->append(m_smartSubstitutionTextComponents[i]);
-        int l = snprintf(buffer, sizeof(buffer), "%.17g", m_smartSubstitutionValues[i]);
-        formattedXML->append(buffer, l);
+        formattedXML->append(GSUtil::toString(m_smartSubstitutionValues[i]));
     }
     formattedXML->append(m_smartSubstitutionTextComponents[m_smartSubstitutionValues.size()]);
 }
 
 // this needs to be customised depending on how the genome interacts with
 // the XML file specifying the simulation
-int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
+int XMLConverter::applyGenome(const std::vector<double> &genomeData)
 {
     bool ok = false;
 #ifdef USE_SLOW_AND_RELIABLE_PYTHON_ASSIGN
     // slow but reliable version by creating a python command to assign the list
     std::vector<std::string> stringList;
     stringList.reserve(genomeData.size());
-    for (auto &&x : genomeData) { stringList.push_back(GSUtil::ToString(x)); }
+    for (auto &&x : genomeData) { stringList.push_back(GSUtil::toString(x)); }
     std::string pythonString = "g=["s + pystring::join(","s, stringList) + "]"s;
     ok = py_exec(pythonString.c_str(), "<string>", EXEC_MODE, NULL);
     if (!ok) std::cerr << "Error in XMLConverter.cpp Line = " << __LINE__ << "\n";
@@ -140,7 +138,7 @@ int XMLConverter::ApplyGenome(const std::vector<double> &genomeData)
     return 0;
 }
 
-const std::string &XMLConverter::BaseXMLString() const
+const std::string &XMLConverter::baseXMLString() const
 {
     return m_baseXMLString;
 }

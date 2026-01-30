@@ -28,7 +28,7 @@ public:
     FacetedObject();
     virtual ~FacetedObject();
 
-    virtual void Draw();
+    virtual void draw();
 
     struct OBJMaterial
     {
@@ -42,65 +42,64 @@ public:
         int illum = {0};
     };
 
-    int ParseMeshFile(const std::string &filename);
-    int ParseOBJFile(const std::string &filename);
-    int ParseOBJMaterialFile(const std::string &filename, std::map<std::string, OBJMaterial> *materialMap);
-    int ParsePLYFile(const std::string &filename);
+    int parseMeshFile(const std::string &filename);
+    int parseOBJFile(const std::string &filename);
+    int parseOBJMaterialFile(const std::string &filename, std::map<std::string, OBJMaterial> *materialMap);
+    int parsePLYFile(const std::string &filename);
 
-    int ReadFromMemory(const char *data, size_t len, bool binary, const std::string &meshName);
-    void SaveToMemory(std::vector<char> *data, bool binary);
+    int readFromMemory(const char *data, size_t len, bool binary, const std::string &meshName);
+    void saveToMemory(std::vector<char> *data, bool binary);
 
-    int ReadFromResource(const QString &resourceName);
+    int readFromResource(const QString &resourceName);
 
-    virtual void WritePOVRay(std::ostringstream &theString);
-    virtual void WritePOVRay(std::string filename);
-    virtual void WriteOBJFile(std::ostringstream &out);
-    virtual void WriteOBJFile(std::string filename);
-    virtual void WriteUSDFile(std::ostringstream &out, const std::string &name);
+    virtual void writePOVRay(std::ostringstream &theString);
+    virtual void writePOVRay(std::string filename);
+    virtual void writeOBJFile(std::ostringstream &out);
+    virtual void writeOBJFile(std::string filename);
+    virtual void writeUSDFile(std::ostringstream &out, const std::string &name);
 
-    const double *GetVertex(size_t i) const;
-    const double *GetNormal(size_t i) const;
-    const float *GetColour(size_t i) const;
-    const double *GetUV(size_t i) const;
-    const std::vector<double> &GetVertexList() const;
-    const std::vector<double> &GetNormalList() const;
-    const std::vector<float> &GetColourList() const;
-    const std::vector<double> &GetUVList() const;
+    const double *vertex(size_t i) const;
+    const double *normal(size_t i) const;
+    const float *colour(size_t i) const;
+    const double *uv(size_t i) const;
+    const std::vector<double> &vertexList() const;
+    const std::vector<double> &normalList() const;
+    const std::vector<float> &colourList() const;
+    const std::vector<double> &uvList() const;
 
-    size_t GetNumTriangles() const;
-    const double *GetTriangle(size_t i) const;
-    const pgd::Vector3 &GetDisplayPosition() const;
-    const pgd::Matrix3x3 &GetDisplayRotation() const;
-    const pgd::Vector3 &GetDisplayScale() const;
+    size_t numTriangles() const;
+    const double *triangle(size_t i) const;
+    const pgd::Vector3 &displayPosition() const;
+    const pgd::Matrix3x3 &displayRotation() const;
+    const pgd::Vector3 &displayScale() const;
 
-    void AddPolygon(const double *vertices, size_t nSides, const double *normals = nullptr, const double *UVs = nullptr);
-    void AddTriangle(const double *vertices, const double *normals = nullptr, const double *UVs = nullptr);
-    void AddPolygon(const float *floatVertices, size_t nSides, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
-    void AddTriangle(const float *floatVertices, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
-    void AddFacetedObject(const FacetedObject *object, bool useDisplayRotation, bool useDirectAccess);
-    void RawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<float> *colourList, const std::vector<double> *uvList);
-    void RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList);
-    void RawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList);
+    void addPolygon(const double *vertices, size_t nSides, const double *normals = nullptr, const double *UVs = nullptr);
+    void addTriangle(const double *vertices, const double *normals = nullptr, const double *UVs = nullptr);
+    void addPolygon(const float *floatVertices, size_t nSides, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
+    void addTriangle(const float *floatVertices, const float *floatNormals = nullptr, const float *floatUVs = nullptr);
+    void addFacetedObject(const FacetedObject *object, bool useDisplayRotation, bool useDirectAccess);
+    void rawAppend(const std::vector<double> *vertexList, const std::vector<double> *normalList, const std::vector<float> *colourList, const std::vector<double> *uvList);
+    void rawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 3>> *colourList, const std::vector<std::array<double, 2>> *uvList);
+    void rawAppend(const std::vector<std::array<double, 3>> *vertexList, const std::vector<std::array<double, 3>> *normalList, const std::vector<std::array<float, 4>> *colourList, const std::vector<std::array<double, 2>> *uvList);
 
 
     // static utilities
-    static void ComputeFaceNormal(const double *v1, const double *v2, const double *v3, double normal[3]);
-    static void ClearMeshStore();
+    static void computeFaceNormal(const double *v1, const double *v2, const double *v3, double normal[3]);
+    static void clearMeshStore();
 
     // manipulation functions
-    void Move(double x, double y, double z);
-    void Scale(double x, double y, double z);
-    void Mirror(bool x, bool y, bool z);
-    void SwapAxes(int axis1, int axis2);
-    void Rotate(double x, double y, double z, double angleDegrees);
+    void move(double x, double y, double z);
+    void scale(double x, double y, double z);
+    void mirror(bool x, bool y, bool z);
+    void rotate(double x, double y, double z, double angleDegrees);
 
     // utility
-    void ReverseWinding();
-    void AllocateMemory(size_t numTriangles);
-    void ApplyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
-    void ApplyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
-    void CalculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor);
-    void UpdateBoundingBox();
+    void reverseWinding();
+    void allocateMemory(size_t numTriangles);
+    void applyDisplayTransformation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
+    void applyDisplayRotation(const pgd::Vector3 &inVec, pgd::Vector3 *outVec);
+    void calculateMassProperties(double density, bool clockwise, const pgd::Vector3 &translation, double *mass, pgd::Vector3 *centreOfMass, pgd::Matrix3x3 *inertialTensor);
+    void updateBoundingBox();
 
     pgd::Vector3 lowerBound() const;
     pgd::Vector3 upperBound() const;
@@ -114,16 +113,16 @@ public:
     QColor blendColour() const;
     double blendFraction() const;
 
-    int FindIntersection(const pgd::Vector3 &rayOrigin, const pgd::Vector3 &rayVector, std::vector<pgd::Vector3> *intersectionCoordList, std::vector<size_t> *intersectionIndexList) const;
-    static bool RayIntersectsTriangle(const pgd::Vector3 &rayOrigin, const pgd::Vector3 &rayVector, const pgd::Vector3 &vertex0, const pgd::Vector3 &vertex1, const pgd::Vector3 &vertex2, pgd::Vector3 *outIntersectionPoint);
-    static bool HitBoundingBox(const double minB[3], const double maxB[3], const double origin[3], const double dir[3], double coord[3]);
+    int findIntersection(const pgd::Vector3 &rayOrigin, const pgd::Vector3 &rayVector, std::vector<pgd::Vector3> *intersectionCoordList, std::vector<size_t> *intersectionIndexList) const;
+    static bool rayIntersectsTriangle(const pgd::Vector3 &rayOrigin, const pgd::Vector3 &rayVector, const pgd::Vector3 &vertex0, const pgd::Vector3 &vertex1, const pgd::Vector3 &vertex2, pgd::Vector3 *outIntersectionPoint);
+    static bool hitBoundingBox(const double minB[3], const double maxB[3], const double origin[3], const double dir[3], double coord[3]);
 
-    void SetDisplayPosition(double x, double y, double z);
-    void SetDisplayScale(double x, double y, double z);
-    void SetDisplayPosition(const pgd::Vector3 &displayPosition);
-    void SetDisplayScale(const pgd::Vector3 &displayScale);
-    void SetDisplayRotation(const pgd::Matrix3x3 &R);
-    void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
+    void setDisplayPosition(double x, double y, double z);
+    void setDisplayScale(double x, double y, double z);
+    void setDisplayPosition(const pgd::Vector3 &displayPosition);
+    void setDisplayScale(const pgd::Vector3 &displayScale);
+    void setDisplayRotation(const pgd::Matrix3x3 &R);
+    void setDisplayRotationFromQuaternion(const pgd::Quaternion &q);
 
     bool visible() const;
     void setVisible(bool visible);
@@ -169,9 +168,7 @@ private:
     QMatrix4x4 m_model;
     bool m_modelValid = false;
 
-    std::ofstream *m_POVRayFile = nullptr;
-    std::ofstream *m_OBJFile = nullptr;
-    std::string m_OBJName;
+    std::string m_objName;
     std::string m_filename;
     size_t m_vertexOffset = 0;
 

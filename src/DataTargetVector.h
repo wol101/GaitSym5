@@ -21,8 +21,8 @@ class DataTargetVector : public DataTarget
 public:
     DataTargetVector();
 
-    void SetTarget(NamedObject *target);
-    NamedObject *GetTarget();
+    void setTarget(NamedObject *target);
+    NamedObject *target();
 
     virtual std::string dumpToString() override;
 

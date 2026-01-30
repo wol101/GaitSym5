@@ -28,7 +28,7 @@
 #include "joint_internal.h"
 
 /*
- * Double Hinge joint
+ * double Hinge joint
  */
 
 dxJointDHinge::dxJointDHinge(dxWorld* w) :

@@ -33,11 +33,11 @@ StepDriver::~StepDriver()
 // this routine assumes that the time is always greater than or
 // equal to the previously requested time since this greatly speeds
 // up the search since it only ever has to check 2 values
-void StepDriver::Update()
+void StepDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
-    double time = simulation()->GetTime();
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
+    double time = simulation()->simulationTime();
 
     // this is an optimisation that assumes this routine gets called a lot of times with the same index
     // which it usually does because the integration step size is small
@@ -51,7 +51,7 @@ void StepDriver::Update()
         m_index = std::distance(m_changeTimes.begin(), bound) - 1;
     }
 
-    if (Interp() == false)
+    if (interp() == false)
     {
         if (m_index < m_valueList.size())
             setValue(m_valueList[m_index]);
@@ -79,10 +79,10 @@ std::string *StepDriver::createFromAttributes()
     buf.reserve(100000);
     if (findAttribute("Values"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> values;
-    GSUtil::Double(buf, &values);
+    GSUtil::toDouble(buf, &values);
     if (findAttribute("Durations"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<double> durations;
-    GSUtil::Double(buf, &durations);
+    GSUtil::toDouble(buf, &durations);
     if (values.size() != durations.size())
     {
         setLastError("StepDriver ID=\""s + name() + "\" number of values ("s + std::to_string(values.size()) + ") must match number of durations ("s + std::to_string(durations.size()) + ")"s);
@@ -104,8 +104,8 @@ void StepDriver::appendToAttributes()
     std::string buf;
     buf.reserve(m_durationList.size() * 32); // should be big enough but it will grow if necessary anyway
     setAttribute("Type"s, "Step"s);
-    setAttribute("Durations"s, *GSUtil::ToString(m_durationList.data(), m_durationList.size(), &buf));
-    setAttribute("Values"s, *GSUtil::ToString(m_valueList.data(), m_valueList.size(), &buf));
+    setAttribute("Durations"s, *GSUtil::toString(m_durationList.data(), m_durationList.size(), &buf));
+    setAttribute("Values"s, *GSUtil::toString(m_valueList.data(), m_valueList.size(), &buf));
 }
 
 std::vector<double> StepDriver::valueList() const

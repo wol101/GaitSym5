@@ -148,7 +148,7 @@ std::string *DialogCreateMirrorElements::validate()
 {
     GaitSym::Simulation simulation;
     QByteArray editFileData = ui->plainTextEdit->toPlainText().toUtf8();
-    std::string *errorMessage = simulation.LoadModel(editFileData.constData(), size_t(editFileData.size()));
+    std::string *errorMessage = simulation.loadModel(editFileData.constData(), size_t(editFileData.size()));
     if (errorMessage)
     {
         m_lastError = *errorMessage;
@@ -179,7 +179,7 @@ void DialogCreateMirrorElements::apply()
     std::string *lastError;
     std::string xml = ui->plainTextEdit->toPlainText().toStdString();
     std::string rootNodeTag = "GAITSYM5"s;
-    lastError = m_parseXML.LoadModel(xml.c_str(), xml.size(), &rootNodeTag);
+    lastError = m_parseXML.loadModel(xml.c_str(), xml.size(), &rootNodeTag);
     if (lastError)
     {
         QMessageBox::warning(this, "XML parse error", QString("'%1'").arg(QString::fromStdString(*lastError)));
@@ -195,7 +195,7 @@ void DialogCreateMirrorElements::apply()
 
     applyMirrorCreate(fromString, toString, axis);
 
-    std::string newXML = m_parseXML.SaveModel("GAITSYM5"s, "Created from DialogCreateMirrorElements::apply"s);
+    std::string newXML = m_parseXML.saveModel("GAITSYM5"s, "Created from DialogCreateMirrorElements::apply"s);
     ui->plainTextEdit->setPlainText(QString::fromStdString(newXML));
     if (localModified || (xml != newXML)) setModified(true);
 }
@@ -410,9 +410,9 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
                     std::vector<std::string> tokens;
                     pystring::split(quaternion->second, tokens);
                     std::vector<std::string> tokensPrime(tokens.begin() + 1, tokens.end()); // because tokens[0] is the body name
-                    pgd::Quaternion q = GaitSym::GSUtil::GetQuaternion(tokensPrime, 0);
+                    pgd::Quaternion q = GaitSym::GSUtil::toQuaternion(tokensPrime, 0);
                     pgd::Vector3 unitX(1, 0, 0);
-                    pgd::Vector3 unitXPrime = pgd::QVRotate(q, unitX);
+                    pgd::Vector3 unitXPrime = pgd::qVRotate(q, unitX);
                     // and it seems that reversing the non axes components does the trick
                     switch(axis)
                     {
@@ -430,8 +430,8 @@ void DialogCreateMirrorElements::applyMirrorCreate(const std::string &fromString
                         break;
                     }
                     // now convert this back to a quaternion
-                    pgd::Quaternion qPrime = pgd::FindRotation(unitX, unitXPrime);
-                    quaternion->second = tokens[0] + " "s + GaitSym::GSUtil::ToString(qPrime);
+                    pgd::Quaternion qPrime = pgd::findRotation(unitX, unitXPrime);
+                    quaternion->second = tokens[0] + " "s + GaitSym::GSUtil::toString(qPrime);
                 }
             }
         }

@@ -10,15 +10,15 @@ class MainWindow;
 class QTableWidget;
 class QTableWidgetItem;
 
-namespace Ui { class TextEditDialog; }
+namespace Ui { class DialogRawXMLEdit; }
 
-class TextEditDialog : public QDialog
+class DialogRawXMLEdit : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TextEditDialog(QWidget *parent = nullptr);
-    ~TextEditDialog() Q_DECL_OVERRIDE;
+    explicit DialogRawXMLEdit(QWidget *parent = nullptr);
+    ~DialogRawXMLEdit() Q_DECL_OVERRIDE;
 
     QString editorText() const;
     void setEditorText(const QString &editorText);
@@ -72,7 +72,7 @@ private:
     QString attributeMachineSaveToString();
     void attributeMachineLoadFromString(const QString &string, bool quiet);
 
-    Ui::TextEditDialog *ui;
+    Ui::DialogRawXMLEdit *ui;
 
     QString m_editorText;
     BasicXMLSyntaxHighlighter *m_basicXMLSyntaxHighlighter = nullptr;

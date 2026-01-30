@@ -14,17 +14,17 @@ namespace {
 
     void updateGroupGeometry(Mesh& mesh, const SphereGeometry::Params& params) {
 
-        auto g = SphereGeometry::create(params);
-        mesh.setGeometry(g);
+        const auto geometry = SphereGeometry::create(params);
+        mesh.setGeometry(geometry);
 
         mesh.children[0]->removeFromParent();
-        mesh.add(createWireframe(*g));
+        mesh.add(createWireframe(*geometry));
     }
 
     std::shared_ptr<Mesh> createMesh(const SphereGeometry::Params& params) {
 
-        auto geometry = SphereGeometry::create(params);
-        auto material = MeshBasicMaterial::create({{"side", Side::Double}});
+        const auto geometry = SphereGeometry::create(params);
+        const auto material = MeshBasicMaterial::create({{"side", Side::Double}});
 
         auto mesh = Mesh::create(geometry, material);
         mesh->add(createWireframe(*geometry));
@@ -56,9 +56,9 @@ int main() {
     });
 
     bool paramsChanged = false;
-    auto ui = ImguiFunctionalContext(canvas.windowPtr(), [&] {
+    ImguiFunctionalContext ui(canvas, [&] {
         ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
-        ImGui::SetNextWindowSize({230, 0}, 0);
+        ImGui::SetNextWindowSize({0, 0}, 0);
         ImGui::Begin("SphereGeometry");
         ImGui::SliderFloat("radius", &params.radius, 0.1f, 2);
         paramsChanged = paramsChanged || ImGui::IsItemEdited();
@@ -79,7 +79,7 @@ int main() {
 
     Clock clock;
     canvas.animate([&]() {
-        float dt = clock.getDelta();
+        const auto dt = clock.getDelta();
 
         mesh->rotation.y += 0.8f * dt;
         mesh->rotation.x += 0.5f * dt;

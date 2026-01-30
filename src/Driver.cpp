@@ -32,7 +32,7 @@ Driver::~Driver()
 }
 
 
-Drivable *Driver::GetTarget(const std::string &name)
+Drivable *Driver::getTarget(const std::string &name)
 {
     if (name.size() == 0)
     {
@@ -44,15 +44,15 @@ Drivable *Driver::GetTarget(const std::string &name)
     else return it->second;
 }
 
-void Driver::SendData()
+void Driver::sendData()
 {
     for (auto &&it : m_targetList)
     {
-        it.second->ReceiveData(Clamp(m_value), simulation()->GetStepCount());
+        it.second->receiveData(clamp(m_value), simulation()->stepCount());
     }
 }
 
-int Driver::AddTarget(Drivable *target)
+int Driver::addTarget(Drivable *target)
 {
     if (target == nullptr) return __LINE__;
     NamedObject *object = dynamic_cast<NamedObject *>(target);
@@ -61,7 +61,7 @@ int Driver::AddTarget(Drivable *target)
     return 0;
 }
 
-double Driver::Clamp(double value)
+double Driver::clamp(double value)
 {
   return value < m_minValue ? m_minValue : (value > m_maxValue ? m_maxValue : value);
 }
@@ -76,7 +76,7 @@ std::string Driver::dumpToString()
         setFirstDump(false);
         ss << "Name\tTime\tValue\n";
     }
-    ss << name() << "\t" << simulation()->GetTime() << "\t" << value() << "\n";
+    ss << name() << "\t" << simulation()->simulationTime() << "\t" << value() << "\n";
     return ss.str();
 }
 
@@ -104,18 +104,18 @@ std::string *Driver::createFromAttributes()
     upstreamObjects.reserve(targetNames.size());
     for (size_t i = 0; i < targetNames.size(); i++)
     {
-        auto muscleIter = simulation()->GetMuscleList()->find(targetNames[i]);
-        if (muscleIter != simulation()->GetMuscleList()->end())
+        auto muscleIter = simulation()->muscleList()->find(targetNames[i]);
+        if (muscleIter != simulation()->muscleList()->end())
         {
-            this->AddTarget(muscleIter->second.get());
+            this->addTarget(muscleIter->second.get());
             upstreamObjects.push_back(muscleIter->second.get());
         }
         else
         {
-            auto controllerIter = simulation()->GetControllerList()->find(targetNames[i]);
-            if (controllerIter != simulation()->GetControllerList()->end())
+            auto controllerIter = simulation()->controllerList()->find(targetNames[i]);
+            if (controllerIter != simulation()->controllerList()->end())
             {
-                this->AddTarget(controllerIter->second.get());
+                this->addTarget(controllerIter->second.get());
                 upstreamObjects.push_back(controllerIter->second.get());
             }
             else
@@ -128,14 +128,14 @@ std::string *Driver::createFromAttributes()
 
     if (findAttribute("DriverRange"s, &buf))
     {
-        GSUtil::Double(buf, 2, doubleList);
+        GSUtil::toDouble(buf, 2, doubleList);
         this->setMinValue(doubleList[0]);
         this->setMaxValue(doubleList[1]);
     }
 
     if (findAttribute("LinearInterpolation"s, &buf))
     {
-        this->setInterp(GSUtil::Bool(buf));
+        this->setInterp(GSUtil::toBool(buf));
     }
 
     setUpstreamObjects(std::move(upstreamObjects));
@@ -161,11 +161,11 @@ void Driver::appendToAttributes()
     for (auto it = m_targetList.begin(); it != m_targetList.end(); it++) stringList.push_back(it->first);
     setAttribute("TargetIDList"s, pystring::join(" "s, stringList));
     double doubleList[2] = { m_minValue, m_maxValue };
-    setAttribute("DriverRange"s, *GSUtil::ToString(doubleList, 2, &buf));
-    setAttribute("LinearInterpolation"s, *GSUtil::ToString(Interp(), &buf));
+    setAttribute("DriverRange"s, *GSUtil::toString(doubleList, 2, &buf));
+    setAttribute("LinearInterpolation"s, *GSUtil::toString(interp(), &buf));
 }
 
-double Driver::MinValue() const
+double Driver::minValue() const
 {
     return m_minValue;
 }
@@ -175,7 +175,7 @@ void Driver::setMinValue(double MinValue)
     m_minValue = MinValue;
 }
 
-double Driver::MaxValue() const
+double Driver::maxValue() const
 {
     return m_maxValue;
 }
@@ -185,7 +185,7 @@ void Driver::setMaxValue(double MaxValue)
     m_maxValue = MaxValue;
 }
 
-bool Driver::Interp() const
+bool Driver::interp() const
 {
     return m_interp;
 }

@@ -2,7 +2,7 @@
  *  OpenSimExporter.cpp
  *  GaitSym5
  *
- *  Created by Bill Sellers on 20/05/2024.
+ *  created by Bill Sellers on 20/05/2024.
  *  Copyright 2024 Bill Sellers. All rights reserved.
  *
  */
@@ -43,13 +43,13 @@ OpenSimExporter::~OpenSimExporter()
     }
 }
 
-void OpenSimExporter::Process(Simulation *simulation)
+void OpenSimExporter::process(Simulation *simulation)
 {
     m_simulation = simulation;
     m_xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"s;
 
     // create the name mappings
-    for (auto &&nameIter : m_simulation->GetNameList())
+    for (auto &&nameIter : m_simulation->nameList())
     {
         std::string legalName;
         char c = nameIter[0];
@@ -93,349 +93,349 @@ void OpenSimExporter::Process(Simulation *simulation)
         }
     }
 
-    // start building the XML
-    XMLInitiateTag(&m_xmlString, "OpenSimDocument"s, {{"Version"s, "40000"s}});
-    XMLInitiateTag(&m_xmlString, "Model"s, {{"name"s, name()}});
+    // start building the xml
+    xmlInitiateTag(&m_xmlString, "OpenSimDocument"s, {{"Version"s, "40000"s}});
+    xmlInitiateTag(&m_xmlString, "Model"s, {{"name"s, name()}});
 
     // components
-    XMLTagAndContent(&m_xmlString, "components"s, ""s);
+    xmlTagAndContent(&m_xmlString, "components"s, ""s);
 
     // ground
-    XMLInitiateTag(&m_xmlString, "Ground"s, {{"name"s, "ground"s}});
-    XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-    XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-    XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-    XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-    XMLTagAndContent(&m_xmlString, "attached_geometry"s, ""s);
-    XMLInitiateTag(&m_xmlString, "WrapObjectSet"s, {{"name"s, "wrapobjectset"s}});
-    XMLTagAndContent(&m_xmlString, "objects"s, ""s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "WrapObjectSet"s);
-    XMLTerminateTag(&m_xmlString, "Ground"s);
+    xmlInitiateTag(&m_xmlString, "Ground"s, {{"name"s, "ground"s}});
+    xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+    xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+    xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+    xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+    xmlTagAndContent(&m_xmlString, "attached_geometry"s, ""s);
+    xmlInitiateTag(&m_xmlString, "WrapObjectSet"s, {{"name"s, "wrapobjectset"s}});
+    xmlTagAndContent(&m_xmlString, "objects"s, ""s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "WrapObjectSet"s);
+    xmlTerminateTag(&m_xmlString, "Ground"s);
 
     // put in placeholders for credist and publications
-    XMLTagAndContent(&m_xmlString, "credits"s, "Add credits statement here"s);
-    XMLTagAndContent(&m_xmlString, "publications"s, "Add publications statement here"s);
+    xmlTagAndContent(&m_xmlString, "credits"s, "Add credits statement here"s);
+    xmlTagAndContent(&m_xmlString, "publications"s, "Add publications statement here"s);
 
     // set some options
-    XMLTagAndContent(&m_xmlString, "length_units"s, "meters"s);
-    XMLTagAndContent(&m_xmlString, "force_units"s, "N"s);
+    xmlTagAndContent(&m_xmlString, "length_units"s, "meters"s);
+    xmlTagAndContent(&m_xmlString, "force_units"s, "N"s);
     // but we now need to convert gravity to the opensim Y up coordinate system
     pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
-    pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-    pgd::Vector3 gravity = pgd::QVRotate(rotation, m_simulation->GetGlobal()->Gravity());
-    XMLTagAndContent(&m_xmlString, "gravity"s, GSUtil::ToString(gravity));
+    pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+    pgd::Vector3 gravity = pgd::qVRotate(rotation, m_simulation->global()->gravity());
+    xmlTagAndContent(&m_xmlString, "gravity"s, GSUtil::toString(gravity));
 
-    CreateBodySet();
-    CreateJointSet();
-    CreateControllerSet();
-    CreateConstraintSet();
-    CreateForceSet();
-    CreateMarkerSet();
-    CreateContactGeometrySet();
+    createBodySet();
+    createJointSet();
+    createControllerSet();
+    createConstraintSet();
+    createForceSet();
+    createMarkerSet();
+    createContactGeometrySet();
 
-    XMLTerminateTag(&m_xmlString, "Model"s);
-    XMLTerminateTag(&m_xmlString, "OpenSimDocument"s);
+    xmlTerminateTag(&m_xmlString, "Model"s);
+    xmlTerminateTag(&m_xmlString, "OpenSimDocument"s);
 }
 
-void OpenSimExporter::CreateBodySet()
+void OpenSimExporter::createBodySet()
 {
-    XMLInitiateTag(&m_xmlString, "BodySet"s, {{"name"s, "bodyset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
+    xmlInitiateTag(&m_xmlString, "BodySet"s, {{"name"s, "bodyset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&bodyIter : *m_simulation->GetBodyList())
+    for (auto &&bodyIter : *m_simulation->bodyList())
     {
-        XMLInitiateTag(&m_xmlString, "Body"s, {{"name"s, m_legalNameMap[bodyIter.second->name()]}});
+        xmlInitiateTag(&m_xmlString, "Body"s, {{"name"s, m_legalNameMap[bodyIter.second->name()]}});
 
         // The geometry used to display the axes of this Frame
-        XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-        XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-        XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-        XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
+        xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+        xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+        xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+        xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
         // mesh
-        XMLInitiateTag(&m_xmlString, "attached_geometry"s);
-        if (bodyIter.second->GetGraphicFile1().size())
+        xmlInitiateTag(&m_xmlString, "attached_geometry"s);
+        if (bodyIter.second->graphicFile1().size())
         {
-            std::string basename = pystring::os::path::basename(bodyIter.second->GetGraphicFile1());
+            std::string basename = pystring::os::path::basename(bodyIter.second->graphicFile1());
             std::string mesh_path = pystring::os::path::join(m_pathToObjFiles, basename);
-            XMLInitiateTag(&m_xmlString, "Mesh"s, {{"name"s, m_legalNameMap[bodyIter.second->name()] + "_mesh"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLInitiateTag(&m_xmlString, "Appearance"s);
-            XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(bodyIter.second->colour1().alpha()));
-            XMLTagAndContent(&m_xmlString, "color"s, bodyIter.second->colour1().GetFloatColourRGB());
-            XMLTerminateTag(&m_xmlString, "Appearance"s);
-            XMLTagAndContent(&m_xmlString, "mesh_file"s, mesh_path);
-            XMLTerminateTag(&m_xmlString, "Mesh"s);
+            xmlInitiateTag(&m_xmlString, "Mesh"s, {{"name"s, m_legalNameMap[bodyIter.second->name()] + "_mesh"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlInitiateTag(&m_xmlString, "Appearance"s);
+            xmlTagAndContent(&m_xmlString, "opacity"s, GSUtil::toString(bodyIter.second->colour1().alpha()));
+            xmlTagAndContent(&m_xmlString, "color"s, bodyIter.second->colour1().floatColourRGB());
+            xmlTerminateTag(&m_xmlString, "Appearance"s);
+            xmlTagAndContent(&m_xmlString, "mesh_file"s, mesh_path);
+            xmlTerminateTag(&m_xmlString, "Mesh"s);
         }
-        XMLTerminateTag(&m_xmlString, "attached_geometry"s);
+        xmlTerminateTag(&m_xmlString, "attached_geometry"s);
         // wrap objects
-        XMLInitiateTag(&m_xmlString, "WrapObjectSet"s, {{"name"s, "wrapobjectset"s}});
-        XMLTagAndContent(&m_xmlString, "objects"s, ""s);
-        XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-        XMLTerminateTag(&m_xmlString, "WrapObjectSet"s);
+        xmlInitiateTag(&m_xmlString, "WrapObjectSet"s, {{"name"s, "wrapobjectset"s}});
+        xmlTagAndContent(&m_xmlString, "objects"s, ""s);
+        xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+        xmlTerminateTag(&m_xmlString, "WrapObjectSet"s);
         // mass properties
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        bodyIter.second->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
-        XMLTagAndContent(&m_xmlString, "mass"s, GSUtil::ToString(mass));
+        bodyIter.second->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        xmlTagAndContent(&m_xmlString, "mass"s, GSUtil::toString(mass));
         // pgd::Vector3 referencePosition;
         // for (auto &&jointIter : *m_simulation->GetJointList())
         // {
         //     if (jointIter.second->body2() == bodyIter.second.get()) { referencePosition = jointIter.second->body2Marker()->GetPosition(); } // if a body is connected to a parent, then its reference is that joint
         // }
-        // XMLTagAndContent(&m_xmlString, "mass_center"s, GSUtil::ToString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
-        XMLTagAndContent(&m_xmlString, "mass_center"s, "0 0 0"s); // Maybe the centre of mass is always at the local origin given the way I have defined the joints
-        XMLTagAndContent(&m_xmlString, "inertia"s, GSUtil::ToString("%.17g %.17g %.17g %.17g %.17g %.17g", ixx, iyy, izz, ixy, izx, iyz)); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
-        XMLTerminateTag(&m_xmlString, "Body"s);
+        // xmlTagAndContent(&m_xmlString, "mass_center"s, GSUtil::toString(-referencePosition)); // The location of the mass center in the body frame which is based on the joint position
+        xmlTagAndContent(&m_xmlString, "mass_center"s, "0 0 0"s); // Maybe the centre of mass is always at the local origin given the way I have defined the joints
+        xmlTagAndContent(&m_xmlString, "inertia"s, GSUtil::toString(std::vector<double>({ixx, iyy, izz, ixy, izx, iyz}))); // elements of the inertia tensor (Vec6) as [Ixx Iyy Izz Ixy Ixz Iyz] measured about the mass_center and not the body origin
+        xmlTerminateTag(&m_xmlString, "Body"s);
     }
 
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "BodySet"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "BodySet"s);
 
 }
 
-void OpenSimExporter::CreateJointSet()
+void OpenSimExporter::createJointSet()
 {
-    XMLInitiateTag(&m_xmlString, "JointSet"s, {{"name"s, "jointset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
+    xmlInitiateTag(&m_xmlString, "JointSet"s, {{"name"s, "jointset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&jointIter : *m_simulation->GetJointList())
+    for (auto &&jointIter : *m_simulation->jointList())
     {
         if (const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(jointIter.second.get()))
         {
-            XMLInitiateTag(&m_xmlString, "PinJoint"s, {{"name"s, m_legalNameMap[jointIter.second->name()]}});
+            xmlInitiateTag(&m_xmlString, "PinJoint"s, {{"name"s, m_legalNameMap[jointIter.second->name()]}});
 
-            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[hingeJoint->body1()->name()] + "_offset"s);
-            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[hingeJoint->body2()->name()] + "_offset"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[hingeJoint->body1()->name()] + "_offset"s);
+            xmlTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[hingeJoint->body2()->name()] + "_offset"s);
 
-            XMLInitiateTag(&m_xmlString, "coordinates"s);
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s}});
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString(pgd::Vector2(-hingeJoint->stops()[1], -hingeJoint->stops()[0])));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
-            XMLTerminateTag(&m_xmlString, "coordinates"s);
+            xmlInitiateTag(&m_xmlString, "coordinates"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s}});
+            xmlTagAndContent(&m_xmlString, "default_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, GSUtil::toString(pgd::Vector2(-hingeJoint->stops()[1], -hingeJoint->stops()[0])));
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlTerminateTag(&m_xmlString, "coordinates"s);
 
-            XMLInitiateTag(&m_xmlString, "frames"s);
+            xmlInitiateTag(&m_xmlString, "frames"s);
 
-            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[hingeJoint->body1()->name()] + "_offset"s}});
-            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body1()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(hingeJoint->body1Marker()->GetPosition()));
-            pgd::Vector3 axis = hingeJoint->body1Marker()->GetAxis(GaitSym::Marker::X);
+            xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[hingeJoint->body1()->name()] + "_offset"s}});
+            xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body1()->name()]);
+            xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body1Marker()->position()));
+            pgd::Vector3 axis = hingeJoint->body1Marker()->axis(GaitSym::Marker::X);
             pgd::Vector3 zAxis(0, 0, 1);
-            pgd::Quaternion rotation = pgd::FindRotation(zAxis, axis);
-            pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(rotation);
-            XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
-            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+            pgd::Quaternion rotation = pgd::findRotation(zAxis, axis);
+            pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(rotation);
+            xmlTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
+            xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[hingeJoint->body2()->name()] + "_offset"s}});
-            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body2()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(hingeJoint->body2Marker()->GetPosition()));
-            axis = hingeJoint->body1Marker()->GetAxis(GaitSym::Marker::X);
-            rotation = pgd::FindRotation(zAxis, axis);
-            euler = pgd::MakeEulerAnglesFromQRadian(rotation);
-            XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
-            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+            xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[hingeJoint->body2()->name()] + "_offset"s}});
+            xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[hingeJoint->body2()->name()]);
+            xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(hingeJoint->body2Marker()->position()));
+            axis = hingeJoint->body1Marker()->axis(GaitSym::Marker::X);
+            rotation = pgd::findRotation(zAxis, axis);
+            euler = pgd::makeEulerAnglesFromQRadian(rotation);
+            xmlTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
+            xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-            XMLTerminateTag(&m_xmlString, "frames"s);
+            xmlTerminateTag(&m_xmlString, "frames"s);
 
-            XMLTerminateTag(&m_xmlString, "PinJoint"s);
+            xmlTerminateTag(&m_xmlString, "PinJoint"s);
         }
 
         if (const FixedJoint *fixedJoint = dynamic_cast<const FixedJoint *>(jointIter.second.get()))
         {
-            XMLInitiateTag(&m_xmlString, "WeldJoint"s, {{"name"s, m_legalNameMap[fixedJoint->name()]}});
+            xmlInitiateTag(&m_xmlString, "WeldJoint"s, {{"name"s, m_legalNameMap[fixedJoint->name()]}});
 
-            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[fixedJoint->body1()->name()] + "_offset"s);
-            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[fixedJoint->body2()->name()] + "_offset"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[fixedJoint->body1()->name()] + "_offset"s);
+            xmlTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[fixedJoint->body2()->name()] + "_offset"s);
 
-            XMLInitiateTag(&m_xmlString, "frames"s);
+            xmlInitiateTag(&m_xmlString, "frames"s);
 
-            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[fixedJoint->body1()->name()] + "_offset"s}});
-            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[fixedJoint->body1()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(fixedJoint->body1Marker()->GetPosition()));
-            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
-            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+            xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[fixedJoint->body1()->name()] + "_offset"s}});
+            xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[fixedJoint->body1()->name()]);
+            xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(fixedJoint->body1Marker()->position()));
+            xmlTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[fixedJoint->body2()->name()] + "_offset"s}});
-            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[fixedJoint->body2()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(fixedJoint->body2Marker()->GetPosition()));
-            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
-            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+            xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[fixedJoint->body2()->name()] + "_offset"s}});
+            xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[fixedJoint->body2()->name()]);
+            xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(fixedJoint->body2Marker()->position()));
+            xmlTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-            XMLTerminateTag(&m_xmlString, "frames"s);
+            xmlTerminateTag(&m_xmlString, "frames"s);
 
-            XMLTerminateTag(&m_xmlString, "WeldJoint"s);
+            xmlTerminateTag(&m_xmlString, "WeldJoint"s);
         }
 
         if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(jointIter.second.get()))
         {
-            XMLInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, m_legalNameMap[jointIter.second->name()]}});
+            xmlInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, m_legalNameMap[jointIter.second->name()]}});
 
-            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[ballJoint->body1()->name()] + "_offset"s);
-            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[ballJoint->body2()->name()] + "_offset"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, m_legalNameMap[ballJoint->body1()->name()] + "_offset"s);
+            xmlTagAndContent(&m_xmlString, "socket_child_frame"s, m_legalNameMap[ballJoint->body2()->name()] + "_offset"s);
 
-            XMLInitiateTag(&m_xmlString, "coordinates"s);
+            xmlInitiateTag(&m_xmlString, "coordinates"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_0"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_0"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, GSUtil::toString(pgd::Vector2(-M_PI/2, M_PI/2)));
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_1"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_1"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, GSUtil::toString(pgd::Vector2(-M_PI/2, M_PI/2)));
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_2"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, GSUtil::ToString("%g %g", -M_PI/2, M_PI/2));
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, m_legalNameMap[ballJoint->name()] + "_coord_2"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, GSUtil::toString(pgd::Vector2(-M_PI/2, M_PI/2)));
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed_function"s, ""s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLTerminateTag(&m_xmlString, "coordinates"s);
+            xmlTerminateTag(&m_xmlString, "coordinates"s);
 
-            XMLInitiateTag(&m_xmlString, "frames"s);
+            xmlInitiateTag(&m_xmlString, "frames"s);
 
-            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[ballJoint->body1()->name()] + "_offset"s}});
-            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body1()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(ballJoint->body1Marker()->GetPosition()));
-            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
-            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+            xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[ballJoint->body1()->name()] + "_offset"s}});
+            xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body1()->name()]);
+            xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(ballJoint->body1Marker()->position()));
+            xmlTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-            XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[ballJoint->body2()->name()] + "_offset"s}});
-            XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-            XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-            XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-            XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-            XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body2()->name()]);
-            XMLTagAndContent(&m_xmlString, "translation"s, GSUtil::ToString(ballJoint->body2Marker()->GetPosition()));
-            XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
-            XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+            xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[ballJoint->body2()->name()] + "_offset"s}});
+            xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+            xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+            xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+            xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+            xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[ballJoint->body2()->name()]);
+            xmlTagAndContent(&m_xmlString, "translation"s, GSUtil::toString(ballJoint->body2Marker()->position()));
+            xmlTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+            xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-            XMLTerminateTag(&m_xmlString, "frames"s);
+            xmlTerminateTag(&m_xmlString, "frames"s);
 
-            XMLInitiateTag(&m_xmlString, "SpatialTransform"s);
+            xmlInitiateTag(&m_xmlString, "SpatialTransform"s);
 
             pgd::Vector3 x, y, z;
-            ballJoint->body1Marker()->GetBasis(&x, &y, &z);
+            ballJoint->body1Marker()->getBasis(&x, &y, &z);
 
-            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_0"s);
-            XMLTagAndContent(&m_xmlString, "axis"s, GSUtil::ToString(x));
-            XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-            XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-            XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+            xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
+            xmlTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_0"s);
+            xmlTagAndContent(&m_xmlString, "axis"s, GSUtil::toString(x));
+            xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+            xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+            xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+            xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation2"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_1"s);
-            XMLTagAndContent(&m_xmlString, "axis"s, GSUtil::ToString(y));
-            XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-            XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-            XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+            xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation2"s}});
+            xmlTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_1"s);
+            xmlTagAndContent(&m_xmlString, "axis"s, GSUtil::toString(y));
+            xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+            xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+            xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+            xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation3"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_2"s);
-            XMLTagAndContent(&m_xmlString, "axis"s, GSUtil::ToString(z));
-            XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-            XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-            XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+            xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation3"s}});
+            xmlTagAndContent(&m_xmlString, "coordinates"s, m_legalNameMap[ballJoint->name()] + "_coord_2"s);
+            xmlTagAndContent(&m_xmlString, "axis"s, GSUtil::toString(z));
+            xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+            xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+            xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+            xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, ""s);
-            XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
-            XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
-            XMLInitiateTag(&m_xmlString, "function"s);
-            XMLInitiateTag(&m_xmlString, "Constant"s);
-            XMLTagAndContent(&m_xmlString, "value"s, "0"s);
-            XMLTerminateTag(&m_xmlString, "Constant"s);
-            XMLTerminateTag(&m_xmlString, "function"s);
-            XMLTagAndContent(&m_xmlString, "scale"s, "1"s);
-            XMLTerminateTag(&m_xmlString, "MultiplierFunction"s);
-            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+            xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
+            xmlTagAndContent(&m_xmlString, "coordinates"s, ""s);
+            xmlTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
+            xmlInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
+            xmlInitiateTag(&m_xmlString, "function"s);
+            xmlInitiateTag(&m_xmlString, "Constant"s);
+            xmlTagAndContent(&m_xmlString, "value"s, "0"s);
+            xmlTerminateTag(&m_xmlString, "Constant"s);
+            xmlTerminateTag(&m_xmlString, "function"s);
+            xmlTagAndContent(&m_xmlString, "scale"s, "1"s);
+            xmlTerminateTag(&m_xmlString, "MultiplierFunction"s);
+            xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, ""s);
-            XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
-            XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
-            XMLInitiateTag(&m_xmlString, "function"s);
-            XMLInitiateTag(&m_xmlString, "Constant"s);
-            XMLTagAndContent(&m_xmlString, "value"s, "0"s);
-            XMLTerminateTag(&m_xmlString, "Constant"s);
-            XMLTerminateTag(&m_xmlString, "function"s);
-            XMLTagAndContent(&m_xmlString, "scale"s, "1"s);
-            XMLTerminateTag(&m_xmlString, "MultiplierFunction"s);
-            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+            xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
+            xmlTagAndContent(&m_xmlString, "coordinates"s, ""s);
+            xmlTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
+            xmlInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
+            xmlInitiateTag(&m_xmlString, "function"s);
+            xmlInitiateTag(&m_xmlString, "Constant"s);
+            xmlTagAndContent(&m_xmlString, "value"s, "0"s);
+            xmlTerminateTag(&m_xmlString, "Constant"s);
+            xmlTerminateTag(&m_xmlString, "function"s);
+            xmlTagAndContent(&m_xmlString, "scale"s, "1"s);
+            xmlTerminateTag(&m_xmlString, "MultiplierFunction"s);
+            xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-            XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
-            XMLTagAndContent(&m_xmlString, "coordinates"s, ""s);
-            XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
-            XMLInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
-            XMLInitiateTag(&m_xmlString, "function"s);
-            XMLInitiateTag(&m_xmlString, "Constant"s);
-            XMLTagAndContent(&m_xmlString, "value"s, "0"s);
-            XMLTerminateTag(&m_xmlString, "Constant"s);
-            XMLTerminateTag(&m_xmlString, "function"s);
-            XMLTagAndContent(&m_xmlString, "scale"s, "1"s);
-            XMLTerminateTag(&m_xmlString, "MultiplierFunction"s);
-            XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+            xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
+            xmlTagAndContent(&m_xmlString, "coordinates"s, ""s);
+            xmlTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
+            xmlInitiateTag(&m_xmlString, "MultiplierFunction"s, {{"name"s, "function"s}});
+            xmlInitiateTag(&m_xmlString, "function"s);
+            xmlInitiateTag(&m_xmlString, "Constant"s);
+            xmlTagAndContent(&m_xmlString, "value"s, "0"s);
+            xmlTerminateTag(&m_xmlString, "Constant"s);
+            xmlTerminateTag(&m_xmlString, "function"s);
+            xmlTagAndContent(&m_xmlString, "scale"s, "1"s);
+            xmlTerminateTag(&m_xmlString, "MultiplierFunction"s);
+            xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-            XMLTerminateTag(&m_xmlString, "SpatialTransform"s);
+            xmlTerminateTag(&m_xmlString, "SpatialTransform"s);
 
-            XMLTerminateTag(&m_xmlString, "CustomJoint"s);
+            xmlTerminateTag(&m_xmlString, "CustomJoint"s);
         }
 
     }
 
     // now handle any free joints for parentless bodies
-    for (auto &&bodyIter : *m_simulation->GetBodyList())
+    for (auto &&bodyIter : *m_simulation->bodyList())
     {
         bool parentlessBody = true;
-        for (auto &&jointIter : *m_simulation->GetJointList())
+        for (auto &&jointIter : *m_simulation->jointList())
         {
             if (jointIter.second->body2() == bodyIter.second.get())
             {
@@ -445,309 +445,309 @@ void OpenSimExporter::CreateJointSet()
         }
         if (parentlessBody)
         {
-            pgd::Vector3 position = bodyIter.second->GetConstructionPosition();
+            pgd::Vector3 position = bodyIter.second->constructionPosition();
             pgd::Vector3 euler(-1.5707963267948966, 0, 0); // all GaitSym bodies are constructed with no rotation, and rotating -90 degrees about the X axis converts from Z up to Y up
-            pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-            position = pgd::QVRotate(rotation, position);
-            if (m_mocoExport)  { XMLInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); } // moco does not support FreeJoint so we have to create a custom joint that does the same thing
-            else { XMLInitiateTag(&m_xmlString, "FreeJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); }
+            pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+            position = pgd::qVRotate(rotation, position);
+            if (m_mocoExport)  { xmlInitiateTag(&m_xmlString, "CustomJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); } // moco does not support FreeJoint so we have to create a custom joint that does the same thing
+            else { xmlInitiateTag(&m_xmlString, "FreeJoint"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()]}}); }
 
-            XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s);
-            XMLTagAndContent(&m_xmlString, "socket_child_frame"s, "/bodyset/"s + m_legalNameMap[bodyIter.second->name()]);
+            xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s);
+            xmlTagAndContent(&m_xmlString, "socket_child_frame"s, "/bodyset/"s + m_legalNameMap[bodyIter.second->name()]);
 
-            XMLInitiateTag(&m_xmlString, "coordinates"s);
+            xmlInitiateTag(&m_xmlString, "coordinates"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_0"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.x));
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_0"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, GSUtil::toString(euler.x));
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_1"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.y));
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_1"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, GSUtil::toString(euler.y));
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_2"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(euler.z));
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_2"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "rotational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, GSUtil::toString(euler.z));
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, "-3.14159265 3.14159265"s);
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_3"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(position.x));
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-99 99"s);
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_3"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, GSUtil::toString(position.x));
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, "-99 99"s);
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_4"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(position.y));
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-99 99"s);
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_4"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, GSUtil::toString(position.y));
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, "-99 99"s);
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_5"s}});
-            XMLTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
-            XMLTagAndContent(&m_xmlString, "default_value"s, GSUtil::ToString(position.z));
-            XMLTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
-            XMLTagAndContent(&m_xmlString, "range"s, "-99 99"s);
-            XMLTagAndContent(&m_xmlString, "clamped"s, "true"s);
-            XMLTagAndContent(&m_xmlString, "locked"s, "false"s);
-            XMLTagAndContent(&m_xmlString, "prescribed"s, "false"s);
-            XMLTerminateTag(&m_xmlString, "Coordinate"s);
+            xmlInitiateTag(&m_xmlString, "Coordinate"s, {{"name"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_5"s}});
+            xmlTagAndContent(&m_xmlString, "motion_type"s, "translational"s);
+            xmlTagAndContent(&m_xmlString, "default_value"s, GSUtil::toString(position.z));
+            xmlTagAndContent(&m_xmlString, "default_speed_value"s, "0"s);
+            xmlTagAndContent(&m_xmlString, "range"s, "-99 99"s);
+            xmlTagAndContent(&m_xmlString, "clamped"s, "true"s);
+            xmlTagAndContent(&m_xmlString, "locked"s, "false"s);
+            xmlTagAndContent(&m_xmlString, "prescribed"s, "false"s);
+            xmlTerminateTag(&m_xmlString, "Coordinate"s);
 
-            XMLTerminateTag(&m_xmlString, "coordinates"s);
+            xmlTerminateTag(&m_xmlString, "coordinates"s);
 
             if (m_mocoExport)
             {
-                XMLInitiateTag(&m_xmlString, "frames"s);
+                xmlInitiateTag(&m_xmlString, "frames"s);
 
-                XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, "ground_offset"s}});
-                XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-                XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-                XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-                XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-                XMLTagAndContent(&m_xmlString, "socket_parent"s, "/ground"s);
-                XMLTagAndContent(&m_xmlString, "translation"s, "0 0 0"s);
-                XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
-                XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+                xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, "ground_offset"s}});
+                xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+                xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+                xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+                xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+                xmlTagAndContent(&m_xmlString, "socket_parent"s, "/ground"s);
+                xmlTagAndContent(&m_xmlString, "translation"s, "0 0 0"s);
+                xmlTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+                xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-                XMLInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[bodyIter.second->name()] + "_offset"s}});
-                XMLInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
-                XMLTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
-                XMLTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
-                XMLTerminateTag(&m_xmlString, "FrameGeometry"s);
-                XMLTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[bodyIter.second->name()]);
-                XMLTagAndContent(&m_xmlString, "translation"s, "0 0 0"s);
-                XMLTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
-                XMLTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
+                xmlInitiateTag(&m_xmlString, "PhysicalOffsetFrame"s, {{"name"s, m_legalNameMap[bodyIter.second->name()] + "_offset"s}});
+                xmlInitiateTag(&m_xmlString, "FrameGeometry"s, {{"name"s, "frame_geometry"s}});
+                xmlTagAndContent(&m_xmlString, "socket_frame"s, ".."s);
+                xmlTagAndContent(&m_xmlString, "scale_factors"s, "1 1 1"s);
+                xmlTerminateTag(&m_xmlString, "FrameGeometry"s);
+                xmlTagAndContent(&m_xmlString, "socket_parent"s, "/bodyset/"s + m_legalNameMap[bodyIter.second->name()]);
+                xmlTagAndContent(&m_xmlString, "translation"s, "0 0 0"s);
+                xmlTagAndContent(&m_xmlString, "orientation"s, "0 0 0"s);
+                xmlTerminateTag(&m_xmlString, "PhysicalOffsetFrame"s);
 
-                XMLTerminateTag(&m_xmlString, "frames"s);
+                xmlTerminateTag(&m_xmlString, "frames"s);
 
-                XMLInitiateTag(&m_xmlString, "SpatialTransform"s);
+                xmlInitiateTag(&m_xmlString, "SpatialTransform"s);
 
-                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
-                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_0"s);
-                XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
-                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+                xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation1"s}});
+                xmlTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_0"s);
+                xmlTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
+                xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+                xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation2"s}});
-                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_1"s);
-                XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
-                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+                xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation2"s}});
+                xmlTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_1"s);
+                xmlTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
+                xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+                xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation3"s}});
-                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_2"s);
-                XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
-                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+                xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "rotation3"s}});
+                xmlTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_2"s);
+                xmlTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
+                xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+                xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
-                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_3"s);
-                XMLTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
-                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+                xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation1"s}});
+                xmlTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_3"s);
+                xmlTagAndContent(&m_xmlString, "axis"s, "1 0 0"s);
+                xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+                xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
-                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_4"s);
-                XMLTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
-                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+                xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation2"s}});
+                xmlTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_4"s);
+                xmlTagAndContent(&m_xmlString, "axis"s, "0 1 0"s);
+                xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+                xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-                XMLInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
-                XMLTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_5"s);
-                XMLTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
-                XMLInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
-                XMLTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
-                XMLTerminateTag(&m_xmlString, "LinearFunction"s);
-                XMLTerminateTag(&m_xmlString, "TransformAxis"s);
+                xmlInitiateTag(&m_xmlString, "TransformAxis"s, {{"name"s, "translation3"s}});
+                xmlTagAndContent(&m_xmlString, "coordinates"s, "free_"s + m_legalNameMap[bodyIter.second->name()] + "_coord_5"s);
+                xmlTagAndContent(&m_xmlString, "axis"s, "0 0 1"s);
+                xmlInitiateTag(&m_xmlString, "LinearFunction"s, {{"name"s, "function"s}});
+                xmlTagAndContent(&m_xmlString, "coefficients"s, "1 0"s);
+                xmlTerminateTag(&m_xmlString, "LinearFunction"s);
+                xmlTerminateTag(&m_xmlString, "TransformAxis"s);
 
-                XMLTerminateTag(&m_xmlString, "SpatialTransform"s);
+                xmlTerminateTag(&m_xmlString, "SpatialTransform"s);
             }
 
-            if (m_mocoExport) { XMLTerminateTag(&m_xmlString, "CustomJoint"s); }
-            else { XMLTerminateTag(&m_xmlString, "FreeJoint"s); }
+            if (m_mocoExport) { xmlTerminateTag(&m_xmlString, "CustomJoint"s); }
+            else { xmlTerminateTag(&m_xmlString, "FreeJoint"s); }
         }
     }
 
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "JointSet"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "JointSet"s);
 }
 
-void OpenSimExporter::CreateControllerSet()
+void OpenSimExporter::createControllerSet()
 {
-    XMLInitiateTag(&m_xmlString, "ControllerSet"s, {{"name"s, "controllerset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "ControllerSet"s);
+    xmlInitiateTag(&m_xmlString, "ControllerSet"s, {{"name"s, "controllerset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "ControllerSet"s);
 }
 
-void OpenSimExporter::CreateConstraintSet()
+void OpenSimExporter::createConstraintSet()
 {
-    XMLInitiateTag(&m_xmlString, "ConstraintSet"s, {{"name"s, "constraintset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "ConstraintSet"s);
+    xmlInitiateTag(&m_xmlString, "ConstraintSet"s, {{"name"s, "constraintset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "ConstraintSet"s);
 }
 
-void OpenSimExporter::CreateForceSet()
+void OpenSimExporter::createForceSet()
 {
-    XMLInitiateTag(&m_xmlString, "ForceSet"s, {{"name"s, "forceset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
+    xmlInitiateTag(&m_xmlString, "ForceSet"s, {{"name"s, "forceset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&muscleIter : *m_simulation->GetMuscleList())
+    for (auto &&muscleIter : *m_simulation->muscleList())
     {
         Muscle *muscle = muscleIter.second.get();
-        Strap *strap = muscleIter.second->GetStrap();
-        if (m_mocoExport) { XMLInitiateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
-        else { XMLInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
-        XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
-        XMLTagAndContent(&m_xmlString, "min_control"s, "0.01"s);
-        XMLTagAndContent(&m_xmlString, "max_control"s, "1.0"s);
+        Strap *strap = muscleIter.second->strap();
+        if (m_mocoExport) { xmlInitiateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
+        else { xmlInitiateTag(&m_xmlString, "Thelen2003Muscle"s, {{"name"s, m_legalNameMap[muscle->name()]}}); }
+        xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+        xmlTagAndContent(&m_xmlString, "min_control"s, "0.01"s);
+        xmlTagAndContent(&m_xmlString, "max_control"s, "1.0"s);
 
-        XMLInitiateTag(&m_xmlString, "GeometryPath"s, {{"name"s, "path"s}});
+        xmlInitiateTag(&m_xmlString, "GeometryPath"s, {{"name"s, "path"s}});
 
-        XMLInitiateTag(&m_xmlString, "Appearance"s);
-        XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(muscle->colour1().alpha()));
-        XMLTagAndContent(&m_xmlString, "color"s, muscle->colour1().GetFloatColourRGB());
-        XMLTerminateTag(&m_xmlString, "Appearance"s);
+        xmlInitiateTag(&m_xmlString, "Appearance"s);
+        xmlTagAndContent(&m_xmlString, "opacity"s, GSUtil::toString(muscle->colour1().alpha()));
+        xmlTagAndContent(&m_xmlString, "color"s, muscle->colour1().floatColourRGB());
+        xmlTerminateTag(&m_xmlString, "Appearance"s);
 
         while (true)
         {
             if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strap))
             {
-                CreatePathPointSet(muscle->name(), {twoPointStrap->GetOriginMarker(), twoPointStrap->GetInsertionMarker()});
+                createPathPointSet(muscle->name(), {twoPointStrap->originMarker(), twoPointStrap->insertionMarker()});
                 break;
             }
             if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strap))
             {
                 std::vector<const Marker *> markerList;
-                markerList.push_back(nPointStrap->GetOriginMarker());
-                for (auto &&markerIter : *nPointStrap->GetViaPointMarkers()) { markerList.push_back(markerIter); }
-                markerList.push_back(nPointStrap->GetInsertionMarker());
-                CreatePathPointSet(muscle->name(), markerList);
+                markerList.push_back(nPointStrap->originMarker());
+                for (auto &&markerIter : *nPointStrap->viaPointMarkers()) { markerList.push_back(markerIter); }
+                markerList.push_back(nPointStrap->insertionMarker());
+                createPathPointSet(muscle->name(), markerList);
                 break;
             }
-            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported strap type in Muscle ID=\"" << muscle->name() << "\"\n";
+            std::cerr << "OpenSimExporter::createForceSet() error: Unsupported strap type in Muscle ID=\"" << muscle->name() << "\"\n";
             break;
         }
-        XMLInitiateTag(&m_xmlString, "PathWrapSet"s);
-        XMLTagAndContent(&m_xmlString, "objects"s, ""s);
-        XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-        XMLTerminateTag(&m_xmlString, "PathWrapSet"s);
+        xmlInitiateTag(&m_xmlString, "PathWrapSet"s);
+        xmlTagAndContent(&m_xmlString, "objects"s, ""s);
+        xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+        xmlTerminateTag(&m_xmlString, "PathWrapSet"s);
 
-        XMLTerminateTag(&m_xmlString, "GeometryPath"s);
+        xmlTerminateTag(&m_xmlString, "GeometryPath"s);
 
         while (true)
         {
             if (MAMuscle *maMuscle = dynamic_cast<MAMuscle *>(muscle))
             {
-                XMLTagAndContent(&m_xmlString, "max_isometric_force"s, GSUtil::ToString(maMuscle->pca() * maMuscle->forcePerUnitArea()));
-                XMLTagAndContent(&m_xmlString, "optimal_fiber_length"s, GSUtil::ToString(maMuscle->fibreLength()));
-                double tendonLength = strap->Length() - maMuscle->fibreLength();
-                XMLTagAndContent(&m_xmlString, "tendon_slack_length"s, GSUtil::ToString(std::max(tendonLength, 0.001)));
-                XMLTagAndContent(&m_xmlString, "pennation_angle_at_optimal"s, "0"s);
-                XMLTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::ToString(maMuscle->vMaxFactor()));
-                XMLTagAndContent(&m_xmlString, "activation_time_constant"s, "0.015"s);
-                XMLTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.050"s);
-                XMLTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
-                XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);               
+                xmlTagAndContent(&m_xmlString, "max_isometric_force"s, GSUtil::toString(maMuscle->pca() * maMuscle->forcePerUnitArea()));
+                xmlTagAndContent(&m_xmlString, "optimal_fiber_length"s, GSUtil::toString(maMuscle->fibreLength()));
+                double tendonLength = strap->length() - maMuscle->fibreLength();
+                xmlTagAndContent(&m_xmlString, "tendon_slack_length"s, GSUtil::toString(std::max(tendonLength, 0.001)));
+                xmlTagAndContent(&m_xmlString, "pennation_angle_at_optimal"s, "0"s);
+                xmlTagAndContent(&m_xmlString, "max_contraction_velocity"s, GSUtil::toString(maMuscle->vMaxFactor()));
+                xmlTagAndContent(&m_xmlString, "activation_time_constant"s, "0.015"s);
+                xmlTagAndContent(&m_xmlString, "deactivation_time_constant"s, "0.050"s);
+                xmlTagAndContent(&m_xmlString, "default_activation"s, "0.01"s);
+                xmlTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
 
                 if (m_mocoExport)
                 {
-                    XMLTagAndContent(&m_xmlString, "ignore_tendon_compliance"s, "true"s);
-                    XMLTagAndContent(&m_xmlString, "ignore_activation_dynamics"s, "true"s);
-                    XMLTagAndContent(&m_xmlString, "default_normalized_tendon_force"s, "0.5"s);
-                    XMLTagAndContent(&m_xmlString, "active_force_width_scale"s, "1.0"s);
-                    XMLTagAndContent(&m_xmlString, "fiber_damping"s, "0.01"s);
-                    XMLTagAndContent(&m_xmlString, "passive_fiber_strain_at_one_norm_force"s, "0.6"s);
-                    XMLTagAndContent(&m_xmlString, "tendon_strain_at_one_norm_force"s, "0.06"s);
-                    XMLTagAndContent(&m_xmlString, "ignore_passive_fiber_force"s, "true"s);
-                    XMLTagAndContent(&m_xmlString, "tendon_compliance_dynamics_mode"s, "explicit"s);
+                    xmlTagAndContent(&m_xmlString, "ignore_tendon_compliance"s, "true"s);
+                    xmlTagAndContent(&m_xmlString, "ignore_activation_dynamics"s, "true"s);
+                    xmlTagAndContent(&m_xmlString, "default_normalized_tendon_force"s, "0.5"s);
+                    xmlTagAndContent(&m_xmlString, "active_force_width_scale"s, "1.0"s);
+                    xmlTagAndContent(&m_xmlString, "fiber_damping"s, "0.01"s);
+                    xmlTagAndContent(&m_xmlString, "passive_fiber_strain_at_one_norm_force"s, "0.6"s);
+                    xmlTagAndContent(&m_xmlString, "tendon_strain_at_one_norm_force"s, "0.06"s);
+                    xmlTagAndContent(&m_xmlString, "ignore_passive_fiber_force"s, "true"s);
+                    xmlTagAndContent(&m_xmlString, "tendon_compliance_dynamics_mode"s, "explicit"s);
                 }
                 else
                 {
-                    XMLTagAndContent(&m_xmlString, "optimal_force"s, "1"s);
-                    XMLTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
-                    XMLTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
-                    XMLTagAndContent(&m_xmlString, "KshapeActive"s, "0.45"s);
-                    XMLTagAndContent(&m_xmlString, "KshapePassive"s, "5"s);
-                    XMLTagAndContent(&m_xmlString, "Af"s, "0.25"s);
-                    XMLTagAndContent(&m_xmlString, "Flen"s, "1.4"s);
-                    XMLTagAndContent(&m_xmlString, "fv_linear_extrap_threshold"s, "0.95"s);
-                    XMLTagAndContent(&m_xmlString, "maximum_pennation_angle"s, "1.47062890563"s);
-                    XMLTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
+                    xmlTagAndContent(&m_xmlString, "optimal_force"s, "1"s);
+                    xmlTagAndContent(&m_xmlString, "FmaxTendonStrain"s, "0.06"s);
+                    xmlTagAndContent(&m_xmlString, "FmaxMuscleStrain"s, "0.6"s);
+                    xmlTagAndContent(&m_xmlString, "KshapeActive"s, "0.45"s);
+                    xmlTagAndContent(&m_xmlString, "KshapePassive"s, "5"s);
+                    xmlTagAndContent(&m_xmlString, "Af"s, "0.25"s);
+                    xmlTagAndContent(&m_xmlString, "Flen"s, "1.4"s);
+                    xmlTagAndContent(&m_xmlString, "fv_linear_extrap_threshold"s, "0.95"s);
+                    xmlTagAndContent(&m_xmlString, "maximum_pennation_angle"s, "1.47062890563"s);
+                    xmlTagAndContent(&m_xmlString, "minimum_activation"s, "0.01"s);
                 }
                 break;
             }
-            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
+            std::cerr << "OpenSimExporter::createForceSet() error: Unsupported muscle type in Muscle ID=\"" << muscle->name() << "\"\n";
             break;
         }
 
-        if (m_mocoExport) { XMLTerminateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s); }
-        else { XMLTerminateTag(&m_xmlString, "Thelen2003Muscle"s); }
+        if (m_mocoExport) { xmlTerminateTag(&m_xmlString, "DeGrooteFregly2016Muscle"s); }
+        else { xmlTerminateTag(&m_xmlString, "Thelen2003Muscle"s); }
     }
 
     // we need to add the coordinate limit forces here so the joint limits are enforced
-    for (auto &&jointIter : *m_simulation->GetJointList())
+    for (auto &&jointIter : *m_simulation->jointList())
     {
         while (true)
         {
             if (const HingeJoint *hingeJoint = dynamic_cast<const HingeJoint *>(jointIter.second.get()))
             {
-                XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit"s}});
-                XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
-                XMLTagAndContent(&m_xmlString, "coordinate"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s);
-                XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                xmlInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit"s}});
+                xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                xmlTagAndContent(&m_xmlString, "coordinate"s, m_legalNameMap[jointIter.second->name()] + "_angle_r"s);
+                xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
                 double stopSpring = hingeJoint->stopSpring();
-                if (stopSpring < 0) { stopSpring = m_simulation->GetGlobal()->SpringConstant(); }
+                if (stopSpring < 0) { stopSpring = m_simulation->global()->springConstant(); }
                 double stopDamp = hingeJoint->stopDamp();
-                if (stopDamp < 0) { stopDamp = m_simulation->GetGlobal()->DampingConstant(); }
-                XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
+                if (stopDamp < 0) { stopDamp = m_simulation->global()->dampingConstant(); }
+                xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
                 pgd::Vector2 stops = hingeJoint->stops();
-                stops.Set(pgd::RadToDeg(-stops[1]), pgd::RadToDeg(-stops[0]));
-                XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(stops[0]));
-                XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(stops[1]));
-                XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((stops[1] - stops[0]) / 1000));
-                XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+                stops.set(pgd::RadToDeg(-stops[1]), pgd::RadToDeg(-stops[0]));
+                xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(stops[0]));
+                xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(stops[1]));
+                xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((stops[1] - stops[0]) / 1000));
+                xmlTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
                 break;
             }
             if (const BallJoint *ballJoint = dynamic_cast<const BallJoint *>(jointIter.second.get()))
@@ -756,50 +756,50 @@ void OpenSimExporter::CreateForceSet()
                 {
                     auto stops = ballJoint->stops();
                     pgd::Vector2 degStops;
-                    XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_0"s}});
-                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
-                    XMLTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_0"s);
-                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    xmlInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_0"s}});
+                    xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    xmlTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[ballJoint->name()] + "_coord_0"s);
+                    xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
                     double stopSpring = 1000000;
                     double stopDamp = 1000000;
-                    XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                    XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                    XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
-                    degStops.Set(pgd::RadToDeg(-(*stops)[0].x), pgd::RadToDeg(-(*stops)[0].y));
-                    XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(degStops[0]));
-                    XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(degStops[1]));
-                    XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((degStops[1] - degStops[0]) / 1000));
-                    XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+                    xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                    xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                    xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
+                    degStops.set(pgd::RadToDeg(-(*stops)[0].x), pgd::RadToDeg(-(*stops)[0].y));
+                    xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(degStops[0]));
+                    xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(degStops[1]));
+                    xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((degStops[1] - degStops[0]) / 1000));
+                    xmlTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
 
-                    XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_1"s}});
-                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
-                    XMLTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[jointIter.second->name()] + "_coord_1"s);
-                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    xmlInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_1"s}});
+                    xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    xmlTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[jointIter.second->name()] + "_coord_1"s);
+                    xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
                     stopSpring = 1000000;
                     stopDamp = 1000000;
-                    XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                    XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                    XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
-                    degStops.Set(pgd::RadToDeg(-(*stops)[1].x), pgd::RadToDeg(-(*stops)[1].y));
-                    XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(degStops[0]));
-                    XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(degStops[1]));
-                    XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((degStops[1] - degStops[0]) / 1000));
-                    XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+                    xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                    xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                    xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
+                    degStops.set(pgd::RadToDeg(-(*stops)[1].x), pgd::RadToDeg(-(*stops)[1].y));
+                    xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(degStops[0]));
+                    xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(degStops[1]));
+                    xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((degStops[1] - degStops[0]) / 1000));
+                    xmlTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
 
-                    XMLInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_2"s}});
-                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
-                    XMLTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[jointIter.second->name()] + "_coord_2"s);
-                    XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    xmlInitiateTag(&m_xmlString, "CoordinateLimitForce"s, {{"name"s, m_legalNameMap[jointIter.second->name()] + "_limit_2"s}});
+                    xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                    xmlTagAndContent(&m_xmlString, "coordinate"s, "ball_"s + m_legalNameMap[jointIter.second->name()] + "_coord_2"s);
+                    xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
                     stopSpring = 1000000;
                     stopDamp = 1000000;
-                    XMLTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                    XMLTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::ToString(stopSpring)); // Nm/degree
-                    XMLTagAndContent(&m_xmlString, "damping"s, GSUtil::ToString(stopDamp));
-                    degStops.Set(pgd::RadToDeg(-(*stops)[2].x), pgd::RadToDeg(-(*stops)[2].y));
-                    XMLTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::ToString(degStops[0]));
-                    XMLTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::ToString(degStops[1]));
-                    XMLTagAndContent(&m_xmlString, "transition"s, GSUtil::ToString((degStops[1] - degStops[0]) / 1000));
-                    XMLTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
+                    xmlTagAndContent(&m_xmlString, "upper_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                    xmlTagAndContent(&m_xmlString, "lower_stiffness"s, GSUtil::toString(stopSpring)); // Nm/degree
+                    xmlTagAndContent(&m_xmlString, "damping"s, GSUtil::toString(stopDamp));
+                    degStops.set(pgd::RadToDeg(-(*stops)[2].x), pgd::RadToDeg(-(*stops)[2].y));
+                    xmlTagAndContent(&m_xmlString, "lower_limit"s, GSUtil::toString(degStops[0]));
+                    xmlTagAndContent(&m_xmlString, "upper_limit"s, GSUtil::toString(degStops[1]));
+                    xmlTagAndContent(&m_xmlString, "transition"s, GSUtil::toString((degStops[1] - degStops[0]) / 1000));
+                    xmlTerminateTag(&m_xmlString, "CoordinateLimitForce"s);
                 }
 
                 break;
@@ -812,9 +812,9 @@ void OpenSimExporter::CreateForceSet()
     // we assume that the only forces we want are between the contacts and the floor
     // first get the name of the floor geom
     std::string floorName;
-    for (auto &&geomIter : *m_simulation->GetGeomList()) { if (dynamic_cast<PlaneGeom *>(geomIter.second.get())) { floorName = geomIter.first; } }
+    for (auto &&geomIter : *m_simulation->geomList()) { if (dynamic_cast<PlaneGeom *>(geomIter.second.get())) { floorName = geomIter.first; } }
     // now create all the forces
-    for (auto &&geomIter : *m_simulation->GetGeomList())
+    for (auto &&geomIter : *m_simulation->geomList())
     {
         Geom *geom = geomIter.second.get();
         while (true)
@@ -824,157 +824,157 @@ void OpenSimExporter::CreateForceSet()
             {
                 if (m_mocoExport)
                 {
-                    XMLInitiateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
+                    xmlInitiateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
 
-                    XMLTagAndContent(&m_xmlString, "socket_sphere"s, "/contactgeometryset/"s + m_legalNameMap[sphereGeom->name()]);
-                    XMLTagAndContent(&m_xmlString, "socket_half_space"s, "/contactgeometryset/"s + m_legalNameMap[floorName]);
-                    XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::ToString(sphereGeom->GetContactSpringConstant()));
-                    XMLTagAndContent(&m_xmlString, "dissipation"s, GSUtil::ToString(2));
-                    XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
-                    XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
-                    XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
-                    XMLTagAndContent(&m_xmlString, "transition_velocity"s, GSUtil::ToString(0.2));
-                    XMLTagAndContent(&m_xmlString, "derivative_smoothing"s, GSUtil::ToString(1.0e-05));
-                    XMLTagAndContent(&m_xmlString, "hertz_smoothing"s, GSUtil::ToString(300));
-                    XMLTagAndContent(&m_xmlString, "hunt_crossley_smoothing"s, GSUtil::ToString(50));
+                    xmlTagAndContent(&m_xmlString, "socket_sphere"s, "/contactgeometryset/"s + m_legalNameMap[sphereGeom->name()]);
+                    xmlTagAndContent(&m_xmlString, "socket_half_space"s, "/contactgeometryset/"s + m_legalNameMap[floorName]);
+                    xmlTagAndContent(&m_xmlString, "stiffness"s, GSUtil::toString(sphereGeom->contactSpringConstant()));
+                    xmlTagAndContent(&m_xmlString, "dissipation"s, GSUtil::toString(2));
+                    xmlTagAndContent(&m_xmlString, "static_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                    xmlTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                    xmlTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                    xmlTagAndContent(&m_xmlString, "transition_velocity"s, GSUtil::toString(0.2));
+                    xmlTagAndContent(&m_xmlString, "derivative_smoothing"s, GSUtil::toString(1.0e-05));
+                    xmlTagAndContent(&m_xmlString, "hertz_smoothing"s, GSUtil::toString(300));
+                    xmlTagAndContent(&m_xmlString, "hunt_crossley_smoothing"s, GSUtil::toString(50));
 
-                    XMLTerminateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s);
+                    xmlTerminateTag(&m_xmlString, "SmoothSphereHalfSpaceForce"s);
                 }
                 else
                 {
-                XMLInitiateTag(&m_xmlString, "HuntCrossleyForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
-                XMLTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
+                xmlInitiateTag(&m_xmlString, "HuntCrossleyForce"s, {{"name"s, m_legalNameMap[sphereGeom->name()] + "_contact_force"s}});
+                xmlTagAndContent(&m_xmlString, "appliesForce"s, "true"s);
 
-                XMLInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s, {{"name"s, "contact_parameters"s}});
-                XMLInitiateTag(&m_xmlString, "objects"s);
-                XMLInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
-                XMLTagAndContent(&m_xmlString, "geometry"s, m_legalNameMap[floorName] + " "s + m_legalNameMap[sphereGeom->name()]);
-                XMLTagAndContent(&m_xmlString, "stiffness"s, GSUtil::ToString(sphereGeom->GetContactSpringConstant()));
-                XMLTagAndContent(&m_xmlString, "dissipation"s, "0.5"s);
-                XMLTagAndContent(&m_xmlString, "static_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
-                XMLTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
-                XMLTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::ToString(sphereGeom->GetContactMu()));
-                XMLTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
-                XMLTerminateTag(&m_xmlString, "objects"s);
-                XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-                XMLTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s);
+                xmlInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s, {{"name"s, "contact_parameters"s}});
+                xmlInitiateTag(&m_xmlString, "objects"s);
+                xmlInitiateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
+                xmlTagAndContent(&m_xmlString, "geometry"s, m_legalNameMap[floorName] + " "s + m_legalNameMap[sphereGeom->name()]);
+                xmlTagAndContent(&m_xmlString, "stiffness"s, GSUtil::toString(sphereGeom->contactSpringConstant()));
+                xmlTagAndContent(&m_xmlString, "dissipation"s, "0.5"s);
+                xmlTagAndContent(&m_xmlString, "static_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                xmlTagAndContent(&m_xmlString, "dynamic_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                xmlTagAndContent(&m_xmlString, "viscous_friction"s, GSUtil::toString(sphereGeom->contactMu()));
+                xmlTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParameters"s);
+                xmlTerminateTag(&m_xmlString, "objects"s);
+                xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+                xmlTerminateTag(&m_xmlString, "HuntCrossleyForce::ContactParametersSet"s);
 
-                XMLTerminateTag(&m_xmlString, "HuntCrossleyForce"s);
+                xmlTerminateTag(&m_xmlString, "HuntCrossleyForce"s);
                 }
                 break;
             }
-            std::cerr << "OpenSimExporter::CreateForceSet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
+            std::cerr << "OpenSimExporter::createForceSet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
             break;
         }
     }
 
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "ForceSet"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "ForceSet"s);
 }
 
-void OpenSimExporter::CreatePathPointSet(std::string name, const std::vector<const Marker *> &markerList)
+void OpenSimExporter::createPathPointSet(std::string name, const std::vector<const Marker *> &markerList)
 {
-    XMLInitiateTag(&m_xmlString, "PathPointSet"s);
-    XMLInitiateTag(&m_xmlString, "objects"s);
+    xmlInitiateTag(&m_xmlString, "PathPointSet"s);
+    xmlInitiateTag(&m_xmlString, "objects"s);
 
     for (size_t i = 0; i < markerList.size(); i++)
     {
         const Marker *marker = markerList[i];
-        XMLInitiateTag(&m_xmlString, "PathPoint"s, {{"name"s, m_legalNameMap[name] + "-P"s + GSUtil::ToString(i + 1)}});
-        if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
-        else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
-        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
-        XMLTerminateTag(&m_xmlString, "PathPoint"s);
+        xmlInitiateTag(&m_xmlString, "PathPoint"s, {{"name"s, m_legalNameMap[name] + "-P"s + GSUtil::toString(i + 1)}});
+        if (marker->body()) { xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->body()->name()]); }
+        else { xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
+        xmlTagAndContent(&m_xmlString, "location"s, GSUtil::toString(marker->position()));
+        xmlTerminateTag(&m_xmlString, "PathPoint"s);
     }
 
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "PathPointSet"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "PathPointSet"s);
 }
 
-void OpenSimExporter::CreateMarkerSet()
+void OpenSimExporter::createMarkerSet()
 {
-    XMLInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
+    xmlInitiateTag(&m_xmlString, "MarkerSet"s, {{"name"s, "markerset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&markerIter : *m_simulation->GetMarkerList())
+    for (auto &&markerIter : *m_simulation->markerList())
     {
         Marker *marker = markerIter.second.get();
-        XMLInitiateTag(&m_xmlString, "Marker"s, {{"name"s,  m_legalNameMap[marker->name()]}});
-        if (marker->GetBody()) { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->GetBody()->name()]); }
-        else { XMLTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
-        XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(marker->GetPosition()));
-        XMLTagAndContent(&m_xmlString, "fixed"s, "true"s);
-        XMLTerminateTag(&m_xmlString, "Marker"s);
+        xmlInitiateTag(&m_xmlString, "Marker"s, {{"name"s,  m_legalNameMap[marker->name()]}});
+        if (marker->body()) { xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, "/bodyset/"s + m_legalNameMap[marker->body()->name()]); }
+        else { xmlTagAndContent(&m_xmlString, "socket_parent_frame"s, "/ground"s); }
+        xmlTagAndContent(&m_xmlString, "location"s, GSUtil::toString(marker->position()));
+        xmlTagAndContent(&m_xmlString, "fixed"s, "true"s);
+        xmlTerminateTag(&m_xmlString, "Marker"s);
     }
 
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "MarkerSet"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "MarkerSet"s);
 }
 
-void OpenSimExporter::CreateContactGeometrySet()
+void OpenSimExporter::createContactGeometrySet()
 {
-    XMLInitiateTag(&m_xmlString, "ContactGeometrySet"s, {{"name"s, "contactgeometryset"s}});
-    XMLInitiateTag(&m_xmlString, "objects"s);
+    xmlInitiateTag(&m_xmlString, "ContactGeometrySet"s, {{"name"s, "contactgeometryset"s}});
+    xmlInitiateTag(&m_xmlString, "objects"s);
 
-    for (auto &&geomIter : *m_simulation->GetGeomList())
+    for (auto &&geomIter : *m_simulation->geomList())
     {
         Geom *geom = geomIter.second.get();
         while (true)
         {
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(geom))
             {
-                XMLInitiateTag(&m_xmlString, "ContactSphere"s, {{"name"s, m_legalNameMap[sphereGeom->name()]}});
-                XMLTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->GetBody()->name()]);
-                XMLTagAndContent(&m_xmlString, "radius"s, GSUtil::ToString(sphereGeom->radius()));
-                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(sphereGeom->geomMarker()->GetPosition()));
-                XMLInitiateTag(&m_xmlString, "Appearance"s);
-                XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(sphereGeom->colour1().alpha()));
-                XMLTagAndContent(&m_xmlString, "color"s, sphereGeom->colour1().GetFloatColourRGB());
-                XMLTerminateTag(&m_xmlString, "Appearance"s);
-                XMLTerminateTag(&m_xmlString, "ContactSphere"s);
+                xmlInitiateTag(&m_xmlString, "ContactSphere"s, {{"name"s, m_legalNameMap[sphereGeom->name()]}});
+                xmlTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->body()->name()]);
+                xmlTagAndContent(&m_xmlString, "radius"s, GSUtil::toString(sphereGeom->radius()));
+                xmlTagAndContent(&m_xmlString, "location"s, GSUtil::toString(sphereGeom->geomMarker()->position()));
+                xmlInitiateTag(&m_xmlString, "Appearance"s);
+                xmlTagAndContent(&m_xmlString, "opacity"s, GSUtil::toString(sphereGeom->colour1().alpha()));
+                xmlTagAndContent(&m_xmlString, "color"s, sphereGeom->colour1().floatColourRGB());
+                xmlTerminateTag(&m_xmlString, "Appearance"s);
+                xmlTerminateTag(&m_xmlString, "ContactSphere"s);
                 break;
             }
             if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(geom))
             {
-                XMLInitiateTag(&m_xmlString, "ContactHalfSpace"s, {{"name"s, m_legalNameMap[planeGeom->name()]}});
-                XMLTagAndContent(&m_xmlString, "socket_frame"s, "/ground"s); // has to be attached to the ground
-                XMLTagAndContent(&m_xmlString, "location"s, GSUtil::ToString(planeGeom->geomMarker()->GetPosition()));
-                XMLInitiateTag(&m_xmlString, "Appearance"s);
-                XMLTagAndContent(&m_xmlString, "opacity"s, GSUtil::ToString(planeGeom->colour1().alpha()));
-                XMLTagAndContent(&m_xmlString, "color"s, planeGeom->colour1().GetFloatColourRGB());
-                XMLTerminateTag(&m_xmlString, "Appearance"s);
-                XMLInitiateTag(&m_xmlString, "SurfaceProperties"s);
-                XMLTagAndContent(&m_xmlString, "representation"s, "2"s); // representation (1:Points, 2:Wire, 3:Shaded) used to display the object
-                XMLTerminateTag(&m_xmlString, "SurfaceProperties"s);
+                xmlInitiateTag(&m_xmlString, "ContactHalfSpace"s, {{"name"s, m_legalNameMap[planeGeom->name()]}});
+                xmlTagAndContent(&m_xmlString, "socket_frame"s, "/ground"s); // has to be attached to the ground
+                xmlTagAndContent(&m_xmlString, "location"s, GSUtil::toString(planeGeom->geomMarker()->position()));
+                xmlInitiateTag(&m_xmlString, "Appearance"s);
+                xmlTagAndContent(&m_xmlString, "opacity"s, GSUtil::toString(planeGeom->colour1().alpha()));
+                xmlTagAndContent(&m_xmlString, "color"s, planeGeom->colour1().floatColourRGB());
+                xmlTerminateTag(&m_xmlString, "Appearance"s);
+                xmlInitiateTag(&m_xmlString, "SurfaceProperties"s);
+                xmlTagAndContent(&m_xmlString, "representation"s, "2"s); // representation (1:Points, 2:Wire, 3:Shaded) used to display the object
+                xmlTerminateTag(&m_xmlString, "SurfaceProperties"s);
                 // plane normal in opensim is defined by the -X axis
                 // plane normal in gaitsym is defined by the Z axis
-                pgd::Vector3 normal = planeGeom->geomMarker()->GetWorldAxis(Marker::Z);
+                pgd::Vector3 normal = planeGeom->geomMarker()->worldAxis(Marker::Z);
                 // but we now need to convert this normal to the opensim Y up coordinate system
                 pgd::Vector3 euler(-1.5707963267948966, 0, 0); // -90 degrees about the X axis converts from Z up to Y up
-                pgd::Quaternion rotation = pgd::MakeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
-                normal = pgd::QVRotate(rotation, normal);
+                pgd::Quaternion rotation = pgd::makeQFromEulerAnglesRadian(euler.x, euler.y, euler.z);
+                normal = pgd::qVRotate(rotation, normal);
                 pgd::Vector3 minusXAxis(-1, 0, 0);
-                pgd::Quaternion quaternion = pgd::FindRotation(minusXAxis, normal); // now we just need to find the rotation that maps the -X axis to this normal
-                euler = pgd::MakeEulerAnglesFromQRadian(quaternion);
-                XMLTagAndContent(&m_xmlString, "orientation"s, GSUtil::ToString(euler));
-                XMLTerminateTag(&m_xmlString, "ContactHalfSpace"s);
+                pgd::Quaternion quaternion = pgd::findRotation(minusXAxis, normal); // now we just need to find the rotation that maps the -X axis to this normal
+                euler = pgd::makeEulerAnglesFromQRadian(quaternion);
+                xmlTagAndContent(&m_xmlString, "orientation"s, GSUtil::toString(euler));
+                xmlTerminateTag(&m_xmlString, "ContactHalfSpace"s);
                 break;
             }
-            std::cerr << "OpenSimExporter::CreateContactGeometrySet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
+            std::cerr << "OpenSimExporter::createContactGeometrySet() error: Unsupported GEOM type ID=\"" << geom->name() << "\"\n";
             break;
         }
     }
 
-    XMLTerminateTag(&m_xmlString, "objects"s);
-    XMLTagAndContent(&m_xmlString, "groups"s, ""s);
-    XMLTerminateTag(&m_xmlString, "ContactGeometrySet"s);
+    xmlTerminateTag(&m_xmlString, "objects"s);
+    xmlTagAndContent(&m_xmlString, "groups"s, ""s);
+    xmlTerminateTag(&m_xmlString, "ContactGeometrySet"s);
 }
 
 
-void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes)
+void OpenSimExporter::xmlInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes)
 {
     for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
     xmlString->append("<"s + tag + " "s);
@@ -987,12 +987,12 @@ void OpenSimExporter::XMLInitiateTag(std::string *xmlString, const std::string &
     m_currentIndent += 2;
 }
 
-void OpenSimExporter::XMLTerminateTag(std::string *xmlString, const std::string &tag)
+void OpenSimExporter::xmlTerminateTag(std::string *xmlString, const std::string &tag)
 {
     m_currentIndent -= 2;
     if (m_currentIndent < 0)
     {
-        std::cerr << "OpenSimExporter::XMLTerminateTag error: indent < 0 tag=\"" << "\"\n";
+        std::cerr << "OpenSimExporter::xmlTerminateTag error: indent < 0 tag=\"" << "\"\n";
         m_currentIndent = 0;
     }
     else
@@ -1002,7 +1002,7 @@ void OpenSimExporter::XMLTerminateTag(std::string *xmlString, const std::string 
     xmlString->append("</"s + tag + ">\n"s);
 }
 
-void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content)
+void OpenSimExporter::xmlTagAndContent(std::string *xmlString, const std::string &tag, const std::string &content)
 {
     for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
     if (content.size() > 0)
@@ -1017,7 +1017,7 @@ void OpenSimExporter::XMLTagAndContent(std::string *xmlString, const std::string
     }
 }
 
-void OpenSimExporter::XMLTagAndAttributes(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes)
+void OpenSimExporter::xmlTagAndAttributes(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes)
 {
     for (int i = 0; i < m_currentIndent; i++) { xmlString->push_back(' '); }
     xmlString->append("<"s + tag + " "s);

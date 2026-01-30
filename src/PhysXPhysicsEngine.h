@@ -70,15 +70,15 @@ public:
     PhysXPhysicsEngine();
     virtual ~PhysXPhysicsEngine();
 
-    virtual std::string *Initialise(Simulation *theSimulation);
-    virtual std::string *Step();
+    virtual std::string *initialise(Simulation *theSimulation);
+    virtual std::string *step();
 
  private:
 
-    std::string *CreateBodies();
-    std::string *CreateJoints();
-    std::string *CreateGeoms();
-    std::string *MoveBodies();
+    std::string *createBodies();
+    std::string *createJoints();
+    std::string *createGeoms();
+    std::string *moveBodies();
 
     // Simulation variables
     physx::PxFoundation *m_foundation = nullptr;
@@ -88,9 +88,9 @@ public:
     physx::PxPvd *m_pvd = nullptr;
     physx::PxRigidStatic *m_world = nullptr;
 
-    float m_defaultLength = 1.0f;
-    float m_defaultSpeed = 10.0f;
-    bool m_recordMemoryAllocations = true;
+    double m_defaultLength = 1.0;
+    double m_defaultSpeed = 10.0;
+    bool m_recordMemoryAllocations = false;
 
     std::map<std::string, physx::PxRigidDynamic*> m_bodyMap;
     std::map<std::string, physx::PxJoint*> m_jointMap;

@@ -19,7 +19,7 @@ public:
     FacetedCheckerboard(size_t nx, size_t ny, double cx, double cy, const QColor &colour1, const QColor &colour2);
 
 private:
-    void CentredRect(double x, double y, double xl, double yl);
+    void centredRect(double x, double y, double xl, double yl);
 
 };
 

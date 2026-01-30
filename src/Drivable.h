@@ -22,7 +22,7 @@ public:
     Drivable();
     virtual ~Drivable();
 
-    virtual void ReceiveData(double receivedData, int64_t receiveDataStepCount);
+    virtual void receiveData(double receivedData, int64_t receiveDataStepCount);
 
 protected:
     double dataSum() const;

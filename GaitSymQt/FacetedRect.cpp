@@ -21,7 +21,7 @@ FacetedRect::FacetedRect(double lx, double ly, const QColor &blendColour, double
     size_t nSides = 4;
     double vertices[12];
     double uvs[8];
-    AllocateMemory(2);
+    allocateMemory(2);
 
     vertices[0] = -lx;
     vertices[1] = -ly;
@@ -44,7 +44,7 @@ FacetedRect::FacetedRect(double lx, double ly, const QColor &blendColour, double
     uvs[6] = 0;
     uvs[7] = 1,
 
-    AddPolygon(vertices, nSides, nullptr, uvs);
+    addPolygon(vertices, nSides, nullptr, uvs);
 
 //    qDebug() << "FacetedRect " << GetNumTriangles() << " triangles created\n";
 }

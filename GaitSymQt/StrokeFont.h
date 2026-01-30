@@ -16,7 +16,7 @@ public:
 
     enum MarkerCode { XShape };
 
-    void StrokeString(const char *string,    /* character string */
+    void strokeString(const char *string,    /* character string */
                       int length,            /* number of characters to draw */
                       float x,               /* x coordinate of bottom left of character */
                       float y,               /* y coordinate ... */
@@ -27,7 +27,7 @@ public:
                       const float *matrix,
                       const float *translation);
 
-    void StrokeCharacter(int ichar,            /* character code */
+    void strokeCharacter(int ichar,            /* character code */
                          float x,              /* x coordinate of bottom left of character */
                          float y,              /* y coordinate ... */
                          float cwidth,         /* cwidth of character cell */
@@ -35,7 +35,7 @@ public:
                          const float *matrix,
                          const float *translation);
 
-    void StrokeMarker(
+    void strokeMarker(
                              MarkerCode code,       /* marker code */
                              float x,               /* x coordinate of centre of marker */
                              float y,               /* y coordinate ... */
@@ -44,36 +44,36 @@ public:
                              const float *matrix,
                              const float *translation);
 
-    void AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2);
-    void AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2, const float *matrix, const float *translation);
-    void StartLine() { m_start_line_flag = true; }
-    void AddPoint(float ix1, float iy1, float iz1);
-    void AddPoint(float ix1, float iy1, float iz1, const float *matrix, const float *translation);
+    void addLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2);
+    void addLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2, const float *matrix, const float *translation);
+    void startLine() { m_startLineFlag = true; }
+    void addPoint(float ix1, float iy1, float iz1);
+    void addPoint(float ix1, float iy1, float iz1, const float *matrix, const float *translation);
 
-    void AddCircle(float cx, float cy, float cz, float r, int num_segments);
-    void AddArc(float cx, float cy, float cz, float r, float start_angle, float arc_angle, int num_segments);
+    void addCircle(float cx, float cy, float cz, float r, int num_segments);
+    void addArc(float cx, float cy, float cz, float r, float start_angle, float arc_angle, int num_segments);
 
-    void SetDisplayPosition(double x, double y, double z);
-    void SetDisplayRotation(const pgd::Matrix3x3 &R);
-    void SetDisplayRotationFromQuaternion(const pgd::Quaternion &q);
-    const pgd::Vector3 &GetDisplayPosition()  { return m_displayPosition; }
-    const pgd::Matrix3x3 &GetDisplayRotation()  { return m_displayRotation; }
-    void Move(double x, double y, double z);
-    void Scale(double x, double y, double z);
+    void setDisplayPosition(double x, double y, double z);
+    void setDisplayRotation(const pgd::Matrix3x3 &R);
+    void setDisplayRotationFromQuaternion(const pgd::Quaternion &q);
+    const pgd::Vector3 &displayPosition()  { return m_displayPosition; }
+    const pgd::Matrix3x3 &displayRotation()  { return m_displayRotation; }
+    void move(double x, double y, double z);
+    void scale(double x, double y, double z);
 
-    void SetZ(float z) { m_z = z; }
-    void SetRGBA(float r, float g, float b, float a) { m_r = r; m_g = g; m_b = b; m_a = a; }
+    void setZ(float z) { m_z = z; }
+    void setRGBA(float r, float g, float b, float a) { m_r = r; m_g = g; m_b = b; m_a = a; }
 
-    void ZeroLineBuffer() { n_lines = 0; }
-    size_t GetNumLines() { return n_lines; }
-    float *GetLineBuffer() { return line_buffer; }
+    void zeroLineBuffer() { m_numLines = 0; }
+    size_t numLines() { return m_numLines; }
+    float *lineBuffer() { return m_lineBuffer; }
 
     SimulationWidget *glWidget() const;
     void setGlWidget(SimulationWidget *glWidget);
     QMatrix4x4 vpMatrix() const;
     void setVpMatrix(const QMatrix4x4 &vpMatrix);
-    void Debug();
-    virtual void Draw();
+    void debug();
+    virtual void draw();
 
 private:
     float m_z = 0;
@@ -82,14 +82,14 @@ private:
     float m_b = 1;
     float m_a = 1;
 
-    float m_last_x = 0;
-    float m_last_y = 0;
-    float m_last_z = 0;
-    bool m_start_line_flag = true;
+    float m_lastX = 0;
+    float m_lastY = 0;
+    float m_lastZ = 0;
+    bool m_startLineFlag = true;
 
-    size_t n_lines = 0;
-    size_t max_lines = 100000;
-    float *line_buffer = nullptr;
+    size_t m_numLines = 0;
+    size_t m_maxLines = 100000;
+    float *m_lineBuffer = nullptr;
 
     pgd::Vector3 m_displayPosition = {0, 0, 0};
     pgd::Vector3 m_displayScale = {1, 1, 1};

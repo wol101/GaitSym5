@@ -31,39 +31,39 @@ Body::Body()
 {
 }
 
-void Body::SetConstructionPosition(double x, double y, double z)
+void Body::setConstructionPosition(double x, double y, double z)
 {
     m_constructionPosition[0] = x;
     m_constructionPosition[1] = y;
     m_constructionPosition[2] = z;
 }
 
-void Body::SetConstructionPosition(const pgd::Vector3 &constructionPosition)
+void Body::setConstructionPosition(const pgd::Vector3 &constructionPosition)
 {
     m_constructionPosition = constructionPosition;
 }
 
-pgd::Vector3 Body::GetConstructionPosition() const
+pgd::Vector3 Body::constructionPosition() const
 {
     return m_constructionPosition;
 }
 
-void Body::SetConstructionDensity(double constructionDensity)
+void Body::setConstructionDensity(double constructionDensity)
 {
     m_constructionDensity = constructionDensity;
 }
 
-double Body::GetConstructionDensity() const
+double Body::constructionDensity() const
 {
     return m_constructionDensity;
 }
 
-void Body::SetPosition(double x, double y, double z)
+void Body::setPosition(double x, double y, double z)
 {
-    m_currentPosition.Set(x, y, z);
+    m_currentPosition.set(x, y, z);
 }
 
-void Body::SetQuaternion(double n, double x, double y, double z)
+void Body::setQuaternion(double n, double x, double y, double z)
 {
     m_currentQuaternion[0] = n;
     m_currentQuaternion[1] = x;
@@ -71,12 +71,12 @@ void Body::SetQuaternion(double n, double x, double y, double z)
     m_currentQuaternion[3] = z;
 }
 
-void Body::SetPosition(const pgd::Vector3 &position)
+void Body::setPosition(const pgd::Vector3 &position)
 {
     m_currentPosition = position;
 }
 
-void Body::SetQuaternion(const pgd::Quaternion &quaternion)
+void Body::setQuaternion(const pgd::Quaternion &quaternion)
 {
     m_currentQuaternion = quaternion;
 }
@@ -85,67 +85,67 @@ void Body::SetQuaternion(const pgd::Quaternion &quaternion)
 // x y z - world coordinates
 // bodyName x y z - position relative to bodyName local coordinate system
 // bodyName x1 y1 z1 x2 y2 z2 - position such that x1,y1,z1 on bodyName has same world coordinates as x2,y2,z2 on local body
-std::string *Body::SetPosition(const std::string &buf)
+std::string *Body::setPosition(const std::string &buf)
 {
     std::vector<std::string> tokens;
     pystring::split(buf, tokens);
 
     if (tokens.size() == 1) // it must be a marker
     {
-        Marker *marker = simulation()->GetMarker(tokens[0]);
+        Marker *marker = simulation()->getMarker(tokens[0]);
         if (marker == nullptr)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" marker not found"s);
             return lastErrorPtr();
         }
-        pgd::Vector3 wp = marker->GetWorldPosition();
-        this->SetPosition(wp.x, wp.y, wp.z);
+        pgd::Vector3 wp = marker->worldPosition();
+        this->setPosition(wp.x, wp.y, wp.z);
         return nullptr;
     }
 
     if (tokens.size() == 2) // two marker definition
     {
-        Marker *marker1 = simulation()->GetMarker(tokens[0]);
-        Marker *marker2 = simulation()->GetMarker(tokens[1]);
+        Marker *marker1 = simulation()->getMarker(tokens[0]);
+        Marker *marker2 = simulation()->getMarker(tokens[1]);
         if (marker1 == nullptr || marker2 == nullptr)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" markers not found"s);
             return lastErrorPtr();
         }
         // find the marker that is relative to this body and make it marker1
-        if (marker2->GetBody() == this) std::swap(marker1, marker2);
-        if (marker2->GetBody() == this)
+        if (marker2->body() == this) std::swap(marker1, marker2);
+        if (marker2->body() == this)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" Only one marker of pair must be relative to the body"s);
             return lastErrorPtr();
         }
-        if (marker1->GetBody() != this)
+        if (marker1->body() != this)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" Only one marker of pair must be relative to the body"s);
             return lastErrorPtr();
         }
 
-        pgd::Vector3 target = marker2->GetWorldPosition();
-        pgd::Vector3 current = marker2->GetWorldPosition();
+        pgd::Vector3 target = marker2->worldPosition();
+        pgd::Vector3 current = marker2->worldPosition();
         pgd::Vector3 difference = target - current;
-        this->SetPosition(difference.x, difference.y, difference.z);
+        this->setPosition(difference.x, difference.y, difference.z);
         return nullptr;
     }
 
     if (tokens.size() == 3)
     {
-        this->SetPosition(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        this->setPosition(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
     if (tokens.size() == 4)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
             {
-                this->SetPosition(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+                this->setPosition(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
                 return nullptr;
             }
             else
@@ -157,17 +157,17 @@ std::string *Body::SetPosition(const std::string &buf)
         else
         {
             // pgd::Vector3 result;
-            // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
+            // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
             //    pgd::Vector3 result;
-            //    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result); // convert from body to world
-            pgd::Vector3 bodyWorldPosition = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->GetPosition());
-            this->SetPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
+            //    dBodyGetRelPointPos(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result); // convert from body to world
+            pgd::Vector3 bodyWorldPosition = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
+            this->setPosition(bodyWorldPosition.x, bodyWorldPosition.y, bodyWorldPosition.z);
             return nullptr;
         }
     }
     if (tokens.size() == 7)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (!theBody)
         {
             setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" reference body not found"s);
@@ -175,14 +175,14 @@ std::string *Body::SetPosition(const std::string &buf)
         }
         // get world coordinates of x1,y1,z1
         pgd::Vector3 world1, world2, pos;
-        // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), world1);
-        // dBodyGetRelPointPos (m_bodyID, GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]), world2);
-        world1 = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]))) + pgd::Vector3(theBody->GetPosition());
-        world2 = pgd::QVRotate(this->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[4]), GSUtil::Double(tokens[5]), GSUtil::Double(tokens[6]))) + pgd::Vector3(this->GetPosition());
+        // dBodyGetRelPointPos (theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), world1);
+        // dBodyGetRelPointPos (m_bodyID, GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]), world2);
+        world1 = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]))) + pgd::Vector3(theBody->position());
+        world2 = pgd::qVRotate(this->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[4]), GSUtil::toDouble(tokens[5]), GSUtil::toDouble(tokens[6]))) + pgd::Vector3(this->position());
         // add the error to the current position
-        pgd::Vector3 p = this->GetPosition();
+        pgd::Vector3 p = this->position();
         for (size_t i = 0; i < 3; i++) pos[i] = p[i] + (world1[i] - world2[i]);
-        this->SetPosition(pos[0], pos[1], pos[2]);
+        this->setPosition(pos[0], pos[1], pos[2]);
 
         // for checking
         // dBodyGetRelPointPos (m_BodyID, local2[0], local2[1], local2[2], world2);
@@ -198,40 +198,40 @@ std::string *Body::SetPosition(const std::string &buf)
 // note quaternion is (qs,qx,qy,qz)
 // s x y z - world coordinates
 // bodyName s x y z - position relative to bodyName local coordinate system
-std::string *Body::SetQuaternion(const std::string &buf)
+std::string *Body::setQuaternion(const std::string &buf)
 {
     std::vector<std::string> tokens;
     pystring::split(buf, tokens);
 
     if (tokens.size() == 1) // it must be a marker
     {
-        Marker *marker = simulation()->GetMarker(tokens[0]);
+        Marker *marker = simulation()->getMarker(tokens[0]);
         if (marker == nullptr)
         {
             setLastError("Body ID=\""s + name() +"\" Quaternion=\""s + buf + "\" Cannot find marker"s);
             return lastErrorPtr();
         }
-        pgd::Quaternion wq = marker->GetWorldQuaternion();
-        this->SetQuaternion(wq.n, wq.x, wq.y, wq.z);
+        pgd::Quaternion wq = marker->worldQuaternion();
+        this->setQuaternion(wq.n, wq.x, wq.y, wq.z);
         return nullptr;
     }
 
     if (tokens.size() == 4)
     {
-        pgd::Quaternion wq = GSUtil::GetQuaternion(tokens, 0);
-        this->SetQuaternion(wq.n, wq.x, wq.y, wq.z);
+        pgd::Quaternion wq = GSUtil::toQuaternion(tokens, 0);
+        this->setQuaternion(wq.n, wq.x, wq.y, wq.z);
         return nullptr;
     }
 
     if (tokens.size() == 5)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
             {
-                pgd::Quaternion wq = GSUtil::GetQuaternion(tokens, 1);
-                this->SetQuaternion(wq.n, wq.x, wq.y, wq.z);
+                pgd::Quaternion wq = GSUtil::toQuaternion(tokens, 1);
+                this->setQuaternion(wq.n, wq.x, wq.y, wq.z);
                 return nullptr;
             }
             else
@@ -240,22 +240,22 @@ std::string *Body::SetQuaternion(const std::string &buf)
                 return lastErrorPtr();
             }
         }
-        pgd::Quaternion qBody = theBody->GetQuaternion();
-        pgd::Quaternion qIn = GSUtil::GetQuaternion(tokens, 1);
+        pgd::Quaternion qBody = theBody->quaternion();
+        pgd::Quaternion qIn = GSUtil::toQuaternion(tokens, 1);
         pgd::Quaternion qNew = qBody * qIn;
-        this->SetQuaternion(qNew.n, qNew.x, qNew.y, qNew.z);
+        this->setQuaternion(qNew.n, qNew.x, qNew.y, qNew.z);
         return nullptr;
     }
     setLastError("Body ID=\""s + name() +"\" Position=\""s + buf + "\" wrong number of tokens"s);
     return lastErrorPtr();
 }
 
-void Body::SetLinearVelocity(double x, double y, double z)
+void Body::setLinearVelocity(double x, double y, double z)
 {
-    m_currentLinearVelocity.Set(x, y, z);
+    m_currentLinearVelocity.set(x, y, z);
 }
 
-void Body::SetLinearVelocity(const pgd::Vector3 &linearVelocity)
+void Body::setLinearVelocity(const pgd::Vector3 &linearVelocity)
 {
     m_currentLinearVelocity = linearVelocity;
 }
@@ -263,25 +263,25 @@ void Body::SetLinearVelocity(const pgd::Vector3 &linearVelocity)
 // parses the linear velocity allowing a relative velocity specified by BODY ID
 // x y z - world coordinates
 // bodyName x y z - position relative to bodyName local coordinate system
-std::string *Body::SetLinearVelocity(const std::string &buf)
+std::string *Body::setLinearVelocity(const std::string &buf)
 {
     std::vector<std::string> tokens;
     pystring::split(buf, tokens);
 
     if (tokens.size() == 3)
     {
-        this->SetLinearVelocity(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        this->setLinearVelocity(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
     if (tokens.size() == 4)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
             {
-                this->SetLinearVelocity(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+                this->setLinearVelocity(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
                 return nullptr;
             }
             else
@@ -293,11 +293,11 @@ std::string *Body::SetLinearVelocity(const std::string &buf)
         else
         {
             // pgd::Vector3 result;
-            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            pgd::Vector3 worldVelocity = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])));
-            pgd::Vector3 vRel = theBody->GetLinearVelocity();
+            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
+            pgd::Vector3 worldVelocity = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
+            pgd::Vector3 vRel = theBody->linearVelocity();
 
-            SetLinearVelocity(worldVelocity[0] + vRel[0], worldVelocity[1] + vRel[1], worldVelocity[2] + vRel[2]);
+            setLinearVelocity(worldVelocity[0] + vRel[0], worldVelocity[1] + vRel[1], worldVelocity[2] + vRel[2]);
             return nullptr;
         }
     }
@@ -305,27 +305,27 @@ std::string *Body::SetLinearVelocity(const std::string &buf)
     return lastErrorPtr();
 }
 
-void Body::SetPositionDelta(double x, double y, double z)
+void Body::setPositionDelta(double x, double y, double z)
 {
     m_currentPosition[0] += x;
     m_currentPosition[1] += y;
     m_currentPosition[2] += z;
 }
 
-void Body::SetQuaternionDelta(double n, double x, double y, double z)
+void Body::setQuaternionDelta(double n, double x, double y, double z)
 {
     pgd::Quaternion qb = {n, x, y, z};
     m_currentQuaternion = qb * m_currentQuaternion;
 }
 
-double Body::GetLinearKineticEnergy()
+double Body::linearKineticEnergy()
 {
     // linear KE = 0.5 m v^2
-    double linearKE = 0.5 * m_mass * m_currentLinearVelocity.Magnitude2();
+    double linearKE = 0.5 * m_mass * m_currentLinearVelocity.magnitude2();
     return linearKE;
 }
 
-void Body::GetLinearKineticEnergy(pgd::Vector3 *ke)
+void Body::getLinearKineticEnergy(pgd::Vector3 *ke)
 {
     // linear KE = 0.5 m v^2
     ke->x = 0.5 * m_mass * m_currentLinearVelocity.x * m_currentLinearVelocity.x;
@@ -334,7 +334,7 @@ void Body::GetLinearKineticEnergy(pgd::Vector3 *ke)
     return;
 }
 
-double Body::GetRotationalKineticEnergy()
+double Body::rotationalKineticEnergy()
 {
 
     // rotational KE = 0.5 * o(t) * I * o
@@ -343,20 +343,20 @@ double Body::GetRotationalKineticEnergy()
     return rotationalKE;
 }
 
-double Body::GetGravitationalPotentialEnergy()
+double Body::gravitationalPotentialEnergy()
 {
     // gravitational PE = mgh
-    pgd::Vector3 g = simulation()->GetGlobal()->Gravity();
+    pgd::Vector3 g = simulation()->global()->gravity();
     double gravitationalPotentialEnergy = -1 * m_mass * (g[0]*m_currentPosition[0] + g[1]*m_currentPosition[1] + g[2]*m_currentPosition[2]);
     return gravitationalPotentialEnergy;
 }
 
-void Body::SetAngularVelocity(double x, double y, double z)
+void Body::setAngularVelocity(double x, double y, double z)
 {
-    m_currentAngularVelocity.Set(x, y, z);
+    m_currentAngularVelocity.set(x, y, z);
 }
 
-void Body::SetAngularVelocity(const pgd::Vector3 &angularVelocity)
+void Body::setAngularVelocity(const pgd::Vector3 &angularVelocity)
 {
     m_currentAngularVelocity = angularVelocity;
 }
@@ -364,25 +364,25 @@ void Body::SetAngularVelocity(const pgd::Vector3 &angularVelocity)
 // parses the angular velocity allowing a relative angular velocity specified by BODY ID
 // x y z - world coordinates
 // bodyName x y z - position relative to bodyName local coordinate system
-std::string *Body::SetAngularVelocity(const std::string &buf)
+std::string *Body::setAngularVelocity(const std::string &buf)
 {
     std::vector<std::string> tokens;
     pystring::split(buf, tokens);
 
     if (tokens.size() == 3)
     {
-        SetAngularVelocity(GSUtil::Double(tokens[0]), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]));
+        setAngularVelocity(GSUtil::toDouble(tokens[0]), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]));
         return nullptr;
     }
 
     if (tokens.size() == 4)
     {
-        Body *theBody = simulation()->GetBody(tokens[0]);
+        Body *theBody = simulation()->getBody(tokens[0]);
         if (theBody == nullptr)
         {
             if (tokens[0] == "World"s)
             {
-                SetAngularVelocity(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]));
+                setAngularVelocity(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]));
                 return nullptr;
             }
             else
@@ -394,10 +394,10 @@ std::string *Body::SetAngularVelocity(const std::string &buf)
         else
         {
             // pgd::Vector3 result;
-            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3]), result);
-            pgd::Vector3 worldAVelocity = pgd::QVRotate(theBody->GetQuaternion(), pgd::Vector3(GSUtil::Double(tokens[1]), GSUtil::Double(tokens[2]), GSUtil::Double(tokens[3])));
-            pgd::Vector3 vARel = theBody->GetAngularVelocity();
-            SetAngularVelocity(worldAVelocity[0] + vARel[0], worldAVelocity[1] + vARel[1], worldAVelocity[2] + vARel[2]);
+            // dBodyVectorToWorld(theBody->GetBodyID(), GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3]), result);
+            pgd::Vector3 worldAVelocity = pgd::qVRotate(theBody->quaternion(), pgd::Vector3(GSUtil::toDouble(tokens[1]), GSUtil::toDouble(tokens[2]), GSUtil::toDouble(tokens[3])));
+            pgd::Vector3 vARel = theBody->angularVelocity();
+            setAngularVelocity(worldAVelocity[0] + vARel[0], worldAVelocity[1] + vARel[1], worldAVelocity[2] + vARel[2]);
             return nullptr;
         }
     }
@@ -406,121 +406,121 @@ std::string *Body::SetAngularVelocity(const std::string &buf)
 
 }
 
-void Body::SetMass(double mass)
+void Body::setMass(double mass)
 {
     m_mass = mass;
 }
 
-void Body::SetMass(double mass, double ixx, double iyy, double izz, double ixy, double izx, double iyz)
+void Body::setMass(double mass, double ixx, double iyy, double izz, double ixy, double izx, double iyz)
 {
     m_mass = mass;
-    m_inertia.SetInertia(ixx, iyy, izz, ixy, izx, iyz);
+    m_inertia.setInertia(ixx, iyy, izz, ixy, izx, iyz);
 }
 
-pgd::Vector3 Body::GetPosition() const
+pgd::Vector3 Body::position() const
 {
     return m_currentPosition;
 }
 
-pgd::Quaternion Body::GetQuaternion() const
+pgd::Quaternion Body::quaternion() const
 {
     return m_currentQuaternion;
 }
 
-pgd::Vector3 Body::GetLinearVelocity() const
+pgd::Vector3 Body::linearVelocity() const
 {
     return m_currentLinearVelocity;
 }
 
-pgd::Vector3 Body::GetAngularVelocity() const
+pgd::Vector3 Body::angularVelocity() const
 {
     return m_currentAngularVelocity;
 }
 
-void Body::GetPosition(pgd::Vector3 *pos) const
+void Body::getPosition(pgd::Vector3 *pos) const
 {
-    *pos = GetPosition();
+    *pos = position();
 }
 
-void Body::GetQuaternion(pgd::Quaternion *quat) const
+void Body::getQuaternion(pgd::Quaternion *quat) const
 {
-    *quat = GetQuaternion();
+    *quat = quaternion();
 }
 
-void Body::GetRelativePosition(const Body *rel, pgd::Vector3 *pos) const
+void Body::getRelativePosition(const Body *rel, pgd::Vector3 *pos) const
 {
     pgd::Vector3 result;
     if (rel)
     {
         // dBodyGetPosRelPoint(rel->GetBodyID(), p[0], p[1], p[2], result); // convert from world to body
-        *pos = pgd::QVRotate(pgd::Conjugate(rel->GetQuaternion()), this->GetPosition() - pgd::Vector3(rel->GetPosition()));
+        *pos = pgd::qVRotate(pgd::conjugate(rel->quaternion()), this->position() - pgd::Vector3(rel->position()));
     }
     else
     {
-        *pos = this->GetPosition();
+        *pos = this->position();
     }
 }
 
-void Body::GetRelativeQuaternion(const Body *rel, pgd::Quaternion *quat) const
+void Body::getRelativeQuaternion(const Body *rel, pgd::Quaternion *quat) const
 {
     if (rel)
     {
-        pgd::Quaternion qWorld = GetQuaternion();
-        pgd::Quaternion qRelBody = rel->GetQuaternion();
+        pgd::Quaternion qWorld = quaternion();
+        pgd::Quaternion qRelBody = rel->quaternion();
         *quat = ~qRelBody * qWorld;
     }
     else
     {
-        *quat = GetQuaternion();
+        *quat = quaternion();
     }
 }
 
-void Body::GetRelativeLinearVelocity(const Body *rel, pgd::Vector3 *vel) const
+void Body::getRelativeLinearVelocity(const Body *rel, pgd::Vector3 *vel) const
 {
     if (rel)
     {
-        pgd::Vector3 worldV = GetLinearVelocity();
-        pgd::Vector3 relV = rel->GetLinearVelocity();
-        pgd::Quaternion qRelBody = rel->GetQuaternion();
-        *vel = QVRotate(~qRelBody, worldV - relV);
+        pgd::Vector3 worldV = linearVelocity();
+        pgd::Vector3 relV = rel->linearVelocity();
+        pgd::Quaternion qRelBody = rel->quaternion();
+        *vel = qVRotate(~qRelBody, worldV - relV);
     }
     else
     {
-        *vel = GetLinearVelocity();
+        *vel = linearVelocity();
     }
 }
 
-void Body::GetRelativeAngularVelocity(const Body *rel, pgd::Vector3 *rVel) const
+void Body::getRelativeAngularVelocity(const Body *rel, pgd::Vector3 *rVel) const
 {
     if (rel)
     {
-        pgd::Vector3 worldVR = GetAngularVelocity();
-        pgd::Vector3 relVR = rel->GetAngularVelocity();
-        pgd::Quaternion qRelBody = rel->GetQuaternion();
-        *rVel = QVRotate(~qRelBody, worldVR - relVR);
+        pgd::Vector3 worldVR = angularVelocity();
+        pgd::Vector3 relVR = rel->angularVelocity();
+        pgd::Quaternion qRelBody = rel->quaternion();
+        *rVel = qVRotate(~qRelBody, worldVR - relVR);
     }
     else
     {
-        *rVel = GetAngularVelocity();
+        *rVel = angularVelocity();
     }
 }
 
 
-double Body::GetMass() const
+double Body::mass() const
 {
     return m_mass;
 }
 
-void Body::GetMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const
+void Body::getMass(double *mass, double *ixx, double *iyy, double *izz, double *ixy, double *izx, double *iyz) const
 {
     *mass = m_mass;
-    m_inertia.GetInertia(ixx, iyy, izz, ixy, izx, iyz);
+    m_inertia.getInertia(ixx, iyy, izz, ixy, izx, iyz);
     return;
 }
 
-Body::LimitTestResult Body::TestLimits()
+Body::LimitTestResult Body::testLimits()
 {
-    pgd::Vector3 p = this->GetPosition();
+    pgd::Vector3 p = this->position();
     if (std::fpclassify(p[0]) != FP_NORMAL && std::fpclassify(p[0]) != FP_ZERO) return NumericalError;
     if (std::fpclassify(p[1]) != FP_NORMAL && std::fpclassify(p[1]) != FP_ZERO) return NumericalError;
     if (std::fpclassify(p[2]) != FP_NORMAL && std::fpclassify(p[2]) != FP_ZERO) return NumericalError;
@@ -528,7 +528,7 @@ Body::LimitTestResult Body::TestLimits()
     if (OUTSIDERANGE(p[1], m_positionLowBound[1], m_positionHighBound[1])) return YPosError;
     if (OUTSIDERANGE(p[2], m_positionLowBound[2], m_positionHighBound[2])) return ZPosError;
 
-    pgd::Vector3 v = GetLinearVelocity();
+    pgd::Vector3 v = linearVelocity();
     if (std::fpclassify(v[0]) != FP_NORMAL && std::fpclassify(v[0]) != FP_ZERO) return NumericalError;
     if (std::fpclassify(v[1]) != FP_NORMAL && std::fpclassify(v[1]) != FP_ZERO) return NumericalError;
     if (std::fpclassify(v[2]) != FP_NORMAL && std::fpclassify(v[2]) != FP_ZERO) return NumericalError;
@@ -536,7 +536,7 @@ Body::LimitTestResult Body::TestLimits()
     if (OUTSIDERANGE(v[1], m_linearVelocityLowBound[1], m_linearVelocityHighBound[1])) return YVelError;
     if (OUTSIDERANGE(v[2], m_linearVelocityLowBound[2], m_linearVelocityHighBound[2])) return ZVelError;
 
-    pgd::Vector3 a = GetAngularVelocity();
+    pgd::Vector3 a = angularVelocity();
     if (std::fpclassify(a[0]) != FP_NORMAL && std::fpclassify(a[0]) != FP_ZERO) return NumericalError;
     if (std::fpclassify(a[1]) != FP_NORMAL && std::fpclassify(a[1]) != FP_ZERO) return NumericalError;
     if (std::fpclassify(a[2]) != FP_NORMAL && std::fpclassify(a[2]) != FP_ZERO) return NumericalError;
@@ -547,7 +547,7 @@ Body::LimitTestResult Body::TestLimits()
     return WithinLimits;
 }
 
-double Body::GetProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vector3 &vector1, const pgd::Vector3 &vector2)
+double Body::getProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vector3 &vector1, const pgd::Vector3 &vector2)
 {
     // calculate the projected angle from vector1 to vector2 projected onto the plane defined by a normal vector
     // this angle gives the proper -pi to +pi value to rotate the direction for vector1 to vector2
@@ -563,9 +563,9 @@ double Body::GetProjectedAngle(const pgd::Vector3 &planeNormal, const pgd::Vecto
     // B cross (A cross B)
     // which we then normalise anyway
     pgd::Vector3 startDirection1 = planeNormal ^ (vector1 ^ planeNormal);
-    startDirection1.Normalize();
+    startDirection1.normalize();
     pgd::Vector3 endDirection1 = planeNormal ^ (vector2 ^ planeNormal);
-    endDirection1.Normalize();
+    endDirection1.normalize();
     // now we can find the angle in the plane using
     // dot = x1*x2 + y1*y2 + z1*z2
     // det = x1*y2*zn + x2*yn*z1 + xn*y1*z2 - z1*y2*xn - z2*yn*x1 - zn*y1*x2
@@ -587,19 +587,19 @@ std::string Body::dumpToString()
         setFirstDump(false);
         ss << "Time\tXP\tYP\tZP\tXV\tYV\tZV\tQW\tQX\tQY\tQZ\tRVX\tRVY\tRVZ\tLKEX\tLKEY\tLKEZ\tRKE\tGPE\n";
     }
-    pgd::Vector3 p = GetPosition();
-    pgd::Vector3 v = GetLinearVelocity();
-    pgd::Quaternion q = GetQuaternion();
-    pgd::Vector3 rv = GetAngularVelocity();
+    pgd::Vector3 p = position();
+    pgd::Vector3 v = linearVelocity();
+    pgd::Quaternion q = quaternion();
+    pgd::Vector3 rv = angularVelocity();
     pgd::Vector3 ke;
-    GetLinearKineticEnergy(&ke);
+    getLinearKineticEnergy(&ke);
 
-    ss << simulation()->GetTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
+    ss << simulation()->simulationTime() << "\t" << p[0] << "\t" << p[1] << "\t" << p[2] <<
           "\t" << v[0] << "\t" << v[1] << "\t" << v[2] <<
           "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] <<
           "\t" << rv[0] << "\t" << rv[1] << "\t" << rv[2] <<
           "\t" << ke[0] << "\t" << ke[1] << "\t" << ke[2] <<
-          "\t" << GetRotationalKineticEnergy() << "\t" << GetGravitationalPotentialEnergy() <<
+          "\t" << rotationalKineticEnergy() << "\t" << gravitationalPotentialEnergy() <<
           "\n";
     return ss.str();
 }
@@ -608,7 +608,7 @@ std::string Body::dumpToString()
 // assumes starting point is the moment of inertia at the centre of mass
 // #define _I(i,j) I[(i)*4+(j)]
 // regex _I\(([0-9]+),([0-9]+)\) to I[(\1)*4+(\2)]
-void Body::ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor)
+void Body::parallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const pgd::Vector3 &translation, const double *quaternion, pgd::Matrix3x3 *newInertialTensor)
 {
     double x, y, z; // transformation from centre of mass to new location (m)
     double m; // mass (kg)
@@ -621,7 +621,7 @@ void Body::ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const
     y = translation[1];
     z = translation[2];
     m = mass;
-    inertialTensor.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    inertialTensor.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
 
     ang = 2*acos(quaternion[0]);
     double magnitude = sqrt(SQUARE(quaternion[1]) + SQUARE(quaternion[2]) + SQUARE(quaternion[3]));
@@ -633,13 +633,13 @@ void Body::ParallelAxis(double mass, const pgd::Matrix3x3 &inertialTensor, const
     ay = quaternion[2] / magnitude;
     az = quaternion[3] / magnitude;
 
-    ParallelAxis(x, y, z, m, ixx, iyy, izz, ixy, izx, iyz, ang, ax, ay, az, &ixxp, &iyyp, &izzp, &ixyp, &izxp, &iyzp);
+    parallelAxis(x, y, z, m, ixx, iyy, izz, ixy, izx, iyz, ang, ax, ay, az, &ixxp, &iyyp, &izzp, &ixyp, &izxp, &iyzp);
 
-    newInertialTensor->SetInertia(ixxp, iyyp, izzp, ixyp, izxp, iyzp);
+    newInertialTensor->setInertia(ixxp, iyyp, izzp, ixyp, izxp, iyzp);
 }
 
 // a utility function to calculate moments of interia given an arbitrary translation and rotation
-void Body::ParallelAxis(double x, double y, double z, // transformation from centre of mass to new location (m)
+void Body::parallelAxis(double x, double y, double z, // transformation from centre of mass to new location (m)
                         double mass, // mass (kg)
                         double ixx, double iyy, double izz, double ixy, double izx, double iyz, // moments of inertia kgm2
                         double ang, // rotation angle (radians)
@@ -699,32 +699,32 @@ void Body::ParallelAxis(double x, double y, double z, // transformation from cen
 }
 
 
-void Body::SetLinearDamping(double linearDamping)
+void Body::setLinearDamping(double linearDamping)
 {
     m_LinearDamping = linearDamping;
 }
 
-void Body::SetAngularDamping(double angularDamping)
+void Body::setAngularDamping(double angularDamping)
 {
     m_AngularDamping = angularDamping;
 }
 
-void Body::SetLinearDampingThreshold(double linearDampingThreshold)
+void Body::setLinearDampingThreshold(double linearDampingThreshold)
 {
     m_LinearDampingThreshold = linearDampingThreshold;
 }
 
-void Body::SetAngularDampingThreshold(double angularDampingThreshold)
+void Body::setAngularDampingThreshold(double angularDampingThreshold)
 {
     m_AngularDampingThreshold = angularDampingThreshold;
 }
 
-void Body::SetMaxAngularSpeed(double maxAngularSpeed)
+void Body::setMaxAngularSpeed(double maxAngularSpeed)
 {
     m_MaxAngularSpeed = maxAngularSpeed;
 }
 
-void Body::SetCylinderDragParameters(DragControl dragAxis, double dragFluidDensity, double dragCylinderMin, double dragCylinderMax, double dragCylinderRadius, double dragCylinderCoefficient)
+void Body::setCylinderDragParameters(DragControl dragAxis, double dragFluidDensity, double dragCylinderMin, double dragCylinderMax, double dragCylinderRadius, double dragCylinderCoefficient)
 {
     // drag parameters
     m_dragControl = dragAxis;
@@ -735,7 +735,7 @@ void Body::SetCylinderDragParameters(DragControl dragAxis, double dragFluidDensi
     m_dragCylinderCoefficient = dragCylinderCoefficient;
 }
 
-void Body::SetDirectDragCoefficients(double linearDragCoefficientX, double linearDragCoefficientY, double linearDragCoefficientZ,
+void Body::setDirectDragCoefficients(double linearDragCoefficientX, double linearDragCoefficientY, double linearDragCoefficientZ,
                                      double rotationalDragCoefficientX, double rotationalDragCoefficientY, double rotationalDragCoefficientZ)
 {
     m_dragControl = DragCoefficients;
@@ -748,7 +748,7 @@ void Body::SetDirectDragCoefficients(double linearDragCoefficientX, double linea
 }
 
 // this routine modifed from Dynamechs 4.0 by Scott McMillan
-void Body::ComputeDrag()
+void Body::computeDrag()
 {
     const double gqx[4] = {0.069431844,     // Gauss-quadrature constants.
                            0.330009478,
@@ -765,14 +765,14 @@ void Body::ComputeDrag()
     double f_D[6] = {0, 0, 0, 0, 0, 0}; // angular follwed by linear
     double v_rel[6]; // angular follwed by linear
 
-    pgd::Vector3 aVel = GetAngularVelocity();
-    pgd::Vector3 aVelBody = pgd::QVRotate(~GetQuaternion(), aVel);
+    pgd::Vector3 aVel = angularVelocity();
+    pgd::Vector3 aVelBody = pgd::qVRotate(~quaternion(), aVel);
     v_rel[0] = aVelBody.x;
     v_rel[1] = aVelBody.y;
     v_rel[2] = aVelBody.z;
 
-    pgd::Vector3 lVel = GetLinearVelocity();
-    pgd::Vector3 lVelBody = pgd::QVRotate(~GetQuaternion(), lVel);
+    pgd::Vector3 lVel = linearVelocity();
+    pgd::Vector3 lVelBody = pgd::qVRotate(~quaternion(), lVel);
     v_rel[3] = lVelBody.x;
     v_rel[4] = lVelBody.y;
     v_rel[5] = lVelBody.z;
@@ -889,8 +889,8 @@ void Body::ComputeDrag()
     // need to add them to the body
     // dBodyAddRelTorque(m_bodyID, f_D[0], f_D[1], f_D[2]);
     // dBodyAddRelForce(m_bodyID, f_D[3], f_D[4], f_D[5]);
-    m_dragTorque.Set(f_D[0], f_D[1], f_D[2]);
-    m_dragForce.Set(f_D[3], f_D[4], f_D[5]);
+    m_dragTorque.set(f_D[0], f_D[1], f_D[2]);
+    m_dragForce.set(f_D[3], f_D[4], f_D[5]);
 }
 
 // this function initialises the data in the object based on the contents
@@ -902,83 +902,83 @@ std::string *Body::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
 
     bool constructionMode = m_constructionMode;
-    if (constructionMode) EnterRunMode();
+    if (constructionMode) enterRunMode();
 
     std::string buf;
     double doubleList[6];
 
     // initial position/quaternion first then construction position/quaternion
     if (findAttribute("Position"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetPosition(buf);
-    m_initialPosition = this->GetPosition();
+    this->setPosition(buf);
+    m_initialPosition = this->position();
 
     if (findAttribute("ConstructionPosition"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetPosition(buf); // set the position first and copy the values
-    m_constructionPosition = this->GetPosition();
+    this->setPosition(buf); // set the position first and copy the values
+    m_constructionPosition = this->position();
 
     if (findAttribute("Quaternion"s, &buf) == nullptr) return lastErrorPtr(); // note quaternion is (qs,qx,qy,qz)
-    this->SetQuaternion(buf);
-    m_initialQuaternion = this->GetQuaternion();
-    this->SetQuaternion(1, 0, 0, 0); // construction quaternion is always zero
+    this->setQuaternion(buf);
+    m_initialQuaternion = this->quaternion();
+    this->setQuaternion(1, 0, 0, 0); // construction quaternion is always zero
 
     if (findAttribute("LinearVelocity"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetLinearVelocity(buf);
+    this->setLinearVelocity(buf);
 
     if (findAttribute("AngularVelocity"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetAngularVelocity(buf);
+    this->setAngularVelocity(buf);
 
     // and now the mass properties
     // (remember the origin is always at the centre of mass)
 
     if (findAttribute("Mass"s, &buf) == nullptr) return lastErrorPtr();
-    double mass = GSUtil::Double(buf);
+    double mass = GSUtil::toDouble(buf);
 
     if (findAttribute("MOI"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 6, doubleList);
+    GSUtil::toDouble(buf, 6, doubleList);
 
-    SetMass(mass, doubleList[0], doubleList[1], doubleList[2], doubleList[3], doubleList[4], doubleList[5]);
+    setMass(mass, doubleList[0], doubleList[1], doubleList[2], doubleList[3], doubleList[4], doubleList[5]);
 
     // get limits if available
     if (findAttribute("PositionLowBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
-        this->SetPositionLowBound(doubleList[0], doubleList[1], doubleList[2]);
+        GSUtil::toDouble(buf, 3, doubleList);
+        this->setPositionLowBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("PositionHighBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
-        this->SetPositionHighBound(doubleList[0], doubleList[1], doubleList[2]);
+        GSUtil::toDouble(buf, 3, doubleList);
+        this->setPositionHighBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("LinearVelocityLowBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
-        this->SetLinearVelocityLowBound(doubleList[0], doubleList[1], doubleList[2]);
+        GSUtil::toDouble(buf, 3, doubleList);
+        this->setLinearVelocityLowBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("LinearVelocityHighBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
-        this->SetLinearVelocityHighBound(doubleList[0], doubleList[1], doubleList[2]);
+        GSUtil::toDouble(buf, 3, doubleList);
+        this->setLinearVelocityHighBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("AngularVelocityLowBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
-        this->SetAngularVelocityLowBound(doubleList[0], doubleList[1], doubleList[2]);
+        GSUtil::toDouble(buf, 3, doubleList);
+        this->setAngularVelocityLowBound(doubleList[0], doubleList[1], doubleList[2]);
     }
     if (findAttribute("AngularVelocityHighBound"s, &buf))
     {
-        GSUtil::Double(buf, 3, doubleList);
-        this->SetAngularVelocityHighBound(doubleList[0], doubleList[1], doubleList[2]);
+        GSUtil::toDouble(buf, 3, doubleList);
+        this->setAngularVelocityHighBound(doubleList[0], doubleList[1], doubleList[2]);
     }
 
     if (findAttribute("ConstructionDensity"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetConstructionDensity(GSUtil::Double(buf));
+    this->setConstructionDensity(GSUtil::toDouble(buf));
 
     // set damping if necessary
-    if (findAttribute("LinearDamping"s, &buf)) this->SetLinearDamping(GSUtil::Double(buf));
-    if (findAttribute("AngularDamping"s, &buf)) this->SetAngularDamping(GSUtil::Double(buf));
-    if (findAttribute("LinearDampingThreshold"s, &buf)) this->SetLinearDampingThreshold(GSUtil::Double(buf));
-    if (findAttribute("AngularDampingThreshold"s, &buf)) this->SetAngularDampingThreshold(GSUtil::Double(buf));
-    if (findAttribute("MaxAngularSpeed"s, &buf)) this->SetMaxAngularSpeed(GSUtil::Double(buf));
+    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::toDouble(buf));
+    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::toDouble(buf));
+    if (findAttribute("LinearDampingThreshold"s, &buf)) this->setLinearDampingThreshold(GSUtil::toDouble(buf));
+    if (findAttribute("AngularDampingThreshold"s, &buf)) this->setAngularDampingThreshold(GSUtil::toDouble(buf));
+    if (findAttribute("MaxAngularSpeed"s, &buf)) this->setMaxAngularSpeed(GSUtil::toDouble(buf));
 
     if (findAttribute("DragControl"s, &buf))
     {
@@ -996,29 +996,29 @@ std::string *Body::createFromAttributes()
     if (m_dragControl == DragCoefficients)
     {
         if (findAttribute("DirectDragCoefficients"s, &buf) == nullptr) return lastErrorPtr();
-        GSUtil::Double(buf, 6, doubleList);
-        this->SetDirectDragCoefficients(doubleList[0], doubleList[1], doubleList[2], doubleList[3], doubleList[4], doubleList[5]); // 3 rotational then 3 linear
+        GSUtil::toDouble(buf, 6, doubleList);
+        this->setDirectDragCoefficients(doubleList[0], doubleList[1], doubleList[2], doubleList[3], doubleList[4], doubleList[5]); // 3 rotational then 3 linear
     }
     else if (m_dragControl == DragCylinderX || m_dragControl == DragCylinderY || m_dragControl == DragCylinderZ)
     {
         if (findAttribute("DragFluidDensity"s, &buf) == nullptr) return lastErrorPtr();
-        double dragFluidDensity = GSUtil::Double(buf);
+        double dragFluidDensity = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderMin"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderMin = GSUtil::Double(buf);
+        double dragCylinderMin = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderMax"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderMax = GSUtil::Double(buf);
+        double dragCylinderMax = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderRadius"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderRadius = GSUtil::Double(buf);
+        double dragCylinderRadius = GSUtil::toDouble(buf);
         if (findAttribute("DragCylinderCoefficient"s, &buf) == nullptr) return lastErrorPtr();
-        double dragCylinderCoefficient = GSUtil::Double(buf);
-        this->SetCylinderDragParameters(m_dragControl, dragFluidDensity, dragCylinderMin, dragCylinderMax, dragCylinderRadius, dragCylinderCoefficient);
+        double dragCylinderCoefficient = GSUtil::toDouble(buf);
+        this->setCylinderDragParameters(m_dragControl, dragFluidDensity, dragCylinderMin, dragCylinderMax, dragCylinderRadius, dragCylinderCoefficient);
     }
 
-    if (findAttribute("GraphicFile1"s, &buf)) this->SetGraphicFile1(buf);
-    if (findAttribute("GraphicFile2"s, &buf)) this->SetGraphicFile2(buf);
-    if (findAttribute("GraphicFile3"s, &buf)) this->SetGraphicFile3(buf);
+    if (findAttribute("GraphicFile1"s, &buf)) this->setGraphicFile1(buf);
+    if (findAttribute("GraphicFile2"s, &buf)) this->setGraphicFile2(buf);
+    if (findAttribute("GraphicFile3"s, &buf)) this->setGraphicFile3(buf);
 
-    if (constructionMode) EnterConstructionMode();
+    if (constructionMode) enterConstructionMode();
 
     return nullptr;
 }
@@ -1038,34 +1038,34 @@ void Body::appendToAttributes()
     std::string buf;
 
     bool constructionMode = m_constructionMode;
-    if (constructionMode) EnterRunMode();
+    if (constructionMode) enterRunMode();
 
-    setAttribute("Mass"s, *GSUtil::ToString(m_mass, &buf));
+    setAttribute("Mass"s, *GSUtil::toString(m_mass, &buf));
     double ixx, iyy, izz, ixy, izx, iyz;
-    m_inertia.GetInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
+    m_inertia.getInertia(&ixx, &iyy, &izz, &ixy, &izx, &iyz);
     double MOI[6] = {ixx, iyy, izz, ixy, izx, iyz}; // xx, yy, zz, xy, xz, yz
-    setAttribute("MOI"s, *GSUtil::ToString(MOI, 6, &buf));
-    if (m_LinearDamping >= 0) setAttribute("LinearDamping"s, *GSUtil::ToString(m_LinearDamping, &buf));
-    if (m_AngularDamping >= 0) setAttribute("AngularDamping"s, *GSUtil::ToString(m_AngularDamping, &buf));
-    if (m_LinearDampingThreshold >= 0) setAttribute("LinearDampingThreshold"s, *GSUtil::ToString(m_LinearDampingThreshold, &buf));
-    if (m_AngularDampingThreshold >= 0) setAttribute("AngularDampingThreshold"s, *GSUtil::ToString(m_AngularDampingThreshold, &buf));
-    if (m_MaxAngularSpeed >= 0) setAttribute("MaxAngularSpeed"s, *GSUtil::ToString(m_MaxAngularSpeed, &buf));
+    setAttribute("MOI"s, *GSUtil::toString(MOI, 6, &buf));
+    if (m_LinearDamping >= 0) setAttribute("LinearDamping"s, *GSUtil::toString(m_LinearDamping, &buf));
+    if (m_AngularDamping >= 0) setAttribute("AngularDamping"s, *GSUtil::toString(m_AngularDamping, &buf));
+    if (m_LinearDampingThreshold >= 0) setAttribute("LinearDampingThreshold"s, *GSUtil::toString(m_LinearDampingThreshold, &buf));
+    if (m_AngularDampingThreshold >= 0) setAttribute("AngularDampingThreshold"s, *GSUtil::toString(m_AngularDampingThreshold, &buf));
+    if (m_MaxAngularSpeed >= 0) setAttribute("MaxAngularSpeed"s, *GSUtil::toString(m_MaxAngularSpeed, &buf));
 
-    setAttribute("Quaternion"s, *GSUtil::ToString(GetQuaternion(), &buf)); // note quaternion is (qs,qx,qy,qz)
-    setAttribute("Position"s, *GSUtil::ToString(GetPosition(), &buf));
+    setAttribute("Quaternion"s, *GSUtil::toString(quaternion(), &buf)); // note quaternion is (qs,qx,qy,qz)
+    setAttribute("Position"s, *GSUtil::toString(position(), &buf));
 
-    setAttribute("LinearVelocity"s, *GSUtil::ToString(GetLinearVelocity(), &buf));
-    setAttribute("AngularVelocity"s, *GSUtil::ToString(GetAngularVelocity(), &buf));
+    setAttribute("LinearVelocity"s, *GSUtil::toString(linearVelocity(), &buf));
+    setAttribute("AngularVelocity"s, *GSUtil::toString(angularVelocity(), &buf));
 
-    setAttribute("ConstructionPosition"s, *GSUtil::ToString(m_constructionPosition, &buf));
-    setAttribute("ConstructionDensity"s, *GSUtil::ToString(m_constructionDensity, &buf));
+    setAttribute("ConstructionPosition"s, *GSUtil::toString(m_constructionPosition, &buf));
+    setAttribute("ConstructionDensity"s, *GSUtil::toString(m_constructionDensity, &buf));
 
-    setAttribute("PositionLowBound"s, *GSUtil::ToString(m_positionLowBound, &buf));
-    setAttribute("PositionHighBound"s, *GSUtil::ToString(m_positionHighBound, &buf));
-    setAttribute("LinearVelocityLowBound"s, *GSUtil::ToString(m_linearVelocityLowBound, &buf));
-    setAttribute("LinearVelocityHighBound"s, *GSUtil::ToString(m_linearVelocityHighBound, &buf));
-    setAttribute("AngularVelocityLowBound"s, *GSUtil::ToString(m_angularVelocityLowBound, &buf));
-    setAttribute("AngularVelocityHighBound"s, *GSUtil::ToString(m_angularVelocityHighBound, &buf));
+    setAttribute("PositionLowBound"s, *GSUtil::toString(m_positionLowBound, &buf));
+    setAttribute("PositionHighBound"s, *GSUtil::toString(m_positionHighBound, &buf));
+    setAttribute("LinearVelocityLowBound"s, *GSUtil::toString(m_linearVelocityLowBound, &buf));
+    setAttribute("LinearVelocityHighBound"s, *GSUtil::toString(m_linearVelocityHighBound, &buf));
+    setAttribute("AngularVelocityLowBound"s, *GSUtil::toString(m_angularVelocityLowBound, &buf));
+    setAttribute("AngularVelocityHighBound"s, *GSUtil::toString(m_angularVelocityHighBound, &buf));
 
     setAttribute("GraphicFile1"s, m_graphicFile1);
     setAttribute("GraphicFile2"s, m_graphicFile2);
@@ -1078,15 +1078,15 @@ void Body::appendToAttributes()
     else if (m_dragControl == DragCylinderZ) setAttribute("DragControl"s, "DragCylinderZ"s);
     if (m_dragControl != NoDrag)
     {
-        setAttribute("DragCoefficients"s, *GSUtil::ToString(m_dragCoefficients, 6, &buf));
-        setAttribute("DragFluidDensity"s, *GSUtil::ToString(m_dragFluidDensity, &buf));
-        setAttribute("DragCylinderMin"s, *GSUtil::ToString(m_dragCylinderMin, &buf));
-        setAttribute("DragCylinderLength"s, *GSUtil::ToString(m_dragCylinderLength, &buf));
-        setAttribute("DragCylinderRadius"s, *GSUtil::ToString(m_dragCylinderRadius, &buf));
-        setAttribute("DragCylinderCoefficient"s, *GSUtil::ToString(m_dragCylinderCoefficient, &buf));
+        setAttribute("DragCoefficients"s, *GSUtil::toString(m_dragCoefficients, 6, &buf));
+        setAttribute("DragFluidDensity"s, *GSUtil::toString(m_dragFluidDensity, &buf));
+        setAttribute("DragCylinderMin"s, *GSUtil::toString(m_dragCylinderMin, &buf));
+        setAttribute("DragCylinderLength"s, *GSUtil::toString(m_dragCylinderLength, &buf));
+        setAttribute("DragCylinderRadius"s, *GSUtil::toString(m_dragCylinderRadius, &buf));
+        setAttribute("DragCylinderCoefficient"s, *GSUtil::toString(m_dragCylinderCoefficient, &buf));
     }
 
-    if (constructionMode) EnterConstructionMode();
+    if (constructionMode) enterConstructionMode();
 }
 
 pgd::Vector3 Body::dragForce() const
@@ -1109,34 +1109,34 @@ void Body::setDragControl(const DragControl &newDragControl)
     m_dragControl = newDragControl;
 }
 
-void Body::LateInitialisation()
+void Body::lateInitialisation()
 {
-    this->SetPosition(m_initialPosition[0], m_initialPosition[1], m_initialPosition[2]);
-    this->SetQuaternion(m_initialQuaternion[0], m_initialQuaternion[1], m_initialQuaternion[2], m_initialQuaternion[3]);
+    this->setPosition(m_initialPosition[0], m_initialPosition[1], m_initialPosition[2]);
+    this->setQuaternion(m_initialQuaternion[0], m_initialQuaternion[1], m_initialQuaternion[2], m_initialQuaternion[3]);
 }
 
-void Body::EnterConstructionMode()
+void Body::enterConstructionMode()
 {
     m_constructionMode = true;
-    this->SetPosition(m_constructionPosition[0], m_constructionPosition[1], m_constructionPosition[2]);
-    this->SetQuaternion(m_constructionQuaternion[0], m_constructionQuaternion[1], m_constructionQuaternion[2], m_constructionQuaternion[3]);
+    this->setPosition(m_constructionPosition[0], m_constructionPosition[1], m_constructionPosition[2]);
+    this->setQuaternion(m_constructionQuaternion[0], m_constructionQuaternion[1], m_constructionQuaternion[2], m_constructionQuaternion[3]);
 }
 
-void Body::EnterRunMode()
+void Body::enterRunMode()
 {
     m_constructionMode = false;
-    this->SetPosition(m_initialPosition[0], m_initialPosition[1], m_initialPosition[2]);
-    this->SetQuaternion(m_initialQuaternion[0], m_initialQuaternion[1], m_initialQuaternion[2], m_initialQuaternion[3]);
+    this->setPosition(m_initialPosition[0], m_initialPosition[1], m_initialPosition[2]);
+    this->setQuaternion(m_initialQuaternion[0], m_initialQuaternion[1], m_initialQuaternion[2], m_initialQuaternion[3]);
 }
 
-void Body::SetInitialPosition(double x, double y, double z)
+void Body::setInitialPosition(double x, double y, double z)
 {
     m_initialPosition[0] = x;
     m_initialPosition[1] = y;
     m_initialPosition[2] = z;
 }
 
-void Body::SetInitialQuaternion(double n, double x, double y, double z)
+void Body::setInitialQuaternion(double n, double x, double y, double z)
 {
     m_initialQuaternion[0] = n;
     m_initialQuaternion[1] = x;
@@ -1144,12 +1144,22 @@ void Body::SetInitialQuaternion(double n, double x, double y, double z)
     m_initialQuaternion[3] = z;
 }
 
-pgd::Vector3 Body::GetInitialPosition()
+void Body::setInitialPosition(const pgd::Vector3 &position)
+{
+    m_initialPosition = position;
+}
+
+void Body::setInitialQuaternion(const pgd::Quaternion &quaternion)
+{
+    m_initialQuaternion = quaternion;
+}
+
+pgd::Vector3 Body::initialPosition()
 {
     return m_initialPosition;
 }
 
-pgd::Quaternion Body::GetInitialQuaternion()
+pgd::Quaternion Body::initialQuaternion()
 {
     return m_initialQuaternion;
 }

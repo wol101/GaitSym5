@@ -23,20 +23,14 @@ FixedJoint::FixedJoint() : Joint()
 {
 }
 
-void FixedJoint::SetFixed()
+void FixedJoint::lateInitialisation()
 {
-    // dJointSetFixed(JointID());
-}
-
-void FixedJoint::LateInitialisation()
-{
-    if (m_lateFix) SetFixed();
 }
 
 // this is the part where we calculate the stress map
 // SetCrossSection needs to be called first
 // note for this to work the centre of the fixed joint needs to be the centroid of the cross section area
-void FixedJoint::CalculateStress()
+void FixedJoint::calculateStress()
 {
 #ifdef FIX_ME
     // first of all we need to convert the forces and torques into the joint local coordinate system
@@ -60,8 +54,8 @@ void FixedJoint::CalculateStress()
     // now rotate new values to stress based coordinates
     const double *q = dBodyGetQuaternion (this->GetBody1()->GetBodyID());
     pgd::Quaternion bodyOrientation(q[0], q[1], q[2], q[3]);
-    m_torqueStressCoords = pgd::QVRotate(m_StressOrientation, pgd::QVRotate(bodyOrientation, torqueStressOrigin));
-    m_forceStressCoords = pgd::QVRotate(m_StressOrientation, pgd::QVRotate(bodyOrientation, forceCM));
+    m_torqueStressCoords = pgd::qVRotate(m_StressOrientation, pgd::qVRotate(bodyOrientation, torqueStressOrigin));
+    m_forceStressCoords = pgd::qVRotate(m_StressOrientation, pgd::qVRotate(bodyOrientation, forceCM));
 
     if (m_stressCalculationType == beam)
     {
@@ -301,7 +295,7 @@ double FixedJoint::width() const
 // dx, dy are the real world sizes of each pixel in the array
 // stiffness array is copied
 // the edge of the mesh corresponds to the edge of the pixel not the centre
-void FixedJoint::SetCrossSection(const std::vector<unsigned char> &stiffness, size_t nx, size_t ny, double dx, double dy)
+void FixedJoint::setCrossSection(const std::vector<unsigned char> &stiffness, size_t nx, size_t ny, double dx, double dy)
 {
     size_t ix, iy;
     unsigned char *ptr;
@@ -382,25 +376,25 @@ void FixedJoint::SetCrossSection(const std::vector<unsigned char> &stiffness, si
 }
 
 // note: m_StressOrigin is in Body1 local coordinates
-void FixedJoint::SetStressOrigin(double x, double y, double z)
+void FixedJoint::setStressOrigin(double x, double y, double z)
 {
-    m_StressOrigin.x = x;
-    m_StressOrigin.y = y;
-    m_StressOrigin.z = z;
+    m_stressOrigin.x = x;
+    m_stressOrigin.y = y;
+    m_stressOrigin.z = z;
 }
 
 // note: m_StressOrientation is in Body1 local coordinates
-void FixedJoint::SetStressOrientation(double q0, double q1, double q2, double q3)
+void FixedJoint::setStressOrientation(double q0, double q1, double q2, double q3)
 {
-    m_StressOrientation.n = q0;
-    m_StressOrientation.x = q1;
-    m_StressOrientation.y = q2;
-    m_StressOrientation.z = q3;
-    m_StressOrientation.Normalize(); // this is the safest option
+    m_stressOrientation.n = q0;
+    m_stressOrientation.x = q1;
+    m_stressOrientation.y = q2;
+    m_stressOrientation.z = q3;
+    m_stressOrientation.normalize(); // this is the safest option
 }
 
 
-void FixedJoint::SetWindow(size_t window)
+void FixedJoint::setWindow(size_t window)
 {
 //    m_minStressMovingAverage = new MovingAverage(window);
 //    m_maxStressMovingAverage = new MovingAverage(window);
@@ -411,10 +405,10 @@ void FixedJoint::SetWindow(size_t window)
     for (size_t i = 0; i < m_nActivePixels; i++) m_filteredStress.push_back(std::make_unique<MovingAverage>(int(window)));
 }
 
-void FixedJoint::SetCutoffFrequency(double cutoffFrequency)
+void FixedJoint::setCutoffFrequency(double cutoffFrequency)
 {
     m_cutoffFrequency = cutoffFrequency;
-    double samplingFrequency = 1.0 / simulation()->GetTimeIncrement();
+    double samplingFrequency = 1.0 / simulation()->global()->stepSize();
 //    m_minStressButterworth = new ButterworthFilter(cutoffFrequency, samplingFrequency);
 //    m_maxStressButterworth = new ButterworthFilter(cutoffFrequency, samplingFrequency);
     m_lowPassType = Butterworth2ndOrderLowPass;
@@ -428,7 +422,7 @@ void FixedJoint::SetCutoffFrequency(double cutoffFrequency)
 #endif
 }
 
-bool FixedJoint::CheckStressAbort()
+bool FixedJoint::checkStressAbort()
 {
     if (m_stressCalculationType == none) return false;
     if (m_lowPassMaxStress > m_stressLimit) return true;
@@ -436,9 +430,9 @@ bool FixedJoint::CheckStressAbort()
     return false;
 }
 
-void FixedJoint::Update()
+void FixedJoint::update()
 {
-    if (m_stressCalculationType != none) CalculateStress();
+    if (m_stressCalculationType != none) calculateStress();
 }
 
 std::string *FixedJoint::createFromAttributes()
@@ -447,44 +441,43 @@ std::string *FixedJoint::createFromAttributes()
     std::string buf;
     buf.reserve(1000000);
 
-    pgd::Vector3 position = body1Marker()->GetPosition();
-    this->SetStressOrigin(position.x, position.y, position.z);
-    pgd::Quaternion quaternion = body1Marker()->GetQuaternion();
-    this->SetStressOrientation(quaternion.n, quaternion.x, quaternion.y, quaternion.z);
+    pgd::Vector3 position = body1Marker()->position();
+    this->setStressOrigin(position.x, position.y, position.z);
+    pgd::Quaternion quaternion = body1Marker()->quaternion();
+    this->setStressOrientation(quaternion.n, quaternion.x, quaternion.y, quaternion.z);
 
-    SetFixed();
     // if (CFM() >= 0) dJointSetFixedParam (JointID(), dParamCFM, CFM());
     // if (ERP() >= 0) dJointSetFixedParam (JointID(), dParamERP, ERP());
-    if (findAttribute("LateFix"s, &buf)) m_lateFix = GSUtil::Bool(buf);
+    if (findAttribute("LateFix"s, &buf)) m_lateFix = GSUtil::toBool(buf);
 
     if (findAttribute("StressCalculationType"s, &buf) == nullptr) return lastErrorPtr();
-    if (buf == "None"s) this->SetStressCalculationType(FixedJoint::none);
-    else if (buf == "Beam"s) this->SetStressCalculationType(FixedJoint::beam);
-    else if (buf == "Spring"s) this->SetStressCalculationType(FixedJoint::spring);
+    if (buf == "None"s) this->setStressCalculationType(FixedJoint::none);
+    else if (buf == "Beam"s) this->setStressCalculationType(FixedJoint::beam);
+    else if (buf == "Spring"s) this->setStressCalculationType(FixedJoint::spring);
     else { setLastError("Joint ID=\""s + name() +"\" unrecognised StressCalculationTypes"s); return lastErrorPtr(); }
 
     if (m_stressCalculationType != FixedJoint::none)
     {
         if (findAttribute("LowPassType"s, &buf) == nullptr) return lastErrorPtr();
-        if (buf == "Butterworth2ndOrderLowPass"s) this->SetLowPassType(FixedJoint::Butterworth2ndOrderLowPass);
-        else if (buf == "MovingAverageLowPass"s) this->SetLowPassType(FixedJoint::MovingAverageLowPass);
-        else if (buf == "NoLowPass"s) this->SetLowPassType(FixedJoint::NoLowPass);
+        if (buf == "Butterworth2ndOrderLowPass"s) this->setLowPassType(FixedJoint::Butterworth2ndOrderLowPass);
+        else if (buf == "MovingAverageLowPass"s) this->setLowPassType(FixedJoint::MovingAverageLowPass);
+        else if (buf == "NoLowPass"s) this->setLowPassType(FixedJoint::NoLowPass);
         else { setLastError("Joint ID=\""s + name() +"\" unrecognised LowPassType"s); return lastErrorPtr(); }
 
         if (findAttribute("StressLimit"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetStressLimit(GSUtil::Double(buf));
+        this->setStressLimit(GSUtil::toDouble(buf));
 
         double doubleList[2];
         if (findAttribute("StressBitmapPixelSize"s, &buf) == nullptr) return lastErrorPtr();
-        GSUtil::Double(buf, 2, doubleList);
+        GSUtil::toDouble(buf, 2, doubleList);
         double dx = doubleList[0];
         double dy = doubleList[1];
         if (findAttribute("StressBitmapDimensions"s, &buf) == nullptr) return lastErrorPtr();
-        GSUtil::Double(buf, 2, doubleList);
+        GSUtil::toDouble(buf, 2, doubleList);
         int nx = int(doubleList[0] + 0.5);
         int ny = int(doubleList[1] + 0.5);
         if (findAttribute("StressBitmap"s, &buf) == nullptr) return lastErrorPtr();
-        this->SetCrossSection(AsciiToBitMap(buf, nx, ny, '1', true), nx, ny, dx, dy);
+        this->setCrossSection(asciiToBitMap(buf, nx, ny, '1', true), nx, ny, dx, dy);
 
         switch (m_lowPassType)
         {
@@ -492,17 +485,19 @@ std::string *FixedJoint::createFromAttributes()
             break;
         case FixedJoint::Butterworth2ndOrderLowPass:
             if (findAttribute("CutoffFrequency"s, &buf) == nullptr) return lastErrorPtr();
-            this->SetCutoffFrequency(GSUtil::Double(buf));
+            if (!simulation()->global()) { setLastError("Joint ID=\""s + name() +"\" unable to set CutoffFrequency"s); return lastErrorPtr(); }
+            this->setCutoffFrequency(GSUtil::toDouble(buf));
             break;
         case FixedJoint::MovingAverageLowPass:
             if (findAttribute("Window"s, &buf) == nullptr) return lastErrorPtr();
-            this->SetWindow(GSUtil::Int(buf));
+            if (!simulation()->global()) { setLastError("Joint ID=\""s + name() +"\" unable to set Window"s); return lastErrorPtr(); }
+            this->setWindow(GSUtil::toInt(buf));
             break;
         }
 
         if (findAttribute("StressBitmapDisplayRange"s, &buf))
         {
-            GSUtil::Double(buf, 2, doubleList);
+            GSUtil::toDouble(buf, 2, doubleList);
             setLowRange(doubleList[0]);
             setHighRange(doubleList[1]);
         }
@@ -519,7 +514,7 @@ void FixedJoint::appendToAttributes()
     std::string buf;
     buf.reserve(1000000);
     setAttribute("Type"s, "Fixed"s);
-    setAttribute("LateFix"s, *GSUtil::ToString(m_lateFix, &buf));
+    setAttribute("LateFix"s, *GSUtil::toString(m_lateFix, &buf));
     switch (m_stressCalculationType)
     {
     case FixedJoint::none:
@@ -538,21 +533,21 @@ void FixedJoint::appendToAttributes()
         {
         case FixedJoint::Butterworth2ndOrderLowPass:
             setAttribute("LowPassType"s, "Butterworth2ndOrderLowPass"s);
-            setAttribute("CutoffFrequency"s, *GSUtil::ToString(m_cutoffFrequency, &buf));
+            setAttribute("CutoffFrequency"s, *GSUtil::toString(m_cutoffFrequency, &buf));
             break;
         case FixedJoint::MovingAverageLowPass:
             setAttribute("LowPassType"s, "MovingAverageLowPass"s);
-            setAttribute("Window"s, *GSUtil::ToString(m_window, &buf));
+            setAttribute("Window"s, *GSUtil::toString(m_window, &buf));
             break;
         case FixedJoint::NoLowPass:
             setAttribute("LowPassType"s, "NoLowPass"s);
             break;
         }
-        setAttribute("StressLimit"s, *GSUtil::ToString(m_stressLimit, &buf));
+        setAttribute("StressLimit"s, *GSUtil::toString(m_stressLimit, &buf));
         double doubleList[2] = { m_dx, m_dy };
-        setAttribute("StressBitmapPixelSize"s, *GSUtil::ToString(doubleList, 2, &buf));
+        setAttribute("StressBitmapPixelSize"s, *GSUtil::toString(doubleList, 2, &buf));
         size_t intList[2] = { m_nx, m_ny };
-        setAttribute("StressBitmapDimensions"s, *GSUtil::ToString(intList, 2, &buf));
+        setAttribute("StressBitmapDimensions"s, *GSUtil::toString(intList, 2, &buf));
         std::string bitmap;
         bitmap.reserve(size_t((m_nx + 2) * m_ny));
         for (size_t iy = m_ny - 1; iy < m_ny; iy--)
@@ -567,7 +562,7 @@ void FixedJoint::appendToAttributes()
         bitmap.append("\n");
         setAttribute("StressBitmap"s, bitmap);
         double doubleList2[2] = { m_lowRange, m_highRange };
-        setAttribute("StressBitmapDisplayRange"s, *GSUtil::ToString(doubleList2, 2, &buf));
+        setAttribute("StressBitmapDisplayRange"s, *GSUtil::toString(doubleList2, 2, &buf));
     }
 }
 
@@ -650,7 +645,7 @@ std::string FixedJoint::dumpToString()
     return ss.str();
 }
 
-void FixedJoint::CalculatePixmap()
+void FixedJoint::calculatePixmap()
 {
     if (!m_colourMap.size())
     {
@@ -659,7 +654,7 @@ void FixedJoint::CalculatePixmap()
         for (size_t i = 0; i < 256; i++)
         {
             float r = ((float)i / 255.0f);
-            Colour::SetColourFromMap(r, Colour::JetColourMap, &mappedColour, false);
+            Colour::setColourFromMap(r, Colour::JetColourMap, &mappedColour, false);
             m_colourMap.push_back(static_cast<unsigned char>(255.0 * mappedColour.r()));
             m_colourMap.push_back(static_cast<unsigned char>(255.0 * mappedColour.g()));
             m_colourMap.push_back(static_cast<unsigned char>(255.0 * mappedColour.b()));
@@ -672,14 +667,14 @@ void FixedJoint::CalculatePixmap()
         m_pixMap.resize(m_nx * m_ny * 4);
     }
 
-    if (m_lastDisplayTime != simulation()->GetTime())
+    if (m_lastDisplayTime != simulation()->simulationTime())
     {
-        m_lastDisplayTime = simulation()->GetTime();
+        m_lastDisplayTime = simulation()->simulationTime();
         size_t backgroundColourIndex4 = 0;
         size_t foregroundColourIndex4 = 255 * 4;
         unsigned char *stiffnessPtr = m_stiffness.data();
         size_t i = 0;
-        if (simulation()->GetTime() <= 0) // set texture from stiffness bitmap (0 or 1)
+        if (simulation()->simulationTime() <= 0) // set texture from stiffness bitmap (0 or 1)
         {
             for (size_t iy = 0; iy < m_ny; iy++)
             {
@@ -734,12 +729,12 @@ void FixedJoint::CalculatePixmap()
                         case Butterworth2ndOrderLowPass:
                             if (m_lowRange != m_highRange)
                             {
-                                v = (m_filteredStress[filteredStressIndex]->Output() - m_lowRange) / (m_highRange - m_lowRange);
+                                v = (m_filteredStress[filteredStressIndex]->output() - m_lowRange) / (m_highRange - m_lowRange);
                             }
                             else
                             {
                                 if (m_minStress != m_maxStress)
-                                    v = (m_filteredStress[filteredStressIndex]->Output() - m_minStress) / (m_maxStress - m_minStress);
+                                    v = (m_filteredStress[filteredStressIndex]->output() - m_minStress) / (m_maxStress - m_minStress);
                                 else
                                     v = 0;
                             }
@@ -766,14 +761,14 @@ void FixedJoint::CalculatePixmap()
     }
 }
 
-bool FixedJoint::CalculatePixmapNeeded()
+bool FixedJoint::calculatePixmapNeeded()
 {
-    if (m_stressCalculationType == none || !simulation() || m_lastDisplayTime == simulation()->GetTime()) return false;
+    if (m_stressCalculationType == none || !simulation() || m_lastDisplayTime == simulation()->simulationTime()) return false;
     return true;
 }
 
 
-std::vector<unsigned char> FixedJoint::AsciiToBitMap(const std::string &buffer, size_t width, size_t height, char setChar, bool reverseY)
+std::vector<unsigned char> FixedJoint::asciiToBitMap(const std::string &buffer, size_t width, size_t height, char setChar, bool reverseY)
 {
     std::vector<unsigned char> bitmap(width * height);
     size_t bufferIndex = 0;

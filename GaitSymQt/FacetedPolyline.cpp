@@ -25,7 +25,7 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
     if (internal)
     {
         std::vector<pgd::Vector3> profile;
-        AllocateMemory(n * (polyline->size() * 2 + 2));
+        allocateMemory(n * (polyline->size() * 2 + 2));
 
         // need to add extra tails to the polyline for direction padding
         std::vector<pgd::Vector3> newPolyline;
@@ -50,7 +50,7 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
             profile.push_back(v0);
         }
 
-        Extrude(&newPolyline, &profile);
+        extrude(&newPolyline, &profile);
     }
     else
     {
@@ -77,7 +77,7 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
                         pointArray.get(),      /* polyline vertces */
                         colourArray.get(),      /* colors at polyline verts */
                         radius);                /* radius of polycylinder */
-        RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
+        rawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
     }
 
 }
@@ -87,7 +87,7 @@ FacetedPolyline::FacetedPolyline(std::vector<pgd::Vector3> *polyline, double rad
 // polyline needs to have no parallel neighbouring segements
 // anti-clockwise winding assumed (I think)
 // first and last point of polyline used for direction only!
-void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<pgd::Vector3> *profile)
+void FacetedPolyline::extrude(std::vector<pgd::Vector3> *polyline, std::vector<pgd::Vector3> *profile)
 {
     unsigned int i, j;
     Line3D line;
@@ -104,10 +104,10 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
     {
         v1 = (*polyline)[i] - (*polyline)[i - 1];
         v2 = (*polyline)[i + 1] - (*polyline)[i];
-        v1.Normalize();
-        v2.Normalize();
+        v1.normalize();
+        v2.normalize();
         p1 = v1 - v2;
-        if (p1.Magnitude2() > epsilon2)   // not parallel so use two vector form of plane
+        if (p1.magnitude2() > epsilon2)   // not parallel so use two vector form of plane
         {
             p2 = v1 ^ v2;
             plane = Plane3D(&(*polyline)[i], &p1, &p2);
@@ -124,12 +124,12 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
     // note for a truly generic routine you need two rotations to allow an up vector to be defined
     pgd::Vector3 zVec(0, 0, 1);
     v1 = (*polyline)[1] - (*polyline)[0];
-    pgd::Quaternion q = pgd::FindRotation(zVec, v1);
+    pgd::Quaternion q = pgd::findRotation(zVec, v1);
     std::vector<pgd::Vector3> rotatedProfile;
     rotatedProfile.reserve(polyline->size());
     for (i = 0; i < (*profile).size(); i++)
     {
-        pgd::Vector3 v = pgd::QVRotate(q, (*profile)[i]);
+        pgd::Vector3 v = pgd::qVRotate(q, (*profile)[i]);
         rotatedProfile.push_back(v);
     }
 
@@ -142,7 +142,7 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
         line = Line3D(&v2, &v1);
         for (j = 0; j < joinPlanes.size(); j++)
         {
-            if (Intersection(&line, &joinPlanes[j], &v2))
+            if (intersection(&line, &joinPlanes[j], &v2))
             {
                 vertexList.push_back(v2);
                 if (j < joinPlanes.size() - 1)
@@ -198,26 +198,26 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
                 polygon[11] = vertexList[j].z;
             }
             normal = pgd::Vector3(polygon[0], polygon[1], polygon[2]) - centroid1;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[0] = normal.x;
             polygonNormal[1] = normal.y;
             polygonNormal[2] = normal.z;
             normal = pgd::Vector3(polygon[3], polygon[4], polygon[5]) - centroid2;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[3] = normal.x;
             polygonNormal[4] = normal.y;
             polygonNormal[5] = normal.z;
             normal = pgd::Vector3(polygon[6], polygon[7], polygon[8]) - centroid2;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[6] = normal.x;
             polygonNormal[7] = normal.y;
             polygonNormal[8] = normal.z;
             normal = pgd::Vector3(polygon[9], polygon[10], polygon[11]) - centroid1;
-            normal.Normalize();
+            normal.normalize();
             polygonNormal[9] = normal.x;
             polygonNormal[10] = normal.y;
             polygonNormal[11] = normal.z;
-            this->AddPolygon(polygon.get(), 4, polygonNormal.get());
+            this->addPolygon(polygon.get(), 4, polygonNormal.get());
         }
     }
 
@@ -228,21 +228,21 @@ void FacetedPolyline::Extrude(std::vector<pgd::Vector3> *polyline, std::vector<p
         polygon[i * 3 + 1] = vertexList[joinPlanes.size() * i].y;
         polygon[i * 3 + 2] = vertexList[joinPlanes.size() * i].z;
     }
-    this->AddPolygon(polygon.get(), rotatedProfile.size());
+    this->addPolygon(polygon.get(), rotatedProfile.size());
     for (i = 0; i < rotatedProfile.size(); i++)
     {
         polygon[i * 3] = vertexList[joinPlanes.size() - 1 + joinPlanes.size() * (rotatedProfile.size() - i - 1)].x;
         polygon[i * 3 + 1] = vertexList[joinPlanes.size() - 1 + joinPlanes.size() * (rotatedProfile.size() - i - 1)].y;
         polygon[i * 3 + 2] = vertexList[joinPlanes.size() - 1 + joinPlanes.size() * (rotatedProfile.size() - i - 1)].z;
     }
-    this->AddPolygon(polygon.get(), rotatedProfile.size());
+    this->addPolygon(polygon.get(), rotatedProfile.size());
 }
 
 // find intersection of line and plane
 // returns true on success, false if no intersection
-bool FacetedPolyline::Intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *intersection)
+bool FacetedPolyline::intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *intersection)
 {
-    double denominator = line->direction * plane->GetNormal();
+    double denominator = line->direction * plane->normal();
     const double epsilon = std::numeric_limits<double>::epsilon();
     double t;
 

@@ -16,6 +16,8 @@
 #include "FluidSac.h"
 #include "Geom.h"
 #include "HingeJoint.h"
+#include "BallJoint.h"
+#include "FixedJoint.h"
 #include "SphereGeom.h"
 #include "PlaneGeom.h"
 #include "Marker.h"
@@ -54,9 +56,9 @@ PhysXPhysicsEngine::~PhysXPhysicsEngine()
     PX_RELEASE(m_foundation);
 }
 
-std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
+std::string *PhysXPhysicsEngine::initialise(Simulation *theSimulation)
 {
-    std::string *err = PhysicsEngine::Initialise(theSimulation);
+    std::string *err = PhysicsEngine::initialise(theSimulation);
     if (err) { return err; }
 
     m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, g_allocator, g_errorCallback);
@@ -66,10 +68,26 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
         return lastErrorPtr();
     }
 
+#ifdef QT_DEBUG
     m_pvd = PxCreatePvd(*m_foundation);
     physx::PxPvdTransport *transport = physx::PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
     m_pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+    m_recordMemoryAllocations = true;
+#endif
 
+    // m_defaultLength
+    // The approximate size of objects in the simulation.
+    // For simulating roughly human-sized in metric units, 1 is a good choice.
+    // If simulation is done in centimetres, use 100 instead. This is used to estimate certain length-related tolerances.
+
+    // m_defaultSpeed
+    // The typical magnitude of velocities of objects in simulation.
+    // This is used to estimate whether a contact should be treated as bouncing or resting based on its impact velocity,
+    // and a kinetic energy threshold below which the simulation may put objects to sleep.
+    // For normal physical environments, a good choice is the approximate speed of an object falling under gravity for one second.
+
+    m_defaultLength = simulation()->global()->defaultLength();
+    m_defaultSpeed = simulation()->global()->defaultSpeed();
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale(m_defaultLength, m_defaultSpeed), m_recordMemoryAllocations, m_pvd);
     if (!m_physics)
     {
@@ -80,11 +98,19 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     PxInitExtensions(*m_physics, m_pvd);
 
     physx::PxSceneDesc sceneDesc(m_physics->getTolerancesScale());
-    pgd::Vector3 gravity = simulation()->GetGlobal()->Gravity();
+    pgd::Vector3 gravity = simulation()->global()->gravity();
     sceneDesc.gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
-    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
     physx::PxU32 numCores = physx::PxThread::getNbPhysicalCores();
-    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(numCores == 0 ? 0 : numCores - 1);
+    if (numCores == 0)
+    {
+        setLastError("Error: PhysXPhysicsEngine error in getNbPhysicalCores"s);
+        return lastErrorPtr();
+    }
+    physx::PxU32 coresToUse = 1;
+#ifdef QT_IS_AVAILABLE
+    // if (numCores > 1) { coresToUse = numCores - 1; } // only use multiple threads in the GUI version
+#endif
+    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(coresToUse);
     sceneDesc.cpuDispatcher	= m_dispatcher;
     sceneDesc.filterShader	= contactReportFilterShader;
     sceneDesc.simulationEventCallback = &g_contactReportCallback;
@@ -92,6 +118,7 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
     m_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
+#ifdef QT_DEBUG
     physx::PxPvdSceneClient* pvdClient = m_scene->getScenePvdClient();
     if (pvdClient)
     {
@@ -99,6 +126,7 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
         pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
     }
+#endif
 
     // create the fixed world body
     physx::PxTransform transform(physx::PxVec3(0, 0, 0));
@@ -107,27 +135,27 @@ std::string *PhysXPhysicsEngine::Initialise(Simulation *theSimulation)
     m_scene->addActor(*m_world);
 
     // create the PhysX versions of the main elements
-    CreateBodies();
-    CreateJoints();
-    CreateGeoms();
+    createBodies();
+    createJoints();
+    createGeoms();
 
     // And PhysX requires that bodies be moved to their starting positions after joints have been created
-    MoveBodies();
+    moveBodies();
 
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::CreateBodies()
+std::string *PhysXPhysicsEngine::createBodies()
 {
     const pgd::Quaternion zeroRotation( 1, 0, 0, 0);
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         Body *body = iter.second.get();
         double mass, ixx, iyy, izz, ixy, izx, iyz;
-        body->GetMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
-        pgd::Vector3 position = body->GetConstructionPosition();
-        pgd::Vector3 linearVelocity = body->GetLinearVelocity();
-        pgd::Vector3 angularVelocity = body->GetAngularVelocity();
+        body->getMass(&mass, &ixx, &iyy, &izz, &ixy, &izx, &iyz);
+        pgd::Vector3 position = body->constructionPosition();
+        pgd::Vector3 linearVelocity = body->linearVelocity();
+        pgd::Vector3 angularVelocity = body->angularVelocity();
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(zeroRotation.x, zeroRotation.y, zeroRotation.z, zeroRotation.n));
         physx::PxRigidDynamic* rigidDynamic = m_physics->createRigidDynamic(transform);
         physx::PxMat33 inertialTensor(physx::PxVec3(ixx, ixy, izx), physx::PxVec3(ixy, iyy, iyz), physx::PxVec3(izx, iyz, izz)); // construct from 3 column vectors
@@ -145,9 +173,9 @@ std::string *PhysXPhysicsEngine::CreateBodies()
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::CreateJoints()
+std::string *PhysXPhysicsEngine::createJoints()
 {
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -155,10 +183,10 @@ std::string *PhysXPhysicsEngine::CreateJoints()
             {
                 Marker *marker1 = hingeJoint->body1Marker();
                 Marker *marker2 = hingeJoint->body2Marker();
-                pgd::Vector3 p1 = marker1->GetPosition();
-                pgd::Vector3 p2 = marker2->GetPosition();
-                pgd::Quaternion q1 = marker1->GetQuaternion();
-                pgd::Quaternion q2 = marker2->GetQuaternion();
+                pgd::Vector3 p1 = marker1->position();
+                pgd::Vector3 p2 = marker2->position();
+                pgd::Quaternion q1 = marker1->quaternion();
+                pgd::Quaternion q2 = marker2->quaternion();
                 physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
                 physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
                 physx::PxRigidActor *actor0 = m_bodyMap[hingeJoint->body1()->name()];
@@ -176,6 +204,50 @@ std::string *PhysXPhysicsEngine::CreateJoints()
                 m_jointMap[iter.first] = revolute;
                 break;
             }
+            if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(iter.second.get()))
+            {
+                Marker *marker1 = ballJoint->body1Marker();
+                Marker *marker2 = ballJoint->body2Marker();
+                pgd::Vector3 p1 = marker1->position();
+                pgd::Vector3 p2 = marker2->position();
+                pgd::Quaternion q1 = marker1->quaternion();
+                pgd::Quaternion q2 = marker2->quaternion();
+                physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
+                physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
+                physx::PxRigidActor *actor0 = m_bodyMap[ballJoint->body1()->name()];
+                physx::PxRigidActor *actor1 = m_bodyMap[ballJoint->body2()->name()];
+                physx::PxSphericalJoint *spherical = PxSphericalJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
+                spherical->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+
+                // physx::PxReal yLimitAngle = physx::PxPi/2; // The limit angle from the Y-axis of the constraint frame
+                // physx::PxReal zLimitAngle = physx::PxPi/2; // The limit angle from the Z-axis of the constraint frame
+                // spherical->setLimitCone(physx::PxJointLimitCone(yLimitAngle, zLimitAngle)); // there is also a soft version PxJointLimitCone(PxReal yLimitAngle, PxReal zLimitAngle, const PxSpring &spring)
+                // spherical->setSphericalJointFlag(physx::PxSphericalJointFlag::eLIMIT_ENABLED, true);
+                spherical->userData = ballJoint;
+                m_jointMap[iter.first] = spherical;
+                break;
+            }
+            if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
+            {
+                Marker *marker1 = fixedJoint->body1Marker();
+                Marker *marker2 = fixedJoint->body2Marker();
+                pgd::Vector3 p1 = marker1->position();
+                pgd::Vector3 p2 = marker2->position();
+                pgd::Quaternion q1 = marker1->quaternion();
+                pgd::Quaternion q2 = marker2->quaternion();
+                physx::PxTransform localFrame0(physx::PxVec3(p1.x, p1.y, p1.z), physx::PxQuat(q1.x, q1.y, q1.z, q1.n));
+                physx::PxTransform localFrame1(physx::PxVec3(p2.x, p2.y, p2.z), physx::PxQuat(q2.x, q2.y, q2.z, q2.n));
+                physx::PxRigidActor *actor0 = m_bodyMap[fixedJoint->body1()->name()];
+                physx::PxRigidActor *actor1 = m_bodyMap[fixedJoint->body2()->name()];
+                physx::PxFixedJoint *fixed = PxFixedJointCreate(*m_physics, actor0, localFrame0, actor1, localFrame1);
+                fixed->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+
+                // fixed->setBreakForce(1000.0f, 1000.0f); // joint breaks if exceeded [setBreakForce(PxReal force, PxReal torque)]
+                fixed->userData = fixedJoint;
+                m_jointMap[iter.first] = fixed;
+                break;
+            }
+            std::cerr << "Unsupported JOINT type \"" << iter.second.get()->type();
             break;
         }
     }
@@ -183,39 +255,34 @@ std::string *PhysXPhysicsEngine::CreateJoints()
 }
 
 
-std::string *PhysXPhysicsEngine::CreateGeoms()
+std::string *PhysXPhysicsEngine::createGeoms()
 {
-    for (auto &&iter : *simulation()->GetGeomList())
+    for (auto &&iter : *simulation()->geomList())
     {
         while (true)
         {
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(iter.second.get()))
             {
                 double radius = sphereGeom->radius();
-                pgd::Vector3 position = sphereGeom->GetPosition();
-                pgd::Quaternion quaternion = sphereGeom->GetQuaternion();
-                physx::PxReal staticFriction = sphereGeom->GetContactMu();
+                pgd::Vector3 position = sphereGeom->position();
+                pgd::Quaternion quaternion = sphereGeom->quaternion();
+                physx::PxReal staticFriction = sphereGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (sphereGeom->GetContactBounce() > 0)
-                {
-                    physx::PxReal restitution = sphereGeom->GetContactBounce();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                }
-                else
-                {
-                    physx::PxReal restitution = -1 * sphereGeom->GetContactSpringConstant();
-                    physx::PxReal damping = sphereGeom->GetContactDampingConstant();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setDamping(damping);
-                }
+                physx::PxReal damping = sphereGeom->contactDampingConstant();
+                physx::PxReal restitution = sphereGeom->contactBounce();
+                material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                material->setDamping(damping);
+
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxSphereGeometry(radius), *material, isExclusive, shapeFlags);
+                shape->setContactOffset(simulation()->global()->contactSurfaceLayer()); // start to get a collision effect when still some distance away
+                shape->setRestOffset(0.0); // rest separation distance - because less than the ContactOffset this gives some softness to collisions
                 physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
                 shape->setLocalPose(transform);
                 shape->userData = sphereGeom;
-                m_bodyMap[sphereGeom->GetBody()->name()]->attachShape(*shape);
+                m_bodyMap[sphereGeom->body()->name()]->attachShape(*shape);
                 material->release();
                 shape->release();
                 break;
@@ -223,22 +290,15 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
             if (PlaneGeom *planeGeom = dynamic_cast<PlaneGeom *>(iter.second.get()))
             {
                 double a, b, c, d;
-                planeGeom->GetPlane(&a, &b, &c, &d);
-                physx::PxReal staticFriction = planeGeom->GetContactMu();
+                planeGeom->getPlane(&a, &b, &c, &d);
+                physx::PxReal staticFriction = planeGeom->contactMu();
                 physx::PxReal dynamicFriction = staticFriction; // FIX ME - need to implement dynamic friction
                 physx::PxMaterial *material;
-                if (planeGeom->GetContactBounce() > 0)
-                {
-                    physx::PxReal restitution = planeGeom->GetContactBounce();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                }
-                else
-                {
-                    physx::PxReal restitution = -1 * planeGeom->GetContactSpringConstant();
-                    physx::PxReal damping = planeGeom->GetContactDampingConstant();
-                    material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
-                    material->setDamping(damping);
-                }
+                physx::PxReal damping = planeGeom->contactDampingConstant();
+                physx::PxReal restitution = planeGeom->contactBounce();
+                material = m_physics->createMaterial(staticFriction, dynamicFriction, restitution);
+                material->setDamping(damping);
+
                 bool isExclusive = true;
                 physx::PxShapeFlags shapeFlags = physx::PxShapeFlag::eVISUALIZATION | physx::PxShapeFlag::eSCENE_QUERY_SHAPE | physx::PxShapeFlag::eSIMULATION_SHAPE;
                 physx::PxShape *shape = m_physics->createShape(physx::PxPlaneGeometry(), *material, isExclusive, shapeFlags);
@@ -250,35 +310,36 @@ std::string *PhysXPhysicsEngine::CreateGeoms()
                 shape->release();
                 break;
             }
+            std::cerr << "Unsupported GEOM type \"" << iter.second.get()->type();
             break;
         }
     }
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::MoveBodies()
+std::string *PhysXPhysicsEngine::moveBodies()
 {
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
-        pgd::Vector3 position = iter.second->GetPosition();
-        pgd::Quaternion quaternion = iter.second->GetQuaternion();
+        pgd::Vector3 position = iter.second->position();
+        pgd::Quaternion quaternion = iter.second->quaternion();
         physx::PxTransform transform(physx::PxVec3(position.x, position.y, position.z), physx::PxQuat(quaternion.x, quaternion.y, quaternion.z, quaternion.n));
         rigidDynamic->setGlobalPose(transform);
     }
     return nullptr;
 }
 
-std::string *PhysXPhysicsEngine::Step()
+std::string *PhysXPhysicsEngine::step()
 {
     // clear the contacts
     g_contactReportCallback.contactData()->clear();
 
     // apply the point forces from the muscles
-    for (auto &&iter :  *simulation()->GetMuscleList())
+    for (auto &&iter :  *simulation()->muscleList())
     {
-        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->GetPointForceList();
-        double tension = iter.second->GetTension();
+        std::vector<std::unique_ptr<PointForce>> *pointForceList = iter.second->pointForceList();
+        double tension = iter.second->tension();
         for (unsigned int i = 0; i < pointForceList->size(); i++)
         {
             const PointForce *pf = pointForceList->at(i).get();
@@ -292,7 +353,7 @@ std::string *PhysXPhysicsEngine::Step()
     }
 
     // apply the point forces from the  fluid sacs
-    for (auto &&iter : *simulation()->GetFluidSacList())
+    for (auto &&iter : *simulation()->fluidSacList())
     {
         for (size_t i = 0; i < iter.second->pointForceList().size(); i++)
         {
@@ -307,25 +368,25 @@ std::string *PhysXPhysicsEngine::Step()
     }
 
     // apply the forces from the drag
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         if (iter.second->dragControl() == Body::NoDrag) continue;
         pgd::Vector3 dragForce = iter.second->dragForce();
         pgd::Vector3 dragTorque = iter.second->dragTorque();
-        iter.second->ComputeDrag();
+        iter.second->computeDrag();
         Marker marker(iter.second.get());
-        pgd::Vector3 worldDragForce = marker.GetWorldVector(dragForce);
-        pgd::Vector3 worldDragTorque = marker.GetWorldVector(dragTorque);
+        pgd::Vector3 worldDragForce = marker.worldVector(dragForce);
+        pgd::Vector3 worldDragTorque = marker.worldVector(dragTorque);
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
         rigidDynamic->addForce(physx::PxVec3(worldDragForce[0], worldDragForce[1], worldDragForce[2]), physx::PxForceMode::eFORCE, true);
         rigidDynamic->addTorque(physx::PxVec3(worldDragTorque[0], worldDragTorque[1], worldDragTorque[2]), physx::PxForceMode::eFORCE, true);
     }
 
     // run the simulation
-    m_scene->simulate(simulation()->GetGlobal()->StepSize());
+    m_scene->simulate(simulation()->global()->stepSize());
     m_scene->fetchResults(true);
 
-#ifdef DEBUG_ACTORS
+#ifdef QT_DEBUG
     physx::PxScene* scene;
     PxGetPhysics().getScenes(&scene,1);
     physx::PxU32 nbActors = scene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC | physx::PxActorTypeFlag::eRIGID_STATIC);
@@ -346,19 +407,19 @@ std::string *PhysXPhysicsEngine::Step()
 #endif
 
     // update the objects with the new data
-    for (auto &&iter : *simulation()->GetBodyList())
+    for (auto &&iter : *simulation()->bodyList())
     {
         physx::PxRigidDynamic* rigidDynamic = m_bodyMap[iter.first];
         physx::PxTransform transform = rigidDynamic->getGlobalPose();
         physx::PxVec3 linearVelocity = rigidDynamic->getLinearVelocity();
         physx::PxVec3 angularVelocity = rigidDynamic->getAngularVelocity();
-        iter.second->SetPosition(transform.p[0], transform.p[1], transform.p[2]);
-        iter.second->SetQuaternion(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-        iter.second->SetLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
-        iter.second->SetAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
+        iter.second->setPosition(transform.p[0], transform.p[1], transform.p[2]);
+        iter.second->setQuaternion(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
+        iter.second->setLinearVelocity(linearVelocity[0], linearVelocity[1], linearVelocity[2]);
+        iter.second->setAngularVelocity(angularVelocity[0], angularVelocity[1], angularVelocity[2]);
     }
 
-    for (auto &&iter : *simulation()->GetJointList())
+    for (auto &&iter : *simulation()->jointList())
     {
         while (true)
         {
@@ -400,8 +461,8 @@ std::string *PhysXPhysicsEngine::Step()
         }
     }
 
-    simulation()->GetContactList()->clear();
-    double timeStep =simulation()->GetGlobal()->StepSize();
+    simulation()->contactList()->clear();
+    double timeStep = simulation()->global()->stepSize();
     for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
     {
         physx::PxActor *actors[2];
@@ -413,17 +474,21 @@ std::string *PhysXPhysicsEngine::Step()
             physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
             physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
             physx::PxShape *shape2 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
+            Geom *shape1UserData = static_cast<Geom *>(shape1->userData);
+            Geom *shape2UserData = static_cast<Geom *>(shape2->userData);
+            if (shape1UserData->abort()) simulation()->setContactAbort(shape1UserData->name());
+            if (shape2UserData->abort()) simulation()->setContactAbort(shape2UserData->name());
             std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
             myContact->setSimulation(simulation());
             myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
             myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
             Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
             Geom *geom2 = reinterpret_cast<Geom *>(shape2->userData);
-            geom1->AddContact(myContact.get());
-            geom2->AddContact(myContact.get());
-            myContact->setBody1(geom1->GetBody());
-            myContact->setBody2(geom2->GetBody());
-            simulation()->GetContactList()->push_back(std::move(myContact));
+            geom1->addContact(myContact.get());
+            geom2->addContact(myContact.get());
+            myContact->setBody1(geom1->body());
+            myContact->setBody2(geom2->body());
+            simulation()->contactList()->push_back(std::move(myContact));
         }
     }
 

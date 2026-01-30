@@ -27,10 +27,10 @@ namespace GaitSym {
 
 PlaneGeom::PlaneGeom(double a, double b, double c, double d)
 {
-    SetPlane(a, b, c, d);
+    setPlane(a, b, c, d);
 }
 
-void PlaneGeom::SetPlane(double a, double b, double c, double d)
+void PlaneGeom::setPlane(double a, double b, double c, double d)
 {
     // create the geom
     double length = std::sqrt(a * a + b * b + c * c);
@@ -53,7 +53,7 @@ void PlaneGeom::SetPlane(double a, double b, double c, double d)
     m_d = d;
 }
 
-void PlaneGeom::GetPlane(double *a, double *b, double *c, double *d)
+void PlaneGeom::getPlane(double *a, double *b, double *c, double *d)
 {
     *a = m_a;
     *b = m_b;
@@ -66,7 +66,7 @@ std::string *PlaneGeom::createFromAttributes()
     if (Geom::createFromAttributes()) return lastErrorPtr();
     std::string buf;
 
-    if (geomMarker()->GetBody())
+    if (geomMarker()->body())
     {
         setLastError("GEOM ID=\""s + name() +"\" PlaneGeom must be attached to the World"s);
         return lastErrorPtr();
@@ -80,13 +80,13 @@ std::string *PlaneGeom::createFromAttributes()
     // the normal is (a,b,c)
     // d is the dot product of the normal at the point on the plane
 
-    pgd::Vector3 normal = geomMarker()->GetWorldAxis(Marker::Axis::Z);
-    pgd::Vector3 point = geomMarker()->GetWorldPosition();
+    pgd::Vector3 normal = geomMarker()->worldAxis(Marker::Axis::Z);
+    pgd::Vector3 point = geomMarker()->worldPosition();
     double a = normal.x;
     double b = normal.y;
     double c = normal.z;
-    double d = normal.Dot(point);
-    SetPlane(a, b, c, d);
+    double d = normal.dot(point);
+    setPlane(a, b, c, d);
     return nullptr;
 }
 

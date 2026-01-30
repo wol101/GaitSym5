@@ -26,8 +26,8 @@ public:
 
     PlaneGeom(double a, double b, double c, double d);
 
-    void SetPlane(double a, double b, double c, double d);
-    void GetPlane(double *a, double *b, double *c, double *d);
+    void setPlane(double a, double b, double c, double d);
+    void getPlane(double *a, double *b, double *c, double *d);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

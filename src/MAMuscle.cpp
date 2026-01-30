@@ -39,32 +39,32 @@ MAMuscle::~MAMuscle()
 {
 }
 
-void MAMuscle::SetVMax(double vMax)
+void MAMuscle::setVMax(double vMax)
 {
-    m_VMax = vMax;
+    m_vMax = vMax;
 }
 
-void MAMuscle::SetF0(double f0)
+void MAMuscle::setF0(double f0)
 {
-    m_F0 = f0;
+    m_f0 = f0;
 }
 
-void MAMuscle::SetK(double k)
+void MAMuscle::setK(double k)
 {
-    m_K = k;
+    m_k = k;
 }
 
-void MAMuscle::SetActivation()
+void MAMuscle::updateActivation()
 {
     SetAlpha(dataSum());
 }
 
-double MAMuscle::GetActivation()
+double MAMuscle::activation()
 {
-    return m_Alpha;
+    return m_alpha;
 }
 
-double MAMuscle::GetElasticEnergy()
+double MAMuscle::elasticEnergy()
 {
     return 0;
 }
@@ -77,33 +77,33 @@ void MAMuscle::SetAlpha(double alpha)
     double fCE;
     double v, fFull;
 
-    if (alpha < 0) m_Alpha = 0;
+    if (alpha < 0) m_alpha = 0;
     else
     {
-        if (alpha > 1.0) m_Alpha = 1.0;
-        else m_Alpha = alpha;
+        if (alpha > 1.0) m_alpha = 1.0;
+        else m_alpha = alpha;
     }
 
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    v = -GetStrap()->Velocity();
+    v = -strap()->velocity();
 
     // limit v
-    if (v > m_VMax) v = m_VMax;
-    else if (v < -m_VMax) v = -m_VMax;
+    if (v > m_vMax) v = m_vMax;
+    else if (v < -m_vMax) v = -m_vMax;
 
     if (v < 0)
     {
-        fFull = m_F0 * (1.8 - 0.8 * ((m_VMax + v) / (m_VMax - (7.56 / m_K) * v)));
+        fFull = m_f0 * (1.8 - 0.8 * ((m_vMax + v) / (m_vMax - (7.56 / m_k) * v)));
     }
     else
     {
-        fFull = m_F0 * (m_VMax - v) / (m_VMax + (v / m_K));
+        fFull = m_f0 * (m_vMax - v) / (m_vMax + (v / m_k));
     }
 
     // now set the tension as a proportion of fFull
-    fCE = m_Alpha * fFull;
-    GetStrap()->setTension(fCE);
+    fCE = m_alpha * fFull;
+    strap()->setTension(fCE);
 }
 
 void MAMuscle::setFibreLength(double fibreLength)
@@ -148,11 +148,11 @@ double MAMuscle::fibreLength() const
 
 // calculate the metabolic power of the muscle
 
-double MAMuscle::GetMetabolicPower()
+double MAMuscle::metabolicPower()
 {
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    double relV = -GetStrap()->Velocity() / m_VMax;
+    double relV = -strap()->velocity() / m_vMax;
 
     // limit relV
     if (relV > 1) relV = 1;
@@ -164,7 +164,7 @@ double MAMuscle::GetMetabolicPower()
     double sigma = (0.054 + 0.506 * relV + 2.46 * relVSquared) /
         (1 - 1.13 * relV + 12.8 * relVSquared - 1.64 * relVCubed);
 
-    return (m_Alpha * m_F0 * m_VMax * sigma);
+    return (m_alpha * m_f0 * m_vMax * sigma);
 }
 
 std::string *MAMuscle::createFromAttributes()
@@ -172,17 +172,17 @@ std::string *MAMuscle::createFromAttributes()
     if (Muscle::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("ForcePerUnitArea"s, &buf) == nullptr) return lastErrorPtr();
-    m_forcePerUnitArea = GSUtil::Double(buf);
+    m_forcePerUnitArea = GSUtil::toDouble(buf);
     if (findAttribute("VMaxFactor"s, &buf) == nullptr) return lastErrorPtr();
-    m_vMaxFactor = GSUtil::Double(buf);
+    m_vMaxFactor = GSUtil::toDouble(buf);
     if (findAttribute("PCA"s, &buf) == nullptr) return lastErrorPtr();
-    m_pca = GSUtil::Double(buf);
-    this->SetF0(m_pca * m_forcePerUnitArea);
+    m_pca = GSUtil::toDouble(buf);
+    this->setF0(m_pca * m_forcePerUnitArea);
     if (findAttribute("FibreLength"s, &buf) == nullptr) return lastErrorPtr();
-    m_fibreLength = GSUtil::Double(buf);
-    this->SetVMax(m_fibreLength * m_vMaxFactor);
+    m_fibreLength = GSUtil::toDouble(buf);
+    this->setVMax(m_fibreLength * m_vMaxFactor);
     if (findAttribute("ActivationK"s, &buf) == nullptr) return lastErrorPtr();
-    m_K = GSUtil::Double(buf);
+    m_k = GSUtil::toDouble(buf);
     return nullptr;
 }
 
@@ -191,11 +191,11 @@ void MAMuscle::appendToAttributes()
     Muscle::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "MinettiAlexander"s);
-    setAttribute("ForcePerUnitArea"s, *GSUtil::ToString(m_forcePerUnitArea, &buf));
-    setAttribute("VMaxFactor"s, *GSUtil::ToString(m_vMaxFactor, &buf));
-    setAttribute("PCA"s, *GSUtil::ToString(m_pca, &buf));
-    setAttribute("FibreLength"s, *GSUtil::ToString(m_fibreLength, &buf));
-    setAttribute("ActivationK"s, *GSUtil::ToString(m_K, &buf));
+    setAttribute("ForcePerUnitArea"s, *GSUtil::toString(m_forcePerUnitArea, &buf));
+    setAttribute("VMaxFactor"s, *GSUtil::toString(m_vMaxFactor, &buf));
+    setAttribute("PCA"s, *GSUtil::toString(m_pca, &buf));
+    setAttribute("FibreLength"s, *GSUtil::toString(m_fibreLength, &buf));
+    setAttribute("ActivationK"s, *GSUtil::toString(m_k, &buf));
 }
 
 std::string MAMuscle::dumpToString()
@@ -208,9 +208,9 @@ std::string MAMuscle::dumpToString()
         setFirstDump(false);
         ss << "Time\tVMax\tF0\tK\tAlpha\tFCE\tLCE\tVCE\tPMECH\tPMET\n";
     }
-    ss << simulation()->GetTime() << "\t" << m_VMax << "\t" << m_F0 << "\t" << m_K << "\t" << m_Alpha <<
-          "\t" << GetStrap()->Tension() << "\t" << GetStrap()->Length() << "\t" << GetStrap()->Velocity() <<
-          "\t" << GetStrap()->Velocity() * GetStrap()->Tension() << "\t" << GetMetabolicPower() <<
+    ss << simulation()->simulationTime() << "\t" << m_vMax << "\t" << m_f0 << "\t" << m_k << "\t" << m_alpha <<
+          "\t" << strap()->tension() << "\t" << strap()->length() << "\t" << strap()->velocity() <<
+          "\t" << strap()->velocity() * strap()->tension() << "\t" << metabolicPower() <<
           "\n";
     return ss.str();
 }

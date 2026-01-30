@@ -18,7 +18,7 @@ class FacetedConicSegment: public FacetedObject
 public:
     FacetedConicSegment(double length, double r1, double r2, size_t sides, double ox, double oy, double oz, const QColor &blendColour, double blendFraction);
 
-    virtual void WritePOVRay(std::ostringstream &theString);
+    virtual void writePOVRay(std::ostringstream &theString);
 
 private:
     double m_R1;

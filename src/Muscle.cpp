@@ -30,14 +30,14 @@ std::string *Muscle::createFromAttributes()
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("StrapID"s, &buf) == nullptr) return lastErrorPtr();
-    auto strapList = simulation()->GetStrapList();
+    auto strapList = simulation()->strapList();
     auto it = strapList->find(buf);
     if (it == strapList->end())
     {
         setLastError("MUSCLE ID=\""s + name() +"\" StrapID=\""s + buf + "\" not found"s);
         return lastErrorPtr();
     }
-    this->SetStrap(it->second.get());
+    this->setStrap(it->second.get());
 #ifdef SAVE_CUSTOM_STRAP_COLOUR_CONTROL
     if (findAttribute("StrapColourControl"s, &buf))
     {
@@ -66,7 +66,7 @@ void Muscle::saveToAttributes()
 void Muscle::appendToAttributes()
 {
     NamedObject::appendToAttributes();
-    setAttribute("StrapID"s, this->GetStrap()->name());
+    setAttribute("StrapID"s, this->strap()->name());
 
 #ifdef SAVE_CUSTOM_STRAP_COLOUR_CONTROL
     switch (m_strapColourControl)
@@ -98,54 +98,54 @@ void Muscle::setStrapColourControl(const Muscle::StrapColourControl &strapColour
     m_strapColourControl = strapColourControl;
 }
 
-double Muscle::GetLength() const
+double Muscle::length() const
 {
-    return m_Strap->Length();
+    return m_Strap->length();
 }
 
-double Muscle::GetVelocity() const
+double Muscle::velocity() const
 {
-    return m_Strap->Velocity();
+    return m_Strap->velocity();
 }
 
-double Muscle::GetTension() const
+double Muscle::tension() const
 {
-    return m_Strap->Tension();
+    return m_Strap->tension();
 }
 
-double Muscle::GetPower() const
+double Muscle::power() const
 {
-    return -(m_Strap->Tension() * m_Strap->Velocity());
+    return -(m_Strap->tension() * m_Strap->velocity());
 }
 
-void Muscle::CalculateStrap()
+void Muscle::calculateStrap()
 {
-    m_Strap->Calculate();
+    m_Strap->calculate();
 }
 
-std::vector<std::unique_ptr<PointForce >> *Muscle::GetPointForceList() const
+std::vector<std::unique_ptr<PointForce >> *Muscle::pointForceList() const
 {
-    return m_Strap->GetPointForceList();
+    return m_Strap->pointForceList();
 }
 
-Strap *Muscle::GetStrap() const
+Strap *Muscle::strap() const
 {
     return m_Strap;
 }
 
-void Muscle::SetStrap(Strap *strap)
+void Muscle::setStrap(Strap *strap)
 {
     m_Strap = strap;
 }
 
-//int Muscle::SanityCheck(Muscle *otherMuscle, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
+//int Muscle::sanityCheck(Muscle *otherMuscle, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
 //{
-//    return m_Strap->SanityCheck(otherMuscle->m_Strap, axis, sanityCheckLeft, sanityCheckRight);
+//    return m_Strap->sanityCheck(otherMuscle->m_Strap, axis, sanityCheckLeft, sanityCheckRight);
 //}
 
-void Muscle::LateInitialisation()
+void Muscle::lateInitialisation()
 {
-    CalculateStrap();
+    calculateStrap();
 }
 
 

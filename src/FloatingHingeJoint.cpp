@@ -24,14 +24,14 @@ FloatingHingeJoint::FloatingHingeJoint() : Joint()
 std::string *FloatingHingeJoint::createFromAttributes()
 {
     if (Joint::createFromAttributes()) return lastErrorPtr();
-    pgd::Vector3 axis = body1Marker()->GetWorldAxis(Marker::Axis::X);
+    pgd::Vector3 axis = body1Marker()->worldAxis(Marker::Axis::X);
     this->setAxis(axis);
 
     std::string buf;
     if (findAttribute("LowStop"s, &buf) == nullptr) return lastErrorPtr();
-    double loStop = GSUtil::GetAngle(buf);
+    double loStop = GSUtil::toAngle(buf);
     if (findAttribute("HighStop"s, &buf) == nullptr) return lastErrorPtr();
-    double hiStop = GSUtil::GetAngle(buf);
+    double hiStop = GSUtil::toAngle(buf);
     if (loStop >= hiStop)
     {
         setLastError("FloatingHinge ID=\""s + name() +"\" LowStop >= HighStop"s);
@@ -46,8 +46,8 @@ void FloatingHingeJoint::appendToAttributes()
     Joint::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "FloatingHinge"s);
-    setAttribute("LowStop"s, *GSUtil::ToString(m_stops[0], &buf));
-    setAttribute("HighStop"s, *GSUtil::ToString(m_stops[1], &buf));
+    setAttribute("LowStop"s, *GSUtil::toString(m_stops[0], &buf));
+    setAttribute("HighStop"s, *GSUtil::toString(m_stops[1], &buf));
 }
 
 pgd::Vector3 FloatingHingeJoint::axis() const

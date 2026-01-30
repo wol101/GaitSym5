@@ -39,41 +39,41 @@ double DataTargetVector::calculateError(size_t valueListIndex)
     m_vectorTarget = m_valueList[size_t(valueListIndex)];
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
-            m_vectorValue = body->GetPosition();
+            m_vectorValue = body->position();
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            m_vectorValue = geom->GetWorldPosition();
+            m_vectorValue = geom->worldPosition();
             break;
         }
-        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
         {
             m_vectorValue = hingeJoint->anchor();
             break;
         }
-        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(target()))
         {
             m_vectorValue = ballJoint->anchor();
             break;
         }
-        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(target()))
         {
             m_vectorValue = universalJoint->anchor();
             break;
         }
-        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
-            m_vectorValue = marker->GetWorldPosition();
+            m_vectorValue = marker->worldPosition();
             break;
         }
         std::cerr << "DataTargetVector target missing error " << name() << "\n";
         break;
     }
     m_vectorError = m_vectorValue - m_vectorTarget;
-    return m_vectorError.Magnitude();
+    return m_vectorError.magnitude();
 }
 
 // returns the degree of match to the stored values
@@ -83,48 +83,48 @@ double DataTargetVector::calculateError(size_t index, size_t indexNext, double t
     if (index >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
     if (indexNext >= m_valueList.size()) { std::cerr << "Warning: DataTargetVector::calculateError index out of range\n"; return 0; }
 
-    double interpX = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].x, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].x, time);
-    double interpY = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].y, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].y, time);
-    double interpZ = GSUtil::Interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].z, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].z, time);
-    m_vectorTarget.Set(interpX, interpY, interpZ);
+    double interpX = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].x, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].x, time);
+    double interpY = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].y, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].y, time);
+    double interpZ = GSUtil::interpolate((*targetTimeList())[size_t(index)], m_valueList[size_t(index)].z, (*targetTimeList())[size_t(indexNext)], m_valueList[size_t(indexNext)].z, time);
+    m_vectorTarget.set(interpX, interpY, interpZ);
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
-            m_vectorValue = body->GetPosition();
+            m_vectorValue = body->position();
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            m_vectorValue = geom->GetWorldPosition();
+            m_vectorValue = geom->worldPosition();
             break;
         }
-        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(GetTarget()))
+        if (HingeJoint *hingeJoint = dynamic_cast<HingeJoint *>(target()))
         {
             m_vectorValue = hingeJoint->anchor();
             break;
         }
-        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(GetTarget()))
+        if (BallJoint *ballJoint = dynamic_cast<BallJoint *>(target()))
         {
             m_vectorValue = ballJoint->anchor();
             break;
         }
-        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(GetTarget()))
+        if (UniversalJoint *universalJoint = dynamic_cast<UniversalJoint *>(target()))
         {
             m_vectorValue = universalJoint->anchor();
             break;
         }
-        if (Marker *marker = dynamic_cast<Marker *>(GetTarget()))
+        if (Marker *marker = dynamic_cast<Marker *>(target()))
         {
-            m_vectorValue = marker->GetWorldPosition();
+            m_vectorValue = marker->worldPosition();
             break;
         }
         std::cerr << "DataTargetVector target missing error " << name() << "\n";
         break;
     }
     m_vectorError = m_vectorValue - m_vectorTarget;
-    return m_vectorError.Magnitude();
+    return m_vectorError.magnitude();
 
 }
 
@@ -141,16 +141,16 @@ std::string DataTargetVector::dumpToString()
         setFirstDump(false);
         s += dumpHelper({"time"s, "index"s, "raw_error", "positive_error", "score"s, "vector_value_x"s, "vector_value_y"s, "vector_value_z"s, "vector_target_x"s, "vector_target_y"s, "vector_target_z"s, "vector_error_x"s, "vector_error_y"s, "vector_error_z"s});
     }
-    s += dumpHelper({simulation()->GetTime(), double(index()), rawError(), positiveError(), value(), m_vectorValue.x, m_vectorValue.y, m_vectorValue.z, m_vectorTarget.x, m_vectorTarget.y, m_vectorTarget.z, m_vectorError.x, m_vectorError.y, m_vectorError.z});
+    s += dumpHelper({simulation()->simulationTime(), double(index()), rawError(), positiveError(), value(), m_vectorValue.x, m_vectorValue.y, m_vectorValue.z, m_vectorTarget.x, m_vectorTarget.y, m_vectorTarget.z, m_vectorError.x, m_vectorError.y, m_vectorError.z});
     return s;
 }
 
-void DataTargetVector::SetTarget(NamedObject *target)
+void DataTargetVector::setTarget(NamedObject *target)
 {
     m_target = target;
 }
 
-NamedObject *DataTargetVector::GetTarget()
+NamedObject *DataTargetVector::target()
 {
     return m_target;
 }
@@ -169,14 +169,14 @@ std::string *DataTargetVector::createFromAttributes()
     if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
     for (bool once = true; once; once = false)
     {
-        auto iterBody = simulation()->GetBodyList()->find(buf);
-        if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
-        auto iterJoint = simulation()->GetJointList()->find(buf);
-        if (iterJoint != simulation()->GetJointList()->end()) { m_target = iterJoint->second.get(); break; }
-        auto iterGeom = simulation()->GetGeomList()->find(buf);
-        if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
-        auto iterMarker = simulation()->GetMarkerList()->find(buf);
-        if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
+        auto iterBody = simulation()->bodyList()->find(buf);
+        if (iterBody != simulation()->bodyList()->end()) { m_target = iterBody->second.get(); break; }
+        auto iterJoint = simulation()->jointList()->find(buf);
+        if (iterJoint != simulation()->jointList()->end()) { m_target = iterJoint->second.get(); break; }
+        auto iterGeom = simulation()->geomList()->find(buf);
+        if (iterGeom != simulation()->geomList()->end()) { m_target = iterGeom->second.get(); break; }
+        auto iterMarker = simulation()->markerList()->find(buf);
+        if (iterMarker != simulation()->markerList()->end()) { m_target = iterMarker->second.get(); break; }
     }
     if (!m_target)
     {
@@ -201,7 +201,7 @@ std::string *DataTargetVector::createFromAttributes()
     m_valueList.reserve(targetTimeList()->size());
     for (size_t i = 0; i < targetTimeList()->size(); i++)
     {
-        pgd::Vector3 v(GSUtil::Double(targetValuesTokens[i * 3]), GSUtil::Double(targetValuesTokens[i * 3 + 1]), GSUtil::Double(targetValuesTokens[i * 3 + 2]));
+        pgd::Vector3 v(GSUtil::toDouble(targetValuesTokens[i * 3]), GSUtil::toDouble(targetValuesTokens[i * 3 + 1]), GSUtil::toDouble(targetValuesTokens[i * 3 + 2]));
         m_valueList.push_back(v);
     }
 
@@ -223,7 +223,7 @@ void DataTargetVector::appendToAttributes()
         valueList.push_back(m_valueList[i].y);
         valueList.push_back(m_valueList[i].z);
     }
-    setAttribute("TargetValues"s, *GSUtil::ToString(valueList.data(), valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(valueList.data(), valueList.size(), &buf));
     setAttribute("TargetID"s, m_target->name());
 }
 

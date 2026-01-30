@@ -33,7 +33,7 @@ public:
     SMART_ENUM(MuscleDrawStyle, muscleDrawStyleStrings, muscleDrawStyleCount, FixedCylinder, VolumeCylinder, AreaCylinder, FixedFusiform, VolumeFusiform, AreaFusiform);
 
     virtual void initialise(SimulationWidget *simulationWidget);
-    virtual void Draw();
+    virtual void draw();
     virtual std::string name();
 
     GaitSym::Muscle *muscle() const;
@@ -94,8 +94,8 @@ private:
     std::vector<pgd::Vector3> m_polyline;
 
     MuscleDrawStyle m_muscleDrawStyle = AreaFusiform;
-    void Cylinder();
-    void Fusiform();
+    void cylinder();
+    void fusiform();
 };
 
 #endif // DRAWMUSCLE_H

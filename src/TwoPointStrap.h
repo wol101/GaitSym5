@@ -24,30 +24,20 @@ public:
 
     TwoPointStrap();
 
-//    void SetOrigin(Body *body, const pgd::Vector3 point);
-//    void SetInsertion(Body *body, const pgd::Vector3 point);
-    void SetOrigin(Marker *originMarker);
-    void SetInsertion(Marker *insertionMarker);
+    void setOrigin(Marker *originMarker);
+    void setInsertion(Marker *insertionMarker);
 
-//    void GetOrigin(const Body **body, pgd::Vector3 origin) const;
-//    void GetInsertion(const Body **body, pgd::Vector3 insertion) const;
+    virtual void calculate();
 
-    virtual void Calculate();
-
-//    virtual int SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
+//    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight);
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
 
-    Marker *GetOriginMarker() const;
-    Marker *GetInsertionMarker() const;
+    Marker *originMarker() const;
+    Marker *insertionMarker() const;
 
 private:
-
-//    Body *m_originBody = nullptr;
-//    pgd::Vector3 m_origin;
-//    Body *m_insertionBody = nullptr;
-//    pgd::Vector3 m_insertion;
 
     Marker *m_originMarker = nullptr;
     Marker *m_insertionMarker = nullptr;

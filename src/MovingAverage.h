@@ -25,10 +25,10 @@ public:
     MovingAverage();
     MovingAverage(int window);
 
-    virtual void AddNewSample(double x);
-    virtual double Output();
+    virtual void addNewSample(double x);
+    virtual double output();
 
-    void InitialiseBuffer(int window);
+    void initialiseBuffer(int window);
 
     double sum() const;
     double average() const;

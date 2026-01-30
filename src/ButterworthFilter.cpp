@@ -45,7 +45,7 @@ ButterworthFilter::ButterworthFilter(double cutoffFrequency, double samplingFreq
     m_yn = 0;
     m_ynminus1 = 0;
     m_ynminus2 = 0;
-    CalculateCoefficients(cutoffFrequency, samplingFrequency);
+    calculateCoefficients(cutoffFrequency, samplingFrequency);
 }
 
 double ButterworthFilter::yn() const
@@ -63,7 +63,7 @@ double ButterworthFilter::samplingFrequency() const
     return m_samplingFrequency;
 }
 
-void ButterworthFilter::AddNewSample(double x)
+void ButterworthFilter::addNewSample(double x)
 {
     // shift all the current values
     m_xnminus2 = m_xnminus1;
@@ -76,12 +76,12 @@ void ButterworthFilter::AddNewSample(double x)
     m_yn  =  m_b0*xn() + m_b1*m_xnminus1 + m_b2*m_xnminus2 + m_a1*m_ynminus1 + m_a2*m_ynminus2;
 }
 
-double ButterworthFilter::Output()
+double ButterworthFilter::output()
 {
     return m_yn;
 }
 
-void ButterworthFilter::CalculateCoefficients(double cutoffFrequency, double samplingFrequency)
+void ButterworthFilter::calculateCoefficients(double cutoffFrequency, double samplingFrequency)
 {
     m_cutoffFrequency = cutoffFrequency;
     m_samplingFrequency = samplingFrequency;

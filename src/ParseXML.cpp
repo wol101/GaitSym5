@@ -21,7 +21,7 @@ ParseXML::ParseXML()
 {
 }
 
-std::string *ParseXML::LoadModel(const char *buffer, size_t length, std::string *rootNodeTag) // note buffer must be a null terminated string (total length length + 1)
+std::string *ParseXML::loadModel(const char *buffer, size_t length, std::string *rootNodeTag) // note buffer must be a null terminated string (total length length + 1)
 {
     m_inputConfigDoc.clear();
     m_elementList.clear();
@@ -86,7 +86,7 @@ std::string *ParseXML::LoadModel(const char *buffer, size_t length, std::string 
     return nullptr;
 }
 
-std::string ParseXML::SaveModel(const std::string &rootNodeTag, const std::string &comment)
+std::string ParseXML::saveModel(const std::string &rootNodeTag, const std::string &comment)
 {
     std::string xmlString;
     m_ouputConfigDoc.clear();
@@ -94,8 +94,8 @@ std::string ParseXML::SaveModel(const std::string &rootNodeTag, const std::strin
     // declaration first
     rapidxml::xml_node<char> *declarationNode = m_ouputConfigDoc.allocate_node(rapidxml::node_declaration);
     m_ouputConfigDoc.append_node(declarationNode); // must append the node before we start creating attributes
-    CreateXMLAttribute(declarationNode, "version"s, "1.0"s, false); // note important that these are kept in this order
-    CreateXMLAttribute(declarationNode, "encoding"s, "UTF-8"s, false);
+    createXMLAttribute(declarationNode, "version"s, "1.0"s, false); // note important that these are kept in this order
+    createXMLAttribute(declarationNode, "encoding"s, "UTF-8"s, false);
     rapidxml::print(std::back_inserter(xmlString), *declarationNode);
 
     // now add the comment
@@ -107,15 +107,15 @@ std::string ParseXML::SaveModel(const std::string &rootNodeTag, const std::strin
     }
 
     // create the root node
-    rapidxml::xml_node<char> *rootNode = CreateXMLNode(&m_ouputConfigDoc, rootNodeTag);
+    rapidxml::xml_node<char> *rootNode = createXMLNode(&m_ouputConfigDoc, rootNodeTag);
 
     // create all the child nodes
     for (auto &&element : m_elementList)
     {
-        rapidxml::xml_node<char> *node = CreateXMLNode(rootNode, element->tag);
+        rapidxml::xml_node<char> *node = createXMLNode(rootNode, element->tag);
         for (auto &&attribute : element->attributes)
         {
-            CreateXMLAttribute(node, attribute.first, attribute.second, false);
+            createXMLAttribute(node, attribute.first, attribute.second, false);
         }
     }
 
@@ -125,7 +125,7 @@ std::string ParseXML::SaveModel(const std::string &rootNodeTag, const std::strin
 }
 
 // adds an element (tag plus attributes) to the internal list
-void ParseXML::AddElement(const std::string &tag, const std::map<std::string, std::string> &attributeList)
+void ParseXML::addElement(const std::string &tag, const std::map<std::string, std::string> &attributeList)
 {
     auto xmlElement = std::make_unique<XMLElement>();
     xmlElement->tag.assign(tag);
@@ -135,7 +135,7 @@ void ParseXML::AddElement(const std::string &tag, const std::map<std::string, st
 
 // creates a new attribute and inserts it in alphabetical order
 // returns a pointer to the attribute
-rapidxml::xml_attribute<char> *ParseXML::CreateXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, const std::string &newValue, bool sorted)
+rapidxml::xml_attribute<char> *ParseXML::createXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, const std::string &newValue, bool sorted)
 {
     lastErrorPtr()->clear();
     rapidxml::xml_attribute<char> *ptr = nullptr;
@@ -181,7 +181,7 @@ rapidxml::xml_attribute<char> *ParseXML::CreateXMLAttribute(rapidxml::xml_node<c
     return ptr;
 }
 
-rapidxml::xml_node<char> *ParseXML::CreateXMLNode(rapidxml::xml_node<char> *parent, const std::string &name)
+rapidxml::xml_node<char> *ParseXML::createXMLNode(rapidxml::xml_node<char> *parent, const std::string &name)
 {
     char *allocatedName = parent->document()->allocate_string(name.data(), name.size());
     rapidxml::xml_node<char> *node = parent->document()->allocate_node(rapidxml::node_element, allocatedName, nullptr, name.size(), 0);
@@ -189,7 +189,7 @@ rapidxml::xml_node<char> *ParseXML::CreateXMLNode(rapidxml::xml_node<char> *pare
     return node;
 }
 
-rapidxml::xml_node<char> *ParseXML::CreateXMLNode(rapidxml::xml_node<char> *parent, const std::string &name, const std::string newValue)
+rapidxml::xml_node<char> *ParseXML::createXMLNode(rapidxml::xml_node<char> *parent, const std::string &name, const std::string newValue)
 {
     char *allocatedName = parent->document()->allocate_string(name.data(), name.size());
     char *allocatedValue = parent->document()->allocate_string(newValue.data(), newValue.size());
@@ -200,9 +200,9 @@ rapidxml::xml_node<char> *ParseXML::CreateXMLNode(rapidxml::xml_node<char> *pare
 
 // removes a named attribute if it exists
 // returns true if an attribute is removed
-bool ParseXML::RemoveXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive)
+bool ParseXML::removeXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive)
 {
-    rapidxml::xml_attribute<char> *ptr = FindXMLAttribute(cur, name, caseSensitive);
+    rapidxml::xml_attribute<char> *ptr = findXMLAttribute(cur, name, caseSensitive);
     if (ptr)
     {
         cur->remove_attribute(ptr);
@@ -215,7 +215,7 @@ bool ParseXML::RemoveXMLAttribute(rapidxml::xml_node<char> *cur, const std::stri
 }
 
 // returns a pointer to an attribute if it exists
-rapidxml::xml_attribute<char> *ParseXML::FindXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive)
+rapidxml::xml_attribute<char> *ParseXML::findXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, bool caseSensitive)
 {
     int res;
     rapidxml::xml_attribute<char> *ptr = nullptr;
@@ -241,9 +241,9 @@ found:
 // using caller provided string
 // returns "" if attribute is not found
 // also returns the pointer to the attribute or nullptr if not found
-rapidxml::xml_attribute<char> *ParseXML::GetXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, std::string *attributeValue, bool caseSensitive)
+rapidxml::xml_attribute<char> *ParseXML::getXMLAttribute(rapidxml::xml_node<char> *cur, const std::string &name, std::string *attributeValue, bool caseSensitive)
 {
-    rapidxml::xml_attribute<char> *ptr = FindXMLAttribute(cur, name, caseSensitive);
+    rapidxml::xml_attribute<char> *ptr = findXMLAttribute(cur, name, caseSensitive);
     if (ptr)
     {
         attributeValue->assign(ptr->value(), ptr->value_size());

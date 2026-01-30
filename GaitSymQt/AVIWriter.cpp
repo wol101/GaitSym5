@@ -29,7 +29,7 @@ AVIWriter::~AVIWriter()
     if (m_gwavi) CloseFile();
 }
 
-int AVIWriter::InitialiseFile(const QString &aviFilename, unsigned int width, unsigned int height, unsigned int fps)
+int AVIWriter::initialiseFile(const QString &aviFilename, unsigned int width, unsigned int height, unsigned int fps)
 {
     m_width = width;
     m_height = height;
@@ -52,7 +52,7 @@ int AVIWriter::InitialiseFile(const QString &aviFilename, unsigned int width, un
     return 0;
 }
 
-int AVIWriter::WriteAVI(unsigned int width, unsigned int height, const unsigned char *rgb, int quality)
+int AVIWriter::writeAVI(unsigned int width, unsigned int height, uint8_t *rgb, int quality)
 {
     if (width != m_width || height != m_height)
     {
@@ -73,7 +73,7 @@ int AVIWriter::WriteAVI(unsigned int width, unsigned int height, const unsigned 
     return 0;
 }
 
-int AVIWriter::WriteAVI(const QImage &image, int quality)
+int AVIWriter::writeAVI(const QImage &image, int quality)
 {
     if (image.width() != int(m_width) || image.height() != int(m_height))
     {

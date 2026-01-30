@@ -11,7 +11,7 @@
  *
  * HISTORY:
  * Developed & written, Linas Vepstas, Septmeber 1991
- * Double precision port, March 1993
+ * double precision port, March 1993
  *
  * DETAILED DESCRIPTION:
  * This module contains three routines:

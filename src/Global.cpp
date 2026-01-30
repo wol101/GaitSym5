@@ -19,66 +19,66 @@ namespace GaitSym {
 
 Global::Global()
 {
-    m_SpringConstant = m_ERP / (m_CFM * m_StepSize);
-    m_DampingConstant = (1.0 - m_ERP) / m_CFM;
+    m_springConstant = m_erp / (m_cfm * m_stepSize);
+    m_dampingConstant = (1.0 - m_erp) / m_cfm;
 }
 
-double Global::SpringConstant() const
+double Global::springConstant() const
 {
-    return m_SpringConstant;
+    return m_springConstant;
 }
 
 void Global::setSpringConstant(double SpringConstant)
 {
-    m_SpringConstant = SpringConstant;
+    m_springConstant = SpringConstant;
 }
 
-double Global::DampingConstant() const
+double Global::dampingConstant() const
 {
-    return m_DampingConstant;
+    return m_dampingConstant;
 }
 
 void Global::setDampingConstant(double DampingConstant)
 {
-    m_DampingConstant = DampingConstant;
+    m_dampingConstant = DampingConstant;
 }
 
-std::vector<std::string> *Global::MeshSearchPath()
+std::vector<std::string> *Global::meshSearchPath()
 {
-    return &m_MeshSearchPath;
+    return &m_meshSearchPath;
 }
 
-const std::vector<std::string> *Global::ConstMeshSearchPath() const
+const std::vector<std::string> *Global::constMeshSearchPath() const
 {
-    return &m_MeshSearchPath;
+    return &m_meshSearchPath;
 }
 
-void Global::MeshSearchPathAddToFront(const std::string &meshSearchPath)
+void Global::meshSearchPathAddToFront(const std::string &meshSearchPath)
 {
-    if (m_MeshSearchPath[0] != meshSearchPath)
+    if (m_meshSearchPath[0] != meshSearchPath)
     {
-        MeshSearchPathRemove(meshSearchPath);
-        m_MeshSearchPath.insert(m_MeshSearchPath.begin(), meshSearchPath); // because there is no push_front in a vector
+        meshSearchPathRemove(meshSearchPath);
+        m_meshSearchPath.insert(m_meshSearchPath.begin(), meshSearchPath); // because there is no push_front in a vector
     }
 }
 
-void Global::MeshSearchPathAddToBack(const std::string &meshSearchPath)
+void Global::meshSearchPathAddToBack(const std::string &meshSearchPath)
 {
-    if (m_MeshSearchPath[m_MeshSearchPath.size() - 1] != meshSearchPath)
+    if (m_meshSearchPath[m_meshSearchPath.size() - 1] != meshSearchPath)
     {
-        MeshSearchPathRemove(meshSearchPath);
-        m_MeshSearchPath.push_back(meshSearchPath);
+        meshSearchPathRemove(meshSearchPath);
+        m_meshSearchPath.push_back(meshSearchPath);
     }
 }
 
-bool Global::MeshSearchPathRemove(const std::string &meshSearchPath)
+bool Global::meshSearchPathRemove(const std::string &meshSearchPath)
 {
     bool altered = false;
-    for (auto it = m_MeshSearchPath.begin(); it != m_MeshSearchPath.end();)
+    for (auto it = m_meshSearchPath.begin(); it != m_meshSearchPath.end();)
     {
         if ((*it) == meshSearchPath)
         {
-            it = m_MeshSearchPath.erase(it);
+            it = m_meshSearchPath.erase(it);
             altered = true;
         }
         else
@@ -89,24 +89,24 @@ bool Global::MeshSearchPathRemove(const std::string &meshSearchPath)
     return altered;
 }
 
-double Global::LinearDamping() const
+double Global::linearDamping() const
 {
-    return m_LinearDamping;
+    return m_linearDamping;
 }
 
 void Global::setLinearDamping(double LinearDamping)
 {
-    m_LinearDamping = LinearDamping;
+    m_linearDamping = LinearDamping;
 }
 
-double Global::AngularDamping() const
+double Global::angularDamping() const
 {
-    return m_AngularDamping;
+    return m_angularDamping;
 }
 
 void Global::setAngularDamping(double AngularDamping)
 {
-    m_AngularDamping = AngularDamping;
+    m_angularDamping = AngularDamping;
 }
 
 // this function initialises the data in the object based on the contents
@@ -127,7 +127,7 @@ std::string *Global::createFromAttributes()
     {
         if (strcmp(buf.c_str(), physicsEngineTypeStrings(i)) == 0)
         {
-            m_PhysicsEngine = PhysicsEngine(i);
+            m_physicsEngine = PhysicsEngine(i);
             break;
         }
     }
@@ -139,128 +139,151 @@ std::string *Global::createFromAttributes()
 
     // gravity
     if (findAttribute("GravityVector", &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 3, m_DoubleList);
-    m_Gravity.Set(m_DoubleList);
+    GSUtil::toDouble(buf, 3, m_DoubleList);
+    m_gravity.set(m_DoubleList);
 
     // set the simulation integration step size
     if (findAttribute("IntegrationStepSize", &buf) == nullptr) return lastErrorPtr();
-    m_StepSize = GSUtil::Double(buf);
-    if (m_StepSize <= 0.0) { setLastError("Error: GLOBAL IntegrationStepSize must be > 0"s); return lastErrorPtr(); }
+    m_stepSize = GSUtil::toDouble(buf);
+    if (m_stepSize <= 0.0) { setLastError("Error: GLOBAL IntegrationStepSize must be > 0"s); return lastErrorPtr(); }
 
-
-    // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
-    if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
+    while (true)
     {
-        m_ERP = GSUtil::Double(buf);
-        m_CFM = GSUtil::Double(buf2);
-        if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-        if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-        m_SpringConstant = m_ERP / (m_CFM * m_StepSize);
-        m_DampingConstant = (1.0 - m_ERP) / m_CFM;
-    }
-    else if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
-    {
-        m_ERP = GSUtil::Double(buf);
-        m_SpringConstant = GSUtil::Double(buf2);
-        if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-        if (m_SpringConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
-        m_DampingConstant = m_StepSize * (m_SpringConstant / m_ERP - m_SpringConstant);
-        m_CFM = 1.0/(m_StepSize * m_SpringConstant + m_DampingConstant);
-    }
-    else if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
-    {
-        m_ERP = GSUtil::Double(buf);
-        m_DampingConstant = GSUtil::Double(buf2);
-        if (m_ERP <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
-        if (m_DampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
-        m_SpringConstant = m_DampingConstant / (m_StepSize / m_ERP - m_StepSize);
-        m_CFM = 1.0/(m_StepSize * m_SpringConstant + m_DampingConstant);
-    }
-    else if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
-    {
-        m_CFM = GSUtil::Double(buf);
-        m_DampingConstant = GSUtil::Double(buf2);
-        if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-        if (m_DampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
-        m_SpringConstant = (1.0 / m_CFM - m_DampingConstant) / m_StepSize;
-        m_ERP = m_StepSize * m_SpringConstant/(m_StepSize * m_SpringConstant + m_DampingConstant);
-    }
-    else if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
-    {
-        m_CFM = GSUtil::Double(buf);
-        m_SpringConstant = GSUtil::Double(buf2);
-        if (m_CFM <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
-        if (m_SpringConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
-        m_DampingConstant = 1.0 / m_CFM - m_StepSize * m_SpringConstant;
-        m_ERP = m_StepSize * m_SpringConstant/(m_StepSize * m_SpringConstant + m_DampingConstant);
-    }
-    else if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
-    {
-        m_DampingConstant = GSUtil::Double(buf);
-        m_SpringConstant = GSUtil::Double(buf2);
-        m_CFM = 1.0/(m_StepSize * m_SpringConstant + m_DampingConstant);
-        m_ERP = m_StepSize * m_SpringConstant/(m_StepSize * m_SpringConstant + m_DampingConstant);
-    }
-    else
-    {
-        setLastError("Error: GLOBAL needs one of these pairs ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM"s);
-        return lastErrorPtr();
-    }
-
-    if (findAttribute("ContactMaxCorrectingVel", &buf) == nullptr) return lastErrorPtr();
-    m_ContactMaxCorrectingVel = GSUtil::Double(buf);
-    if (m_ContactMaxCorrectingVel < 0.0) { setLastError("Error: GLOBAL ContactMaxCorrectingVel must be >= 0"s); return lastErrorPtr(); }
-
-    if (findAttribute("ContactSurfaceLayer", &buf) == nullptr) return lastErrorPtr();
-    m_ContactSurfaceLayer = GSUtil::Double(buf);
-    if (m_ContactSurfaceLayer < 0.0) { setLastError("Error: GLOBAL ContactSurfaceLayer must be >= 0"s); return lastErrorPtr(); }
-
-    // get the stepper required
-    // WorldStep, accurate but slow
-    // QuickStep, faster but less accurate
-    findAttribute("StepType", &buf);
-    for (i = 0; i < stepTypeCount; i++)
-    {
-        if (strcmp(buf.c_str(), stepTypeStrings(i)) == 0)
+        if (m_physicsEngine == ODE)
         {
-            m_StepType = StepType(i);
+            // can specify ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM
+            if (findAttribute("ERP", &buf) && findAttribute("CFM", &buf2))
+            {
+                m_erp = GSUtil::toDouble(buf);
+                m_cfm = GSUtil::toDouble(buf2);
+                if (m_erp <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_cfm <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = m_erp / (m_cfm * m_stepSize);
+                m_dampingConstant = (1.0 - m_erp) / m_cfm;
+            }
+            else if (findAttribute("ERP", &buf) && findAttribute("SpringConstant", &buf2))
+            {
+                m_erp = GSUtil::toDouble(buf);
+                m_springConstant = GSUtil::toDouble(buf2);
+                if (m_erp <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
+                m_dampingConstant = m_stepSize * (m_springConstant / m_erp - m_springConstant);
+                m_cfm = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("ERP", &buf) && findAttribute("DampingConstant", &buf2))
+            {
+                m_erp = GSUtil::toDouble(buf);
+                m_dampingConstant = GSUtil::toDouble(buf2);
+                if (m_erp <= 0.0) { setLastError("Error: GLOBAL ERP must be > 0"s); return lastErrorPtr(); }
+                if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = m_dampingConstant / (m_stepSize / m_erp - m_stepSize);
+                m_cfm = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("CFM", &buf) && findAttribute("DampingConstant", &buf2))
+            {
+                m_cfm = GSUtil::toDouble(buf);
+                m_dampingConstant = GSUtil::toDouble(buf2);
+                if (m_cfm <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                if (m_dampingConstant <= 0.0) { setLastError("Error: GLOBAL DampingConstant must be > 0"s); return lastErrorPtr(); }
+                m_springConstant = (1.0 / m_cfm - m_dampingConstant) / m_stepSize;
+                m_erp = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("CFM", &buf) && findAttribute("SpringConstant", &buf2))
+            {
+                m_cfm = GSUtil::toDouble(buf);
+                m_springConstant = GSUtil::toDouble(buf2);
+                if (m_cfm <= 0.0) { setLastError("Error: GLOBAL CFM must be > 0"s); return lastErrorPtr(); }
+                if (m_springConstant <= 0.0) { setLastError("Error: GLOBAL SpringConstant must be > 0"s); return lastErrorPtr(); }
+                m_dampingConstant = 1.0 / m_cfm - m_stepSize * m_springConstant;
+                m_erp = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else if (findAttribute("DampingConstant", &buf) && findAttribute("SpringConstant", &buf2))
+            {
+                m_dampingConstant = GSUtil::toDouble(buf);
+                m_springConstant = GSUtil::toDouble(buf2);
+                m_cfm = 1.0/(m_stepSize * m_springConstant + m_dampingConstant);
+                m_erp = m_stepSize * m_springConstant/(m_stepSize * m_springConstant + m_dampingConstant);
+            }
+            else
+            {
+                setLastError("Error: GLOBAL needs one of these pairs ERP & CFM; SpringConstant & DampingConstant; SpringConstant & ERP; SpringConstant & CFM; DampingConstant & ERP; DampingConstant & CFM"s);
+                return lastErrorPtr();
+            }
+
+            if (findAttribute("ContactMaxCorrectingVel", &buf) == nullptr) return lastErrorPtr();
+            m_contactMaxCorrectingVel = GSUtil::toDouble(buf);
+            if (m_contactMaxCorrectingVel < 0.0) { setLastError("Error: GLOBAL ContactMaxCorrectingVel must be >= 0"s); return lastErrorPtr(); }
+
+            if (findAttribute("ContactSurfaceLayer", &buf) == nullptr) return lastErrorPtr();
+            m_contactSurfaceLayer = GSUtil::toDouble(buf);
+            if (m_contactSurfaceLayer < 0.0) { setLastError("Error: GLOBAL ContactSurfaceLayer must be >= 0"s); return lastErrorPtr(); }
+
+            // get the stepper required
+            // WorldStep, accurate but slow
+            // QuickStep, faster but less accurate
+            findAttribute("StepType", &buf);
+            for (i = 0; i < stepTypeCount; i++)
+            {
+                if (strcmp(buf.c_str(), stepTypeStrings(i)) == 0)
+                {
+                    m_stepType = StepType(i);
+                    break;
+                }
+            }
+            if (i >= stepTypeCount)
+            {
+                setLastError("GLOBAL: Unrecognised StepType=\""s + buf + "\""s);
+                return lastErrorPtr();
+            }
             break;
         }
-    }
-    if (i >= stepTypeCount)
-    {
-        setLastError("GLOBAL: Unrecognised StepType=\""s + buf + "\""s);
+
+        if (m_physicsEngine == PhysX)
+        {
+            if (findAttribute("DefaultLength", &buf) == nullptr) return lastErrorPtr();
+            m_defaultLength = GSUtil::toDouble(buf);
+            if (findAttribute("DefaultSpeed", &buf) == nullptr) return lastErrorPtr();
+            m_defaultSpeed = GSUtil::toDouble(buf);
+            break;
+        }
+
+        if (m_physicsEngine == MuJoCo)
+        {
+            break;
+        }
+
+        setLastError("GLOBAL: Unimplemented PhysicsEngine"s);
         return lastErrorPtr();
     }
 
     // allow internal collisions
     if (findAttribute("AllowInternalCollisions", &buf) == nullptr) return lastErrorPtr();
-    m_AllowInternalCollisions = GSUtil::Bool(buf);
+    m_allowInternalCollisions = GSUtil::toBool(buf);
 
     // allow collisions for objects connected by a joint
-    findAttribute("AllowConnectedCollisions", &buf);
-    if (buf.size()) m_AllowConnectedCollisions = GSUtil::Bool(buf);
+    if (findAttribute("AllowConnectedCollisions", &buf) == nullptr) return lastErrorPtr();
+    m_allowConnectedCollisions = GSUtil::toBool(buf);
 
-    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::Double(buf));
-    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::Double(buf));
+    if (findAttribute("LinearDamping"s, &buf)) this->setLinearDamping(GSUtil::toDouble(buf));
+    if (findAttribute("AngularDamping"s, &buf)) this->setAngularDamping(GSUtil::toDouble(buf));
 
     // now some run parameters
 
     if (findAttribute("BMR", &buf) == nullptr) return lastErrorPtr();
-    m_BMR = GSUtil::Double(buf);
+    m_bmr = GSUtil::toDouble(buf);
 
     if (findAttribute("TimeLimit", &buf) == nullptr) return lastErrorPtr();
-    m_TimeLimit = GSUtil::Double(buf);
+    m_timeLimit = GSUtil::toDouble(buf);
     if (findAttribute("MechanicalEnergyLimit", &buf) == nullptr) return lastErrorPtr();
-    m_MechanicalEnergyLimit = GSUtil::Double(buf);
+    m_mechanicalEnergyLimit = GSUtil::toDouble(buf);
     if (findAttribute("MetabolicEnergyLimit", &buf) == nullptr) return lastErrorPtr();
-    m_MetabolicEnergyLimit = GSUtil::Double(buf);
+    m_metabolicEnergyLimit = GSUtil::toDouble(buf);
     if (findAttribute("FitnessType", &buf) == nullptr) return lastErrorPtr();
     for (i = 0; i < fitnessTypeCount; i++)
     {
         if (strcmp(buf.c_str(), fitnessTypeStrings(i)) == 0)
         {
-            m_FitnessType = FitnessType(i);
+            m_fitnessType = FitnessType(i);
             break;
         }
     }
@@ -270,16 +293,16 @@ std::string *Global::createFromAttributes()
         return lastErrorPtr();
     }
 
-    if (findAttribute("PermittedNumericalErrors", &buf)) m_PermittedNumericalErrors = GSUtil::Int(buf);
-    if (findAttribute("NumericalErrorsScore", &buf)) m_NumericalErrorsScore = GSUtil::Double(buf);
+    if (findAttribute("PermittedNumericalErrors", &buf)) m_permittedNumericalErrors = GSUtil::toInt(buf);
+    if (findAttribute("NumericalErrorsScore", &buf)) m_numericalErrorsScore = GSUtil::toDouble(buf);
 
-    m_MeshSearchPath.clear();
+    m_meshSearchPath.clear();
     findAttribute("MeshSearchPath", &buf);
     std::vector<std::string> encodedMeshSearchPath;
     if (buf.size())
     {
         pystring::split(buf, encodedMeshSearchPath, ":"s);
-        for (i = 0; i < encodedMeshSearchPath.size(); i++) m_MeshSearchPath.push_back(percentDecode(encodedMeshSearchPath[i]));
+        for (i = 0; i < encodedMeshSearchPath.size(); i++) m_meshSearchPath.push_back(percentDecode(encodedMeshSearchPath[i]));
     }
 
     return nullptr;
@@ -299,28 +322,30 @@ void Global::appendToAttributes()
     NamedObject::appendToAttributes();
     std::string buf;
 
-    setAttribute("AllowConnectedCollisions", *GSUtil::ToString(m_AllowConnectedCollisions, &buf));
-    setAttribute("AllowInternalCollisions", *GSUtil::ToString(m_AllowInternalCollisions, &buf));
-    setAttribute("BMR", *GSUtil::ToString(m_BMR, &buf));
-    setAttribute("CFM", *GSUtil::ToString(m_CFM, &buf));
-    setAttribute("ContactMaxCorrectingVel", *GSUtil::ToString(m_ContactMaxCorrectingVel, &buf));
-    setAttribute("ContactSurfaceLayer", *GSUtil::ToString(m_ContactSurfaceLayer, &buf));
-    setAttribute("ERP", *GSUtil::ToString(m_ERP, &buf));
-    setAttribute("FitnessType", fitnessTypeStrings(m_FitnessType));
-    setAttribute("LinearDamping", *GSUtil::ToString(m_LinearDamping, &buf));
-    setAttribute("AngularDamping", *GSUtil::ToString(m_AngularDamping, &buf));
-    setAttribute("GravityVector", *GSUtil::ToString(m_Gravity, &buf));
-    setAttribute("IntegrationStepSize", *GSUtil::ToString(m_StepSize, &buf));
-    setAttribute("MechanicalEnergyLimit", *GSUtil::ToString(m_MechanicalEnergyLimit, &buf));
-    setAttribute("MetabolicEnergyLimit", *GSUtil::ToString(m_MetabolicEnergyLimit, &buf));
-    setAttribute("PhysicsEngine", physicsEngineTypeStrings(m_PhysicsEngine));
-    setAttribute("StepType", stepTypeStrings(m_StepType));
-    setAttribute("TimeLimit", *GSUtil::ToString(m_TimeLimit, &buf));
-    setAttribute("NumericalErrorsScore", *GSUtil::ToString(m_NumericalErrorsScore, &buf));
-    setAttribute("PermittedNumericalErrors", *GSUtil::ToString(m_PermittedNumericalErrors, &buf));
+    setAttribute("AllowConnectedCollisions", *GSUtil::toString(m_allowConnectedCollisions, &buf));
+    setAttribute("AllowInternalCollisions", *GSUtil::toString(m_allowInternalCollisions, &buf));
+    setAttribute("BMR", *GSUtil::toString(m_bmr, &buf));
+    setAttribute("CFM", *GSUtil::toString(m_cfm, &buf));
+    setAttribute("ContactMaxCorrectingVel", *GSUtil::toString(m_contactMaxCorrectingVel, &buf));
+    setAttribute("ContactSurfaceLayer", *GSUtil::toString(m_contactSurfaceLayer, &buf));
+    setAttribute("ERP", *GSUtil::toString(m_erp, &buf));
+    setAttribute("FitnessType", fitnessTypeStrings(m_fitnessType));
+    setAttribute("LinearDamping", *GSUtil::toString(m_linearDamping, &buf));
+    setAttribute("AngularDamping", *GSUtil::toString(m_angularDamping, &buf));
+    setAttribute("GravityVector", *GSUtil::toString(m_gravity, &buf));
+    setAttribute("IntegrationStepSize", *GSUtil::toString(m_stepSize, &buf));
+    setAttribute("MechanicalEnergyLimit", *GSUtil::toString(m_mechanicalEnergyLimit, &buf));
+    setAttribute("MetabolicEnergyLimit", *GSUtil::toString(m_metabolicEnergyLimit, &buf));
+    setAttribute("PhysicsEngine", physicsEngineTypeStrings(m_physicsEngine));
+    setAttribute("StepType", stepTypeStrings(m_stepType));
+    setAttribute("TimeLimit", *GSUtil::toString(m_timeLimit, &buf));
+    setAttribute("NumericalErrorsScore", *GSUtil::toString(m_numericalErrorsScore, &buf));
+    setAttribute("PermittedNumericalErrors", *GSUtil::toString(m_permittedNumericalErrors, &buf));
+    setAttribute("DefaultLength", *GSUtil::toString(m_defaultLength, &buf));
+    setAttribute("DefaultSpeed", *GSUtil::toString(m_defaultSpeed, &buf));
 
     std::vector<std::string> encodedMeshSearchPath;
-    for (size_t i = 0; i < m_MeshSearchPath.size(); i++) encodedMeshSearchPath.push_back(percentEncode(m_MeshSearchPath[i], "%:"s));
+    for (size_t i = 0; i < m_meshSearchPath.size(); i++) encodedMeshSearchPath.push_back(percentEncode(m_meshSearchPath[i], "%:"s));
     setAttribute("MeshSearchPath", pystring::join(":"s, encodedMeshSearchPath));
 }
 
@@ -402,179 +427,199 @@ std::string Global::percentDecode(const std::string &input)
     return output;
 }
 
-int Global::PermittedNumericalErrors() const
+int Global::permittedNumericalErrors() const
 {
-    return m_PermittedNumericalErrors;
+    return m_permittedNumericalErrors;
 }
 
 void Global::setPermittedNumericalErrors(int PermittedNumericalErrors)
 {
-    m_PermittedNumericalErrors = PermittedNumericalErrors;
+    m_permittedNumericalErrors = PermittedNumericalErrors;
 }
 
-double Global::NumericalErrorsScore() const
+double Global::numericalErrorsScore() const
 {
-    return m_NumericalErrorsScore;
+    return m_numericalErrorsScore;
 }
 
 void Global::setNumericalErrorsScore(double NumericalErrorsScore)
 {
-    m_NumericalErrorsScore = NumericalErrorsScore;
+    m_numericalErrorsScore = NumericalErrorsScore;
+}
+
+double Global::defaultLength() const
+{
+    return m_defaultLength;
+}
+
+void Global::setDefaultLength(double newDefaultLength)
+{
+    m_defaultLength = newDefaultLength;
+}
+
+double Global::defaultSpeed() const
+{
+    return m_defaultSpeed;
+}
+
+void Global::setDefaultSpeed(double newDefaultSpeed)
+{
+    m_defaultSpeed = newDefaultSpeed;
 }
 
 Global::PhysicsEngine Global::physicsEngine() const
 {
-    return m_PhysicsEngine;
+    return m_physicsEngine;
 }
 
 void Global::setPhysicsEngine(PhysicsEngine newPhysicsEngine)
 {
-    m_PhysicsEngine = newPhysicsEngine;
+    m_physicsEngine = newPhysicsEngine;
 }
 
 Global::FitnessType Global::fitnessType() const
 {
-    return m_FitnessType;
+    return m_fitnessType;
 }
 
 void Global::setFitnessType(FitnessType fitnessType)
 {
-    m_FitnessType = fitnessType;
+    m_fitnessType = fitnessType;
 }
 
 Global::StepType Global::stepType() const
 {
-    return m_StepType;
+    return m_stepType;
 }
 
 void Global::setStepType(Global::StepType stepType)
 {
-    m_StepType = stepType;
+    m_stepType = stepType;
 }
 
-bool Global::AllowConnectedCollisions() const
+bool Global::allowConnectedCollisions() const
 {
-    return m_AllowConnectedCollisions;
+    return m_allowConnectedCollisions;
 }
 
-void Global::setAllowConnectedCollisions(bool AllowConnectedCollisions)
+void Global::setAllowConnectedCollisions(bool allowConnectedCollisions)
 {
-    m_AllowConnectedCollisions = AllowConnectedCollisions;
+    m_allowConnectedCollisions = allowConnectedCollisions;
 }
 
-bool Global::AllowInternalCollisions() const
+bool Global::allowInternalCollisions() const
 {
-    return m_AllowInternalCollisions;
+    return m_allowInternalCollisions;
 }
 
-void Global::setAllowInternalCollisions(bool AllowInternalCollisions)
+void Global::setAllowInternalCollisions(bool allowInternalCollisions)
 {
-    m_AllowInternalCollisions = AllowInternalCollisions;
+    m_allowInternalCollisions = allowInternalCollisions;
 }
 
-pgd::Vector3 Global::Gravity() const
+pgd::Vector3 Global::gravity() const
 {
-    return m_Gravity;
+    return m_gravity;
 }
 
 void Global::setGravity(const pgd::Vector3 &gravity)
 {
-    m_Gravity = gravity;
+    m_gravity = gravity;
 }
 
 void Global::setGravity(double gravityX, double gravityY, double gravityZ)
 {
-    m_Gravity.Set(gravityX, gravityY, gravityZ);
+    m_gravity.set(gravityX, gravityY, gravityZ);
 }
 
 double Global::BMR() const
 {
-    return m_BMR;
+    return m_bmr;
 }
 
 void Global::setBMR(double BMR)
 {
-    m_BMR = BMR;
+    m_bmr = BMR;
 }
 
 double Global::CFM() const
 {
-    return m_CFM;
+    return m_cfm;
 }
 
 void Global::setCFM(double CFM)
 {
-    m_CFM = CFM;
+    m_cfm = CFM;
 }
 
-double Global::ContactMaxCorrectingVel() const
+double Global::contactMaxCorrectingVel() const
 {
-    return m_ContactMaxCorrectingVel;
+    return m_contactMaxCorrectingVel;
 }
 
 void Global::setContactMaxCorrectingVel(double ContactMaxCorrectingVel)
 {
-    m_ContactMaxCorrectingVel = ContactMaxCorrectingVel;
+    m_contactMaxCorrectingVel = ContactMaxCorrectingVel;
 }
 
-double Global::ContactSurfaceLayer() const
+double Global::contactSurfaceLayer() const
 {
-    return m_ContactSurfaceLayer;
+    return m_contactSurfaceLayer;
 }
 
 void Global::setContactSurfaceLayer(double ContactSurfaceLayer)
 {
-    m_ContactSurfaceLayer = ContactSurfaceLayer;
+    m_contactSurfaceLayer = ContactSurfaceLayer;
 }
 
 double Global::ERP() const
 {
-    return m_ERP;
+    return m_erp;
 }
 
 void Global::setERP(double ERP)
 {
-    m_ERP = ERP;
+    m_erp = ERP;
 }
 
-double Global::MechanicalEnergyLimit() const
+double Global::mechanicalEnergyLimit() const
 {
-    return m_MechanicalEnergyLimit;
+    return m_mechanicalEnergyLimit;
 }
 
 void Global::setMechanicalEnergyLimit(double MechanicalEnergyLimit)
 {
-    m_MechanicalEnergyLimit = MechanicalEnergyLimit;
+    m_mechanicalEnergyLimit = MechanicalEnergyLimit;
 }
 
-double Global::MetabolicEnergyLimit() const
+double Global::metabolicEnergyLimit() const
 {
-    return m_MetabolicEnergyLimit;
+    return m_metabolicEnergyLimit;
 }
 
 void Global::setMetabolicEnergyLimit(double MetabolicEnergyLimit)
 {
-    m_MetabolicEnergyLimit = MetabolicEnergyLimit;
+    m_metabolicEnergyLimit = MetabolicEnergyLimit;
 }
 
-double Global::StepSize() const
+double Global::stepSize() const
 {
-    return m_StepSize;
+    return m_stepSize;
 }
 
 void Global::setStepSize(double StepSize)
 {
-    m_StepSize = StepSize;
+    m_stepSize = StepSize;
 }
 
-double Global::TimeLimit() const
+double Global::timeLimit() const
 {
-    return m_TimeLimit;
+    return m_timeLimit;
 }
 
 void Global::setTimeLimit(double TimeLimit)
 {
-    m_TimeLimit = TimeLimit;
+    m_timeLimit = TimeLimit;
 }
 
 

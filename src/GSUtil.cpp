@@ -38,7 +38,7 @@
 using namespace std::string_literals;
 namespace GaitSym {
 
-void GSUtil::Tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList)
+void GSUtil::tokenizer(const char *constbuf, std::vector<std::string> &tokens, const char *stopList)
 {
     char *localBuf = reinterpret_cast<char *>(malloc(strlen(constbuf) + 1));
     char *ptr = localBuf;
@@ -101,7 +101,7 @@ void GSUtil::Tokenizer(const char *constbuf, std::vector<std::string> &tokens, c
 // to (qs,qx,qy,qz) quaternions
 // angle is identified by a postscript r for radians and d for degrees
 // no postscript means that the value is already a quaternion
-double *GSUtil::GetQuaternion(char *bufPtrs[], double *q)
+double *GSUtil::toQuaternion(char *bufPtrs[], double *q)
 {
     int i;
     for (i = 0; i < 4; i++) q[i] = strtod(bufPtrs[i], nullptr);
@@ -113,7 +113,7 @@ double *GSUtil::GetQuaternion(char *bufPtrs[], double *q)
 
     if (*p == 'r') // radian angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], q[0]);
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], q[0]);
         q[0] = qq.n;
         q[1] = qq.x;
         q[2] = qq.y;
@@ -122,7 +122,7 @@ double *GSUtil::GetQuaternion(char *bufPtrs[], double *q)
     }
     if (*p == 'd') // degee angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
         q[0] = qq.n;
         q[1] = qq.x;
         q[2] = qq.y;
@@ -132,7 +132,7 @@ double *GSUtil::GetQuaternion(char *bufPtrs[], double *q)
     return q;
 }
 
-pgd::Quaternion GSUtil::GetQuaternion(const std::vector<std::string> &tokens, size_t startIndex)
+pgd::Quaternion GSUtil::toQuaternion(const std::vector<std::string> &tokens, size_t startIndex)
 {
     double q[4];
     for (size_t i = 0; i < 4; i++) q[i] = strtod(tokens[startIndex + i].c_str(), nullptr);
@@ -140,12 +140,12 @@ pgd::Quaternion GSUtil::GetQuaternion(const std::vector<std::string> &tokens, si
     char p = tokens[startIndex].back();
     if (p == 'r') // radian angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], q[0]);
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], q[0]);
         return qq;
     }
     if (p == 'd') // degee angle axis
     {
-        pgd::Quaternion qq = pgd::MakeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
+        pgd::Quaternion qq = pgd::makeQFromAxisAngle(q[1], q[2], q[3], pgd::DegToRad(q[0]));
         return qq;
     }
     return pgd::Quaternion(q[0], q[1], q[2], q[3]);
@@ -154,7 +154,7 @@ pgd::Quaternion GSUtil::GetQuaternion(const std::vector<std::string> &tokens, si
 // function to return an angle from a string
 // angle is identified by a postscript r for radians and d for degrees
 // no postscript means that the value is already in radians
-double GSUtil::GetAngle(const char *buf)
+double GSUtil::toAngle(const char *buf)
 {
     double angle = strtod(buf, nullptr);
 
@@ -177,7 +177,7 @@ double GSUtil::GetAngle(const char *buf)
 // function to return an angle from a string
 // angle is identified by a postscript r for radians and d for degrees
 // no postscript means that the value is already in radians
-double GSUtil::GetAngle(const std::string &buf)
+double GSUtil::toAngle(const std::string &buf)
 {
     double angle = strtod(buf.c_str(), nullptr);
 
@@ -199,11 +199,11 @@ double GSUtil::GetAngle(const std::string &buf)
 // d1 - direction of line 1
 // p2 - point on line 2
 // d2 - direction of line 2
-double GSUtil::DistanceBetweenTwoLines(pgd::Vector3 p1, pgd::Vector3 d1, pgd::Vector3 p2, pgd::Vector3 d2)
+double GSUtil::distanceBetweenTwoLines(pgd::Vector3 p1, pgd::Vector3 d1, pgd::Vector3 p2, pgd::Vector3 d2)
 {
     // first find ther perpendicular to the two vectors
     pgd::Vector3 perpendicular = d1 ^ d2;
-    perpendicular.Normalize();
+    perpendicular.normalize();
 
     // now find a vector from l1 to l2
     pgd::Vector3 link = p2 - p1;
@@ -221,7 +221,7 @@ double GSUtil::DistanceBetweenTwoLines(pgd::Vector3 p1, pgd::Vector3 d1, pgd::Ve
       Pb = P3 + mub (P4 - P3)
    Return false if no solution exists.
 */
-bool GSUtil::LineLineIntersect(pgd::Vector3 p1, pgd::Vector3 p2,
+bool GSUtil::lineLineIntersect(pgd::Vector3 p1, pgd::Vector3 p2,
                             pgd::Vector3 p3, pgd::Vector3 p4,
                             pgd::Vector3 *pa, pgd::Vector3 *pb,
                             double *mua, double *mub)
@@ -275,7 +275,7 @@ bool GSUtil::LineLineIntersect(pgd::Vector3 p1, pgd::Vector3 p2,
 // is a set bit. It returns the address of the character array
 // of 0 and 1. Optionally the Y can be reversed since by default the
 // origin is the top left and often the bottom right is what is wanted
-unsigned char *GSUtil::AsciiToBitMap(const char *string, int width, int height, char setChar, bool reverseY, unsigned char *bitmap)
+unsigned char *GSUtil::asciiToBitMap(const char *string, int width, int height, char setChar, bool reverseY, unsigned char *bitmap)
 {
     const char *pin = string;
     int outputLen = width * height;
@@ -336,7 +336,7 @@ unsigned char *GSUtil::AsciiToBitMap(const char *string, int width, int height, 
     return bitmap;
 }
 
-void GSUtil::FindAndReplace( std::string *source, const std::string &find, const std::string &replace )
+void GSUtil::findAndReplace( std::string *source, const std::string &find, const std::string &replace )
 {
     std::string::size_type j;
     while ((j = source->find( find )) != std::string::npos)
@@ -347,7 +347,7 @@ void GSUtil::FindAndReplace( std::string *source, const std::string &find, const
 
 // finds the indices of the members in a sorted list that bracket a particular value
 // intially *lowBound should equal zero, and *highBound should equal the length of the list
-void GSUtil::FindBoundsCheck(double *list, double x, int *lowBound, int *highBound)
+void GSUtil::findBoundsCheck(double *list, double x, int *lowBound, int *highBound)
 {
     if (x < list[*lowBound])
     {
@@ -361,10 +361,10 @@ void GSUtil::FindBoundsCheck(double *list, double x, int *lowBound, int *highBou
         *highBound = *highBound + 1;
         return;
     }
-    FindBounds(list, x, lowBound, highBound);
+    findBounds(list, x, lowBound, highBound);
 }
 
-void GSUtil::FindBounds(double *list, double x, int *lowBound, int *highBound)
+void GSUtil::findBounds(double *list, double x, int *lowBound, int *highBound)
 {
     if ((*highBound - *lowBound) <= 1) return; // end condition
     int pivotIndex = (*lowBound + *highBound) / 2;
@@ -373,10 +373,10 @@ void GSUtil::FindBounds(double *list, double x, int *lowBound, int *highBound)
     double high = list[*highBound];
     if (x >= low && x <= pivot) *highBound = pivotIndex;
     else if (x >= pivot && x <= high) *lowBound = pivotIndex;
-    FindBounds(list, x, lowBound, highBound);
+    findBounds(list, x, lowBound, highBound);
 }
 
-double GSUtil::GetTime()
+double GSUtil::systemTime()
 {
 #if defined(_WIN32) || defined(WIN32)
     FILETIME ft;
@@ -395,7 +395,7 @@ double GSUtil::GetTime()
 #endif
 }
 
-int GSUtil::QuickInt(const char *p)
+int GSUtil::quickInt(const char *p)
 {
     int x = 0;
     bool neg = false;
@@ -416,7 +416,7 @@ int GSUtil::QuickInt(const char *p)
     return x;
 }
 
-double GSUtil::QuickDouble(const char *p)
+double GSUtil::quickDouble(const char *p)
 {
     //double t = atof(p);
     double r = 0.0;
@@ -442,13 +442,13 @@ double GSUtil::QuickDouble(const char *p)
             ++p;
             ++n;
         }
-        r += f / QuickPow(10.0, n);
+        r += f / quickPow(10.0, n);
     }
     if (*p == 'e' || *p == 'E')
     {
         ++p;
-        int m = QuickInt(p);
-        r *= QuickPow(10.0, m);
+        int m = quickInt(p);
+        r *= quickPow(10.0, m);
     }
     if (neg)
     {
@@ -459,7 +459,7 @@ double GSUtil::QuickDouble(const char *p)
     return r;
 }
 
-double GSUtil::QuickPow(double base, int exp)
+double GSUtil::quickPow(double base, int exp)
 {
     if (exp >= 0)
     {
@@ -490,23 +490,23 @@ double GSUtil::QuickPow(double base, int exp)
     }
 }
 
-std::string *GSUtil::ToString(double v, std::string *output)
+std::string *GSUtil::toString(double v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%.17g", v); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17e", v); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
 
-std::string *GSUtil::ToString(float v, std::string *output)
+std::string *GSUtil::toString(float v, std::string *output)
 {
     char buf[32];
-    int l = snprintf(buf, sizeof(buf), "%.9g", double(v)); // 9 is enough to round trip, the double() is to silence warnings
+    int l = snprintf(buf, sizeof(buf), "%.9g", double(v)); // 9 is enough to round trip, the Double() is to silence warnings
     output->assign(buf, size_t(l));
     return output;
 }
 
-std::string *GSUtil::ToString(int32_t v, std::string *output)
+std::string *GSUtil::toString(int32_t v, std::string *output)
 {
     char buf[32];
     int l = snprintf(buf, sizeof(buf), "%" PRId32, v);
@@ -514,7 +514,7 @@ std::string *GSUtil::ToString(int32_t v, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(uint32_t v, std::string *output)
+std::string *GSUtil::toString(uint32_t v, std::string *output)
 {
     char buf[32];
     int l = snprintf(buf, sizeof(buf), "%" PRIu32, v);
@@ -522,7 +522,7 @@ std::string *GSUtil::ToString(uint32_t v, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(int64_t v, std::string *output)
+std::string *GSUtil::toString(int64_t v, std::string *output)
 {
     char buf[32];
     int l = snprintf(buf, sizeof(buf), "%" PRId64, v);
@@ -530,7 +530,7 @@ std::string *GSUtil::ToString(int64_t v, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(uint64_t v, std::string *output)
+std::string *GSUtil::toString(uint64_t v, std::string *output)
 {
     char buf[32];
     int l = snprintf(buf, sizeof(buf), "%" PRIu64, v);
@@ -538,29 +538,29 @@ std::string *GSUtil::ToString(uint64_t v, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(bool v, std::string *output)
+std::string *GSUtil::toString(bool v, std::string *output)
 {
     if (v) output->assign("true"s);
     else output->assign("false"s);
     return output;
 }
 
-std::string *GSUtil::ToString(const double *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const double *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
     int l;
     for (size_t i = 0; i < n; i++)
     {
-        if (i < n - 1) l = snprintf(&buf[count], 32, "%.17g ", v[i]);
-        else l = snprintf(&buf[count], 32, "%.17g", v[i]);
+        if (i < n - 1) l = snprintf(&buf[count], 32, "%.17e ", v[i]);
+        else l = snprintf(&buf[count], 32, "%.17e", v[i]);
         count += size_t(l);
     }
     output->assign(buf.get(), count);
     return output;
 }
 
-std::string *GSUtil::ToString(const float *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const float *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
@@ -575,7 +575,7 @@ std::string *GSUtil::ToString(const float *v, size_t n, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const int32_t *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const int32_t *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
@@ -590,7 +590,7 @@ std::string *GSUtil::ToString(const int32_t *v, size_t n, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const uint32_t *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const uint32_t *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
@@ -605,7 +605,7 @@ std::string *GSUtil::ToString(const uint32_t *v, size_t n, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const int64_t *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const int64_t *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
@@ -620,7 +620,7 @@ std::string *GSUtil::ToString(const int64_t *v, size_t n, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const uint64_t *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const uint64_t *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
@@ -635,7 +635,7 @@ std::string *GSUtil::ToString(const uint64_t *v, size_t n, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const bool *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const bool *v, size_t n, std::string *output)
 {
     std::unique_ptr<char[]> buf = std::make_unique<char[]>(32 * n);
     size_t count = 0;
@@ -650,20 +650,20 @@ std::string *GSUtil::ToString(const bool *v, size_t n, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const pgd::Quaternion &v, std::string *output)
+std::string *GSUtil::toString(const pgd::Quaternion &v, std::string *output)
 {
     char buf[32 * 4];
     // note quaternion is (qs,qx,qy,qz)
-    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g %.17g", v.n, v.x, v.y, v.z); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17e %.17e %.17e %.17e", v.n, v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
 
-std::string *GSUtil::ToString(const pgd::Matrix3x3 &m, std::string *output)
+std::string *GSUtil::toString(const pgd::Matrix3x3 &m, std::string *output)
 {
     char buf[32 * 9];
     // note quaternion is (qs,qx,qy,qz)
-    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g\n%.17g %.17g %.17g\n%.17g %.17g %.17g",
+    int l = snprintf(buf, sizeof(buf), "%.17e %.17e %.17e\n%.17e %.17e %.17e\n%.17e %.17e %.17e",
                      m.e11, m.e12, m.e13,
                      m.e21, m.e22, m.e23,
                      m.e31, m.e32, m.e33); // 17 digits is enough to round trip
@@ -671,31 +671,31 @@ std::string *GSUtil::ToString(const pgd::Matrix3x3 &m, std::string *output)
     return output;
 }
 
-std::string *GSUtil::ToString(const pgd::Vector2 &v, std::string *output)
+std::string *GSUtil::toString(const pgd::Vector2 &v, std::string *output)
 {
     char buf[32 * 2];
-    int l = snprintf(buf, sizeof(buf), "%.17g %.17g", v.x, v.y); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17e %.17e", v.x, v.y); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
 
-std::string *GSUtil::ToString(const pgd::Vector3 &v, std::string *output)
+std::string *GSUtil::toString(const pgd::Vector3 &v, std::string *output)
 {
     char buf[32 * 3];
-    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g", v.x, v.y, v.z); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17e %.17e %.17e", v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
 
-std::string *GSUtil::ToString(const pgd::Vector4 &v, std::string *output)
+std::string *GSUtil::toString(const pgd::Vector4 &v, std::string *output)
 {
     char buf[32 * 4];
-    int l = snprintf(buf, sizeof(buf), "%.17g %.17g %.17g", v.x, v.y, v.z); // 17 digits is enough to round trip
+    int l = snprintf(buf, sizeof(buf), "%.17e %.17e %.17e", v.x, v.y, v.z); // 17 digits is enough to round trip
     output->assign(buf, size_t(l));
     return output;
 }
 
-std::string *GSUtil::ToString(uint32_t address, uint16_t port, std::string *output)
+std::string *GSUtil::toString(uint32_t address, uint16_t port, std::string *output)
 {
     *output = (std::to_string(address & 0xff) + "."s +
                std::to_string((address >> 8) & 0xff) + "."s +
@@ -705,136 +705,136 @@ std::string *GSUtil::ToString(uint32_t address, uint16_t port, std::string *outp
     return output;
 }
 
-std::string *GSUtil::ToString(const std::string &s, std::string *output)
+std::string *GSUtil::toString(const std::string &s, std::string *output)
 {
     *output = s;
     return output;
 }
 
 
-std::string GSUtil::ToString(double v)
+std::string GSUtil::toString(double v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(float v)
+std::string GSUtil::toString(float v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(int32_t v)
+std::string GSUtil::toString(int32_t v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(int64_t v)
+std::string GSUtil::toString(int64_t v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(uint32_t v)
+std::string GSUtil::toString(uint32_t v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(uint64_t v)
+std::string GSUtil::toString(uint64_t v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(bool v)
+std::string GSUtil::toString(bool v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(const double *v, size_t n)
+std::string GSUtil::toString(const double *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const float *v, size_t n)
+std::string GSUtil::toString(const float *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const int32_t *v, size_t n)
+std::string GSUtil::toString(const int32_t *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const uint32_t *v, size_t n)
+std::string GSUtil::toString(const uint32_t *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const int64_t *v, size_t n)
+std::string GSUtil::toString(const int64_t *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const uint64_t *v, size_t n)
+std::string GSUtil::toString(const uint64_t *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const bool *v, size_t n)
+std::string GSUtil::toString(const bool *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 
-std::string GSUtil::ToString(const pgd::Matrix3x3 &m)
+std::string GSUtil::toString(const pgd::Matrix3x3 &m)
 {
     std::string output;
-    return *ToString(m, &output);
+    return *toString(m, &output);
 }
 
-std::string GSUtil::ToString(const pgd::Quaternion &v)
+std::string GSUtil::toString(const pgd::Quaternion &v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(const pgd::Vector2 &v)
+std::string GSUtil::toString(const pgd::Vector2 &v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(const pgd::Vector3 &v)
+std::string GSUtil::toString(const pgd::Vector3 &v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(const pgd::Vector4 &v)
+std::string GSUtil::toString(const pgd::Vector4 &v)
 {
     std::string output;
-    return *ToString(v, &output);
+    return *toString(v, &output);
 }
 
-std::string GSUtil::ToString(uint32_t address, uint16_t port)
+std::string GSUtil::toString(uint32_t address, uint16_t port)
 {
     std::string output;
-    return *ToString(address, port, &output);
+    return *toString(address, port, &output);
 }
 
 
 // convert to string using printf style formatting and variable numbers of arguments
-std::string GSUtil::ToString(const char * const printfFormatString, ...)
+std::string GSUtil::toString(const char * const printfFormatString, ...)
 {
     // initialize use of the variable argument array
     va_list vaArgs;
@@ -870,12 +870,12 @@ std::string GSUtil::ConvertIPAddressToString(uint32_t address, bool networkOrder
 }
 
 #if defined(__APPLE__)
-std::string *GSUtil::ToString(size_t v, std::string *output)
+std::string *GSUtil::toString(size_t v, std::string *output)
 {
-    return ToString(uint64_t(v), output);
+    return toString(uint64_t(v), output);
 }
 
-std::string *GSUtil::ToString(const size_t *v, size_t n, std::string *output)
+std::string *GSUtil::toString(const size_t *v, size_t n, std::string *output)
 {
     std::vector<char> buf(32 * n);
     size_t count = 0;
@@ -890,14 +890,14 @@ std::string *GSUtil::ToString(const size_t *v, size_t n, std::string *output)
     return output;
 }
 
-std::string GSUtil::ToString(const size_t *v, size_t n)
+std::string GSUtil::toString(const size_t *v, size_t n)
 {
     std::string output;
-    return *ToString(v, n, &output);
+    return *toString(v, n, &output);
 }
 #endif
 
-bool GSUtil::BoolRegex(const std::string &buf)
+bool GSUtil::boolRegex(const std::string &buf)
 {
     const std::regex true_regex("^\\s*(true|yes)\\s*$"s, std::regex_constants::icase);
     const std::regex false_regex("^\\s*(false|no)\\s*$"s, std::regex_constants::icase);
@@ -908,7 +908,7 @@ bool GSUtil::BoolRegex(const std::string &buf)
 }
 
 // wraps a string at white space to a maximum of line length
-std::string GSUtil::Wrap(const char *text, size_t line_length)
+std::string GSUtil::wrap(const char *text, size_t line_length)
 {
     std::istringstream words(text);
     std::ostringstream wrapped;
@@ -930,7 +930,7 @@ std::string GSUtil::Wrap(const char *text, size_t line_length)
     return wrapped.str();
 }
 
-size_t GSUtil::SplitExceptQuoted(const std::string &line, std::vector<std::string> *tokens)
+size_t GSUtil::splitExceptQuoted(const std::string &line, std::vector<std::string> *tokens)
 {
     tokens->clear();
     std::regex rgx("( |\\\".*?\\\"|'.*?')"); // this regular expression splits on spaces unless contained within quotes
@@ -947,7 +947,7 @@ size_t GSUtil::SplitExceptQuoted(const std::string &line, std::vector<std::strin
 // if split is 0 then split on any whitespace
 // otherwise split on this character
 // strings can be optionally quoted to allow the split character in the string
-size_t GSUtil::SplitGeneric(const std::string &line, std::vector<std::string> *tokens, char split, bool quoted, bool allowEmpty)
+size_t GSUtil::splitGeneric(const std::string &line, std::vector<std::string> *tokens, char split, bool quoted, bool allowEmpty)
 {
     tokens->clear();
     if (!quoted && split)
@@ -1184,7 +1184,7 @@ double GSUtil::fast_a_to_double(const char *nptr)
     return value;
 }
 
-double GSUtil::ThreeAxisDecompositionScore(double x[] , void *data)
+double GSUtil::threeAxisDecompositionScore(double x[] , void *data)
 {
     double *ptr = reinterpret_cast<double *>(data);
     pgd::Quaternion target(ptr[0], ptr[1], ptr[2], ptr[3]);
@@ -1194,11 +1194,11 @@ double GSUtil::ThreeAxisDecompositionScore(double x[] , void *data)
     double ang1 = x[0];
     double ang2 = x[1];
     double ang3 = x[2];
-    double error = GSUtil::ThreeAxisDecompositionError(target, ax1, ax2, ax3, ang1, ang2, ang3);
+    double error = GSUtil::threeAxisDecompositionError(target, ax1, ax2, ax3, ang1, ang2, ang3);
     return error;
 }
 
-void GSUtil::Logger(const std::string &file, const std::string &message)
+void GSUtil::logger(const std::string &file, const std::string &message)
 {
     auto now = std::chrono::system_clock::now();
     std::time_t t = std::chrono::system_clock::to_time_t(now);
@@ -1216,9 +1216,9 @@ void GSUtil::Logger(const std::string &file, const std::string &message)
     }
 }
 
-double GSUtil::ThreeAxisDecompositionError(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double ang1, double ang2, double ang3)
+double GSUtil::threeAxisDecompositionError(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double ang1, double ang2, double ang3)
 {
-    pgd::Quaternion product = pgd::MakeQFromAxisAngle(ax3, ang3, true) * pgd::MakeQFromAxisAngle(ax2, ang2, true) * pgd::MakeQFromAxisAngle(ax1, ang1, true);
+    pgd::Quaternion product = pgd::makeQFromAxisAngle(ax3, ang3, true) * pgd::makeQFromAxisAngle(ax2, ang2, true) * pgd::makeQFromAxisAngle(ax1, ang1, true);
     // now we need a distance metric between product and target. I could just calculate the angle between them:
     // theta = acos(2(q1,q2)^2-1) where (q1,q2) is the inner product (n1n2 + x1x2+ y1y2 + z1z2)
     // but there are other quantities that will do a similar job in less time
@@ -1228,7 +1228,7 @@ double GSUtil::ThreeAxisDecompositionError(const pgd::Quaternion &target, const 
     return error;
 }
 
-double GSUtil::ThreeAxisDecomposition(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double *ang1, double *ang2, double *ang3)
+double GSUtil::threeAxisDecomposition(const pgd::Quaternion &target, const pgd::Vector3 &ax1, const pgd::Vector3 &ax2, const pgd::Vector3 &ax3, double *ang1, double *ang2, double *ang3)
 {
     // we use simplex search to try and solve this
 
@@ -1249,7 +1249,7 @@ double GSUtil::ThreeAxisDecomposition(const pgd::Quaternion &target, const pgd::
     int icount = 0;
     int numres = 0;
     int ifault = 0;
-    nelmin (ThreeAxisDecompositionScore, userData, N, start, xmin, &ynewlo, reqmin, step, konvge, kcount, &icount, &numres, &ifault );
+    nelmin (threeAxisDecompositionScore, userData, N, start, xmin, &ynewlo, reqmin, step, konvge, kcount, &icount, &numres, &ifault );
 
     *ang1 = xmin[0];
     *ang2 = xmin[1];

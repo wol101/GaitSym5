@@ -18,7 +18,7 @@ PIDMuscleLengthController::PIDMuscleLengthController()
 {
 }
 
-void PIDMuscleLengthController::Initialise(double Kp, double Ki, double Kd)
+void PIDMuscleLengthController::initialise(double Kp, double Ki, double Kd)
 {
     m_setpoint = 0;
     m_Kp = Kp;
@@ -33,17 +33,17 @@ void PIDMuscleLengthController::Initialise(double Kp, double Ki, double Kd)
     m_current_length = 0;
 }
 
-void PIDMuscleLengthController::Update()
+void PIDMuscleLengthController::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
 
-    m_dt = simulation()->GetTimeIncrement();
+    m_dt = simulation()->global()->stepSize();
 
     // in this driver, the length is driven by the upstream driver
     m_setpoint = dataSum();
-    Muscle *muscle = dynamic_cast<Muscle *>(GetTarget(""s));
-    if (muscle) m_current_length = muscle->GetLength();
+    Muscle *muscle = dynamic_cast<Muscle *>(getTarget(""s));
+    if (muscle) m_current_length = muscle->length();
     m_error = m_current_length - m_setpoint;
     if (m_previous_error == std::numeric_limits<double>::infinity()) m_previous_error = m_error;
 
@@ -55,7 +55,7 @@ void PIDMuscleLengthController::Update()
 
     // now set the output based on the PID output
     // note that we limit the value to the range
-    setValue(Clamp(m_output));
+    setValue(clamp(m_output));
 }
 
 // this function initialises the data in the object based on the contents
@@ -72,12 +72,12 @@ std::string *PIDMuscleLengthController::createFromAttributes()
     }
     std::string buf;
     if (findAttribute("Kp"s, &buf) == nullptr) return lastErrorPtr();
-    double Kp = GSUtil::Double(buf);
+    double Kp = GSUtil::toDouble(buf);
     if (findAttribute("Ki"s, &buf) == nullptr) return lastErrorPtr();
-    double Ki = GSUtil::Double(buf);
+    double Ki = GSUtil::toDouble(buf);
     if (findAttribute("Kd"s, &buf) == nullptr) return lastErrorPtr();
-    double Kd = GSUtil::Double(buf);
-    Initialise(Kp, Ki, Kd);
+    double Kd = GSUtil::toDouble(buf);
+    initialise(Kp, Ki, Kd);
     return nullptr;
 }
 
@@ -87,9 +87,9 @@ void PIDMuscleLengthController::appendToAttributes()
     Controller::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "PIDMuscleLength"s);
-    setAttribute("Kp"s, *GSUtil::ToString(m_Kp, &buf));
-    setAttribute("Ki"s, *GSUtil::ToString(m_Ki, &buf));
-    setAttribute("Kd"s, *GSUtil::ToString(m_Kd, &buf));
+    setAttribute("Kp"s, *GSUtil::toString(m_Kp, &buf));
+    setAttribute("Ki"s, *GSUtil::toString(m_Ki, &buf));
+    setAttribute("Kd"s, *GSUtil::toString(m_Kd, &buf));
 }
 
 std::string PIDMuscleLengthController::dumpToString()
@@ -100,13 +100,13 @@ std::string PIDMuscleLengthController::dumpToString()
         setFirstDump(false);
         s = dumpHelper({"Time", "setpoint"s, "Kp"s, "Ki"s, "Kd"s, "previous_error"s, "error"s, "integral"s, "derivative"s, "output"s, "dt"s, "current_length"s, "value"s});
     }
-    s += dumpHelper({simulation()->GetTime(), m_setpoint, m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, m_current_length, value()});
+    s += dumpHelper({simulation()->simulationTime(), m_setpoint, m_Kp, m_Ki, m_Kd, m_previous_error, m_error, m_integral, m_derivative, m_output, m_dt, m_current_length, value()});
     return s;
 }
 
 Muscle *PIDMuscleLengthController::muscle()
 {
-    return dynamic_cast<Muscle *>(GetTarget(""s));;
+    return dynamic_cast<Muscle *>(getTarget(""s));;
 }
 
 } // namespace GaitSym

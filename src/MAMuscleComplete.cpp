@@ -40,33 +40,33 @@ MAMuscleComplete::~MAMuscleComplete()
 }
 
 // set the muscle elastic properties
-void MAMuscleComplete::SetSerialElasticProperties(double serialStrainAtFmax, double serialStrainRateAtFmax, double tendonLength, MAMuscleComplete::StrainModel serialStrainModel)
+void MAMuscleComplete::setSerialElasticProperties(double serialStrainAtFmax, double serialStrainRateAtFmax, double tendonLength, MAMuscleComplete::StrainModel serialStrainModel)
 {
     double serialDampingConstant, serialElasticConstant;
     m_serialStrainAtFmax = serialStrainAtFmax;
     m_serialStrainRateAtFmax = serialStrainRateAtFmax;
-    m_Params.smse = serialStrainModel; // strain model for serial element
-    m_Params.sse = tendonLength; // slack length serial element (m)
+    m_params.smse = serialStrainModel; // strain model for serial element
+    m_params.sse = tendonLength; // slack length serial element (m)
 
     if (tendonLength != -1) // if tendonLength == -1 this has to be done later once the tendonLength can be calculated
     {
         switch (serialStrainModel)
         {
         case MAMuscleComplete::linear:
-            serialElasticConstant = m_Params.fmax/(serialStrainAtFmax * tendonLength);
+            serialElasticConstant = m_params.fmax/(serialStrainAtFmax * tendonLength);
             break;
         case MAMuscleComplete::square:
-            serialElasticConstant = m_Params.fmax/(SQUARE(serialStrainAtFmax * tendonLength));
+            serialElasticConstant = m_params.fmax/(SQUARE(serialStrainAtFmax * tendonLength));
             break;
         }
         if (serialStrainRateAtFmax == 0) serialDampingConstant = 0;
-        else serialDampingConstant = m_Params.fmax/(serialStrainRateAtFmax * tendonLength);
-        m_Params.ese = serialElasticConstant; // elastic constant serial element (N/m)
-        m_Params.dse = serialDampingConstant; // damping constant serial element (Ns/m)
+        else serialDampingConstant = m_params.fmax/(serialStrainRateAtFmax * tendonLength);
+        m_params.ese = serialElasticConstant; // elastic constant serial element (N/m)
+        m_params.dse = serialDampingConstant; // damping constant serial element (Ns/m)
     }
 }
 
-void MAMuscleComplete::SetParallelElasticProperties(double parallelStrainAtFmax, double parallelStrainRateAtFmax, double parallelElementLength, MAMuscleComplete::StrainModel parallelStrainModel)
+void MAMuscleComplete::setParallelElasticProperties(double parallelStrainAtFmax, double parallelStrainRateAtFmax, double parallelElementLength, MAMuscleComplete::StrainModel parallelStrainModel)
 {
     double parallelDampingConstant, parallelElasticConstant;
 
@@ -79,38 +79,38 @@ void MAMuscleComplete::SetParallelElasticProperties(double parallelStrainAtFmax,
         switch (parallelStrainModel)
         {
         case MAMuscleComplete::linear:
-            parallelElasticConstant = m_Params.fmax/(parallelStrainAtFmax * parallelElementLength);
+            parallelElasticConstant = m_params.fmax/(parallelStrainAtFmax * parallelElementLength);
             break;
         case MAMuscleComplete::square:
-            parallelElasticConstant = m_Params.fmax/(SQUARE(parallelStrainAtFmax * parallelElementLength));
+            parallelElasticConstant = m_params.fmax/(SQUARE(parallelStrainAtFmax * parallelElementLength));
             break;
         }
     }
     if (parallelStrainRateAtFmax == 0) parallelDampingConstant = 0;
-    else parallelDampingConstant = m_Params.fmax/(parallelStrainRateAtFmax * parallelElementLength);
+    else parallelDampingConstant = m_params.fmax/(parallelStrainRateAtFmax * parallelElementLength);
 
-    m_Params.spe = parallelElementLength; // slack length parallel element (m)
-    m_Params.epe = parallelElasticConstant; // elastic constant parallel element (N/m)
-    m_Params.dpe = parallelDampingConstant; // damping constant serial element (Ns/m)
-    m_Params.smpe = parallelStrainModel; // strain model for serial element
+    m_params.spe = parallelElementLength; // slack length parallel element (m)
+    m_params.epe = parallelElasticConstant; // elastic constant parallel element (N/m)
+    m_params.dpe = parallelDampingConstant; // damping constant serial element (Ns/m)
+    m_params.smpe = parallelStrainModel; // strain model for serial element
 }
 
 // set the muscle contractile properties
-void MAMuscleComplete::SetMuscleProperties(double vMax, double Fmax, double K, double Width)
+void MAMuscleComplete::setMuscleProperties(double vMax, double Fmax, double K, double Width)
 {
-    m_Params.k = K; // shape constant
-    m_Params.vmax = vMax; // maximum shortening velocity (m/s)
-    m_Params.fmax = Fmax; // isometric force
-    m_Params.width = Width; // relative width of length/tension peak
+    m_params.k = K; // shape constant
+    m_params.vmax = vMax; // maximum shortening velocity (m/s)
+    m_params.fmax = Fmax; // isometric force
+    m_params.width = Width; // relative width of length/tension peak
 }
 
 // set the activation kinetics
-void MAMuscleComplete::SetActivationKinetics(bool activationKinetics,
+void MAMuscleComplete::setActivationKinetics(bool activationKinetics,
                                              double akFastTwitchProportion,
                                              double akTActivationA, double akTActivationB,
                                              double akTDeactivationA, double akTDeactivationB)
 {
-    m_ActivationKinetics = activationKinetics;
+    m_activationKinetics = activationKinetics;
 
     // original code
     //double ft = 0.5; // arbitrary set activation kinetics as 50% fast twitch
@@ -124,44 +124,44 @@ void MAMuscleComplete::SetActivationKinetics(bool activationKinetics,
 
 // do any intialisation that relies on the strap being set up properly
 
-void MAMuscleComplete::LateInitialisation()
+void MAMuscleComplete::lateInitialisation()
 {
-    Muscle::LateInitialisation();
-    m_Params.len = GetStrap()->Length();
+    Muscle::lateInitialisation();
+    m_params.len = strap()->length();
 
     // lastlpe perhaps not set to anything useful
 
     // handle sse == -1 which means I need to calculate this value internally and reset the derived values
-    if (m_Params.sse == -1)
+    if (m_params.sse == -1)
     {
-        m_Params.sse = m_Params.len - m_Params.spe; // set the slack serial length
+        m_params.sse = m_params.len - m_params.spe; // set the slack serial length
 
         double serialDampingConstant, serialElasticConstant;
-        switch (m_Params.smse)
+        switch (m_params.smse)
         {
         case MAMuscleComplete::linear:
-            serialElasticConstant = m_Params.fmax/(m_serialStrainAtFmax * m_Params.sse);
+            serialElasticConstant = m_params.fmax/(m_serialStrainAtFmax * m_params.sse);
             break;
         case MAMuscleComplete::square:
-            serialElasticConstant = m_Params.fmax/(SQUARE(m_serialStrainAtFmax * m_Params.sse));
+            serialElasticConstant = m_params.fmax/(SQUARE(m_serialStrainAtFmax * m_params.sse));
             break;
         }
         if (m_serialStrainRateAtFmax == 0) serialDampingConstant = 0;
-        else serialDampingConstant = m_Params.fmax/(m_serialStrainRateAtFmax * m_Params.sse);
-        m_Params.ese = serialElasticConstant; // elastic constant serial element (N/m)
-        m_Params.dse = serialDampingConstant; // damping constant serial element (Ns/m)
+        else serialDampingConstant = m_params.fmax/(m_serialStrainRateAtFmax * m_params.sse);
+        m_params.ese = serialElasticConstant; // elastic constant serial element (N/m)
+        m_params.dse = serialDampingConstant; // damping constant serial element (Ns/m)
     }
 
-    double minlpe = m_Params.spe - (m_Params.spe * m_Params.width / 2);
+    double minlpe = m_params.spe - (m_params.spe * m_params.width / 2);
     if (minlpe < 0) minlpe = 0;
-    double maxlpe = m_Params.len - m_Params.sse; // this would be right with no damping
+    double maxlpe = m_params.len - m_params.sse; // this would be right with no damping
     if (maxlpe < minlpe) maxlpe = minlpe;
-    if (m_Params.lastlpe == -1)
+    if (m_params.lastlpe == -1)
     {
         // just setting lastlpe to something sensible should be enough
-        m_Params.lastlpe = (maxlpe + minlpe) / 2;
+        m_params.lastlpe = (maxlpe + minlpe) / 2;
     }
-    m_Params.lpe = m_Params.lastlpe; // needed so that we get a sensible t=0 OutputProgramState
+    m_params.lpe = m_params.lastlpe; // needed so that we get a sensible t=0 OutputProgramState
 
     return;
 
@@ -170,61 +170,61 @@ void MAMuscleComplete::LateInitialisation()
 // set the proportion of muscle fibres that are active
 // calculates the tension in the strap
 
-void MAMuscleComplete::SetActivation()
+void MAMuscleComplete::updateActivation()
 {
     double activation = dataSum();
     // set variable input parameters
 
-    if (activation < m_MinimumActivation) activation = m_MinimumActivation;
+    if (activation < m_minimumActivation) activation = m_minimumActivation;
     else if (activation > 1) activation = 1;
-    m_Stim = activation;
+    m_stim = activation;
 
-    m_Params.timeIncrement = simulation()->GetTimeIncrement();
-    if (m_ActivationKinetics || m_ActivationRate != 0)
+    m_params.timeIncrement = simulation()->global()->stepSize();
+    if (m_activationKinetics || m_activationRate != 0)
     {
-        if (m_Params.alpha == -1) // special case for first run through if I just want disable rate
+        if (m_params.alpha == -1) // special case for first run through if I just want disable rate
         {
-            m_Params.alpha = m_Stim;
+            m_params.alpha = m_stim;
         }
         else
         {
-            if (m_ActivationKinetics)
+            if (m_activationKinetics)
             {
                 // using activation kinetics from UGM model
                 double t2 = 1 / m_tdeact;
                 double t1 = 1 / m_tact - t2;
                 // Nagano & Gerritsen 2001 A2
-                double qdot = (m_Stim - m_Params.alpha) * (t1 * m_Stim + t2);
-                m_Params.alpha += qdot * m_Params.timeIncrement;
+                double qdot = (m_stim - m_params.alpha) * (t1 * m_stim + t2);
+                m_params.alpha += qdot * m_params.timeIncrement;
                 // I think I should allow this to fall - it won't make any difference and it maintains
                 // continuity in the differentials
                 // if (m_Params.alpha < 0.001) m_Params.alpha = 0.001; // m_Act never drops to zero in practice
             }
             else // this is if the activation rate is limited
             {
-                double delAct = m_ActivationRate * m_Params.timeIncrement;
-                if (m_Stim > m_Params.alpha)
+                double delAct = m_activationRate * m_params.timeIncrement;
+                if (m_stim > m_params.alpha)
                 {
-                    m_Params.alpha += delAct;
-                    if (m_Params.alpha > m_Stim) m_Params.alpha = m_Stim;
+                    m_params.alpha += delAct;
+                    if (m_params.alpha > m_stim) m_params.alpha = m_stim;
                 }
-                else if (m_Stim < m_Params.alpha)
+                else if (m_stim < m_params.alpha)
                 {
-                    m_Params.alpha -= delAct;
-                    if (m_Params.alpha < m_Stim) m_Params.alpha = m_Stim;
+                    m_params.alpha -= delAct;
+                    if (m_params.alpha < m_stim) m_params.alpha = m_stim;
                 }
             }
         }
     }
     else
     {
-        m_Params.alpha = m_Stim;
+        m_params.alpha = m_stim;
     }
 
-    m_Params.len = GetStrap()->Length();
-    m_Params.v = GetStrap()->Velocity();
+    m_params.len = strap()->length();
+    m_params.v = strap()->velocity();
 
-    double minlpe = m_Params.spe - (m_Params.spe * m_Params.width / 2);
+    double minlpe = m_params.spe - (m_params.spe * m_params.width / 2);
     if (minlpe < 0) minlpe = 0;
     // double maxlpe = m_Params.len - m_Params.sse; // this would be right with no damping
     // if (maxlpe < minlpe) maxlpe = minlpe;
@@ -233,28 +233,28 @@ void MAMuscleComplete::SetActivation()
 
     // need to do some checks here for being slack (and also silly extension/contraction rates???)
     double minlen;
-    minlen = m_Params.sse + minlpe;
-    if (m_Params.len <= minlen)
+    minlen = m_params.sse + minlpe;
+    if (m_params.len <= minlen)
     {
-        m_Params.lastlpe = minlpe;
+        m_params.lastlpe = minlpe;
 
-        m_Params.fce = 0; // contractile force (N)
-        m_Params.lpe = minlpe; // contractile and parallel length (m)
-        m_Params.fpe = 0; // parallel element force (N)
-        m_Params.lse = m_Params.sse; // serial length (m)
-        m_Params.fse = 0; // serial element force (N)
-        m_Params.vce = 0; // contractile element velocity (m/s)
-        m_Params.vse = 0; // serial element velocity (m/s)
-        m_Params.targetFce = 0; // fce calculated from elastic elements (N)
-        m_Params.f0 = 0; // length corrected fmax (N)
-        m_Params.err = 0; // error term in lpe (m)
+        m_params.fce = 0; // contractile force (N)
+        m_params.lpe = minlpe; // contractile and parallel length (m)
+        m_params.fpe = 0; // parallel element force (N)
+        m_params.lse = m_params.sse; // serial length (m)
+        m_params.fse = 0; // serial element force (N)
+        m_params.vce = 0; // contractile element velocity (m/s)
+        m_params.vse = 0; // serial element velocity (m/s)
+        m_params.targetFce = 0; // fce calculated from elastic elements (N)
+        m_params.f0 = 0; // length corrected fmax (N)
+        m_params.err = 0; // error term in lpe (m)
     }
     else
     {
-        if (m_Params.ese == 0) // special case - easy to calculate
+        if (m_params.ese == 0) // special case - easy to calculate
         {
-            m_Params.err = CalculateForceError (m_Params.len - m_Params.sse, &m_Params);
-            m_Params.lastlpe = m_Params.lpe;
+            m_params.err = CalculateForceError (m_params.len - m_params.sse, &m_params);
+            m_params.lastlpe = m_params.lpe;
         }
         else
         {
@@ -262,19 +262,19 @@ void MAMuscleComplete::SetActivation()
             // now solve the activation function so the contractile and elastic elements are consistent
 
             // we have a previous value for lce that is probably a good estimate of the new values
-            double currentEstimate = m_Params.lastlpe;
+            double currentEstimate = m_params.lastlpe;
             if (currentEstimate < 0) currentEstimate = 0;
-            if (currentEstimate > m_Params.len) currentEstimate = m_Params.len;
-            double flast = CalculateForceError(currentEstimate, &m_Params);
-            if (fabs(flast) <= m_Tolerance)
+            if (currentEstimate > m_params.len) currentEstimate = m_params.len;
+            double flast = CalculateForceError(currentEstimate, &m_params);
+            if (fabs(flast) <= m_tolerance)
             {
-                m_Params.err = flast;
+                m_params.err = flast;
             }
             else
             {
                 double ax = -std::numeric_limits<double>::infinity(), bx = std::numeric_limits<double>::infinity(), r, tol;
                 // double range = maxlpe - minlpe; // this doesn't quite work because of damping
-                double range = m_Params.len; // this should be bigger than necessary
+                double range = m_params.len; // this should be bigger than necessary
                 int nInc = 100;
                 double inc = range / nInc;
                 double high_target, low_target, err;
@@ -283,12 +283,12 @@ void MAMuscleComplete::SetActivation()
                 {
                     high_target = currentEstimate + i * inc;
                     low_target = currentEstimate - i * inc;
-                    if (high_target > m_Params.len) high_target = m_Params.len;
+                    if (high_target > m_params.len) high_target = m_params.len;
                     if (low_target < 0) low_target = 0;
 
-                    if (high_target <= m_Params.len) // maxlpe might be expected to work but is too small
+                    if (high_target <= m_params.len) // maxlpe might be expected to work but is too small
                     {
-                        err = CalculateForceError(high_target, &m_Params);
+                        err = CalculateForceError(high_target, &m_params);
                         if (std::signbit(err) != std::signbit(flast))
                         {
                             ax = currentEstimate + (i - 1) * inc;
@@ -298,7 +298,7 @@ void MAMuscleComplete::SetActivation()
                     }
                     if (low_target >= 0) // minlpe might be expected to work but is too big
                     {
-                        err = CalculateForceError(low_target, &m_Params);
+                        err = CalculateForceError(low_target, &m_params);
                         if (std::signbit(err) != std::signbit(flast))
                         {
                             ax = currentEstimate - (i - 1) * inc;
@@ -306,35 +306,35 @@ void MAMuscleComplete::SetActivation()
                             break;
                         }
                     }
-                    if (high_target >= m_Params.len && low_target <= 0) i = nInc + 1;
+                    if (high_target >= m_params.len && low_target <= 0) i = nInc + 1;
                 }
                 if (i > nInc)
                 {
                     std::cerr << "MAMuscleComplete::SetActivation Error: Unable to solve lpe " << name() << "\n";
-                    m_Params.err = CalculateForceError (currentEstimate, &m_Params); // couldn't find anything better
-                    m_Params.lastlpe = currentEstimate;
+                    m_params.err = CalculateForceError (currentEstimate, &m_params); // couldn't find anything better
+                    m_params.lastlpe = currentEstimate;
                 }
                 else
                 {
-                    tol = m_Tolerance;
-                    r = GSUtil::zeroin(ax, bx, &CalculateForceError, &m_Params, tol);
-                    m_Params.err = CalculateForceError (r, &m_Params); // this sets m_Params with all the correct values
-                    m_Params.lastlpe = r;
+                    tol = m_tolerance;
+                    r = GSUtil::zeroin(ax, bx, &CalculateForceError, &m_params, tol);
+                    m_params.err = CalculateForceError (r, &m_params); // this sets m_Params with all the correct values
+                    m_params.lastlpe = r;
                 }
             }
         }
     }
 
-    GetStrap()->setTension(m_Params.fse);
+    strap()->setTension(m_params.fse);
 }
 
 // calculate the metabolic power of the muscle
 
-double MAMuscleComplete::GetMetabolicPower()
+double MAMuscleComplete::metabolicPower()
 {
     // m_Velocity is negative when muscle shortening
     // we need the sign the other way round
-    double relV = -m_Params.vce / m_Params.vmax;
+    double relV = -m_params.vce / m_params.vmax;
 
     // limit relV
     if (relV > 1) relV = 1;
@@ -346,27 +346,27 @@ double MAMuscleComplete::GetMetabolicPower()
     double sigma = (0.054 + 0.506 * relV + 2.46 * relVSquared) /
         (1 - 1.13 * relV + 12.8 * relVSquared - 1.64 * relVCubed);
 
-    double power = m_Params.alpha * m_Params.f0 * m_Params.vmax * sigma;
+    double power = m_params.alpha * m_params.f0 * m_params.vmax * sigma;
 
     return (power);
 }
 
 // note that with damping this is the energy stored but not the energy that will be returned
-double MAMuscleComplete::GetESE() // energy serial element
+double MAMuscleComplete::ese() // energy serial element
 {
-    if (m_Params.lse <= m_Params.sse) return 0;
+    if (m_params.lse <= m_params.sse) return 0;
 
     double energy;
-    double extension = m_Params.lse - m_Params.sse;
+    double extension = m_params.lse - m_params.sse;
     // serial element model
-    switch (m_Params.smpe)
+    switch (m_params.smpe)
     {
     case MAMuscleComplete::linear:
-        energy = (0.5 * SQUARE(extension) * m_Params.ese);
+        energy = (0.5 * SQUARE(extension) * m_params.ese);
         break;
 
     case MAMuscleComplete::square:
-        energy = ((1.0/3.0) * CUBE(extension) * m_Params.ese);
+        energy = ((1.0/3.0) * CUBE(extension) * m_params.ese);
         break;
     }
 
@@ -374,21 +374,21 @@ double MAMuscleComplete::GetESE() // energy serial element
 }
 
 // note that with damping this is the energy stored but not the energy that will be returned
-double MAMuscleComplete::GetEPE() // energy serial element
+double MAMuscleComplete::epe() // energy serial element
 {
-    if (m_Params.lpe <= m_Params.spe) return 0;
+    if (m_params.lpe <= m_params.spe) return 0;
 
     double energy;
-    double extension = m_Params.lpe - m_Params.spe;
+    double extension = m_params.lpe - m_params.spe;
     // serial element model
-    switch (m_Params.smpe)
+    switch (m_params.smpe)
     {
     case MAMuscleComplete::linear:
-        energy = (0.5 * SQUARE(extension) * m_Params.epe);
+        energy = (0.5 * SQUARE(extension) * m_params.epe);
         break;
 
     case MAMuscleComplete::square:
-        energy = ((1.0/3.0) * CUBE(extension) * m_Params.epe);
+        energy = ((1.0/3.0) * CUBE(extension) * m_params.epe);
         break;
     }
 
@@ -495,68 +495,68 @@ std::string *MAMuscleComplete::createFromAttributes()
     std::string buf;
 
     if (findAttribute("ForcePerUnitArea"s, &buf) == nullptr) return lastErrorPtr();
-    m_forcePerUnitArea = GSUtil::Double(buf);
+    m_forcePerUnitArea = GSUtil::toDouble(buf);
     if (findAttribute("VMaxFactor"s, &buf) == nullptr) return lastErrorPtr();
-    m_vMaxFactor = GSUtil::Double(buf);
+    m_vMaxFactor = GSUtil::toDouble(buf);
     if (findAttribute("PCA"s, &buf) == nullptr) return lastErrorPtr();
-    m_pca = GSUtil::Double(buf);
+    m_pca = GSUtil::toDouble(buf);
     double f0 = m_pca * m_forcePerUnitArea;
     if (findAttribute("FibreLength"s, &buf) == nullptr) return lastErrorPtr();
-    m_fibreLength = GSUtil::Double(buf);
+    m_fibreLength = GSUtil::toDouble(buf);
     double vMax = m_fibreLength * m_vMaxFactor;
     if (findAttribute("ActivationK"s, &buf) == nullptr) return lastErrorPtr();
-    m_activationK = GSUtil::Double(buf);
+    m_activationK = GSUtil::toDouble(buf);
     if (findAttribute("Width"s, &buf) == nullptr) return lastErrorPtr();
-    m_width = GSUtil::Double(buf);
-    this->SetMuscleProperties(vMax, f0, m_activationK, m_width);
+    m_width = GSUtil::toDouble(buf);
+    this->setMuscleProperties(vMax, f0, m_activationK, m_width);
 
     if (findAttribute("TendonLength"s, &buf) == nullptr) return lastErrorPtr();
-    m_tendonLength = GSUtil::Double(buf);
+    m_tendonLength = GSUtil::toDouble(buf);
     if (findAttribute("SerialStrainAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double serialStrainAtFmax = GSUtil::Double(buf);
+    double serialStrainAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("SerialStrainRateAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double serialStrainRateAtFmax = GSUtil::Double(buf);
+    double serialStrainRateAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("SerialStrainModel"s, &buf) == nullptr) return lastErrorPtr();
     if (buf == "Linear"s) m_serialStrainModel = MAMuscleComplete::linear;
     else if (buf == "Square"s) m_serialStrainModel = MAMuscleComplete::square;
     else { setLastError("MUSCLE ID=\""s + name() + "\": Invalid SerialStrainModel"s); return lastErrorPtr(); }
     if (findAttribute("ParallelStrainAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double parallelStrainAtFmax = GSUtil::Double(buf);
+    double parallelStrainAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("ParallelStrainRateAtFmax"s, &buf) == nullptr) return lastErrorPtr();
-    double parallelStrainRateAtFmax = GSUtil::Double(buf);
+    double parallelStrainRateAtFmax = GSUtil::toDouble(buf);
     if (findAttribute("ParallelStrainModel"s, &buf) == nullptr) return lastErrorPtr();
     if (buf == "Linear"s) m_parallelStrainModel = MAMuscleComplete::linear;
     else if (buf == "Square"s) m_parallelStrainModel = MAMuscleComplete::square;
     else { setLastError("MUSCLE ID=\""s + name() + "\": Invalid ParallelStrainModel"s); return lastErrorPtr(); }
-    this->SetSerialElasticProperties(serialStrainAtFmax, serialStrainRateAtFmax, m_tendonLength, m_serialStrainModel);
-    this->SetParallelElasticProperties(parallelStrainAtFmax, parallelStrainRateAtFmax, m_fibreLength, m_parallelStrainModel);
+    this->setSerialElasticProperties(serialStrainAtFmax, serialStrainRateAtFmax, m_tendonLength, m_serialStrainModel);
+    this->setParallelElasticProperties(parallelStrainAtFmax, parallelStrainRateAtFmax, m_fibreLength, m_parallelStrainModel);
 
     if (findAttribute("ActivationKinetics"s, &buf) == nullptr) return lastErrorPtr();
-    bool activationKinetics = GSUtil::Bool(buf);
+    bool activationKinetics = GSUtil::toBool(buf);
     if (activationKinetics)
     {
         if (findAttribute("FastTwitchProportion"s, &buf) == nullptr) return lastErrorPtr();
-        m_akFastTwitchProportion = GSUtil::Double(buf);
+        m_akFastTwitchProportion = GSUtil::toDouble(buf);
         if (findAttribute("TActivationA"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTActivationA = GSUtil::Double(buf);
+        m_akTActivationA = GSUtil::toDouble(buf);
         if (findAttribute("TActivationB"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTActivationB = GSUtil::Double(buf);
+        m_akTActivationB = GSUtil::toDouble(buf);
         if (findAttribute("TDeactivationA"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTDeactivationA = GSUtil::Double(buf);
+        m_akTDeactivationA = GSUtil::toDouble(buf);
         if (findAttribute("TDeactivationB"s, &buf) == nullptr) return lastErrorPtr();
-        m_akTDeactivationB = GSUtil::Double(buf);
-        this->SetActivationKinetics(activationKinetics, m_akFastTwitchProportion, m_akTActivationA, m_akTActivationB, m_akTDeactivationA, m_akTDeactivationB);
+        m_akTDeactivationB = GSUtil::toDouble(buf);
+        this->setActivationKinetics(activationKinetics, m_akFastTwitchProportion, m_akTActivationA, m_akTActivationB, m_akTDeactivationA, m_akTDeactivationB);
     }
     if (findAttribute("InitialFibreLength"s, &buf) == nullptr) return lastErrorPtr(); // FIX ME - InitialFibreLength is currently not used
-    m_initialFibreLength = GSUtil::Double(buf);
-    this->SetInitialFibreLength(m_initialFibreLength);
+    m_initialFibreLength = GSUtil::toDouble(buf);
+    this->setInitialFibreLength(m_initialFibreLength);
     if (findAttribute("ActivationRate"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetActivationRate(GSUtil::Double(buf));
+    this->setActivationRate(GSUtil::toDouble(buf));
     if (findAttribute("StartActivation"s, &buf) == nullptr) return lastErrorPtr(); // FIX ME - StartActivation is currently not used
-    m_startActivation = GSUtil::Double(buf);
-    this->SetStartActivation(m_startActivation);
+    m_startActivation = GSUtil::toDouble(buf);
+    this->setStartActivation(m_startActivation);
     if (findAttribute("MinimumActivation"s, &buf) == nullptr) return lastErrorPtr();
-    this->SetMinimumActivation(GSUtil::Double(buf));
+    this->setMinimumActivation(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -566,16 +566,16 @@ void MAMuscleComplete::appendToAttributes()
     Muscle::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "MinettiAlexanderComplete"s);
-    setAttribute("ForcePerUnitArea"s, *GSUtil::ToString(m_forcePerUnitArea, &buf));
-    setAttribute("VMaxFactor"s, *GSUtil::ToString(m_vMaxFactor, &buf));
-    setAttribute("PCA"s, *GSUtil::ToString(m_pca, &buf));
-    setAttribute("FibreLength"s, *GSUtil::ToString(m_fibreLength, &buf));
-    setAttribute("ActivationK"s, *GSUtil::ToString(m_activationK, &buf));
-    setAttribute("Width"s, *GSUtil::ToString(m_width, &buf));
+    setAttribute("ForcePerUnitArea"s, *GSUtil::toString(m_forcePerUnitArea, &buf));
+    setAttribute("VMaxFactor"s, *GSUtil::toString(m_vMaxFactor, &buf));
+    setAttribute("PCA"s, *GSUtil::toString(m_pca, &buf));
+    setAttribute("FibreLength"s, *GSUtil::toString(m_fibreLength, &buf));
+    setAttribute("ActivationK"s, *GSUtil::toString(m_activationK, &buf));
+    setAttribute("Width"s, *GSUtil::toString(m_width, &buf));
 
-    setAttribute("TendonLength"s, *GSUtil::ToString(m_tendonLength, &buf));
-    setAttribute("SerialStrainAtFmax"s, *GSUtil::ToString(m_serialStrainAtFmax, &buf));
-    setAttribute("SerialStrainRateAtFmax"s, *GSUtil::ToString(m_serialStrainRateAtFmax, &buf));
+    setAttribute("TendonLength"s, *GSUtil::toString(m_tendonLength, &buf));
+    setAttribute("SerialStrainAtFmax"s, *GSUtil::toString(m_serialStrainAtFmax, &buf));
+    setAttribute("SerialStrainRateAtFmax"s, *GSUtil::toString(m_serialStrainRateAtFmax, &buf));
     switch (m_serialStrainModel)
     {
     case MAMuscleComplete::linear:
@@ -585,8 +585,8 @@ void MAMuscleComplete::appendToAttributes()
         setAttribute("SerialStrainModel"s, "Square"s);
         break;
     }
-    setAttribute("ParallelStrainAtFmax"s, *GSUtil::ToString(m_parallelStrainAtFmax, &buf));
-    setAttribute("ParallelStrainRateAtFmax"s, *GSUtil::ToString(m_parallelStrainRateAtFmax, &buf));
+    setAttribute("ParallelStrainAtFmax"s, *GSUtil::toString(m_parallelStrainAtFmax, &buf));
+    setAttribute("ParallelStrainRateAtFmax"s, *GSUtil::toString(m_parallelStrainRateAtFmax, &buf));
     switch (m_parallelStrainModel)
     {
     case MAMuscleComplete::linear:
@@ -597,19 +597,19 @@ void MAMuscleComplete::appendToAttributes()
         break;
     }
 
-    setAttribute("ActivationKinetics"s, *GSUtil::ToString(m_ActivationKinetics, &buf));
-    if (m_ActivationKinetics)
+    setAttribute("ActivationKinetics"s, *GSUtil::toString(m_activationKinetics, &buf));
+    if (m_activationKinetics)
     {
-        setAttribute("FastTwitchProportion"s, *GSUtil::ToString(m_akFastTwitchProportion, &buf));
-        setAttribute("TActivationA"s, *GSUtil::ToString(m_akTActivationA, &buf));
-        setAttribute("TActivationB"s, *GSUtil::ToString(m_akTActivationB, &buf));
-        setAttribute("TDeactivationA"s, *GSUtil::ToString(m_akTDeactivationA, &buf));
-        setAttribute("TDeactivationB"s, *GSUtil::ToString(m_akTDeactivationB, &buf));
+        setAttribute("FastTwitchProportion"s, *GSUtil::toString(m_akFastTwitchProportion, &buf));
+        setAttribute("TActivationA"s, *GSUtil::toString(m_akTActivationA, &buf));
+        setAttribute("TActivationB"s, *GSUtil::toString(m_akTActivationB, &buf));
+        setAttribute("TDeactivationA"s, *GSUtil::toString(m_akTDeactivationA, &buf));
+        setAttribute("TDeactivationB"s, *GSUtil::toString(m_akTDeactivationB, &buf));
     }
-    setAttribute("InitialFibreLength"s, *GSUtil::ToString(m_initialFibreLength, &buf));
-    setAttribute("ActivationRate"s, *GSUtil::ToString(m_ActivationRate, &buf));
-    setAttribute("StartActivation"s, *GSUtil::ToString(m_startActivation, &buf));
-    setAttribute("MinimumActivation"s, *GSUtil::ToString(m_MinimumActivation, &buf));
+    setAttribute("InitialFibreLength"s, *GSUtil::toString(m_initialFibreLength, &buf));
+    setAttribute("ActivationRate"s, *GSUtil::toString(m_activationRate, &buf));
+    setAttribute("StartActivation"s, *GSUtil::toString(m_startActivation, &buf));
+    setAttribute("MinimumActivation"s, *GSUtil::toString(m_minimumActivation, &buf));
 
 }
 
@@ -795,13 +795,13 @@ std::string MAMuscleComplete::dumpToString()
         setFirstDump(false);
         ss << "Time\tm_Stim\talpha\tlen\tv\tlastlpe\tfce\tlpe\tfpe\tlse\tfse\tvce\tvse\ttargetFce\tf0\terr\tESE\tEPE\tPSE\tPPE\tPCE\ttension\tlength\tvelocity\tPMECH\tPMET\n";
     }
-    ss << simulation()->GetTime() << "\t" <<
-          m_Stim << "\t" << m_Params.alpha << "\t" << m_Params.len << "\t" << m_Params.v << "\t" << m_Params.lastlpe << "\t" <<
-          m_Params.fce << "\t" << m_Params.lpe << "\t" << m_Params.fpe << "\t" << m_Params.lse << "\t" << m_Params.fse << "\t" <<
-          m_Params.vce << "\t" << m_Params.vse << "\t" << m_Params.targetFce << "\t" << m_Params.f0 << "\t" << m_Params.err << "\t" <<
-          GetESE() << "\t" << GetEPE() << "\t" << GetPSE() << "\t" << GetPPE() << "\t" << GetPCE() << "\t" <<
-          GetTension() << "\t" << GetLength() << "\t" << GetVelocity() << "\t" <<
-          GetPower() << "\t" << GetMetabolicPower() <<
+    ss << simulation()->simulationTime() << "\t" <<
+          m_stim << "\t" << m_params.alpha << "\t" << m_params.len << "\t" << m_params.v << "\t" << m_params.lastlpe << "\t" <<
+          m_params.fce << "\t" << m_params.lpe << "\t" << m_params.fpe << "\t" << m_params.lse << "\t" << m_params.fse << "\t" <<
+          m_params.vce << "\t" << m_params.vse << "\t" << m_params.targetFce << "\t" << m_params.f0 << "\t" << m_params.err << "\t" <<
+          ese() << "\t" << epe() << "\t" << pse() << "\t" << ppe() << "\t" << pce() << "\t" <<
+          tension() << "\t" << length() << "\t" << velocity() << "\t" <<
+          power() << "\t" << metabolicPower() <<
           "\n";
     return ss.str();
 }

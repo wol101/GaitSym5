@@ -13,12 +13,7 @@
 #include "Simulation.h"
 #include "GSUtil.h"
 
-#include "pystring.h"
-
-#include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <typeinfo>
 
 #ifdef __GNUG__
 #include <cstdlib>
@@ -140,12 +135,12 @@ std::string *NamedObject::createFromAttributes()
     }
     this->setName(buf); // FIX ME - it would probably be a good idea to check for duplicate names and throw an error
     if (findAttribute("Group"s, &buf)) this->setGroup(buf);
-    if (findAttribute("Size1"s, &buf)) m_size1 = GSUtil::Double(buf);
-    if (findAttribute("Size2"s, &buf)) m_size2 = GSUtil::Double(buf);
-    if (findAttribute("Size3"s, &buf)) m_size3 = GSUtil::Double(buf);
-    if (findAttribute("Colour1"s, &buf)) m_colour1.SetColour(buf);
-    if (findAttribute("Colour2"s, &buf)) m_colour2.SetColour(buf);
-    if (findAttribute("Colour3"s, &buf)) m_colour3.SetColour(buf);
+    if (findAttribute("Size1"s, &buf)) m_size1 = GSUtil::toDouble(buf);
+    if (findAttribute("Size2"s, &buf)) m_size2 = GSUtil::toDouble(buf);
+    if (findAttribute("Size3"s, &buf)) m_size3 = GSUtil::toDouble(buf);
+    if (findAttribute("Colour1"s, &buf)) m_colour1.setColour(buf);
+    if (findAttribute("Colour2"s, &buf)) m_colour2.setColour(buf);
+    if (findAttribute("Colour3"s, &buf)) m_colour3.setColour(buf);
     return nullptr;
 }
 
@@ -161,12 +156,12 @@ void NamedObject::appendToAttributes()
     setAttribute("ID"s, name());
     setAttribute("Group"s, group());
     std::string buf;
-    setAttribute("Size1"s, *GSUtil::ToString(m_size1, &buf));
-    setAttribute("Size2"s, *GSUtil::ToString(m_size2, &buf));
-    setAttribute("Size3"s, *GSUtil::ToString(m_size3, &buf));
-    setAttribute("Colour1"s, m_colour1.GetIntColourRGBA());
-    setAttribute("Colour2"s, m_colour2.GetIntColourRGBA());
-    setAttribute("Colour3"s, m_colour3.GetIntColourRGBA());
+    setAttribute("Size1"s, *GSUtil::toString(m_size1, &buf));
+    setAttribute("Size2"s, *GSUtil::toString(m_size2, &buf));
+    setAttribute("Size3"s, *GSUtil::toString(m_size3, &buf));
+    setAttribute("Colour1"s, m_colour1.intColourRGBA());
+    setAttribute("Colour2"s, m_colour2.intColourRGBA());
+    setAttribute("Colour3"s, m_colour3.intColourRGBA());
 }
 
 void NamedObject::createAttributeMap(const std::map<std::string, std::string> &attributeMap)
@@ -203,10 +198,10 @@ std::string NamedObject::dumpHelper(std::initializer_list<double> values)
     auto &&it = values.begin();
     if (it != values.end())
     {
-        ss << std::setprecision(17) << *it++; // this defaults to %.17g format if neither fixed nor scientific is set
+        ss << GSUtil::toString(*it++);
         for (; it != values.end(); it++)
         {
-            ss << std::setprecision(17) << "\t" << *it;
+            ss << "\t"s << GSUtil::toString(*it);
         }
     }
     ss << "\n";

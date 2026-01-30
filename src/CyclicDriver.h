@@ -23,7 +23,7 @@ public:
     CyclicDriver();
     virtual ~CyclicDriver();
 
-    virtual void Update();
+    virtual void update();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();
@@ -34,7 +34,7 @@ public:
     std::vector<double> durationList() const;
     void setDurationList(const std::vector<double> &durationList);
 
-    double GetCycleTime() const;
+    double cycleTime() const;
 
 private:
 

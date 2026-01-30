@@ -742,6 +742,10 @@ add_executable(gaitsym5_asio
     ${PROJECT_SOURCES}
 )
 
+# add_executable(gaitsym5_asio_mpi
+#     ${PROJECT_SOURCES}
+# )
+
 target_include_directories(gaitsym5 PRIVATE
     ${INCLUDE_DIRECTORIES}
 )
@@ -750,14 +754,20 @@ target_include_directories(gaitsym5_asio PRIVATE
     ${INCLUDE_DIRECTORIES}
 )
 
+# target_include_directories(gaitsym5_asio_mpi PRIVATE
+#     ${INCLUDE_DIRECTORIES}
+# )
+
 target_compile_definitions(gaitsym5 PRIVATE USE_CL)
 target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
+# target_compile_definitions(gaitsym5_asio_mpi PRIVATE USE_ASIO_ASYNC_MPI)
 
 if (CMAKE_BUILD_TYPE STREQUAL Release)
 #    target_compile_options(gaitsym5 PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
 #    target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
     target_compile_options(gaitsym5 PRIVATE -static -O3)
     target_compile_options(gaitsym5_asio PRIVATE -static -O3)
+#    target_compile_options(gaitsym5_asio_mpi PRIVATE -static -O3)
 endif()
 
 if(use_physx_src)
@@ -773,6 +783,7 @@ if(use_physx_src)
     )
     target_link_libraries(gaitsym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
     target_link_libraries(gaitsym5_asio PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
+#    target_link_libraries(gaitsym5_asio_mpi PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
 endif()
 
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
@@ -783,13 +794,20 @@ if (HOST_NAME STREQUAL "submitter.itservices.manchester.ac.uk")
     find_package(Threads REQUIRED)
     target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
     target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
+#    target_link_libraries(gaitsym5_asio_mpi PRIVATE -static Threads::Threads dl)
+elseif (HOST_NAME MATCHES ".*csf3.man.alces.network$") # cannot build static executables on csf3 but they are not needed
+    target_link_libraries(gaitsym5 PRIVATE )
+    target_link_libraries(gaitsym5_asio PRIVATE )
+#    target_link_libraries(gaitsym5_asio_mpi PRIVATE )
 else()
     target_link_libraries(gaitsym5 PRIVATE -static)
     target_link_libraries(gaitsym5_asio PRIVATE -static)
+#    target_link_libraries(gaitsym5_asio_mpi PRIVATE -static)
 endif()
 
 
-install(TARGETS gaitsym5 gaitsym5_asio
+#install(TARGETS gaitsym5 gaitsym5_asio gaitsym5_asio_mpi
+install(TARGETS gaitsym5 gaitsym5_asio 
     DESTINATION ${PROJECT_SOURCE_DIR}/../bin
 )
 

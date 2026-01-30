@@ -24,7 +24,7 @@ public:
     virtual ~DrawMarker();
 
     virtual void initialise(SimulationWidget *simulationWidget);
-    virtual void Draw();
+    virtual void draw();
     virtual std::string name();
 
     void updateEntityPose();

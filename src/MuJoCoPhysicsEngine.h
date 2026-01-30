@@ -30,8 +30,8 @@ public:
     MuJoCoPhysicsEngine();
     virtual ~MuJoCoPhysicsEngine();
 
-    virtual std::string *Initialise(Simulation *theSimulation);
-    virtual std::string *Step();
+    virtual std::string *initialise(Simulation *theSimulation);
+    virtual std::string *step();
 
     std::string mjXML() const;
 
@@ -45,23 +45,23 @@ private:
         std::vector<std::unique_ptr<TreeBody>> childList;
     };
 
-    std::string *CreateConnectedGroups();
-    std::string *CreateTree();
-    void InsertMJBodyIDs(TreeBody *treeBody);
+    std::string *createConnectedGroups();
+    std::string *createTree();
+    void insertMJBodyIDs(TreeBody *treeBody);
 
-    std::string *CreateBody(const TreeBody &treeBody);
-    std::string *CreateJoint(const Joint *joint);
-    std::string *CreateGeom(const Geom *geom);
+    std::string *createBody(const TreeBody &treeBody);
+    std::string *createJoint(const Joint *joint);
+    std::string *createGeom(const Geom *geom);
 
-    std::string *MoveBodies();
+    std::string *moveBodies();
 
     // utility functions
-    static void XMLInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
-    static void XMLTerminateTag(std::string *xmlString, const std::string &tag);
+    static void xmlInitiateTag(std::string *xmlString, const std::string &tag, const std::map<std::string, std::string> &attributes = std::map<std::string, std::string>(), bool terminate = false);
+    static void xmlTerminateTag(std::string *xmlString, const std::string &tag);
 
     // Returns a newly-allocated mjModel, loaded from the contents of xml.
     // On failure returns nullptr and populates the error array if present.
-    mjModel* LoadModelFromString(const std::string &xml, char* error = nullptr, int error_size = 0, mjVFS* vfs = nullptr);
+    mjModel* loadModelFromString(const std::string &xml, char* error = nullptr, int error_size = 0, mjVFS* vfs = nullptr);
 
     // Simulation variables
     // MuJoCo model and data
@@ -70,6 +70,8 @@ private:
 
     std::string m_mjXML;
     std::string m_mjXMLSensors;
+    std::string m_mjXMLActuators;
+    std::string m_mjXMLEqualities;
 
     std::vector<TreeBody> m_rootTreeBodyList;
     std::multiset<Body *> m_jointLoopDetector;

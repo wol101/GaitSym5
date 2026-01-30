@@ -26,7 +26,7 @@ struct MyUI: ImguiContext {
     std::vector<float> values;
 
     explicit MyUI(const Canvas& canvas, Kine& kine)
-        : ImguiContext(canvas.windowPtr()),
+        : ImguiContext(canvas),
           limits(kine.limits()),
           values(kine.meanAngles()) {
 
@@ -115,7 +115,7 @@ int main() {
 
     HUD hud(canvas.size());
     FontLoader fontLoader;
-    const auto font = *fontLoader.load("data/fonts/helvetiker_regular.typeface.json");
+    const auto font = *fontLoader.load(std::string(DATA_FOLDER) + "/fonts/helvetiker_regular.typeface.json");
 
     TextGeometry::Options opts(font, 40, 2);
     auto handle = Text2D(opts, "Loading Crane3R..");

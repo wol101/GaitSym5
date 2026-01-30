@@ -25,21 +25,21 @@ const size_t line_buffer_stride = 7;
 
 StrokeFont::StrokeFont()
 {
-    m_displayRotation.SetIdentity();
+    m_displayRotation.setIdentity();
     // the line buffer is organised x1,y1,z1,r1,g1,b1,a1,x2,y2,z2,r2,g2,b2,a2
-    line_buffer = new float[max_lines * line_buffer_stride * 2];
+    m_lineBuffer = new float[m_maxLines * line_buffer_stride * 2];
 }
 
 StrokeFont::~StrokeFont()
 {
-    delete [] line_buffer;
+    delete [] m_lineBuffer;
 }
 
-void StrokeFont::AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2)
+void StrokeFont::addLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2)
 {
-    if (n_lines >= max_lines) return; // at some point I might want to dynamically increase max_lines
+    if (m_numLines >= m_maxLines) return; // at some point I might want to dynamically increase max_lines
 
-    float *fp = line_buffer + n_lines * line_buffer_stride * 2;
+    float *fp = m_lineBuffer + m_numLines * line_buffer_stride * 2;
     *fp++ = ix1;
     *fp++ = iy1;
     *fp++ = iz1;
@@ -58,12 +58,12 @@ void StrokeFont::AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, 
     *fp++ = m_b;
     *fp++ = m_a;
 
-    n_lines++;
+    m_numLines++;
 }
 
-void StrokeFont::AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2, const float *matrix, const float *translation)
+void StrokeFont::addLine(float ix1, float iy1, float iz1, float ix2, float iy2, float iz2, const float *matrix, const float *translation)
 {
-    if (n_lines >= max_lines) return; // at some point I might want to dynamically increase max_lines
+    if (m_numLines >= m_maxLines) return; // at some point I might want to dynamically increase max_lines
 
     // matrix is an ODE style pgd::Matrix3x3 so multiply first and then add the translation
     float mix1, miy1, miz1, mix2, miy2, miz2;
@@ -104,7 +104,7 @@ void StrokeFont::AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, 
         miz2 = iz2;
     }
 
-    float *fp = line_buffer + n_lines * line_buffer_stride * 2;
+    float *fp = m_lineBuffer + m_numLines * line_buffer_stride * 2;
     *fp++ = mix1;
     *fp++ = miy1;
     *fp++ = miz1;
@@ -123,28 +123,28 @@ void StrokeFont::AddLine(float ix1, float iy1, float iz1, float ix2, float iy2, 
     *fp++ = m_b;
     *fp++ = m_a;
 
-    n_lines++;
+    m_numLines++;
 }
 
-void StrokeFont::AddPoint(float ix1, float iy1, float iz1)
+void StrokeFont::addPoint(float ix1, float iy1, float iz1)
 {
-    if (m_start_line_flag)
+    if (m_startLineFlag)
     {
-        m_start_line_flag = false;
-        m_last_x = ix1;
-        m_last_y = iy1;
-        m_last_z = iz1;
+        m_startLineFlag = false;
+        m_lastX = ix1;
+        m_lastY = iy1;
+        m_lastZ = iz1;
     }
     else
     {
-        AddLine(m_last_x, m_last_y, m_last_z, ix1, iy1, iz1);
-        m_last_x = ix1;
-        m_last_y = iy1;
-        m_last_z = iz1;
+        addLine(m_lastX, m_lastY, m_lastZ, ix1, iy1, iz1);
+        m_lastX = ix1;
+        m_lastY = iy1;
+        m_lastZ = iz1;
     }
 }
 
-void StrokeFont::AddPoint(float ix1, float iy1, float iz1, const float *matrix, const float *translation)
+void StrokeFont::addPoint(float ix1, float iy1, float iz1, const float *matrix, const float *translation)
 {
     // matrix is an ODE style pgd::Matrix3x3 so multiply first and then add the translation
     float mix1, miy1, miz1;
@@ -173,25 +173,25 @@ void StrokeFont::AddPoint(float ix1, float iy1, float iz1, const float *matrix, 
         miz1 = iz1;
     }
 
-    if (m_start_line_flag)
+    if (m_startLineFlag)
     {
-        m_start_line_flag = false;
-        m_last_x = mix1;
-        m_last_y = miy1;
-        m_last_z = miz1;
+        m_startLineFlag = false;
+        m_lastX = mix1;
+        m_lastY = miy1;
+        m_lastZ = miz1;
     }
     else
     {
-        AddLine(m_last_x, m_last_y, m_last_z, mix1, miy1, miz1);
-        m_last_x = mix1;
-        m_last_y = miy1;
-        m_last_z = miz1;
+        addLine(m_lastX, m_lastY, m_lastZ, mix1, miy1, miz1);
+        m_lastX = mix1;
+        m_lastY = miy1;
+        m_lastZ = miz1;
     }
 }
 
 
 
-void StrokeFont::StrokeString(const char *string,    /* character string */
+void StrokeFont::strokeString(const char *string,    /* character string */
                   int length,            /* number of characters to draw */
                   float x,               /* x coordinate of bottom left of character */
                   float y,               /* y coordinate ... */
@@ -239,14 +239,14 @@ void StrokeFont::StrokeString(const char *string,    /* character string */
 
     for (i = 0; i < length; i++)
     {
-        StrokeCharacter(int(string[i]), xOrigin, yOrigin, cwidth, cheight, matrix, translation);
+        strokeCharacter(int(string[i]), xOrigin, yOrigin, cwidth, cheight, matrix, translation);
         xOrigin += cwidth;
     }
 
     m_z = orig_m_z; // m_z may have been changed and we don't want that
 }
 
-void StrokeFont::StrokeCharacter(
+void StrokeFont::strokeCharacter(
                      int ichar,            /* character code */
                      float x,              /* x coordinate of bottom left of character */
                      float y,              /* y coordinate ... */
@@ -415,7 +415,7 @@ void StrokeFont::StrokeCharacter(
 
         if (draw!=0)
         {
-            AddLine(x1, y1, m_z, x2, y2, m_z, matrix, translation);
+            addLine(x1, y1, m_z, x2, y2, m_z, matrix, translation);
         }
 
         /* set ix1,iy1 */
@@ -426,7 +426,7 @@ void StrokeFont::StrokeCharacter(
     }
 }
 
-void StrokeFont::StrokeMarker(
+void StrokeFont::strokeMarker(
                          MarkerCode code,       /* marker code */
                          float x,               /* x coordinate of centre of marker */
                          float y,               /* y coordinate ... */
@@ -442,39 +442,39 @@ void StrokeFont::StrokeMarker(
         x2 = x + cwidth / 2;
         y1 = y - cheight / 2;
         y2 = y + cheight / 2;
-        AddLine(x1, y1, m_z, x2, y2, m_z, matrix, translation);
-        AddLine(x1, y2, m_z, x2, y1, m_z, matrix, translation);
+        addLine(x1, y1, m_z, x2, y2, m_z, matrix, translation);
+        addLine(x1, y2, m_z, x2, y1, m_z, matrix, translation);
         break;
     }
 }
 
 
-void StrokeFont::SetDisplayPosition(double x, double y, double z)
+void StrokeFont::setDisplayPosition(double x, double y, double z)
 {
     m_displayPosition[0] = x;
     m_displayPosition[1] = y;
     m_displayPosition[2] = z;
 }
 
-void StrokeFont::SetDisplayRotation(const pgd::Matrix3x3 &R)
+void StrokeFont::setDisplayRotation(const pgd::Matrix3x3 &R)
 {
     m_displayRotation = R;
 }
 
-void StrokeFont::SetDisplayRotationFromQuaternion(const pgd::Quaternion &q)
+void StrokeFont::setDisplayRotationFromQuaternion(const pgd::Quaternion &q)
 {
-    m_displayRotation = pgd::MakeMFromQ(q);
+    m_displayRotation = pgd::makeMFromQ(q);
 }
 
 // move the object
 // note this must be used before first draw call
-void StrokeFont::Move(double x, double y, double z)
+void StrokeFont::move(double x, double y, double z)
 {
-    float *ptr = line_buffer;
+    float *ptr = m_lineBuffer;
     float dx = float(x);
     float dy = float(y);
     float dz = float(z);
-    for (size_t i = 0; i < n_lines; i++)
+    for (size_t i = 0; i < m_numLines; i++)
     {
         *ptr += dx; ptr++;
         *ptr += dy; ptr++;
@@ -489,13 +489,13 @@ void StrokeFont::Move(double x, double y, double z)
 
 // scale the object
 // note this must be used before first draw call
-void StrokeFont::Scale(double x, double y, double z)
+void StrokeFont::scale(double x, double y, double z)
 {
-    float *ptr = line_buffer;
+    float *ptr = m_lineBuffer;
     float dx = float(x);
     float dy = float(y);
     float dz = float(z);
-    for (size_t i = 0; i < n_lines; i++)
+    for (size_t i = 0; i < m_numLines; i++)
     {
         *ptr *= dx; ptr++;
         *ptr *= dy; ptr++;
@@ -509,7 +509,7 @@ void StrokeFont::Scale(double x, double y, double z)
 }
 
 // draw a circle using line segments
-void StrokeFont::AddCircle(float cx, float cy, float cz, float r, int num_segments)
+void StrokeFont::addCircle(float cx, float cy, float cz, float r, int num_segments)
 {
     float theta = 2.0f * 3.1415926f / float(num_segments);
     float tangetial_factor = tanf(theta); //calculate the tangential factor
@@ -518,8 +518,8 @@ void StrokeFont::AddCircle(float cx, float cy, float cz, float r, int num_segmen
     float x = r; //we start at angle = 0
     float y = 0;
 
-    StartLine();
-    AddPoint(x + cx, y + cy, cz);
+    startLine();
+    addPoint(x + cx, y + cy, cz);
     for(int ii = 0; ii < num_segments; ii++)
     {
         //calculate the tangential vector
@@ -539,11 +539,11 @@ void StrokeFont::AddCircle(float cx, float cy, float cz, float r, int num_segmen
         x *= radial_factor;
         y *= radial_factor;
 
-        AddPoint(x + cx, y + cy, cz);
+        addPoint(x + cx, y + cy, cz);
     }
 }
 
-void StrokeFont::AddArc(float cx, float cy, float cz, float r, float start_angle, float arc_angle, int num_segments)
+void StrokeFont::addArc(float cx, float cy, float cz, float r, float start_angle, float arc_angle, int num_segments)
 {
     float theta = arc_angle / float(num_segments);//theta is now calculated from the arc angle instead
     float tangetial_factor = tanf(theta);
@@ -552,8 +552,8 @@ void StrokeFont::AddArc(float cx, float cy, float cz, float r, float start_angle
     float x = r * cosf(start_angle);//we now start at the start angle
     float y = r * sinf(start_angle);
 
-    StartLine();
-    AddPoint(x + cx, y + cy, cz);
+    startLine();
+    addPoint(x + cx, y + cy, cz);
     for(int ii = 0; ii < num_segments; ii++)
     {
         float tx = -y;
@@ -565,20 +565,20 @@ void StrokeFont::AddArc(float cx, float cy, float cz, float r, float start_angle
         x *= radial_factor;
         y *= radial_factor;
 
-        AddPoint(x + cx, y + cy, cz);
+        addPoint(x + cx, y + cy, cz);
     }
 }
 
-void StrokeFont::Draw()
+void StrokeFont::draw()
 {
-    if (m_glWidget && n_lines)
+    if (m_glWidget && m_numLines)
     {
         if (m_BufferObjectsAllocated == false)
         {
             // data is already sensibly ordered so just setup our vertex buffer object.
             m_VBO.create();
             m_VBO.bind();
-            m_VBO.allocate(line_buffer, int(n_lines * line_buffer_stride * 2 * sizeof(GLfloat)));
+            m_VBO.allocate(m_lineBuffer, int(m_numLines * line_buffer_stride * 2 * sizeof(GLfloat)));
             m_BufferObjectsAllocated = true;
         }
 
@@ -638,7 +638,7 @@ void StrokeFont::setGlWidget(SimulationWidget *glWidget)
     m_glWidget = glWidget;
 }
 
-void StrokeFont::Debug()
+void StrokeFont::debug()
 {
     float *fp ;
     QMatrix4x4 translationRotation(
@@ -654,10 +654,10 @@ void StrokeFont::Debug()
     // ModelMatrix = Translation * Rotation * Scale
     QMatrix4x4 model = translationRotation * scale;
     QMatrix4x4 mvpMatrix = m_vpMatrix * model;
-    qDebug("n_lines = %zu\n", n_lines);
-    for (size_t i = 0; i < n_lines; i++)
+    qDebug("n_lines = %zu\n", m_numLines);
+    for (size_t i = 0; i < m_numLines; i++)
     {
-        fp = line_buffer + i * line_buffer_stride * 2;
+        fp = m_lineBuffer + i * line_buffer_stride * 2;
         QVector4D start(*fp, *(fp + 1), *(fp + 2), 1);
         QVector4D finish(*(fp + 7), *(fp + 8), *(fp + 9), 1);
         QVector4D start2 = mvpMatrix * start;

@@ -34,13 +34,13 @@ public:
     Strap();
     virtual ~Strap();
 
-    void GetTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vector3 *markerTorque, pgd::Vector3 *worldMomentArm, pgd::Vector3 *markerMomentArm);
+    void getTorque(const Marker &marker, pgd::Vector3 *worldTorque, pgd::Vector3 *markerTorque, pgd::Vector3 *worldMomentArm, pgd::Vector3 *markerMomentArm);
 
-    std::vector<std::unique_ptr<PointForce >> *GetPointForceList();
+    std::vector<std::unique_ptr<PointForce >> *pointForceList();
 
-    virtual void Calculate() = 0;
+    virtual void calculate() = 0;
 
-//    virtual int SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight) = 0;
+//    virtual int sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight) = 0;
 
     virtual std::string dumpToString();
 
@@ -48,13 +48,13 @@ public:
     virtual void saveToAttributes();
     virtual void appendToAttributes();
 
-    double Length() const;
+    double length() const;
     void setLength(double Length);
 
-    double Velocity() const;
+    double velocity() const;
     void setVelocity(double Velocity);
 
-    double Tension() const;
+    double tension() const;
     void setTension(double Tension);
 
     std::vector<Marker *> torqueMarkerList() const;

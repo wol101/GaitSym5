@@ -12,7 +12,7 @@ public:
     virtual ~DrawCustom();
 
     virtual void initialise(SimulationWidget *simulationWidget);
-    virtual void Draw();
+    virtual void draw();
     virtual std::string name();
 
     void addFacetedObject(std::unique_ptr<FacetedObject> &&facetedObject);

@@ -24,10 +24,10 @@ public:
 
     virtual std::string dumpToString();
 
-    virtual void SetActivation();
-    virtual double GetActivation();
-    virtual double GetMetabolicPower();
-    virtual double GetElasticEnergy();
+    virtual void updateActivation();
+    virtual double activation();
+    virtual double metabolicPower();
+    virtual double elasticEnergy();
 
 private:
     double m_activation = 0;

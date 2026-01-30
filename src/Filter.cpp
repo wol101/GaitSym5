@@ -23,12 +23,12 @@ Filter::~Filter()
 
 }
 
-void Filter::AddNewSample(double x)
+void Filter::addNewSample(double x)
 {
     m_xn = x;
 }
 
-double Filter::Output()
+double Filter::output()
 {
     return m_xn;
 }

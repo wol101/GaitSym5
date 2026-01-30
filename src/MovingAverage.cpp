@@ -28,7 +28,7 @@ MovingAverage::MovingAverage(int window)  : Filter()
     m_average = 0;
 }
 
-void MovingAverage::InitialiseBuffer(int window)
+void MovingAverage::initialiseBuffer(int window)
 {
     m_window = window;
     m_buffer.clear();
@@ -38,7 +38,7 @@ void MovingAverage::InitialiseBuffer(int window)
     m_average = 0;
 }
 
-void MovingAverage::AddNewSample(double x)
+void MovingAverage::addNewSample(double x)
 {
     m_index = ++m_index % m_window; // increment and modulus implementing ring buffer
     m_sum -= m_buffer[size_t(m_index)];
@@ -47,7 +47,7 @@ void MovingAverage::AddNewSample(double x)
     m_average = m_sum / m_window;
 }
 
-double MovingAverage::Output()
+double MovingAverage::output()
 {
     return m_average;
 }

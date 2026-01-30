@@ -32,11 +32,11 @@ public:
                XF, YF, ZF, Force, DriverValue);
 
 
-    void SetTarget(NamedObject *target);
-    NamedObject *GetTarget();
+    void setTarget(NamedObject *target);
+    NamedObject *target();
 
-    void SetDataType(DataType dataType) { m_dataType = dataType; }
-    DataType GetDataType() { return m_dataType; }
+    void setDataType(DataType dataType) { m_dataType = dataType; }
+    DataType dataType() { return m_dataType; }
 
     virtual std::string *createFromAttributes() override;
     virtual void appendToAttributes() override;

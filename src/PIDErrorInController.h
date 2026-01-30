@@ -20,9 +20,9 @@ class PIDErrorInController : public Controller
 public:
     PIDErrorInController();
 
-    void Initialise(double Kp, double Ki, double Kd);
+    void initialise(double Kp, double Ki, double Kd);
 
-    virtual void Update();
+    virtual void update();
 
     virtual std::string *createFromAttributes();
     virtual void appendToAttributes();

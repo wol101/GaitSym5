@@ -31,15 +31,15 @@ public:
     MAMuscle();
     virtual ~MAMuscle();
 
-    void SetVMax(double vMax);
-    void SetF0(double f0);
-    void SetK(double k);
+    void setVMax(double vMax);
+    void setF0(double f0);
+    void setK(double k);
 
-    virtual double GetMetabolicPower();
+    virtual double metabolicPower();
 
-    virtual void SetActivation();
-    virtual double GetActivation();
-    virtual double GetElasticEnergy();
+    virtual void updateActivation();
+    virtual double activation();
+    virtual double elasticEnergy();
 
     virtual std::string dumpToString();
 
@@ -62,10 +62,10 @@ private:
 
     void SetAlpha(double alpha);
 
-    double m_VMax = 0;
-    double m_F0 = 0;
-    double m_K = 0;
-    double m_Alpha = 0;
+    double m_vMax = 0;
+    double m_f0 = 0;
+    double m_k = 0;
+    double m_alpha = 0;
 
     // these values are only used for loading and saving
     double m_forcePerUnitArea = 0;

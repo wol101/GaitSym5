@@ -35,33 +35,33 @@ ThreeHingeJointDriver::ThreeHingeJointDriver()
 {
 }
 
-void ThreeHingeJointDriver::Update()
+void ThreeHingeJointDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
 
     // set the desired distance
-    pgd::Vector3 proximalJointPositionWorld = m_proximalJoint->body1Marker()->GetWorldPosition();
-    pgd::Vector3 targetPositionWorld = m_targetMarker->GetWorldPosition();
-    m_desiredLength = (targetPositionWorld - proximalJointPositionWorld).Magnitude();
+    pgd::Vector3 proximalJointPositionWorld = m_proximalJoint->body1Marker()->worldPosition();
+    pgd::Vector3 targetPositionWorld = m_targetMarker->worldPosition();
+    m_desiredLength = (targetPositionWorld - proximalJointPositionWorld).magnitude();
 
     // now find the zero of the CalculateLengthDifference to get the angle fraction that achieves this length
-    m_angleFraction = GSUtil::zeroin(0, 1, &CalculateLengthDifference, this, m_tolerance);
+    m_angleFraction = GSUtil::zeroin(0, 1, &calculateLengthDifference, this, m_tolerance);
 
     // that sorts out the angles on the intermediate and distal joints - lets see where that takes us
 #ifndef NDEBUG
     double testAngleFraction = m_angleFraction;
-    CalculateLength(m_angleFraction); // not mormally needed because zeroin will have called this with the returned angleFraction as its last operation
+    calculateLength(m_angleFraction); // not mormally needed because zeroin will have called this with the returned angleFraction as its last operation
     if (std::abs(testAngleFraction - m_angleFraction) >= std::numeric_limits<double>::epsilon())
         std::cerr << "Warning zeroin calculated m_angleFraction does not match\n";
 #endif
 
-    pgd::Vector3 targetVector = m_targetMarker->GetPosition() - m_proximalJoint->body1Marker()->GetPosition(); // these will both be on the same body
+    pgd::Vector3 targetVector = m_targetMarker->position() - m_proximalJoint->body1Marker()->position(); // these will both be on the same body
     // need to find the rotations about m_proximalJoint->body1Marker()->GetAxis(Marker::X) and m_proximalJoint->body1Marker()->GetAxis(Marker::Y)
     // that rotate m_distalBodyMarkerPositionWRTProxJoint to targetVector
-    targetVector.Normalize();
+    targetVector.normalize();
     pgd::Vector3 startVector = m_distalBodyMarkerPositionWRTProxJoint;
-    startVector.Normalize();
+    startVector.normalize();
 
     // start by projecting the two vectors onto a plane defined by the first axis as a normal
     // from https://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/index.htm
@@ -72,11 +72,11 @@ void ThreeHingeJointDriver::Update()
     // however we can use some optimisation because we just want the direction in the plane which is
     // B cross (A cross B)
     // which we then normalise anyway
-    pgd::Vector3 normal1 = m_proximalJoint->body1Marker()->GetAxis(Marker::X);
+    pgd::Vector3 normal1 = m_proximalJoint->body1Marker()->axis(Marker::X);
     pgd::Vector3 startDirection1 = normal1 ^ (startVector ^ normal1);
-    startDirection1.Normalize();
+    startDirection1.normalize();
     pgd::Vector3 endDirection1 = normal1 ^ (targetVector ^ normal1);
-    endDirection1.Normalize();
+    endDirection1.normalize();
     // now we can find the angle in the plane using
     // dot = x1*x2 + y1*y2 + z1*z2
     // det = x1*y2*zn + x2*yn*z1 + xn*y1*z2 - z1*y2*xn - z2*yn*x1 - zn*y1*x2
@@ -85,19 +85,19 @@ void ThreeHingeJointDriver::Update()
     double dot = startDirection1 * endDirection1;
     double det = normal1 * (startDirection1 ^ endDirection1);
     double angle1 = atan2(det, dot);
-    pgd::Quaternion q1 = pgd::MakeQFromAxisAngle(normal1, angle1);
+    pgd::Quaternion q1 = pgd::makeQFromAxisAngle(normal1, angle1);
 
     // now work on the second rotation
-    pgd::Vector3 rotatedStartVector = pgd::QVRotate(q1, startVector);
+    pgd::Vector3 rotatedStartVector = pgd::qVRotate(q1, startVector);
 #ifdef USE_UNROTATED_SECOND_AXIS
     pgd::Vector3 normal2 =m_proximalJoint->body1Marker()->GetAxis(Marker::Y);
 #else // using the rotated seconds axis is what is required to mimic a universal joint
-    pgd::Vector3 normal2 = pgd::QVRotate(q1, m_proximalJoint->body1Marker()->GetAxis(Marker::Y));
+    pgd::Vector3 normal2 = pgd::qVRotate(q1, m_proximalJoint->body1Marker()->axis(Marker::Y));
 #endif
     pgd::Vector3 startDirection2 = normal2 ^ (rotatedStartVector ^ normal2);
-    startDirection2.Normalize();
+    startDirection2.normalize();
     pgd::Vector3 endDirection2 = normal2 ^ (targetVector ^ normal2);
-    endDirection2.Normalize();
+    endDirection2.normalize();
     dot = startDirection2 * endDirection2;
     det = normal2 * (startDirection2 ^ endDirection2);
     double angle2 = atan2(det, dot);
@@ -105,7 +105,7 @@ void ThreeHingeJointDriver::Update()
 #ifdef CHECK_VECTOR_MATH
     // check what we get by rotating the intial vector by the two quaternions
     pgd::Quaternion q2 = pgd::MakeQFromAxisAngle(normal2, angle2);
-    pgd::Vector3 checkVector = pgd::QVRotate(q2, pgd::QVRotate(q1, startVector));
+    pgd::Vector3 checkVector = pgd::qVRotate(q2, pgd::qVRotate(q1, startVector));
     std::cerr << "targetVector = " << targetVector << "\n";
     std::cerr << "checkVector = " << checkVector << "\n";
     std::cerr << "difference = " << targetVector - checkVector << "\n";
@@ -121,10 +121,10 @@ void ThreeHingeJointDriver::Update()
             m_proximalAngleFraction1 = (m_proximalJointAngle1 - m_proximalJointRange[0]) / (m_proximalJointRange[1] - m_proximalJointRange[0]);
             if (m_proximalAngleFraction1 < 0 || m_proximalAngleFraction1 > 1)
             {
-                m_proximalAngleFraction1 = GSUtil::Clamp(m_proximalAngleFraction1, 0.0, 1.0);
+                m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
-            m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
+            m_proximalJointRotation = pgd::makeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
             break;
         }
 
@@ -135,13 +135,13 @@ void ThreeHingeJointDriver::Update()
             m_proximalAngleFraction1 = (m_proximalJointAngle1 - m_proximalJointRange[0]) / (m_proximalJointRange[1] - m_proximalJointRange[0]);
             if (m_proximalAngleFraction1 < 0 || m_proximalAngleFraction1 > 1)
             {
-                m_proximalAngleFraction1 = GSUtil::Clamp(m_proximalAngleFraction1, 0.0, 1.0);
+                m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
-            m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
+            m_proximalJointRotation = pgd::makeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
             m_proximalJointAxis2 = normal2;
             m_proximalJointAngle2 = angle2;
-            m_proximalJointRotation =  pgd::MakeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
+            m_proximalJointRotation =  pgd::makeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
             break;
         }
 
@@ -152,13 +152,13 @@ void ThreeHingeJointDriver::Update()
             m_proximalAngleFraction1 = (m_proximalJointAngle1 - m_proximalJointRange[0]) / (m_proximalJointRange[1] - m_proximalJointRange[0]);
             if (m_proximalAngleFraction1 < 0 || m_proximalAngleFraction1 > 1)
             {
-                m_proximalAngleFraction1 = GSUtil::Clamp(m_proximalAngleFraction1, 0.0, 1.0);
+                m_proximalAngleFraction1 = GSUtil::clamp(m_proximalAngleFraction1, 0.0, 1.0);
                 m_proximalJointAngle1 = m_proximalAngleFraction1 * (m_proximalJointRange[1] - m_proximalJointRange[0]) + m_proximalJointRange[0];
             }
-            m_proximalJointRotation = pgd::MakeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
+            m_proximalJointRotation = pgd::makeQFromAxisAngle(m_proximalJointAxis1, -m_proximalJointAngle1); // note that the angle is negated again to put it back to the correct sign
             m_proximalJointAxis2 = normal2;
             m_proximalJointAngle2 = angle2;
-            m_proximalJointRotation =  pgd::MakeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
+            m_proximalJointRotation =  pgd::makeQFromAxisAngle(m_proximalJointAxis2, m_proximalJointAngle2) * m_proximalJointRotation;
             break;
         }
 
@@ -282,29 +282,29 @@ void ThreeHingeJointDriver::Update()
 //#endif
 
     // now assemble a fake limb that uses the calculated angles
-    m_proximalBody->SetQuaternion(m_proximalJointRotation.n, m_proximalJointRotation.x, m_proximalJointRotation.y, m_proximalJointRotation.z);
+    m_proximalBody->setQuaternion(m_proximalJointRotation.n, m_proximalJointRotation.x, m_proximalJointRotation.y, m_proximalJointRotation.z);
     pgd::Quaternion qIntermediateBody = m_intermediateJointRotation * m_proximalJointRotation;
-    m_intermediateBody->SetQuaternion(qIntermediateBody.n, qIntermediateBody.x, qIntermediateBody.y, qIntermediateBody.z);
+    m_intermediateBody->setQuaternion(qIntermediateBody.n, qIntermediateBody.x, qIntermediateBody.y, qIntermediateBody.z);
     pgd::Quaternion qDistalBody = m_distalJointRotation * qIntermediateBody;
-    m_distalBody->SetQuaternion(qDistalBody.n, qDistalBody.x, qDistalBody.y, qDistalBody.z);
+    m_distalBody->setQuaternion(qDistalBody.n, qDistalBody.x, qDistalBody.y, qDistalBody.z);
 
     // and move them around so the markers line up
-    pgd::Vector3 negDelta = m_proximalJointMarker1->GetWorldPosition() - m_proximalJointMarker2->GetWorldPosition();
-    m_proximalBody->SetPositionDelta(negDelta.x, negDelta.y, negDelta.z);
-    negDelta = m_intermediateJointMarker1->GetWorldPosition() - m_intermediateJointMarker2->GetWorldPosition();
-    m_intermediateBody->SetPositionDelta(negDelta.x, negDelta.y, negDelta.z);
-    negDelta = m_distalJointMarker1->GetWorldPosition() - m_distalJointMarker2->GetWorldPosition();
-    m_distalBody->SetPositionDelta(negDelta.x, negDelta.y, negDelta.z);
+    pgd::Vector3 negDelta = m_proximalJointMarker1->worldPosition() - m_proximalJointMarker2->worldPosition();
+    m_proximalBody->setPositionDelta(negDelta.x, negDelta.y, negDelta.z);
+    negDelta = m_intermediateJointMarker1->worldPosition() - m_intermediateJointMarker2->worldPosition();
+    m_intermediateBody->setPositionDelta(negDelta.x, negDelta.y, negDelta.z);
+    negDelta = m_distalJointMarker1->worldPosition() - m_distalJointMarker2->worldPosition();
+    m_distalBody->setPositionDelta(negDelta.x, negDelta.y, negDelta.z);
 
     // and calculate all the straps
     for (auto &&it : m_localStrapList)
     {
-        it.second->Calculate();
+        it.second->calculate();
 //        std::cerr << it.first << " " << it.second->Length() << "\n";
     }
 }
 
-pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations)
+pgd::Vector3 ThreeHingeJointDriver::getEulerAngles(const Joint &joint, const Marker &basisMarker, bool reverseBodyOrderInCalculations)
 {
     // returns the Euler angles using marker axes as the basis
 
@@ -322,8 +322,8 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     //    Y' = A*Y*A^t
     //    Z' = A*Y*A^t
 
-    pgd::Quaternion body1MarkerWorld = joint.body1Marker()->GetWorldQuaternion();
-    pgd::Quaternion body2MarkerWorld = joint.body2Marker()->GetWorldQuaternion();
+    pgd::Quaternion body1MarkerWorld = joint.body1Marker()->worldQuaternion();
+    pgd::Quaternion body2MarkerWorld = joint.body2Marker()->worldQuaternion();
     pgd::Matrix3x3 R;
     if (reverseBodyOrderInCalculations)
     {
@@ -337,21 +337,21 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
         pgd::Quaternion body2ToBody1 = body1MarkerWorld * (~body2MarkerWorld);
         R = pgd::Matrix3x3(body2ToBody1);
     }
-    pgd::Matrix3x3 A = pgd::MakeMFromQ(basisMarker.GetWorldQuaternion());
-    pgd::Matrix3x3 At = A.Transpose();
+    pgd::Matrix3x3 A = pgd::makeMFromQ(basisMarker.worldQuaternion());
+    pgd::Matrix3x3 At = A.transpose();
     pgd::Matrix3x3 Rp = At * R * A;
-    pgd::Vector3 euler = pgd::MakeEulerAnglesFromQRadian(pgd::MakeQfromM(Rp));
-    pgd::Matrix3x3 Xp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(1, 0, 0, (euler.x), true)) * At;
-    pgd::Matrix3x3 Yp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 1, 0, (euler.y), true)) * At;
-    pgd::Matrix3x3 Zp = A * pgd::MakeMFromQ(pgd::MakeQFromAxisAngle(0, 0, 1, (euler.z), true)) * At;
-    pgd::Quaternion Xpq = pgd::MakeQfromM(Xp);
-    pgd::Quaternion Ypq = pgd::MakeQfromM(Yp);
-    pgd::Quaternion Zpq = pgd::MakeQfromM(Zp);
+    pgd::Vector3 euler = pgd::makeEulerAnglesFromQRadian(pgd::makeQfromM(Rp));
+    pgd::Matrix3x3 Xp = A * pgd::makeMFromQ(pgd::makeQFromAxisAngle(1, 0, 0, (euler.x), true)) * At;
+    pgd::Matrix3x3 Yp = A * pgd::makeMFromQ(pgd::makeQFromAxisAngle(0, 1, 0, (euler.y), true)) * At;
+    pgd::Matrix3x3 Zp = A * pgd::makeMFromQ(pgd::makeQFromAxisAngle(0, 0, 1, (euler.z), true)) * At;
+    pgd::Quaternion Xpq = pgd::makeQfromM(Xp);
+    pgd::Quaternion Ypq = pgd::makeQfromM(Yp);
+    pgd::Quaternion Zpq = pgd::makeQfromM(Zp);
 
     // we can't just convert the quaternions into axis angle to get the angles because the axes might be reversed, or might be arbitrary if close to zero
-    double xMag = Xpq.GetVector().Magnitude();
-    double yMag = Ypq.GetVector().Magnitude();
-    double zMag = Zpq.GetVector().Magnitude();
+    double xMag = Xpq.vector().magnitude();
+    double yMag = Ypq.vector().magnitude();
+    double zMag = Zpq.vector().magnitude();
     double dotX = 0, dotY = 0, dotZ = 0;
     pgd::Vector3 axisX, axisY, axisZ;
     double angle0 = 0, angle1 = 0, angle2 = 0;
@@ -364,8 +364,8 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     {
         angle0 = 2 * std::acos(Xpq.n); // acos produces a value from 0 to pi, so this angle is 0 to 2*pi
         if (angle0 > M_PI) angle0 -= 2 * M_PI; // so this means the angle is restricted to the more usual -pi to pi
-        axisX = Xpq.GetVector() / xMag;
-        dotX =pgd::Dot(axisX, pgd::Vector3(A.e11, A.e21, A.e31));
+        axisX = Xpq.vector() / xMag;
+        dotX =pgd::dot(axisX, pgd::Vector3(A.e11, A.e21, A.e31));
         if (dotX < 0)
             angle0 = - angle0;
     }
@@ -377,8 +377,8 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     {
         angle1 = 2 * std::acos(Ypq.n);
         if (angle1 > M_PI) angle1 -= 2 * M_PI;
-        axisY = Ypq.GetVector() / yMag;
-        dotY =pgd::Dot(axisY, pgd::Vector3(A.e12, A.e22, A.e32));
+        axisY = Ypq.vector() / yMag;
+        dotY =pgd::dot(axisY, pgd::Vector3(A.e12, A.e22, A.e32));
         if (dotY < 0)
             angle1 = - angle1;
     }
@@ -390,54 +390,54 @@ pgd::Vector3 ThreeHingeJointDriver::GetEulerAngles(const Joint &joint, const Mar
     {
         angle2 = 2 * std::acos(Zpq.n);
         if (angle2 > M_PI) angle2 -= 2 * M_PI;
-        axisZ = Zpq.GetVector() / zMag;
-        dotZ =pgd::Dot(axisZ, pgd::Vector3(A.e13, A.e23, A.e33));
+        axisZ = Zpq.vector() / zMag;
+        dotZ =pgd::dot(axisZ, pgd::Vector3(A.e13, A.e23, A.e33));
         if (dotZ < 0)
             angle2 = - angle2;
     }
     return pgd::Vector3(angle0, angle1, angle2);
 }
 
-void ThreeHingeJointDriver::SendData()
+void ThreeHingeJointDriver::sendData()
 {
     // and set the required strap lengths
     for (auto &&it : *targetList())
     {
         PIDMuscleLengthController *pidMuscleLengthController = dynamic_cast<PIDMuscleLengthController *>(it.second);
         if (!pidMuscleLengthController) continue;
-        Strap *remoteStrap = pidMuscleLengthController->muscle()->GetStrap();
+        Strap *remoteStrap = pidMuscleLengthController->muscle()->strap();
         auto localStrap = m_localStrapList.find(remoteStrap->name());
         if (localStrap == m_localStrapList.end()) continue;
-        double length = localStrap->second->Length();
+        double length = localStrap->second->length();
         // now set the target length
-        pidMuscleLengthController->ReceiveData(Clamp(length), simulation()->GetStepCount());
+        pidMuscleLengthController->receiveData(clamp(length), simulation()->stepCount());
     }
 }
 
 
 // this funtion calculates the distance from the proximal joint to the distal Body Marker
 // dependent on the fraction of the joint limits for the interconnecting hinge joints
-void ThreeHingeJointDriver::CalculateLength(double angleFraction)
+void ThreeHingeJointDriver::calculateLength(double angleFraction)
 {
     // now calculate the rotations at the joints in a consistent coordinate frame (and this can be the local frame because at contruction nothing is rotated)
     m_intermediateJointAngle = std::pow(angleFraction, m_intermediateJointAngleGamma) * (m_intermediateJointRange[1] - m_intermediateJointRange[0]) + m_intermediateJointRange[0];
-    m_intermediateJointAxis = m_intermediateJoint->body1Marker()->GetAxis(Marker::X);
-    m_intermediateJointRotation = pgd::MakeQFromAxisAngle(m_intermediateJointAxis, -m_intermediateJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
+    m_intermediateJointAxis = m_intermediateJoint->body1Marker()->axis(Marker::X);
+    m_intermediateJointRotation = pgd::makeQFromAxisAngle(m_intermediateJointAxis, -m_intermediateJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
     m_distalJointAngle = std::pow(angleFraction, m_distalJointAngleGamma) * (m_distalJointRange[1] - m_distalJointRange[0]) + m_distalJointRange[0];
-    m_distalJointAxis = m_distalJoint->body1Marker()->GetAxis(Marker::X);
-    m_distalJointRotation = pgd::MakeQFromAxisAngle(m_distalJointAxis, -m_distalJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
+    m_distalJointAxis = m_distalJoint->body1Marker()->axis(Marker::X);
+    m_distalJointRotation = pgd::makeQFromAxisAngle(m_distalJointAxis, -m_distalJointAngle); // note that the angle is negated because ODE calculates hinge joint angle wrt body 2 and this is a rotation wrt body 1
 
     // now sum the vectors to get the position of the end point
-    m_distalBodyMarkerPositionWRTProxJoint = m_proximalBodyVector + pgd::QVRotate(m_intermediateJointRotation, m_intermediateBodyVector) + pgd::QVRotate(m_distalJointRotation * m_intermediateJointRotation, m_distalBodyVector);
-    m_actualLength = m_distalBodyMarkerPositionWRTProxJoint.Magnitude();
+    m_distalBodyMarkerPositionWRTProxJoint = m_proximalBodyVector + pgd::qVRotate(m_intermediateJointRotation, m_intermediateBodyVector) + pgd::qVRotate(m_distalJointRotation * m_intermediateJointRotation, m_distalBodyVector);
+    m_actualLength = m_distalBodyMarkerPositionWRTProxJoint.magnitude();
 //    std::cerr << "angleFraction " << angleFraction << " actualLength " << m_actualLength << "\n";
 }
 
 // this funtion calculates the difference between the desired length and the length calculated from the angle fraction
-double ThreeHingeJointDriver::CalculateLengthDifference(double angleFraction, void *data)
+double ThreeHingeJointDriver::calculateLengthDifference(double angleFraction, void *data)
 {
     ThreeHingeJointDriver *threeHingeJointController = static_cast<ThreeHingeJointDriver *>(data);
-    threeHingeJointController->CalculateLength(angleFraction);
+    threeHingeJointController->calculateLength(angleFraction);
     double lengthError = threeHingeJointController->actualLength() - threeHingeJointController->desiredLength();
     return lengthError;
 }
@@ -445,16 +445,16 @@ double ThreeHingeJointDriver::CalculateLengthDifference(double angleFraction, vo
 
 Marker *ThreeHingeJointDriver::createLocalMarkerCopy(const Marker *marker)
 {
-    auto it = m_localBodyList.find(marker->GetBody()->name());
+    auto it = m_localBodyList.find(marker->body()->name());
     if (it == m_localBodyList.end()) return nullptr;
     std::unique_ptr<Marker> localMarker = std::make_unique<Marker>(nullptr);
     Marker *localMarkerPtr = localMarker.get();
     localMarker->setName(marker->name());
-    localMarker->SetBody(it->second.get());
-    pgd::Vector3 p = marker->GetPosition();
-    localMarker->SetPosition(p.x, p.y, p.z);
-    pgd::Quaternion q = marker->GetQuaternion();
-    localMarker->SetQuaternion(q.n, q.x, q.y, q.z);
+    localMarker->setBody(it->second.get());
+    pgd::Vector3 p = marker->position();
+    localMarker->setPosition(p.x, p.y, p.z);
+    pgd::Quaternion q = marker->quaternion();
+    localMarker->setQuaternion(q.n, q.x, q.y, q.z);
     m_localMarkerList[localMarker->name()] = std::move(localMarker);
     return localMarkerPtr;
 }
@@ -504,10 +504,10 @@ std::string ThreeHingeJointDriver::dumpToString()
             for (int i = 0; i < nSteps; i++)
             {
                 double angleFraction = double(i) / nSteps;
-                CalculateLength(angleFraction);
+                calculateLength(angleFraction);
                 s +=  dumpHelper({angleFraction, m_intermediateJointAngle, m_distalJointAngle, m_actualLength});
             }
-            CalculateLength(m_angleFraction); // neeeded because CalculateLengthDifference changes m_intermediateJointAngle and m_distalJointAngle
+            calculateLength(m_angleFraction); // neeeded because CalculateLengthDifference changes m_intermediateJointAngle and m_distalJointAngle
         }
         s += dumpHelper({"Time"s, "MarkerDistance"s, "DesiredLength"s, "AngleFraction"s, "ProximalAngleFraction1"s,
                          "ProximalJointAngle1"s, "ProximalJointAngle2"s, "IntermediateJointAngle"s, "DistalJointAngle"s,
@@ -517,12 +517,12 @@ std::string ThreeHingeJointDriver::dumpToString()
                          "distalBodyMarkerLocalPosition.x"s, "distalBodyMarkerLocalPosition.y"s, "distalBodyMarkerLocalPosition.z"s});
 
     }
-    pgd::Vector3 proximalJointMarker1Position = m_proximalJointMarker1->GetWorldPosition();
-    pgd::Vector3 intermediateJointMarker1Position = m_intermediateJointMarker1->GetWorldPosition();
-    pgd::Vector3 distalJointMarker1Position = m_distalJointMarker1->GetWorldPosition();
-    pgd::Vector3 distalBodyMarkerLocalPosition = m_distalBodyMarkerLocal->GetWorldPosition();
-    double markerDistance = (m_distalBodyMarker->GetWorldPosition() - m_proximalJoint->body1Marker()->GetWorldPosition()).Magnitude();
-    s += dumpHelper({simulation()->GetTime(), markerDistance, m_desiredLength, m_angleFraction, m_proximalAngleFraction1,
+    pgd::Vector3 proximalJointMarker1Position = m_proximalJointMarker1->worldPosition();
+    pgd::Vector3 intermediateJointMarker1Position = m_intermediateJointMarker1->worldPosition();
+    pgd::Vector3 distalJointMarker1Position = m_distalJointMarker1->worldPosition();
+    pgd::Vector3 distalBodyMarkerLocalPosition = m_distalBodyMarkerLocal->worldPosition();
+    double markerDistance = (m_distalBodyMarker->worldPosition() - m_proximalJoint->body1Marker()->worldPosition()).magnitude();
+    s += dumpHelper({simulation()->simulationTime(), markerDistance, m_desiredLength, m_angleFraction, m_proximalAngleFraction1,
                      m_proximalJointAngle1, m_proximalJointAngle2, m_intermediateJointAngle, m_distalJointAngle,
                      proximalJointMarker1Position.x, proximalJointMarker1Position.y, proximalJointMarker1Position.z,
                      intermediateJointMarker1Position.x, intermediateJointMarker1Position.y, intermediateJointMarker1Position.z,
@@ -540,37 +540,37 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
     if (Driver::createFromAttributes()) return lastErrorPtr();
     std::string buf;
     if (findAttribute("TargetMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    m_targetMarker = simulation()->GetMarker(buf);
+    m_targetMarker = simulation()->getMarker(buf);
     if (!m_targetMarker)
     {
         setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" TargetMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("DistalBodyMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    m_distalBodyMarker = simulation()->GetMarker(buf);
+    m_distalBodyMarker = simulation()->getMarker(buf);
     if (!m_distalBodyMarker)
     {
         setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" DistalBodyMarkerID marker not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("ProximalJointID"s, &buf) == nullptr) return lastErrorPtr();
-    m_proximalJoint = dynamic_cast<HingeJoint *>(simulation()->GetJoint(buf));
-    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<UniversalJoint *>(simulation()->GetJoint(buf));
-    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<BallJoint *>(simulation()->GetJoint(buf));
+    m_proximalJoint = dynamic_cast<HingeJoint *>(simulation()->getJoint(buf));
+    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<UniversalJoint *>(simulation()->getJoint(buf));
+    if (!m_proximalJoint) m_proximalJoint = dynamic_cast<BallJoint *>(simulation()->getJoint(buf));
     if (!m_proximalJoint)
     {
         setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" ProximalJointID joint not found or not Hinge, Universal or Ball \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("IntermediateJointID"s, &buf) == nullptr) return lastErrorPtr();
-    m_intermediateJoint = dynamic_cast<HingeJoint *>(simulation()->GetJoint(buf));
+    m_intermediateJoint = dynamic_cast<HingeJoint *>(simulation()->getJoint(buf));
     if (!m_intermediateJoint)
     {
         setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" IntermediateJointID joint not found \""s + buf + "\"");
         return lastErrorPtr();
     }
     if (findAttribute("DistalJointID"s, &buf) == nullptr) return lastErrorPtr();
-    m_distalJoint = dynamic_cast<HingeJoint *>(simulation()->GetJoint(buf));
+    m_distalJoint = dynamic_cast<HingeJoint *>(simulation()->getJoint(buf));
     if (!m_distalJoint)
     {
         setLastError("ThreeHingeJointDriver ID=\""s + name() + "\" DistalJointID joint not found \""s + buf + "\"");
@@ -586,99 +586,99 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
         }
     }
     if (findAttribute("ProximalJointRange"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 2, m_proximalJointRange.data());
+    GSUtil::toDouble(buf, 2, m_proximalJointRange.data());
     if (findAttribute("IntermediateJointRange"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 2, m_intermediateJointRange.data());
+    GSUtil::toDouble(buf, 2, m_intermediateJointRange.data());
     if (findAttribute("DistalJointRange"s, &buf) == nullptr) return lastErrorPtr();
-    GSUtil::Double(buf, 2, m_distalJointRange.data());
+    GSUtil::toDouble(buf, 2, m_distalJointRange.data());
     if (findAttribute("IntermediateJointGamma"s, &buf) == nullptr) return lastErrorPtr();
-    m_intermediateJointAngleGamma = GSUtil::Double(buf);
+    m_intermediateJointAngleGamma = GSUtil::toDouble(buf);
     if (findAttribute("DistalJointGamma"s, &buf) == nullptr) return lastErrorPtr();
-    m_distalJointAngleGamma = GSUtil::Double(buf);
+    m_distalJointAngleGamma = GSUtil::toDouble(buf);
 
-    if (findAttribute("Tolerance"s, &buf)) m_tolerance = GSUtil::Double(buf);
+    if (findAttribute("Tolerance"s, &buf)) m_tolerance = GSUtil::toDouble(buf);
 
     // check for consistency
-    if (m_proximalJoint->body2Marker()->GetBody() != m_intermediateJoint->body1Marker()->GetBody())
+    if (m_proximalJoint->body2Marker()->body() != m_intermediateJoint->body1Marker()->body())
     {
         setLastError("Driver ID=\""s + name() +"\" proximal joint body2 != intermediate joint body1"s);
         return lastErrorPtr();
     }
-    if (m_intermediateJoint->body2Marker()->GetBody() != m_distalJoint->body1Marker()->GetBody())
+    if (m_intermediateJoint->body2Marker()->body() != m_distalJoint->body1Marker()->body())
     {
         setLastError("Driver ID=\""s + name() +"\" intermediate joint body2 != distal joint body1"s);
         return lastErrorPtr();
     }
-    if (m_distalJoint->body2Marker()->GetBody() != m_distalBodyMarker->GetBody())
+    if (m_distalJoint->body2Marker()->body() != m_distalBodyMarker->body())
     {
         setLastError("Driver ID=\""s + name() +"\" distal joint body2 != distal marker body"s);
         return lastErrorPtr();
     }
-    if (m_proximalJoint->body1Marker()->GetBody() != m_targetMarker->GetBody())
+    if (m_proximalJoint->body1Marker()->body() != m_targetMarker->body())
     {
         setLastError("Driver ID=\""s + name() +"\" proximal joint body1 != target marker body"s);
         return lastErrorPtr();
     }
 
     // during contruction the bodies are not rotated, so the body vectors are the contruction vectors
-    m_proximalBodyVector = m_intermediateJoint->body1Marker()->GetPosition() - m_proximalJoint->body2Marker()->GetPosition();
-    m_intermediateBodyVector = m_distalJoint->body1Marker()->GetPosition() - m_intermediateJoint->body2Marker()->GetPosition();
-    m_distalBodyVector = m_distalBodyMarker->GetPosition() - m_distalJoint->body2Marker()->GetPosition();
+    m_proximalBodyVector = m_intermediateJoint->body1Marker()->position() - m_proximalJoint->body2Marker()->position();
+    m_intermediateBodyVector = m_distalJoint->body1Marker()->position() - m_intermediateJoint->body2Marker()->position();
+    m_distalBodyVector = m_distalBodyMarker->position() - m_distalJoint->body2Marker()->position();
 
     // we need to find the best ordering for the intermediate and distal joint ranges
     // so that we get a monotonically increasing function
     double eps = 1.0 / 1000;
-    int monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+    int monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
     if (monotonic != +1 && monotonic != -1)
     {
         std::string message = "Driver ID=\""s + name() +"\" selected IntermediateJointRange and DistalJointRange do not produce a monotonic length change\n"s;
-        message += "IntermediateJointRange=\""s + *GSUtil::ToString(m_intermediateJointRange, &buf);
-        message += "\" and DistalJointRange=\""s + *GSUtil::ToString(m_distalJointRange, &buf) + "\""s;
+        message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
+        message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_intermediateJointRange.x, m_intermediateJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
-        message += "IntermediateJointRange=\""s + *GSUtil::ToString(m_intermediateJointRange, &buf);
-        message += "\" and DistalJointRange=\""s + *GSUtil::ToString(m_distalJointRange, &buf) + "\""s;
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
+        message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_distalJointRange.x, m_distalJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
-        message += "IntermediateJointRange=\""s + *GSUtil::ToString(m_intermediateJointRange, &buf);
-        message += "\" and DistalJointRange=\""s + *GSUtil::ToString(m_distalJointRange, &buf) + "\""s;
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
+        message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails\n"s;
         else message += " succeeds\n"s;
         std::swap(m_intermediateJointRange.x, m_intermediateJointRange.y);
-        monotonic = monotonicTest(CalculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
-        message += "IntermediateJointRange=\""s + *GSUtil::ToString(m_intermediateJointRange, &buf);
-        message += "\" and DistalJointRange=\""s + *GSUtil::ToString(m_distalJointRange, &buf) + "\""s;
+        monotonic = monotonicTest(calculateLengthDifference, 0.0, 1.0 + eps / 2, eps, this);
+        message += "IntermediateJointRange=\""s + *GSUtil::toString(m_intermediateJointRange, &buf);
+        message += "\" and DistalJointRange=\""s + *GSUtil::toString(m_distalJointRange, &buf) + "\""s;
         if (monotonic != +1 && monotonic != -1) message += " fails"s;
         else message += " succeeds"s;
         setLastError(message);
         return lastErrorPtr();
     }
 #ifndef NDEBUG
-    CalculateLength(0);
+    calculateLength(0);
     double minLength = m_actualLength;
-    CalculateLength(1);
+    calculateLength(1);
     double maxLength = m_actualLength;
     std::cerr << "Driver ID=\"" << name() << "\" minLength=" << minLength << " maxLength=" << maxLength << "\n";
 #endif
 
-    if (findAttribute("DumpExtensionCurve"s, &buf)) m_dumpExtensionCurve = GSUtil::Bool(buf);
+    if (findAttribute("DumpExtensionCurve"s, &buf)) m_dumpExtensionCurve = GSUtil::toBool(buf);
 
     // assemble the local copies of bodies, markers and joints
     std::unique_ptr<Body> baseBody = std::make_unique<Body>();
-    baseBody->setName(m_proximalJoint->body1Marker()->GetBody()->name());
+    baseBody->setName(m_proximalJoint->body1Marker()->body()->name());
     m_baseBody = baseBody.get();
     std::unique_ptr<Body> proximalBody = std::make_unique<Body>();
-    proximalBody->setName(m_proximalJoint->body2Marker()->GetBody()->name());
+    proximalBody->setName(m_proximalJoint->body2Marker()->body()->name());
     m_proximalBody = proximalBody.get();
     std::unique_ptr<Body> intermediateBody = std::make_unique<Body>();
-    intermediateBody->setName(m_intermediateJoint->body2Marker()->GetBody()->name());
+    intermediateBody->setName(m_intermediateJoint->body2Marker()->body()->name());
     m_intermediateBody = intermediateBody.get();
     std::unique_ptr<Body> distalBody = std::make_unique<Body>();
-    distalBody->setName(m_distalJoint->body2Marker()->GetBody()->name());
+    distalBody->setName(m_distalJoint->body2Marker()->body()->name());
     m_distalBody = distalBody.get();
     m_localBodyList[baseBody->name()] = std::move(baseBody);
     m_localBodyList[proximalBody->name()] = std::move(proximalBody);
@@ -697,12 +697,12 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
     {
         PIDMuscleLengthController *pidMuscleLengthController = dynamic_cast<PIDMuscleLengthController *>(it.second);
         if (!pidMuscleLengthController) continue;
-        Strap *strapPtr = pidMuscleLengthController->muscle()->GetStrap();
+        Strap *strapPtr = pidMuscleLengthController->muscle()->strap();
 
         if (TwoPointStrap *twoPointStrap = dynamic_cast<TwoPointStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(twoPointStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(twoPointStrap->GetInsertionMarker());
+            Marker *originMarker = createLocalMarkerCopy(twoPointStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(twoPointStrap->insertionMarker());
             if (!originMarker || !insertionMarker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -710,18 +710,18 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<TwoPointStrap> strap = std::make_unique<TwoPointStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
+            strap->setOrigin(originMarker);
+            strap->setInsertion(insertionMarker);
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
 
         if (NPointStrap *nPointStrap = dynamic_cast<NPointStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(nPointStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(nPointStrap->GetInsertionMarker());
+            Marker *originMarker = createLocalMarkerCopy(nPointStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(nPointStrap->insertionMarker());
             std::vector<Marker *> viaPointList;
-            for (auto &&it : *nPointStrap->GetViaPointMarkers()) viaPointList.push_back(createLocalMarkerCopy(it));
+            for (auto &&it : *nPointStrap->viaPointMarkers()) viaPointList.push_back(createLocalMarkerCopy(it));
             if (!originMarker || !insertionMarker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -729,18 +729,18 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<NPointStrap> strap = std::make_unique<NPointStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
-            strap->SetViaPoints(&viaPointList);
+            strap->setOrigin(originMarker);
+            strap->setInsertion(insertionMarker);
+            strap->setViaPoints(&viaPointList);
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
 
         if (CylinderWrapStrap *cylinderWrapStrap = dynamic_cast<CylinderWrapStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(cylinderWrapStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(cylinderWrapStrap->GetInsertionMarker());
-            Marker *cylinderMarker = createLocalMarkerCopy(cylinderWrapStrap->GetCylinderMarker());
+            Marker *originMarker = createLocalMarkerCopy(cylinderWrapStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(cylinderWrapStrap->insertionMarker());
+            Marker *cylinderMarker = createLocalMarkerCopy(cylinderWrapStrap->cylinderMarker());
             if (!originMarker || !insertionMarker || !cylinderMarker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -748,20 +748,20 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<CylinderWrapStrap> strap = std::make_unique<CylinderWrapStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
-            strap->SetCylinder(cylinderMarker);
-            strap->SetCylinderRadius(cylinderWrapStrap->cylinderRadius());
+            strap->setOriginMarker(originMarker);
+            strap->setInsertionMarker(insertionMarker);
+            strap->setCylinderMarker(cylinderMarker);
+            strap->setCylinderRadius(cylinderWrapStrap->cylinderRadius());
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
 
         if (TwoCylinderWrapStrap *twoCylinderWrapStrap = dynamic_cast<TwoCylinderWrapStrap *>(strapPtr))
         {
-            Marker *originMarker = createLocalMarkerCopy(twoCylinderWrapStrap->GetOriginMarker());
-            Marker *insertionMarker = createLocalMarkerCopy(twoCylinderWrapStrap->GetInsertionMarker());
-            Marker *cylinder1Marker = createLocalMarkerCopy(twoCylinderWrapStrap->GetCylinder1Marker());
-            Marker *cylinder2Marker = createLocalMarkerCopy(twoCylinderWrapStrap->GetCylinder2Marker());
+            Marker *originMarker = createLocalMarkerCopy(twoCylinderWrapStrap->originMarker());
+            Marker *insertionMarker = createLocalMarkerCopy(twoCylinderWrapStrap->insertionMarker());
+            Marker *cylinder1Marker = createLocalMarkerCopy(twoCylinderWrapStrap->cylinder1Marker());
+            Marker *cylinder2Marker = createLocalMarkerCopy(twoCylinderWrapStrap->cylinder2Marker());
             if (!originMarker || !insertionMarker || !cylinder1Marker || !cylinder2Marker)
             {
                 setLastError("Driver ID=\""s + name() +"\" cannot create local strap=\""s + strapPtr->name() + "\""s);
@@ -769,12 +769,12 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
             }
             std::unique_ptr<TwoCylinderWrapStrap> strap = std::make_unique<TwoCylinderWrapStrap>();
             strap->setName(strapPtr->name());
-            strap->SetOrigin(originMarker);
-            strap->SetInsertion(insertionMarker);
-            strap->SetCylinder1(cylinder1Marker);
-            strap->SetCylinder2(cylinder2Marker);
-            strap->SetCylinder1Radius(twoCylinderWrapStrap->Cylinder1Radius());
-            strap->SetCylinder2Radius(twoCylinderWrapStrap->Cylinder2Radius());
+            strap->setOrigin(originMarker);
+            strap->setInsertion(insertionMarker);
+            strap->setCylinder1Marker(cylinder1Marker);
+            strap->setCylinder2Marker(cylinder2Marker);
+            strap->setCylinder1Radius(twoCylinderWrapStrap->cylinder1Radius());
+            strap->setCylinder2Radius(twoCylinderWrapStrap->cylinder2Radius());
             m_localStrapList[strap->name()] = std::move(strap);
             continue;
         }
@@ -795,13 +795,13 @@ void ThreeHingeJointDriver::appendToAttributes()
     setAttribute("ProximalJointID"s, m_proximalJoint->name());
     setAttribute("IntermediateJointID"s, m_intermediateJoint->name());
     setAttribute("DistalJointID"s, m_distalJoint->name());
-    setAttribute("ProximalJointRange"s, *GSUtil::ToString(m_proximalJointRange, &buf));
-    setAttribute("IntermediateJointRange"s, *GSUtil::ToString(m_intermediateJointRange, &buf));
-    setAttribute("DistalJointRange"s, *GSUtil::ToString(m_distalJointRange, &buf));
-    setAttribute("IntermediateJointGamma"s, *GSUtil::ToString(m_intermediateJointAngleGamma, &buf));
-    setAttribute("DistalJointGamma"s, *GSUtil::ToString(m_distalJointAngleGamma, &buf));
-    setAttribute("Tolerance"s, *GSUtil::ToString(m_tolerance, &buf));
-    setAttribute("DumpExtensionCurve"s, *GSUtil::ToString(m_dumpExtensionCurve, &buf));
+    setAttribute("ProximalJointRange"s, *GSUtil::toString(m_proximalJointRange, &buf));
+    setAttribute("IntermediateJointRange"s, *GSUtil::toString(m_intermediateJointRange, &buf));
+    setAttribute("DistalJointRange"s, *GSUtil::toString(m_distalJointRange, &buf));
+    setAttribute("IntermediateJointGamma"s, *GSUtil::toString(m_intermediateJointAngleGamma, &buf));
+    setAttribute("DistalJointGamma"s, *GSUtil::toString(m_distalJointAngleGamma, &buf));
+    setAttribute("Tolerance"s, *GSUtil::toString(m_tolerance, &buf));
+    setAttribute("DumpExtensionCurve"s, *GSUtil::toString(m_dumpExtensionCurve, &buf));
 }
 
 Marker *ThreeHingeJointDriver::targetMarker() const

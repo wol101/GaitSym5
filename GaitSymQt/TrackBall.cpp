@@ -19,32 +19,32 @@ Trackball::Trackball()
 // called with the mouse start position and the trackbal dimensions
 // note: clicks outside the trackball radius have a different rotation behaviour
 // note: values given in window coordinates with raster origin at top left
-void Trackball::StartTrackball(int mouseX, int mouseY, int trackballOriginX, int trackballOriginY,
+void Trackball::startTrackball(int mouseX, int mouseY, int trackballOriginX, int trackballOriginY,
                                int trackballRadius, const pgd::Vector3 &up, const pgd::Vector3 &out)
 {
-    mTrackballRadius = trackballRadius;
-    mStartMouseX = mouseX;
-    mStartMouseY = mouseY;
-    mTrackballOriginX = trackballOriginX;
-    mTrackballOriginY = trackballOriginY;
-    mOut = out;
-    mUp = up;
-    mOut.Normalize();
-    mUp.Normalize();
-    mLeft = mUp ^ mOut;
-    mLeft.Normalize();
+    m_trackballRadius = trackballRadius;
+    m_startMouseX = mouseX;
+    m_startMouseY = mouseY;
+    m_trackballOriginX = trackballOriginX;
+    m_trackballOriginY = trackballOriginY;
+    m_out = out;
+    m_up = up;
+    m_out.normalize();
+    m_up.normalize();
+    m_left = m_up ^ m_out;
+    m_left.normalize();
 
-    double dx = mStartMouseX - mTrackballOriginX;
-    double dy = mTrackballOriginY - mStartMouseY;
+    double dx = m_startMouseX - m_trackballOriginX;
+    double dy = m_trackballOriginY - m_startMouseY;
     double r = sqrt(dx * dx + dy * dy);
-    if (r > trackballRadius) mOutsideRadius = true;
-    else mOutsideRadius = false;
+    if (r > trackballRadius) m_outsideRadius = true;
+    else m_outsideRadius = false;
 }
 
 // calculated rotation based on current mouse position
-void Trackball::RollTrackballToClick(int mouseX, int mouseY, pgd::Quaternion *rotation)
+void Trackball::rollTrackballToClick(int mouseX, int mouseY, pgd::Quaternion *rotation)
 {
-    if (mouseX == mStartMouseX && mouseY == mStartMouseY)
+    if (mouseX == m_startMouseX && mouseY == m_startMouseY)
     {
         rotation->n = 1;
         rotation->x = rotation->y = rotation->z = 0;
@@ -52,18 +52,18 @@ void Trackball::RollTrackballToClick(int mouseX, int mouseY, pgd::Quaternion *ro
     }
     pgd::Vector3 v1;
     pgd::Vector3 v2;
-    if (mOutsideRadius == false)   // normal behaviour
+    if (m_outsideRadius == false)   // normal behaviour
     {
-        v1 = (mStartMouseX - mTrackballOriginX) * mLeft + (mTrackballOriginY - mStartMouseY) * mUp +
-             mTrackballRadius * mOut;
-        v2 = (mouseX - mTrackballOriginX) * mLeft + (mTrackballOriginY - mouseY) * mUp + mTrackballRadius *
-             mOut;
+        v1 = (m_startMouseX - m_trackballOriginX) * m_left + (m_trackballOriginY - m_startMouseY) * m_up +
+             m_trackballRadius * m_out;
+        v2 = (mouseX - m_trackballOriginX) * m_left + (m_trackballOriginY - mouseY) * m_up + m_trackballRadius *
+             m_out;
 
     }
     else     // rotate around axis coming out of screen
     {
-        v1 = (mStartMouseX - mTrackballOriginX) * mLeft + (mTrackballOriginY - mStartMouseY) * mUp;
-        v2 = (mouseX - mTrackballOriginX) * mLeft + (mTrackballOriginY - mouseY) * mUp;
+        v1 = (m_startMouseX - m_trackballOriginX) * m_left + (m_trackballOriginY - m_startMouseY) * m_up;
+        v2 = (mouseX - m_trackballOriginX) * m_left + (m_trackballOriginY - mouseY) * m_up;
     }
 
     // cross product will get us the rotation axis
@@ -76,18 +76,18 @@ void Trackball::RollTrackballToClick(int mouseX, int mouseY, pgd::Quaternion *ro
     // cos angle obtained from dot product formula
     // cos(a) = (s . e) / (||s|| ||e||)
     double cosAng = v1 * v2; // (s . e)
-    double ls = v1.Magnitude();
+    double ls = v1.magnitude();
     ls = 1. / ls; // 1 / ||s||
-    double le = v2.Magnitude();
+    double le = v2.magnitude();
     le = 1. / le; // 1 / ||e||
     cosAng = cosAng * ls * le;
 
     // sin angle obtained from cross product formula
     // sin(a) = ||(s X e)|| / (||s|| ||e||)
-    double sinAng = axis.Magnitude(); // ||(s X e)||;
+    double sinAng = axis.magnitude(); // ||(s X e)||;
     sinAng = sinAng * ls * le;
     double angle = atan2(sinAng, cosAng); // rotations are in radians.
 
-    *rotation = pgd::MakeQFromAxisAngle(axis.x, axis.y, axis.z, angle);
+    *rotation = pgd::makeQFromAxisAngle(axis.x, axis.y, axis.z, angle);
 }
 

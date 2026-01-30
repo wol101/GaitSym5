@@ -55,7 +55,7 @@ void DrawDataTarget::initialise(SimulationWidget *simulationWidget)
     m_dataTargetSize1 = m_dataTarget->size1();
 
     FacetedObject dataTargetObject;
-    dataTargetObject.ReadFromResource(":/objects/datatarget.tri");
+    dataTargetObject.readFromResource(":/objects/datatarget.tri");
 
     if (GaitSym::DataTargetVector *dataTargetVector = dynamic_cast<GaitSym::DataTargetVector *>(m_dataTarget))
     {
@@ -65,8 +65,8 @@ void DrawDataTarget::initialise(SimulationWidget *simulationWidget)
         {
             auto facetedObject = std::make_unique<FacetedObject>();
             facetedObject->setSimulationWidget(simulationWidget);
-            facetedObject->AddFacetedObject(&dataTargetObject, false, true);
-            facetedObject->SetDisplayScale(m_dataTargetSize1, m_dataTargetSize1, m_dataTargetSize1);
+            facetedObject->addFacetedObject(&dataTargetObject, false, true);
+            facetedObject->setDisplayScale(m_dataTargetSize1, m_dataTargetSize1, m_dataTargetSize1);
             m_facetedObjectList.push_back(facetedObject.get());
             m_facetedObjectStore.push_back(std::move(facetedObject));
         }
@@ -82,15 +82,15 @@ void DrawDataTarget::updateEntityPose()
     {
         for (size_t i = 0; i < dataTargetVector->valueList()->size(); i++)
         {
-            m_facetedObjectList[i]->SetDisplayPosition(dataTargetVector->valueList()->at(i));
+            m_facetedObjectList[i]->setDisplayPosition(dataTargetVector->valueList()->at(i));
         }
         return;
     }
 }
 
-void DrawDataTarget::Draw()
+void DrawDataTarget::draw()
 {
-    for (auto &&iter : m_facetedObjectList) { iter->Draw(); }
+    for (auto &&iter : m_facetedObjectList) { iter->draw(); }
     m_dataTarget->setRedraw(false);
 }
 

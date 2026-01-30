@@ -1,0 +1,22 @@
+# to build the container make sure the static binary is up to date and in the correct folder
+# build with (note that singularity containers cannot be built in WSL):
+# sudo singularity build gaitsym5_asio_container.sif gaitsym5_asio_static_singularity.def
+# run with:
+# singularity run gaitsym5_asio_container.sif --host 
+# with ip_address:port set to suitable values (it works with urls but using the ip address saves a few lookups)
+
+Bootstrap: docker
+From: ubuntu:24.04
+
+# copy the binary from the build folder
+%files
+    ../build/gaitsym5_asio /usr/local/bin/gaitsym5_asio
+
+# make it executable
+%post
+    chmod +x /usr/local/bin/gaitsym5_asio
+
+# allow command line arguments to be passed when run
+%runscript
+    exec /usr/local/bin/gaitsym5_asio "$@"
+

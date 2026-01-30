@@ -34,35 +34,34 @@ class FixedJoint: public Joint
     SMART_ENUM(LowPassType, lowPassTypeStrings, lowPassTypeCount, NoLowPass, MovingAverageLowPass, Butterworth2ndOrderLowPass);
 //    enum LowPassType { NoLowPass = 0, MovingAverageLowPass, Butterworth2ndOrderLowPass };
 
-    virtual void LateInitialisation();
-    void SetFixed();
+    virtual void lateInitialisation();
 
-    void SetCrossSection(const std::vector<unsigned char> &stiffness, size_t nx, size_t ny, double dx, double dy);
-    void SetStressOrigin(double x, double y, double z);
-    void SetStressOrientation(double q0, double q1, double q2, double q3);
+    void setCrossSection(const std::vector<unsigned char> &stiffness, size_t nx, size_t ny, double dx, double dy);
+    void setStressOrigin(double x, double y, double z);
+    void setStressOrientation(double q0, double q1, double q2, double q3);
 
-    void SetStressCalculationType(StressCalculationType type) { m_stressCalculationType = type; }
-    StressCalculationType GetStressCalculationType() { return m_stressCalculationType; }
+    void setStressCalculationType(StressCalculationType type) { m_stressCalculationType = type; }
+    StressCalculationType stressCalculationType() { return m_stressCalculationType; }
 
-    pgd::Vector3 GetStressOrigin() { return m_StressOrigin; }
-    pgd::Quaternion GetStressOrientation() { return m_StressOrientation; }
+    pgd::Vector3 stressOrigin() { return m_stressOrigin; }
+    pgd::Quaternion stressOrientation() { return m_stressOrientation; }
 
-    double GetMaxStress() { return m_maxStress; }
-    double GetMinStress() { return m_minStress; }
+    double maxStress() { return m_maxStress; }
+    double minStress() { return m_minStress; }
 
-    void SetStressLimit(double stressLimit) { m_stressLimit = stressLimit; }
-    bool CheckStressAbort();
+    void setStressLimit(double stressLimit) { m_stressLimit = stressLimit; }
+    bool checkStressAbort();
 
-    void SetLowPassType(LowPassType lowPassType) { m_lowPassType = lowPassType; }
-    LowPassType GetLowPassType() { return m_lowPassType; }
-    void SetWindow(size_t window);
-    void SetCutoffFrequency(double cutoffFrequency);
-    double GetLowPassMinStress() { return m_lowPassMinStress; }
-    double GetLowPassMaxStress() { return m_lowPassMaxStress; }
+    void setLowPassType(LowPassType lowPassType) { m_lowPassType = lowPassType; }
+    LowPassType lowPassType() { return m_lowPassType; }
+    void setWindow(size_t window);
+    void setCutoffFrequency(double cutoffFrequency);
+    double lowPassMinStress() { return m_lowPassMinStress; }
+    double lowPassMaxStress() { return m_lowPassMaxStress; }
 
-    const std::vector<double> &GetStress() { return m_stress; }
+    const std::vector<double> &stress() { return m_stress; }
 
-    virtual void Update();
+    virtual void update();
     virtual std::string dumpToString();
 
     virtual std::string *createFromAttributes();
@@ -90,8 +89,8 @@ class FixedJoint: public Joint
     double highRange() const;
     void setHighRange(double highRange);
 
-    void CalculatePixmap();
-    bool CalculatePixmapNeeded();
+    void calculatePixmap();
+    bool calculatePixmapNeeded();
     const std::vector<unsigned char> &pixMap() const;
 
     bool lateFix() const;
@@ -99,8 +98,8 @@ class FixedJoint: public Joint
 
 private:
 
-    void CalculateStress();
-    static std::vector<unsigned char> AsciiToBitMap(const std::string &buffer, size_t width, size_t height, char setChar, bool reverseY);
+    void calculateStress();
+    static std::vector<unsigned char> asciiToBitMap(const std::string &buffer, size_t width, size_t height, char setChar, bool reverseY);
 
     bool m_lateFix = false;
 
@@ -126,8 +125,8 @@ private:
     double m_height = 0;
     StressCalculationType m_stressCalculationType = StressCalculationType::none;
 
-    pgd::Vector3 m_StressOrigin;
-    pgd::Quaternion m_StressOrientation;
+    pgd::Vector3 m_stressOrigin;
+    pgd::Quaternion m_stressOrientation;
     pgd::Vector3 m_torqueStressCoords;
     pgd::Vector3 m_forceStressCoords;
     pgd::Vector3 m_torqueAxis;

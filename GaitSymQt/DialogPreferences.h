@@ -50,7 +50,7 @@ private:
 
     Ui::DialogPreferences *ui;
 
-    QList<SettingsWidget> m_SettingsWidgetList;
+    QList<SettingsWidget> m_settingsWidgetList;
 
     void initialiseTab(const QString &tabName, const QVector<SettingsItem> &settingItems);
     QColor getIdealTextColour(const QColor &rBackgroundColour);

@@ -5,7 +5,6 @@
 #include "Preferences.h"
 #include "Body.h"
 #include "LineEditDouble.h"
-#include "LineEditPath.h"
 #include "DialogProperties.h"
 #include "MainWindow.h"
 
@@ -37,6 +36,10 @@ DialogGlobal::DialogGlobal(QWidget *parent) :
     connect(ui->pushButtonDefaults, SIGNAL(clicked()), this, SLOT(setDefaults()));
     connect(ui->checkBoxSpringDamping, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSpringDampingStateChanged(int)));
 
+    // this means that when text is edited (but not when changed programmatically since that will cause loops), the change is propagated
+    connect(ui->lineEditStepSize, &QLineEdit::textEdited, ui->lineEditStepSizePhysX, &QLineEdit::setText);
+    connect(ui->lineEditStepSizePhysX, &QLineEdit::textEdited, ui->lineEditStepSize, &QLineEdit::setText);
+
     restoreGeometry(Preferences::valueQByteArray("DialogGlobalGeometry"));
 
 }
@@ -63,6 +66,8 @@ void DialogGlobal::accept() // this catches OK and return/enter
     m_outputGlobal->setNumericalErrorsScore(ui->lineEditNumericalErrorScore->value());
     m_outputGlobal->setLinearDamping(ui->lineEditLinearDamping->value());
     m_outputGlobal->setAngularDamping(ui->lineEditAngularDamping->value());
+    m_outputGlobal->setDefaultLength(ui->lineEditDefaultLengthPhysX->value());
+    m_outputGlobal->setDefaultSpeed(ui->lineEditDefaultSpeedPhysX->value());
     m_outputGlobal->setAllowConnectedCollisions(ui->checkBoxAllowConnectedCollisions->isChecked());
     m_outputGlobal->setAllowInternalCollisions(ui->checkBoxAllowInternalCollisions->isChecked());
     m_outputGlobal->setPermittedNumericalErrors(ui->spinBoxPermittedErrorCount->value());
@@ -75,7 +80,7 @@ void DialogGlobal::accept() // this catches OK and return/enter
         double damping_constant = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double cfm, erp;
-        ConvertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
+        convertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
         m_outputGlobal->setCFM(cfm);
         m_outputGlobal->setERP(erp);
         m_outputGlobal->setSpringConstant(spring_constant);
@@ -87,7 +92,7 @@ void DialogGlobal::accept() // this catches OK and return/enter
         double erp = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double spring_constant, damping_constant;
-        ConvertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
+        convertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
         m_outputGlobal->setCFM(cfm);
         m_outputGlobal->setERP(erp);
         m_outputGlobal->setSpringConstant(spring_constant);
@@ -95,11 +100,11 @@ void DialogGlobal::accept() // this catches OK and return/enter
     }
 
     int count = ui->listWidgetMeshPath->count();
-    m_outputGlobal->MeshSearchPath()->clear();
+    m_outputGlobal->meshSearchPath()->clear();
     for (int i = 0; i < count; i++)
     {
         QString itemText = ui->listWidgetMeshPath->item(i)->text();
-        if (itemText.size()) m_outputGlobal->MeshSearchPath()->push_back(itemText.toStdString());
+        if (itemText.size()) m_outputGlobal->meshSearchPath()->push_back(itemText.toStdString());
     }
 
     if (m_inputGlobal)
@@ -198,31 +203,34 @@ void DialogGlobal::updateUI(const GaitSym::Global *globalPtr)
     }
 
     ui->lineEditCFM->setValue(globalPtr->CFM());
-    ui->lineEditContactMaxCorrectingVel->setValue(globalPtr->ContactMaxCorrectingVel());
+    ui->lineEditContactMaxCorrectingVel->setValue(globalPtr->contactMaxCorrectingVel());
     ui->lineEditERP->setValue(globalPtr->ERP());
-    ui->lineEditContactSurfaceLayer->setValue(globalPtr->ContactSurfaceLayer());
-    ui->lineEditGravityX->setValue(globalPtr->Gravity().x);
-    ui->lineEditGravityY->setValue(globalPtr->Gravity().y);
-    ui->lineEditGravityZ->setValue(globalPtr->Gravity().z);
-    ui->lineEditMechanicalEnergyLimit->setValue(globalPtr->MechanicalEnergyLimit());
-    ui->lineEditMetabolicEnergyLimit->setValue(globalPtr->MetabolicEnergyLimit());
-    ui->lineEditStepSize->setValue(globalPtr->StepSize());
-    ui->lineEditTimeLimit->setValue(globalPtr->TimeLimit());
-    ui->lineEditNumericalErrorScore->setValue(globalPtr->NumericalErrorsScore());
-    ui->lineEditLinearDamping->setValue(globalPtr->LinearDamping());
-    ui->lineEditAngularDamping->setValue(globalPtr->AngularDamping());
-    ui->checkBoxAllowConnectedCollisions->setChecked(globalPtr->AllowConnectedCollisions());
-    ui->checkBoxAllowInternalCollisions->setChecked(globalPtr->AllowInternalCollisions());
-    ui->spinBoxPermittedErrorCount->setValue(globalPtr->PermittedNumericalErrors());
+    ui->lineEditContactSurfaceLayer->setValue(globalPtr->contactSurfaceLayer());
+    ui->lineEditGravityX->setValue(globalPtr->gravity().x);
+    ui->lineEditGravityY->setValue(globalPtr->gravity().y);
+    ui->lineEditGravityZ->setValue(globalPtr->gravity().z);
+    ui->lineEditMechanicalEnergyLimit->setValue(globalPtr->mechanicalEnergyLimit());
+    ui->lineEditMetabolicEnergyLimit->setValue(globalPtr->metabolicEnergyLimit());
+    ui->lineEditStepSize->setValue(globalPtr->stepSize());
+    ui->lineEditStepSizePhysX->setValue(globalPtr->stepSize());
+    ui->lineEditTimeLimit->setValue(globalPtr->timeLimit());
+    ui->lineEditNumericalErrorScore->setValue(globalPtr->numericalErrorsScore());
+    ui->lineEditLinearDamping->setValue(globalPtr->linearDamping());
+    ui->lineEditAngularDamping->setValue(globalPtr->angularDamping());
+    ui->lineEditDefaultLengthPhysX->setValue(globalPtr->defaultLength());
+    ui->lineEditDefaultSpeedPhysX->setValue(globalPtr->defaultSpeed());
+    ui->checkBoxAllowConnectedCollisions->setChecked(globalPtr->allowConnectedCollisions());
+    ui->checkBoxAllowInternalCollisions->setChecked(globalPtr->allowInternalCollisions());
+    ui->spinBoxPermittedErrorCount->setValue(globalPtr->permittedNumericalErrors());
 
     ui->listWidgetMeshPath->clear();
-    for (size_t i = 0; i < globalPtr->ConstMeshSearchPath()->size(); i++)
+    for (size_t i = 0; i < globalPtr->constMeshSearchPath()->size(); i++)
     {
-        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(globalPtr->ConstMeshSearchPath()->at(i)));
+        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(globalPtr->constMeshSearchPath()->at(i)));
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         ui->listWidgetMeshPath->addItem(item);
     }
-    for (size_t i = globalPtr->ConstMeshSearchPath()->size(); i < 100; i++)
+    for (size_t i = globalPtr->constMeshSearchPath()->size(); i < 100; i++)
     {
         QListWidgetItem *item = new QListWidgetItem(QString());
         item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -240,7 +248,7 @@ void DialogGlobal::checkBoxSpringDampingStateChanged(int /* state */)
         double erp = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double spring_constant, damping_constant;
-        ConvertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
+        convertToSpringAndDampingConstants(erp, cfm, integration_stepsize, &spring_constant, &damping_constant);
         ui->lineEditCFM->setValue(spring_constant);
         ui->lineEditERP->setValue(damping_constant);
     }
@@ -252,13 +260,13 @@ void DialogGlobal::checkBoxSpringDampingStateChanged(int /* state */)
         double damping_constant = ui->lineEditERP->value();
         double integration_stepsize = ui->lineEditStepSize->value();
         double cfm, erp;
-        ConvertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
+        convertToCFMERP(spring_constant, damping_constant, integration_stepsize, &cfm, &erp);
         ui->lineEditCFM->setValue(cfm);
         ui->lineEditERP->setValue(erp);
     }
 }
 
-void DialogGlobal::ConvertToCFMERP(double spring_constant, double damping_constant, double integration_stepsize, double *cfm, double *erp)
+void DialogGlobal::convertToCFMERP(double spring_constant, double damping_constant, double integration_stepsize, double *cfm, double *erp)
 {
     // naive version could cause divide by zero errors
     // *erp = (integration_stepsize * spring_constant) / ((integration_stepsize * spring_constant) + damping_constant);
@@ -277,7 +285,7 @@ void DialogGlobal::ConvertToCFMERP(double spring_constant, double damping_consta
     return;
 }
 
-void DialogGlobal::ConvertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize, double *spring_constant, double *damping_constant)
+void DialogGlobal::convertToSpringAndDampingConstants(double erp, double cfm, double integration_stepsize, double *spring_constant, double *damping_constant)
 {
     // naive version could cause divide by zero errors
     // *spring_constant = erp / (cfm * integration_stepsize);
@@ -307,7 +315,7 @@ void DialogGlobal::properties()
     if (m_inputGlobal)
     {
         globalAxesSize.value = m_inputGlobal->size1();
-        backgroundColour.value = QColor(QString::fromStdString(m_inputGlobal->colour1().GetHexARGB()));
+        backgroundColour.value = QColor(QString::fromStdString(m_inputGlobal->colour1().hexARGB()));
     }
     m_properties.clear();
     m_properties = { { globalAxesSize.key, globalAxesSize },
@@ -375,14 +383,16 @@ void DialogGlobal::initialiseDefaultGlobal()
     m_defaultGlobal.setLinearDamping(Preferences::valueDouble("GlobalDefaultLinearDamping"));
     m_defaultGlobal.setAngularDamping(Preferences::valueDouble("GlobalDefaultAngularDamping"));
     m_defaultGlobal.setNumericalErrorsScore(Preferences::valueDouble("GlobalDefaultNumericalErrorsScore"));
+    m_defaultGlobal.setDefaultLength(Preferences::valueDouble("GlobalDefaultLength"));
+    m_defaultGlobal.setDefaultSpeed(Preferences::valueDouble("GlobalDefaultSpeed"));
 
-    m_defaultGlobal.MeshSearchPath()->clear();
+    m_defaultGlobal.meshSearchPath()->clear();
     std::string buf = Preferences::valueQString("GlobalDefaultMeshSearchPath").toStdString();
     std::vector<std::string> encodedMeshSearchPath;
     if (buf.size())
     {
         pystring::split(buf, encodedMeshSearchPath, ":"s);
-        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_defaultGlobal.MeshSearchPath()->push_back(GaitSym::Global::percentDecode(encodedMeshSearchPath[i]));
+        for (size_t i = 0; i < encodedMeshSearchPath.size(); i++) m_defaultGlobal.meshSearchPath()->push_back(GaitSym::Global::percentDecode(encodedMeshSearchPath[i]));
     }
 }
 

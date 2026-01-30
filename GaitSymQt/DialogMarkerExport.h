@@ -21,7 +21,7 @@ public:
     explicit DialogMarkerExport(QWidget *parent = nullptr);
     ~DialogMarkerExport() Q_DECL_OVERRIDE;
 
-    int ExportMarkers();
+    int exportMarkers();
 
     void setSimulation(GaitSym::Simulation *simulation);
 
@@ -40,8 +40,8 @@ private:
 
     GaitSym::Simulation *m_simulation = nullptr;
 
-    void SetUIElementsFromPreferences();
-    void SaveUIElementsToPreferences();
+    void setUIElementsFromPreferences();
+    void saveUIElementsToPreferences();
 
     void EnableWidgets();
 };

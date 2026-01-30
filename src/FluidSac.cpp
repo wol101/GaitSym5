@@ -27,11 +27,11 @@ FluidSac::FluidSac()
 
 void FluidSac::calculateVolume()
 {
-    for (size_t i = 0; i < m_markerList.size(); i++) m_vertexList[i] = m_markerList[i]->GetWorldPosition();
+    for (size_t i = 0; i < m_markerList.size(); i++) m_vertexList[i] = m_markerList[i]->worldPosition();
     double currentVolume = volumeOfMesh(m_triangleList, m_vertexList);
-    double deltaT = simulation()->GetTimeIncrement() / 1e-6;
+    double deltaT = simulation()->global()->stepSize() / 1e-6;
     std::vector<pgd::Vector3> deltaList(m_markerList.size());
-    for (size_t i = 0; i < m_markerList.size(); i++) deltaList[i] = m_markerList[i]->GetWorldLinearVelocity() * deltaT; // using the marker velocities gives a semi-implicit solution which should be more stable
+    for (size_t i = 0; i < m_markerList.size(); i++) deltaList[i] = m_markerList[i]->worldLinearVelocity() * deltaT; // using the marker velocities gives a semi-implicit solution which should be more stable
     std::vector<pgd::Vector3> vertexList1 = m_vertexList;
     std::vector<pgd::Vector3> vertexList2 = m_vertexList;
     for (size_t i = 0; i < m_markerList.size(); i++) vertexList1[i] -= deltaList[i];
@@ -55,11 +55,11 @@ void FluidSac::calculateLoadsOnMarkers()
         areaCentroidNormal(m_vertexList[it->v0], m_vertexList[it->v1], m_vertexList[it->v2], &it->area, &it->centroid, &it->normal);
 
         // now rotate the system so that the normal is aligned to the z axis
-        pgd::Quaternion r = pgd::FindRotation(it->normal, pgd::Vector3(0, 0, 1));
-        pgd::Vector3 v0 = pgd::QVRotate(r, m_vertexList[it->v0]);
-        pgd::Vector3 v1 = pgd::QVRotate(r, m_vertexList[it->v1]);
-        pgd::Vector3 v2 = pgd::QVRotate(r, m_vertexList[it->v2]);
-        pgd::Vector3 centroid = pgd::QVRotate(r, it->centroid);
+        pgd::Quaternion r = pgd::findRotation(it->normal, pgd::Vector3(0, 0, 1));
+        pgd::Vector3 v0 = pgd::qVRotate(r, m_vertexList[it->v0]);
+        pgd::Vector3 v1 = pgd::qVRotate(r, m_vertexList[it->v1]);
+        pgd::Vector3 v2 = pgd::qVRotate(r, m_vertexList[it->v2]);
+        pgd::Vector3 centroid = pgd::qVRotate(r, it->centroid);
 
         // now we can use the Z=0 triangle formulae
         // the triangle is in the z=0 plane
@@ -87,15 +87,15 @@ void FluidSac::calculateLoadsOnMarkers()
         double R2 = (F*(x*y0 - x0*y - x*y1 + x0*y1 + x1*y - x1*y0)) / denom;
 
         // and add the reaction forces to the body
-        m_pointForceList[pointListIndex].body = m_markerList[it->v0]->GetBody();
+        m_pointForceList[pointListIndex].body = m_markerList[it->v0]->body();
         m_pointForceList[pointListIndex].point = m_vertexList[it->v0];
         m_pointForceList[pointListIndex].vector = it->normal * R0;
         pointListIndex++;
-        m_pointForceList[pointListIndex].body = m_markerList[it->v1]->GetBody();
+        m_pointForceList[pointListIndex].body = m_markerList[it->v1]->body();
         m_pointForceList[pointListIndex].point = m_vertexList[it->v1];
         m_pointForceList[pointListIndex].vector = it->normal * R1;
         pointListIndex++;
-        m_pointForceList[pointListIndex].body = m_markerList[it->v2]->GetBody();
+        m_pointForceList[pointListIndex].body = m_markerList[it->v2]->body();
         m_pointForceList[pointListIndex].point = m_vertexList[it->v2];
         m_pointForceList[pointListIndex].vector = it->normal * R2;
         pointListIndex++;
@@ -131,7 +131,7 @@ bool FluidSac::isGoodMesh(const std::vector<FluidSac::Triangle> &triangleList, c
 
 double FluidSac::signedVolumeOfTriangle(pgd::Vector3 p1, pgd::Vector3 p2, pgd::Vector3 p3)
 {
-    return p1.Dot(p2.Cross(p3)) / 6.0;
+    return p1.dot(p2.cross(p3)) / 6.0;
 }
 
 double FluidSac::volumeOfMesh(const std::vector<FluidSac::Triangle> &triangleList, const std::vector<pgd::Vector3> &vectorList)
@@ -190,9 +190,9 @@ void FluidSac::areaCentroidNormal(const pgd::Vector3 &v0, const pgd::Vector3 &v1
     *centroid = (v0 + v1 + v2) / 3.0; // centroid is easy for triangles
     pgd::Vector3 edge0 = v1 - v0;
     pgd::Vector3 edge1 = v2 - v1;
-    pgd::Vector3 crossProduct = edge0.Cross(edge1);
-    double crossProductMagnitude = crossProduct.Magnitude(); // cross product magnitude is the area of the parallelogram
-    *area = crossProduct.Magnitude() / 2; // and the area of the triangle is half the area of the prallelogram
+    pgd::Vector3 crossProduct = edge0.cross(edge1);
+    double crossProductMagnitude = crossProduct.magnitude(); // cross product magnitude is the area of the parallelogram
+    *area = crossProduct.magnitude() / 2; // and the area of the triangle is half the area of the prallelogram
     *normal = crossProduct / crossProductMagnitude;
 }
 
@@ -209,7 +209,7 @@ void FluidSac::areaCentroidNormal(const pgd::Vector3 &v0, const pgd::Vector3 &v1
     pgd::Vector3 normal2;
     areaCentroidNormal(v0, v2, v3, &area2, &centroid2, &normal2);
     // check normals
-    assert(normal1.Dot(normal2) > 0.9999999999);
+    assert(normal1.dot(normal2) > 0.9999999999);
     *normal = normal1;
     *area = area1 + area2;
     *centroid = (centroid1 * area1 + centroid2 * area2) / *area;
@@ -254,7 +254,7 @@ void FluidSac::triangleVertices(size_t triangleIndex, double vertices[9]) const
     vertices[8] = m_vertexList[tri->v2].z;
 }
 
-void FluidSac::LateInitialisation()
+void FluidSac::lateInitialisation()
 {
     this->calculateVolume();
     // m_lastSacVolume = m_sacVolume;
@@ -269,7 +269,7 @@ std::string *FluidSac::createFromAttributes()
     buf.reserve(1000000);
 
     if (findAttribute("NumMarkers"s, &buf) == nullptr) return lastErrorPtr();
-    size_t numMarkers = size_t(GSUtil::Int(buf));
+    size_t numMarkers = size_t(GSUtil::toInt(buf));
     if (findAttribute("MarkerIDList"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> markerNames;
     pystring::split(buf, markerNames);
@@ -282,8 +282,8 @@ std::string *FluidSac::createFromAttributes()
     m_markerList.reserve(markerNames.size());
     for (size_t i = 0; i < markerNames.size(); i++)
     {
-        auto it = this->simulation()->GetMarkerList()->find(markerNames[i]);
-        if (it == this->simulation()->GetMarkerList()->end())
+        auto it = this->simulation()->markerList()->find(markerNames[i]);
+        if (it == this->simulation()->markerList()->end())
         {
             setLastError("FLUIDSAC ID=\""s + name() +"\" Marker ID=\""s + markerNames[i] + "\" not found"s);
             return lastErrorPtr();
@@ -291,7 +291,7 @@ std::string *FluidSac::createFromAttributes()
         m_markerList.push_back(it->second.get());
     }
     if (findAttribute("NumTriangles"s, &buf) == nullptr) return lastErrorPtr();
-    size_t numTriangles = size_t(GSUtil::Int(buf));
+    size_t numTriangles = size_t(GSUtil::toInt(buf));
     if (findAttribute("TriangleIndexList"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> markerIndices;
     pystring::split(buf, markerIndices);
@@ -304,9 +304,9 @@ std::string *FluidSac::createFromAttributes()
     m_triangleList.resize(numTriangles);
     for (size_t i = 0; i < numTriangles; i++)
     {
-        m_triangleList[i].v0 = size_t(GSUtil::Int(markerIndices[i * 3 + 0]));
-        m_triangleList[i].v1 = size_t(GSUtil::Int(markerIndices[i * 3 + 1]));
-        m_triangleList[i].v2 = size_t(GSUtil::Int(markerIndices[i * 3 + 2]));
+        m_triangleList[i].v0 = size_t(GSUtil::toInt(markerIndices[i * 3 + 0]));
+        m_triangleList[i].v1 = size_t(GSUtil::toInt(markerIndices[i * 3 + 1]));
+        m_triangleList[i].v2 = size_t(GSUtil::toInt(markerIndices[i * 3 + 2]));
         m_triangleList[i].area = 0;
         m_triangleList[i].normal = {0, 0, 0};
         m_triangleList[i].centroid = {0, 0, 0};
@@ -333,19 +333,19 @@ void FluidSac::appendToAttributes()
 {
     NamedObject::appendToAttributes();
     std::string buf;
-    setAttribute("NumMarkers"s, *GSUtil::ToString(m_markerList.size(), &buf));
+    setAttribute("NumMarkers"s, *GSUtil::toString(m_markerList.size(), &buf));
     std::vector<std::string> stringList;
     stringList.reserve(m_markerList.size());
     for (size_t i = 0; i < m_markerList.size(); i++) stringList.push_back(m_markerList[i]->name());
     setAttribute("MarkerIDList"s, pystring::join(" "s, stringList));
-    setAttribute("NumTriangles"s, *GSUtil::ToString(m_triangleList.size(), &buf));
+    setAttribute("NumTriangles"s, *GSUtil::toString(m_triangleList.size(), &buf));
     stringList.clear();
     stringList.reserve(m_triangleList.size());
     size_t triVertices[3];
     for (size_t i = 0; i < m_triangleList.size(); i++)
     {
         triVertices[0] = m_triangleList[i].v0; triVertices[1] = m_triangleList[i].v1; triVertices[2] = m_triangleList[i].v2;
-        stringList.push_back(*GSUtil::ToString(triVertices, 3, &buf));
+        stringList.push_back(*GSUtil::toString(triVertices, 3, &buf));
     }
     setAttribute("TriangleIndexList"s, pystring::join(" "s, stringList));
 }
@@ -366,7 +366,7 @@ std::string FluidSac::dumpToString()
         }
         ss << "\n";
     }
-    ss << simulation()->GetTime() << "\t" << m_sacVolume << "\t" << m_pressure << "\t" << m_pointForceList.size();
+    ss << simulation()->simulationTime() << "\t" << m_sacVolume << "\t" << m_pressure << "\t" << m_pointForceList.size();
     for (size_t i = 0; i < m_pointForceList.size(); i++)
     {
         ss << "\t" << m_pointForceList[i].body->name() << "\t" << m_pointForceList[i].point[0] << "\t" << m_pointForceList[i].point[1] << "\t" << m_pointForceList[i].point[2] << "\t" <<

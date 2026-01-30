@@ -41,16 +41,16 @@ double DataTargetQuaternion::calculateError(size_t valueListIndex)
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
-            q = body->GetQuaternion();
-            angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+            q = body->quaternion();
+            angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            q = geom->GetWorldQuaternion();
-            angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+            q = geom->worldQuaternion();
+            angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
             break;
         }
         std::cerr << "DataTargetQuaternion target missing error " << name() << "\n";
@@ -75,16 +75,16 @@ double DataTargetQuaternion::calculateError(size_t index, size_t indexNext, doub
 
     while (true)
     {
-        if (Body *body = dynamic_cast<Body *>(GetTarget()))
+        if (Body *body = dynamic_cast<Body *>(target()))
         {
-            q = body->GetQuaternion();
-            angle = pgd::FindAngle(interpolatedTarget, q);
+            q = body->quaternion();
+            angle = pgd::findAngle(interpolatedTarget, q);
             break;
         }
-        if (Geom *geom = dynamic_cast<Geom *>(GetTarget()))
+        if (Geom *geom = dynamic_cast<Geom *>(target()))
         {
-            q = geom->GetWorldQuaternion();
-            angle = pgd::FindAngle(interpolatedTarget, q);
+            q = geom->worldQuaternion();
+            angle = pgd::findAngle(interpolatedTarget, q);
             break;
         }
         std::cerr << "DataTargetQuaternion target missing error " << name() << "\n";
@@ -109,21 +109,21 @@ std::string DataTargetQuaternion::dumpToString()
     pgd::Quaternion q;
 
     size_t valueListIndex = 0;
-    auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->GetTime());
+    auto lowerBounds = std::lower_bound(targetTimeList()->begin(), targetTimeList()->end(), simulation()->simulationTime());
     if (lowerBounds != targetTimeList()->end()) valueListIndex = std::distance(targetTimeList()->begin(), lowerBounds);
 
-    if ((body = dynamic_cast<Body *>(GetTarget())) != nullptr)
+    if ((body = dynamic_cast<Body *>(target())) != nullptr)
     {
-        q = body->GetQuaternion();
-        angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+        q = body->quaternion();
+        angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
     }
-    else if ((geom = dynamic_cast<Geom *>(GetTarget())) != nullptr)
+    else if ((geom = dynamic_cast<Geom *>(target())) != nullptr)
     {
-        q = geom->GetWorldQuaternion();
-        angle = pgd::FindAngle(m_qValueList[size_t(valueListIndex)], q);
+        q = geom->worldQuaternion();
+        angle = pgd::findAngle(m_qValueList[size_t(valueListIndex)], q);
     }
 
-    ss << simulation()->GetTime() <<
+    ss << simulation()->simulationTime() <<
           "\t" << m_qValueList[size_t(valueListIndex)].n << "\t" << m_qValueList[size_t(valueListIndex)].x << "\t" << m_qValueList[size_t(valueListIndex)].y << "\t" << m_qValueList[size_t(valueListIndex)].z <<
           "\t" << q[0] << "\t" << q[1] << "\t" << q[2] << "\t" << q[3] <<
           "\t" << angle <<
@@ -131,12 +131,12 @@ std::string DataTargetQuaternion::dumpToString()
     return ss.str();
 }
 
-void DataTargetQuaternion::SetTarget(NamedObject *target)
+void DataTargetQuaternion::setTarget(NamedObject *target)
 {
     m_target = target;
 }
 
-NamedObject *DataTargetQuaternion::GetTarget()
+NamedObject *DataTargetQuaternion::target()
 {
     return m_target;
 }
@@ -155,12 +155,12 @@ std::string *DataTargetQuaternion::createFromAttributes()
     if (findAttribute("TargetID"s, &buf) == nullptr) return lastErrorPtr();
     for (bool once = true; once; once = false)
     {
-        auto iterBody = simulation()->GetBodyList()->find(buf);
-        if (iterBody != simulation()->GetBodyList()->end()) { m_target = iterBody->second.get(); break; }
-        auto iterGeom = simulation()->GetGeomList()->find(buf);
-        if (iterGeom != simulation()->GetGeomList()->end()) { m_target = iterGeom->second.get(); break; }
-        auto iterMarker = simulation()->GetMarkerList()->find(buf);
-        if (iterMarker != simulation()->GetMarkerList()->end()) { m_target = iterMarker->second.get(); break; }
+        auto iterBody = simulation()->bodyList()->find(buf);
+        if (iterBody != simulation()->bodyList()->end()) { m_target = iterBody->second.get(); break; }
+        auto iterGeom = simulation()->geomList()->find(buf);
+        if (iterGeom != simulation()->geomList()->end()) { m_target = iterGeom->second.get(); break; }
+        auto iterMarker = simulation()->markerList()->find(buf);
+        if (iterMarker != simulation()->markerList()->end()) { m_target = iterMarker->second.get(); break; }
     }
     if (!m_target)
     {
@@ -185,8 +185,8 @@ std::string *DataTargetQuaternion::createFromAttributes()
     m_qValueList.reserve(targetTimeList()->size());
     for (size_t i = 0; i < targetTimeList()->size(); i++)
     {
-        pgd::Quaternion q(GSUtil::Double(targetValuesTokens[i * 4]), GSUtil::Double(targetValuesTokens[i * 4 + 1]),
-                          GSUtil::Double(targetValuesTokens[i * 4 + 2]), GSUtil::Double(targetValuesTokens[i * 4 + 3]));
+        pgd::Quaternion q(GSUtil::toDouble(targetValuesTokens[i * 4]), GSUtil::toDouble(targetValuesTokens[i * 4 + 1]),
+                          GSUtil::toDouble(targetValuesTokens[i * 4 + 2]), GSUtil::toDouble(targetValuesTokens[i * 4 + 3]));
         m_qValueList.push_back(q);
     }
 
@@ -209,7 +209,7 @@ void DataTargetQuaternion::appendToAttributes()
         valueList.push_back(m_qValueList[i].y);
         valueList.push_back(m_qValueList[i].z);
     }
-    setAttribute("TargetValues"s, *GSUtil::ToString(valueList.data(), valueList.size(), &buf));
+    setAttribute("TargetValues"s, *GSUtil::toString(valueList.data(), valueList.size(), &buf));
     setAttribute("TargetID"s, m_target->name());
 }
 

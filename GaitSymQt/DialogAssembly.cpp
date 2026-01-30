@@ -249,12 +249,12 @@ void DialogAssembly::reject() // this catches cancel, close and escape key
 void DialogAssembly::comboBoxBodyListCurrentIndexChanged(const QString &text)
 {
     if (!m_simulation) return;
-    GaitSym::Body *body = m_simulation->GetBody(text.toStdString());
+    GaitSym::Body *body = m_simulation->getBody(text.toStdString());
     if (body)
     {
-        pgd::Vector3 position(body->GetPosition());
-        pgd::Quaternion quaternion(body->GetQuaternion());
-        pgd::Vector3 euler = MakeEulerAnglesFromQ(quaternion);
+        pgd::Vector3 position(body->position());
+        pgd::Quaternion quaternion(body->quaternion());
+        pgd::Vector3 euler = makeEulerAnglesFromQ(quaternion);
         ui->lineEditX->setValue(position.x);
         ui->lineEditY->setValue(position.y);
         ui->lineEditZ->setValue(position.z);

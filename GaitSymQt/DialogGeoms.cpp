@@ -91,7 +91,7 @@ void DialogGeoms::accept() // this catches OK and return/enter
 {
     qDebug() << "DialogGeoms::accept()";
 
-    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->GetMarkerList();
+    std::map<std::string, std::unique_ptr<GaitSym::Marker>> *markerList = m_simulation->markerList();
     QString strapTab = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     while (true)
     {
@@ -113,12 +113,12 @@ void DialogGeoms::accept() // this catches OK and return/enter
         if (strapTab == "Plane")
         {
             GaitSym::Marker *geomMarker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
-            pgd::Vector3 normal = geomMarker->GetWorldAxis(GaitSym::Marker::Axis::Z);
-            pgd::Vector3 point = geomMarker->GetWorldPosition();
+            pgd::Vector3 normal = geomMarker->worldAxis(GaitSym::Marker::Axis::Z);
+            pgd::Vector3 point = geomMarker->worldPosition();
             double a = normal.x;
             double b = normal.y;
             double c = normal.z;
-            double d = normal.Dot(point);
+            double d = normal.dot(point);
             m_outputGeom = std::make_unique<GaitSym::PlaneGeom>(a, b, c, d);
             break;
         }
@@ -129,10 +129,21 @@ void DialogGeoms::accept() // this catches OK and return/enter
             convexGeom->setIndexStart(ui->spinBoxIndexStartConvex->value());
             std::string triangleIndicesString = ui->plainTextEditTriangleIndicesConvex->toPlainText().toStdString();
             std::vector<int> *triangles = convexGeom->triangles();
-            GaitSym::GSUtil::Int(triangleIndicesString, triangles);
+            GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
+            if (convexGeom->indexStart()) { for (size_t i = 0; i < triangles->size(); i++) { (*triangles)[i] -= convexGeom->indexStart(); } }
+            if (convexGeom->reverseWinding()) { for (size_t i = 0; i < triangles->size(); i += 3) { std::swap(triangles[i], triangles[i + 2]); } }
             std::string verticesString = ui->plainTextEditVerticesConvex->toPlainText().toStdString();
             std::vector<double> *vertices = convexGeom->vertices();
-            GaitSym::GSUtil::Double(verticesString, vertices);
+            GaitSym::GSUtil::toDouble(verticesString, vertices);
+            if (ui->checkBoxGlobalMeshConvex->isChecked()) // need to convert the vertices into marker based coordinates
+            {
+                GaitSym::Marker *marker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
+                for (size_t i = 0; i < vertices->size(); i += 3)
+                {
+                    pgd::Vector3 markerBasedPosition = marker->position(pgd::Vector3(vertices->data() + i));
+                    std::copy_n(markerBasedPosition.data(), 3, vertices->begin() + i);
+                }
+            }
             m_outputGeom = std::move(convexGeom);
             break;
         }
@@ -143,10 +154,21 @@ void DialogGeoms::accept() // this catches OK and return/enter
             trimeshGeom->setIndexStart(ui->spinBoxIndexStartTrimesh->value());
             std::string triangleIndicesString = ui->plainTextEditTriangleIndicesTrimesh->toPlainText().toStdString();
             std::vector<int> *triangles = trimeshGeom->triangles();
-            GaitSym::GSUtil::Int(triangleIndicesString, triangles);
+            GaitSym::GSUtil::toInt(triangleIndicesString, triangles);
+            if (trimeshGeom->indexStart()) { for (size_t i = 0; i < triangles->size(); ++i) { (*triangles)[i] -= trimeshGeom->indexStart(); } }
+            if (trimeshGeom->reverseWinding()) { for (size_t i = 0; i < triangles->size(); i += 3) { std::swap(triangles[i], triangles[i + 2]); } }
             std::string verticesString = ui->plainTextEditVerticesTrimesh->toPlainText().toStdString();
             std::vector<double> *vertices = trimeshGeom->vertices();
-            GaitSym::GSUtil::Double(verticesString, vertices);
+            GaitSym::GSUtil::toDouble(verticesString, vertices);
+            if (ui->checkBoxGlobalMeshTrimesh->isChecked()) // need to convert the vertices into marker based coordinates
+            {
+                GaitSym::Marker *marker = markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get();
+                for (size_t i = 0; i < vertices->size(); i += 3)
+                {
+                    pgd::Vector3 markerBasedPosition = marker->position(pgd::Vector3(vertices->data() + i));
+                    std::copy_n(markerBasedPosition.data(), 3, vertices->begin() + i);
+                }
+            }
             m_outputGeom = std::move(trimeshGeom);
             break;
         }
@@ -157,17 +179,17 @@ void DialogGeoms::accept() // this catches OK and return/enter
     m_outputGeom->setName(ui->lineEditGeomID->text().toStdString());
     m_outputGeom->setSimulation(m_simulation);
     m_outputGeom->setGeomMarker(markerList->at(ui->comboBoxGeomMarker->currentText().toStdString()).get());
-    m_outputGeom->SetSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->GetTimeIncrement());
-    m_outputGeom->SetContactMu(ui->lineEditMu->value());
-    m_outputGeom->SetContactRho(ui->lineEditRho->value());
-    m_outputGeom->SetContactBounce(ui->lineEditBounce->value());
-    m_outputGeom->SetAbort(ui->checkBoxAbort->isChecked());
+    m_outputGeom->setSpringDamp(ui->lineEditSpring->value(), ui->lineEditDamp->value(), m_simulation->global()->stepSize());
+    m_outputGeom->setContactMu(ui->lineEditMu->value());
+    m_outputGeom->setContactRho(ui->lineEditRho->value());
+    m_outputGeom->setContactBounce(ui->lineEditBounce->value());
+    m_outputGeom->setAbort(ui->checkBoxAbort->isChecked());
 
-    std::vector<GaitSym::Geom *> *excludedGeoms = m_outputGeom->GetExcludeList();
+    std::vector<GaitSym::Geom *> *excludedGeoms = m_outputGeom->excludeList();
     excludedGeoms->clear();
     if (ui->spinBoxNExcludedGeoms->value())
     {
-        auto geomList = m_simulation->GetGeomList();
+        auto geomList = m_simulation->geomList();
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
         {
             GaitSym::Geom *geom = geomList->at(m_excludedGeomComboBoxList[i]->currentText().toStdString()).get();
@@ -234,7 +256,7 @@ void DialogGeoms::lateInitialise()
 
     // set the marker lists
     QStringList markerIDs;
-    for (auto &&it : *m_simulation->GetMarkerList()) markerIDs.append(QString::fromStdString(it.first));
+    for (auto &&it : *m_simulation->markerList()) markerIDs.append(QString::fromStdString(it.first));
     ui->comboBoxGeomMarker->addItems(markerIDs);
 
     // now set some sensible defaults
@@ -267,7 +289,7 @@ void DialogGeoms::lateInitialise()
     if (!m_inputGeom)
     {
         // set default new name
-        auto nameSet = simulation()->GetNameSet();
+        auto nameSet = simulation()->nameSet();
         ui->lineEditGeomID->addStrings(nameSet);
         int initialNameCount = 0;
         QString initialName = QString("Geom%1").arg(initialNameCount, 3, 10, QLatin1Char('0'));
@@ -290,19 +312,19 @@ void DialogGeoms::lateInitialise()
     ui->lineEditGeomID->setText(QString::fromStdString(m_inputGeom->findAttribute("ID"s)));
     ui->lineEditGeomID->setEnabled(false);
     ui->comboBoxGeomMarker->setCurrentText(QString::fromStdString(m_inputGeom->findAttribute("MarkerID"s)));
-    if ((s = m_inputGeom->findAttribute("SpringConstant"s)).size()) ui->lineEditSpring->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("DampingConstant"s)).size()) ui->lineEditDamp->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Bounce"s)).size()) ui->lineEditBounce->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Mu"s)).size()) ui->lineEditMu->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Rho"s)).size()) ui->lineEditRho->setValue(GaitSym::GSUtil::Double(s));
-    if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GaitSym::GSUtil::Bool(s));
-    if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GaitSym::GSUtil::Bool(s));
+    if ((s = m_inputGeom->findAttribute("SpringConstant"s)).size()) ui->lineEditSpring->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("DampingConstant"s)).size()) ui->lineEditDamp->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Bounce"s)).size()) ui->lineEditBounce->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Mu"s)).size()) ui->lineEditMu->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Rho"s)).size()) ui->lineEditRho->setValue(GaitSym::GSUtil::toDouble(s));
+    if ((s = m_inputGeom->findAttribute("Abort"s)).size()) ui->checkBoxAbort->setChecked(GaitSym::GSUtil::toBool(s));
+    if ((s = m_inputGeom->findAttribute("Adhesion"s)).size()) ui->checkBoxAdhesion->setChecked(GaitSym::GSUtil::toBool(s));
 
-    std::vector<GaitSym::Geom *> *excludeList = m_inputGeom->GetExcludeList();
+    std::vector<GaitSym::Geom *> *excludeList = m_inputGeom->excludeList();
     if (excludeList->size())
     {
         QStringList geomIDs;
-        for (auto &&it : *m_simulation->GetGeomList()) geomIDs.append(QString::fromStdString(it.first));
+        for (auto &&it : *m_simulation->geomList()) geomIDs.append(QString::fromStdString(it.first));
         const QSignalBlocker blocker(ui->spinBoxNExcludedGeoms);
         ui->spinBoxNExcludedGeoms->setValue(int(excludeList->size()));
         for (int i = 0; i < ui->spinBoxNExcludedGeoms->value(); i++)
@@ -324,22 +346,22 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::SphereGeom *sphereGeom = dynamic_cast<GaitSym::SphereGeom *>(m_inputGeom))
     {
-        if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = sphereGeom->findAttribute("Radius"s)).size()) ui->lineEditSphereRadius->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Sphere"));
     }
 
     if (GaitSym::CappedCylinderGeom *cappedCylinderGeom = dynamic_cast<GaitSym::CappedCylinderGeom *>(m_inputGeom))
     {
-        if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = cappedCylinderGeom->findAttribute("Radius"s)).size()) ui->lineEditCapsuleRadius->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = cappedCylinderGeom->findAttribute("Length"s)).size()) ui->lineEditCapsuleLength->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Capsule"));
     }
 
     if (GaitSym::BoxGeom *boxGeom = dynamic_cast<GaitSym::BoxGeom *>(m_inputGeom))
     {
-        if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GaitSym::GSUtil::Double(s));
-        if ((s = boxGeom->findAttribute("LengthZ"s)).size()) ui->lineEditBoxLengthZ->setValue(GaitSym::GSUtil::Double(s));
+        if ((s = boxGeom->findAttribute("LengthX"s)).size()) ui->lineEditBoxLengthX->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = boxGeom->findAttribute("LengthY"s)).size()) ui->lineEditBoxLengthY->setValue(GaitSym::GSUtil::toDouble(s));
+        if ((s = boxGeom->findAttribute("LengthZ"s)).size()) ui->lineEditBoxLengthZ->setValue(GaitSym::GSUtil::toDouble(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Box"));
     }
 
@@ -351,8 +373,8 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::TrimeshGeom *trimeshGeom = dynamic_cast<GaitSym::TrimeshGeom *>(m_inputGeom))
     {
-        if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::Int(s));
-        if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = trimeshGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartTrimesh->setValue(GaitSym::GSUtil::toInt(s));
+        if ((s = trimeshGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingTrimesh->setChecked(GaitSym::GSUtil::toBool(s));
         if ((s = trimeshGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesTrimesh->setPlainText(QString::fromStdString(listToLines(pystring::split(s), 3)));
         if ((s = trimeshGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesTrimesh->setPlainText(QString::fromStdString(listToLines(pystring::split(s), 3)));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Trimesh"));
@@ -360,8 +382,8 @@ void DialogGeoms::lateInitialise()
 
     if (GaitSym::ConvexGeom *convexGeom = dynamic_cast<GaitSym::ConvexGeom *>(m_inputGeom))
     {
-        if ((s = convexGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartConvex->setValue(GaitSym::GSUtil::Int(s));
-        if ((s = convexGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingConvex->setChecked(GaitSym::GSUtil::Bool(s));
+        if ((s = convexGeom->findAttribute("IndexStart"s)).size()) ui->spinBoxIndexStartConvex->setValue(GaitSym::GSUtil::toInt(s));
+        if ((s = convexGeom->findAttribute("ReverseWinding"s)).size()) ui->checkBoxReverseWindingConvex->setChecked(GaitSym::GSUtil::toBool(s));
         if ((s = convexGeom->findAttribute("Vertices"s)).size()) ui->plainTextEditVerticesConvex->setPlainText(QString::fromStdString(s));
         if ((s = convexGeom->findAttribute("Triangles"s)).size()) ui->plainTextEditTriangleIndicesConvex->setPlainText(QString::fromStdString(s));
         ui->tabWidget->setCurrentIndex(tabNames.indexOf("Convex"));
@@ -385,7 +407,7 @@ void DialogGeoms::spinBoxChanged(const QString &/*text*/)
     {
         // get the lists in the right formats
         QStringList geomIDs;
-        for (auto &&it : *m_simulation->GetGeomList()) geomIDs.append(QString::fromStdString(it.first));
+        for (auto &&it : *m_simulation->geomList()) geomIDs.append(QString::fromStdString(it.first));
 
         // store the current values in the list
         QVector<QString> oldValues(m_excludedGeomComboBoxList.size());
@@ -449,8 +471,8 @@ void DialogGeoms::properties()
 
     if (m_inputGeom)
     {
-        geomColour1.value = QColor(QString::fromStdString(m_inputGeom->colour1().GetHexARGB()));
-        geomColour2.value = QColor(QString::fromStdString(m_inputGeom->colour2().GetHexARGB()));
+        geomColour1.value = QColor(QString::fromStdString(m_inputGeom->colour1().hexARGB()));
+        geomColour2.value = QColor(QString::fromStdString(m_inputGeom->colour2().hexARGB()));
         geomSize1.value = m_inputGeom->size1();
         geomSize2.value = m_inputGeom->size2();
         geomSize3.value = m_inputGeom->size3();

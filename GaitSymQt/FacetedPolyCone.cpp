@@ -49,5 +49,5 @@ FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, co
     colourArray[index][0] = vertexColours.back()[0]; colourArray[index][1] = vertexColours.back()[1]; colourArray[index][2] = vertexColours.back()[2];
     radiusArray[index] = radiusList.back();
     glePolyCone(int(nPoints), pointArray.get(), colourArray.get(), radiusArray.get());
-    RawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
+    rawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
 }

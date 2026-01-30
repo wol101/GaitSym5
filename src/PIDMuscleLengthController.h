@@ -21,9 +21,9 @@ class PIDMuscleLengthController : public Controller
 public:
     PIDMuscleLengthController();
 
-    void Initialise(double Kp, double Ki, double Kd);
+    void initialise(double Kp, double Ki, double Kd);
 
-    virtual void Update();
+    virtual void update();
 
     Muscle *muscle();
 

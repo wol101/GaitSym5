@@ -68,7 +68,7 @@ double DataTarget::positiveFunction(double v)
 // returns true when matchScore value is valid
 bool DataTarget::calculateMatchValue(double time, double *matchScore)
 {
-    m_index = size_t(0.5 + time / simulation()->GetTimeIncrement());
+    m_index = size_t(0.5 + time / simulation()->global()->stepSize());
     switch (m_interpolationType)
     {
     case Punctuated:
@@ -131,7 +131,7 @@ bool DataTarget::calculateMatchValue(double time, double *matchScore)
     }
     if (m_value < m_abortBelow || m_value > m_abortAbove)
     {
-        simulation()->SetDataTargetAbort(name());
+        simulation()->setDataTargetAbort(name());
         m_value += m_abortBonus;
     }
     *matchScore = m_value;
@@ -182,7 +182,7 @@ std::string DataTarget::dumpToString()
         setFirstDump(false);
         s += dumpHelper({"time"s, "index"s, "raw_error", "positive_error", "score"s});
     }
-    s += dumpHelper({simulation()->GetTime(), double(m_index), m_rawError, m_positiveError, m_value});
+    s += dumpHelper({simulation()->simulationTime(), double(m_index), m_rawError, m_positiveError, m_value});
     return s;
 }
 
@@ -198,13 +198,13 @@ std::string *DataTarget::createFromAttributes()
     buf.reserve(10000);
 
     if (findAttribute("Intercept"s, &buf) == nullptr) return lastErrorPtr();
-    m_intercept = GSUtil::Double(buf);
+    m_intercept = GSUtil::toDouble(buf);
     if (findAttribute("Slope"s, &buf) == nullptr) return lastErrorPtr();
-    m_slope = GSUtil::Double(buf);
+    m_slope = GSUtil::toDouble(buf);
 
-    if (findAttribute("AbortAbove"s, &buf)) m_abortAbove = GSUtil::Double(buf);
-    if (findAttribute("AbortBelow"s, &buf)) m_abortBelow = GSUtil::Double(buf);
-    if (findAttribute("AbortBonus"s, &buf)) m_abortBonus = GSUtil::Double(buf);
+    if (findAttribute("AbortAbove"s, &buf)) m_abortAbove = GSUtil::toDouble(buf);
+    if (findAttribute("AbortBelow"s, &buf)) m_abortBelow = GSUtil::toDouble(buf);
+    if (findAttribute("AbortBonus"s, &buf)) m_abortBonus = GSUtil::toDouble(buf);
 
     if (findAttribute("TargetTimes"s, &buf) == nullptr) return lastErrorPtr();
     std::vector<std::string> targetTimesTokens;
@@ -216,7 +216,7 @@ std::string *DataTarget::createFromAttributes()
     }
     m_targetTimeList.clear();
     m_targetTimeList.reserve(targetTimesTokens.size());
-    for (auto &&token : targetTimesTokens) m_targetTimeList.push_back(GSUtil::Double(token));
+    for (auto &&token : targetTimesTokens) m_targetTimeList.push_back(GSUtil::toDouble(token));
     if (monotonicTest(m_targetTimeList) != 1)
     {
         setLastError("DataTarget ID=\""s + name() +"\" TargetTimes are not in ascending order"s);
@@ -224,7 +224,7 @@ std::string *DataTarget::createFromAttributes()
     }
     m_targetTimeIndexList.clear();
     m_targetTimeIndexList.reserve(m_targetTimeList.size());
-    for (auto &&iter : m_targetTimeList) m_targetTimeIndexList.push_back(size_t(0.5 + iter / simulation()->GetTimeIncrement()));
+    for (auto &&iter : m_targetTimeList) m_targetTimeIndexList.push_back(size_t(0.5 + iter / simulation()->global()->stepSize()));
 
     if (findAttribute("MatchType"s, &buf) == nullptr) return lastErrorPtr();
     size_t matchTypeIndex;
@@ -276,12 +276,12 @@ void DataTarget::appendToAttributes()
     NamedObject::appendToAttributes();
     std::string buf;
     buf.reserve(size_t(m_targetTimeList.size()) * 32);
-    setAttribute("Intercept"s, *GSUtil::ToString(m_intercept, &buf));
-    setAttribute("Slope"s, *GSUtil::ToString(m_slope, &buf));
-    setAttribute("AbortAbove"s, *GSUtil::ToString(m_abortAbove, &buf));
-    setAttribute("AbortBelow"s, *GSUtil::ToString(m_abortBelow, &buf));
-    setAttribute("AbortBonus"s, *GSUtil::ToString(m_abortBonus, &buf));
-    setAttribute("TargetTimes"s, *GSUtil::ToString(m_targetTimeList.data(), m_targetTimeList.size(), &buf));
+    setAttribute("Intercept"s, *GSUtil::toString(m_intercept, &buf));
+    setAttribute("Slope"s, *GSUtil::toString(m_slope, &buf));
+    setAttribute("AbortAbove"s, *GSUtil::toString(m_abortAbove, &buf));
+    setAttribute("AbortBelow"s, *GSUtil::toString(m_abortBelow, &buf));
+    setAttribute("AbortBonus"s, *GSUtil::toString(m_abortBonus, &buf));
+    setAttribute("TargetTimes"s, *GSUtil::toString(m_targetTimeList.data(), m_targetTimeList.size(), &buf));
     setAttribute("MatchType", matchTypeStrings(m_matchType));
     setAttribute("InterpolationType", interpolationTypeStrings(m_interpolationType));
 }

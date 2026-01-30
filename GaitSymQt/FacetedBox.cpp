@@ -22,7 +22,7 @@
     ly *= 0.5;
     lz *= 0.5;
 
-    AllocateMemory(12);
+    allocateMemory(12);
     std::vector<pgd::Vector3> triangleStrip;
 
     // sides
@@ -36,7 +36,7 @@
     triangleStrip.push_back(pgd::Vector3(lx, -ly, lz));
     triangleStrip.push_back(pgd::Vector3(-lx, -ly, -lz));
     triangleStrip.push_back(pgd::Vector3(-lx, -ly, lz));
-    AddTriangleStrip(triangleStrip);
+    addTriangleStrip(triangleStrip);
 
     // top face
     triangleStrip.clear();
@@ -44,7 +44,7 @@
     triangleStrip.push_back(pgd::Vector3(lx, -ly, lz));
     triangleStrip.push_back(pgd::Vector3(lx, ly, lz));
     triangleStrip.push_back(pgd::Vector3(-lx, ly, lz));
-    AddTriangleFan(triangleStrip);
+    addTriangleFan(triangleStrip);
 
     // bottom face
     triangleStrip.clear();
@@ -52,12 +52,12 @@
     triangleStrip.push_back(pgd::Vector3(-lx, ly, -lz));
     triangleStrip.push_back(pgd::Vector3(lx, ly, -lz));
     triangleStrip.push_back(pgd::Vector3(lx, -ly, -lz));
-    AddTriangleFan(triangleStrip);
+    addTriangleFan(triangleStrip);
 
 //    qDebug() << "FacetedBox " << GetNumTriangles() << " triangles created\n";
 }
 
-void FacetedBox::AddTriangleStrip(std::vector<pgd::Vector3> &triangleStrip)
+void FacetedBox::addTriangleStrip(std::vector<pgd::Vector3> &triangleStrip)
 {
     double triangle[9];
     unsigned int i;
@@ -88,11 +88,11 @@ void FacetedBox::AddTriangleStrip(std::vector<pgd::Vector3> &triangleStrip)
             triangle[4] = triangleStrip[i].y;
             triangle[5] = triangleStrip[i].z;
         }
-        AddTriangle(triangle);
+        addTriangle(triangle);
     }
 }
 
-void FacetedBox::AddTriangleFan(std::vector<pgd::Vector3> &triangleFan)
+void FacetedBox::addTriangleFan(std::vector<pgd::Vector3> &triangleFan)
 {
     double triangle[9];
     unsigned int i;
@@ -108,7 +108,7 @@ void FacetedBox::AddTriangleFan(std::vector<pgd::Vector3> &triangleFan)
         triangle[6] = triangleFan[i].x;
         triangle[7] = triangleFan[i].y;
         triangle[8] = triangleFan[i].z;
-        AddTriangle(triangle);
+        addTriangle(triangle);
     }
 }
 

@@ -37,7 +37,7 @@ DialogMarkerExport::DialogMarkerExport(QWidget *parent) :
 
     ui->lineEditFileName->setPathType(LineEditPath::FileForSave);
 
-    SetUIElementsFromPreferences();
+    setUIElementsFromPreferences();
 
     EnableWidgets();
 
@@ -52,8 +52,8 @@ DialogMarkerExport::~DialogMarkerExport()
 void DialogMarkerExport::processButtonClicked() // this catches OK and return/enter
 {
     qDebug() << "DialogMarkerExportGeometry::applyButtonClicked()";
-    ExportMarkers();
-    SaveUIElementsToPreferences();
+    exportMarkers();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerExportGeometry", saveGeometry());
 }
 
@@ -67,7 +67,7 @@ void DialogMarkerExport::reject() // this catches cancel, close and escape key
 void DialogMarkerExport::closeEvent(QCloseEvent *event)
 {
     qDebug() << "DialogMarkerExportGeometry::closeEvent()";
-    SaveUIElementsToPreferences();
+    saveUIElementsToPreferences();
     Preferences::insert("DialogMarkerExportGeometry", saveGeometry());
     QDialog::closeEvent(event);
 }
@@ -77,7 +77,7 @@ void DialogMarkerExport::setSimulation(GaitSym::Simulation *simulation)
     m_simulation = simulation;
 }
 
-void DialogMarkerExport::SetUIElementsFromPreferences()
+void DialogMarkerExport::setUIElementsFromPreferences()
 {
     int formatOption = Preferences::valueInt("DialogMarkerExportFormatOption");
     switch (formatOption)
@@ -119,7 +119,7 @@ void DialogMarkerExport::SetUIElementsFromPreferences()
     ui->lineEditFileName->setText(Preferences::valueQString("DialogMarkerExportFileName"));
 }
 
-void DialogMarkerExport::SaveUIElementsToPreferences()
+void DialogMarkerExport::saveUIElementsToPreferences()
 {
     int formatOption = 0;
     if (ui->radioButtonPositionOnly->isChecked()) formatOption = 0;
@@ -143,7 +143,7 @@ void DialogMarkerExport::SaveUIElementsToPreferences()
     Preferences::insert("DialogMarkerExportFileName", ui->lineEditFileName->text());
 }
 
-int DialogMarkerExport::ExportMarkers()
+int DialogMarkerExport::exportMarkers()
 {
     std::vector<std::string> lines;
     pgd::Vector3 pOutput;
@@ -162,20 +162,20 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
-            if (markerIt.second->GetBody()) bodyName = markerIt.second->GetBody()->name();
+            if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
             ui->plainTextEditLog->appendPlainText(QString("Processing marker '%1\n").arg(QString::fromStdString(bodyName)));
             std::vector<std::string> line;
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
-            else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
+            else { pOutput = markerIt.second->worldPosition(); }
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -186,28 +186,28 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "RX"s, "RY"s, "RZ"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
-            if (markerIt.second->GetBody()) bodyName = markerIt.second->GetBody()->name();
+            if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
             ui->plainTextEditLog->appendPlainText(QString("Processing marker '%1\n").arg(QString::fromStdString(bodyName)));
             std::vector<std::string> line;
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
-            else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
-            else { qOutput = markerIt.second->GetWorldQuaternion(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
+            else { pOutput = markerIt.second->worldPosition(); }
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
+            else { qOutput = markerIt.second->worldQuaternion(); }
             pgd::Vector3 euler;
-            if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::MakeEulerAnglesFromQRadian(qOutput);
-            else euler = pgd::MakeEulerAnglesFromQ(qOutput);
-            line.push_back(GaitSym::GSUtil::ToString(euler.x));
-            line.push_back(GaitSym::GSUtil::ToString(euler.y));
-            line.push_back(GaitSym::GSUtil::ToString(euler.z));
+            if (ui->checkBoxAnglesInRadians->isChecked()) euler = pgd::makeEulerAnglesFromQRadian(qOutput);
+            else euler = pgd::makeEulerAnglesFromQ(qOutput);
+            line.push_back(GaitSym::GSUtil::toString(euler.x));
+            line.push_back(GaitSym::GSUtil::toString(euler.y));
+            line.push_back(GaitSym::GSUtil::toString(euler.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -218,29 +218,29 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R"s, "AX"s, "AY"s, "AZ"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
-            if (markerIt.second->GetBody()) bodyName = markerIt.second->GetBody()->name();
+            if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
             ui->plainTextEditLog->appendPlainText(QString("Processing marker '%1\n").arg(QString::fromStdString(bodyName)));
             std::vector<std::string> line;
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
-            else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
-            else { qOutput = markerIt.second->GetWorldQuaternion(); }
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
+            else { pOutput = markerIt.second->worldPosition(); }
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
+            else { qOutput = markerIt.second->worldQuaternion(); }
             double xa, ya, za, angle;
-            pgd::MakeAxisAngleFromQ(qOutput, &xa, &ya, &za, &angle);
+            pgd::makeAxisAngleFromQ(qOutput, &xa, &ya, &za, &angle);
             if (ui->checkBoxAnglesInRadians->isChecked() == false) angle = pgd::RadToDeg(angle);
-            line.push_back(GaitSym::GSUtil::ToString(angle));
-            line.push_back(GaitSym::GSUtil::ToString(xa));
-            line.push_back(GaitSym::GSUtil::ToString(ya));
-            line.push_back(GaitSym::GSUtil::ToString(za));
+            line.push_back(GaitSym::GSUtil::toString(angle));
+            line.push_back(GaitSym::GSUtil::toString(xa));
+            line.push_back(GaitSym::GSUtil::toString(ya));
+            line.push_back(GaitSym::GSUtil::toString(za));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -251,26 +251,26 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "QN"s, "QX"s, "QY"s, "QZ"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
-            if (markerIt.second->GetBody()) bodyName = markerIt.second->GetBody()->name();
+            if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
             ui->plainTextEditLog->appendPlainText(QString("Processing marker '%1\n").arg(QString::fromStdString(bodyName)));
             std::vector<std::string> line;
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
-            else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
-            else { qOutput = markerIt.second->GetWorldQuaternion(); }
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.n));
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(qOutput.z));
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
+            else { pOutput = markerIt.second->worldPosition(); }
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
+            else { qOutput = markerIt.second->worldQuaternion(); }
+            line.push_back(GaitSym::GSUtil::toString(qOutput.n));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(qOutput.z));
             lines.push_back(pystring::join(separator, line));
         }
     }
@@ -281,41 +281,41 @@ int DialogMarkerExport::ExportMarkers()
             std::vector<std::string> header = {"Name"s, "Body"s, "X"s, "Y"s, "Z"s, "R1C1"s, "R1C2"s, "R1C3"s, "R2C1"s, "R2C2"s, "R2C3"s, "R3C1"s, "R3C2"s, "R3C3"s};
             lines.push_back(pystring::join(separator, header));
         }
-        for (auto &&markerIt : *m_simulation->GetMarkerList())
+        for (auto &&markerIt : *m_simulation->markerList())
         {
-            if (markerIt.second->GetBody()) bodyName = markerIt.second->GetBody()->name();
+            if (markerIt.second->body()) bodyName = markerIt.second->body()->name();
             else bodyName = "World"s;
             ui->plainTextEditLog->appendPlainText(QString("Processing marker '%1\n").arg(QString::fromStdString(bodyName)));
             std::vector<std::string> line;
             line.reserve(5);
             line.push_back(markerIt.first);
             line.push_back(bodyName);
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->GetPosition(); }
-            else { pOutput = markerIt.second->GetWorldPosition(); }
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.x));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.y));
-            line.push_back(GaitSym::GSUtil::ToString(pOutput.z));
-            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->GetQuaternion(); }
-            else { qOutput = markerIt.second->GetWorldQuaternion(); }
-            pgd::Matrix3x3 matrix = MakeMFromQ(qOutput);
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { pOutput = markerIt.second->position(); }
+            else { pOutput = markerIt.second->worldPosition(); }
+            line.push_back(GaitSym::GSUtil::toString(pOutput.x));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.y));
+            line.push_back(GaitSym::GSUtil::toString(pOutput.z));
+            if (ui->checkBoxBodyLocalCoordinates->isChecked()) { qOutput = markerIt.second->quaternion(); }
+            else { qOutput = markerIt.second->worldQuaternion(); }
+            pgd::Matrix3x3 matrix = makeMFromQ(qOutput);
             for (size_t i =0; i < 9; i++)
-                line.push_back(GaitSym::GSUtil::ToString(matrix.data()[i]));
+                line.push_back(GaitSym::GSUtil::toString(matrix.data()[i]));
             lines.push_back(pystring::join(separator, line));
         }
     }
 
     std::string data = pystring::join("\n"s, lines);
     GaitSym::DataFile dataFile;
-    dataFile.SetRawData(data.data(), data.size());
+    dataFile.setRawData(data.data(), data.size());
     QString fileName = ui->lineEditFileName->text();
-    if (dataFile.WriteFile(fileName.toStdString()))
+    if (dataFile.writeFile(fileName.toStdString()))
     {
         ui->plainTextEditLog->appendPlainText(QString("Error writing '%1'.\n").arg(fileName));
         QMessageBox::information(this, "Marker Export Errors", QString("Error writing '%1'.\n").arg(fileName), QMessageBox::Ok);
         return __LINE__;
     }
 
-    ui->plainTextEditLog->appendPlainText(QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName));
+    ui->plainTextEditLog->appendPlainText(QString("%1 markers written to '%2'.\n").arg(m_simulation->markerList()->size()).arg(fileName));
     // QMessageBox::information(this, "Marker Export Results", QString("%1 markers written to '%2'.\n").arg(m_simulation->GetMarkerList()->size()).arg(fileName), QMessageBox::Ok);
     return 0;
 }

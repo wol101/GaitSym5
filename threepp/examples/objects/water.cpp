@@ -38,7 +38,7 @@ int main() {
     scene->add(sphere);
 
     TextureLoader textureLoader{};
-    auto texture = textureLoader.load("data/textures/waternormals.jpg");
+    auto texture = textureLoader.load(std::string(DATA_FOLDER) + "/textures/waternormals.jpg");
     texture->wrapS = TextureWrapping::Repeat;
     texture->wrapT = TextureWrapping::Repeat;
 
@@ -87,9 +87,9 @@ int main() {
         renderer.setSize(size);
     });
 
-    ImguiFunctionalContext ui(canvas.windowPtr(), [&] {
+    ImguiFunctionalContext ui(canvas, [&] {
         ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
-        ImGui::SetNextWindowSize({230, 0}, 0);
+        ImGui::SetNextWindowSize({0, 0}, 0);
         ImGui::Begin("Controls");
         ImGui::SliderFloat("turbidity", &shaderUniforms.at("turbidity").value<float>(), 0, 20);
         ImGui::SliderFloat("rayleigh", &shaderUniforms.at("rayleigh").value<float>(), 0, 4);
@@ -113,7 +113,7 @@ int main() {
     Clock clock;
     auto& timeUniform = water->material()->as<ShaderMaterial>()->uniforms.at("time");
     canvas.animate([&]() {
-        float t = clock.getElapsedTime();
+        const auto t = clock.getElapsedTime();
 
         sphere->position.y = std::sin(t) * 20 + 5;
         sphere->rotation.x = t * 0.05f;

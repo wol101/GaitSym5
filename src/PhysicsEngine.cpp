@@ -19,7 +19,7 @@ PhysicsEngine::~PhysicsEngine()
 {
 }
 
-std::string *PhysicsEngine::Initialise(Simulation *simulation)
+std::string *PhysicsEngine::initialise(Simulation *simulation)
 {
     m_simulation = simulation;
     return nullptr;

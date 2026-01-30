@@ -57,8 +57,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>146</width>
-              <height>637</height>
+              <width>219</width>
+              <height>856</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
@@ -862,8 +862,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>346</width>
-              <height>445</height>
+              <width>360</width>
+              <height>463</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_7">
@@ -969,8 +969,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1143</width>
-          <height>358</height>
+          <width>1135</width>
+          <height>302</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_11">
@@ -1036,7 +1036,7 @@
      <x>0</x>
      <y>0</y>
      <width>1157</width>
-     <height>18</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -1144,9 +1144,11 @@
     <addaction name="separator"/>
     <addaction name="actionCreateMirrorElements"/>
     <addaction name="actionCreateTestingDrivers"/>
+    <addaction name="actionCreateStringOfPearls"/>
     <addaction name="separator"/>
     <addaction name="actionRawXMLEditor"/>
     <addaction name="actionRenameElement"/>
+    <addaction name="actionRawXMLView"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1803,6 +1805,16 @@
   <action name="actionExportMuJoCo">
    <property name="text">
     <string>MuJoCo...</string>
+   </property>
+  </action>
+  <action name="actionCreateStringOfPearls">
+   <property name="text">
+    <string>Create String of Pearls...</string>
+   </property>
+  </action>
+  <action name="actionRawXMLView">
+   <property name="text">
+    <string>RawXML View...</string>
    </property>
   </action>
  </widget>

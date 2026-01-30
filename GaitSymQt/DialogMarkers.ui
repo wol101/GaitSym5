@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1652</width>
-    <height>907</height>
+    <width>1654</width>
+    <height>912</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,60 +18,150 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_8">
    <property name="sizeConstraint">
-    <enum>QLayout::SetDefaultConstraint</enum>
+    <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
    </property>
-   <item row="5" column="0" colspan="2">
-    <widget class="QWidget" name="widget_3" native="true">
+   <item row="2" column="1">
+    <widget class="QGroupBox" name="groupBox_4">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+     <property name="title">
+      <string>Orientation Construction 3 Marker</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="sizeHint" stdset="0">
+        <property name="minimumSize">
          <size>
-          <width>346</width>
-          <height>20</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
-       </spacer>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Marker 3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBoxOrientation3Marker2"/>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton3DCursor">
-        <property name="text">
-         <string>3D Cursor</string>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="comboBoxOrientation3Marker1"/>
       </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="pushButtonOK">
-        <property name="text">
-         <string>OK</string>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="default">
-         <bool>true</bool>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="pushButtonCancel">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Cancel</string>
+         <string>Marker 2</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QPushButton" name="pushButtonProperties">
+       <widget class="QLabel" name="label_10">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Properties...</string>
+         <string>Marker 1</string>
         </property>
        </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QWidget" name="widget_2" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonCalculateOrientation3Marker">
+           <property name="text">
+            <string>Calculate</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboBoxOrientation3Marker3"/>
       </item>
      </layout>
     </widget>
@@ -143,7 +233,7 @@
          <item>
           <spacer name="horizontalSpacer_7">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -162,6 +252,273 @@
          </item>
         </layout>
        </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Orientation Construction 2 Marker</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBoxOrientation2Marker2"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QWidget" name="widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonCalculateOrientation2Marker">
+           <property name="text">
+            <string>Calculate</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Marker 1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comboBoxOrientation2Marker1"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Marker 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Calculator</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>Euler XYZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelAxisAngle">
+        <property name="text">
+         <string>Angle Axis</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="LineEditDouble" name="lineEditAngle"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="LineEditDouble" name="lineEditAxisX"/>
+      </item>
+      <item row="1" column="3">
+       <widget class="LineEditDouble" name="lineEditAxisY"/>
+      </item>
+      <item row="1" column="4">
+       <widget class="LineEditDouble" name="lineEditAxisZ"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>Quaternion nxyz</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="LineEditDouble" name="lineEditQuaternionN"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="LineEditDouble" name="lineEditQuaternionX"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="LineEditDouble" name="lineEditQuaternionY"/>
+      </item>
+      <item row="2" column="4">
+       <widget class="LineEditDouble" name="lineEditQuaternionZ"/>
+      </item>
+      <item row="3" column="1" colspan="4">
+       <widget class="QWidget" name="widget_8" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="pushButtonCalculatorImport">
+           <property name="text">
+            <string>Import</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>148</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonCalculatorCalculate">
+           <property name="text">
+            <string>Calculate</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="LineEditDouble" name="lineEditEulerZAppend"/>
+      </item>
+      <item row="0" column="3">
+       <widget class="LineEditDouble" name="lineEditEulerYAppend"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="LineEditDouble" name="lineEditEulerXAppend"/>
       </item>
      </layout>
     </widget>
@@ -199,7 +556,7 @@
          <item>
           <spacer name="horizontalSpacer_5">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -323,7 +680,7 @@
       <item row="2" column="0">
        <spacer name="verticalSpacer_2">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -367,479 +724,6 @@
        </property>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Orientation Construction 2 Marker</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="1">
-       <widget class="QComboBox" name="comboBoxOrientation2Marker2"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="QWidget" name="widget" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonCalculateOrientation2Marker">
-           <property name="text">
-            <string>Calculate</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Marker 1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="comboBoxOrientation2Marker1"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Marker 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Orientation Construction 3 Marker</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Marker 3</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="comboBoxOrientation3Marker2"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="comboBoxOrientation3Marker1"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_11">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Marker 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Marker 1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QWidget" name="widget_2" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonCalculateOrientation3Marker">
-           <property name="text">
-            <string>Calculate</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="comboBoxOrientation3Marker3"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Calculator</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_15">
-        <property name="text">
-         <string>Euler XYZ</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelAxisAngle">
-        <property name="text">
-         <string>Angle Axis</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="LineEditDouble" name="lineEditAngle"/>
-      </item>
-      <item row="1" column="2">
-       <widget class="LineEditDouble" name="lineEditAxisX"/>
-      </item>
-      <item row="1" column="3">
-       <widget class="LineEditDouble" name="lineEditAxisY"/>
-      </item>
-      <item row="1" column="4">
-       <widget class="LineEditDouble" name="lineEditAxisZ"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string>Quaternion nxyz</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="LineEditDouble" name="lineEditQuaternionN"/>
-      </item>
-      <item row="2" column="2">
-       <widget class="LineEditDouble" name="lineEditQuaternionX"/>
-      </item>
-      <item row="2" column="3">
-       <widget class="LineEditDouble" name="lineEditQuaternionY"/>
-      </item>
-      <item row="2" column="4">
-       <widget class="LineEditDouble" name="lineEditQuaternionZ"/>
-      </item>
-      <item row="3" column="1" colspan="4">
-       <widget class="QWidget" name="widget_8" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="pushButtonCalculatorImport">
-           <property name="text">
-            <string>Import</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>148</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonCalculatorCalculate">
-           <property name="text">
-            <string>Calculate</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="LineEditDouble" name="lineEditEulerZAppend"/>
-      </item>
-      <item row="0" column="3">
-       <widget class="LineEditDouble" name="lineEditEulerYAppend"/>
-      </item>
-      <item row="0" column="2">
-       <widget class="LineEditDouble" name="lineEditEulerXAppend"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Definition</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>MarkerID</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="3">
-       <widget class="LineEditUniqueName" name="lineEditMarkerID"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Body ID</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="3">
-       <widget class="QComboBox" name="comboBoxBodyID"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Position XYZ</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="LineEditDouble" name="lineEditPositionX"/>
-      </item>
-      <item row="2" column="2">
-       <widget class="LineEditDouble" name="lineEditPositionY"/>
-      </item>
-      <item row="2" column="3">
-       <widget class="LineEditDouble" name="lineEditPositionZ"/>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Euler XYZ</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="LineEditDouble" name="lineEditEulerX"/>
-      </item>
-      <item row="3" column="2">
-       <widget class="LineEditDouble" name="lineEditEulerY"/>
-      </item>
-      <item row="3" column="3">
-       <widget class="LineEditDouble" name="lineEditEulerZ"/>
-      </item>
-     </layout>
     </widget>
    </item>
    <item row="1" column="0">
@@ -943,7 +827,7 @@
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -966,18 +850,150 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="5" column="0" colspan="2">
+    <widget class="QWidget" name="widget_3" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="2">
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>346</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton3DCursor">
+        <property name="text">
+         <string>3D Cursor</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButtonOK">
+        <property name="text">
+         <string>OK</string>
+        </property>
+        <property name="default">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="pushButtonCancel">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButtonProperties">
+        <property name="text">
+         <string>Properties...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-    </spacer>
+     <property name="title">
+      <string>Definition</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>MarkerID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="3">
+       <widget class="LineEditUniqueName" name="lineEditMarkerID"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="LineEditDouble" name="lineEditWorldPositionZ"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Euler XYZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="LineEditDouble" name="lineEditWorldPositionY"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="LineEditDouble" name="lineEditEulerX"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>World Position XYZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QComboBox" name="comboBoxBodyID"/>
+      </item>
+      <item row="4" column="3">
+       <widget class="LineEditDouble" name="lineEditEulerZ"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Body ID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>Body Position XYZ</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="LineEditDouble" name="lineEditBodyPositionX"/>
+      </item>
+      <item row="3" column="2">
+       <widget class="LineEditDouble" name="lineEditBodyPositionY"/>
+      </item>
+      <item row="3" column="3">
+       <widget class="LineEditDouble" name="lineEditBodyPositionZ"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="LineEditDouble" name="lineEditEulerY"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="LineEditDouble" name="lineEditWorldPositionX"/>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -996,16 +1012,27 @@
  <tabstops>
   <tabstop>lineEditMarkerID</tabstop>
   <tabstop>comboBoxBodyID</tabstop>
-  <tabstop>lineEditPositionX</tabstop>
-  <tabstop>lineEditPositionY</tabstop>
-  <tabstop>lineEditPositionZ</tabstop>
+  <tabstop>lineEditWorldPositionX</tabstop>
+  <tabstop>lineEditWorldPositionY</tabstop>
+  <tabstop>lineEditWorldPositionZ</tabstop>
+  <tabstop>lineEditBodyPositionX</tabstop>
+  <tabstop>lineEditBodyPositionY</tabstop>
+  <tabstop>lineEditBodyPositionZ</tabstop>
   <tabstop>lineEditEulerX</tabstop>
   <tabstop>lineEditEulerY</tabstop>
   <tabstop>lineEditEulerZ</tabstop>
   <tabstop>comboBoxPositionMarker1</tabstop>
   <tabstop>comboBoxPositionMarker2</tabstop>
   <tabstop>lineEditFraction</tabstop>
+  <tabstop>lineEditDistance</tabstop>
+  <tabstop>pushButtonCopyMarker1</tabstop>
+  <tabstop>pushButtonCopyMarker2</tabstop>
   <tabstop>pushButtonCalculatePosition</tabstop>
+  <tabstop>comboBoxMirrorMarker</tabstop>
+  <tabstop>radioButtonX</tabstop>
+  <tabstop>radioButtonY</tabstop>
+  <tabstop>radioButtonZ</tabstop>
+  <tabstop>pushButtonCalculateMirrorMarker</tabstop>
   <tabstop>comboBoxOrientation2Marker1</tabstop>
   <tabstop>comboBoxOrientation2Marker2</tabstop>
   <tabstop>pushButtonCalculateOrientation2Marker</tabstop>
@@ -1013,11 +1040,31 @@
   <tabstop>comboBoxOrientation3Marker2</tabstop>
   <tabstop>comboBoxOrientation3Marker3</tabstop>
   <tabstop>pushButtonCalculateOrientation3Marker</tabstop>
-  <tabstop>comboBoxMirrorMarker</tabstop>
-  <tabstop>radioButtonX</tabstop>
-  <tabstop>radioButtonY</tabstop>
-  <tabstop>radioButtonZ</tabstop>
-  <tabstop>pushButtonCalculateMirrorMarker</tabstop>
+  <tabstop>lineEditEulerXAppend</tabstop>
+  <tabstop>lineEditEulerYAppend</tabstop>
+  <tabstop>lineEditEulerZAppend</tabstop>
+  <tabstop>lineEditAngle</tabstop>
+  <tabstop>lineEditAxisX</tabstop>
+  <tabstop>lineEditAxisY</tabstop>
+  <tabstop>lineEditAxisZ</tabstop>
+  <tabstop>lineEditQuaternionN</tabstop>
+  <tabstop>lineEditQuaternionX</tabstop>
+  <tabstop>lineEditQuaternionY</tabstop>
+  <tabstop>lineEditQuaternionZ</tabstop>
+  <tabstop>pushButtonCalculatorImport</tabstop>
+  <tabstop>pushButtonCalculatorCalculate</tabstop>
+  <tabstop>lineEditMatrixr1c1</tabstop>
+  <tabstop>lineEditMatrixr1c2</tabstop>
+  <tabstop>lineEditMatrixr1c3</tabstop>
+  <tabstop>lineEditMatrixr2c1</tabstop>
+  <tabstop>lineEditMatrixr2c2</tabstop>
+  <tabstop>lineEditMatrixr2c3</tabstop>
+  <tabstop>lineEditMatrixr3c1</tabstop>
+  <tabstop>lineEditMatrixr3c2</tabstop>
+  <tabstop>lineEditMatrixr3c3</tabstop>
+  <tabstop>pushButtonMatrixImport</tabstop>
+  <tabstop>pushButtonMatrixCalculate</tabstop>
+  <tabstop>pushButtonProperties</tabstop>
   <tabstop>pushButton3DCursor</tabstop>
   <tabstop>pushButtonOK</tabstop>
   <tabstop>pushButtonCancel</tabstop>

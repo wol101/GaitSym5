@@ -22,18 +22,18 @@ FixedDriver::FixedDriver()
 {
 }
 
-void FixedDriver::Update()
+void FixedDriver::update()
 {
-    assert(simulation()->GetStepCount() == lastStepCount() + 1);
-    setLastStepCount(simulation()->GetStepCount());
+    assert(simulation()->stepCount() == lastStepCount() + 1);
+    setLastStepCount(simulation()->stepCount());
 }
 
-void FixedDriver::MultiplyValue(double mod)
+void FixedDriver::multiplyValue(double mod)
 {
     setValue(value() * mod);
 }
 
-void FixedDriver::AddValue(double mod)
+void FixedDriver::addValue(double mod)
 {
     setValue(value() + mod);
 }
@@ -48,7 +48,7 @@ std::string *FixedDriver::createFromAttributes()
 
     std::string buf;
     if (findAttribute("Value"s, &buf) == nullptr) return lastErrorPtr();
-    this->setValue(GSUtil::Double(buf));
+    this->setValue(GSUtil::toDouble(buf));
 
     return nullptr;
 }
@@ -59,7 +59,7 @@ void FixedDriver::appendToAttributes()
     Driver::appendToAttributes();
     std::string buf;
     setAttribute("Type"s, "Fixed"s);
-    setAttribute("Value"s, *GSUtil::ToString(value(), &buf));
+    setAttribute("Value"s, *GSUtil::toString(value(), &buf));
 }
 
 } // namespace GaitSym

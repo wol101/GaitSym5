@@ -55,15 +55,15 @@ DialogOutputSelect::DialogOutputSelect(QWidget *parent) :
     int count;
     MainWindow *mainWindow = dynamic_cast<MainWindow *>(parent);
     GaitSym::Simulation *simulation = mainWindow->simulation();
-    auto bodyList = simulation->GetBodyList();
-    auto markerList = simulation->GetMarkerList();
-    auto jointList = simulation->GetJointList();
-    auto geomList = simulation->GetGeomList();
-    auto muscleList = simulation->GetMuscleList();
-    auto driverList = simulation->GetDriverList();
-    auto dataTargetList = simulation->GetDataTargetList();
-    auto reporterList = simulation->GetReporterList();
-    auto controllerList = simulation->GetControllerList();
+    auto bodyList = simulation->bodyList();
+    auto markerList = simulation->markerList();
+    auto jointList = simulation->jointList();
+    auto geomList = simulation->geomList();
+    auto muscleList = simulation->muscleList();
+    auto driverList = simulation->driverList();
+    auto dataTargetList = simulation->dataTargetList();
+    auto reporterList = simulation->reporterList();
+    auto controllerList = simulation->controllerList();
 
     if (bodyList->size() > 0)
     {
@@ -588,7 +588,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetBody()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetBodyList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->bodyList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     for (i = 0; listWidgetMuscle() && i < listWidgetMuscle()->count(); i++)
@@ -596,8 +596,8 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetMuscle()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetMuscleList())[std::string(item->text().toUtf8())]->setDump(dump);
-        (*m_simulation->GetMuscleList())[std::string(item->text().toUtf8())]->GetStrap()->setDump(dump);
+        (*m_simulation->muscleList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->muscleList())[std::string(item->text().toUtf8())]->strap()->setDump(dump);
     }
 
     for (i = 0; listWidgetGeom() && i < listWidgetGeom()->count(); i++)
@@ -605,7 +605,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetGeom()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetGeomList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->geomList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     for (i = 0; listWidgetJoint() && i < listWidgetJoint()->count(); i++)
@@ -613,7 +613,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetJoint()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetJointList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->jointList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     for (i = 0; listWidgetDriver() && i < listWidgetDriver()->count(); i++)
@@ -621,7 +621,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetDriver()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetDriverList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->driverList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     for (i = 0; listWidgetDataTarget() && i < listWidgetDataTarget()->count(); i++)
@@ -629,7 +629,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetDataTarget()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetDataTargetList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->dataTargetList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     for (i = 0; listWidgetReporter() && i < listWidgetReporter()->count(); i++)
@@ -637,7 +637,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetReporter()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetReporterList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->reporterList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     for (i = 0; listWidgetController() && i < listWidgetController()->count(); i++)
@@ -645,7 +645,7 @@ void DialogOutputSelect::acceptButtonClicked()
         item = listWidgetController()->item(i);
         if (item->checkState() == Qt::Unchecked) dump = false;
         else dump = true;
-        (*m_simulation->GetControllerList())[std::string(item->text().toUtf8())]->setDump(dump);
+        (*m_simulation->controllerList())[std::string(item->text().toUtf8())]->setDump(dump);
     }
 
     Preferences::insert("DialogOutputSelectGeometry", saveGeometry());

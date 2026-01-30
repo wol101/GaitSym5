@@ -24,103 +24,47 @@ TwoPointStrap::TwoPointStrap()
 {
 }
 
-//void TwoPointStrap::SetOrigin(Body *body, const pgd::Vector3 point)
-//{
-//    m_originBody = body;
-//    m_origin[0] = point[0];
-//    m_origin[1] = point[1];
-//    m_origin[2] = point[2];
-//    if (GetPointForceList()->size() == 0)
-//    {
-//        std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
-//        origin->body = m_originBody;
-//        GetPointForceList()->push_back(std::move(origin));
-//    }
-//    else
-//    {
-//        GetPointForceList()->at(0)->body = m_originBody;
-//    }
-//}
-
-//void TwoPointStrap::SetInsertion(Body *body, const pgd::Vector3 point)
-//{
-//    m_insertionBody = body;
-//    m_insertion[0] = point[0];
-//    m_insertion[1] = point[1];
-//    m_insertion[2] = point[2];
-//    if (GetPointForceList()->size() <= 1)
-//    {
-//        std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
-//        insertion->body = m_insertionBody;
-//        GetPointForceList()->push_back(std::move(insertion));
-//    }
-//    else
-//    {
-//        GetPointForceList()->at(1)->body = m_insertionBody;
-//    }
-//}
-
-//void TwoPointStrap::GetOrigin(const Body **body, pgd::Vector3 origin) const
-//{
-//    *body = m_originBody;
-//    origin[0] = m_origin[0];
-//    origin[1] = m_origin[1];
-//    origin[2] = m_origin[2];
-//}
-
-//void TwoPointStrap::GetInsertion(const Body **body, pgd::Vector3 insertion) const
-//{
-//    *body = m_insertionBody;
-//    insertion[0] = m_insertion[0];
-//    insertion[1] = m_insertion[1];
-//    insertion[2] = m_insertion[2];
-//}
-
-void TwoPointStrap::SetOrigin(Marker *originMarker)
+void TwoPointStrap::setOrigin(Marker *originMarker)
 {
     m_originMarker = originMarker;
-//    this->SetOrigin(originMarker->GetBody(), originMarker->GetPosition().data());
-    if (GetPointForceList()->size() == 0)
+    if (pointForceList()->size() == 0)
     {
         std::unique_ptr<PointForce> origin = std::make_unique<PointForce>();
-        origin->body = m_originMarker->GetBody();
-        GetPointForceList()->push_back(std::move(origin));
+        origin->body = m_originMarker->body();
+        pointForceList()->push_back(std::move(origin));
     }
     else
     {
-        GetPointForceList()->at(0)->body = m_originMarker->GetBody();
+        pointForceList()->at(0)->body = m_originMarker->body();
     }
 }
 
-void TwoPointStrap::SetInsertion(Marker *insertionMarker)
+void TwoPointStrap::setInsertion(Marker *insertionMarker)
 {
     m_insertionMarker = insertionMarker;
-//    this->SetInsertion(insertionMarker->GetBody(), insertionMarker->GetPosition().data());
-    if (GetPointForceList()->size() <= 1)
+    if (pointForceList()->size() <= 1)
     {
         std::unique_ptr<PointForce> insertion = std::make_unique<PointForce>();
-        insertion->body = m_insertionMarker->GetBody();
-        GetPointForceList()->push_back(std::move(insertion));
+        insertion->body = m_insertionMarker->body();
+        pointForceList()->push_back(std::move(insertion));
     }
     else
     {
-        GetPointForceList()->at(1)->body =  m_insertionMarker->GetBody();
+        pointForceList()->at(1)->body =  m_insertionMarker->body();
     }
 }
 
-void TwoPointStrap::Calculate()
+void TwoPointStrap::calculate()
 {
-    PointForce *theOrigin = (*GetPointForceList())[0].get();
-    PointForce *theInsertion = (*GetPointForceList())[1].get();
+    PointForce *theOrigin = (*pointForceList())[0].get();
+    PointForce *theInsertion = (*pointForceList())[1].get();
 
     // calculate the world positions
-//    dBodyGetRelPointPos(m_originBody->GetBodyID(), m_origin[0], m_origin[1], m_origin[2], theOrigin->point);
-//    dBodyGetRelPointPos(m_insertionBody->GetBodyID(), m_insertion[0], m_insertion[1], m_insertion[2], theInsertion->point);
-    pgd::Vector3 origin = m_originMarker->GetWorldPosition();
+    pgd::Vector3 origin = m_originMarker->worldPosition();
     theOrigin->point[0] = origin.x;
     theOrigin->point[1] = origin.y;
     theOrigin->point[2] = origin.z;
-    pgd::Vector3 insertion = m_insertionMarker->GetWorldPosition();
+    pgd::Vector3 insertion = m_insertionMarker->worldPosition();
     theInsertion->point[0] = insertion.x;
     theInsertion->point[1] = insertion.y;
     theInsertion->point[2] = insertion.z;
@@ -133,14 +77,14 @@ void TwoPointStrap::Calculate()
 
     // calculate the length and velocity
     double length = std::sqrt(line[0]*line[0] + line[1]*line[1] + line[2]*line[2]);
-    if (Length() >= 0 && simulation() && simulation()->GetTimeIncrement() > 0) setVelocity((length - Length()) / simulation()->GetTimeIncrement());
+    if (this->length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((length - this->length()) / simulation()->global()->stepSize());
     else setVelocity(0);
     setLength(length);
 
     // normalise the direction vector
-    line[0] /= Length();
-    line[1] /= Length();
-    line[2] /= Length();
+    line[0] /= this->length();
+    line[1] /= this->length();
+    line[2] /= this->length();
 
     theOrigin->vector[0] = line[0];
     theOrigin->vector[1] = line[1];
@@ -152,19 +96,19 @@ void TwoPointStrap::Calculate()
     theInsertion->vector[2] = -line[2];
 
     // check that we don't have any non-normal values for directions which can occur if points co-locate
-    for (size_t i = 0; i < GetPointForceList()->size(); i++)
+    for (size_t i = 0; i < pointForceList()->size(); i++)
     {
-        if ((std::isfinite((*GetPointForceList())[i]->vector[0]) && std::isfinite((*GetPointForceList())[i]->vector[1]) && std::isfinite((*GetPointForceList())[i]->vector[2])) == false)
+        if ((std::isfinite((*pointForceList())[i]->vector[0]) && std::isfinite((*pointForceList())[i]->vector[1]) && std::isfinite((*pointForceList())[i]->vector[2])) == false)
         {
-            (*GetPointForceList())[i]->vector[0] = 0.0;
-            (*GetPointForceList())[i]->vector[1] = 0.0;
-            (*GetPointForceList())[i]->vector[2] = 0.0;
+            (*pointForceList())[i]->vector[0] = 0.0;
+            (*pointForceList())[i]->vector[1] = 0.0;
+            (*pointForceList())[i]->vector[2] = 0.0;
             std::cerr << "Warning: point force direction in \"" << name() << "\" is invalid so applying standard fixup\n";
         }
     }
 }
 
-//int TwoPointStrap::SanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
+//int TwoPointStrap::sanityCheck(Strap *otherStrap, Simulation::AxisType axis, const std::string &sanityCheckLeft, const std::string &sanityCheckRight)
 //{
 //    const double epsilon = DBL_EPSILON;
 
@@ -224,21 +168,21 @@ std::string *TwoPointStrap::createFromAttributes()
     std::string buf;
 
     if (findAttribute("OriginMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto originMarker = simulation()->GetMarkerList()->find(buf);
-    if (originMarker == simulation()->GetMarkerList()->end())
+    auto originMarker = simulation()->markerList()->find(buf);
+    if (originMarker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" OriginMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetOrigin(originMarker->second.get());
+    this->setOrigin(originMarker->second.get());
     if (findAttribute("InsertionMarkerID"s, &buf) == nullptr) return lastErrorPtr();
-    auto insertionMarker = simulation()->GetMarkerList()->find(buf);
-    if (insertionMarker == simulation()->GetMarkerList()->end())
+    auto insertionMarker = simulation()->markerList()->find(buf);
+    if (insertionMarker == simulation()->markerList()->end())
     {
         setLastError("STRAP ID=\""s + name() +"\" InsertionMarker not found"s);
         return lastErrorPtr();
     }
-    this->SetInsertion(insertionMarker->second.get());
+    this->setInsertion(insertionMarker->second.get());
 
     setUpstreamObjects({m_originMarker, m_insertionMarker});
     return nullptr;
@@ -253,12 +197,12 @@ void TwoPointStrap::appendToAttributes()
     setAttribute("InsertionMarkerID"s, m_insertionMarker->name());
 }
 
-Marker *TwoPointStrap::GetOriginMarker() const
+Marker *TwoPointStrap::originMarker() const
 {
     return m_originMarker;
 }
 
-Marker *TwoPointStrap::GetInsertionMarker() const
+Marker *TwoPointStrap::insertionMarker() const
 {
     return m_insertionMarker;
 }

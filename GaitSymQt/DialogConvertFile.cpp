@@ -120,7 +120,7 @@ void DialogConvertFile::doConversion()
     std::string str = buffer.str();
     std::string rootNodeTag;
     GaitSym::ParseXML parseXML;
-    std::string *err = parseXML.LoadModel(str.data(), str.size(), &rootNodeTag);
+    std::string *err = parseXML.loadModel(str.data(), str.size(), &rootNodeTag);
     if (err) { log(QString("Error parsing \"%1\"\n%1").arg(ui->lineEditInputFile->text()).arg(QString::fromStdString(*err))); return; }
     else { log(QString("\"%1\" parsed successfully").arg(ui->lineEditInputFile->text())); }
 
@@ -138,9 +138,9 @@ void DialogConvertFile::doConversion()
 
             // create a new xml file
             std::string newRootNodeTag("GAITSYM5"s);
-            std::string xml = parseXML.SaveModel(newRootNodeTag, "File generated using DialogConvertFile"s);
+            std::string xml = parseXML.saveModel(newRootNodeTag, "File generated using DialogConvertFile"s);
             GaitSym::ParseXML newParseXML;
-            err = newParseXML.LoadModel(xml.c_str(), xml.size(), &newRootNodeTag);
+            err = newParseXML.loadModel(xml.c_str(), xml.size(), &newRootNodeTag);
             if (err) { QMessageBox::warning(this, "Internal XML parse error", QString("'%1'").arg(QString::fromStdString(*err))); return; } // this should never happen
             auto elementList = newParseXML.elementList();
             for (auto &&tagElementIt : *elementList)
@@ -160,10 +160,10 @@ void DialogConvertFile::doConversion()
             if (!lightsFile.open(QIODevice::ReadOnly)) { QMessageBox::warning(this, "Internal XML parse error", QString("Unable to open resource file: \"%1\"").arg(lightsFile.fileName())); return; } // this should never happen
             QByteArray lightsData = lightsFile.readAll();
             GaitSym::ParseXML lightsXML;
-            err = lightsXML.LoadModel(lightsData.data(), lightsData.size(), nullptr);
+            err = lightsXML.loadModel(lightsData.data(), lightsData.size(), nullptr);
             if (err) { QMessageBox::warning(this, "LightsTemplate.xml: Internal XML parse error", QString("'%1'").arg(QString::fromStdString(*err))); return; } // this should never happen
             for (auto &&elementIt : *lightsXML.elementList()) { elementList->push_back(std::move(elementIt)); }
-            xml = newParseXML.SaveModel(newRootNodeTag, "File generated using DialogConvertFile"s);
+            xml = newParseXML.saveModel(newRootNodeTag, "File generated using DialogConvertFile"s);
             log(QString("Writing \"%1\"").arg(ui->lineEditOutputFile->text()));
             try {
                 std::ofstream file(ui->lineEditOutputFile->text().toStdString(), std::ios::binary);
@@ -177,10 +177,10 @@ void DialogConvertFile::doConversion()
                 return;
             }
             GaitSym::Simulation simulation;
-            err = simulation.LoadModel(xml.data(), xml.size());
+            err = simulation.loadModel(xml.data(), xml.size());
             if (err)
             {
-                log(QString("WARNING\nWARNING: \"%1\" converted but fails validation.\nWARNING%s").arg(ui->lineEditOutputFile->text()).arg(QString::fromStdString(*err)));
+                log(QString("WARNING\nWARNING: \"%1\" converted but fails validation.\nWARNING%2").arg(ui->lineEditOutputFile->text()).arg(QString::fromStdString(*err)));
             }
             break;
         }

@@ -19,6 +19,7 @@
 #include "threepp/renderers/gl/GLUtils.hpp"
 
 #include "threepp/cameras/OrthographicCamera.hpp"
+#include "threepp/canvas/Monitor.hpp"
 #include "threepp/materials/RawShaderMaterial.hpp"
 
 #include "threepp/objects/Group.hpp"
@@ -96,7 +97,7 @@ struct GLRenderer::Impl {
 
     WindowSize _size;
 
-    int _pixelRatio = 1;
+    float _pixelRatio = 1;
 
     Vector4 _viewport;
     Vector4 _scissor;
@@ -164,6 +165,27 @@ struct GLRenderer::Impl {
 
         this->setViewport(0, 0, _size.width(), _size.height());
         this->setScissor(0, 0, _size.width(), _size.height());
+
+#ifdef __APPLE__
+        const auto [xScale, yScale] = monitor::contentScale();
+        if (xScale != 1 && xScale == yScale) {
+            setPixelRatio(xScale);
+        }
+#endif
+
+    }
+
+    void setPixelRatio(float value) {
+
+        _pixelRatio = value;
+        setSize(_size);
+    }
+
+    void setSize(const std::pair<int, int>& size) {
+
+        _size = size;
+
+        this->setViewport(0, 0, size.first, size.second);
     }
 
     [[nodiscard]] std::optional<unsigned int> getGlTextureId(Texture& texture) const {
@@ -845,7 +867,7 @@ struct GLRenderer::Impl {
 
             if (gl::GLCapabilities::instance().logarithmicDepthBuffer) {
 
-                p_uniforms->setValue("logDepthBufFC", 2.f / (std::log(camera->far + 1.f) / math::LN2));
+                p_uniforms->setValue("logDepthBufFC", 2.f / (std::log(camera->farPlane + 1.f) / math::LN2));
             }
 
             if (_currentCamera != camera) {
@@ -1248,15 +1270,14 @@ gl::GLState& GLRenderer::state() {
     return pimpl_->state;
 }
 
-int GLRenderer::getTargetPixelRatio() const {
+float GLRenderer::getTargetPixelRatio() const {
 
     return pimpl_->_pixelRatio;
 }
 
-void GLRenderer::setPixelRatio(int value) {
+void GLRenderer::setPixelRatio(float value) {
 
-    pimpl_->_pixelRatio = value;
-    this->setSize(pimpl_->_size);
+    pimpl_->setPixelRatio(value);
 }
 
 WindowSize GLRenderer::size() const {
@@ -1266,9 +1287,7 @@ WindowSize GLRenderer::size() const {
 
 void GLRenderer::setSize(const std::pair<int, int>& size) {
 
-    pimpl_->_size = size;
-
-    this->setViewport(0, 0, size.first, size.second);
+    pimpl_->setSize(size);
 }
 
 void GLRenderer::getDrawingBufferSize(Vector2& target) const {
