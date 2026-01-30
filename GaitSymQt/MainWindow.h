@@ -97,6 +97,7 @@ public slots:
     void menuOutputs();
     void menuPreferences();
     void menuRawXMLEditor();
+    void menuRawXMLView();
     void menuRecordMovie();
     void menuRename();
     void menuResetView();

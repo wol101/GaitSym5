@@ -150,6 +150,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionPreferences, SIGNAL(triggered()), this, SLOT(menuPreferences()));
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionRawXMLEditor, SIGNAL(triggered()), this, SLOT(menuRawXMLEditor()));
+    connect(ui->actionRawXMLView, SIGNAL(triggered()), this, SLOT(menuRawXMLView()));
     connect(ui->actionRecordMovie, SIGNAL(triggered()), this, SLOT(menuRecordMovie()));
     connect(ui->actionRenameElement, SIGNAL(triggered()), this, SLOT(menuRename()));
     connect(ui->actionResetView, SIGNAL(triggered()), this, SLOT(menuResetView()));
@@ -793,6 +794,7 @@ void MainWindow::updateEnable()
     ui->actionSave->setEnabled(m_simulation != nullptr && m_noName == false && isWindowModified() == true);
     ui->actionSaveAs->setEnabled(m_simulation != nullptr);
     ui->actionRawXMLEditor->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
+    ui->actionRawXMLView->setEnabled(m_simulation != nullptr);
     ui->actionRenameElement->setEnabled(m_simulation != nullptr && m_mode == constructionMode);
     ui->actionCreateMirrorElements->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->bodyList()->size() > 0);
     ui->actionCreateStringOfPearls->setEnabled(m_simulation != nullptr && m_mode == constructionMode && m_simulation->bodyList()->size() > 0);
@@ -2911,6 +2913,17 @@ void MainWindow::menuRawXMLEditor()
     {
         this->ui->statusBar->showMessage(tr("Raw XML Editor cancelled"));
     }
+}
+
+void MainWindow::menuRawXMLView()
+{
+    DialogInfo *dialog = new DialogInfo(this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true); // needed so I can display this modelessly
+    dialog->useXMLSyntaxHighlighter();
+    dialog->setEditorText(QString::fromStdString(this->m_simulation->saveToXML()));
+    dialog->setWindowTitle(QString("Raw XML for \"%1\"").arg(m_configFile.canonicalFilePath()));
+    dialog->setModal(false);
+    dialog->show();
 }
 
 void MainWindow::menuCreateMirrorElements()
