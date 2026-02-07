@@ -1030,6 +1030,8 @@ if (use_mucojo_src)
 endif()
 
 if (use_physx_src)
+add_custom_target(prebuild_phase ALL
+    COMMAND ${CMAKE_COMMAND} -E echo "Prebuild phase complete"
 
     # compiler define options (get set to zero if undefined)
     # PX_SUPPORT_GPU_PHYSX
@@ -1089,7 +1091,7 @@ if (use_physx_src)
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXVehicle.cmake)
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SceneQuery.cmake)
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SimulationController.cmake)
-
+)
 endif()
 
 list(REMOVE_DUPLICATES PROJECT_SOURCES)
@@ -1123,6 +1125,7 @@ if(use_physx_src)
         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXVehicle2_static.lib
         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysX_static.lib
     )
+    add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
 endif()
 
 if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Release)
