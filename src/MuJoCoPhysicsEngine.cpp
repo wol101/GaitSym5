@@ -831,7 +831,7 @@ std::string *MuJoCoPhysicsEngine::step()
             }
             if (FixedJoint *fixedJoint = dynamic_cast<FixedJoint *>(iter.second.get()))
             {
-                // since this is not a real joitn I suspect there is no way of getting any useful information
+                // since this is not a real joint I suspect there is no way of getting any useful information
                 // I probably need to fix it using motors or somesuch
             }
             break;
@@ -839,31 +839,42 @@ std::string *MuJoCoPhysicsEngine::step()
     }
 
     simulation()->contactList()->clear();
-    // double timeStep =simulation()->GetGlobal()->StepSize();
-    // for (size_t i = 0; i < g_contactReportCallback.contactData()->size(); i++)
-    // {
-    //     physx::PxActor *actors[2];
-    //     actors[0] = g_contactReportCallback.contactData()->at(i).actors[0];
-    //     actors[1] = g_contactReportCallback.contactData()->at(i).actors[1];
-    //     for (size_t j = 0; j < g_contactReportCallback.contactData()->at(i).positions.size(); j++)
-    //     {
-    //         physx::PxVec3 position = g_contactReportCallback.contactData()->at(i).positions[j];
-    //         physx::PxVec3 impulse = g_contactReportCallback.contactData()->at(i).impulses[j];
-    //         physx::PxShape *shape1 = g_contactReportCallback.contactData()->at(i).shapes[j * 2];
-    //         physx::PxShape *shape2 = g_contactReportCallback.contactData()->at(i).shapes[j * 2 + 1];
-    //         std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
-    //         myContact->setSimulation(simulation());
-    //         myContact->setPosition(pgd::Vector3(position[0], position[1], position[2]));
-    //         myContact->setForce(pgd::Vector3(impulse[0] / timeStep, impulse[1] / timeStep, impulse[2] / timeStep));
-    //         Geom *geom1 = reinterpret_cast<Geom *>(shape1->userData);
-    //         Geom *geom2 = reinterpret_cast<Geom *>(shape2->userData);
-    //         geom1->AddContact(myContact.get());
-    //         geom2->AddContact(myContact.get());
-    //         myContact->setBody1(geom1->GetBody());
-    //         myContact->setBody2(geom2->GetBody());
-    //         simulation()->GetContactList()->push_back(std::move(myContact));
-    //     }
-    // }
+    // iterate through the contact list
+    for (int i = 0; i < m_mjData->ncon; i++)
+    {
+        mjContact* c = &m_mjData->contact[i];
+        int g1 = c->geom1;
+        int g2 = c->geom2;
+        const char* name1 = mj_id2name(m_mjModel, mjOBJ_GEOM, g1);
+        const char* name2 = mj_id2name(m_mjModel, mjOBJ_GEOM, g2);
+
+        // get the world position of the contact
+        mjtNum* pos_world = c->pos;   // length 3
+
+        // Get the 6D contact force
+        mjtNum f_local[6]; // result[0..2] → normal + two friction directions (in contact frame); result[3..5] → torque components (rarely needed unless using rolling friction)
+        mj_contactForce(m_mjModel, m_mjData, i, f_local); // this is in frame coordinates
+        mjtNum* R = c->frame;   // 9 numbers, row-major; this matrix will rotate the coordinates to world coordinates
+        mjtNum f_world[3], t_world[3];
+        for (int r = 0; r < 3; r++) { f_world[r] = R[3*r + 0] * f_local[0] + R[3*r + 1] * f_local[1] + R[3*r + 2] * f_local[2]; }
+        for (int r = 0; r < 3; r++) { t_world[r] = R[3*r + 0] * f_local[3] + R[3*r + 1] * f_local[4] + R[3*r + 2] * f_local[5]; }
+
+        std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
+        myContact->setSimulation(simulation());
+        myContact->setPosition(pgd::Vector3(pos_world[0], pos_world[1], pos_world[2]));
+        myContact->setForce(pgd::Vector3(f_world[0], f_world[1], f_world[2]));
+        myContact->setTorque(pgd::Vector3(t_world[0], t_world[1], t_world[2]));
+        Geom *geom1 = simulation()->getGeom(name1);
+        Geom *geom2 = simulation()->getGeom(name2);
+        if (geom1->abort()) simulation()->setContactAbort(geom1->name());
+        if (geom2->abort()) simulation()->setContactAbort(geom2->name());
+        geom1->addContact(myContact.get());
+        geom2->addContact(myContact.get());
+        myContact->setBody1(geom1->body());
+        myContact->setBody2(geom2->body());
+        simulation()->contactList()->push_back(std::move(myContact));
+    }
+
     return nullptr;
 }
 
