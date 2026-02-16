@@ -859,25 +859,27 @@ std::string *MuJoCoPhysicsEngine::step()
         for (int r = 0; r < 3; r++) { f_world[r] = R[3*r + 0] * f_local[0] + R[3*r + 1] * f_local[1] + R[3*r + 2] * f_local[2]; }
         for (int r = 0; r < 3; r++) { t_world[r] = R[3*r + 0] * f_local[3] + R[3*r + 1] * f_local[4] + R[3*r + 2] * f_local[5]; }
 
-        if (name1 == 0 || name2 == 0)
+        // sometimes MuJoCo contacts will not have names
+        // these can be implicit geoms created by composite geoms (heightfields, meshes, capsules)
+        // or joint limits and other constraints may generate unnamed geoms
+        // GaitSym can only cope with fully named contacts
+        if (name1 && name2)
         {
-            std::cerr << "Error: MuJoCo names undefined name1 = " << name1 << " name2 = " << name2 << "\n";
-            return nullptr;
+            std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
+            myContact->setSimulation(simulation());
+            myContact->setPosition(pgd::Vector3(pos_world[0], pos_world[1], pos_world[2]));
+            myContact->setForce(pgd::Vector3(f_world[0], f_world[1], f_world[2]));
+            myContact->setTorque(pgd::Vector3(t_world[0], t_world[1], t_world[2]));
+            Geom *geom1 = simulation()->getGeom(name1);
+            Geom *geom2 = simulation()->getGeom(name2);
+            if (geom1->abort()) simulation()->setContactAbort(geom1->name());
+            if (geom2->abort()) simulation()->setContactAbort(geom2->name());
+            geom1->addContact(myContact.get());
+            geom2->addContact(myContact.get());
+            myContact->setBody1(geom1->body());
+            myContact->setBody2(geom2->body());
+            simulation()->contactList()->push_back(std::move(myContact));
         }
-        std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
-        myContact->setSimulation(simulation());
-        myContact->setPosition(pgd::Vector3(pos_world[0], pos_world[1], pos_world[2]));
-        myContact->setForce(pgd::Vector3(f_world[0], f_world[1], f_world[2]));
-        myContact->setTorque(pgd::Vector3(t_world[0], t_world[1], t_world[2]));
-        Geom *geom1 = simulation()->getGeom(name1);
-        Geom *geom2 = simulation()->getGeom(name2);
-        if (geom1->abort()) simulation()->setContactAbort(geom1->name());
-        if (geom2->abort()) simulation()->setContactAbort(geom2->name());
-        geom1->addContact(myContact.get());
-        geom2->addContact(myContact.get());
-        myContact->setBody1(geom1->body());
-        myContact->setBody2(geom2->body());
-        simulation()->contactList()->push_back(std::move(myContact));
     }
 
     return nullptr;
