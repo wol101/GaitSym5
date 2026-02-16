@@ -859,6 +859,11 @@ std::string *MuJoCoPhysicsEngine::step()
         for (int r = 0; r < 3; r++) { f_world[r] = R[3*r + 0] * f_local[0] + R[3*r + 1] * f_local[1] + R[3*r + 2] * f_local[2]; }
         for (int r = 0; r < 3; r++) { t_world[r] = R[3*r + 0] * f_local[3] + R[3*r + 1] * f_local[4] + R[3*r + 2] * f_local[5]; }
 
+        if (name1 == 0 || name2 == 0)
+        {
+            std::cerr << "Error: MuJoCo names undefined name1 = " << name1 << " name2 = " << name2 << "\n";
+            return nullptr;
+        }
         std::unique_ptr<Contact> myContact = std::make_unique<Contact>();
         myContact->setSimulation(simulation());
         myContact->setPosition(pgd::Vector3(pos_world[0], pos_world[1], pos_world[2]));
