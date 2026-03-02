@@ -1235,6 +1235,12 @@ if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
     )
 endif()
 
+if(UNIX AND CMAKE_BUILD_TYPE STREQUAL Release)
+    add_custom_command(TARGET GaitSym5 POST_BUILD
+        COMMAND "/usr/bin/cqtdeployer" "-bin" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GaitSym5" "-qmake" "${CMAKE_PREFIX_PATH}/bin/qmake" "-targetDir" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GaitSym5_ubuntu" # this copies the Qt dlls and a fairly minimal set of plugins
+    )
+endif()
+
 function(dump_cmake_variables)
     get_cmake_property(_variableNames VARIABLES)
     list (SORT _variableNames)
