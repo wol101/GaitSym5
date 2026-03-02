@@ -1029,7 +1029,7 @@ if (use_mucojo_src)
 
 endif()
 
-if (use_physx_src)
+if (WIN32 AND use_physx_src)
 add_custom_target(prebuild_phase ALL
     COMMAND ${CMAKE_COMMAND} -E echo "Prebuild phase complete"
 
@@ -1114,6 +1114,7 @@ if(WIN32)
     target_link_libraries(GaitSym5 PRIVATE wsock32 ws2_32)
 endif()
 
+if (WIN32)
 if(use_physx_src)
     target_link_libraries(GaitSym5 PRIVATE
         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCharacterKinematic_static.lib
@@ -1151,6 +1152,22 @@ if(NOT use_physx_src AND MAKE_BUILD_TYPE STREQUAL Debug)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCooking_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXExtensions_static_64.lib")
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXPvdSDK_static_64.lib")
+endif()
+endif()
+
+# this is a kludge that forces the use of the terminal libraries in build
+if (UNIX)
+    set(LINK_LIBS
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXCharacterKinematic_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXCommon_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXCooking_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXExtensions_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXFoundation_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXPvdSDK_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXVehicle2_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysX_static.a
+    )
+    target_link_libraries(GaitSym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
 endif()
 
 set_target_properties(GaitSym5 PROPERTIES
