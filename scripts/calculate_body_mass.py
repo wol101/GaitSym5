@@ -20,7 +20,7 @@ def calculate_body_mass():
     count = 0
 
     print(f"{'ID':<30} {'Mass':>15}")
-    print("-" * 37)
+    print("-" * 46)
 
     for body in bodies:
         body_id = body.get("ID", "<no ID>")
@@ -33,10 +33,10 @@ def calculate_body_mass():
         mass = float(mass_str)
         total_mass += mass
         count += 1
-        print(f"{body_id:<20} {mass:>15.6f}")
+        print(f"{body_id:<30} {mass:>15.6f}")
 
-    print("-" * 37)
-    print(f"{'Total (' + str(count) + ' bodies)':<20} {total_mass:>15.6f}")
+    print("-" * 46)
+    print(f"{'Total (' + str(count) + ' bodies)':<30} {total_mass:>15.6f}")
 
 
 if __name__ == "__main__":
