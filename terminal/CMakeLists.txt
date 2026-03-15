@@ -1,5 +1,7 @@
-# run "cmake -D CMAKE_BUILD_TYPE=Release ../terminal/" for a release version
-# run "cmake -D CMAKE_BUILD_TYPE=Debug ../terminal/" for a debug version
+# cd into the folder where this CMakeFList.txt file is
+# create a build folder with "mkdir build" and cd into it woth "cd build"
+# run "cmake -D CMAKE_BUILD_TYPE=Release .." for a release version
+# run "cmake -D CMAKE_BUILD_TYPE=Debug .." for a debug version
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -9,6 +11,11 @@ set(use_physx_src 1)
 
 # this command stops the CMAKE_BUILD_TYPE from being cached
 SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
+
+# set some output folders
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/$<CONFIG>/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/$<CONFIG>/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/$<CONFIG>/lib)
 
 project(gaitsym VERSION 0.1 LANGUAGES C CXX)
 
