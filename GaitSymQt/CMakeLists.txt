@@ -1158,14 +1158,14 @@ endif()
 # this is a kludge that forces the use of the terminal libraries in build
 if (UNIX)
     set(LINK_LIBS
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXCharacterKinematic_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXCommon_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXCooking_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXExtensions_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXFoundation_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXPvdSDK_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysXVehicle2_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../build/libPhysX_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXCharacterKinematic_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXCommon_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXCooking_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXExtensions_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXFoundation_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXPvdSDK_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXVehicle2_static.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysX_static.a
     )
     target_link_libraries(GaitSym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
 endif()
