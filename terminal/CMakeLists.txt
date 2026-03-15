@@ -779,14 +779,14 @@ endif()
 
 if(use_physx_src)
     set(LINK_LIBS
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXCharacterKinematic_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXCommon_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXCooking_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXExtensions_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXFoundation_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXPvdSDK_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysXVehicle2_static.a
-        ${CMAKE_CURRENT_BINARY_DIR}/libPhysX_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXCharacterKinematic_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXCommon_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXCooking_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXExtensions_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXFoundation_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXPvdSDK_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysXVehicle2_static.a
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libPhysX_static.a
     )
     target_link_libraries(gaitsym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
     target_link_libraries(gaitsym5_asio PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
