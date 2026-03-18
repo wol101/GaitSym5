@@ -10,11 +10,13 @@ From: ubuntu:24.04
 
 # copy the binary from the build folder
 %files
-    ../build/gaitsym5_asio /usr/local/bin/gaitsym5_asio
+    ../terminal/Release/bin/gaitsym5_asio /usr/local/bin/gaitsym5_asio
+    ../terminal/Release/bin/gaitsym5 /usr/local/bin/gaitsym5
 
 # make it executable
 %post
     chmod +x /usr/local/bin/gaitsym5_asio
+    chmod +x /usr/local/bin/gaitsym5
 
 # allow command line arguments to be passed when run
 %runscript
