@@ -20,13 +20,12 @@
 #include "Geom.h"
 #include "ArgParse.h"
 
-#include "pocketpy.h"
-
 #define MAX_ARGS 4096
 
 using namespace std::string_literals;
 
 #if defined(USE_CL)
+#include "pocketpy.h"
 int main(int argc, const char **argv)
 {
     py_initialize(); // not bothering with py_finalize() because it can cause problems with py_resetvm in destructors
@@ -50,6 +49,7 @@ ObjectiveMain::ObjectiveMain(int argc, const char **argv)
     m_argparse.addArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
     m_argparse.addArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
     m_argparse.addArgument("-de"s, "--debug"s, "Turn debugging on"s);
+    m_argparse.addArgument("-qu"s, "--quiet"s, "Turn quiet mode on"s);
 
     m_argparse.addArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
 
@@ -115,6 +115,7 @@ int ObjectiveMain::readModel()
 
     // create the simulation object
     m_simulation = std::make_unique<Simulation>();
+    m_simulation->setQuiet(m_quiet);
     if (m_outputModelStateFilename.size()) m_simulation->setOutputModelStateFile(m_outputModelStateFilename);
     if (m_outputModelStateAtTime >= 0) m_simulation->setOutputModelStateAtTime(m_outputModelStateAtTime);
     if (m_outputModelStateAtCycle >= 0) m_simulation->setOutputModelStateAtCycle(m_outputModelStateAtCycle);
@@ -138,13 +139,8 @@ int ObjectiveMain::readModel()
 int ObjectiveMain::writeOutput()
 {
     double score = m_simulation->calculateInstantaneousFitness();
-    std::cerr << "Simulation Time: " << m_simulation->simulationTime() <<
-                 " Steps: " << m_simulation->stepCount() <<
-                 " Score: " << score <<
-                 " Mechanical Energy: " << m_simulation->mechanicalEnergy() <<
-                 " Metabolic Energy: " << m_simulation->metabolicEnergy() <<
-                 " CPUTimeSimulation: " << m_simulationTime <<
-                 "\n";
+    if (!m_quiet) std::cerr << "Simulation Time: " << m_simulation->simulationTime() << " Steps: " << m_simulation->stepCount() << " Score: " << score <<
+            " Mechanical Energy: " << m_simulation->mechanicalEnergy() << " Metabolic Energy: " << m_simulation->metabolicEnergy() << " CPUTimeSimulation: " << m_simulationTime << "\n";
 
     if (m_scoreFilename.size())
     {

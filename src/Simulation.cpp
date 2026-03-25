@@ -160,7 +160,7 @@ std::string *Simulation::loadModel(const char *buffer, size_t length) // note th
         setLastError(pystring::join("\n"s, errorList));
         return lastErrorPtr();
     }
-    if (cycles > 1)
+    if (cycles > 1 && !m_quiet)
         std::cerr << "Warning: file took " << cycles << " cycles to parse. Consider reordering for speed.\n";
 
     // joints are created with the bodies in construction poses
@@ -368,23 +368,29 @@ bool Simulation::testForCatastrophy()
     // check for simulation error
     if (m_simulationError)
     {
-        std::cerr << "Failed due to simulation error " << m_simulationError << "\n";
+        if (!m_quiet) std::cerr << "Failed due to simulation error " << m_simulationError << "\n";
         return true;
     }
 
     // check for contact abort
     if (m_contactAbort)
     {
-        std::cerr << "Failed due to contact abort\n";
-        for (auto &&it: m_contactAbortList) { std::cerr << it << "\n"; }
+        if (!m_quiet)
+        {
+            std::cerr << "Failed due to contact abort\n";
+            for (auto &&it: m_contactAbortList) { std::cerr << it << "\n"; }
+        }
         return true;
     }
 
     // check for data target abort
     if (m_dataTargetAbort)
     {
-        std::cerr << "Failed due to DataTarget abort\n";
-        for (auto &&it: m_dataTargetAbortList) { std::cerr << it << "\n"; }
+        if (!m_quiet)
+        {
+            std::cerr << "Failed due to DataTarget abort\n";
+            for (auto &&it: m_dataTargetAbortList) { std::cerr << it << "\n"; }
+        }
         return true;
     }
 
@@ -402,23 +408,23 @@ bool Simulation::testForCatastrophy()
         case Body::XPosError:
         case Body::YPosError:
         case Body::ZPosError:
-            std::cerr << "Failed due to position error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
+            if (!m_quiet) std::cerr << "Failed due to position error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
             return true;
 
         case Body::XVelError:
         case Body::YVelError:
         case Body::ZVelError:
-            std::cerr << "Failed due to linear velocity error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
+            if (!m_quiet) std::cerr << "Failed due to linear velocity error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
             return true;
 
         case Body::XAVelError:
         case Body::YAVelError:
         case Body::ZAVelError:
-            std::cerr << "Failed due to angular velocity error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
+            if (!m_quiet) std::cerr << "Failed due to angular velocity error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
             return true;
 
         case Body::NumericalError:
-            std::cerr << "Failed due to numerical error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
+            if (!m_quiet) std::cerr << "Failed due to numerical error " << Body::limitTestResultStrings(p) << " in: " << iter1.second->name() << "\n";
             return true;
         }
     }
@@ -431,12 +437,12 @@ bool Simulation::testForCatastrophy()
             int t = j->TestLimits();
             if (t < 0)
             {
-                std::cerr << "Failed due to LoStopTorqueLimit error in: " << iter3.second->name() << "\n";
+                if (!m_quiet) std::cerr << "Failed due to LoStopTorqueLimit error in: " << iter3.second->name() << "\n";
                 return true;
             }
             else if (t > 0)
             {
-                std::cerr << "Failed due to HiStopTorqueLimit error in: " << iter3.second->name() << "\n";
+                if (!m_quiet) std::cerr << "Failed due to HiStopTorqueLimit error in: " << iter3.second->name() << "\n";
                 return true;
             }
         }
@@ -445,7 +451,7 @@ bool Simulation::testForCatastrophy()
         {
             if (f->checkStressAbort())
             {
-                std::cerr << "Failed due to stress limit error in: " << iter3.second->name() << " " << f->lowPassMinStress() << " " << f->lowPassMaxStress() << "\n";
+                if (!m_quiet) std::cerr << "Failed due to stress limit error in: " << iter3.second->name() << " " << f->lowPassMinStress() << " " << f->lowPassMaxStress() << "\n";
                 return true;
             }
         }
@@ -456,14 +462,14 @@ bool Simulation::testForCatastrophy()
     {
         if (reporterIter.second->shouldAbort())
         {
-            std::cerr << "Failed due to Reporter Abort in: " << reporterIter.second->name() << "\n";
+            if (!m_quiet) std::cerr << "Failed due to Reporter Abort in: " << reporterIter.second->name() << "\n";
             return true;
         }
     }
 
     if (m_outputModelStateOccured && m_abortAfterModelStateOutput)
     {
-        std::cerr << "Abort because ModelState successfully written\n";
+        if (!m_quiet) std::cerr << "Abort because ModelState successfully written\n";
         return true;
     }
 
@@ -1236,6 +1242,11 @@ void Simulation::dumpObject(NamedObject *namedObject)
             std::cerr << "Error writing dump file\n";
         }
     }
+}
+
+void Simulation::setQuiet(bool newQuiet)
+{
+    m_quiet = newQuiet;
 }
 
 std::string Simulation::configFileRootTag() const

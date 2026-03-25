@@ -284,6 +284,7 @@ private:
     std::uniform_real_distribution<double> m_distrib;
 
     bool m_debug = false;
+    bool m_quiet = false;
 };
 
 } // namespace GaitSym

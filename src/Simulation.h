@@ -130,6 +130,8 @@ public:
 
     std::string configFileRootTag() const;
 
+    void setQuiet(bool newQuiet);
+
 private:
 
     std::string *parseGlobal(const ParseXML::XMLElement *node);
@@ -194,6 +196,7 @@ private:
     std::vector<std::string> m_dataTargetAbortList;
     std::vector<std::string> m_contactAbortList;
     int m_numericalErrorCount = 0;
+    bool m_quiet = false;
 
     // for fitness calculations
     double m_targetMatchFitness = 0;

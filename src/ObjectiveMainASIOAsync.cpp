@@ -20,7 +20,6 @@
 #include "ArgParse.h"
 
 #include "pystring.h"
-#include "pocketpy.h"
 
 #include <chrono>
 #include <thread>
@@ -38,6 +37,7 @@
 using namespace std::string_literals;
 
 #if defined(USE_ASIO_ASYNC)
+#include "pocketpy.h"
 int main(int argc, const char **argv)
 {
     py_initialize();
@@ -49,6 +49,7 @@ int main(int argc, const char **argv)
 #endif
 
 #if defined(USE_ASIO_ASYNC_MPI)
+#include "pocketpy.h"
 #include <mpi.h>
 int main(int argc, const char **argv)
 {
@@ -87,6 +88,7 @@ ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
     m_argparse.addArgument("-mc"s, "--outputModelStateAtCycle"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
     m_argparse.addArgument("-mt"s, "--outputModelStateAtTime"s, "Output model state at this cycle"s, ""s, 1, false, ArgParse::Double);
     m_argparse.addArgument("-de"s, "--debug"s, "Turn debugging on"s);
+    m_argparse.addArgument("-qu"s, "--quiet"s, "Turn quiet mode on"s);
 
     m_argparse.addArgument("-ol"s, "--outputList"s, "List of objects to produce output"s, ""s, 1, MAX_ARGS, false, ArgParse::String);
 
@@ -108,6 +110,7 @@ ObjectiveMainASIOAsync::ObjectiveMainASIOAsync(int argc, const char **argv)
     m_argparse.get("--score"s, &m_scoreFilename);
     m_argparse.get("--modelState"s, &m_outputModelStateFilename);
     m_argparse.get("--debug"s, &m_debug);
+    m_argparse.get("--quiet"s, &m_quiet);
 
     std::string rawHost;
     std::vector<std::string> result;
@@ -206,7 +209,7 @@ int ObjectiveMainASIOAsync::run()
         runTime = GSUtil::systemTime() - startTime;
         double housekeeping = runTime - computeTime;
         double utilisation = computeTime / runTime;
-        std::cerr << "runTime: " << runTime << " computeTime: " << computeTime << " housekeeping: " << housekeeping << " utilisation: " << utilisation * 100.0 << "%\n";
+        if (!m_quiet) std::cerr << "runTime: " << runTime << " computeTime: " << computeTime << " housekeeping: " << housekeeping << " utilisation: " << utilisation * 100.0 << "%\n";
     }
     return 0;
 }
@@ -228,6 +231,7 @@ void ObjectiveMainASIOAsync::doSimulation(const char *xmlPtr, size_t xmlLen, dou
 
     // create the simulation object locally so delete happens before the next one is create otherwise we get problems with ODE error tracking
     std::unique_ptr<Simulation> simulation = std::make_unique<Simulation>();
+    simulation->setQuiet(m_quiet);
     if (m_outputModelStateFilename.size()) simulation->setOutputModelStateFile(m_outputModelStateFilename);
     if (m_outputModelStateAtTime >= 0) simulation->setOutputModelStateAtTime(m_outputModelStateAtTime);
     if (m_outputModelStateAtCycle >= 0) simulation->setOutputModelStateAtCycle(m_outputModelStateAtCycle);
@@ -257,12 +261,8 @@ void ObjectiveMainASIOAsync::doSimulation(const char *xmlPtr, size_t xmlLen, dou
         if (simulation->testForCatastrophy()) break;
     }
     *score = simulation->calculateInstantaneousFitness();
-    std::cerr << "Simulation Time: " << simulation->simulationTime() <<
-                 " Steps: " << simulation->stepCount() <<
-                 " Score: " << *score <<
-                 " Mechanical Energy: " << simulation->mechanicalEnergy() <<
-                 " Metabolic Energy: " << simulation->metabolicEnergy() <<
-                 "\n";
+    if (!m_quiet) std::cerr << "Simulation Time: " << simulation->simulationTime() << " Steps: " << simulation->stepCount() << " Score: " << *score <<
+            " Mechanical Energy: " << simulation->mechanicalEnergy() << " Metabolic Energy: " << simulation->metabolicEnergy() << "\n";
     *computeTime += (GSUtil::systemTime() - startTime);
 }
 

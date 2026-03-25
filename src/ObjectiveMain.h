@@ -39,6 +39,7 @@ private:
     XMLConverter m_xmlConverter;
     ArgParse m_argparse;
     bool m_debug = false;
+    bool m_quiet = false;
 };
 
 }
