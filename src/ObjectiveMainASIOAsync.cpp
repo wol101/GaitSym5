@@ -279,7 +279,7 @@ int ObjectiveMainASIOAsync::readGenome(std::string host, uint16_t port, std::str
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr <<  "ReadGenome m_asioClient.connect() OK\n";
@@ -296,7 +296,7 @@ int ObjectiveMainASIOAsync::readGenome(std::string host, uint16_t port, std::str
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr <<  "ReadGenome req_gen_ sent\n";
@@ -308,18 +308,18 @@ int ObjectiveMainASIOAsync::readGenome(std::string host, uint16_t port, std::str
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr << "ReadGenome genome received " << reply.size() << " characters\n";
     if (reply.size() < sizeof(DataMessage))
     {
-        std::cerr << "ReadGenome reply.size() < sizeof(DataMessage)\n";
+        if (!m_quiet) std::cerr << "ReadGenome reply.size() < sizeof(DataMessage)\n";
         return __LINE__;
     }
     if (strncmp(reply.data(), "genome", 16) != 0)
     {
-        std::cerr << "ReadGenome strncmp(reply.data(), \"genome\", 16) != 0\n";
+        if (!m_quiet) std::cerr << "ReadGenome strncmp(reply.data(), \"genome\", 16) != 0\n";
         return __LINE__;
     }
     const DataMessage *dataMessagePtr = reinterpret_cast<const DataMessage *>(reply.data());
@@ -334,7 +334,7 @@ int ObjectiveMainASIOAsync::readGenome(std::string host, uint16_t port, std::str
                            << dataMessagePtr->md5[2] << " " << dataMessagePtr->md5[3] << "\n";
     if (reply.size() < sizeof(DataMessage) + dataMessagePtr->genomeLength * sizeof(double))
     {
-        std::cerr << "ReadGenome reply.size() < sizeof(DataMessage) + dataMessagePtr->genomeLength * sizeof(double)\n";
+        if (!m_quiet) std::cerr << "ReadGenome reply.size() < sizeof(DataMessage) + dataMessagePtr->genomeLength * sizeof(double)\n";
         return __LINE__;
     }
     *rawMessage = reply;
@@ -352,7 +352,7 @@ int ObjectiveMainASIOAsync::readXML(std::string host, uint16_t port, std::string
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr <<  "ReadXML m_asioClient.connect() OK\n";
@@ -368,7 +368,7 @@ int ObjectiveMainASIOAsync::readXML(std::string host, uint16_t port, std::string
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr << "ReadXML req_xml_ sent\n";
@@ -380,24 +380,24 @@ int ObjectiveMainASIOAsync::readXML(std::string host, uint16_t port, std::string
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr << "ReadXML xml received " << reply.size() << " characters\n";
     if (reply.size() < sizeof(DataMessage))
     {
-        std::cerr << "ReadXML reply.size() < sizeof(DataMessage)\n";
+        if (!m_quiet) std::cerr << "ReadXML reply.size() < sizeof(DataMessage)\n";
         return __LINE__;
     }
     const DataMessage *dataMessagePtr = reinterpret_cast<const DataMessage *>(reply.data());
     if (reply.size() < sizeof(DataMessage) + dataMessagePtr->xmlLength * sizeof(char))
     {
-        std::cerr << "ReadXML reply.size() < sizeof(DataMessage) + dataMessagePtr->xmlLength * sizeof(char)\n";
+        if (!m_quiet) std::cerr << "ReadXML reply.size() < sizeof(DataMessage) + dataMessagePtr->xmlLength * sizeof(char)\n";
         return __LINE__;
     }
     if (strncmp(reply.data(), "xml", 16) != 0)
     {
-        std::cerr << "ReadXML strncmp(reply.data(), \"xml\", 16) != 0\n";
+        if (!m_quiet) std::cerr << "ReadXML strncmp(reply.data(), \"xml\", 16) != 0\n";
         return __LINE__;
     }
 
@@ -416,7 +416,7 @@ int ObjectiveMainASIOAsync::writeOutput(std::string host, uint16_t port, uint64_
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr <<  "WriteOutput m_asioClient.connect() OK\n";
@@ -435,7 +435,7 @@ int ObjectiveMainASIOAsync::writeOutput(std::string host, uint16_t port, uint64_
     }
     catch (std::exception& e)
     {
-        std::cerr << __LINE__ << " " << e.what() << std::endl;
+        if (!m_quiet) std::cerr << __LINE__ << " " << e.what() << std::endl;
         return __LINE__;
     }
     if (m_debug) std::cerr << "WriteOutput score = " << score << " runID = " << runID << " sent\n";
