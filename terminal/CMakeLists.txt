@@ -1,5 +1,5 @@
 # cd into the folder where this CMakeFList.txt file is
-# create a build folder with "mkdir build" and cd into it woth "cd build"
+# create a build folder with "mkdir build" and cd into it with "cd build"
 # run "cmake -D CMAKE_BUILD_TYPE=Release .." for a release version
 # run "cmake -D CMAKE_BUILD_TYPE=Debug .." for a debug version
 
