@@ -1114,17 +1114,32 @@ if(WIN32)
     target_link_libraries(GaitSym5 PRIVATE wsock32 ws2_32)
 endif()
 
+# if (WIN32)
+# if(use_physx_src)
+#     target_link_libraries(GaitSym5 PRIVATE
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCharacterKinematic.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCommon_static.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCooking_static.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXExtensions_static.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXFoundation_static.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXPvdSDK_static.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXVehicle2_static.lib
+#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysX_static.lib
+#     )
+#     add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
+# endif()
+
 if (WIN32)
 if(use_physx_src)
     target_link_libraries(GaitSym5 PRIVATE
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCharacterKinematic_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCommon_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCooking_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXExtensions_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXFoundation_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXPvdSDK_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXVehicle2_static.lib
-        ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysX_static.lib
+        PhysXCharacterKinematic
+        PhysXCommon
+        PhysXCooking
+        PhysXExtensions
+        PhysXFoundation
+        PhysXPvdSDK
+        PhysXVehicle2
+        PhysX_static
     )
     add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
 endif()
