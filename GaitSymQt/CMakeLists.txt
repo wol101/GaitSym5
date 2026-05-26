@@ -1030,7 +1030,38 @@ if (use_mucojo_src)
 endif()
 
 if (use_physx_src)
-    # set(PX_GENERATE_STATIC_LIBRARIES 1)
+    # compiler define options (get set to zero if undefined)
+    # PX_SUPPORT_GPU_PHYSX
+    # PX_SUPPORT_PVD
+    # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
+    # DISABLE_CUDA_PHYSX
+    # PX_SUPPORT_OMNI_PVD
+    # PX_SUPPORT_PVD
+    # PX_NVTX
+
+    # build style compiler definitions (do not define any for release code)
+    # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive, must be used with PX_CHECKED]
+    # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
+    # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
+
+    # cmake variables used to control build
+    # PX_SCALAR_MATH [Disable SIMD math]
+    # PX_PUBLIC_RELEASE
+
+    add_compile_definitions(DISABLE_CUDA_PHYSX PX_PHYSX_STATIC_LIB)
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        add_compile_definitions(PX_DEBUG PX_CHECKED)
+    endif()
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
+        add_compile_definitions(PX_SIMD_DISABLED)
+    endif()
+
+    # cmake variables used to control build
+    # PX_SCALAR_MATH [Disable SIMD math]
+    # PX_PUBLIC_RELEASE
+    # PX_GENERATE_STATIC_LIBRARIES
+    # PX_FLOAT_POINT_PRECISE_MATH [Visual C++ only]
+
     set(PX_FLOAT_POINT_PRECISE_MATH 1)
     set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
     set(PHYSX_SOURCE_DIR ${PHYSX_ROOT_DIR}/source)
@@ -1093,13 +1124,18 @@ if (use_physx_src)
 
     set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
         ${PHYSX_SOURCE_DIR}/common/include
-        ${PHYSX_SOURCE_DIR}/lowlevel/api/include
-        ${PHYSX_SOURCE_DIR}/lowlevel/software/include
-        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline
-        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/collision
-        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/utils
-        ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+        ${PHYSX_SOURCE_DIR}/common/src
+        ${PHYSX_SOURCE_DIR}/geomutils/include
         ${PHYSX_SOURCE_DIR}/geomutils/src
+        ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+        ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
+        ${PHYSX_SOURCE_DIR}/geomutils/src/pcm
+        ${PHYSX_SOURCE_DIR}/lowlevel/api/include
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/collision
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/utils
+        ${PHYSX_SOURCE_DIR}/lowlevel/software/include
+        ${PHYSX_SOURCE_DIR}/lowlevelaabb/include
     )
 
 
@@ -1502,7 +1538,8 @@ if (use_physx_src)
    )
 endif()
 
-if (WIN32 AND use_physx_src AND 0)
+#[[
+if (WIN32 AND use_physx_src)
 add_custom_target(prebuild_phase ALL
     COMMAND ${CMAKE_COMMAND} -E echo "Prebuild phase complete"
 
@@ -1566,6 +1603,7 @@ add_custom_target(prebuild_phase ALL
     include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SimulationController.cmake)
 )
 endif()
+]]
 
 list(REMOVE_DUPLICATES PROJECT_SOURCES)
 list(REMOVE_DUPLICATES INCLUDE_DIRECTORIES)
@@ -1602,7 +1640,8 @@ endif()
 #     add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
 # endif()
 
-if (WIN32 AND 0)
+#[[
+if (WIN32)
 if(use_physx_src)
     target_link_libraries(GaitSym5 PRIVATE
         PhysXCharacterKinematic
@@ -1642,6 +1681,7 @@ if(NOT use_physx_src AND MAKE_BUILD_TYPE STREQUAL Debug)
     target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXPvdSDK_static_64.lib")
 endif()
 endif()
+]]
 
 # this is a kludge that forces the use of the terminal libraries in build
 if (UNIX)
