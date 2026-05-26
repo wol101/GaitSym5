@@ -101,7 +101,7 @@ void MarkerEllipseDriver::update()
     else
     {
         // we need to do something to correct for the phase
-        m_valueChangeDirection = detectSignChange(m_phaseControlInput->calculateError(simulation()->simulationTime()));
+        m_valueChangeDirection = detectSignChange(m_phaseControlInput->calculateError(simulation()->simulationTime())); // FIX ME - this does not work
         if (m_valueChangeDirection != 0)
         {
             m_halfPeriod = simulation()->simulationTime() - m_lastPhaseChangeTime;
