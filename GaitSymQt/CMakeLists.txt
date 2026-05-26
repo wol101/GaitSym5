@@ -1030,7 +1030,7 @@ if (use_mucojo_src)
 endif()
 
 if (use_physx_src)
-    set(PX_GENERATE_STATIC_LIBRARIES 1)
+    # set(PX_GENERATE_STATIC_LIBRARIES 1)
     set(PX_FLOAT_POINT_PRECISE_MATH 1)
     set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
     set(PHYSX_SOURCE_DIR ${PHYSX_ROOT_DIR}/source)
@@ -1094,8 +1094,12 @@ if (use_physx_src)
     set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
         ${PHYSX_SOURCE_DIR}/common/include
         ${PHYSX_SOURCE_DIR}/lowlevel/api/include
-        ${PHYSX_SOURCE_DIR}/lowlevel/software/src
+        ${PHYSX_SOURCE_DIR}/lowlevel/software/include
         ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/collision
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/utils
+        ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+        ${PHYSX_SOURCE_DIR}/geomutils/src
     )
 
 
