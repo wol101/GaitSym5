@@ -41,11 +41,6 @@ if (MSVC)
     add_compile_definitions(HAVE_MALLOC_H)
 endif()
 
-# MuJoCo definitions
-if (use_mucojo_src)
-    add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC CCD_STATIC_DEFINE)
-endif()
-
 # glextrusion definitions
 add_compile_definitions(TRIANGLE_GENERATOR __GLE_DOUBLE)
 
@@ -865,6 +860,7 @@ set(INCLUDE_DIRECTORIES
 )
 
 if (use_mucojo_src)
+    add_compile_definitions(MC_CPP_USE_DOUBLE_PRECISION MC_IMPLEM_ENABLE MJ_STATIC CCD_STATIC_DEFINE)
     set(PROJECT_SOURCES ${PROJECT_SOURCES}
         ../MuJoCo/mujoco-3.3.0/src/engine/engine_array_safety.h
         ../MuJoCo/mujoco-3.3.0/src/engine/engine_callback.c
@@ -1637,73 +1633,6 @@ if (use_physx_src)
 
 endif()
 
-#[[
-if (WIN32 AND use_physx_src)
-add_custom_target(prebuild_phase ALL
-    COMMAND ${CMAKE_COMMAND} -E echo "Prebuild phase complete"
-
-    # compiler define options (get set to zero if undefined)
-    # PX_SUPPORT_GPU_PHYSX
-    # PX_SUPPORT_PVD
-    # PX_PHYSX_STATIC_LIB [turns off a lot of DLL specific code]
-    # DISABLE_CUDA_PHYSX
-    # PX_SUPPORT_OMNI_PVD
-    # PX_SUPPORT_PVD
-    # PX_NVTX
-
-    # build style compiler definitions (do not define any for release code)
-    # PX_DEBUG    [optimisation off, SDK development asserts, very intrusive, must be used with PX_CHECKED]
-    # PX_CHECKED  [code to detect invalid parameters, API race conditions, and other incorrect uses of the API]
-    # PX_PROFILE  [omits the checks, but still has PVD and memory instrumentation]
-
-    # cmake variables used to control build
-    # PX_SCALAR_MATH [Disable SIMD math]
-    # PX_PUBLIC_RELEASE
-
-    add_compile_definitions(DISABLE_CUDA_PHYSX PX_PHYSX_STATIC_LIB)
-    if(CMAKE_BUILD_TYPE STREQUAL Debug)
-        add_compile_definitions(PX_DEBUG PX_CHECKED)
-    endif()
-    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
-        add_compile_definitions(PX_SIMD_DISABLED)
-    endif()
-
-    # cmake variables used to control build
-    # PX_SCALAR_MATH [Disable SIMD math]
-    # PX_PUBLIC_RELEASE
-    # PX_GENERATE_STATIC_LIBRARIES
-    # PX_FLOAT_POINT_PRECISE_MATH [Visual C++ only]
-
-    set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
-    #set(PHYSX_ROOT_DIR ../PhysX/PhysX-107.0/physx)
-    if (UNIX)
-        set(TARGET_BUILD_PLATFORM linux)
-    endif()
-    if (WIN32)
-        set(TARGET_BUILD_PLATFORM windows)
-    endif()
-    set(PROJECT_CMAKE_FILES_DIR ../../custom_cmake) # these have been copied from physx/source/compiler/cmake
-    set(PX_GENERATE_STATIC_LIBRARIES 1)
-    set(PX_FLOAT_POINT_PRECISE_MATH 1)
-
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXFoundation.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevel.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevelAABB.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/LowLevelDynamics.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysX.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXCharacterKinematic.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXCommon.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXCooking.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXExtensions.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXPvdSDK.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXTask.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/PhysXVehicle.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SceneQuery.cmake)
-    include(${PHYSX_ROOT_DIR}/${PROJECT_CMAKE_FILES_DIR}/SimulationController.cmake)
-)
-endif()
-]]
-
 list(REMOVE_DUPLICATES PROJECT_SOURCES)
 list(REMOVE_DUPLICATES INCLUDE_DIRECTORIES)
 
@@ -1724,82 +1653,43 @@ if(WIN32)
     target_link_libraries(GaitSym5 PRIVATE wsock32 ws2_32)
 endif()
 
-# if (WIN32)
-# if(use_physx_src)
-#     target_link_libraries(GaitSym5 PRIVATE
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCharacterKinematic.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCommon_static.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXCooking_static.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXExtensions_static.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXFoundation_static.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXPvdSDK_static.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysXVehicle2_static.lib
-#         ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/PhysX_static.lib
-#     )
-#     add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
-# endif()
-
-#[[
-if (WIN32)
-if(use_physx_src)
-    target_link_libraries(GaitSym5 PRIVATE
-        PhysXCharacterKinematic
-        PhysXCommon
-        PhysXCooking
-        PhysXExtensions
-        PhysXFoundation
-        PhysXPvdSDK
-        PhysXVehicle2
-        PhysX_static
-    )
-    add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
+if (NOT use_mucojo_src)
+    if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Release/mujoco.lib")
+    else()
+            message(FATAL_ERROR "Unix mucojo release library location needs to be defined in CMakeLists.txt")
+    endif()
+    if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL Debug)
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Debug/mujoco.lib")
+    else()
+            message(FATAL_ERROR "Unix mucojo debug library location needs to be defined in CMakeLists.txt")
+    endif()
 endif()
 
-if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Release)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Release/mujoco.lib")
-endif()
-if (NOT use_mucojo_src AND CMAKE_BUILD_TYPE STREQUAL Debug)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/lib/Debug/mujoco.lib")
+if (NOT use_physx_src)
+    if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysX_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXExtensions_static_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXPvdSDK_static_64.lib")
+    else()
+            message(FATAL_ERROR "Unix physx release library location needs to be defined in CMakeLists.txt")
+    endif()
+    if(WIN32 MAKE_BUILD_TYPE STREQUAL Debug)
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCooking_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXExtensions_static_64.lib")
+        target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXPvdSDK_static_64.lib")
+    else()
+            message(FATAL_ERROR "Unix physx debug library location needs to be defined in CMakeLists.txt")
+    endif()
 endif()
 
-if(NOT use_physx_src AND CMAKE_BUILD_TYPE STREQUAL Release)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysX_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCommon_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXCooking_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXExtensions_static_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/release/PhysXPvdSDK_static_64.lib")
-endif()
-
-if(NOT use_physx_src AND MAKE_BUILD_TYPE STREQUAL Debug)
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysX_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXFoundation_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCommon_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXCooking_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXExtensions_static_64.lib")
-    target_link_libraries(GaitSym5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx/bin/win.x86_64.vc143.md/debug/PhysXPvdSDK_static_64.lib")
-endif()
-endif()
-]]
-
-#[[
-# this is a kludge that forces the use of the terminal libraries in build
-if (UNIX)
-    set(LINK_LIBS
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXCharacterKinematic_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXCommon_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXCooking_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXExtensions_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXFoundation_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXPvdSDK_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysXVehicle2_static.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysX_static.a
-    )
-    target_link_libraries(GaitSym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
-endif()
-]]
-
-if (UNIX)
+if (UNIX AND use_physx_src)
     SET_SOURCE_FILES_PROPERTIES(${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
     SET_SOURCE_FILES_PROPERTIES(${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
 endif()
@@ -1848,19 +1738,13 @@ if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release) # for release builds make sure a
         COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GaitSym5.exe" # this copies the Qt dlls and a fairly minimal set of plugins
     )
 endif()
-
-if (WIN32 AND NOT use_mucojo_src)
-    add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../MuJoCo/mujoco-3.3.0/build/bin/Debug/mujoco.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    )
-endif()
-if (WIN32 AND NOT use_physx_src)
-    add_custom_command(TARGET GaitSym5 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysX_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXFoundation_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCommon_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/debug/bin/win.x86_64.vc143.md/release/PhysXCooking_64.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    )
+if(UNIX AND CMAKE_BUILD_TYPE STREQUAL Release)
+    if (NOT use_mucojo_src)
+        message(WARNING "Unix mucojo release dynamic library may need to be copied")
+    endif()
+    if (NOT use_physx_src)
+        message(WARNING "Unix physx release dynamic library may need to be copied")
+    endif()
 endif()
 
 if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL Release)
