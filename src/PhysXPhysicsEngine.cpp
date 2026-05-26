@@ -23,6 +23,8 @@
 #include "Marker.h"
 #include "Contact.h"
 
+#include <algorithm>
+
 using namespace std::string_literals;
 namespace GaitSym {
 
@@ -195,10 +197,12 @@ std::string *PhysXPhysicsEngine::createJoints()
                 revolute->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
 
                 pgd::Vector2 stops = hingeJoint->stops();
-                double springConstant = hingeJoint->stopSpring();
-                double dampingConstant = hingeJoint->stopDamp();
-                pgd::Vector2 reversedStops(-stops[1], -stops[0]);
-                revolute->setLimit(physx::PxJointAngularLimitPair(reversedStops[0], reversedStops[1], physx::PxSpring(springConstant, dampingConstant))); // note the stops are reversed from the ODE values
+                physx::PxJointAngularLimitPair limit(-stops[1], -stops[0]);  // lower, upper and note the stops are reversed from the ODE values
+                limit.restitution = std::clamp(0.0f, 0.0f, 1.0f); // how bouncy the limit is (0 = dead stop, 1 = full bounce)
+                limit.bounceThreshold = 0.0f; // minimum impact velocity needed to trigger bounce
+                limit.stiffness = std::max(float(hingeJoint->stopSpring()), 0.0f); // if >0, the limit becomes a soft spring pulling the joint back
+                limit.damping = std::max(float(hingeJoint->stopDamp()), 0.0f); // damping applied when stiffness > 0
+                revolute->setLimit(limit);
                 revolute->setRevoluteJointFlag(physx::PxRevoluteJointFlag::eLIMIT_ENABLED, true);
                 revolute->userData = hingeJoint;
                 m_jointMap[iter.first] = revolute;
