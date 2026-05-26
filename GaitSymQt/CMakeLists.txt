@@ -1127,15 +1127,35 @@ if (use_physx_src)
         ${PHYSX_SOURCE_DIR}/common/src
         ${PHYSX_SOURCE_DIR}/geomutils/include
         ${PHYSX_SOURCE_DIR}/geomutils/src
+        ${PHYSX_SOURCE_DIR}/geomutils/src/ccd
+        ${PHYSX_SOURCE_DIR}/geomutils/src/common
         ${PHYSX_SOURCE_DIR}/geomutils/src/contact
+        ${PHYSX_SOURCE_DIR}/geomutils/src/convex
+        ${PHYSX_SOURCE_DIR}/geomutils/src/distance
+        ${PHYSX_SOURCE_DIR}/geomutils/src/gjk
+        ${PHYSX_SOURCE_DIR}/geomutils/src/hf
+        ${PHYSX_SOURCE_DIR}/geomutils/src/intersection
         ${PHYSX_SOURCE_DIR}/geomutils/src/mesh
         ${PHYSX_SOURCE_DIR}/geomutils/src/pcm
+        ${PHYSX_SOURCE_DIR}/geomutils/src/sweep
         ${PHYSX_SOURCE_DIR}/lowlevel/api/include
         ${PHYSX_SOURCE_DIR}/lowlevel/common/include/collision
         ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline
         ${PHYSX_SOURCE_DIR}/lowlevel/common/include/utils
         ${PHYSX_SOURCE_DIR}/lowlevel/software/include
         ${PHYSX_SOURCE_DIR}/lowlevelaabb/include
+        ${PHYSX_SOURCE_DIR}/lowleveldynamics/include
+        ${PHYSX_SOURCE_DIR}/lowleveldynamics/shared
+        ${PHYSX_SOURCE_DIR}/physx/src
+        ${PHYSX_SOURCE_DIR}/physxextensions/src
+        ${PHYSX_SOURCE_DIR}/physxextensions/src/serialization/File
+        ${PHYSX_SOURCE_DIR}/physxgpu/include
+        ${PHYSX_SOURCE_DIR}/physxmetadata/core/include
+        ${PHYSX_SOURCE_DIR}/physxmetadata/extensions/include
+        ${PHYSX_SOURCE_DIR}/pvd/include
+        ${PHYSX_SOURCE_DIR}/scenequery/include
+        ${PHYSX_SOURCE_DIR}/simulationcontroller/include
+        ${PHYSX_SOURCE_DIR}/simulationcontroller/src
     )
 
 
