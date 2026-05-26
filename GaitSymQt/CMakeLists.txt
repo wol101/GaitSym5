@@ -1088,8 +1088,6 @@ if (use_physx_src)
         set(PROJECT_SOURCES ${PROJECT_SOURCES}
             ${PX_SOURCE_DIR}/gpu/PxGpu.cpp
             ${PX_SOURCE_DIR}/gpu/PxPhysXGpuModuleLoader.cpp
-            SET_SOURCE_FILES_PROPERTIES(${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
-            SET_SOURCE_FILES_PROPERTIES(${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
             ${LL_SOURCE_DIR}/unix/FdUnixAtomic.cpp
             ${LL_SOURCE_DIR}/unix/FdUnixMutex.cpp
             ${LL_SOURCE_DIR}/unix/FdUnixSync.cpp
@@ -1635,7 +1633,7 @@ if (use_physx_src)
         ${EXTENSIONS_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp
     )
 
-set(PROJECT_SOURCES ${PROJECT_SOURCES} ${PHYSX_EXTENSIONS_SOURCE} ${PHYSX_EXTENSIONS_JOINTS_SOURCE} ${PHYSX_EXTENSIONS_TET_SOURCE} ${PHYSX_EXTENSIONS_METADATA_SOURCE} ${PHYSX_EXTENSIONS_OMNIPVD_SOURCE})
+    set(PROJECT_SOURCES ${PROJECT_SOURCES} ${PHYSX_EXTENSIONS_SOURCE} ${PHYSX_EXTENSIONS_JOINTS_SOURCE} ${PHYSX_EXTENSIONS_TET_SOURCE} ${PHYSX_EXTENSIONS_METADATA_SOURCE} ${PHYSX_EXTENSIONS_OMNIPVD_SOURCE})
 
 endif()
 
@@ -1784,6 +1782,7 @@ endif()
 endif()
 ]]
 
+#[[
 # this is a kludge that forces the use of the terminal libraries in build
 if (UNIX)
     set(LINK_LIBS
@@ -1797,6 +1796,12 @@ if (UNIX)
         ${CMAKE_CURRENT_SOURCE_DIR}/../terminal/$<CONFIG>/lib/libPhysX_static.a
     )
     target_link_libraries(GaitSym5 PRIVATE "$<LINK_GROUP:RESCAN,${LINK_LIBS}>") # the rescan option effectively adds --start-group/--end-group for a GNU compiler
+endif()
+]]
+
+if (UNIX)
+    SET_SOURCE_FILES_PROPERTIES(${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
+    SET_SOURCE_FILES_PROPERTIES(${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
 endif()
 
 set_target_properties(GaitSym5 PROPERTIES
