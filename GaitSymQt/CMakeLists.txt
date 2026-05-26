@@ -1029,7 +1029,476 @@ if (use_mucojo_src)
 
 endif()
 
-if (WIN32 AND use_physx_src)
+if (use_physx_src)
+    set(PX_GENERATE_STATIC_LIBRARIES 1)
+    set(PX_FLOAT_POINT_PRECISE_MATH 1)
+    set(PHYSX_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../PhysX/PhysX-107.0/physx)
+    set(PHYSX_SOURCE_DIR ${PHYSX_ROOT_DIR}/source)
+    set (LL_SOURCE_DIR ${PHYSX_SOURCE_DIR}/foundation)
+    set (COOKING_DIR ${PHYSX_SOURCE_DIR}/physxcooking/src)
+    set(PX_SOURCE_DIR ${PHYSX_SOURCE_DIR}/physx/src)
+    set(COMMON_SRC_DIR ${PHYSX_SOURCE_DIR}/common/src)
+    set(LL_API_DIR ${PHYSX_SOURCE_DIR}/lowlevel/api)
+    set(LL_COMMON_DIR ${PHYSX_SOURCE_DIR}/lowlevel/common)
+    set(LL_SOFTWARE_DIR ${PHYSX_SOURCE_DIR}/lowlevel/software)
+    set(LLAABB_DIR ${PHYSX_SOURCE_DIR}/lowlevelaabb)
+    set(LLDYNAMICS_BASE_DIR ${PHYSX_SOURCE_DIR}/lowleveldynamics)
+    set(MD_SOURCE_DIR ${PHYSX_SOURCE_DIR}/physxmetadata)
+    set(CHARACTERKINEMATICS_DIR ${PHYSX_SOURCE_DIR}/physxcharacterkinematic/src)
+    set(GU_SOURCE_DIR ${PHYSX_SOURCE_DIR}/geomutils)
+    set(EXTENSIONS_DIR ${PHYSX_SOURCE_DIR}/physxextensions/src)
+    set(SERIALIZATION_DIR ${PHYSX_SOURCE_DIR}/physxextensions/src)
+    set(TASK_DIR ${PHYSX_SOURCE_DIR}/task)
+    set(VEHICLE_DIR ${PHYSX_SOURCE_DIR}/physxvehicle/src)
+    set(SCENEQUERY_BASE_DIR ${PHYSX_SOURCE_DIR}/scenequery)
+    set(SIMULATIONCONTROLLER_BASE_DIR ${PHYSX_SOURCE_DIR}/simulationcontroller)
+    if (UNIX)
+        set(TARGET_BUILD_PLATFORM linux)
+        set(PROJECT_SOURCES ${PROJECT_SOURCES}
+            ${PX_SOURCE_DIR}/gpu/PxGpu.cpp
+            ${PX_SOURCE_DIR}/gpu/PxPhysXGpuModuleLoader.cpp
+            SET_SOURCE_FILES_PROPERTIES(${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
+            SET_SOURCE_FILES_PROPERTIES(${LL_SOURCE_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp PROPERTIES COMPILE_FLAGS "-fpermissive -Wno-error")
+            ${LL_SOURCE_DIR}/unix/FdUnixAtomic.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixMutex.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixSync.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixThread.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixPrintString.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixSList.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixSocket.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixTime.cpp
+            ${LL_SOURCE_DIR}/unix/FdUnixFPU.cpp
+        )
+    endif()
+    if (WIN32)
+        set(TARGET_BUILD_PLATFORM windows)
+        set(PROJECT_SOURCES ${PROJECT_SOURCES}
+            ${PX_SOURCE_DIR}/gpu/PxGpu.cpp
+            ${PX_SOURCE_DIR}/gpu/PxPhysXGpuModuleLoader.cpp
+            ${PX_SOURCE_DIR}/windows/NpWindowsDelayLoadHook.cpp
+            ${COMMON_SRC_DIR}/windows/CmWindowsModuleUpdateLoader.cpp
+            ${COMMON_SRC_DIR}/windows/CmWindowsDelayLoadHook.cpp
+            ${COOKING_DIR}/windows/WindowsCookingDelayLoadHook.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsAtomic.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsMutex.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsSync.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsThread.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsPrintString.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsSList.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsSocket.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsTime.cpp
+            ${LL_SOURCE_DIR}/windows/FdWindowsFPU.cpp
+        )
+    endif()
+
+    set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES}
+        ${PHYSX_SOURCE_DIR}/common/include
+        ${PHYSX_SOURCE_DIR}/lowlevel/api/include
+        ${PHYSX_SOURCE_DIR}/lowlevel/software/src
+        ${PHYSX_SOURCE_DIR}/lowlevel/common/include/pipeline
+    )
+
+
+    set(PROJECT_SOURCES ${PROJECT_SOURCES}
+        ${LL_SOURCE_DIR}/FdAllocator.cpp
+        ${LL_SOURCE_DIR}/FdString.cpp
+        ${LL_SOURCE_DIR}/FdTempAllocator.cpp
+        ${LL_SOURCE_DIR}/FdAssert.cpp
+        ${LL_SOURCE_DIR}/FdMathUtils.cpp
+        ${LL_SOURCE_DIR}/FdFoundation.cpp
+        ${LL_SOURCE_DIR}/FdFoundation.h
+        ${LL_API_DIR}/src/px_globals.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcContactCache.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcContactMethodImpl.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcMaterialMethodImpl.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcNpBatch.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcNpCacheStreamPair.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcNpContactPrepShared.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcNpMemBlockPool.cpp
+        ${LL_COMMON_DIR}/src/pipeline/PxcNpThreadContext.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsCCD.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsContactManager.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsContext.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsDefaultMemoryManager.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsIslandSim.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsNphaseImplementationContext.cpp
+        ${LL_SOFTWARE_DIR}/src/PxsSimpleIslandManager.cpp
+        ${LLAABB_DIR}/src/BpAABBManager.cpp
+        ${LLAABB_DIR}/src/BpAABBManagerBase.cpp
+        ${LLAABB_DIR}/src/BpBroadPhase.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseUpdate.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseABP.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseABP.h
+        ${LLAABB_DIR}/src/BpBroadPhaseMBP.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseMBP.h
+        ${LLAABB_DIR}/src/BpBroadPhaseMBPCommon.h
+        ${LLAABB_DIR}/src/BpBroadPhaseSap.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseSap.h
+        ${LLAABB_DIR}/src/BpBroadPhaseSapAux.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseSapAux.h
+        ${LLAABB_DIR}/src/BpBroadPhaseShared.cpp
+        ${LLAABB_DIR}/src/BpBroadPhaseShared.h
+        ${LLAABB_DIR}/src/BpBroadPhaseIntegerAABB.h
+        ${LLAABB_DIR}/src/BpFiltering.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyAllocator.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyArticulationContactPrep.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyArticulationMimicJoint.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyFeatherstoneArticulation.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyFeatherstoneForwardDynamic.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyFeatherstoneInverseDynamic.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyConstraintPartition.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyConstraintSetup.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyConstraintSetupBlock.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyContactPrep.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyContactPrep4.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyDynamicsBase.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyDynamics.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyFrictionCorrelation.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyRigidBodyToSolverBody.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DySolverConstraints.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DySolverConstraintsBlock.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DySolverControl.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DySolverConstraint1DStep.h
+        ${LLDYNAMICS_BASE_DIR}/src/DyThreadContext.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyThresholdTable.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyTGSDynamics.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyTGSContactPrep.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DyTGSContactPrepBlock.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DySolverCore.cpp
+        ${LLDYNAMICS_BASE_DIR}/src/DySleep.cpp
+        ${MD_SOURCE_DIR}/core/src/PxAutoGeneratedMetaDataObjects.cpp
+        ${MD_SOURCE_DIR}/core/src/PxMetaDataObjects.cpp
+        ${MD_SOURCE_DIR}/core/src/PxAutoGeneratedMetaDataObjects.cpp
+        ${MD_SOURCE_DIR}/core/src/PxMetaDataObjects.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvd.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdRegistrationData.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdMetaData.cpp
+        ${PX_SOURCE_DIR}/omnipvd/NpOmniPvdSimulationControllerCallbacks.cpp
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdPxSampler.cpp
+        ${PX_SOURCE_DIR}/omnipvd/OmniPvdChunkAlloc.cpp
+        ${PX_SOURCE_DIR}/NpPvdSceneClient.cpp
+        ${PX_SOURCE_DIR}/NpPvdSceneQueryCollector.cpp
+        ${PX_SOURCE_DIR}/PvdMetaDataPvdBinding.cpp
+        ${PX_SOURCE_DIR}/PvdPhysicsClient.cpp
+        ${PHYSX_ROOT_DIR}/source/immediatemode/src/NpImmediateMode.cpp
+        ${PX_SOURCE_DIR}/NpMaterial.cpp
+        ${PX_SOURCE_DIR}/NpDeformableSurfaceMaterial.cpp
+        ${PX_SOURCE_DIR}/NpDeformableVolumeMaterial.cpp
+        ${PX_SOURCE_DIR}/NpPBDMaterial.cpp
+        ${PX_SOURCE_DIR}/NpArticulationReducedCoordinate.cpp
+        ${PX_SOURCE_DIR}/NpArticulationJointReducedCoordinate.cpp
+        ${PX_SOURCE_DIR}/NpArticulationLink.cpp
+        ${PX_SOURCE_DIR}/NpArticulationTendon.cpp
+        ${PX_SOURCE_DIR}/NpArticulationMimicJoint.cpp
+        ${PX_SOURCE_DIR}/NpActor.cpp
+        ${PX_SOURCE_DIR}/NpAggregate.cpp
+        ${PX_SOURCE_DIR}/NpDeformableAttachment.cpp
+        ${PX_SOURCE_DIR}/NpDeformableElementFilter.cpp
+        ${PX_SOURCE_DIR}/NpDeformableSurface.cpp
+        ${PX_SOURCE_DIR}/NpDeformableVolume.cpp
+        ${PX_SOURCE_DIR}/NpPBDParticleSystem.cpp
+        ${PX_SOURCE_DIR}/NpParticleBuffer.cpp
+        ${PX_SOURCE_DIR}/NpConstraint.cpp
+        ${PX_SOURCE_DIR}/NpFactory.cpp
+        ${PX_SOURCE_DIR}/NpPhysics.cpp
+        ${PX_SOURCE_DIR}/NpBounds.cpp
+        ${PX_SOURCE_DIR}/NpPruningStructure.cpp
+        ${PX_SOURCE_DIR}/NpCheck.cpp
+        ${PX_SOURCE_DIR}/NpRigidDynamic.cpp
+        ${PX_SOURCE_DIR}/NpRigidStatic.cpp
+        ${PX_SOURCE_DIR}/NpScene.cpp
+        ${PX_SOURCE_DIR}/NpSceneFetchResults.cpp
+        ${PX_SOURCE_DIR}/NpSceneQueries.cpp
+        ${PX_SOURCE_DIR}/NpSerializerAdapter.cpp
+        ${PX_SOURCE_DIR}/NpShape.cpp
+        ${PX_SOURCE_DIR}/NpShapeManager.cpp
+        ${PX_SOURCE_DIR}/NpDebugViz.cpp
+        ${PX_SOURCE_DIR}/NpDirectGPUAPI.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctBoxController.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctCapsuleController.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctCharacterController.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctCharacterControllerCallbacks.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctCharacterControllerManager.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctController.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctObstacleContext.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctSweptBox.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctSweptCapsule.cpp
+        ${CHARACTERKINEMATICS_DIR}/CctSweptVolume.cpp
+        ${COMMON_SRC_DIR}/CmPtrTable.cpp
+        ${COMMON_SRC_DIR}/CmCollection.cpp
+        ${COMMON_SRC_DIR}/CmRadixSort.cpp
+        ${COMMON_SRC_DIR}/CmSerialize.cpp
+        ${COMMON_SRC_DIR}/CmVisualization.cpp
+        ${GU_SOURCE_DIR}/src/GuBox.cpp
+        ${GU_SOURCE_DIR}/src/GuCapsule.cpp
+        ${GU_SOURCE_DIR}/src/GuCCTSweepTests.cpp
+        ${GU_SOURCE_DIR}/src/GuGeometryQuery.cpp
+        ${GU_SOURCE_DIR}/src/GuInternal.cpp
+        ${GU_SOURCE_DIR}/src/GuMeshFactory.cpp
+        ${GU_SOURCE_DIR}/src/GuMTD.cpp
+        ${GU_SOURCE_DIR}/src/GuOverlapTests.cpp
+        ${GU_SOURCE_DIR}/src/GuRaycastTests.cpp
+        ${GU_SOURCE_DIR}/src/GuSweepMTD.cpp
+        ${GU_SOURCE_DIR}/src/GuSweepSharedTests.cpp
+        ${GU_SOURCE_DIR}/src/GuSweepTests.cpp
+        ${GU_SOURCE_DIR}/src/GuSDF.cpp
+        ${GU_SOURCE_DIR}/src/GuGjkQuery.cpp
+        ${GU_SOURCE_DIR}/src/GuWindingNumber.cpp
+        ${GU_SOURCE_DIR}/src/GuConvexGeometry.cpp
+        ${GU_SOURCE_DIR}/src/GuConvexSupport.cpp
+        ${GU_SOURCE_DIR}/src/ccd/GuCCDSweepConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/ccd/GuCCDSweepPrimitives.cpp
+        ${GU_SOURCE_DIR}/src/common/GuBarycentricCoordinates.cpp
+        ${GU_SOURCE_DIR}/src/common/GuAdjacencies.cpp
+        ${GU_SOURCE_DIR}/src/common/GuEdgeList.cpp
+        ${GU_SOURCE_DIR}/src/common/GuSeparatingAxes.cpp
+        ${GU_SOURCE_DIR}/src/common/GuQuantizer.cpp
+        ${GU_SOURCE_DIR}/src/common/GuMeshCleaner.cpp
+        ${GU_SOURCE_DIR}/src/common/GuVertexReducer.cpp
+        ${GU_SOURCE_DIR}/src/common/GuMeshAnalysis.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleCapsule.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCapsuleMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexCoreMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactConvexCoreConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneConvexCore.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneCapsule.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneConvex.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPlaneMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactPolygonPolygon.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactMeshMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereBox.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereMesh.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSpherePlane.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactSphereSphere.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuContactCustomGeometry.cpp
+        ${GU_SOURCE_DIR}/src/contact/GuFeatureCode.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuBigConvexData.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexHelper.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexSupportTable.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuConvexUtilsInternal.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuHillClimbing.cpp
+        ${GU_SOURCE_DIR}/src/convex/GuShapeConvex.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointBox.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointTriangle.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentBox.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentSegment.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceSegmentTriangle.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistanceTriangleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/distance/GuDistancePointTetrahedron.cpp
+        ${GU_SOURCE_DIR}/src/gjk/GuEPA.cpp
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKSimplex.cpp
+        ${GU_SOURCE_DIR}/src/gjk/GuGJKTest.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuHeightField.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuHeightFieldUtil.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuOverlapTestsHF.cpp
+        ${GU_SOURCE_DIR}/src/hf/GuSweepsHF.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionCapsuleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionEdgeEdge.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRayCapsule.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionRaySphere.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionSphereBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionTetrahedronBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionTriangleBox.cpp
+        ${GU_SOURCE_DIR}/src/intersection/GuIntersectionTriangleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_AABBSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_BoxOverlap.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_CapsuleSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_CapsuleSweepAA.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_MeshMeshOverlap.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_OBBSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_Raycast.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_SphereOverlap.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4_SphereSweep.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuMidphaseBV4.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV4Build.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuMeshQuery.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuMidphaseRTree.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuOverlapTestsMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuRTree.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuRTreeQueries.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuSweepsMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMeshBV4.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTriangleMeshRTree.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV32.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuBV32Build.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedronMesh.cpp
+        ${GU_SOURCE_DIR}/src/mesh/GuTetrahedronMeshUtils.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactBoxConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleHeightField.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCapsuleMesh.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexCommon.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexHeightField.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenBoxConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactPlaneBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactPlaneCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactPlaneConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereBox.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereHeightField.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereMesh.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSpherePlane.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactSphereSphere.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactCustomGeometry.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMShapeConvex.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMTriangleContactGen.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPersistentContactManifold.cpp
+        ${GU_SOURCE_DIR}/src/pcm/GuPCMContactGenUtil.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxBox.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxSphere.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxTriangle_FeatureBased.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepBoxTriangle_SAT.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleBox.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleCapsule.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepCapsuleTriangle.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereCapsule.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereSphere.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepSphereTriangle.cpp
+        ${GU_SOURCE_DIR}/src/sweep/GuSweepTriangleUtils.cpp
+        ${GU_SOURCE_DIR}/src/GuBounds.cpp
+        ${GU_SOURCE_DIR}/src/GuAABBTree.cpp
+        ${GU_SOURCE_DIR}/src/GuAABBTreeUpdateMap.cpp
+        ${GU_SOURCE_DIR}/src/GuSqInternal.cpp
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBTree.cpp
+        ${GU_SOURCE_DIR}/src/GuSAH.cpp
+        ${GU_SOURCE_DIR}/src/GuBVH.cpp
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBPrunerCore.cpp
+        ${GU_SOURCE_DIR}/src/GuIncrementalAABBPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuPruningPool.cpp
+        ${GU_SOURCE_DIR}/src/GuBucketPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuMaverickNode.cpp
+        ${GU_SOURCE_DIR}/src/GuExtendedBucketPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuSecondaryPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuAABBPruner.cpp
+        ${GU_SOURCE_DIR}/src/GuActorShapeMap.cpp
+        ${GU_SOURCE_DIR}/src/GuQuerySystem.cpp
+        ${GU_SOURCE_DIR}/src/GuFactory.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuRTreeCooking.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingBVH.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingHF.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexMesh.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingTriangleMesh.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingTetrahedronMesh.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingVolumeIntegration.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingQuickHullConvexHullLib.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexPolygonsBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexMeshBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullUtils.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullLib.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingConvexHullBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingBigConvexDataBuilder.cpp
+        ${GU_SOURCE_DIR}/src/cooking/GuCookingSDF.cpp
+        ${COOKING_DIR}/Cooking.cpp
+        ${EXTENSIONS_DIR}/omnipvd/OmniPvdPxExtensionsSampler.cpp
+        ${SERIALIZATION_DIR}/serialization/SnSerialization.cpp
+        ${SERIALIZATION_DIR}/serialization/SnSerializationRegistry.cpp
+        ${SERIALIZATION_DIR}/serialization/SnSerialUtils.cpp
+        ${SERIALIZATION_DIR}/serialization/Xml/SnJointRepXSerializer.cpp
+        ${SERIALIZATION_DIR}/serialization/Xml/SnRepXCoreSerializer.cpp
+        ${SERIALIZATION_DIR}/serialization/Xml/SnRepXUpgrader.cpp
+        ${SERIALIZATION_DIR}/serialization/Xml/SnXmlSerialization.cpp
+        ${SERIALIZATION_DIR}/serialization/Xml/PsFastXml.cpp
+        ${SERIALIZATION_DIR}/serialization/Binary/SnBinaryDeserialization.cpp
+        ${SERIALIZATION_DIR}/serialization/Binary/SnBinarySerialization.cpp
+        ${SERIALIZATION_DIR}/serialization/Binary/SnSerializationContext.cpp
+        ${TASK_DIR}/src/TaskManager.cpp
+        ${VEHICLE_DIR}/commands/VhCommandHelpers.cpp
+        ${VEHICLE_DIR}/drivetrain/VhDrivetrainFunctions.cpp
+        ${VEHICLE_DIR}/drivetrain/VhDrivetrainHelpers.cpp
+        ${VEHICLE_DIR}/physxActor/VhPhysXActorFunctions.cpp
+        ${VEHICLE_DIR}/physxActor/VhPhysXActorHelpers.cpp
+        ${VEHICLE_DIR}/physxConstraints/VhPhysXConstraintFunctions.cpp
+        ${VEHICLE_DIR}/physxConstraints/VhPhysXConstraintHelpers.cpp
+        ${VEHICLE_DIR}/physxRoadGeometry/VhPhysXRoadGeometryFunctions.cpp
+        ${VEHICLE_DIR}/physxRoadGeometry/VhPhysXRoadGeometryHelpers.cpp
+        ${VEHICLE_DIR}/rigidBody/VhRigidBodyFunctions.cpp
+        ${VEHICLE_DIR}/steering/VhSteeringFunctions.cpp
+        ${VEHICLE_DIR}/suspension/VhSuspensionFunctions.cpp
+        ${VEHICLE_DIR}/suspension/VhSuspensionHelpers.cpp
+        ${VEHICLE_DIR}/tire/VhTireFunctions.cpp
+        ${VEHICLE_DIR}/tire/VhTireHelpers.cpp
+        ${VEHICLE_DIR}/wheel/VhWheelFunctions.cpp
+        ${VEHICLE_DIR}/pvd/VhPvdHelpers.cpp
+        ${VEHICLE_DIR}/pvd/VhPvdFunctions.cpp
+        ${VEHICLE_DIR}/pvd/VhPvdWriter.cpp
+        ${SCENEQUERY_BASE_DIR}/src/SqFactory.cpp
+        ${SCENEQUERY_BASE_DIR}/src/SqCompoundPruner.cpp
+        ${SCENEQUERY_BASE_DIR}/src/SqCompoundPruningPool.cpp
+        ${SCENEQUERY_BASE_DIR}/src/SqManager.cpp
+        ${SCENEQUERY_BASE_DIR}/src/SqQuery.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScActorCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScActorSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScGpuActorSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationJointCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationTendonCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationJointSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationTendonJointCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationTendonSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScArticulationMimicJointSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScBroadphase.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScDeformableSurfaceCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScDeformableSurfaceSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScDeformableVolumeCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScDeformableVolumeSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScFiltering.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScParticleSystemCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScParticleSystemSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScParticleSystemShapeCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScBodyCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScBodySim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScConstraintBreakage.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScConstraintCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScConstraintInteraction.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScConstraintSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScElementInteractionMarker.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScElementSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScInteraction.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScIterators.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScKinematics.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScNPhaseCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScPhysics.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScRigidCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScRigidSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScScene.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScCCD.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScShapeCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScShapeInteraction.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScShapeSim.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScShapeSimBase.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScSimStats.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScSimulationController.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScSqBoundsManager.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScStaticCore.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScTriggerInteraction.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScVisualize.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScSleep.cpp
+        ${SIMULATIONCONTROLLER_BASE_DIR}/src/ScPipeline.cpp
+
+   )
+endif()
+
+if (WIN32 AND use_physx_src AND 0)
 add_custom_target(prebuild_phase ALL
     COMMAND ${CMAKE_COMMAND} -E echo "Prebuild phase complete"
 
@@ -1129,7 +1598,7 @@ endif()
 #     add_dependencies(GaitSym5 prebuild_phase) # the PhysX libraries are built slightly strangely so the library build has to be forced to complete first
 # endif()
 
-if (WIN32)
+if (WIN32 AND 0)
 if(use_physx_src)
     target_link_libraries(GaitSym5 PRIVATE
         PhysXCharacterKinematic
