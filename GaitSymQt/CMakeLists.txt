@@ -621,6 +621,7 @@ set(PROJECT_SOURCES
     ../src/HingeJoint.cpp
     ../src/Joint.cpp
     ../src/LightBase.cpp
+    ../src/LineWrapStrap.cpp
     ../src/LMotorJoint.cpp
     ../src/MAMuscle.cpp
     ../src/MAMuscleComplete.cpp
@@ -780,6 +781,7 @@ set(PROJECT_SOURCES
     ../src/HingeJoint.h
     ../src/Joint.h
     ../src/LightBase.h
+    ../src/LineWrapStrap.h
     ../src/LMotorJoint.h
     ../src/MAMuscle.h
     ../src/MAMuscleComplete.h
