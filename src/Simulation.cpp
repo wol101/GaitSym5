@@ -36,6 +36,7 @@
 #include "TwoPointStrap.h"
 #include "CylinderWrapStrap.h"
 #include "TwoCylinderWrapStrap.h"
+#include "LineWrapStrap.h"
 #include "FluidSacIdealGas.h"
 #include "FluidSacIncompressible.h"
 #include "PlaneGeom.h"
@@ -761,6 +762,13 @@ std::string *Simulation::parseStrap(const ParseXML::XMLElement *node)
     else if (buf == "TwoCylinderWrap"s)
     {
         strap = std::make_unique<TwoCylinderWrapStrap>();
+        strap->setSimulation(this);
+        strap->createAttributeMap(node->attributes);
+        errorMessage = strap->createFromAttributes();
+    }
+    else if (buf == "LineWrap"s)
+    {
+        strap = std::make_unique<LineWrapStrap>();
         strap->setSimulation(this);
         strap->createAttributeMap(node->attributes);
         errorMessage = strap->createFromAttributes();
