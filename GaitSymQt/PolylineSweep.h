@@ -40,8 +40,8 @@ inline double dot(const Vec3& a, const Vec3& b) {
 }
 inline Vec3 cross(const Vec3& a, const Vec3& b) {
     return { a.y*b.z - a.z*b.y,
-            a.z*b.x - a.x*b.z,
-            a.x*b.y - a.y*b.x };
+             a.z*b.x - a.x*b.z,
+             a.x*b.y - a.y*b.x };
 }
 inline double length(const Vec3& v) { return std::sqrt(dot(v, v)); }
 inline Vec3 normalize(const Vec3& v) {
@@ -362,28 +362,37 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
                 Vec3 outgoing_ctr = polyline[i] + t_out * s2;
                 Vec3 pivot        = incoming_ctr + offset_in;
 
-                // Color for this bend node (interpolated for pull-back)
+                // Interpolate scale at incoming_ctr (pulled back by s1 from polyline[i])
+                // so scale varies smoothly through the bend without a step.
+                double segLen_in  = length(polyline[i] - polyline[i-1]);
+                double t_inc      = (segLen_in  > 1e-15) ? std::max(0.0, std::min(1.0, 1.0 + s1/segLen_in )) : 1.0;
+                double scale_inc  = scales[i-1] + (scales[i]   - scales[i-1]) * t_inc;
+
+                double segLen_out = length(polyline[i+1] - polyline[i]);
+                double t_out_frac = (segLen_out > 1e-15) ? std::max(0.0, std::min(1.0, s2/segLen_out)) : 0.0;
+                double scale_out  = scales[i]   + (scales[i+1] - scales[i])   * t_out_frac;
+
+                // Color at incoming_ctr (also interpolated for the pull-back)
                 Color incomingColor{};
                 const Color* inCol = nullptr;
                 if (hasColors) {
-                    double segLen = length(polyline[i] - polyline[i-1]);
-                    double t = (segLen > 1e-15) ? 1.0 + s1/segLen : 1.0;
-                    incomingColor = lerp(colors[i-1], colors[i],
-                                         std::max(0.0, std::min(1.0, t)));
+                    incomingColor = lerp(colors[i-1], colors[i], t_inc);
                     inCol = &incomingColor;
                 }
 
-                // Incoming ring
+                // Incoming ring — uses the interpolated scale, not scales[i]
                 vCurrent += length(incoming_ctr - prevCenter);
                 prevCenter = incoming_ctr;
                 Frame inFrame = frame; inFrame.origin = incoming_ctr;
-                rings.push_back(addRing(inFrame, scales[i], inCol,
+                rings.push_back(addRing(inFrame, scale_inc, inCol,
                                         frame.xAxis, frame.yAxis));
                 ringColor.push_back(hasColors ? incomingColor : Color{});
 
-                // Bend fan rings
+                // Bend fan rings — place vertices directly from the rotated frame
+                // at the interpolated scale for that step so radius changes smoothly.
                 for (int k = 1; k <= opts.bendSteps; k++) {
                     double angle = bendAngle * (double)k / opts.bendSteps;
+                    double scale_k = scale_inc + (scale_out - scale_inc) * (double)k / opts.bendSteps;
                     Vec3 rotX = rotateAround(frame.xAxis, rotAxis, angle);
                     Vec3 rotY = rotateAround(frame.yAxis, rotAxis, angle);
                     Vec3 fanCtr = pivot + rotateAround(incoming_ctr - pivot, rotAxis, angle);
@@ -397,10 +406,9 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
                     if (smooth) rec.normIdx.reserve(P);
 
                     for (int j = 0; j < P; j++) {
-                        Vec3 vIn  = incoming_ctr
-                                   + frame.xAxis*(polygon[j].x*scales[i])
-                                   + frame.yAxis*(polygon[j].y*scales[i]);
-                        Vec3 vRot = pivot + rotateAround(vIn - pivot, rotAxis, angle);
+                        // Place from rotated centre at the current fan scale
+                        Vec3 vRot = fanCtr + rotX*(polygon[j].x*scale_k)
+                                           + rotY*(polygon[j].y*scale_k);
                         rec.verts.push_back((int)mesh.vertices.size());
                         mesh.vertices.push_back(vRot);
                         if (inCol) mesh.vertexColors.push_back(colors[i]);
