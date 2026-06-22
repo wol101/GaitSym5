@@ -35,8 +35,7 @@ std::string *Strap::createFromAttributes()
     m_torqueMarkerList.clear();
     if (NamedObject::createFromAttributes()) return lastErrorPtr();
     std::string buf;
-    if (findAttribute("Length"s, &buf) == nullptr) return lastErrorPtr();
-    this->setLength(GSUtil::toDouble(buf));
+    if (findAttribute("Length"s, &buf) == nullptr) { this->setLength(GSUtil::toDouble(buf)); } // length does not always make sense as an input
 
     if (findAttribute("TorqueMarkerIDList"s, &buf))
     {

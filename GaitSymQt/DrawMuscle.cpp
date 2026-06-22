@@ -135,6 +135,12 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             m_polyline.push_back(pgd::Vector3(pointForceList->at(0)->point[0], pointForceList->at(0)->point[1], pointForceList->at(0)->point[2]));
             for (size_t i = 2; i < pointForceList->size(); i++) m_polyline.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));
             m_polyline.push_back(pgd::Vector3(pointForceList->at(1)->point[0], pointForceList->at(1)->point[1], pointForceList->at(1)->point[2]));
+            std::vector<pgd::Vector3> polyline;
+            polyline.push_back(nLineStrap->lineStartMarker()->worldPosition());
+            polyline.push_back(nLineStrap->lineEndMarker()->worldPosition());
+            m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyline, m_strapRadius, m_strapCylinderSegments, m_strapCylinderColor, 1);
+            m_facetedObject2->setSimulationWidget(simulationWidget);
+            m_facetedObjectList.push_back(m_facetedObject2.get());
             break;
         }
 
