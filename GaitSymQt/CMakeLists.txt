@@ -566,22 +566,6 @@ set(PROJECT_SOURCES
 
     ../pystring/pystring.cpp
 
-    ../glextrusion/GLEmulator.cpp
-    ../glextrusion/extrude.cpp
-    ../glextrusion/ex_alpha.cpp
-    ../glextrusion/ex_angle.cpp
-    ../glextrusion/ex_cut_round.cpp
-    ../glextrusion/ex_raw.cpp
-    ../glextrusion/intersect.cpp
-    ../glextrusion/qmesh.cpp
-    ../glextrusion/rotate.cpp
-    ../glextrusion/rot_prince.cpp
-    ../glextrusion/round_cap.cpp
-    ../glextrusion/segment.cpp
-    ../glextrusion/texgen.cpp
-    ../glextrusion/urotate.cpp
-    ../glextrusion/view.cpp
-
     ../libgwavi/avi-utils.c
     ../libgwavi/fileio.c
     ../libgwavi/gwavi.c
@@ -718,6 +702,7 @@ set(PROJECT_SOURCES
     ../GaitSymQt/LineEditUniqueName.h
     ../GaitSymQt/MainWindow.h
     ../GaitSymQt/MeshStore.h
+    ../GaitSymQt/PolylineSweep.h
     ../GaitSymQt/Preferences.h
     ../GaitSymQt/SimulationWidget.h
     ../GaitSymQt/StrokeFont.h
@@ -725,17 +710,6 @@ set(PROJECT_SOURCES
     ../GaitSymQt/TrackBall.h
     ../GaitSymQt/UniqueNameValidator.h
     ../GaitSymQt/ViewControlWidget.h
-
-    ../glextrusion/GLEmulator.h
-    ../glextrusion/copy.h
-    ../glextrusion/extrude.h
-    ../glextrusion/gle.h
-    ../glextrusion/intersect.h
-    ../glextrusion/port.h
-    ../glextrusion/rot.h
-    ../glextrusion/segment.h
-    ../glextrusion/tube_gc.h
-    ../glextrusion/vvector.h
 
     ../libgwavi/avi-utils.h
     ../libgwavi/fileio.h

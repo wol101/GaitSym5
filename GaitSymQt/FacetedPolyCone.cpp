@@ -8,11 +8,7 @@
  */
 
 #include "FacetedPolyCone.h"
-
-#include "gle.h"
-#include "GLEmulator.h"
-
-extern GLEmulator glEmulator;
+#include "PolylineSweep.h"
 
 // this draws a fat polyline with varying radius. It mostly works very well but large radii and sharp turns will casue holes
 // this might be fixable by shifting the circle so that the polyline is at an edge for steep turns rather than in the centre
@@ -22,32 +18,27 @@ FacetedPolyCone::FacetedPolyCone(const std::vector<pgd::Vector3> &vertexList, co
 {
     setBlendColour(blendColour, blendFraction);
 
-    glEmulator.clear();
-    glEmulator.reserve(nSides * (vertexList.size() * 2 + 2));
-    gleSetNumSides(int(nSides));
-    gleSetJoinStyle(TUBE_JN_ANGLE | TUBE_JN_CAP | TUBE_NORM_PATH_EDGE | TUBE_CONTOUR_CLOSED); // TUBE_JN_ROUND is pretty but TUBE_JN_ANGLE is probably quicker
-    size_t nPoints = vertexList.size() + 2;
-    auto pointArray = std::make_unique<gleDouble[][3]>(nPoints);
-    auto colourArray = std::make_unique<gleColor[]>(nPoints);
-    auto radiusArray = std::make_unique<gleDouble[]>(nPoints);
-    size_t index = 0;
-    // need to create an extra vertex at the begining and end because it is used to define the normal to the end cap
-    pgd::Vector3 prefix = vertexList[0] - (vertexList[1] - vertexList[0]);
-    pgd::Vector3 suffix = vertexList[vertexList.size() - 1] + (vertexList[vertexList.size() - 1] - vertexList[vertexList.size() - 2]);
-    pointArray[index][0] = prefix.x; pointArray[index][1] = prefix.y; pointArray[index][2] = prefix.z;
-    colourArray[index][0] = vertexColours[0][0]; colourArray[index][1] = vertexColours[0][1]; colourArray[index][2] = vertexColours[0][2];
-    radiusArray[index] = radiusList[0];
-    ++index;
-    for (size_t i = 0 ; i < vertexList.size(); i++)
+    std::vector<PolylineSweep::Vec3> nGon = PolylineSweep::makeNgon(nSides, 1.0);
+    std::vector<PolylineSweep::Vec3> polyLine;
+    polyLine.reserve(vertexList.size());
+    for (auto &&vertex : vertexList) { polyLine.push_back({vertex.x, vertex.y, vertex.z}); }
+    PolylineSweep::SweepOptions opts; opts.closeEnds = true; opts.bendSteps = nSides;
+    PolylineSweep::PolylineSweep polylineSweep;
+    PolylineSweep::Mesh mesh = polylineSweep.sweep(polyLine, nGon, radiusList, opts);
+
+    double tri[9];
+    allocateMemory(mesh.triangles.size() * 9);
+    for (auto &&triangle : mesh.triangles)
     {
-        pointArray[index][0] = vertexList[i].x; pointArray[index][1] = vertexList[i].y; pointArray[index][2] = vertexList[i].z;
-        colourArray[index][0] = vertexColours[i][0]; colourArray[index][1] = vertexColours[i][1]; colourArray[index][2] = vertexColours[i][2];
-        radiusArray[index] = radiusList[i];
-        ++index;
+        tri[0] = mesh.vertices[triangle.a].x;
+        tri[1] = mesh.vertices[triangle.a].y;
+        tri[2] = mesh.vertices[triangle.a].z;
+        tri[3] = mesh.vertices[triangle.b].x;
+        tri[4] = mesh.vertices[triangle.b].y;
+        tri[5] = mesh.vertices[triangle.b].z;
+        tri[6] = mesh.vertices[triangle.c].x;
+        tri[7] = mesh.vertices[triangle.c].y;
+        tri[8] = mesh.vertices[triangle.c].z;
+        addTriangle(tri);
     }
-    pointArray[index][0] = suffix.x; pointArray[index][1] = suffix.y; pointArray[index][2] = suffix.z;
-    colourArray[index][0] = vertexColours.back()[0]; colourArray[index][1] = vertexColours.back()[1]; colourArray[index][2] = vertexColours.back()[2];
-    radiusArray[index] = radiusList.back();
-    glePolyCone(int(nPoints), pointArray.get(), colourArray.get(), radiusArray.get());
-    rawAppend(glEmulator.vertexList(), glEmulator.normalList(), glEmulator.colourList(), glEmulator.uvList());
 }

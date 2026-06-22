@@ -154,7 +154,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             std::vector<pgd::Vector3> polyline;
             polyline.push_back(pgd::Vector3(position[0] - cylinderVecWorld.x, position[1] - cylinderVecWorld.y, position[2] - cylinderVecWorld.z));
             polyline.push_back(pgd::Vector3(position[0] + cylinderVecWorld.x, position[1] + cylinderVecWorld.y, position[2] + cylinderVecWorld.z));
-            m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1, true);
+            m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1);
             m_facetedObject2->setSimulationWidget(simulationWidget);
             m_facetedObjectList.push_back(m_facetedObject2.get());
             break;
@@ -175,7 +175,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             std::vector<pgd::Vector3> polyline;
             polyline.push_back(pgd::Vector3(position[0] - cylinderVecWorld.x, position[1] - cylinderVecWorld.y, position[2] - cylinderVecWorld.z));
             polyline.push_back(pgd::Vector3(position[0] + cylinderVecWorld.x, position[1] + cylinderVecWorld.y, position[2] + cylinderVecWorld.z));
-            m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1, true);
+            m_facetedObject2 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1);
             m_facetedObject2->setSimulationWidget(simulationWidget);
             m_facetedObjectList.push_back(m_facetedObject2.get());
             position = twoCylinderWrapStrap->cylinder2Marker()->worldPosition();
@@ -184,7 +184,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             polyline.clear();
             polyline.push_back(pgd::Vector3(position[0] - cylinderVecWorld.x, position[1] - cylinderVecWorld.y, position[2] - cylinderVecWorld.z));
             polyline.push_back(pgd::Vector3(position[0] + cylinderVecWorld.x, position[1] + cylinderVecWorld.y, position[2] + cylinderVecWorld.z));
-            m_facetedObject3 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1, true);
+            m_facetedObject3 = std::make_unique<FacetedPolyline>(&polyline, radius, m_strapCylinderSegments, m_strapCylinderColor, 1);
             m_facetedObject3->setSimulationWidget(simulationWidget);
             m_facetedObjectList.push_back(m_facetedObject3.get());
             break;
@@ -219,7 +219,7 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
             pgd::Vector3 f = pgd::Vector3(pointForceList->at(i)->vector[0], pointForceList->at(i)->vector[1], pointForceList->at(i)->vector[2]) * m_muscle->tension() * m_strapForceScale;
             polyline.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]));
             polyline.push_back(pgd::Vector3(pointForceList->at(i)->point[0], pointForceList->at(i)->point[1], pointForceList->at(i)->point[2]) + f);
-            std::unique_ptr<FacetedPolyline>facetedPolyline = std::make_unique<FacetedPolyline>(&polyline, m_strapForceRadius, m_strapNumSegments, m_strapForceColor, 1, true);
+            std::unique_ptr<FacetedPolyline>facetedPolyline = std::make_unique<FacetedPolyline>(&polyline, m_strapForceRadius, m_strapNumSegments, m_strapForceColor, 1);
             facetedPolyline->setSimulationWidget(simulationWidget);
             m_facetedObjectForceList.push_back(std::move(facetedPolyline));
             m_facetedObjectList.push_back(facetedPolyline.get());
@@ -304,7 +304,7 @@ void DrawMuscle::cylinder()
         qDebug() << "Error in DrawMuscle::cylinder: Unsupported MUSCLE type";
         break;
     }
-    m_facetedObject1 = std::make_unique<FacetedPolyline>(&m_polyline, radius, m_strapNumSegments, m_strapColor, 1, false);
+    m_facetedObject1 = std::make_unique<FacetedPolyline>(&m_polyline, radius, m_strapNumSegments, m_strapColor, 1);
     m_facetedObject1->setSimulationWidget(m_simulationWidget);
     m_facetedObjectList.push_back(m_facetedObject1.get());
 }

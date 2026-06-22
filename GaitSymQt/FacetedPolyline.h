@@ -94,7 +94,7 @@ public:
 class FacetedPolyline: public FacetedObject
 {
 public:
-    FacetedPolyline(std::vector<pgd::Vector3> *polyline, double radius, size_t n, const QColor &blendColour, double blendFraction, bool internal);
+    FacetedPolyline(std::vector<pgd::Vector3> *polyline, double radius, size_t n, const QColor &blendColour, double blendFraction);
 
     void extrude(std::vector<pgd::Vector3> *polyline, std::vector<pgd::Vector3> *profile);
     static bool intersection(Line3D *line, Plane3D *plane, pgd::Vector3 *intersection);
