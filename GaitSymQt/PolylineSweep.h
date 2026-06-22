@@ -1,4 +1,14 @@
-#pragma once
+/*
+ *  PolylineSweep.h
+ *  GaitSym5
+ *
+ *  Created by Bill Sellers on 22/06/2026
+ *  Copyright 2026 Bill Sellers. All rights reserved.
+ *
+ */
+
+#ifndef POLYLINESWEEP_H
+#define POLYLINESWEEP_H
 
 #include <vector>
 #include <cmath>
@@ -28,22 +38,16 @@ inline Vec3& operator+=(Vec3& a, const Vec3& b)     { a.x+=b.x; a.y+=b.y; a.z+=b
 inline double dot(const Vec3& a, const Vec3& b) {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
-
 inline Vec3 cross(const Vec3& a, const Vec3& b) {
     return { a.y*b.z - a.z*b.y,
-             a.z*b.x - a.x*b.z,
-             a.x*b.y - a.y*b.x };
+            a.z*b.x - a.x*b.z,
+            a.x*b.y - a.y*b.x };
 }
-
-inline double length(const Vec3& v) {
-    return std::sqrt(dot(v, v));
-}
-
+inline double length(const Vec3& v) { return std::sqrt(dot(v, v)); }
 inline Vec3 normalize(const Vec3& v) {
     double len = length(v);
-    return (len > 1e-15) ? v / len : Vec3{0.0, 0.0, 0.0};
+    return (len > 1e-15) ? v / len : Vec3{};
 }
-
 // Rodrigues rotation: rotate v around a unit-length axis by angle radians
 inline Vec3 rotateAround(const Vec3& v, const Vec3& axis, double angle) {
     double c = std::cos(angle), s = std::sin(angle);
@@ -51,14 +55,45 @@ inline Vec3 rotateAround(const Vec3& v, const Vec3& axis, double angle) {
 }
 
 // ============================================================
+// Color (RGB, double precision, 0–1 range)
+// ============================================================
+
+struct Color {
+    double r = 1.0, g = 1.0, b = 1.0;
+    Color() = default;
+    Color(double r, double g, double b) : r(r), g(g), b(b) {}
+};
+inline Color operator+(const Color& a, const Color& b) { return {a.r+b.r, a.g+b.g, a.b+b.b}; }
+inline Color operator*(const Color& c, double s)       { return {c.r*s, c.g*s, c.b*s}; }
+inline Color operator*(double s, const Color& c)       { return c * s; }
+inline Color lerp(const Color& a, const Color& b, double t) { return a*(1.0-t) + b*t; }
+
+// ============================================================
+// UV coordinates
+// ============================================================
+
+struct UV {
+    double u = 0.0, v = 0.0;
+    UV() = default;
+    UV(double u, double v) : u(u), v(v) {}
+};
+
+// ============================================================
 // Mesh types
 // ============================================================
 
+// Vertex / normal / UV index triple for one triangle corner.
+// When normals or UVs are absent, normalTris / uvTris are empty.
 struct Triangle { int a, b, c; };
 
 struct Mesh {
     std::vector<Vec3>     vertices;
-    std::vector<Triangle> triangles;
+    std::vector<Color>    vertexColors;  // optional, same count as vertices
+    std::vector<Vec3>     normals;       // optional
+    std::vector<UV>       uvs;           // optional
+    std::vector<Triangle> triangles;     // vertex indices
+    std::vector<Triangle> normalTris;    // normal indices, parallel to triangles
+    std::vector<Triangle> uvTris;        // UV indices,     parallel to triangles
 };
 
 // ============================================================
@@ -66,10 +101,16 @@ struct Mesh {
 // ============================================================
 
 struct SweepOptions {
-    bool closeEnds = true;
-    // Number of rotation steps inserted at each bend node.
-    // More steps produce a smoother outer arc at sharp bends.
-    int bendSteps = 4;
+    bool closeEnds       = true;
+    // Number of rotation steps at each bend node.
+    int  bendSteps       = 4;
+    // Normals
+    bool generateNormals = true;
+    // true  = smooth (per-vertex) normals on the tube; caps always flat.
+    // false = flat (per-face) normals everywhere.
+    bool smoothNormals   = true;
+    // UVs: U wraps 0→1 around the cross-section; V increases with arc length.
+    bool generateUVs     = true;
 };
 
 // ============================================================
@@ -95,53 +136,42 @@ std::vector<Vec3> makeNgon(int n, double r = 1.0) {
 // triangular mesh.
 //
 // At each interior node the polygon is rotated around the inner-
-// most polygon vertex (the vertex on the concave side of the
-// bend) so that:
-//   - the inner edge stays sharp and free from self-intersection
-//   - the outer edge fans out smoothly across bendSteps triangles
+// most polygon vertex so that the inner edge stays sharp and the
+// outer edge fans smoothly across bendSteps triangles.
 //
-// The polygon is expected in local XY coordinates (Z is ignored).
-// scales[i] uniformly scales the polygon at polyline point i.
+// polygon : closed polygon in local XY (Z ignored), wound so that
+//           the outward face is correct when swept.
+// scales  : one scale factor per polyline point.
+// colors  : optional per-node colors; if non-empty must match
+//           polyline.size(). Interpolated across segments.
 // ============================================================
 
 class PolylineSweep {
 public:
-    Mesh sweep(const std::vector<Vec3>&    polyline,
-               const std::vector<Vec3>&    polygon,
-               const std::vector<double>&  scales,
-               const SweepOptions&         opts = {}) const;
+    Mesh sweep(const std::vector<Vec3>&   polyline,
+               const std::vector<Vec3>&   polygon,
+               const std::vector<double>& scales,
+               const SweepOptions&        opts   = {},
+               const std::vector<Color>&  colors = {}) const;
 
 private:
-    // Local orthonormal frame: zAxis is the sweep tangent direction
     struct Frame {
         Vec3 origin;
-        Vec3 xAxis, yAxis, zAxis;
+        Vec3 xAxis, yAxis, zAxis;  // zAxis = tangent direction
     };
 
-    Frame initialFrame(const Vec3& p0, const Vec3& tangent) const;
+    Frame initialFrame  (const Vec3& p0, const Vec3& tangent) const;
+    Frame transportFrame(const Frame& f, const Vec3& newOrigin,
+                         const Vec3& newTangent) const;
 
-    // Parallel-transport f so that zAxis aligns with newTangent,
-    // minimising torsion (no unnecessary roll).
-    Frame transportFrame(const Frame& f,
-                         const Vec3&  newOrigin,
-                         const Vec3&  newTangent) const;
+    // Append polygon vertices (+ optional color) to mesh; return indices.
+    std::vector<int> addRingVerts(Mesh& mesh, const Frame& f,
+                                  const std::vector<Vec3>& polygon,
+                                  double scale,
+                                  const Color* color) const;
 
-    // Place the polygon in world space using f and scale;
-    // appends vertices to mesh and returns their indices.
-    std::vector<int> addRing(Mesh&                     mesh,
-                             const Frame&               f,
-                             const std::vector<Vec3>&   polygon,
-                             double                     scale) const;
-
-    // Add two triangles forming a quad strip cell.
-    // a0,b0 are adjacent polygon vertices in ring r;
-    // a1,b1 are the same two vertices in ring r+1.
-    void addQuad(Mesh& mesh, int a0, int b0, int a1, int b1) const;
-
-    // Return the index of the polygon vertex most in direction dir2D
-    // (using only the x,y components of dir2D for projection).
     int findInnerVertex(const std::vector<Vec3>& polygon,
-                        const Vec3&              dir2D) const;
+                        const Vec3& dir2D) const;
 };
 
 // ============================================================
@@ -153,228 +183,371 @@ PolylineSweep::initialFrame(const Vec3& p0, const Vec3& tangent) const {
     Frame f;
     f.origin = p0;
     f.zAxis  = normalize(tangent);
-    // Pick a world-up vector that is not parallel to the tangent
-    Vec3 up  = (std::abs(f.zAxis.z) < 0.9) ? Vec3{0.0, 0.0, 1.0}
-                                             : Vec3{1.0, 0.0, 0.0};
+    Vec3 up  = (std::abs(f.zAxis.z) < 0.9) ? Vec3{0,0,1} : Vec3{1,0,0};
     f.xAxis  = normalize(cross(up, f.zAxis));
     f.yAxis  = normalize(cross(f.zAxis, f.xAxis));
     return f;
 }
 
 inline PolylineSweep::Frame
-PolylineSweep::transportFrame(const Frame& f,
-                               const Vec3&  newOrigin,
-                               const Vec3&  newTangent) const {
-    Frame result;
-    result.origin = newOrigin;
-    result.zAxis  = normalize(newTangent);
-
-    Vec3 rotAxis = cross(f.zAxis, result.zAxis);
-    double axisLen = length(rotAxis);
-
-    if (axisLen < 1e-10) {
-        // Tangents are (nearly) parallel or anti-parallel
-        if (dot(f.zAxis, result.zAxis) >= 0.0) {
-            result.xAxis = f.xAxis;
-            result.yAxis = f.yAxis;
-        } else {
-            // 180-degree flip
-            result.xAxis = -f.xAxis;
-            result.yAxis = -f.yAxis;
-        }
+PolylineSweep::transportFrame(const Frame& f, const Vec3& newOrigin,
+                              const Vec3& newTangent) const {
+    Frame r;
+    r.origin = newOrigin;
+    r.zAxis  = normalize(newTangent);
+    Vec3 ax  = cross(f.zAxis, r.zAxis);
+    double len = length(ax);
+    if (len < 1e-10) {
+        r.xAxis = (dot(f.zAxis, r.zAxis) >= 0.0) ? f.xAxis : -f.xAxis;
+        r.yAxis = (dot(f.zAxis, r.zAxis) >= 0.0) ? f.yAxis : -f.yAxis;
     } else {
-        rotAxis = rotAxis / axisLen;
-        double cosA = std::max(-1.0, std::min(1.0, dot(f.zAxis, result.zAxis)));
-        double angle = std::acos(cosA);
-        result.xAxis = rotateAround(f.xAxis, rotAxis, angle);
-        result.yAxis = rotateAround(f.yAxis, rotAxis, angle);
+        ax = ax / len;
+        double angle = std::acos(std::max(-1.0, std::min(1.0, dot(f.zAxis, r.zAxis))));
+        r.xAxis = rotateAround(f.xAxis, ax, angle);
+        r.yAxis = rotateAround(f.yAxis, ax, angle);
     }
-    return result;
+    return r;
 }
 
 inline std::vector<int>
-PolylineSweep::addRing(Mesh&                   mesh,
-                        const Frame&             f,
-                        const std::vector<Vec3>& polygon,
-                        double                   scale) const {
-    std::vector<int> indices;
-    indices.reserve(polygon.size());
+PolylineSweep::addRingVerts(Mesh& mesh, const Frame& f,
+                            const std::vector<Vec3>& polygon,
+                            double scale, const Color* color) const {
+    std::vector<int> idx;
+    idx.reserve(polygon.size());
     for (const Vec3& p : polygon) {
-        Vec3 world = f.origin
-                   + f.xAxis * (p.x * scale)
-                   + f.yAxis * (p.y * scale);
-        indices.push_back(static_cast<int>(mesh.vertices.size()));
-        mesh.vertices.push_back(world);
+        idx.push_back(static_cast<int>(mesh.vertices.size()));
+        mesh.vertices.push_back(f.origin + f.xAxis*(p.x*scale) + f.yAxis*(p.y*scale));
+        if (color) mesh.vertexColors.push_back(*color);
     }
-    return indices;
-}
-
-inline void PolylineSweep::addQuad(Mesh& mesh,
-                                    int a0, int b0,
-                                    int a1, int b1) const {
-    // Two triangles with outward-facing normals (polygon CCW from inside,
-    // i.e. CW when viewed from outside along the sweep tangent).
-    mesh.triangles.push_back({a0, b0, a1});
-    mesh.triangles.push_back({b0, b1, a1});
+    return idx;
 }
 
 inline int PolylineSweep::findInnerVertex(const std::vector<Vec3>& polygon,
-                                           const Vec3&              dir2D) const {
-    int    best    = 0;
-    double bestVal = polygon[0].x * dir2D.x + polygon[0].y * dir2D.y;
-    for (int i = 1; i < static_cast<int>(polygon.size()); i++) {
-        double val = polygon[i].x * dir2D.x + polygon[i].y * dir2D.y;
+                                          const Vec3& dir2D) const {
+    int best = 0;
+    double bestVal = polygon[0].x*dir2D.x + polygon[0].y*dir2D.y;
+    for (int i = 1; i < (int)polygon.size(); i++) {
+        double val = polygon[i].x*dir2D.x + polygon[i].y*dir2D.y;
         if (val > bestVal) { bestVal = val; best = i; }
     }
     return best;
 }
 
 inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
-                                  const std::vector<Vec3>&   polygon,
-                                  const std::vector<double>& scales,
-                                  const SweepOptions&        opts) const {
-    const int N = static_cast<int>(polyline.size());
-    const int P = static_cast<int>(polygon.size());
+                                 const std::vector<Vec3>&   polygon,
+                                 const std::vector<double>& scales,
+                                 const SweepOptions&        opts,
+                                 const std::vector<Color>&  colors) const {
+    const int N = (int)polyline.size();
+    const int P = (int)polygon.size();
 
-    if (N < 2)
-        throw std::runtime_error("polyline must have at least 2 points");
-    if (P < 3)
-        throw std::runtime_error("polygon must have at least 3 vertices");
-    if (static_cast<int>(scales.size()) != N)
+    if (N < 2)  throw std::runtime_error("polyline must have >= 2 points");
+    if (P < 3)  throw std::runtime_error("polygon must have >= 3 vertices");
+    if ((int)scales.size() != N)
         throw std::runtime_error("scales.size() must equal polyline.size()");
     if (opts.bendSteps < 1)
         throw std::runtime_error("bendSteps must be >= 1");
+    const bool hasColors = !colors.empty();
+    if (hasColors && (int)colors.size() != N)
+        throw std::runtime_error("colors.size() must equal polyline.size()");
+
+    const bool doNormals = opts.generateNormals;
+    const bool smooth    = doNormals && opts.smoothNormals;
+    const bool doUVs     = opts.generateUVs;
+
+    // Max polygon radius for cap UV normalisation
+    double polyRadius = 1e-15;
+    for (const Vec3& p : polygon)
+        polyRadius = std::max(polyRadius, std::sqrt(p.x*p.x + p.y*p.y));
 
     Mesh mesh;
-    // Ordered list of polygon rings (each ring is a list of vertex indices)
-    std::vector<std::vector<int>> rings;
 
-    // ---------- First ring ----------
+    // ---- Per-ring build records ----------------------------------------
+    // Each ring stores vertex indices, smooth-normal indices (may be empty),
+    // the base index into mesh.uvs (P+1 entries, seam-closed), and its
+    // world-space centre for arc-length V tracking.
+    struct RingRecord {
+        std::vector<int> verts;
+        std::vector<int> normIdx;  // only used for smooth shading
+        int  uvBase  = 0;
+        Vec3 center;
+    };
+    std::vector<RingRecord> rings;
+    std::vector<Color>      ringColor;   // one entry per ring, for cap centres
+
+    double vCurrent  = 0.0;
+    Vec3   prevCenter = polyline[0];
+
+    // Helper: compute outward smooth normal for polygon vertex j in frame f
+    auto smoothNormal = [&](const Vec3& xA, const Vec3& yA, int j) -> Vec3 {
+        return normalize(xA * polygon[j].x + yA * polygon[j].y);
+    };
+
+    // Helper: append P+1 UV entries (u = j/P, v = vCurrent) for one ring
+    auto pushRingUVs = [&]() -> int {
+        int base = (int)mesh.uvs.size();
+        if (doUVs)
+            for (int j = 0; j <= P; j++)
+                mesh.uvs.push_back({ (double)j / P, vCurrent });
+        return base;
+    };
+
+    // Helper: add a complete ring (verts + optional smooth normals + UVs)
+    // using an already-placed frame and a per-vertex normal function.
+    auto addRing = [&](const Frame& f, double scale,
+                       const Color* col,
+                       const Vec3& nxAxis, const Vec3& nyAxis) -> RingRecord {
+        RingRecord rec;
+        rec.center = f.origin;
+        rec.verts  = addRingVerts(mesh, f, polygon, scale, col);
+        if (smooth) {
+            rec.normIdx.reserve(P);
+            for (int j = 0; j < P; j++) {
+                rec.normIdx.push_back((int)mesh.normals.size());
+                mesh.normals.push_back(smoothNormal(nxAxis, nyAxis, j));
+            }
+        }
+        rec.uvBase = pushRingUVs();
+        return rec;
+    };
+
+    auto nodeColor = [&](int i) -> const Color* {
+        return hasColors ? &colors[i] : nullptr;
+    };
+
+    // ---- First ring ----------------------------------------------------
     Frame frame = initialFrame(polyline[0], polyline[1] - polyline[0]);
-    rings.push_back(addRing(mesh, frame, polygon, scales[0]));
+    rings.push_back(addRing(frame, scales[0], nodeColor(0),
+                            frame.xAxis, frame.yAxis));
+    ringColor.push_back(hasColors ? colors[0] : Color{});
 
-    // ---------- Walk the polyline ----------
+    // ---- Walk the polyline ---------------------------------------------
     for (int i = 1; i < N; i++) {
-        Vec3 t_in = normalize(polyline[i] - polyline[i - 1]);
-
-        // Transport frame to current node
+        Vec3 t_in = normalize(polyline[i] - polyline[i-1]);
         frame = transportFrame(frame, polyline[i], t_in);
 
         if (i < N - 1) {
-            // Interior node: may have a bend
-            Vec3   t_out     = normalize(polyline[i + 1] - polyline[i]);
+            // Interior node: check for a bend
+            Vec3   t_out     = normalize(polyline[i+1] - polyline[i]);
             double cosA      = std::max(-1.0, std::min(1.0, dot(t_in, t_out)));
             double bendAngle = std::acos(cosA);
 
             if (bendAngle > 1e-8) {
-                Vec3 rotAxis = normalize(cross(t_in, t_out));
-
-                // Outgoing frame axes (incoming axes rotated by bendAngle).
+                Vec3 rotAxis  = normalize(cross(t_in, t_out));
                 Vec3 xAxis_out = rotateAround(frame.xAxis, rotAxis, bendAngle);
                 Vec3 yAxis_out = rotateAround(frame.yAxis, rotAxis, bendAngle);
 
-                // Find the inner (concave-side) polygon vertex.
-                // +(t_in + t_out) bisects toward the inside of the curve.
+                // Inner polygon vertex (concave side)
                 int innerIdx = findInnerVertex(polygon, {
-                    dot(t_in + t_out, frame.xAxis),
-                    dot(t_in + t_out, frame.yAxis),
-                    0.0
-                });
+                                                          dot(t_in + t_out, frame.xAxis),
+                                                          dot(t_in + t_out, frame.yAxis),
+                                                          0.0 });
 
-                // Inner-vertex offset in the incoming and outgoing frames.
                 double px = polygon[innerIdx].x * scales[i];
                 double py = polygon[innerIdx].y * scales[i];
                 Vec3 offset_in  = frame.xAxis * px + frame.yAxis  * py;
                 Vec3 offset_out = xAxis_out   * px + yAxis_out    * py;
 
-                // The bend must start where the incoming inner edge terminates
-                // and end where the outgoing inner edge begins — both at the
-                // same fixed pivot.  Solve:
-                //   s1·t_in − s2·t_out = offset_out − offset_in
-                // s1 (≤ 0): pull back along t_in from polyline[i]
-                // s2 (≥ 0): push forward along t_out from polyline[i]
+                // Solve s1·t_in − s2·t_out = offset_out − offset_in
                 Vec3   delta   = offset_out - offset_in;
-                double sinA_sq = 1.0 - cosA * cosA;
+                double sinA_sq = 1.0 - cosA*cosA;
                 double s1 = 0.0, s2 = 0.0;
                 if (sinA_sq > 1e-10) {
-                    s2 = (dot(delta, t_in) * cosA - dot(delta, t_out)) / sinA_sq;
-                    s1 = dot(delta, t_in) + s2 * cosA;
+                    s2 = (dot(delta,t_in)*cosA - dot(delta,t_out)) / sinA_sq;
+                    s1 = dot(delta,t_in) + s2*cosA;
                 }
 
-                Vec3 incoming_ctr = polyline[i] + t_in  * s1;  // s1 ≤ 0
-                Vec3 outgoing_ctr = polyline[i] + t_out * s2;  // s2 ≥ 0
-                Vec3 pivot        = incoming_ctr + offset_in;   // fixed point
+                Vec3 incoming_ctr = polyline[i] + t_in  * s1;
+                Vec3 outgoing_ctr = polyline[i] + t_out * s2;
+                Vec3 pivot        = incoming_ctr + offset_in;
 
-                // Incoming ring: end of the segment arriving at this bend
-                Frame incoming_frame = frame;
-                incoming_frame.origin = incoming_ctr;
-                rings.push_back(addRing(mesh, incoming_frame, polygon, scales[i]));
+                // Color for this bend node (interpolated for pull-back)
+                Color incomingColor{};
+                const Color* inCol = nullptr;
+                if (hasColors) {
+                    double segLen = length(polyline[i] - polyline[i-1]);
+                    double t = (segLen > 1e-15) ? 1.0 + s1/segLen : 1.0;
+                    incomingColor = lerp(colors[i-1], colors[i],
+                                         std::max(0.0, std::min(1.0, t)));
+                    inCol = &incomingColor;
+                }
 
-                // Bend fan: rotate each vertex around the pivot
+                // Incoming ring
+                vCurrent += length(incoming_ctr - prevCenter);
+                prevCenter = incoming_ctr;
+                Frame inFrame = frame; inFrame.origin = incoming_ctr;
+                rings.push_back(addRing(inFrame, scales[i], inCol,
+                                        frame.xAxis, frame.yAxis));
+                ringColor.push_back(hasColors ? incomingColor : Color{});
+
+                // Bend fan rings
                 for (int k = 1; k <= opts.bendSteps; k++) {
-                    double angle = bendAngle * static_cast<double>(k) / opts.bendSteps;
-                    std::vector<int> ring;
-                    ring.reserve(P);
+                    double angle = bendAngle * (double)k / opts.bendSteps;
+                    Vec3 rotX = rotateAround(frame.xAxis, rotAxis, angle);
+                    Vec3 rotY = rotateAround(frame.yAxis, rotAxis, angle);
+                    Vec3 fanCtr = pivot + rotateAround(incoming_ctr - pivot, rotAxis, angle);
+
+                    vCurrent += length(fanCtr - prevCenter);
+                    prevCenter = fanCtr;
+
+                    RingRecord rec;
+                    rec.center = fanCtr;
+                    rec.verts.reserve(P);
+                    if (smooth) rec.normIdx.reserve(P);
+
                     for (int j = 0; j < P; j++) {
-                        Vec3 vIn = incoming_ctr
-                                 + frame.xAxis * (polygon[j].x * scales[i])
-                                 + frame.yAxis * (polygon[j].y * scales[i]);
+                        Vec3 vIn  = incoming_ctr
+                                   + frame.xAxis*(polygon[j].x*scales[i])
+                                   + frame.yAxis*(polygon[j].y*scales[i]);
                         Vec3 vRot = pivot + rotateAround(vIn - pivot, rotAxis, angle);
-                        ring.push_back(static_cast<int>(mesh.vertices.size()));
+                        rec.verts.push_back((int)mesh.vertices.size());
                         mesh.vertices.push_back(vRot);
+                        if (inCol) mesh.vertexColors.push_back(colors[i]);
+                        if (smooth) {
+                            rec.normIdx.push_back((int)mesh.normals.size());
+                            mesh.normals.push_back(smoothNormal(rotX, rotY, j));
+                        }
                     }
-                    rings.push_back(std::move(ring));
+                    rec.uvBase = pushRingUVs();
+                    rings.push_back(std::move(rec));
+                    ringColor.push_back(hasColors ? colors[i] : Color{});
                 }
 
-                // Advance frame to the outgoing segment start
                 frame.origin = outgoing_ctr;
                 frame.xAxis  = xAxis_out;
                 frame.yAxis  = yAxis_out;
                 frame.zAxis  = t_out;
 
             } else {
-                // Straight segment: single ring at this node
-                rings.push_back(addRing(mesh, frame, polygon, scales[i]));
+                // Straight: one ring at this node
+                vCurrent += length(polyline[i] - prevCenter);
+                prevCenter = polyline[i];
+                rings.push_back(addRing(frame, scales[i], nodeColor(i),
+                                        frame.xAxis, frame.yAxis));
+                ringColor.push_back(hasColors ? colors[i] : Color{});
+            }
+        } else {
+            // Last node
+            vCurrent += length(polyline[i] - prevCenter);
+            prevCenter = polyline[i];
+            rings.push_back(addRing(frame, scales[i], nodeColor(i),
+                                    frame.xAxis, frame.yAxis));
+            ringColor.push_back(hasColors ? colors[i] : Color{});
+        }
+    }
+
+    // ---- Connect consecutive rings with quad strips --------------------
+    const int R = (int)rings.size();
+    for (int r = 0; r+1 < R; r++) {
+        const auto& r0 = rings[r];
+        const auto& r1 = rings[r+1];
+        for (int j = 0; j < P; j++) {
+            int jn = (j+1) % P;
+            // Vertex triangles
+            int va0=r0.verts[j], vb0=r0.verts[jn];
+            int va1=r1.verts[j], vb1=r1.verts[jn];
+            mesh.triangles.push_back({va0, vb0, va1});
+            mesh.triangles.push_back({vb0, vb1, va1});
+
+            // Smooth normal triangles (same indices as vertices)
+            if (smooth) {
+                int na0=r0.normIdx[j], nb0=r0.normIdx[jn];
+                int na1=r1.normIdx[j], nb1=r1.normIdx[jn];
+                mesh.normalTris.push_back({na0, nb0, na1});
+                mesh.normalTris.push_back({nb0, nb1, na1});
             }
 
-        } else {
-            // Last node: just add the final ring
-            rings.push_back(addRing(mesh, frame, polygon, scales[i]));
+            // UV triangles — use P+1 entries so the seam column has u=1
+            if (doUVs) {
+                int u0=r0.uvBase+j,   u0n=r0.uvBase+j+1;
+                int u1=r1.uvBase+j,   u1n=r1.uvBase+j+1;
+                mesh.uvTris.push_back({u0, u0n, u1});
+                mesh.uvTris.push_back({u0n, u1n, u1});
+            }
         }
     }
 
-    // ---------- Connect consecutive rings with quad strips ----------
-    const int R = static_cast<int>(rings.size());
-    for (int r = 0; r + 1 < R; r++) {
-        const auto& r0 = rings[r];
-        const auto& r1 = rings[r + 1];
-        for (int j = 0; j < P; j++) {
-            int jn = (j + 1) % P;
-            addQuad(mesh, r0[j], r0[jn], r1[j], r1[jn]);
-        }
-    }
-
-    // ---------- End caps ----------
+    // ---- End caps (always flat-shaded) ---------------------------------
     if (opts.closeEnds) {
-        auto addCap = [&](const std::vector<int>& ring, bool flipWinding) {
-            Vec3 center = {0.0, 0.0, 0.0};
-            for (int idx : ring) center += mesh.vertices[idx];
-            center = center / static_cast<double>(P);
-            int ci = static_cast<int>(mesh.vertices.size());
-            mesh.vertices.push_back(center);
+        // Tangent directions for the two caps
+        Vec3 t_start = normalize(polyline[1]   - polyline[0]);
+        Vec3 t_end   = normalize(polyline[N-1] - polyline[N-2]);
+
+        // Cap UV layout: P entries for ring vertices, then one for the centre.
+        // Uses a circular disc projection from the polygon's local XY.
+        auto pushCapUVs = [&](bool /*unused*/) -> int {
+            int base = (int)mesh.uvs.size();
+            if (doUVs) {
+                for (int j = 0; j < P; j++)
+                    mesh.uvs.push_back({ 0.5 + 0.5*polygon[j].x/polyRadius,
+                                        0.5 + 0.5*polygon[j].y/polyRadius });
+                mesh.uvs.push_back({0.5, 0.5});  // centre at index P
+            }
+            return base;
+        };
+
+        auto buildCap = [&](const RingRecord& ring, const Color& col,
+                            const Vec3& flatNormal, bool flipWinding) {
+            // One flat normal shared by all cap triangles
+            int ni = doNormals ? (int)mesh.normals.size() : -1;
+            if (doNormals) mesh.normals.push_back(flatNormal);
+
+            int capUVBase = pushCapUVs(false);
+
+            // Centre vertex
+            Vec3 ctr{};
+            for (int idx : ring.verts) ctr += mesh.vertices[idx];
+            ctr = ctr / (double)P;
+            int ci = (int)mesh.vertices.size();
+            mesh.vertices.push_back(ctr);
+            if (hasColors) mesh.vertexColors.push_back(col);
+
             for (int j = 0; j < P; j++) {
-                int jn = (j + 1) % P;
-                if (flipWinding)
-                    mesh.triangles.push_back({ring[j], ci, ring[jn]});
-                else
-                    mesh.triangles.push_back({ring[j], ring[jn], ci});
+                int jn = (j+1) % P;
+                Triangle vTri = flipWinding
+                                    ? Triangle{ring.verts[j], ci, ring.verts[jn]}
+                                    : Triangle{ring.verts[j], ring.verts[jn], ci};
+                mesh.triangles.push_back(vTri);
+
+                if (doNormals)
+                    mesh.normalTris.push_back({ni, ni, ni});
+
+                if (doUVs) {
+                    // UV: (ring[j], centre, ring[jn]) or flipped
+                    Triangle uTri = flipWinding
+                                        ? Triangle{capUVBase+j, capUVBase+P, capUVBase+jn}
+                                        : Triangle{capUVBase+j, capUVBase+jn, capUVBase+P};
+                    mesh.uvTris.push_back(uTri);
+                }
             }
         };
-        addCap(rings.front(), true);   // start cap faces backward
-        addCap(rings.back(),  false);  // end cap faces forward
+
+        buildCap(rings.front(), ringColor.front(), -t_start, /*flip*/true);
+        buildCap(rings.back(),  ringColor.back(),   t_end,   /*flip*/false);
+    }
+
+    // ---- Flat shading: replace smooth normals with per-face normals ----
+    // Caps were already added with their correct flat normals above, so we
+    // recompute everything from geometry (which naturally gives flat cap
+    // normals too — the cross product of two cap edges equals ±tangent).
+    if (doNormals && !opts.smoothNormals) {
+        mesh.normals.clear();
+        mesh.normalTris.clear();
+        for (const Triangle& t : mesh.triangles) {
+            Vec3 v0 = mesh.vertices[t.a];
+            Vec3 v1 = mesh.vertices[t.b];
+            Vec3 v2 = mesh.vertices[t.c];
+            Vec3 n  = normalize(cross(v1-v0, v2-v0));
+            int ni  = (int)mesh.normals.size();
+            mesh.normals.push_back(n);
+            mesh.normalTris.push_back({ni, ni, ni});
+        }
     }
 
     return mesh;
 }
 
 } // namespace PolylineSweep
+
+#endif // POLYLINESWEEP_H
