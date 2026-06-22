@@ -344,13 +344,18 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
                                                           dot(t_in + t_out, frame.yAxis),
                                                           0.0 });
 
-                double px = polygon[innerIdx].x * scales[i];
-                double py = polygon[innerIdx].y * scales[i];
-                Vec3 offset_in  = frame.xAxis * px + frame.yAxis  * py;
-                Vec3 offset_out = xAxis_out   * px + yAxis_out    * py;
+                // Segment lengths for scale interpolation.
+                double segLen_in  = length(polyline[i]   - polyline[i-1]);
+                double segLen_out = length(polyline[i+1] - polyline[i]);
 
-                // Solve s1·t_in − s2·t_out = offset_out − offset_in
-                Vec3   delta   = offset_out - offset_in;
+                // Inner-vertex offset direction in each frame (⊥ to its tangent).
+                Vec3 fvec_in  = frame.xAxis * polygon[innerIdx].x + frame.yAxis * polygon[innerIdx].y;
+                Vec3 fvec_out = xAxis_out   * polygon[innerIdx].x + yAxis_out   * polygon[innerIdx].y;
+
+                // Original stable s1/s2 solve: find pull-back distances so the
+                // inner polygon vertex coincides in incoming and outgoing frames
+                // (using scales[i] for geometry; scale variation handled below).
+                Vec3   delta = (fvec_out - fvec_in) * scales[i];
                 double sinA_sq = 1.0 - cosA*cosA;
                 double s1 = 0.0, s2 = 0.0;
                 if (sinA_sq > 1e-10) {
@@ -360,17 +365,19 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
 
                 Vec3 incoming_ctr = polyline[i] + t_in  * s1;
                 Vec3 outgoing_ctr = polyline[i] + t_out * s2;
-                Vec3 pivot        = incoming_ctr + offset_in;
 
-                // Interpolate scale at incoming_ctr (pulled back by s1 from polyline[i])
-                // so scale varies smoothly through the bend without a step.
-                double segLen_in  = length(polyline[i] - polyline[i-1]);
+                // Interpolated scales at the pull-back positions.
                 double t_inc      = (segLen_in  > 1e-15) ? std::max(0.0, std::min(1.0, 1.0 + s1/segLen_in )) : 1.0;
-                double scale_inc  = scales[i-1] + (scales[i]   - scales[i-1]) * t_inc;
-
-                double segLen_out = length(polyline[i+1] - polyline[i]);
                 double t_out_frac = (segLen_out > 1e-15) ? std::max(0.0, std::min(1.0, s2/segLen_out)) : 0.0;
+                double scale_inc  = scales[i-1] + (scales[i]   - scales[i-1]) * t_inc;
                 double scale_out  = scales[i]   + (scales[i+1] - scales[i])   * t_out_frac;
+
+                // Two pivots: inner-vertex world positions on the incoming and
+                // outgoing rings respectively.  Blending across the fan ensures
+                // both ring boundaries match exactly, with no lateral offset on
+                // either side regardless of how much the scale changes.
+                Vec3 pivot_in  = incoming_ctr + fvec_in  * scale_inc;
+                Vec3 pivot_out = outgoing_ctr + fvec_out * scale_out;
 
                 // Color at incoming_ctr (also interpolated for the pull-back)
                 Color incomingColor{};
@@ -388,14 +395,19 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
                                         frame.xAxis, frame.yAxis));
                 ringColor.push_back(hasColors ? incomingColor : Color{});
 
-                // Bend fan rings — place vertices directly from the rotated frame
-                // at the interpolated scale for that step so radius changes smoothly.
+                // Bend fan rings — blend the pivot linearly from pivot_in to pivot_out
+                // so that ring 0 exactly matches the incoming ring and ring bendSteps
+                // exactly matches the outgoing ring, with no off-axis translation.
                 for (int k = 1; k <= opts.bendSteps; k++) {
-                    double angle = bendAngle * (double)k / opts.bendSteps;
-                    double scale_k = scale_inc + (scale_out - scale_inc) * (double)k / opts.bendSteps;
+                    double frac    = (double)k / opts.bendSteps;
+                    double angle   = bendAngle * frac;
+                    double scale_k = scale_inc + (scale_out - scale_inc) * frac;
                     Vec3 rotX = rotateAround(frame.xAxis, rotAxis, angle);
                     Vec3 rotY = rotateAround(frame.yAxis, rotAxis, angle);
-                    Vec3 fanCtr = pivot + rotateAround(incoming_ctr - pivot, rotAxis, angle);
+                    Vec3 pivot_k   = pivot_in * (1.0 - frac) + pivot_out * frac;
+                    Vec3 fanCtr = pivot_k
+                                - rotX * (polygon[innerIdx].x * scale_k)
+                                - rotY * (polygon[innerIdx].y * scale_k);
 
                     vCurrent += length(fanCtr - prevCenter);
                     prevCenter = fanCtr;
@@ -406,9 +418,9 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
                     if (smooth) rec.normIdx.reserve(P);
 
                     for (int j = 0; j < P; j++) {
-                        // Place from rotated centre at the current fan scale
-                        Vec3 vRot = fanCtr + rotX*(polygon[j].x*scale_k)
-                                           + rotY*(polygon[j].y*scale_k);
+                        Vec3 vRot = pivot_k
+                                  + rotX * ((polygon[j].x - polygon[innerIdx].x) * scale_k)
+                                  + rotY * ((polygon[j].y - polygon[innerIdx].y) * scale_k);
                         rec.verts.push_back((int)mesh.vertices.size());
                         mesh.vertices.push_back(vRot);
                         if (inCol) mesh.vertexColors.push_back(colors[i]);
