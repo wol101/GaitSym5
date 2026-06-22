@@ -111,6 +111,12 @@ struct SweepOptions {
     bool smoothNormals   = true;
     // UVs: U wraps 0→1 around the cross-section; V increases with arc length.
     bool generateUVs     = true;
+    // Extra distance (in world units) to pull the bend start back along the
+    // incoming segment and push the bend end forward along the outgoing segment,
+    // beyond the geometric minimum.  A positive value rounds the inner edge,
+    // eliminates zero-area triangles, and spreads any scale change over a longer
+    // arc.  Clamped so the fan never reaches the previous or next polyline node.
+    double bendExtend    = 0.0;
 };
 
 // ============================================================
@@ -363,12 +369,21 @@ inline Mesh PolylineSweep::sweep(const std::vector<Vec3>&   polyline,
                     s1 = dot(delta,t_in) + s2*cosA;
                 }
 
-                Vec3 incoming_ctr = polyline[i] + t_in  * s1;
-                Vec3 outgoing_ctr = polyline[i] + t_out * s2;
+                // Apply bendExtend: pull the fan start further back and the fan
+                // end further forward, clamped to 90% of each segment so the fan
+                // never swallows a neighbouring polyline node.
+                double ext  = opts.bendExtend;
+                double s1e  = s1 - ext;   // more negative = further back
+                double s2e  = s2 + ext;   // more positive = further forward
+                s1e = std::max(s1e, -0.9 * segLen_in );
+                s2e = std::min(s2e,  0.9 * segLen_out);
 
-                // Interpolated scales at the pull-back positions.
-                double t_inc      = (segLen_in  > 1e-15) ? std::max(0.0, std::min(1.0, 1.0 + s1/segLen_in )) : 1.0;
-                double t_out_frac = (segLen_out > 1e-15) ? std::max(0.0, std::min(1.0, s2/segLen_out)) : 0.0;
+                Vec3 incoming_ctr = polyline[i] + t_in  * s1e;
+                Vec3 outgoing_ctr = polyline[i] + t_out * s2e;
+
+                // Interpolated scales at the (possibly extended) pull-back positions.
+                double t_inc      = (segLen_in  > 1e-15) ? std::max(0.0, std::min(1.0, 1.0 + s1e/segLen_in )) : 1.0;
+                double t_out_frac = (segLen_out > 1e-15) ? std::max(0.0, std::min(1.0, s2e/segLen_out)) : 0.0;
                 double scale_inc  = scales[i-1] + (scales[i]   - scales[i-1]) * t_inc;
                 double scale_out  = scales[i]   + (scales[i+1] - scales[i])   * t_out_frac;
 
