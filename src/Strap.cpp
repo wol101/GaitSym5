@@ -213,7 +213,7 @@ std::string Strap::dumpToString()
     ss << simulation()->simulationTime() << "\t" << length();
     for (auto &&it: m_pointForceList)
     {
-        ss << "\t" << it->body->name() << "\t" <<
+        ss << "\t" << (it->body ? it->body->name() : "World"s) << "\t" <<
               it->point[0] << "\t" << it->point[1] << "\t" << it->point[2] << "\t" <<
               it->vector[0] * m_tension << "\t" << it->vector[1] * m_tension << "\t" << it->vector[2] * m_tension;
     }

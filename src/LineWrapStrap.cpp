@@ -118,6 +118,9 @@ void LineWrapStrap::calculate()
         std::cerr << "Error pointForceList()->size() != 3 in LineWrapStrap::calculate()\n";
         return;
     }
+    if (this->length() >= 0 && simulation() && simulation()->global()->stepSize() > 0) setVelocity((total_length - this->length()) / simulation()->global()->stepSize());
+    else setVelocity(0);
+    setLength(total_length);
 
     pgd::Vector3 originForce = pgd::normalize(W - origin);
     pgd::Vector3 insertionForce = pgd::normalize(W - insertion);

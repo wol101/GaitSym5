@@ -669,10 +669,10 @@ std::string *ThreeHingeJointDriver::createFromAttributes()
 
     // assemble the local copies of bodies, markers and joints
     std::unique_ptr<Body> baseBody = std::make_unique<Body>();
-    baseBody->setName(m_proximalJoint->body1Marker()->body()->name());
+    baseBody->setName(m_proximalJoint->body1Marker()->body()->name()); // fix me - not safe for World
     m_baseBody = baseBody.get();
     std::unique_ptr<Body> proximalBody = std::make_unique<Body>();
-    proximalBody->setName(m_proximalJoint->body2Marker()->body()->name());
+    proximalBody->setName(m_proximalJoint->body2Marker()->body()->name()); // fix me - not safe for World
     m_proximalBody = proximalBody.get();
     std::unique_ptr<Body> intermediateBody = std::make_unique<Body>();
     intermediateBody->setName(m_intermediateJoint->body2Marker()->body()->name());

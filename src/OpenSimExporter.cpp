@@ -927,7 +927,7 @@ void OpenSimExporter::createContactGeometrySet()
             if (SphereGeom *sphereGeom = dynamic_cast<SphereGeom *>(geom))
             {
                 xmlInitiateTag(&m_xmlString, "ContactSphere"s, {{"name"s, m_legalNameMap[sphereGeom->name()]}});
-                xmlTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->body()->name()]);
+                xmlTagAndContent(&m_xmlString, "socket_frame"s, "/bodyset/"s + m_legalNameMap[sphereGeom->geomMarker()->body()->name()]); // fix me - not safe for World
                 xmlTagAndContent(&m_xmlString, "radius"s, GSUtil::toString(sphereGeom->radius()));
                 xmlTagAndContent(&m_xmlString, "location"s, GSUtil::toString(sphereGeom->geomMarker()->position()));
                 xmlInitiateTag(&m_xmlString, "Appearance"s);

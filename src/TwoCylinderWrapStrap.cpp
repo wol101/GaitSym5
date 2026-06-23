@@ -134,13 +134,13 @@ int TwoCylinderWrapStrap::numWrapSegments()
 
 void TwoCylinderWrapStrap::calculate()
 {
-    pgd::Quaternion qOriginBody = originMarker()->body()->quaternion();
+    pgd::Quaternion qOriginBody = originMarker()->body()->quaternion(); // fix me - not safe for World
     pgd::Vector3 vOriginBody = originMarker()->body()->position();
-    pgd::Quaternion qInsertionBody = insertionMarker()->body()->quaternion();
+    pgd::Quaternion qInsertionBody = insertionMarker()->body()->quaternion(); // fix me - not safe for World
     pgd::Vector3 vInsertionBody = insertionMarker()->body()->position();
-    pgd::Quaternion qCylinder1Body = cylinder1Marker()->body()->quaternion();
+    pgd::Quaternion qCylinder1Body = cylinder1Marker()->body()->quaternion(); // fix me - not safe for World
     pgd::Vector3 vCylinder1Body = cylinder1Marker()->body()->position();
-    pgd::Quaternion qCylinder2Body = cylinder2Marker()->body()->quaternion();
+    pgd::Quaternion qCylinder2Body = cylinder2Marker()->body()->quaternion(); // fix me - not safe for World
     pgd::Vector3 vCylinder2Body = cylinder2Marker()->body()->position();
 
     pgd::Vector3 m_originPosition = originMarker()->position();

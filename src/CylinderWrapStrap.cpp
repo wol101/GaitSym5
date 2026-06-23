@@ -107,11 +107,11 @@ Marker *CylinderWrapStrap::cylinderMarker() const
 
 void CylinderWrapStrap::calculate()
 {
-    pgd::Quaternion qOriginBody = originMarker()->body()->quaternion();
+    pgd::Quaternion qOriginBody = originMarker()->body()->quaternion(); // fix me - not safe for World (most of this section will break)
     pgd::Vector3 vOriginBody = originMarker()->body()->position();
-    pgd::Quaternion qInsertionBody = insertionMarker()->body()->quaternion();
+    pgd::Quaternion qInsertionBody = insertionMarker()->body()->quaternion(); // fix me - not safe for World
     pgd::Vector3 vInsertionBody = insertionMarker()->body()->position();
-    pgd::Quaternion qCylinderBody = cylinderMarker()->body()->quaternion();
+    pgd::Quaternion qCylinderBody = cylinderMarker()->body()->quaternion(); // fix me - not safe for World
     pgd::Vector3 vCylinderBody = cylinderMarker()->body()->position();
 
     pgd::Vector3 m_originPosition = originMarker()->position();
