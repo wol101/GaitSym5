@@ -199,6 +199,9 @@ void DrawMuscle::initialise(SimulationWidget *simulationWidget)
         break;
     }
 
+    // there is a special case for muscles with 2 segments that start and stop on the same point because the current wrapping algorithms will fail
+    if (m_polyline.size() == 3 && m_polyline[0] == m_polyline[2])
+
     // the muscle visualisation depends on the type
     switch (m_muscleDrawStyle)
     {

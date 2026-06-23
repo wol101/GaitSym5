@@ -215,6 +215,10 @@ bool pgd::Vector2::operator<(const pgd::Vector2 &rhs) const
     return std::tie(x, y) < std::tie(rhs.x, rhs.y);
 }
 
+bool pgd::Vector2::operator==(const pgd::Vector2 &rhs) const
+{
+    return x == rhs.x && y == rhs.y;
+}
 
 pgd::Vector3::Vector3(void)
 {
@@ -451,6 +455,11 @@ bool pgd::Vector3::operator<(const pgd::Vector3 &rhs) const
     return std::tie(x, y, z) < std::tie(rhs.x, rhs.y, rhs.z);
 }
 
+bool pgd::Vector3::operator==(const pgd::Vector3 &rhs) const
+{
+    return x == rhs.x && y == rhs.y && z == rhs.z;
+}
+
 pgd::Vector3 pgd::perpendicularVector(const pgd::Vector3 &v)
 {
     pgd::Vector3 result;
@@ -682,6 +691,11 @@ bool pgd::Vector4::operator<(const pgd::Vector4 &rhs) const
     return std::tie(x, y, z, w) < std::tie(rhs.x, rhs.y, rhs.z, rhs.w);
 }
 
+bool pgd::Vector4::operator==(const pgd::Vector4 &rhs) const
+{
+    return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
+}
+
 
 pgd::Quaternion::Quaternion(void)
 {
@@ -874,6 +888,12 @@ bool pgd::Quaternion::operator<(const pgd::Quaternion &rhs) const
 {
     return std::tie(n, x, y, z) < std::tie(rhs.n, rhs.x, rhs.y, rhs.z);
 }
+
+bool pgd::Quaternion::operator==(const pgd::Quaternion &rhs) const
+{
+    return  n == rhs.n && x == rhs.x && y == rhs.y && z == rhs.z;
+}
+
 
 pgd::Quaternion pgd::conjugate(const pgd::Quaternion &q)
 {

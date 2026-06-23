@@ -62,6 +62,7 @@ public:
     const double *constData(void) const;
 
     bool operator <(const Vector2 &rhs) const; // used for sets and maps
+    bool operator==(const Vector2 &rhs) const;
 };
 
 Vector2 operator+(const Vector2 &u, const Vector2 &v);
@@ -112,6 +113,7 @@ public:
     const double *constData(void) const;
 
     bool operator <(const Vector3 &rhs) const; // used for sets and maps
+    bool operator==(const Vector3 &rhs) const;
 };
 
 Vector3 operator+(const Vector3 &u, const Vector3 &v);
@@ -164,6 +166,7 @@ public:
     const double *constData(void) const;
 
     bool operator <(const Vector4 &rhs) const; // used for sets and maps
+    bool operator==(const pgd::Vector4 &rhs) const;
 };
 
 Vector4 operator+(const Vector4 &u, const Vector4 &v);
@@ -214,6 +217,7 @@ public:
     const double *constData() const;
 
     bool operator <(const Quaternion &rhs) const; // used for sets and maps
+    bool operator==(const pgd::Quaternion &rhs) const;
 };
 
 Quaternion operator+(const Quaternion &q1, const Quaternion &q2);
