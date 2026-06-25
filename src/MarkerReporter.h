@@ -3,6 +3,8 @@
 
 #include "Reporter.h"
 
+#include <cstdint>
+
 namespace GaitSym {
 
 class Marker;
