@@ -70,6 +70,18 @@ int main(int argc, char *argv[])
 
     QApplication application(argc, argv);
 
+    Qt::KeyboardModifiers mods = QApplication::queryKeyboardModifiers();
+    bool anyModifier = mods & (Qt::ControlModifier | Qt::ShiftModifier |  Qt::AltModifier | Qt::MetaModifier);
+    if (anyModifier)
+    {
+        QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Clear Settings", "A modifier key is held. Clear all settings and reset to defaults?", QMessageBox::Yes | QMessageBox::No );
+        if (reply == QMessageBox::Yes)
+        {
+            Preferences::setSettings(Preferences::importDefaults());
+            Preferences::write();
+        }
+    }
+
     int styleCode = Preferences::valueInt("StyleCode");
     QStringList styles = QStyleFactory::keys();
     qDebug() << styles;
