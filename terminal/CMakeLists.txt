@@ -31,6 +31,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# gaitsym5/gaitsym5_asio default to a fully static link (see the HOST_NAME
+# block below) so they can run unmodified across HPC nodes with mismatched
+# shared library versions. Some deployments need the opposite: e.g. running
+# under DMTCP, which injects its checkpoint runtime via LD_PRELOAD and
+# therefore requires a real dynamic linker to be present, which a fully
+# static executable does not have. Configure with -DSTATIC_BUILD=OFF to get
+# a dynamically linked build for those cases; plain cmake keeps the current
+# static default. Has no effect on the csf3 branch below, which never links
+# static regardless (that cluster's toolchain can't produce static binaries).
+option(STATIC_BUILD "Link gaitsym5/gaitsym5_asio statically" ON)
+
 # customise the behaviour
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # generates detailed compile_commands.json file
 if(CMAKE_BUILD_TYPE STREQUAL Release)
@@ -1321,8 +1332,15 @@ target_compile_definitions(gaitsym5_asio PRIVATE USE_ASIO_ASYNC)
 if (CMAKE_BUILD_TYPE STREQUAL Release)
 #    target_compile_options(gaitsym5 PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
 #    target_compile_options(gaitsym5_asio PRIVATE -static -O3 -ffast-math -fno-finite-math-only)
-    target_compile_options(gaitsym5 PRIVATE -static -O3)
-    target_compile_options(gaitsym5_asio PRIVATE -static -O3)
+    # -static here only matters when STATIC_BUILD is on (see the option
+    # declared near the top of this file)
+    if (STATIC_BUILD)
+        target_compile_options(gaitsym5 PRIVATE -static -O3)
+        target_compile_options(gaitsym5_asio PRIVATE -static -O3)
+    else()
+        target_compile_options(gaitsym5 PRIVATE -O3)
+        target_compile_options(gaitsym5_asio PRIVATE -O3)
+    endif()
 #    target_compile_options(gaitsym5_asio_mpi PRIVATE -static -O3)
 endif()
 
@@ -1369,21 +1387,36 @@ endif()
 
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
 message("HOST_NAME variable is set to: ${HOST_NAME}")
+# -static below only applies when STATIC_BUILD is on (see the option
+# declared near the top of this file). The csf3 branch is unaffected by
+# STATIC_BUILD - that cluster's toolchain can't produce static binaries.
 if (HOST_NAME STREQUAL "submitter.itservices.manchester.ac.uk")
     message("Use: 'cmake -D CMAKE_BUILD_TYPE=Release ../terminal/ -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++'")
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
-    target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
-    target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
-#    target_link_libraries(gaitsym5_asio_mpi PRIVATE -static Threads::Threads dl)
+    if (STATIC_BUILD)
+        target_link_libraries(gaitsym5 PRIVATE -static Threads::Threads dl)
+        target_link_libraries(gaitsym5_asio PRIVATE -static Threads::Threads dl)
+#        target_link_libraries(gaitsym5_asio_mpi PRIVATE -static Threads::Threads dl)
+    else()
+        target_link_libraries(gaitsym5 PRIVATE Threads::Threads dl)
+        target_link_libraries(gaitsym5_asio PRIVATE Threads::Threads dl)
+#        target_link_libraries(gaitsym5_asio_mpi PRIVATE Threads::Threads dl)
+    endif()
 elseif (HOST_NAME MATCHES ".*csf3.man.alces.network$") # cannot build static executables on csf3 but they are not needed
     target_link_libraries(gaitsym5 PRIVATE )
     target_link_libraries(gaitsym5_asio PRIVATE )
 #    target_link_libraries(gaitsym5_asio_mpi PRIVATE )
 else()
-    target_link_libraries(gaitsym5 PRIVATE -static)
-    target_link_libraries(gaitsym5_asio PRIVATE -static)
-#    target_link_libraries(gaitsym5_asio_mpi PRIVATE -static)
+    if (STATIC_BUILD)
+        target_link_libraries(gaitsym5 PRIVATE -static)
+        target_link_libraries(gaitsym5_asio PRIVATE -static)
+#        target_link_libraries(gaitsym5_asio_mpi PRIVATE -static)
+    else()
+        target_link_libraries(gaitsym5 PRIVATE )
+        target_link_libraries(gaitsym5_asio PRIVATE )
+#        target_link_libraries(gaitsym5_asio_mpi PRIVATE )
+    endif()
 endif()
 
 
