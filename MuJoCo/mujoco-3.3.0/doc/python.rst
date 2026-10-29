@@ -730,7 +730,7 @@ successfully installed, ``cd`` outside of the ``mujoco`` directory and run
 .. _PyModule:
 
 Modules
-=======
+========
 
 The ``mujoco`` package contains two sub-modules: ``mujoco.rollout`` and ``mujoco.minimize``
 

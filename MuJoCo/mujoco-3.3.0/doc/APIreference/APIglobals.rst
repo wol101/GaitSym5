@@ -1,6 +1,6 @@
-=======
+========
 Globals
-=======
+========
 
 Global variable and constant definitions can be classified as:
 
